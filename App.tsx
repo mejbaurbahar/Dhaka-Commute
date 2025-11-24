@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, Settings, Lock, Key, ChevronRight, CheckCircle2, User } from 'lucide-react';
 import { BusRoute, AppView } from './types';
 import { BUS_DATA, STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
@@ -8,16 +7,27 @@ import LiveTracker from './components/LiveTracker';
 import { askGeminiRoute } from './services/geminiService';
 import { getCurrentLocation, findNearestStation } from './services/locationService';
 
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  text: string;
+}
+
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.HOME);
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // API Key State
+  const [apiKey, setApiKey] = useState<string>(() => localStorage.getItem('dhaka_commute_gemini_key') || '');
+  const [tempApiKey, setTempApiKey] = useState('');
+  
   const [aiQuery, setAiQuery] = useState('');
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
   const [nearestStopIndex, setNearestStopIndex] = useState<number>(-1);
   const [nearestStopDistance, setNearestStopDistance] = useState<number>(Infinity);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to top of the container when view changes
   useEffect(() => {
@@ -25,6 +35,20 @@ const App: React.FC = () => {
       scrollContainerRef.current.scrollTop = 0;
     }
   }, [view]);
+
+  // Scroll to bottom of chat when history changes
+  useEffect(() => {
+    if (view === AppView.AI_ASSISTANT && chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatHistory, aiLoading, view]);
+
+  // Sync temp key when entering settings
+  useEffect(() => {
+    if (view === AppView.SETTINGS) {
+      setTempApiKey(apiKey);
+    }
+  }, [view, apiKey]);
 
   // Fetch location when entering Bus Details to show "You are here" on the map
   useEffect(() => {
@@ -73,14 +97,30 @@ const App: React.FC = () => {
     }).catch(console.error);
   };
 
+  const handleSaveApiKey = () => {
+    const trimmed = tempApiKey.trim();
+    localStorage.setItem('dhaka_commute_gemini_key', trimmed);
+    setApiKey(trimmed);
+    // Visual feedback handled by UI
+    setView(AppView.HOME); // Or stay? Let's go home for now.
+  };
+
   const handleAiSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!aiQuery.trim()) return;
     
+    if (!apiKey) {
+      setChatHistory(prev => [...prev, { role: 'assistant', text: "Please configure your Gemini API Key in Settings first." }]);
+      return;
+    }
+
+    const userMessage: ChatMessage = { role: 'user', text: aiQuery };
     const queryToSend = aiQuery;
+    
+    // Optimistic update
+    setChatHistory(prev => [...prev, userMessage]);
     setAiQuery(''); // Clear input immediately
     setAiLoading(true);
-    setAiResponse(null);
     
     let locationContext = "Dhaka, Bangladesh";
     try {
@@ -100,8 +140,11 @@ const App: React.FC = () => {
     } catch (e) {
       console.log("Location not available for AI context");
     }
-    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`);
-    setAiResponse(result);
+
+    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`, apiKey);
+    
+    const assistantMessage: ChatMessage = { role: 'assistant', text: result };
+    setChatHistory(prev => [...prev, assistantMessage]);
     setAiLoading(false);
   };
 
@@ -279,105 +322,203 @@ const App: React.FC = () => {
           <p className="text-[10px] text-gray-400">Powered by Gemini</p>
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-5 bg-slate-50" ref={scrollContainerRef}>
-        <div className="flex gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-dhaka-green to-teal-600 flex items-center justify-center shrink-0 shadow-sm mt-1">
-             <Bot className="w-4 h-4 text-white" />
-          </div>
-          <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-sm text-gray-700 max-w-[85%]">
-             <p className="font-bold text-gray-900 mb-2">Hello! 👋</p>
-             I can help you find bus routes in Dhaka. Try asking:
-             <div className="mt-3 space-y-2">
-               <button onClick={() => setAiQuery('How to go from Mirpur to Gulshan?')} className="block text-left w-full text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-600 p-2.5 rounded-xl border border-gray-200 hover:border-blue-200 text-gray-600 transition-colors">
-                 "How to go from Mirpur to Gulshan?"
-               </button>
-               <button onClick={() => setAiQuery('Direct bus to Airport?')} className="block text-left w-full text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-600 p-2.5 rounded-xl border border-gray-200 hover:border-blue-200 text-gray-600 transition-colors">
-                 "Direct bus to Airport?"
-               </button>
+      
+      {!apiKey ? (
+         <div className="flex-1 flex flex-col items-center justify-center p-8 bg-slate-50 text-center">
+             <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mb-6">
+                <Lock className="w-10 h-10 text-gray-500" />
              </div>
-          </div>
-        </div>
-        {aiResponse && (
-          <div className="flex gap-3 animate-fade-in">
-             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-dhaka-green to-teal-600 flex items-center justify-center shrink-0 shadow-sm mt-1">
-               <Bot className="w-4 h-4 text-white" />
-             </div>
-             <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-sm text-gray-800 max-w-[90%] whitespace-pre-line leading-relaxed">
-               {aiResponse.replace(/\*\*/g, '')}
-             </div>
-          </div>
-        )}
-        {aiLoading && (
-          <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center shrink-0 opacity-50 mt-1">
-               <Bot className="w-4 h-4 text-white" />
-            </div>
-            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100">
-              <div className="flex gap-1.5">
-                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-75"></div>
-                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></div>
+             <h3 className="text-xl font-bold text-gray-800 mb-2">Setup Required</h3>
+             <p className="text-gray-500 max-w-xs mb-8">
+               To use the AI Assistant, you need to provide your own Google Gemini API Key.
+             </p>
+             <button 
+                onClick={() => setView(AppView.SETTINGS)}
+                className="px-6 py-3 bg-dhaka-green text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors flex items-center gap-2"
+             >
+                <Settings className="w-4 h-4" /> Open Settings
+             </button>
+         </div>
+      ) : (
+        <>
+          <div className="flex-1 overflow-y-auto p-4 space-y-5 bg-slate-50" ref={scrollContainerRef}>
+            {/* Welcome Message */}
+            {chatHistory.length === 0 && (
+              <div className="flex gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-dhaka-green to-teal-600 flex items-center justify-center shrink-0 shadow-sm mt-1">
+                   <Bot className="w-4 h-4 text-white" />
+                </div>
+                <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-sm text-gray-700 max-w-[85%]">
+                   <p className="font-bold text-gray-900 mb-2">Hello! 👋</p>
+                   I can help you find bus routes in Dhaka. Try asking:
+                   <div className="mt-3 space-y-2">
+                     <button onClick={() => setAiQuery('How to go from Mirpur to Gulshan?')} className="block text-left w-full text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-600 p-2.5 rounded-xl border border-gray-200 hover:border-blue-200 text-gray-600 transition-colors">
+                       "How to go from Mirpur to Gulshan?"
+                     </button>
+                     <button onClick={() => setAiQuery('Direct bus to Airport?')} className="block text-left w-full text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-600 p-2.5 rounded-xl border border-gray-200 hover:border-blue-200 text-gray-600 transition-colors">
+                       "Direct bus to Airport?"
+                     </button>
+                   </div>
+                </div>
               </div>
-            </div>
+            )}
+            
+            {/* Chat History */}
+            {chatHistory.map((msg, index) => (
+              <div key={index} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm mt-1 ${msg.role === 'user' ? 'bg-blue-600' : 'bg-gradient-to-br from-dhaka-green to-teal-600'}`}>
+                   {msg.role === 'user' ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-white" />}
+                 </div>
+                 <div className={`p-4 rounded-2xl shadow-sm border text-sm max-w-[90%] whitespace-pre-line leading-relaxed
+                   ${msg.role === 'user' 
+                     ? 'bg-blue-600 text-white border-blue-600 rounded-tr-none' 
+                     : 'bg-white text-gray-800 border-gray-100 rounded-tl-none'
+                   }
+                 `}>
+                   {msg.text.replace(/\*\*/g, '')}
+                 </div>
+              </div>
+            ))}
+
+            {/* Loading Indicator */}
+            {aiLoading && (
+              <div className="flex gap-3">
+                <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center shrink-0 opacity-50 mt-1">
+                   <Bot className="w-4 h-4 text-white" />
+                </div>
+                <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100">
+                  <div className="flex gap-1.5">
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-75"></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
           </div>
-        )}
+          <div className="flex-none p-4 border-t border-gray-100 bg-white pb-safe z-30">
+            <form onSubmit={handleAiSubmit} className="relative">
+              <input
+                type="text"
+                className="w-full bg-gray-100 border border-transparent rounded-2xl pl-5 pr-12 py-3.5 focus:bg-white focus:outline-none focus:border-dhaka-green focus:ring-1 focus:ring-dhaka-green transition-all shadow-inner text-sm placeholder:text-gray-400"
+                placeholder="Type your question..."
+                value={aiQuery}
+                onChange={(e) => setAiQuery(e.target.value)}
+              />
+              <button 
+                type="submit"
+                disabled={aiLoading || !aiQuery.trim()}
+                className="absolute right-2 top-2 p-2 bg-dhaka-green text-white rounded-xl hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-green-200"
+              >
+                <Navigation className="w-4 h-4 rotate-90" />
+              </button>
+            </form>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  const renderSettings = () => (
+    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full">
+       <div className="flex-none p-4 border-b border-gray-100 flex items-center gap-3 bg-white z-40 fixed md:sticky top-0 w-full">
+        <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"><ArrowLeft className="w-5 h-5 text-gray-600" /></button>
+        <h2 className="text-lg font-bold text-dhaka-dark">Settings</h2>
       </div>
-      <div className="flex-none p-4 border-t border-gray-100 bg-white pb-safe z-30">
-        <form onSubmit={handleAiSubmit} className="relative">
-          <input
-            type="text"
-            className="w-full bg-gray-100 border border-transparent rounded-2xl pl-5 pr-12 py-3.5 focus:bg-white focus:outline-none focus:border-dhaka-green focus:ring-1 focus:ring-dhaka-green transition-all shadow-inner text-sm placeholder:text-gray-400"
-            placeholder="Type your question..."
-            value={aiQuery}
-            onChange={(e) => setAiQuery(e.target.value)}
-          />
-          <button 
-            type="submit"
-            disabled={aiLoading || !aiQuery.trim()}
-            className="absolute right-2 top-2 p-2 bg-dhaka-green text-white rounded-xl hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-green-200"
-          >
-            <Navigation className="w-4 h-4 rotate-90" />
-          </button>
-        </form>
+      <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+           <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+             <Key className="w-5 h-5 text-dhaka-green" /> API Key Configuration
+           </h3>
+           <p className="text-sm text-gray-500 mb-6">
+             To use the AI Assistant features, you must provide your own Google Gemini API Key. The key is stored locally on your device.
+           </p>
+           
+           <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Gemini API Key</label>
+           <input 
+             type="password" 
+             value={tempApiKey}
+             onChange={(e) => setTempApiKey(e.target.value)}
+             placeholder="AIzaSy..."
+             className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-dhaka-green focus:ring-1 focus:ring-dhaka-green transition-all mb-4 font-mono"
+           />
+           
+           <button 
+             onClick={handleSaveApiKey}
+             disabled={!tempApiKey.trim()}
+             className="w-full bg-dhaka-green text-white py-3 rounded-xl font-bold shadow-lg shadow-green-100 hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+           >
+             <CheckCircle2 className="w-4 h-4" /> Save Configuration
+           </button>
+           
+           <div className="mt-6 pt-6 border-t border-gray-100">
+             <a 
+               href="https://aistudio.google.com/app/apikey" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               className="flex items-center justify-between text-sm text-blue-600 hover:underline bg-blue-50 px-4 py-3 rounded-xl"
+             >
+               <span>Get a Gemini API Key</span>
+               <ExternalLink className="w-4 h-4" />
+             </a>
+           </div>
+        </div>
       </div>
     </div>
   );
 
   const renderPrivacyPolicy = () => (
-    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full">
+    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full relative">
       <div className="flex-none p-4 border-b border-gray-100 flex items-center gap-3 bg-white z-40 fixed md:sticky top-0 w-full">
         <button onClick={() => setView(AppView.ABOUT)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"><ArrowLeft className="w-5 h-5 text-gray-600" /></button>
         <h2 className="text-lg font-bold text-dhaka-dark">Privacy Policy</h2>
       </div>
-      <div className="flex-1 overflow-y-auto p-6 bg-slate-50 space-y-4 text-sm text-gray-700">
+      <div className="flex-1 overflow-y-auto p-6 bg-slate-50 space-y-4 text-sm text-gray-700 pb-20">
         <p><strong>Last Updated: 2025</strong></p>
         <p>At DhakaCommute, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your information.</p>
         <h3 className="font-bold text-gray-900 mt-4">1. Information We Collect</h3>
         <ul className="list-disc pl-5 space-y-1">
           <li><strong>Location Data:</strong> We access your device's geolocation to provide real-time navigation and nearby bus station information. This data is processed locally on your device and is not stored on our servers.</li>
-          <li><strong>Usage Data:</strong> We may collect anonymous data about how you interact with the app to improve our services.</li>
+          <li><strong>API Keys:</strong> If you use the AI features, your Google Gemini API Key is stored securely in your browser's local storage and is sent directly to Google's servers only when making requests. We do not log or save your keys on our servers.</li>
         </ul>
         <h3 className="font-bold text-gray-900 mt-4">2. How We Use Your Information</h3>
         <p>We use your information solely to provide the core functionality of the app, such as calculating routes and showing your position on the map.</p>
-        <h3 className="font-bold text-gray-900 mt-4">3. Data Security</h3>
-        <p>We implement appropriate technical measures to protect your data. However, no method of transmission over the internet is 100% secure.</p>
+      </div>
+      {/* Sticky Back Button */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur border-t border-gray-100 z-50 pb-safe">
+        <button 
+          onClick={() => setView(AppView.ABOUT)}
+          className="w-full bg-gray-100 text-gray-700 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to About
+        </button>
       </div>
     </div>
   );
 
   const renderTerms = () => (
-    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full">
+    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full relative">
       <div className="flex-none p-4 border-b border-gray-100 flex items-center gap-3 bg-white z-40 fixed md:sticky top-0 w-full">
         <button onClick={() => setView(AppView.ABOUT)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"><ArrowLeft className="w-5 h-5 text-gray-600" /></button>
         <h2 className="text-lg font-bold text-dhaka-dark">Terms & Conditions</h2>
       </div>
-      <div className="flex-1 overflow-y-auto p-6 bg-slate-50 space-y-4 text-sm text-gray-700">
+      <div className="flex-1 overflow-y-auto p-6 bg-slate-50 space-y-4 text-sm text-gray-700 pb-20">
         <h3 className="font-bold text-gray-900">1. Acceptance of Terms</h3>
         <p>By accessing and using DhakaCommute, you accept and agree to be bound by the terms and provision of this agreement.</p>
         <h3 className="font-bold text-gray-900 mt-4">2. Use of Service</h3>
         <p>This service is provided for informational purposes only. While we strive for accuracy, bus routes and schedules in Dhaka are subject to change without notice.</p>
         <h3 className="font-bold text-gray-900 mt-4">3. Limitation of Liability</h3>
         <p>DhakaCommute shall not be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses.</p>
+      </div>
+      {/* Sticky Back Button */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur border-t border-gray-100 z-50 pb-safe">
+        <button 
+          onClick={() => setView(AppView.ABOUT)}
+          className="w-full bg-gray-100 text-gray-700 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to About
+        </button>
       </div>
     </div>
   );
@@ -485,22 +626,39 @@ const App: React.FC = () => {
                </div>
             </div>
 
-            {/* Privacy & Disclaimer Links */}
+            {/* Links */}
             <div className="bg-white rounded-2xl p-2 border border-gray-100 shadow-sm">
-               <button onClick={() => setView(AppView.PRIVACY)} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors">
+               <button onClick={() => setView(AppView.SETTINGS)} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors group">
                   <div className="flex items-center gap-3">
-                    <Shield className="w-5 h-5 text-blue-500" />
-                    <span className="font-bold text-gray-700 text-sm">Privacy Policy</span>
+                    <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center group-hover:bg-green-100 transition-colors">
+                      <Settings className="w-4 h-4 text-dhaka-green" />
+                    </div>
+                    <div className="text-left">
+                      <span className="font-bold text-gray-800 text-sm block">Settings</span>
+                      <span className="text-[10px] text-gray-500 block">Manage API Keys & Preferences</span>
+                    </div>
                   </div>
-                  <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
                </button>
                <div className="h-px bg-gray-100 mx-4"></div>
-               <button onClick={() => setView(AppView.TERMS)} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors">
+               <button onClick={() => setView(AppView.PRIVACY)} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors group">
                   <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-orange-500" />
+                     <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                        <Shield className="w-4 h-4 text-blue-500" />
+                     </div>
+                    <span className="font-bold text-gray-700 text-sm">Privacy Policy</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+               </button>
+               <div className="h-px bg-gray-100 mx-4"></div>
+               <button onClick={() => setView(AppView.TERMS)} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors group">
+                  <div className="flex items-center gap-3">
+                     <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+                        <FileText className="w-4 h-4 text-orange-500" />
+                     </div>
                     <span className="font-bold text-gray-700 text-sm">Terms & Conditions</span>
                   </div>
-                  <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
                </button>
             </div>
              
@@ -549,7 +707,7 @@ const App: React.FC = () => {
             className="flex items-center gap-2.5 outline-none cursor-pointer"
           >
               <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
-                <span className="text-lg">D</span>
+                <Bus className="w-5 h-5 text-white" />
               </div>
               <h1 className="text-xl font-bold tracking-tight text-gray-900">Dhaka<span className="text-dhaka-red">Commute</span></h1>
           </button>
@@ -566,11 +724,17 @@ const App: React.FC = () => {
              className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
           >
               <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
-                <span className="text-xl">D</span>
+                <Bus className="w-6 h-6 text-white" />
               </div>
               <h1 className="text-2xl font-bold tracking-tight text-gray-900">Dhaka<span className="text-dhaka-red">Commute</span></h1>
           </button>
           <div className="flex items-center gap-4">
+             <button 
+                onClick={() => setView(AppView.SETTINGS)}
+                className="text-sm font-bold text-gray-500 hover:text-dhaka-green transition-colors flex items-center gap-2"
+             >
+               <Settings className="w-4 h-4" />
+             </button>
              <button 
                 onClick={() => setView(AppView.AI_ASSISTANT)}
                 className="text-sm font-bold text-gray-600 hover:text-dhaka-green transition-colors"
@@ -700,6 +864,7 @@ const App: React.FC = () => {
            {view === AppView.ABOUT && renderAbout()}
            {view === AppView.PRIVACY && renderPrivacyPolicy()}
            {view === AppView.TERMS && renderTerms()}
+           {view === AppView.SETTINGS && renderSettings()}
            {view === AppView.NOT_FOUND && renderNotFound()}
            {view === AppView.SERVER_ERROR && renderServerError()}
         </div>

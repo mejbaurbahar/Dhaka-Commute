@@ -2,12 +2,14 @@
 import { GoogleGenAI } from '@google/genai';
 import { BUS_DATA } from '../constants';
 
-// Initialize the Gemini client
-// Note: process.env.API_KEY is handled by the build system/environment
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+export const askGeminiRoute = async (userQuery: string, apiKey: string): Promise<string> => {
+  if (!apiKey) {
+    return "Please configure your Gemini API Key in Settings to use the Assistant.";
+  }
 
-export const askGeminiRoute = async (userQuery: string): Promise<string> => {
   try {
+    // Initialize client with the provided key
+    const ai = new GoogleGenAI({ apiKey: apiKey });
     const model = 'gemini-2.5-flash';
     
     // Construct a context-aware prompt with our bus data
@@ -43,8 +45,11 @@ export const askGeminiRoute = async (userQuery: string): Promise<string> => {
 
     return response.text || "Sorry, I couldn't process that request right now.";
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini API Error:", error);
-    return "I'm having trouble connecting to the AI assistant. Please try browsing the list manually.";
+    if (error.message?.includes('API_KEY_INVALID') || error.status === 400 || error.status === 403) {
+      return "Invalid API Key. Please check your key in Settings.";
+    }
+    return "I'm having trouble connecting to the AI assistant. Please check your internet connection or API key.";
   }
 };

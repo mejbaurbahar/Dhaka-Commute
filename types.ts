@@ -35,6 +35,7 @@ export enum AppView {
   ABOUT = 'ABOUT',
   PRIVACY = 'PRIVACY',
   TERMS = 'TERMS',
+  SETTINGS = 'SETTINGS',
   NOT_FOUND = 'NOT_FOUND',
   SERVER_ERROR = 'SERVER_ERROR'
 }
