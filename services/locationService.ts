@@ -17,24 +17,51 @@ export const getCurrentLocation = (): Promise<UserLocation> => {
     };
 
     const errorHandler = (error: GeolocationPositionError) => {
-      // If high accuracy fails (timeout or unavailable), try low accuracy
+      console.warn(`Geolocation High Accuracy Failed: ${error.message} (${error.code})`);
+      
+      // If high accuracy fails (timeout or unavailable), try low accuracy with loose constraints
       if (error.code === error.TIMEOUT || error.code === error.POSITION_UNAVAILABLE) {
-        console.warn("High accuracy failed, trying low accuracy...");
+        console.log("Attempting low accuracy fallback...");
         navigator.geolocation.getCurrentPosition(
           successHandler,
-          (err) => reject(err),
-          { enableHighAccuracy: false, timeout: 10000, maximumAge: 30000 }
+          (err) => {
+            console.error(`Geolocation Fallback Failed: ${err.message} (${err.code})`);
+            // Custom error messages for better user experience
+            if (err.code === err.TIMEOUT) {
+              reject(new Error("Location request timed out. Please ensure GPS is enabled and you have a clear view of the sky."));
+            } else if (err.code === err.PERMISSION_DENIED) {
+              reject(new Error("Location permission denied. Please allow location access in your browser settings."));
+            } else if (err.code === err.POSITION_UNAVAILABLE) {
+              reject(new Error("Location unavailable. Your device cannot determine its position right now."));
+            } else {
+              reject(new Error(`Location error: ${err.message}`));
+            }
+          },
+          { 
+            enableHighAccuracy: false, 
+            timeout: 20000, // 20 seconds for fallback
+            maximumAge: 60000 // Accept cached positions up to 1 minute old (helps significantly on mobile)
+          } 
         );
       } else {
-        reject(error);
+        // Immediate failure (like Permission Denied)
+        if (error.code === error.PERMISSION_DENIED) {
+             reject(new Error("Location permission denied. Please allow location access in your browser settings."));
+        } else {
+             reject(error);
+        }
       }
     };
 
-    // First try: High Accuracy (GPS) with 10s timeout
+    // First try: High Accuracy (GPS)
     navigator.geolocation.getCurrentPosition(
       successHandler,
       errorHandler,
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      { 
+        enableHighAccuracy: true, 
+        timeout: 15000, // Increased to 15 seconds to allow GPS warmup
+        maximumAge: 5000 // Accept positions up to 5 seconds old
+      }
     );
   });
 };
