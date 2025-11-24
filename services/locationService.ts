@@ -1,10 +1,9 @@
-
 import { UserLocation, Station } from '../types';
 import { STATIONS } from '../constants';
 
 export const getCurrentLocation = (): Promise<UserLocation> => {
   return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
       reject(new Error("Geolocation is not supported by your browser"));
       return;
     }

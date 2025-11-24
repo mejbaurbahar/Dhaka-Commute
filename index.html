@@ -22,6 +22,21 @@
                 dark: '#1f2937',
                 light: '#f3f4f6'
               }
+            },
+            animation: {
+              'drive': 'drive 3s linear infinite',
+              'cloud-1': 'cloud 15s linear infinite',
+              'cloud-2': 'cloud 20s linear infinite',
+            },
+            keyframes: {
+              drive: {
+                '0%': { transform: 'translateX(-100px)' },
+                '100%': { transform: 'translateX(100vw)' },
+              },
+              cloud: {
+                '0%': { transform: 'translateX(100%)' },
+                '100%': { transform: 'translateX(-100%)' },
+              }
             }
           },
         },
@@ -43,6 +58,9 @@
       }
       .pb-safe {
         padding-bottom: env(safe-area-inset-bottom);
+      }
+      .pt-safe-top {
+        padding-top: env(safe-area-inset-top);
       }
     </style>
   <script type="importmap">

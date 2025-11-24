@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from '@google/genai';
 import { BUS_DATA } from '../constants';
 
@@ -26,13 +25,15 @@ export const askGeminiRoute = async (userQuery: string, apiKey: string): Promise
       User Location Context: Dhaka, Bangladesh.
       
       Rules:
-      1. CRITICAL: Always provide ALL possible options. If there is a direct bus, list it as "Option 1". If there are alternative buses, list them as "Option 2", etc.
-      2. If a direct bus is not available, suggest a connecting route (e.g., Take Bus A to Farmgate, then Bus B to Destination).
-      3. Be specific about station names.
-      4. Use Bengali names in brackets if helpful.
-      5. Output format should be clear and structured (e.g., bullet points).
-      6. If the user asks in Bengali (Bangla), reply in Bengali.
-      7. Be friendly and helpful.
+      1. CRITICAL: You must ONLY answer questions related to Dhaka bus routes, transport, commuting, or station locations.
+      2. If the user asks about anything unrelated (e.g., politics, coding, math, general knowledge, movies), politely refuse by saying: "I can only help you with Dhaka bus routes and transportation."
+      3. Always provide ALL possible options. If there is a direct bus, list it as "Option 1". If there are alternative buses, list them as "Option 2", etc.
+      4. If a direct bus is not available, suggest a connecting route (e.g., Take Bus A to Farmgate, then Bus B to Destination).
+      5. Be specific about station names.
+      6. Use Bengali names in brackets if helpful.
+      7. Output format should be clear and structured (e.g., bullet points).
+      8. If the user asks in Bengali (Bangla), reply in Bengali.
+      9. Be friendly and helpful.
     `;
 
     const response = await ai.models.generateContent({

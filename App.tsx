@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, Settings, Lock, Key, ChevronRight, CheckCircle2, User } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, Settings, Lock, Key, ChevronRight, CheckCircle2, User, Linkedin } from 'lucide-react';
 import { BusRoute, AppView } from './types';
 import { BUS_DATA, STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
@@ -12,13 +12,26 @@ interface ChatMessage {
   text: string;
 }
 
+// Safe LocalStorage Helper
+const getStoredApiKey = () => {
+  try {
+    return localStorage.getItem('dhaka_commute_gemini_key') || '';
+  } catch (e) {
+    console.warn("LocalStorage access denied");
+    return '';
+  }
+};
+
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.HOME);
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Search State
+  const [inputValue, setInputValue] = useState(''); // What user types
+  const [searchQuery, setSearchQuery] = useState(''); // What we filter by
   
   // API Key State
-  const [apiKey, setApiKey] = useState<string>(() => localStorage.getItem('dhaka_commute_gemini_key') || '');
+  const [apiKey, setApiKey] = useState<string>(getStoredApiKey);
   const [tempApiKey, setTempApiKey] = useState('');
   
   const [aiQuery, setAiQuery] = useState('');
@@ -28,6 +41,14 @@ const App: React.FC = () => {
   const [nearestStopDistance, setNearestStopDistance] = useState<number>(Infinity);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Check URL on mount for 404
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path !== '/' && path !== '') {
+      setView(AppView.NOT_FOUND);
+    }
+  }, []);
 
   // Scroll to top of the container when view changes
   useEffect(() => {
@@ -67,7 +88,7 @@ const App: React.FC = () => {
     }
   }, [selectedBus]);
 
-  // Filter buses based on search
+  // Filter buses based on committed search query
   const filteredBuses = BUS_DATA.filter(bus => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
@@ -81,6 +102,18 @@ const App: React.FC = () => {
     });
     return nameMatch || bnNameMatch || routeMatch || stopMatch;
   });
+
+  const handleSearchCommit = () => {
+    setSearchQuery(inputValue);
+    // Dismiss keyboard on mobile
+    (document.activeElement as HTMLElement)?.blur();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearchCommit();
+    }
+  };
 
   const handleBusSelect = (bus: BusRoute) => {
     setSelectedBus(bus);
@@ -99,10 +132,13 @@ const App: React.FC = () => {
 
   const handleSaveApiKey = () => {
     const trimmed = tempApiKey.trim();
-    localStorage.setItem('dhaka_commute_gemini_key', trimmed);
+    try {
+      localStorage.setItem('dhaka_commute_gemini_key', trimmed);
+    } catch (e) {
+      console.warn("LocalStorage save failed");
+    }
     setApiKey(trimmed);
-    // Visual feedback handled by UI
-    setView(AppView.HOME); // Or stay? Let's go home for now.
+    setView(AppView.HOME); 
   };
 
   const handleAiSubmit = async (e: React.FormEvent) => {
@@ -524,21 +560,50 @@ const App: React.FC = () => {
   );
 
   const renderNotFound = () => (
-    <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-white md:rounded-l-3xl md:border-l md:border-gray-200 w-full">
-      <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-        <AlertTriangle className="w-10 h-10 text-gray-400" />
+    <div className="flex flex-col items-center justify-center h-full text-center bg-cyan-100 md:rounded-l-3xl md:border-l md:border-gray-200 w-full overflow-hidden relative">
+       {/* Background Animation Layers */}
+       <div className="absolute top-10 left-0 w-full h-20 opacity-30">
+          <div className="w-20 h-8 bg-white rounded-full absolute top-2 animate-cloud-1"></div>
+          <div className="w-16 h-6 bg-white rounded-full absolute top-10 animate-cloud-2"></div>
+       </div>
+
+      <div className="relative z-10 p-8 bg-white/60 backdrop-blur-md rounded-3xl border border-white/50 shadow-xl max-w-sm mx-6">
+        <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-6 mx-auto animate-bounce">
+          <MapIcon className="w-10 h-10 text-orange-500" />
+        </div>
+        <h2 className="text-xl font-bold text-gray-800 mb-2">Off Route?</h2>
+        <p className="text-gray-600 mb-8 text-sm leading-relaxed">
+          Looks like you've wandered off the map. Don't worry, we can get you back on track!
+        </p>
+        <button 
+          onClick={() => {
+            // Clean URL and go home
+            window.history.pushState({}, "", "/");
+            setView(AppView.HOME);
+          }}
+          className="px-8 py-3.5 bg-dhaka-green text-white rounded-xl font-bold hover:bg-green-800 transition-colors shadow-lg shadow-green-200 w-full flex items-center justify-center gap-2"
+        >
+          <Home className="w-4 h-4" /> Back to Home
+        </button>
       </div>
-      <h1 className="text-4xl font-bold text-dhaka-dark mb-2">404</h1>
-      <h2 className="text-xl font-bold text-gray-700 mb-4">Page Not Found</h2>
-      <p className="text-gray-500 max-w-xs mb-8">
-        The page you are looking for doesn't exist or has been moved.
-      </p>
-      <button 
-        onClick={() => setView(AppView.HOME)}
-        className="px-6 py-3 bg-dhaka-green text-white rounded-xl font-bold hover:bg-green-800 transition-colors"
-      >
-        Go Back Home
-      </button>
+
+      {/* Moving Bus Animation at Bottom */}
+      <div className="absolute bottom-0 w-full h-48 overflow-hidden pointer-events-none">
+         <div className="absolute bottom-10 w-full h-1 bg-gray-400"></div>
+         <div className="absolute bottom-0 w-full h-10 bg-gray-300"></div>
+         
+         <div className="absolute bottom-11 animate-drive">
+            <div className="relative">
+                <div className="w-32 h-16 bg-dhaka-red rounded-t-lg rounded-r-lg relative z-10 flex items-center justify-center">
+                   <div className="text-white font-bold text-xs uppercase tracking-widest border border-white px-2 py-0.5">Dhaka</div>
+                   <div className="absolute top-2 right-4 w-8 h-6 bg-blue-200 border border-white/20"></div>
+                   <div className="absolute top-2 left-4 w-8 h-6 bg-blue-200 border border-white/20"></div>
+                </div>
+                <div className="absolute -bottom-3 left-4 w-6 h-6 bg-gray-800 rounded-full border-2 border-gray-400 z-20 animate-spin"></div>
+                <div className="absolute -bottom-3 right-4 w-6 h-6 bg-gray-800 rounded-full border-2 border-gray-400 z-20 animate-spin"></div>
+            </div>
+         </div>
+      </div>
     </div>
   );
 
@@ -662,13 +727,27 @@ const App: React.FC = () => {
                </button>
             </div>
              
-             {/* Version & Copyright (Clean Footer) */}
-            <div className="text-center pt-6 opacity-60">
+             {/* Version & Developer Info */}
+            <div className="text-center pt-6">
                <div className="flex justify-center items-center gap-2 mb-2">
                  <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 font-bold text-xs">D</div>
                </div>
                <p className="text-xs text-gray-400 font-medium">DhakaCommute v1.0.0</p>
-               <p className="text-[10px] text-gray-300 mt-1">© 2025 All Rights Reserved</p>
+               
+               <div className="mt-4 pt-4 border-t border-gray-200/50 inline-block w-full max-w-xs">
+                 <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-2">Developed By</p>
+                 <a 
+                    href="https://www.linkedin.com/in/mejbaur/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 bg-white px-4 py-2 rounded-full border border-gray-100 shadow-sm hover:shadow-md transition-shadow mx-auto w-fit"
+                 >
+                    <Linkedin className="w-4 h-4 text-[#0077b5]" />
+                    <span className="text-xs font-bold text-gray-700">Mejbaur Bahar Fagun</span>
+                 </a>
+               </div>
+               
+               <p className="text-[10px] text-gray-300 mt-4">© 2025 All Rights Reserved</p>
             </div>
          </div>
       </div>
@@ -764,15 +843,23 @@ const App: React.FC = () => {
                    <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
                   <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
                   <p className="text-green-100 text-sm mb-5 opacity-90">Find your bus route in seconds</p>
-                  <div className="relative group">
-                    <Search className="absolute left-4 top-3.5 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors" />
+                  <div className="relative group flex items-center">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
                     <input
                       type="text"
-                      placeholder="Search bus or place (e.g. Gulshan)"
-                      className="w-full pl-12 pr-4 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search bus or place..."
+                      className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
                     />
+                    <button 
+                      onClick={handleSearchCommit}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
+                      title="Click to Search"
+                    >
+                       <Search className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
 
@@ -845,6 +932,11 @@ const App: React.FC = () => {
                         <Bus className="w-8 h-8 opacity-40" />
                       </div>
                       <p>No buses found matching "{searchQuery}"</p>
+                      {inputValue && inputValue !== searchQuery && (
+                        <button onClick={handleSearchCommit} className="mt-2 text-xs text-dhaka-green underline">
+                          Click to search for "{inputValue}"
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
