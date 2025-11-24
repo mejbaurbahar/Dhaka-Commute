@@ -1,0 +1,7 @@
+{
+  "name": "DhakaCommute",
+  "description": "Real-time bus route finder and navigation assistant for Dhaka City.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
