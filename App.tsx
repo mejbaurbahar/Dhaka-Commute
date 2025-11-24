@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, Settings, Lock, Key, ChevronRight, CheckCircle2, User, Linkedin } from 'lucide-react';
 import { BusRoute, AppView } from './types';
@@ -575,16 +576,6 @@ const App: React.FC = () => {
         <p className="text-gray-600 mb-8 text-sm leading-relaxed">
           Looks like you've wandered off the map. Don't worry, we can get you back on track!
         </p>
-        <button 
-          onClick={() => {
-            // Clean URL and go home
-            window.history.pushState({}, "", "/");
-            setView(AppView.HOME);
-          }}
-          className="px-8 py-3.5 bg-dhaka-green text-white rounded-xl font-bold hover:bg-green-800 transition-colors shadow-lg shadow-green-200 w-full flex items-center justify-center gap-2"
-        >
-          <Home className="w-4 h-4" /> Back to Home
-        </button>
       </div>
 
       {/* Moving Bus Animation at Bottom */}
