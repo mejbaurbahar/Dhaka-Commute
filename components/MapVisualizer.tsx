@@ -539,14 +539,14 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
                   {/* Metro Station Label */}
                   <foreignObject
-                    x={metroX - 70}
-                    y={metroY > busStopPos.y ? metroY + 15 : metroY - 50}
-                    width="140"
-                    height="45"
-                    className="pointer-events-none"
+                    x={metroX - 100}
+                    y={metroY > busStopPos.y ? metroY + 15 : metroY - 55}
+                    width="200"
+                    height="50"
+                    className="pointer-events-none overflow-visible"
                   >
                     <div className="text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-1 rounded backdrop-blur-sm truncate max-w-full shadow-md border bg-purple-50 border-purple-200 text-purple-900 font-bold">
+                      <span className="px-2 py-1 rounded backdrop-blur-sm shadow-md border bg-purple-50 border-purple-200 text-purple-900 font-bold whitespace-nowrap">
                         <div className="flex items-center gap-1 justify-center">
                           <Train className="w-3 h-3" />
                           <span>{metroStation.name}</span>
