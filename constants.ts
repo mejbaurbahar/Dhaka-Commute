@@ -1765,3 +1765,23 @@ export const RAILWAY_STATIONS: Record<string, MetroStation> = {
     description: 'Railway station in Gandaria residential area'
   }
 };
+
+// Airports
+export const AIRPORTS: Record<string, MetroStation> = {
+  'tejgaon_airport': {
+    id: 'tejgaon_airport',
+    name: 'Tejgaon Airport',
+    bnName: 'তেজগাঁও বিমানবন্দর',
+    lat: 23.7803181,
+    lng: 90.3821504,
+    description: 'Domestic airport in Tejgaon area'
+  },
+  'shahjalal_airport': {
+    id: 'shahjalal_airport',
+    name: 'Hazrat Shahjalal International Airport',
+    bnName: 'হযরত শাহজালাল আন্তর্জাতিক বিমানবন্দর',
+    lat: 23.8434344,
+    lng: 90.4029252,
+    description: 'Main international airport of Bangladesh'
+  }
+};

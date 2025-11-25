@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { BusRoute, UserLocation } from '../types';
-import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS } from '../constants';
-import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train } from 'lucide-react';
+import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
+import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train, Plane } from 'lucide-react';
 
 interface MapVisualizerProps {
   route: BusRoute | null;
