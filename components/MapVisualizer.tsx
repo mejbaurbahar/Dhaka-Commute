@@ -295,20 +295,33 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
       const busStopPos = nodePositions[parseInt(stopIdx)];
       const railwayCount = railways.length;
 
+      // Check if there are metros at this same stop
+      const hasMetrosAtStop = metroConnections.some(m => m.busStopIndex === parseInt(stopIdx));
+
       railways.forEach((railway, idx) => {
         if (railwayCount === 1) {
-          const offsetY = parseInt(stopIdx) % 2 === 0 ? 100 : -100; // Opposite side of metros
-          railway.railwayX = busStopPos.x;
-          railway.railwayY = busStopPos.y + offsetY;
+          // If metros exist at this stop, position railway further away
+          if (hasMetrosAtStop) {
+            const offsetY = parseInt(stopIdx) % 2 === 0 ? 140 : -140; // Further away
+            const offsetX = 60; // Shift horizontally too
+            railway.railwayX = busStopPos.x + offsetX;
+            railway.railwayY = busStopPos.y + offsetY;
+          } else {
+            const offsetY = parseInt(stopIdx) % 2 === 0 ? 100 : -100;
+            railway.railwayX = busStopPos.x;
+            railway.railwayY = busStopPos.y + offsetY;
+          }
         } else if (railwayCount === 2) {
           const offsetX = idx === 0 ? -120 : 120;
-          const offsetY = parseInt(stopIdx) % 2 === 0 ? 100 : -100;
+          const offsetY = hasMetrosAtStop ?
+            (parseInt(stopIdx) % 2 === 0 ? 140 : -140) :
+            (parseInt(stopIdx) % 2 === 0 ? 100 : -100);
           railway.railwayX = busStopPos.x + offsetX;
           railway.railwayY = busStopPos.y + offsetY;
         } else {
           const positions = [-150, 0, 150];
           const offsetX = positions[idx] || 0;
-          const offsetY = 110; // Below route
+          const offsetY = hasMetrosAtStop ? 140 : 110;
           railway.railwayX = busStopPos.x + offsetX;
           railway.railwayY = busStopPos.y + offsetY;
         }
@@ -316,7 +329,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     });
 
     return connections;
-  }, [stations, nodePositions]);
+  }, [stations, nodePositions, metroConnections]);
 
   const totalSegments = stations.length - 1;
   const exactProgress = simulationStep * totalSegments;
