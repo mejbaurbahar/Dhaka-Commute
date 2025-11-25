@@ -178,17 +178,54 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
       // Only show metros within 2km of route
       if (closestDistance < 2000 && closestIndex !== -1) {
-        const busStopPos = nodePositions[closestIndex];
-        // Position metro station offset from bus route
-        const offsetY = closestIndex % 2 === 0 ? -80 : 80;
         connections.push({
           metroStation,
           busStopIndex: closestIndex,
           distance: closestDistance,
-          metroX: busStopPos.x,
-          metroY: busStopPos.y + offsetY
+          metroX: 0, // Will be calculated after grouping
+          metroY: 0
         });
       }
+    });
+
+    // Group metros by their nearest bus stop to prevent overlap
+    const groupedByStop: Record<number, typeof connections> = {};
+    connections.forEach(conn => {
+      if (!groupedByStop[conn.busStopIndex]) {
+        groupedByStop[conn.busStopIndex] = [];
+      }
+      groupedByStop[conn.busStopIndex].push(conn);
+    });
+
+    // Position metros to avoid overlap
+    Object.entries(groupedByStop).forEach(([stopIdx, metros]) => {
+      const busStopPos = nodePositions[parseInt(stopIdx)];
+      const metroCount = metros.length;
+
+      metros.forEach((metro, idx) => {
+        if (metroCount === 1) {
+          // Single metro - position above or below based on stop index
+          const offsetY = parseInt(stopIdx) % 2 === 0 ? -80 : 80;
+          metro.metroX = busStopPos.x;
+          metro.metroY = busStopPos.y + offsetY;
+        } else if (metroCount === 2) {
+          // Two metros - spread horizontally
+          const offsetX = idx === 0 ? -60 : 60;
+          const offsetY = parseInt(stopIdx) % 2 === 0 ? -80 : 80;
+          metro.metroX = busStopPos.x + offsetX;
+          metro.metroY = busStopPos.y + offsetY;
+        } else {
+          // Three or more metros - spread in a fan pattern
+          const angleStep = 60 / (metroCount - 1); // Spread across 60 degrees
+          const startAngle = -30; // Start from -30 degrees
+          const angle = (startAngle + (angleStep * idx)) * (Math.PI / 180);
+          const radius = 100;
+          const offsetX = Math.sin(angle) * radius;
+          const offsetY = -Math.abs(Math.cos(angle)) * radius; // Always above
+          metro.metroX = busStopPos.x + offsetX;
+          metro.metroY = busStopPos.y + offsetY;
+        }
+      });
     });
 
     return connections;
