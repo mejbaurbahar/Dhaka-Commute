@@ -255,52 +255,6 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         </div>
       )}
 
-      {/* Metro Stations Indicator */}
-      {(() => {
-        const METRO_STATIONS_IMPORT = require('../constants').METRO_STATIONS;
-        const nearbyMetros = Object.values(METRO_STATIONS_IMPORT)
-          .map((metroStation: any) => {
-            let closestDistance = Infinity;
-            stations.forEach(busStation => {
-              const R = 6371e3;
-              const φ1 = (busStation.lat * Math.PI) / 180;
-              const φ2 = (metroStation.lat * Math.PI) / 180;
-              const Δφ = ((metroStation.lat - busStation.lat) * Math.PI) / 180;
-              const Δλ = ((metroStation.lng - busStation.lng) * Math.PI) / 180;
-              const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-              const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-              const distance = R * c;
-              if (distance < closestDistance) closestDistance = distance;
-            });
-            return closestDistance < 2000 ? { station: metroStation, distance: closestDistance } : null;
-          })
-          .filter(Boolean)
-          .sort((a: any, b: any) => a.distance - b.distance)
-          .slice(0, 3);
-
-        const Train = require('lucide-react').Train;
-
-        return nearbyMetros.length > 0 ? (
-          <div className="absolute bottom-4 left-4 z-20 bg-purple-600/95 backdrop-blur border border-purple-400 px-3 py-2 rounded-xl shadow-lg max-w-[280px]">
-            <div className="flex items-center gap-2 mb-1.5">
-              <Train className="w-4 h-4 text-white shrink-0" />
-              <p className="text-[10px] font-bold text-white uppercase">Metro Connections</p>
-            </div>
-            <div className="space-y-1">
-              {nearbyMetros.map((metro: any) => (
-                <div key={metro.station.id} className="flex items-center justify-between gap-2 text-white/90">
-                  <span className="text-xs font-medium truncate">{metro.station.name}</span>
-                  <span className="text-[10px] bg-purple-500 px-1.5 py-0.5 rounded-full shrink-0">
-                    {(metro.distance / 1000).toFixed(1)}km
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null;
-      })()}
-
       {/* Top Right Controls */}
       <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 items-end">
         <a
