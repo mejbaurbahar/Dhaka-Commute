@@ -13,9 +13,9 @@ interface MapVisualizerProps {
   userLocation?: UserLocation | null;
 }
 
-const MapVisualizer: React.FC<MapVisualizerProps> = ({ 
-  route, 
-  userStationIndex = -1, 
+const MapVisualizer: React.FC<MapVisualizerProps> = ({
+  route,
+  userStationIndex = -1,
   userDistance = Infinity,
   highlightStartIdx = -1,
   highlightEndIdx = -1,
@@ -42,7 +42,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
       const stations = route.stops.map(id => STATIONS[id]).filter(Boolean);
       const baseWidth = Math.max(stations.length * 100, 1000);
       const padding = 60;
-      
+
       let targetIndex = -1;
 
       if (hasHighlight) {
@@ -56,10 +56,10 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         const containerWidth = scrollContainerRef.current.clientWidth;
         const containerHeight = scrollContainerRef.current.clientHeight;
         const scaledX = x * zoom;
-        
+
         // Center Horizontally
         const scrollX = scaledX - (containerWidth / 2);
-        
+
         // Center Vertically
         const scrollY = (600 * zoom - containerHeight) / 2;
 
@@ -79,7 +79,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   );
 
   const stations = route.stops.map(id => STATIONS[id]).filter(Boolean);
-  
+
   // Simulation Logic
   useEffect(() => {
     if (stations.length < 2) return;
@@ -115,7 +115,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     e.preventDefault();
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
     const y = e.pageY - scrollContainerRef.current.offsetTop;
-    const walkX = (x - startX) * 1.5; 
+    const walkX = (x - startX) * 1.5;
     const walkY = (y - startY) * 1.5;
     scrollContainerRef.current.scrollLeft = scrollLeft - walkX;
     scrollContainerRef.current.scrollTop = scrollTop - walkY;
@@ -129,10 +129,10 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   const normalizeLat = (val: number) => (val - minLat) / (maxLat - minLat || 1);
 
   // Base Dimensions
-  const height = 600; 
+  const height = 600;
   const padding = 60;
-  const baseWidth = Math.max(stations.length * 120, 1000); 
-  
+  const baseWidth = Math.max(stations.length * 120, 1000);
+
   // Dynamic dimensions based on zoom
   const zoomedWidth = baseWidth * zoom;
   const zoomedHeight = height * zoom;
@@ -167,7 +167,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     const midPoints = stations.slice(1, -1)
       .filter((_, i) => i % Math.ceil(stations.length / 8) === 0)
       .map(s => `${s.lat},${s.lng}`).join('|');
-    
+
     return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${midPoints}&travelmode=transit`;
   }, [stations]);
 
@@ -187,28 +187,74 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     // A simple heuristic: If distance is huge, put user "below" the node
     const offsetAmount = Math.min(userDistance / 20, 150); // Scale pixels
     userRelativeX = nearestNodeX;
-    userRelativeY = nearestNodeY + offsetAmount; 
+    userRelativeY = nearestNodeY + offsetAmount;
   }
 
   return (
     <div className="w-full h-80 md:h-[500px] bg-slate-50 border-t border-b border-gray-100 relative group overflow-hidden">
-      
+
       {/* Connection Line Info Badge */}
       {isUserFar && userStationIndex !== -1 && (
         <div className="absolute top-4 left-4 z-20 bg-orange-50/90 backdrop-blur border border-orange-200 px-3 py-2 rounded-xl shadow-lg flex items-center gap-2 animate-pulse max-w-[200px]">
-           <ArrowUpRight className="w-5 h-5 text-orange-600 shrink-0" />
-           <div>
-             <p className="text-[10px] font-bold text-orange-800 uppercase">Outside Route</p>
-             <p className="text-xs font-medium text-orange-900 leading-tight">
-               Go {(userDistance / 1000).toFixed(1)}km to start at <b>{stations[userStationIndex].name}</b>
-             </p>
-           </div>
+          <ArrowUpRight className="w-5 h-5 text-orange-600 shrink-0" />
+          <div>
+            <p className="text-[10px] font-bold text-orange-800 uppercase">Outside Route</p>
+            <p className="text-xs font-medium text-orange-900 leading-tight">
+              Go {(userDistance / 1000).toFixed(1)}km to start at <b>{stations[userStationIndex].name}</b>
+            </p>
+          </div>
         </div>
       )}
 
+      {/* Metro Stations Indicator */}
+      {(() => {
+        const METRO_STATIONS_IMPORT = require('../constants').METRO_STATIONS;
+        const nearbyMetros = Object.values(METRO_STATIONS_IMPORT)
+          .map((metroStation: any) => {
+            let closestDistance = Infinity;
+            stations.forEach(busStation => {
+              const R = 6371e3;
+              const φ1 = (busStation.lat * Math.PI) / 180;
+              const φ2 = (metroStation.lat * Math.PI) / 180;
+              const Δφ = ((metroStation.lat - busStation.lat) * Math.PI) / 180;
+              const Δλ = ((metroStation.lng - busStation.lng) * Math.PI) / 180;
+              const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+              const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+              const distance = R * c;
+              if (distance < closestDistance) closestDistance = distance;
+            });
+            return closestDistance < 2000 ? { station: metroStation, distance: closestDistance } : null;
+          })
+          .filter(Boolean)
+          .sort((a: any, b: any) => a.distance - b.distance)
+          .slice(0, 3);
+
+        const Train = require('lucide-react').Train;
+
+        return nearbyMetros.length > 0 ? (
+          <div className="absolute bottom-4 left-4 z-20 bg-purple-600/95 backdrop-blur border border-purple-400 px-3 py-2 rounded-xl shadow-lg max-w-[280px]">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Train className="w-4 h-4 text-white shrink-0" />
+              <p className="text-[10px] font-bold text-white uppercase">Metro Connections</p>
+            </div>
+            <div className="space-y-1">
+              {nearbyMetros.map((metro: any) => (
+                <div key={metro.station.id} className="flex items-center justify-between gap-2 text-white/90">
+                  <span className="text-xs font-medium truncate">{metro.station.name}</span>
+                  <span className="text-[10px] bg-purple-500 px-1.5 py-0.5 rounded-full shrink-0">
+                    {(metro.distance / 1000).toFixed(1)}km
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null;
+      })()}
+
       {/* Top Right Controls */}
       <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 items-end">
-        <a 
+        <a
           href={googleMapsUrl}
           target="_blank"
           rel="noopener noreferrer"
@@ -217,31 +263,31 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
           <Navigation className="w-3 h-3" /> Real Map
         </a>
         <div className="md:hidden bg-white/90 backdrop-blur px-3 py-1.5 rounded-full border border-gray-200 text-[10px] font-bold text-gray-500 shadow-sm flex items-center gap-1">
-           <Grip className="w-3 h-3" /> Drag Map
+          <Grip className="w-3 h-3" /> Drag Map
         </div>
       </div>
 
       {/* Bottom Zoom Controls */}
       <div className="absolute bottom-4 right-4 z-10 flex gap-1 bg-white/90 backdrop-blur rounded-lg border border-gray-200 shadow-sm p-1">
-          <button 
-            onClick={handleZoomOut} 
-            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 active:bg-gray-200 text-gray-600 transition-colors"
-            title="Zoom Out"
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-          <div className="w-px bg-gray-200 my-1"></div>
-          <button 
-            onClick={handleZoomIn} 
-            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 active:bg-gray-200 text-gray-600 transition-colors"
-            title="Zoom In"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
+        <button
+          onClick={handleZoomOut}
+          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 active:bg-gray-200 text-gray-600 transition-colors"
+          title="Zoom Out"
+        >
+          <Minus className="w-4 h-4" />
+        </button>
+        <div className="w-px bg-gray-200 my-1"></div>
+        <button
+          onClick={handleZoomIn}
+          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 active:bg-gray-200 text-gray-600 transition-colors"
+          title="Zoom In"
+        >
+          <Plus className="w-4 h-4" />
+        </button>
       </div>
-      
+
       {/* Scrollable Container */}
-      <div 
+      <div
         ref={scrollContainerRef}
         className={`w-full h-full overflow-auto no-scrollbar ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         onMouseDown={onMouseDown}
@@ -250,25 +296,25 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         onMouseMove={onMouseMove}
         // Touch events for mobile drag
         onTouchStart={(e) => {
-           const touch = e.touches[0];
-           setStartX(touch.pageX - scrollContainerRef.current!.offsetLeft);
-           setStartY(touch.pageY - scrollContainerRef.current!.offsetTop);
-           setScrollLeft(scrollContainerRef.current!.scrollLeft);
-           setScrollTop(scrollContainerRef.current!.scrollTop);
+          const touch = e.touches[0];
+          setStartX(touch.pageX - scrollContainerRef.current!.offsetLeft);
+          setStartY(touch.pageY - scrollContainerRef.current!.offsetTop);
+          setScrollLeft(scrollContainerRef.current!.scrollLeft);
+          setScrollTop(scrollContainerRef.current!.scrollTop);
         }}
         onTouchMove={(e) => {
-           const touch = e.touches[0];
-           const x = touch.pageX - scrollContainerRef.current!.offsetLeft;
-           const y = touch.pageY - scrollContainerRef.current!.offsetTop;
-           const walkX = (x - startX) * 1.5; 
-           const walkY = (y - startY) * 1.5;
-           scrollContainerRef.current!.scrollLeft = scrollLeft - walkX;
-           scrollContainerRef.current!.scrollTop = scrollTop - walkY;
+          const touch = e.touches[0];
+          const x = touch.pageX - scrollContainerRef.current!.offsetLeft;
+          const y = touch.pageY - scrollContainerRef.current!.offsetTop;
+          const walkX = (x - startX) * 1.5;
+          const walkY = (y - startY) * 1.5;
+          scrollContainerRef.current!.scrollLeft = scrollLeft - walkX;
+          scrollContainerRef.current!.scrollTop = scrollTop - walkY;
         }}
       >
         <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-300 origin-top-left">
           <svg className="w-full h-full block select-none pointer-events-none" viewBox={`0 0 ${baseWidth} ${height}`}>
-            
+
             {/* Base Path (Grey) */}
             <polyline
               points={nodePositions.map(p => `${p.x},${p.y}`).join(' ')}
@@ -305,10 +351,10 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                 className="opacity-100 shadow-lg"
               />
             )}
-            
+
             {/* Past Path (Greyed Out) */}
             {showUserOnNode && !hasHighlight && (
-               <polyline
+              <polyline
                 points={nodePositions.slice(0, userStationIndex + 1).map(p => `${p.x},${p.y}`).join(' ')}
                 fill="none"
                 stroke="#cbd5e1"
@@ -322,14 +368,14 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             {/* Connection Line for Far Users */}
             {isUserFar && userStationIndex !== -1 && (
               <g>
-                <line 
-                  x1={nearestNodeX} 
-                  y1={nearestNodeY} 
-                  x2={userRelativeX} 
-                  y2={userRelativeY} 
-                  stroke="#f97316" 
-                  strokeWidth="3" 
-                  strokeDasharray="8,6" 
+                <line
+                  x1={nearestNodeX}
+                  y1={nearestNodeY}
+                  x2={userRelativeX}
+                  y2={userRelativeY}
+                  stroke="#f97316"
+                  strokeWidth="3"
+                  strokeDasharray="8,6"
                   className="animate-pulse opacity-70"
                 />
                 {/* User Node */}
@@ -338,7 +384,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   <circle r="6" fill="#f97316" stroke="white" strokeWidth="2" />
                   <text y="20" textAnchor="middle" fontSize="12" fontWeight="bold" fill="#ea580c">You</text>
                   <text y="32" textAnchor="middle" fontSize="10" fill="#9a3412" className="uppercase font-bold">
-                    {((userDistance)/1000).toFixed(1)}km
+                    {((userDistance) / 1000).toFixed(1)}km
                   </text>
                 </g>
               </g>
@@ -347,7 +393,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             {/* Stations */}
             {stations.map((s, idx) => {
               const { x, y } = nodePositions[idx];
-              
+
               const isPassed = showUserOnNode && idx < userStationIndex;
               const isCurrent = showUserOnNode && idx === userStationIndex;
               const isNearestButFar = isUserFar && idx === userStationIndex;
@@ -356,7 +402,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
               const isHighlighted = hasHighlight && idx >= highlightStartIdx && idx <= highlightEndIdx;
 
               let fill = "white";
-              let stroke = hasHighlight ? "#e5e7eb" : "#006a4e"; 
+              let stroke = hasHighlight ? "#e5e7eb" : "#006a4e";
               let r = 5;
 
               if (isHighlighted) {
@@ -374,9 +420,9 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   stroke = "#f42a41";
                   r = 8;
                 } else if (isNearestButFar) {
-                   fill = "#fb923c"; 
-                   stroke = "#c2410c";
-                   r = 8;
+                  fill = "#fb923c";
+                  stroke = "#c2410c";
+                  r = 8;
                 } else if (isPassed) {
                   fill = "#e2e8f0";
                   stroke = "#cbd5e1";
@@ -390,66 +436,66 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                 <g key={s.id} className={`cursor-pointer group/node pointer-events-auto ${isHighlighted || !hasHighlight ? 'opacity-100' : 'opacity-50'}`}>
                   {/* Hover Hit Area */}
                   <circle cx={x} cy={y} r={25} fill="transparent" />
-                  
+
                   {/* Current Location Ripple */}
                   {isCurrent && !hasHighlight && (
-                     <circle cx={x} cy={y} r={20} fill="#f42a41" opacity="0.2">
-                        <animate attributeName="r" from="8" to="30" dur="1.5s" repeatCount="indefinite" />
-                        <animate attributeName="opacity" from="0.6" to="0" dur="1.5s" repeatCount="indefinite" />
-                     </circle>
+                    <circle cx={x} cy={y} r={20} fill="#f42a41" opacity="0.2">
+                      <animate attributeName="r" from="8" to="30" dur="1.5s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" from="0.6" to="0" dur="1.5s" repeatCount="indefinite" />
+                    </circle>
                   )}
-                  
+
                   {/* Connect target ripple */}
                   {isNearestButFar && (
-                     <circle cx={x} cy={y} r={20} fill="#f97316" opacity="0.2">
-                        <animate attributeName="r" from="8" to="25" dur="2s" repeatCount="indefinite" />
-                        <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
-                     </circle>
+                    <circle cx={x} cy={y} r={20} fill="#f97316" opacity="0.2">
+                      <animate attributeName="r" from="8" to="25" dur="2s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
+                    </circle>
                   )}
 
                   {/* Visible Node */}
-                  <circle 
-                    cx={x} 
-                    cy={y} 
-                    r={r} 
-                    fill={fill} 
-                    stroke={stroke} 
-                    strokeWidth="2.5" 
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r={r}
+                    fill={fill}
+                    stroke={stroke}
+                    strokeWidth="2.5"
                     className="transition-all duration-300 group-hover/node:r-8"
                   />
-                  
+
                   {/* Label */}
-                  <foreignObject 
-                    x={x - 60} 
-                    y={idx % 2 === 0 ? y + 15 : y - 45} 
-                    width="120" 
+                  <foreignObject
+                    x={x - 60}
+                    y={idx % 2 === 0 ? y + 15 : y - 45}
+                    width="120"
                     height="40"
                     className="pointer-events-none"
                   >
-                     <div className={`text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full ${isCurrent && !hasHighlight ? 'text-dhaka-red font-bold' : (isPassed && !hasHighlight) || (hasHighlight && !isHighlighted) ? 'text-gray-300' : 'text-gray-600'}`}>
-                       <span className={`px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-full shadow-sm border 
-                         ${isCurrent && !hasHighlight ? 'bg-red-50 border-red-100 text-red-600 scale-110' 
-                           : isNearestButFar ? 'bg-orange-50 border-orange-200 text-orange-700 font-bold'
-                           : isHighlighted ? 'bg-green-50 border-green-200 text-green-800 font-bold' 
-                           : 'bg-white/80 border-gray-100/50'}`}>
-                         {s.name}
-                         {isCurrent && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">You are here</span>}
-                         {isNearestButFar && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">Start Here</span>}
-                       </span>
-                     </div>
+                    <div className={`text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full ${isCurrent && !hasHighlight ? 'text-dhaka-red font-bold' : (isPassed && !hasHighlight) || (hasHighlight && !isHighlighted) ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <span className={`px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-full shadow-sm border 
+                         ${isCurrent && !hasHighlight ? 'bg-red-50 border-red-100 text-red-600 scale-110'
+                          : isNearestButFar ? 'bg-orange-50 border-orange-200 text-orange-700 font-bold'
+                            : isHighlighted ? 'bg-green-50 border-green-200 text-green-800 font-bold'
+                              : 'bg-white/80 border-gray-100/50'}`}>
+                        {s.name}
+                        {isCurrent && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">You are here</span>}
+                        {isNearestButFar && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">Start Here</span>}
+                      </span>
+                    </div>
                   </foreignObject>
                 </g>
               );
             })}
 
             {/* Simulated Bus */}
-             <g style={{ transform: `translate(${busX}px, ${busY}px)` }} className="transition-transform duration-75 ease-linear pointer-events-none">
-                <circle r="14" fill="#f42a41" className="shadow-lg opacity-20 animate-ping" />
-                <circle r="10" fill="white" stroke="#f42a41" strokeWidth="2" />
-                <foreignObject x="-6" y="-6" width="12" height="12">
-                   <Bus className="w-3 h-3 text-dhaka-red" />
-                </foreignObject>
-             </g>
+            <g style={{ transform: `translate(${busX}px, ${busY}px)` }} className="transition-transform duration-75 ease-linear pointer-events-none">
+              <circle r="14" fill="#f42a41" className="shadow-lg opacity-20 animate-ping" />
+              <circle r="10" fill="white" stroke="#f42a41" strokeWidth="2" />
+              <foreignObject x="-6" y="-6" width="12" height="12">
+                <Bus className="w-3 h-3 text-dhaka-red" />
+              </foreignObject>
+            </g>
 
           </svg>
         </div>
