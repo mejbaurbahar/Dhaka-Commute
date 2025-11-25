@@ -8,9 +8,17 @@ interface MapVisualizerProps {
   route: BusRoute | null;
   userStationIndex?: number;
   userDistance?: number;
+  highlightStartIdx?: number;
+  highlightEndIdx?: number;
 }
 
-const MapVisualizer: React.FC<MapVisualizerProps> = ({ route, userStationIndex = -1, userDistance = Infinity }) => {
+const MapVisualizer: React.FC<MapVisualizerProps> = ({ 
+  route, 
+  userStationIndex = -1, 
+  userDistance = Infinity,
+  highlightStartIdx = -1,
+  highlightEndIdx = -1
+}) => {
   const [simulationStep, setSimulationStep] = useState(0);
   const [zoom, setZoom] = useState(1);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -24,29 +32,37 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({ route, userStationIndex =
 
   const isUserFar = userDistance > 2000; // 2km threshold
   const showUserOnNode = userStationIndex !== -1 && !isUserFar;
+  const hasHighlight = highlightStartIdx !== -1 && highlightEndIdx !== -1 && highlightStartIdx < highlightEndIdx;
 
-  // Auto-scroll to user location when detected and on route
+  // Auto-scroll to user location or start of highlight
   useEffect(() => {
-    if (showUserOnNode && scrollContainerRef.current && route) {
+    if (scrollContainerRef.current && route) {
       const stations = route.stops.map(id => STATIONS[id]).filter(Boolean);
-      // Dimensions matching the render logic below
       const baseWidth = Math.max(stations.length * 80, 800);
       const padding = 40;
       
-      // Calculate position of the user's station
-      const x = (userStationIndex / (stations.length - 1)) * (baseWidth - (padding * 2)) + padding;
-      
-      // Calculate scroll position to center the node (approximate)
-      const containerWidth = scrollContainerRef.current.clientWidth;
-      const scaledX = x * zoom;
-      const scrollPos = scaledX - (containerWidth / 2);
+      let targetIndex = -1;
 
-      scrollContainerRef.current.scrollTo({
-        left: scrollPos,
-        behavior: 'smooth'
-      });
+      // Priority: Highlight Start > User Location > Start
+      if (hasHighlight) {
+        targetIndex = highlightStartIdx;
+      } else if (showUserOnNode) {
+        targetIndex = userStationIndex;
+      }
+
+      if (targetIndex !== -1) {
+        const x = (targetIndex / (stations.length - 1)) * (baseWidth - (padding * 2)) + padding;
+        const containerWidth = scrollContainerRef.current.clientWidth;
+        const scaledX = x * zoom;
+        const scrollPos = scaledX - (containerWidth / 2);
+
+        scrollContainerRef.current.scrollTo({
+          left: scrollPos,
+          behavior: 'smooth'
+        });
+      }
     }
-  }, [userStationIndex, zoom, route, showUserOnNode]);
+  }, [userStationIndex, hasHighlight, highlightStartIdx, zoom, route, showUserOnNode]);
 
   if (!route) return (
     <div className="w-full h-40 bg-gray-50 flex items-center justify-center text-gray-400 text-sm">
@@ -203,19 +219,46 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({ route, userStationIndex =
       >
         <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-300 origin-top-left">
           <svg className="w-full h-full block select-none pointer-events-none" viewBox={`0 0 ${baseWidth} ${height}`}>
-            {/* Future Path (Colored) */}
+            
+            {/* Base Path (Grey) */}
             <polyline
               points={nodePositions.map(p => `${p.x},${p.y}`).join(' ')}
               fill="none"
-              stroke="#006a4e"
+              stroke="#e5e7eb"
               strokeWidth="4"
               strokeLinecap="round"
               strokeLinejoin="round"
               className="opacity-100"
             />
+
+            {/* Default Route Path (Green) - Only if not highlighting a segment, OR segment is invalid */}
+            {!hasHighlight && (
+              <polyline
+                points={nodePositions.map(p => `${p.x},${p.y}`).join(' ')}
+                fill="none"
+                stroke="#006a4e"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="opacity-100"
+              />
+            )}
+
+            {/* Highlighted Segment Path (Green) - Draws on top of grey */}
+            {hasHighlight && (
+              <polyline
+                points={nodePositions.slice(highlightStartIdx, highlightEndIdx + 1).map(p => `${p.x},${p.y}`).join(' ')}
+                fill="none"
+                stroke="#006a4e"
+                strokeWidth="5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="opacity-100 shadow-lg"
+              />
+            )}
             
             {/* Past Path (Greyed Out) if user location is known AND near */}
-            {showUserOnNode && (
+            {showUserOnNode && !hasHighlight && (
                <polyline
                 points={nodePositions.slice(0, userStationIndex + 1).map(p => `${p.x},${p.y}`).join(' ')}
                 fill="none"
@@ -231,39 +274,54 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({ route, userStationIndex =
             {stations.map((s, idx) => {
               const { x, y } = nodePositions[idx];
               
+              // Status Flags
               const isPassed = showUserOnNode && idx < userStationIndex;
               const isCurrent = showUserOnNode && idx === userStationIndex;
               const isNearestButFar = isUserFar && idx === userStationIndex;
               const isStart = idx === 0;
               const isEnd = idx === stations.length - 1;
+              const isHighlighted = hasHighlight && idx >= highlightStartIdx && idx <= highlightEndIdx;
 
               let fill = "white";
-              let stroke = "#006a4e";
+              let stroke = hasHighlight ? "#e5e7eb" : "#006a4e"; // Default grey if highlighting mode active but node not in range
               let r = 5;
 
-              if (isCurrent) {
-                fill = "#f42a41";
-                stroke = "#f42a41";
-                r = 8;
-              } else if (isNearestButFar) {
-                 fill = "#fb923c"; // Orange for "Nearest but Far"
-                 stroke = "#c2410c";
-                 r = 7;
-              } else if (isPassed) {
-                fill = "#e2e8f0";
-                stroke = "#cbd5e1";
-              } else if (isStart || isEnd) {
-                r = 7;
-                stroke = "#1f2937";
+              if (isHighlighted) {
+                fill = "white";
+                stroke = "#006a4e";
+                r = 6;
+                // Start/End of highlight
+                if (idx === highlightStartIdx || idx === highlightEndIdx) {
+                  fill = "#006a4e";
+                  stroke = "white";
+                  r = 8;
+                }
+              } else if (!hasHighlight) {
+                // Normal Mode Colors
+                if (isCurrent) {
+                  fill = "#f42a41";
+                  stroke = "#f42a41";
+                  r = 8;
+                } else if (isNearestButFar) {
+                   fill = "#fb923c"; 
+                   stroke = "#c2410c";
+                   r = 7;
+                } else if (isPassed) {
+                  fill = "#e2e8f0";
+                  stroke = "#cbd5e1";
+                } else if (isStart || isEnd) {
+                  r = 7;
+                  stroke = "#1f2937";
+                }
               }
 
               return (
-                <g key={s.id} className="cursor-pointer group/node pointer-events-auto">
+                <g key={s.id} className={`cursor-pointer group/node pointer-events-auto ${isHighlighted || !hasHighlight ? 'opacity-100' : 'opacity-50'}`}>
                   {/* Hover Hit Area */}
                   <circle cx={x} cy={y} r={20} fill="transparent" />
                   
                   {/* Current Location Ripple Effect */}
-                  {isCurrent && (
+                  {isCurrent && !hasHighlight && (
                      <circle cx={x} cy={y} r={20} fill="#f42a41" opacity="0.2">
                         <animate attributeName="r" from="8" to="30" dur="1.5s" repeatCount="indefinite" />
                         <animate attributeName="opacity" from="0.6" to="0" dur="1.5s" repeatCount="indefinite" />
@@ -289,11 +347,14 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({ route, userStationIndex =
                     height="40"
                     className="pointer-events-none"
                   >
-                     <div className={`text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full ${isCurrent ? 'text-dhaka-red font-bold' : isPassed ? 'text-gray-400' : 'text-gray-600'}`}>
-                       <span className={`px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-full shadow-sm border ${isCurrent ? 'bg-red-50 border-red-100 text-red-600 scale-110' : isNearestButFar ? 'bg-orange-50 border-orange-100 text-orange-700' : 'bg-white/80 border-gray-100/50'}`}>
+                     <div className={`text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full ${isCurrent && !hasHighlight ? 'text-dhaka-red font-bold' : (isPassed && !hasHighlight) || (hasHighlight && !isHighlighted) ? 'text-gray-300' : 'text-gray-600'}`}>
+                       <span className={`px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-full shadow-sm border 
+                         ${isCurrent && !hasHighlight ? 'bg-red-50 border-red-100 text-red-600 scale-110' 
+                           : isNearestButFar && !hasHighlight ? 'bg-orange-50 border-orange-100 text-orange-700'
+                           : isHighlighted ? 'bg-green-50 border-green-200 text-green-800 font-bold' 
+                           : 'bg-white/80 border-gray-100/50'}`}>
                          {s.name}
-                         {isCurrent && <span className="block text-[8px] uppercase font-bold mt-0.5">You are here</span>}
-                         {isNearestButFar && <span className="block text-[8px] uppercase font-bold mt-0.5">Nearest</span>}
+                         {isCurrent && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">You are here</span>}
                        </span>
                      </div>
                   </foreignObject>
