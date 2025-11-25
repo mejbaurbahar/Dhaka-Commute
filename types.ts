@@ -6,6 +6,24 @@ export interface Station {
   bnName?: string; // Bengali Name
   lat: number;
   lng: number;
+  metroStation?: string; // ID of nearest metro station if applicable
+}
+
+export interface MetroStation {
+  id: string;
+  name: string;
+  bnName: string;
+  lat: number;
+  lng: number;
+  description: string;
+}
+
+export interface MetroLine {
+  id: string;
+  name: string;
+  bnName: string;
+  stations: string[]; // Array of metro station IDs in order
+  color: string; // Line color for display
 }
 
 export interface BusRoute {
