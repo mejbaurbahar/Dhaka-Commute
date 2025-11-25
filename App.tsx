@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles } from 'lucide-react';
 import { BusRoute, AppView, UserLocation } from './types';
@@ -9,6 +8,8 @@ import LiveTracker from './components/LiveTracker';
 import { askGeminiRoute } from './services/geminiService';
 import { getCurrentLocation, findNearestStation, getDistance } from './services/locationService';
 import { findNearestMetroStation } from './services/metroService';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 
 interface ChatMessage {
@@ -1201,6 +1202,8 @@ const App: React.FC = () => {
           </div>
         </nav>
       )}
+      <Analytics />
+      <SpeedInsights />
     </div>
   );
 };
