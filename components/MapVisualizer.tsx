@@ -205,23 +205,30 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
       metros.forEach((metro, idx) => {
         if (metroCount === 1) {
           // Single metro - position above or below based on stop index
-          const offsetY = parseInt(stopIdx) % 2 === 0 ? -80 : 80;
+          const offsetY = parseInt(stopIdx) % 2 === 0 ? -100 : 100;
           metro.metroX = busStopPos.x;
           metro.metroY = busStopPos.y + offsetY;
         } else if (metroCount === 2) {
-          // Two metros - spread horizontally
-          const offsetX = idx === 0 ? -60 : 60;
-          const offsetY = parseInt(stopIdx) % 2 === 0 ? -80 : 80;
+          // Two metros - spread horizontally with more space
+          const offsetX = idx === 0 ? -120 : 120;
+          const offsetY = parseInt(stopIdx) % 2 === 0 ? -100 : 100;
+          metro.metroX = busStopPos.x + offsetX;
+          metro.metroY = busStopPos.y + offsetY;
+        } else if (metroCount === 3) {
+          // Three metros - wider horizontal spread
+          const positions = [-150, 0, 150]; // Left, center, right
+          const offsetX = positions[idx];
+          const offsetY = -110; // All above, slightly higher
           metro.metroX = busStopPos.x + offsetX;
           metro.metroY = busStopPos.y + offsetY;
         } else {
-          // Three or more metros - spread in a fan pattern
-          const angleStep = 60 / (metroCount - 1); // Spread across 60 degrees
-          const startAngle = -30; // Start from -30 degrees
+          // Four or more metros - wider arc pattern
+          const angleStep = 80 / (metroCount - 1); // Spread across 80 degrees
+          const startAngle = -40; // Start from -40 degrees
           const angle = (startAngle + (angleStep * idx)) * (Math.PI / 180);
-          const radius = 100;
+          const radius = 140; // Larger radius
           const offsetX = Math.sin(angle) * radius;
-          const offsetY = -Math.abs(Math.cos(angle)) * radius; // Always above
+          const offsetY = -Math.abs(Math.cos(angle)) * radius - 20; // Higher up
           metro.metroX = busStopPos.x + offsetX;
           metro.metroY = busStopPos.y + offsetY;
         }
