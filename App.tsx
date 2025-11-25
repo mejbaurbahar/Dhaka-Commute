@@ -762,6 +762,82 @@ const App: React.FC = () => {
               </div>
             </div>
 
+            {/* Nearby Metro Stations */}
+            {(() => {
+              const nearbyMetros = Object.values(METRO_STATIONS)
+                .map(metroStation => {
+                  let closestDistance = Infinity;
+                  let closestStopName = '';
+
+                  selectedBus.stops.forEach(stopId => {
+                    const busStation = STATIONS[stopId];
+                    if (!busStation) return;
+
+                    const R = 6371e3;
+                    const φ1 = (busStation.lat * Math.PI) / 180;
+                    const φ2 = (metroStation.lat * Math.PI) / 180;
+                    const Δφ = ((metroStation.lat - busStation.lat) * Math.PI) / 180;
+                    const Δλ = ((metroStation.lng - busStation.lng) * Math.PI) / 180;
+
+                    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    const distance = R * c;
+
+                    if (distance < closestDistance) {
+                      closestDistance = distance;
+                      closestStopName = busStation.name;
+                    }
+                  });
+
+                  return closestDistance < 2000 ? {
+                    station: metroStation,
+                    distance: closestDistance,
+                    nearestStop: closestStopName
+                  } : null;
+                })
+                .filter(Boolean)
+                .sort((a, b) => a!.distance - b!.distance);
+
+              return nearbyMetros.length > 0 ? (
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-4 rounded-2xl border border-purple-200 shadow-sm">
+                  <h3 className="font-bold text-purple-900 mb-3 flex items-center gap-2 text-sm">
+                    <Train className="w-4 h-4 text-purple-600" /> Nearby Metro Stations
+                  </h3>
+                  <div className="space-y-2">
+                    {nearbyMetros.map((metro) => (
+                      <div key={metro!.station.id} className="bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-purple-100 hover:border-purple-300 transition-colors">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-full bg-purple-600 flex items-center justify-center shrink-0">
+                                <Train className="w-3 h-3 text-white" />
+                              </div>
+                              <div>
+                                <p className="font-bold text-purple-900 text-sm leading-tight">{metro!.station.name}</p>
+                                <p className="text-xs text-purple-700 font-bengali">{metro!.station.bnName}</p>
+                              </div>
+                            </div>
+                            <p className="text-[10px] text-purple-600 mt-1.5 ml-8">
+                              {(metro!.distance / 1000).toFixed(2)}km from <span className="font-bold">{metro!.nearestStop}</span>
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
+                              {(metro!.distance / 1000).toFixed(1)}km
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-purple-600 mt-3 text-center">
+                    <span className="font-bold">MRT Line 6</span> • Transfer points along this route
+                  </p>
+                </div>
+              ) : null;
+            })()}
+
             {/* Fare Calculator */}
             <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
               <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
