@@ -24,18 +24,28 @@
               }
             },
             animation: {
-              'drive': 'drive 3s linear infinite',
-              'cloud-1': 'cloud 15s linear infinite',
-              'cloud-2': 'cloud 20s linear infinite',
+              'drive': 'drive 8s linear infinite',
+              'bounce-bus': 'bounce 0.8s ease-in-out infinite',
+              'road-move': 'road 1s linear infinite',
+              'cloud-1': 'cloud 30s linear infinite',
+              'cloud-2': 'cloud 45s linear infinite',
             },
             keyframes: {
               drive: {
-                '0%': { transform: 'translateX(-100px)' },
+                '0%': { transform: 'translateX(-120px)' },
                 '100%': { transform: 'translateX(100vw)' },
               },
+              bounce: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-2px)' },
+              },
+              road: {
+                '0%': { backgroundPosition: '0 0' },
+                '100%': { backgroundPosition: '-40px 0' },
+              },
               cloud: {
-                '0%': { transform: 'translateX(100%)' },
-                '100%': { transform: 'translateX(-100%)' },
+                '0%': { transform: 'translateX(100%)', opacity: '0.8' },
+                '100%': { transform: 'translateX(-100%)', opacity: '0.8' },
               }
             }
           },

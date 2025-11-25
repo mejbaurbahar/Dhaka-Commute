@@ -2,12 +2,12 @@ import { GoogleGenAI } from '@google/genai';
 import { BUS_DATA } from '../constants';
 
 export const askGeminiRoute = async (userQuery: string): Promise<string> => {
-  // Use environment variable exclusively as per guidelines
+  // Exclusively use environment variable as per guidelines
   const apiKey = process.env.API_KEY;
   
   if (!apiKey) {
-    console.error("API Key not found");
-    return "The AI service is currently unavailable. Please check the system configuration.";
+    console.warn("Gemini API Key is missing from environment variables.");
+    return "The AI Assistant is currently unavailable due to configuration issues.";
   }
 
   try {
@@ -16,28 +16,36 @@ export const askGeminiRoute = async (userQuery: string): Promise<string> => {
     const model = 'gemini-2.5-flash';
     
     // Construct a context-aware prompt with our bus data
-    const busContext = BUS_DATA.map(b => 
-      `Bus: ${b.name} (${b.bnName}), Route: ${b.routeString}, Type: ${b.type}`
-    ).join('\n');
+    // We stringify the whole object to ensure the AI sees all stops
+    const busContext = JSON.stringify(BUS_DATA.map(b => ({
+      name: b.name,
+      bnName: b.bnName,
+      route: b.routeString,
+      stops: b.stops // Important: Provide full stop list for connection logic
+    })));
 
     const systemInstruction = `
       You are an expert Dhaka City Transport Assistant. 
-      You help users find the best bus for their route.
-      Here is the available bus data:
+      You help users find the best bus for their route based STRICTLY on the provided data.
+      
+      Here is the COMPLETE database of buses and their stops in JSON format:
       ${busContext}
       
-      User Location Context: Dhaka, Bangladesh.
+      Context: User is in Dhaka, Bangladesh.
       
-      Rules:
-      1. CRITICAL: You must ONLY answer questions related to Dhaka bus routes, transport, commuting, or station locations.
-      2. If the user asks about anything unrelated (e.g., politics, coding, math, general knowledge, movies), politely refuse by saying: "I can only help you with Dhaka bus routes and transportation."
-      3. Always provide ALL possible options. If there is a direct bus, list it as "Option 1". If there are alternative buses, list them as "Option 2", etc.
-      4. If a direct bus is not available, suggest a connecting route (e.g., Take Bus A to Farmgate, then Bus B to Destination).
-      5. Be specific about station names.
-      6. Use Bengali names in brackets if helpful.
-      7. Output format should be clear and structured (e.g., bullet points).
-      8. If the user asks in Bengali (Bangla), reply in Bengali.
-      9. Be friendly and helpful.
+      INSTRUCTIONS:
+      1. **Exhaustive Search**: When asked for a route (e.g., "Farmgate to Banani"), you MUST check the 'stops' array of EVERY bus in the data.
+      2. **Direct Routes**: First, list ALL buses that have BOTH the origin and destination in their 'stops' list.
+      3. **Connecting Routes**: If no direct bus exists, find a common stop. 
+         - Example: "Take Bus A from Origin to [Common Stop], then take Bus B from [Common Stop] to Destination."
+         - You MUST verify that Bus A goes to the common stop and Bus B goes from the common stop.
+      4. **Options**: Provide multiple options if available (Option 1, Option 2, etc.).
+      5. **Constraints**: 
+         - ONLY answer questions about Dhaka buses.
+         - Do not invent buses that are not in the list.
+         - If the user asks about something unrelated, politely refuse.
+      6. **Format**: Use clear bullet points and bold text for bus names.
+      7. **Language**: If the user asks in Bengali, reply in Bengali. Otherwise English.
     `;
 
     const response = await ai.models.generateContent({
@@ -52,9 +60,6 @@ export const askGeminiRoute = async (userQuery: string): Promise<string> => {
 
   } catch (error: any) {
     console.error("Gemini API Error:", error);
-    if (error.message?.includes('API_KEY_INVALID') || error.status === 400 || error.status === 403) {
-      return "The configured API Key is invalid.";
-    }
-    return "I'm having trouble connecting to the AI assistant. Please check your internet connection.";
+    return "I'm having trouble connecting to the AI assistant. Please try again later.";
   }
 };

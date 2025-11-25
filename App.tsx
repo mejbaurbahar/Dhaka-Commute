@@ -1,12 +1,13 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft } from 'lucide-react';
+
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins } from 'lucide-react';
 import { BusRoute, AppView } from './types';
 import { BUS_DATA, STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
 import LiveTracker from './components/LiveTracker';
 import { askGeminiRoute } from './services/geminiService';
-import { getCurrentLocation, findNearestStation } from './services/locationService';
+import { getCurrentLocation, findNearestStation, getDistance } from './services/locationService';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -22,6 +23,86 @@ const getStoredFavorites = (): string[] => {
   }
 };
 
+// --- Helper: Fare Calculator ---
+const calculateFare = (route: BusRoute, fromIndex?: number, toIndex?: number): { min: number, max: number, distance: number } => {
+  const stops = route.stops.map(id => STATIONS[id]).filter(Boolean);
+  if (stops.length < 2) return { min: 0, max: 0, distance: 0 };
+
+  // If specific indices provided, calculate partial route
+  const startIdx = fromIndex ?? 0;
+  const endIdx = toIndex ?? stops.length - 1;
+  
+  if(startIdx >= endIdx) return { min: 0, max: 0, distance: 0 };
+
+  let totalDistance = 0;
+  for (let i = startIdx; i < endIdx; i++) {
+    totalDistance += getDistance(
+      { lat: stops[i].lat, lng: stops[i].lng },
+      { lat: stops[i+1].lat, lng: stops[i+1].lng }
+    );
+  }
+  
+  const distanceKm = totalDistance / 1000;
+  
+  // Official BRTA Rate Logic (Approx 2022/2023 standards)
+  // Rate: ~2.45 Tk/km (City Bus)
+  // Min Fare: 10 Tk
+  const ratePerKm = 2.45; 
+  const minFare = 10;
+  
+  let estimated = Math.ceil(distanceKm * ratePerKm);
+  if (estimated < minFare) estimated = minFare;
+
+  // Buffer for traffic/route variations
+  return {
+    min: estimated,
+    max: estimated + 5, // Slight buffer
+    distance: distanceKm
+  };
+};
+
+
+// --- Sub-components ---
+
+const SettingsView: React.FC<{ 
+  onBack: () => void, 
+  onClearFavorites: () => void
+}> = ({ onBack, onClearFavorites }) => {
+  return (
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
+      <button onClick={onBack} className="mb-6 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
+      
+      <h1 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <Settings className="w-6 h-6 text-gray-600" /> Settings
+      </h1>
+
+      <div className="space-y-8 max-w-xl">
+        {/* Data Section */}
+        <div className="bg-slate-50 p-6 rounded-2xl border border-gray-100">
+           <h3 className="font-bold text-gray-800 mb-2 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-orange-500" /> Data Management
+          </h3>
+          <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-100">
+             <div>
+               <p className="text-sm font-bold text-gray-700">Clear Favorites</p>
+               <p className="text-xs text-gray-400">Remove all saved buses</p>
+             </div>
+             <button 
+               onClick={onClearFavorites}
+               className="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors font-bold text-xs"
+             >
+               Clear
+             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.HOME);
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(null);
@@ -34,6 +115,10 @@ const App: React.FC = () => {
   // Route Finder State
   const [fromStation, setFromStation] = useState<string>('');
   const [toStation, setToStation] = useState<string>('');
+
+  // Fare Calculator State (Specific Stop-to-Stop)
+  const [fareStart, setFareStart] = useState<string>('');
+  const [fareEnd, setFareEnd] = useState<string>('');
 
   // Favorites State
   const [favorites, setFavorites] = useState<string[]>(getStoredFavorites);
@@ -49,6 +134,15 @@ const App: React.FC = () => {
 
   // Sorted Stations List for Dropdown
   const sortedStations = Object.values(STATIONS).sort((a, b) => a.name.localeCompare(b.name));
+
+  // Logic to calculate specific fare based on user selection in Bus Details
+  const calculatedSpecificFare = useMemo(() => {
+    if (!selectedBus || !fareStart || !fareEnd) return null;
+    const startIdx = selectedBus.stops.indexOf(fareStart);
+    const endIdx = selectedBus.stops.indexOf(fareEnd);
+    if (startIdx === -1 || endIdx === -1 || startIdx >= endIdx) return null;
+    return calculateFare(selectedBus, startIdx, endIdx);
+  }, [selectedBus, fareStart, fareEnd]);
 
   // Check URL on mount for 404
   useEffect(() => {
@@ -77,6 +171,10 @@ const App: React.FC = () => {
     if (selectedBus) {
       setNearestStopIndex(-1); // Reset first
       setNearestStopDistance(Infinity);
+      // Reset Fare Calculator
+      setFareStart('');
+      setFareEnd('');
+      
       getCurrentLocation()
         .then(loc => {
           const result = findNearestStation(loc, selectedBus.stops);
@@ -190,12 +288,19 @@ const App: React.FC = () => {
       console.log("Location not available for AI context");
     }
 
-    // Use environment API key implicitly
+    // Pass only the query to service, API key is handled via env var
     const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`);
     
     const assistantMessage: ChatMessage = { role: 'assistant', text: result };
     setChatHistory(prev => [...prev, assistantMessage]);
     setAiLoading(false);
+  };
+
+  const handleClearFavorites = () => {
+    if (confirm('Are you sure you want to clear all favorite buses?')) {
+      setFavorites([]);
+      localStorage.removeItem('dhaka_commute_favorites');
+    }
   };
 
   // --- Render Functions ---
@@ -259,7 +364,7 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
-          {chatHistory.length === 0 && (
+          {chatHistory.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
                <Bot className="w-16 h-16 text-gray-300 mb-4" />
                <p className="text-sm font-medium text-gray-500">Ask me anything about Dhaka buses!</p>
@@ -268,15 +373,16 @@ const App: React.FC = () => {
                  <button onClick={() => setAiQuery("Best bus for Farmgate?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">Best bus for Farmgate?</button>
                </div>
             </div>
+          ) : (
+            chatHistory.map((msg, idx) => (
+              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-dhaka-dark text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none'}`}>
+                   <div className="whitespace-pre-wrap">{msg.text.replace(/\*\*/g, '')}</div>
+                </div>
+              </div>
+            ))
           )}
           
-          {chatHistory.map((msg, idx) => (
-            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-dhaka-dark text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none'}`}>
-                 <div className="whitespace-pre-wrap">{msg.text.replace(/\*\*/g, '')}</div>
-              </div>
-            </div>
-          ))}
           {aiLoading && (
             <div className="flex justify-start">
                <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm">
@@ -336,15 +442,13 @@ const App: React.FC = () => {
                   <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> Offline-ready Route Database</li>
                   <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> Live Navigation Simulation</li>
                   <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> AI-Powered Route Assistant</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> Official 2022 Fare Calculation</li>
                 </ul>
               </div>
 
               <div className="pt-6 border-t border-gray-200">
                  <h3 className="font-bold text-gray-900 mb-4">Connect</h3>
                  <div className="flex gap-4">
-                    <a href="https://github.com" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold hover:bg-gray-50 transition-colors">
-                      <User className="w-4 h-4" /> Developer
-                    </a>
                     <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 text-blue-700 rounded-lg text-sm font-bold hover:bg-blue-100 transition-colors">
                       <Linkedin className="w-4 h-4" /> LinkedIn
                     </a>
@@ -353,9 +457,14 @@ const App: React.FC = () => {
               </div>
            </div>
            
-           <div className="mt-8 flex justify-center gap-6 text-xs font-bold text-gray-400">
-              <button onClick={() => setView(AppView.PRIVACY)} className="hover:text-gray-600">Privacy Policy</button>
-              <button onClick={() => setView(AppView.TERMS)} className="hover:text-gray-600">Terms of Service</button>
+           <div className="mt-8 flex flex-col items-center gap-4 text-xs font-bold text-gray-400">
+              <button onClick={() => setView(AppView.SETTINGS)} className="flex items-center gap-2 hover:text-dhaka-dark">
+                <Settings className="w-4 h-4" /> App Settings
+              </button>
+              <div className="flex gap-6">
+                <button onClick={() => setView(AppView.PRIVACY)} className="hover:text-gray-600">Privacy Policy</button>
+                <button onClick={() => setView(AppView.TERMS)} className="hover:text-gray-600">Terms of Service</button>
+              </div>
            </div>
         </div>
     </div>
@@ -397,13 +506,39 @@ const App: React.FC = () => {
   );
 
   const renderNotFound = () => (
-    <div className="flex flex-col items-center justify-center h-full text-center p-6 bg-white overflow-hidden relative">
-      <div className="absolute top-1/2 left-0 w-full -translate-y-1/2 h-20 bg-gray-100"></div>
-      <div className="relative z-10 animate-drive">
-         <Bus className="w-24 h-24 text-dhaka-green" />
+    <div className="flex flex-col items-center justify-center h-full text-center p-6 bg-sky-50 overflow-hidden relative w-full">
+      {/* Clouds */}
+      <div className="absolute top-10 left-10 text-white/60 animate-cloud-1">
+        <div className="w-20 h-8 bg-white rounded-full relative">
+           <div className="w-10 h-10 bg-white rounded-full absolute -top-5 left-2"></div>
+           <div className="w-8 h-8 bg-white rounded-full absolute -top-3 left-8"></div>
+        </div>
       </div>
-      <h1 className="text-2xl font-bold text-dhaka-dark mt-8 mb-2">Off Route?</h1>
-      <p className="text-gray-500 mb-6 max-w-xs mx-auto">Looks like you've wandered off the map. Don't worry, we can get you back on track!</p>
+      <div className="absolute top-24 right-10 text-white/40 animate-cloud-2 scale-75">
+        <div className="w-20 h-8 bg-white rounded-full relative">
+           <div className="w-10 h-10 bg-white rounded-full absolute -top-5 left-2"></div>
+           <div className="w-8 h-8 bg-white rounded-full absolute -top-3 left-8"></div>
+        </div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-md mx-auto aspect-video flex items-center justify-center mb-8">
+         <div className="animate-drive animate-bounce-bus">
+           <div className="text-dhaka-green filter drop-shadow-xl relative">
+              <Bus className="w-32 h-32" />
+              <div className="w-full h-2 bg-black/20 rounded-full blur-sm absolute bottom-0 translate-y-2"></div>
+           </div>
+         </div>
+         {/* Road */}
+         <div className="absolute bottom-6 left-0 right-0 h-20 bg-gray-700 w-full overflow-hidden border-t-4 border-gray-600 flex items-center -z-10">
+           <div className="w-full h-2 bg-transparent border-t-2 border-dashed border-white/50 animate-road-move [background-size:40px_100%]"></div>
+         </div>
+      </div>
+
+      <h1 className="text-3xl font-bold text-gray-800 mb-3">Off Route?</h1>
+      <p className="text-gray-500 mb-8 max-w-xs mx-auto leading-relaxed">
+        Looks like you've wandered off the map. Don't worry, we can get you back on track!
+      </p>
+      {/* Removed the 'Go Back Home' button as requested */}
     </div>
   );
 
@@ -419,6 +554,7 @@ const App: React.FC = () => {
   const renderBusDetails = () => {
     if (!selectedBus) return <EmptyState />;
     const isFav = favorites.includes(selectedBus.id);
+    const fareInfo = calculateFare(selectedBus);
 
     return (
       <div className="flex flex-col h-full bg-slate-50 md:bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
@@ -470,22 +606,30 @@ const App: React.FC = () => {
 
         <div className="flex-1 overflow-y-auto pb-32 md:pb-0 no-scrollbar md:px-8 md:py-6 pt-16 md:pt-0" ref={scrollContainerRef}>
           <div className="p-4 md:p-0 space-y-5">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
                 <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
                   <Info className="w-4 h-4" />
                 </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Service Type</span>
+                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Type</span>
                 <span className="font-bold text-gray-800 text-sm mt-0.5">{selectedBus.type}</span>
               </div>
-              <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+              <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
                  <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-2">
                   <Bus className="w-4 h-4" />
                 </div>
                 <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Stops</span>
-                <span className="font-bold text-gray-800 text-sm mt-0.5">{selectedBus.stops.length} Stations</span>
+                <span className="font-bold text-gray-800 text-sm mt-0.5">{selectedBus.stops.length}</span>
+              </div>
+              <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+                 <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
+                  <Coins className="w-4 h-4" />
+                </div>
+                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Max Fare</span>
+                <span className="font-bold text-gray-800 text-sm mt-0.5">~৳{fareInfo.max}</span>
               </div>
             </div>
+
             <div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden w-full">
               <div className="px-4 py-3 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
                 <h3 className="font-bold text-gray-700 text-sm flex items-center gap-2">
@@ -502,6 +646,70 @@ const App: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* Specific Fare Calculator */}
+            <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+              <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                <Coins className="w-4 h-4 text-yellow-500" /> Stop-to-Stop Fare
+              </h3>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">From</label>
+                  <select 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-dhaka-green/20"
+                    value={fareStart}
+                    onChange={e => setFareStart(e.target.value)}
+                  >
+                    <option value="">Select...</option>
+                    {selectedBus.stops.map(id => {
+                       const s = STATIONS[id];
+                       return s ? <option key={id} value={id}>{s.name}</option> : null;
+                    })}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">To</label>
+                  <select 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-dhaka-green/20"
+                    value={fareEnd}
+                    onChange={e => setFareEnd(e.target.value)}
+                  >
+                    <option value="">Select...</option>
+                    {selectedBus.stops.map(id => {
+                       const s = STATIONS[id];
+                       return s ? <option key={id} value={id}>{s.name}</option> : null;
+                    })}
+                  </select>
+                </div>
+              </div>
+              {calculatedSpecificFare ? (
+                <div className="bg-green-50 p-3 rounded-xl border border-green-100 flex justify-between items-center animate-in fade-in slide-in-from-top-2">
+                  <div>
+                    <p className="text-[10px] text-green-600 font-bold uppercase">Estimated Cost</p>
+                    <p className="text-xs text-green-600">Distance: {calculatedSpecificFare.distance.toFixed(1)} km</p>
+                  </div>
+                  <span className="text-xl font-bold text-green-800">৳{calculatedSpecificFare.min} - {calculatedSpecificFare.max}</span>
+                </div>
+              ) : (
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
+                  <p className="text-xs text-gray-400">Select start and end stops to calculate fare</p>
+                </div>
+              )}
+            </div>
+
+            {/* General Fare Info */}
+            <div className="bg-purple-50 rounded-2xl p-4 border border-purple-100">
+               <h3 className="text-xs font-bold uppercase tracking-wider text-purple-800 mb-2 flex items-center gap-1">
+                 <Calculator className="w-3 h-3" /> Official Rate Info
+               </h3>
+               <p className="text-sm text-purple-900 mb-1">
+                 Based on 2022 Government Chart: <strong>2.45 Tk/km</strong> (Min 10 Tk)
+               </p>
+               <p className="text-xs text-purple-600">
+                 Note: Actual fare may vary slightly due to rounding or bus contractor rules.
+               </p>
+            </div>
+
             <div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden">
               <h3 className="font-bold text-gray-700 px-4 py-3 border-b border-gray-100 bg-gray-50/30 text-sm">Full Route List</h3>
               <div className="relative">
@@ -690,6 +898,8 @@ const App: React.FC = () => {
       <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-4 space-y-3">
         {filteredBuses.map(bus => {
           const isFav = favorites.includes(bus.id);
+          const estimatedFare = calculateFare(bus);
+          
           return (
             <button 
               key={bus.id}
@@ -717,13 +927,15 @@ const App: React.FC = () => {
                     >
                       <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
                     </button>
-                    <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
-                    ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
-                    bus.type === 'AC' ? 'bg-blue-50 text-blue-600' :
-                    'bg-orange-50 text-orange-600'
-                  }`}>
-                    {bus.type}
-                  </span>
+                    <div className="flex flex-col items-end">
+                      <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
+                      ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
+                      bus.type === 'AC' ? 'bg-blue-50 text-blue-600' :
+                      'bg-orange-50 text-orange-600'
+                    }`}>
+                      {bus.type}
+                    </span>
+                    </div>
                 </div>
               </div>
               <div className="relative pl-3 border-l-2 border-gray-100 ml-5 space-y-1 py-1">
@@ -733,6 +945,10 @@ const App: React.FC = () => {
                 <div className="text-xs text-gray-500 font-medium truncate pr-4">
                     <span className="text-gray-300 mr-1">●</span> {bus.routeString.split('⇄').pop()}
                 </div>
+              </div>
+              <div className="mt-3 flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-md w-fit">
+                 <Coins className="w-3 h-3" />
+                 <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
               </div>
             </button>
           );
@@ -793,6 +1009,13 @@ const App: React.FC = () => {
                AI Assistant
              </button>
              <button 
+                onClick={() => setView(AppView.SETTINGS)}
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                title="Settings"
+             >
+                <Settings className="w-5 h-5"/>
+             </button>
+             <button 
                 onClick={() => setView(AppView.ABOUT)}
                 className="bg-gray-100 px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all flex items-center gap-2"
              >
@@ -821,6 +1044,12 @@ const App: React.FC = () => {
            {view === AppView.BUS_DETAILS && renderBusDetails()}
            {view === AppView.LIVE_NAV && renderLiveNav()}
            {view === AppView.AI_ASSISTANT && renderAiAssistant()}
+           {view === AppView.SETTINGS && (
+             <SettingsView 
+               onBack={() => setView(AppView.HOME)} 
+               onClearFavorites={handleClearFavorites}
+             />
+           )}
            {view === AppView.ABOUT && renderAbout()}
            {view === AppView.PRIVACY && renderPrivacyPolicy()}
            {view === AppView.TERMS && renderTerms()}

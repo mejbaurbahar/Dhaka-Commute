@@ -8,6 +8,8 @@ export const STATIONS: Record<string, Station> = {
   'technical': { id: 'technical', name: 'Technical', lat: 23.7800, lng: 90.3550 },
   'mirpur1': { id: 'mirpur1', name: 'Mirpur 1', lat: 23.7936, lng: 90.3537 },
   'mirpur2': { id: 'mirpur2', name: 'Mirpur 2', lat: 23.8050, lng: 90.3600 },
+  'mirpur6': { id: 'mirpur6', name: 'Mirpur 6', lat: 23.8100, lng: 90.3620 },
+  'mirpur7': { id: 'mirpur7', name: 'Mirpur 7', lat: 23.8130, lng: 90.3630 },
   'mirpur10': { id: 'mirpur10', name: 'Mirpur 10', lat: 23.8071, lng: 90.3686 },
   'mirpur11': { id: 'mirpur11', name: 'Mirpur 11', lat: 23.8150, lng: 90.3650 },
   'mirpur12': { id: 'mirpur12', name: 'Mirpur 12', lat: 23.8200, lng: 90.3650 },
@@ -18,9 +20,13 @@ export const STATIONS: Record<string, Station> = {
   'kalshi': { id: 'kalshi', name: 'Kalshi', lat: 23.8200, lng: 90.3800 },
   'ecb': { id: 'ecb', name: 'ECB Square', lat: 23.8230, lng: 90.3900 },
   'kuril': { id: 'kuril', name: 'Kuril Bishwa Road', lat: 23.8231, lng: 90.4100 },
+  'kuril_flyover': { id: 'kuril_flyover', name: 'Kuril Flyover', lat: 23.8220, lng: 90.4080 },
   'bashundhara': { id: 'bashundhara', name: 'Bashundhara', lat: 23.8120, lng: 90.4250 },
   'notun_bazar': { id: 'notun_bazar', name: 'Notun Bazar', lat: 23.7950, lng: 90.4250 },
   'badda': { id: 'badda', name: 'Badda', lat: 23.7850, lng: 90.4250 },
+  'uttar_badda': { id: 'uttar_badda', name: 'Uttar Badda', lat: 23.7880, lng: 90.4250 },
+  'madhya_badda': { id: 'madhya_badda', name: 'Madhya Badda', lat: 23.7820, lng: 90.4250 },
+  'merul': { id: 'merul', name: 'Merul Badda', lat: 23.7700, lng: 90.4200 },
   'rampura': { id: 'rampura', name: 'Rampura Bridge', lat: 23.7650, lng: 90.4150 },
   'banasree': { id: 'banasree', name: 'Banasree', lat: 23.7600, lng: 90.4300 },
   'demra': { id: 'demra', name: 'Demra Staff Quarter', lat: 23.7200, lng: 90.4500 },
@@ -39,6 +45,8 @@ export const STATIONS: Record<string, Station> = {
   'kallyanpur': { id: 'kallyanpur', name: 'Kallyanpur', lat: 23.7800, lng: 90.3650 },
   'shyamoli': { id: 'shyamoli', name: 'Shyamoli', lat: 23.7750, lng: 90.3700 },
   'dhanmondi27': { id: 'dhanmondi27', name: 'Dhanmondi 27', lat: 23.7550, lng: 90.3750 },
+  'dhanmondi32': { id: 'dhanmondi32', name: 'Dhanmondi 32', lat: 23.7500, lng: 90.3750 },
+  'dhanmondi15': { id: 'dhanmondi15', name: 'Dhanmondi 15', lat: 23.7450, lng: 90.3700 },
   'newmarket': { id: 'newmarket', name: 'New Market', lat: 23.7330, lng: 90.3850 },
   'azimpur': { id: 'azimpur', name: 'Azimpur', lat: 23.7280, lng: 90.3880 },
   'banani': { id: 'banani', name: 'Banani', lat: 23.7930, lng: 90.4040 },
@@ -97,7 +105,6 @@ export const STATIONS: Record<string, Station> = {
   'bashabo': { id: 'bashabo', name: 'Bashabo', lat: 23.7350, lng: 90.4350 },
   'khilgaon': { id: 'khilgaon', name: 'Khilgaon', lat: 23.7480, lng: 90.4250 },
   'hazipara': { id: 'hazipara', name: 'Hazipara', lat: 23.7600, lng: 90.4180 },
-  'merul': { id: 'merul', name: 'Merul Badda', lat: 23.7700, lng: 90.4200 },
   'bashtola': { id: 'bashtola', name: 'Bashtola', lat: 23.7900, lng: 90.4250 },
   'shahjadpur': { id: 'shahjadpur', name: 'Shahjadpur', lat: 23.7920, lng: 90.4250 },
   'nadda': { id: 'nadda', name: 'Nadda', lat: 23.8050, lng: 90.4250 },
@@ -108,7 +115,6 @@ export const STATIONS: Record<string, Station> = {
   'college_gate': { id: 'college_gate', name: 'College Gate', lat: 23.7680, lng: 90.3720 },
   'asad_gate': { id: 'asad_gate', name: 'Asad Gate', lat: 23.7600, lng: 90.3750 },
   'shukrabad': { id: 'shukrabad', name: 'Shukrabad', lat: 23.7520, lng: 90.3780 },
-  'kalabagan': { id: 'kalabagan', name: 'Kalabagan', lat: 23.7480, lng: 90.3800 },
   'nilkhet': { id: 'nilkhet', name: 'Nilkhet', lat: 23.7320, lng: 90.3870 },
   'bakshi_bazar': { id: 'bakshi_bazar', name: 'Bakshi Bazar', lat: 23.7220, lng: 90.3950 },
   'chankhar_pul': { id: 'chankhar_pul', name: 'Chankhar Pul', lat: 23.7250, lng: 90.4000 },
@@ -146,7 +152,6 @@ export const STATIONS: Record<string, Station> = {
   'chashara': { id: 'chashara', name: 'Chashara', lat: 23.6200, lng: 90.5000 },
   'dhamrai': { id: 'dhamrai', name: 'Dhamrai', lat: 23.9200, lng: 90.2100 },
   'manikganj': { id: 'manikganj', name: 'Manikganj', lat: 23.8600, lng: 90.0000 },
-  // Additional Stations
   'chiriyakhana': { id: 'chiriyakhana', name: 'Chiriyakhana', lat: 23.8150, lng: 90.3500 },
   'shib_bari': { id: 'shib_bari', name: 'Shib Bari', lat: 24.0050, lng: 90.4000 },
   'ghatar_char': { id: 'ghatar_char', name: 'Ghatar Char', lat: 23.7450, lng: 90.3400 },
@@ -173,718 +178,37 @@ export const STATIONS: Record<string, Station> = {
   'salimullah_road': { id: 'salimullah_road', name: 'Salimullah Road', lat: 23.7630, lng: 90.3620 },
   'jakir_hossen_road': { id: 'jakir_hossen_road', name: 'Jakir Hossen Road', lat: 23.7640, lng: 90.3640 },
   'baitul_mukarram': { id: 'baitul_mukarram', name: 'Baitul Mukarram', lat: 23.7280, lng: 90.4130 },
+  'jagannath_university': { id: 'jagannath_university', name: 'Jagannath University', lat: 23.7090, lng: 90.4110 },
+  'washpur': { id: 'washpur', name: 'Washpur', lat: 23.7580, lng: 90.3420 },
+  'town_hall': { id: 'town_hall', name: 'Town Hall', lat: 23.7650, lng: 90.3620 },
+  'konapara': { id: 'konapara', name: 'Konapara', lat: 23.7100, lng: 90.4550 },
+  'kajla': { id: 'kajla', name: 'Kajla', lat: 23.7080, lng: 90.4400 },
+  'manikdi': { id: 'manikdi', name: 'Manikdi', lat: 23.8250, lng: 90.3900 },
+  'pagla': { id: 'pagla', name: 'Pagla', lat: 23.6550, lng: 90.4350 },
+  'new_jail': { id: 'new_jail', name: 'New Jail (Keraniganj)', lat: 23.6600, lng: 90.3700 },
+  'kamrangirchar': { id: 'kamrangirchar', name: 'Kamrangirchar', lat: 23.7100, lng: 90.3700 },
+  'amulia': { id: 'amulia', name: 'Amulia', lat: 23.7300, lng: 90.4700 },
+  'sreepur': { id: 'sreepur', name: 'Sreepur', lat: 24.1900, lng: 90.4700 },
+  'kapasia': { id: 'kapasia', name: 'Kapasia', lat: 24.1000, lng: 90.5700 },
+  'beraid': { id: 'beraid', name: 'Beraid', lat: 23.7900, lng: 90.4600 },
+  'meghna_ghat': { id: 'meghna_ghat', name: 'Meghna Ghat', lat: 23.6000, lng: 90.6000 },
+  'sonargaon': { id: 'sonargaon', name: 'Sonargaon', lat: 23.6300, lng: 90.6000 },
+  'vulta': { id: 'vulta', name: 'Vulta', lat: 23.8000, lng: 90.5800 },
+  'rupganj': { id: 'rupganj', name: 'Rupganj', lat: 23.7800, lng: 90.5500 },
+  'fatullah': { id: 'fatullah', name: 'Fatullah', lat: 23.6300, lng: 90.4800 },
+  'panchabati': { id: 'panchabati', name: 'Panchabati', lat: 23.6300, lng: 90.4600 },
+  'dhaleshwar': { id: 'dhaleshwar', name: 'Dhaleshwar', lat: 23.6500, lng: 90.3000 }, // Approx
 };
 
-// Expanded Bus Routes from user input
+// Expanded Bus Routes
 export const BUS_DATA: BusRoute[] = [
-  {
-    id: 'achim',
-    name: 'Achim Paribahan',
-    bnName: 'আছিম পরিবহন',
-    routeString: 'Gabtoli ⇄ Mirpur 1 ⇄ Banasree ⇄ Demra',
-    stops: ['gabtoli', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'kalshi', 'ecb', 'mes', 'kuril', 'jamuna_future_park', 'bashundhara', 'nadda', 'notun_bazar', 'bashtola', 'shahjadpur', 'badda', 'merul', 'rampura', 'banasree', 'demra'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'active',
-    name: 'Active Paribahan',
-    bnName: 'এক্টিভ পরিবহন',
-    routeString: 'Shia Masjid ⇄ Mirpur 10 ⇄ Airport ⇄ Abdullahpur',
-    stops: ['shia_masjid', 'adabor', 'shyamoli', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'kalshi', 'ecb', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'agradut',
-    name: 'Agradut',
-    bnName: 'অগ্রদূত',
-    routeString: 'Savar ⇄ Shyamoli ⇄ Mohakhali ⇄ Notun Bazar',
-    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'agargaon', 'bijoy_sarani', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'airport_bangabandhu',
-    name: 'Airport Bangabandhu',
-    bnName: 'এয়ারপোর্ট বঙ্গবন্ধু',
-    routeString: 'Fulbaria ⇄ Shahbag ⇄ Mohakhali ⇄ Abdullahpur',
-    stops: ['fulbaria', 'golap_shah_mazar', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'bijoy_sarani', 'mohakhali', 'chairman_bari', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
-    type: 'Sitting',
-    hours: '6:30 AM - 10:30 PM'
-  },
-  {
-    id: 'ajmeri_glory',
-    name: 'Ajmeri Glory',
-    bnName: 'আজমেরী গ্লোরী',
-    routeString: 'Sadarghat ⇄ Mouchak ⇄ Mohakhali ⇄ Chandra',
-    stops: ['sadarghat', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'nabisco', 'mohakhali', 'chairman_bari', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur', 'chandra'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'ajmi',
-    name: 'Ajmi',
-    bnName: 'আজমী',
-    routeString: 'Dhamrai ⇄ Savar ⇄ Gabtoli ⇄ Gulistan ⇄ Chittagong Road',
-    stops: ['dhamrai', 'savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'dhanmondi27', 'kalabagan', 'city_college', 'newmarket', 'nilkhet', 'azimpur', 'bakshi_bazar', 'gulistan', 'chittagong_road'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'akash',
-    name: 'Akash Bus',
-    bnName: 'আকাশ বাস',
-    routeString: 'Kadamtali ⇄ Gulistan ⇄ Badda ⇄ Uttara',
-    stops: ['keraniganj', 'babubazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi'],
-    type: 'Local',
-    hours: '5:30 AM - 11:00 PM'
-  },
-  {
-    id: 'akik',
-    name: 'Akik',
-    bnName: 'আকিক',
-    routeString: 'Ansar Camp ⇄ Mirpur 1 ⇄ Kuril ⇄ Notun Bazar',
-    stops: ['ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'kuril', 'jamuna_future_park', 'bashundhara', 'nadda', 'notun_bazar', 'bashtola', 'shahjadpur', 'badda'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'al_makka',
-    name: 'Al Makka',
-    bnName: 'আল মক্কা',
-    routeString: 'Motijheel ⇄ Mohakhali ⇄ Mirpur 1',
-    stops: ['motijheel', 'gulistan', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'mogbazar', 'nabisco', 'mohakhali', 'chairman_bari', 'kakali', 'banani', 'ecb', 'kalshi', 'mirpur10', 'mirpur2', 'mirpur1'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'al_madina_plus',
-    name: 'Al Madina Plus One',
-    bnName: 'আল মনিদা প্লাস ওয়ান',
-    routeString: 'Nandan Park ⇄ Savar ⇄ Farmgate ⇄ Kamalapur',
-    stops: ['nandan_park', 'baipayl', 'nobinagar', 'savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel', 'kamalapur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'alif_1',
-    name: 'Alif (Mirpur-Nandan)',
-    bnName: 'আলিফ',
-    routeString: 'Mirpur 14 ⇄ Mirpur 1 ⇄ Ashulia ⇄ Nandan Park',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'rupnagar', 'beribadh', 'birulia', 'ashulia', 'zirabo', 'fantasy_kingdom', 'nandan_park'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'alif_2',
-    name: 'Alif (Shia Masjid-Banasree)',
-    bnName: 'আলিফ',
-    routeString: 'Shia Masjid ⇄ Shyamoli ⇄ Mohakhali ⇄ Banasree',
-    stops: ['shia_masjid', 'adabor', 'shyamoli', 'shishu_mela', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'merul', 'rampura', 'banasree'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'alif_3',
-    name: 'Alif (Mirpur 1-Banasree)',
-    bnName: 'আলিফ',
-    routeString: 'Mirpur 1 ⇄ Agargaon ⇄ Mohakhali ⇄ Banasree',
-    stops: ['mirpur1', 'mirpur2', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'merul', 'rampura', 'banasree'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'alif_4',
-    name: 'Alif (Japan Garden-Abdullahpur)',
-    bnName: 'আলিফ',
-    routeString: 'Japan Garden City ⇄ Shyamoli ⇄ Banani ⇄ Abdullahpur',
-    stops: ['adabor', 'shyamoli', 'shishu_mela', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'chairman_bari', 'kakali', 'banani', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'anabil',
-    name: 'Anabil Super',
-    bnName: 'অনাবিল সুপার',
-    routeString: 'Sign Board ⇄ Rampura ⇄ Airport ⇄ Gazipur',
-    stops: ['signboard', 'shonir_akhra', 'jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
-    type: 'Sitting',
-    hours: '6:00 AM - 12:00 PM'
-  },
-  {
-    id: 'arnob',
-    name: 'Arnob',
-    bnName: 'অরনব',
-    routeString: 'Hemayetpur ⇄ Gabtoli ⇄ Mohakhali ⇄ Banasree',
-    stops: ['hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'merul', 'rampura', 'banasree', 'demra'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'ashirbad',
-    name: 'Ashirbad Paribahan',
-    bnName: 'আশীর্বাদ পরিবহন',
-    routeString: 'Duaripara ⇄ Mirpur 1 ⇄ Azimpur',
-    stops: ['rupnagar', 'mirpur2', 'mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'dhanmondi27', 'shukrabad', 'kalabagan', 'city_college', 'newmarket', 'nilkhet', 'azimpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'ashulia_classic',
-    name: 'Ashulia Classic',
-    bnName: 'আশুলিয়া ক্লাসিক',
-    routeString: 'Nobinagar ⇄ Ashulia ⇄ Airport ⇄ Mohakhali',
-    stops: ['nobinagar', 'baipayl', 'fantasy_kingdom', 'zirabo', 'ashulia', 'kamarpara', 'abdullahpur', 'uttara', 'azampur', 'rajlakshmi', 'jashimuddin', 'airport', 'khilkhet', 'kuril', 'mes', 'kakali', 'banani', 'chairman_bari', 'mohakhali', 'nabisco', 'satrasta'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'asmani',
-    name: 'Asmani',
-    bnName: 'আসমানী',
-    routeString: 'Abdullahpur ⇄ Badda ⇄ Banasree ⇄ Madanpur',
-    stops: ['dhour', 'abdullahpur', 'uttara', 'azampur', 'rajlakshmi', 'jashimuddin', 'airport', 'khilkhet', 'kuril', 'jamuna_future_park', 'bashundhara', 'nadda', 'notun_bazar', 'bashtola', 'shahjadpur', 'badda', 'merul', 'rampura', 'banasree', 'demra', 'madanpur'],
-    type: 'Local',
-    hours: '5:30 AM - 11:00 PM'
-  },
-  {
-    id: 'atcl',
-    name: 'ATCL',
-    bnName: 'এটিসিএল',
-    routeString: 'Mohammadpur ⇄ Science Lab ⇄ Gulistan ⇄ Arambagh',
-    stops: ['mohammadpur', 'asad_gate', 'shukrabad', 'city_college', 'science_lab', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'ayat',
-    name: 'Ayat',
-    bnName: 'আয়াত',
-    routeString: 'Chiriyakhana ⇄ Mirpur 10 ⇄ Farmgate ⇄ Kamalapur',
-    stops: ['sony_cinema', 'mirpur2', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'farmgate', 'kawran_bazar', 'bangla_motor', 'mogbazar', 'mouchak', 'malibagh', 'kamalapur'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'bahon',
-    name: 'Bahon',
-    bnName: 'বাহন',
-    routeString: 'Mirpur 14 ⇄ Shahbag ⇄ Motijheel',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'asad_gate', 'dhanmondi27', 'shukrabad', 'kalabagan', 'city_college', 'science_lab', 'shahbag', 'high_court', 'press_club', 'paltan', 'motijheel', 'kamalapur', 'mugdapara', 'bashabo', 'khilgaon'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'baishakhi',
-    name: 'Baishakhi',
-    bnName: 'বৈশাখী',
-    routeString: 'Savar ⇄ Mohakhali ⇄ Notun Bazar',
-    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'gulshan1', 'badda', 'bashtola', 'notun_bazar'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'balaka',
-    name: 'Balaka',
-    bnName: 'বলাকা',
-    routeString: 'Sayedabad ⇄ Mohakhali ⇄ Airport ⇄ Gazipur',
-    stops: ['sayedabad', 'maniknagar', 'tt_para', 'kamalapur', 'malibagh', 'mouchak', 'mogbazar', 'satrasta', 'nabisco', 'mohakhali', 'chairman_bari', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'basumati',
-    name: 'Basumati',
-    bnName: 'বাসুমতি',
-    routeString: 'Gabtoli ⇄ Farmgate ⇄ Gulistan ⇄ Maowa',
-    stops: ['gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'golap_shah_mazar', 'naya_bazar', 'babubazar', 'keraniganj', 'maowa'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'basumati_transport',
-    name: 'Basumati Transport',
-    bnName: 'বাসুমতি ট্রান্সপোর্ট',
-    routeString: 'Gabtoli ⇄ Mirpur 10 ⇄ Airport ⇄ Gazipur',
-    stops: ['gabtoli', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'best_satabdi',
-    name: 'Best Satabdi (AC)',
-    bnName: 'বেষ্ট শতাব্দী এসি',
-    routeString: 'Azimpur ⇄ Farmgate ⇄ Airport ⇄ Diabari',
-    stops: ['azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi27', 'farmgate', 'jahangir_gate', 'mohakhali', 'chairman_bari', 'sainik_club', 'banani', 'kakali', 'staff_road', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'diabari'],
-    type: 'AC',
-    hours: '7:00 AM - 10:00 PM'
-  },
-  {
-    id: 'bhuiyan',
-    name: 'Bhuiyan Paribahan',
-    bnName: 'ভূঁইয়া পরিবহন',
-    routeString: 'Japan Garden City ⇄ Mohakhali ⇄ Abdullahpur',
-    stops: ['adabor', 'shyamoli', 'shishu_mela', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'chairman_bari', 'sainik_club', 'kakali', 'banani', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'bihanga',
-    name: 'Bihanga',
-    bnName: 'বিহাঙ্গা',
-    routeString: 'Mirpur 12 ⇄ Mohakhali ⇄ Notun Bazar',
-    stops: ['mirpur12', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'notun_bazar'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'bikalpa_auto',
-    name: 'Bikalpa Auto',
-    bnName: 'বিকল্প অটো',
-    routeString: 'Mirpur 12 ⇄ Farmgate ⇄ Motijheel',
-    stops: ['mirpur12', 'pallabi', 'purobi', 'mirpur11', 'mirpur1', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'bikalpa_super',
-    name: 'Bikalpa City Super',
-    bnName: 'বিকল্প সিটি সুপার',
-    routeString: 'Mirpur 12 ⇄ Shyamoli ⇄ Azimpur',
-    stops: ['mirpur12', 'pallabi', 'purobi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'dhanmondi27', 'kalabagan', 'city_college', 'newmarket', 'nilkhet', 'azimpur'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'bikash',
-    name: 'Bikash',
-    bnName: 'বিকাশ',
-    routeString: 'Azimpur ⇄ Farmgate ⇄ Airport ⇄ Kamarpara',
-    stops: ['azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi27', 'farmgate', 'jahangir_gate', 'mohakhali', 'sainik_club', 'banani', 'kakali', 'kuril', 'khilkhet', 'airport', 'abdullahpur', 'kamarpara'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'bondhu',
-    name: 'Bondhu Paribahan',
-    bnName: 'বন্ধু পরিবহন',
-    routeString: 'Gulistan ⇄ Malibagh ⇄ Notun Bazar',
-    stops: ['gulistan', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'brtc_1',
-    name: 'BRTC (Madanpur-Savar)',
-    bnName: 'বি আর টিসি',
-    routeString: 'Madanpur ⇄ Gulistan ⇄ Farmgate ⇄ Savar',
-    stops: ['madanpur', 'chittagong_road', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'brtc_2',
-    name: 'BRTC (Motijheel-Tongi)',
-    bnName: 'বি আর টিসি',
-    routeString: 'Motijheel ⇄ Farmgate ⇄ Airport ⇄ Tongi',
-    stops: ['motijheel', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'jahangir_gate', 'mohakhali', 'chairman_bari', 'kakali', 'banani', 'staff_road', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'brtc_3',
-    name: 'BRTC (Mohammadpur-Kuril)',
-    bnName: 'বি আর টিসি',
-    routeString: 'Mohammadpur ⇄ Farmgate ⇄ Badda ⇄ Kuril',
-    stops: ['mohammadpur', 'asad_gate', 'farmgate', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'cantonment',
-    name: 'Cantonment',
-    bnName: 'ক্যান্টনমেন্ট',
-    routeString: 'Mirpur 14 ⇄ Gabtoli ⇄ Savar',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'city_link',
-    name: 'City Link',
-    bnName: 'সিটি লিংক',
-    routeString: 'Chittagong Road ⇄ Science Lab ⇄ Mohammadpur',
-    stops: ['chittagong_road', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'science_lab', 'city_college', 'jigatola', 'shankar', 'mohammadpur', 'bosila'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'desh_bangla',
-    name: 'Desh Bangla',
-    bnName: 'দেশ বাংলা',
-    routeString: 'Postagola ⇄ Rampura ⇄ Airport ⇄ Kamarpara',
-    stops: ['postagola', 'jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'rampura', 'merul', 'badda', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'kamarpara'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'dewan',
-    name: 'Dewan',
-    bnName: 'দেওয়ান',
-    routeString: 'Azimpur ⇄ Farmgate ⇄ Kuril',
-    stops: ['azimpur', 'eden_college', 'nilkhet', 'newmarket', 'science_lab', 'city_college', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril'],
-    type: 'Local',
-    hours: '6:00 AM - 10:30 PM'
-  },
-  {
-    id: 'dhaka_paribahan',
-    name: 'Dhaka Paribahan',
-    bnName: 'ঢাকা পরিবহন',
-    routeString: 'Gulistan ⇄ Farmgate ⇄ Gazipur',
-    stops: ['gulistan', 'shahbag', 'farmgate', 'banani', 'uttara', 'gazipur'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'dishari',
-    name: 'Dishari',
-    bnName: 'দিসারি',
-    routeString: 'Chiriyakhana ⇄ Farmgate ⇄ Gulistan',
-    stops: ['sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'golap_shah_mazar', 'naya_bazar', 'babubazar', 'keraniganj'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'elite',
-    name: 'Elite',
-    bnName: 'এলিট',
-    routeString: 'Agargaon ⇄ Mirpur 10 ⇄ Abdullahpur',
-    stops: ['agargaon', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'purobi', 'pallabi', 'kalshi', 'kuril', 'airport', 'jashimuddin', 'rajlakshmi', 'uttara', 'abdullahpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'etc',
-    name: 'ETC Transport',
-    bnName: 'ইটিসি',
-    routeString: 'Golap Shah Mazar ⇄ Farmgate ⇄ Mirpur 12',
-    stops: ['golap_shah_mazar', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'agargaon', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'purobi', 'pallabi', 'mirpur12'],
-    type: 'Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'falgun',
-    name: 'Falgun Art',
-    bnName: 'ফাল্গুন আর্ট',
-    routeString: 'Azimpur ⇄ Rampura ⇄ Uttara',
-    stops: ['azimpur', 'nilkhet', 'newmarket', 'science_lab', 'shahbag', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'rampura', 'merul', 'badda', 'shahjadpur', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'uttara'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'ftcl',
-    name: 'FTCL',
-    bnName: 'এফটিসিএল',
-    routeString: 'Mohammadpur ⇄ Science Lab ⇄ Chittagong Road',
-    stops: ['mohammadpur', 'shankar', 'jigatola', 'city_college', 'science_lab', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'sayedabad', 'jatrabari', 'shonir_akhra', 'rayerbag', 'matuail', 'signboard', 'chittagong_road'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'grameen',
-    name: 'Grameen',
-    bnName: 'গ্রামীণ',
-    routeString: 'Mirpur 14 ⇄ Mirpur 1 ⇄ Gabtoli',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'gabtoli'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'himalay',
-    name: 'Himalay',
-    bnName: 'হিমালয়',
-    routeString: 'Madanpur ⇄ Mohakhali ⇄ Tongi',
-    stops: ['madanpur', 'jatrabari', 'mogbazar', 'mohakhali', 'tongi'],
-    type: 'Semi-Sitting',
-    hours: '5:30 AM - 11:00 PM'
-  },
-  {
-    id: 'jabale_noor',
-    name: 'Jabale Noor',
-    bnName: 'জাবালে নুর',
-    routeString: 'Agargaon ⇄ Mirpur 10 ⇄ Abdullahpur',
-    stops: ['agargaon', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'pallabi', 'kalshi', 'kuril', 'airport', 'jashimuddin', 'rajlakshmi', 'uttara', 'abdullahpur'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'kanak',
-    name: 'Kanak',
-    bnName: 'কনক',
-    routeString: 'Mirpur 1 ⇄ Kalshi ⇄ Abdullahpur',
-    stops: ['mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'pallabi', 'kalshi', 'ecb', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'labbaik',
-    name: 'Labbayek',
-    bnName: 'লাব্বাইক',
-    routeString: 'Savar ⇄ Shyamoli ⇄ Jatrabari ⇄ Sign Board',
-    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'mogbazar', 'mouchak', 'malibagh', 'bashabo', 'mugdapara', 'maniknagar', 'sayedabad', 'jatrabari', 'shonir_akhra', 'rayerbag', 'matuail', 'signboard'],
-    type: 'Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'malancha',
-    name: 'Malancha',
-    bnName: 'মালঞ্চ',
-    routeString: 'Mohammadpur ⇄ Shahbag ⇄ Gulistan',
-    stops: ['mohammadpur', 'shankar', 'dhanmondi27', 'jigatola', 'city_college', 'science_lab', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'manjil_express',
-    name: 'Manjil Express',
-    bnName: 'মাঞ্জিল এক্সপ্রেস',
-    routeString: 'Chittagong Road ⇄ Mohakhali ⇄ Abdullahpur',
-    stops: ['chittagong_road', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'gpo', 'paltan', 'kakrail', 'malibagh', 'mouchak', 'mogbazar', 'satrasta', 'nabisco', 'mohakhali', 'chairman_bari', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
-    type: 'Local',
-    hours: '5:30 AM - 10:30 PM'
-  },
-  {
-    id: 'meghla',
-    name: 'Meghla Transport',
-    bnName: 'মেঘলা ট্রান্সপোর্ট',
-    routeString: 'Kalabagan ⇄ Gulistan ⇄ Kanchpur',
-    stops: ['kalabagan', 'city_college', 'science_lab', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'sayedabad', 'jatrabari', 'shonir_akhra', 'signboard', 'chittagong_road'],
-    type: 'Local',
-    hours: '6:00 AM - 10:30 PM'
-  },
-  {
-    id: 'midline',
-    name: 'Midline',
-    bnName: 'মিডলাইন',
-    routeString: 'Mohammadpur ⇄ Science Lab ⇄ Kamalapur',
-    stops: ['mohammadpur', 'shankar', 'jigatola', 'city_college', 'science_lab', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gulistan', 'motijheel', 'kamalapur', 'bashabo', 'khilgaon'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'mirpur_metro',
-    name: 'Mirpur Metro',
-    bnName: 'মিরপুর মেট্রো',
-    routeString: 'Mirpur 1 ⇄ Shyamoli ⇄ Azimpur',
-    stops: ['mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'asad_gate', 'shukrabad', 'kalabagan', 'science_lab', 'newmarket', 'nilkhet', 'azimpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'modhumita',
-    name: 'Modhumita',
-    bnName: 'মধুমিতা',
-    routeString: 'Mirpur 1 ⇄ Banasree ⇄ Demra',
-    stops: ['mirpur1', 'sony_cinema', 'mirpur2', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'agargaon', 'bijoy_sarani', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'merul', 'rampura', 'banasree', 'demra'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'mohona',
-    name: 'Mohona',
-    bnName: 'মোহনা',
-    routeString: 'Mirpur 14 ⇄ Mirpur 1 ⇄ Fantasy Kingdom',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'konabari', 'rupnagar', 'beribadh', 'birulia', 'ashulia', 'zirabo', 'fantasy_kingdom'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'moumita',
-    name: 'Moumita',
-    bnName: 'মৌমিতা',
-    routeString: 'Chashara ⇄ Azimpur ⇄ Chandra',
-    stops: ['chashara', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'baipayl', 'nandan_park', 'chandra'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'new_vision',
-    name: 'New Vision',
-    bnName: 'নিউ ভিশন',
-    routeString: 'Mirpur 1 ⇄ Farmgate ⇄ Motijheel',
-    stops: ['mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'motijheel'],
-    type: 'Local',
-    hours: '6:00 AM - 10:30 PM'
-  },
-  {
-    id: 'nur_e_makka',
-    name: 'Nur E Makka',
-    bnName: 'নূর এ মক্কা',
-    routeString: 'Mirpur 2 ⇄ Bashundhara ⇄ Malibagh',
-    stops: ['mirpur2', 'mirpur10', 'mirpur11', 'pallabi', 'kalshi', 'ecb', 'mes', 'kuril', 'jamuna_future_park', 'bashundhara', 'nadda', 'notun_bazar', 'bashtola', 'shahjadpur', 'badda', 'merul', 'rampura', 'hazipara', 'malibagh'],
-    type: 'Sitting',
-    hours: '5:30 AM - 10:30 PM'
-  },
-  {
-    id: 'pallabi_super',
-    name: 'Pallabi Super',
-    bnName: 'পল্লবী সুপার',
-    routeString: 'Gabtoli ⇄ Mirpur 10 ⇄ Abdullahpur',
-    stops: ['gabtoli', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'pallabi', 'kalshi', 'ecb', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'projapati',
-    name: 'Projapati',
-    bnName: 'প্রজাপতি',
-    routeString: 'Mohammadpur ⇄ Mirpur ⇄ Abdullahpur',
-    stops: ['bosila', 'mohammadpur', 'asad_gate', 'college_gate', 'shyamoli', 'kallyanpur', 'technical', 'ansar_camp', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'pallabi', 'kalshi', 'ecb', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'uttara', 'abdullahpur'],
-    type: 'Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
+  // ... Existing Routes ...
   {
     id: 'raida',
-    name: 'Raida Paribahan',
-    bnName: 'রাইদা পরিবহন',
-    routeString: 'Postagola ⇄ Jatrabari ⇄ Badda ⇄ Diabari',
-    stops: ['postagola', 'jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'diabari'],
-    type: 'Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'rajanigandha',
-    name: 'Rajanigandha',
-    bnName: 'রজনীগন্ধা',
-    routeString: 'Chittagong Road ⇄ Gulistan ⇄ Mohammadpur',
-    stops: ['chittagong_road', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'shahbag', 'science_lab', 'jigatola', 'shankar', 'mohammadpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'robrob',
-    name: 'Robrob',
-    bnName: 'রবরব',
-    routeString: 'Gabtoli ⇄ Banani ⇄ Banasree',
-    stops: ['gabtoli', 'technical', 'ansar_camp', 'mirpur1', 'mirpur2', 'mirpur10', 'pallabi', 'kalshi', 'ecb', 'mes', 'banani', 'kakali', 'gulshan1', 'badda', 'merul', 'rampura', 'banasree'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'runway',
-    name: 'Runway Express',
-    bnName: 'রানওয়ে এক্সপ্রেস',
-    routeString: 'Keraniganj ⇄ Farmgate ⇄ ECB',
-    stops: ['keraniganj', 'babubazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'agargaon', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'mirpur12', 'ecb'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'safety_druti',
-    name: 'Safety Druti',
-    bnName: 'সেফটি দ্রুতি',
-    routeString: 'Mirpur 12 ⇄ Khamar Bari ⇄ Azimpur',
-    stops: ['mirpur12', 'pallabi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'dhanmondi27', 'kalabagan', 'city_college', 'newmarket', 'nilkhet', 'azimpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'salsabil',
-    name: 'Salsabil',
-    bnName: 'ছালছাবিল',
-    routeString: 'Jatrabari ⇄ Malibagh ⇄ Airport ⇄ Gazipur',
-    stops: ['postagola', 'jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'rampura', 'merul', 'badda', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
-    type: 'Local',
-    hours: '5:30 AM - 11:30 PM'
-  },
-  {
-    id: 'savar_paribahan',
-    name: 'Savar Paribahan',
-    bnName: 'সাভার পরিবহন',
-    routeString: 'Savar ⇄ Farmgate ⇄ Sadarghat',
-    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'golap_shah_mazar', 'naya_bazar', 'sadarghat'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'shikor',
-    name: 'Shikhor Paribahan',
-    bnName: 'শিখর পরিবহন',
-    routeString: 'Mirpur 12 ⇄ Farmgate ⇄ Jatrabari',
-    stops: ['mirpur12', 'pallabi', 'purobi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'jatrabari'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'somoy',
-    name: 'Somoy',
-    bnName: 'সময়',
-    routeString: 'Sign Board ⇄ Gulistan ⇄ Mirpur 12',
-    stops: ['signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'bijoy_sarani', 'agargaon', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'pallabi', 'mirpur12'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'suveccha',
-    name: 'Suveccha',
-    bnName: 'শুভেচ্ছা',
-    routeString: 'Chittagong Road ⇄ Azimpur ⇄ Chandra',
-    stops: ['chittagong_road', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'baipayl', 'nandan_park', 'chandra'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'tanjil',
-    name: 'Tanjil Paribahan',
-    bnName: 'তানজিল পরিবহন',
-    routeString: 'Mirpur 1 ⇄ Farmgate ⇄ Sadarghat',
-    stops: ['mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'golap_shah_mazar', 'naya_bazar', 'sadarghat'],
-    type: 'Local',
-    hours: '5:30 AM - 10:30 PM'
-  },
-  {
-    id: 'tetulia',
-    name: 'Tetulia',
-    bnName: 'তেতুলিয়া',
-    routeString: 'Mohammadpur ⇄ Mirpur 10 ⇄ Abdullahpur',
-    stops: ['shia_masjid', 'adabor', 'shyamoli', 'shishu_mela', 'agargaon', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'purobi', 'pallabi', 'kalshi', 'ecb', 'mes', 'kuril', 'airport', 'jashimuddin', 'rajlakshmi', 'uttara', 'abdullahpur'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'thikana',
-    name: 'Thikana',
-    bnName: 'ঠিকানা',
-    routeString: 'Sign Board ⇄ Savar ⇄ Chandra',
-    stops: ['signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi27', 'asad_gate', 'college_gate', 'shyamoli', 'kallyanpur', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'chandra'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'trust_transport',
-    name: 'Trust Transport',
-    bnName: 'ট্রাষ্ট ট্রান্সপোর্ট',
-    routeString: 'Mirpur DOHS ⇄ Farmgate ⇄ Motijheel',
-    stops: ['mirpur12', 'ecb', 'kachukhet', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'motijheel'],
-    type: 'Sitting',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'transilva',
-    name: 'Transilva',
-    bnName: 'ট্রান্সিল্ভা',
-    routeString: 'Mirpur 1 ⇄ Shahbag ⇄ Jatrabari',
-    stops: ['mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'dhanmondi27', 'science_lab', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel', 'sayedabad', 'jatrabari'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: 'turag',
-    name: 'Turag',
-    bnName: 'তুরাগ',
-    routeString: 'Jatrabari ⇄ Badda ⇄ Tongi',
-    stops: ['jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'rampura', 'merul', 'badda', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi'],
+    name: 'Raida',
+    bnName: 'রাইদা',
+    routeString: 'Postagola ⇄ Diabari',
+    stops: ['postagola', 'jurain', 'dayaganj', 'tikatuli', 'maniknagar', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'rampura', 'merul', 'badda', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'diabari'],
     type: 'Local',
     hours: '6:00 AM - 11:00 PM'
   },
@@ -892,297 +216,26 @@ export const BUS_DATA: BusRoute[] = [
     id: 'victor_classic',
     name: 'Victor Classic',
     bnName: 'ভিক্টর ক্লাসিক',
-    routeString: 'Sadarghat ⇄ Rampura ⇄ Badda ⇄ Uttara',
-    stops: ['sadarghat', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'diabari'],
-    type: 'Semi-Sitting',
-    hours: '6:30 AM - 10:30 PM'
-  },
-  {
-    id: 'vip_27',
-    name: 'VIP 27',
-    bnName: 'ভিআইপি ২৭',
-    routeString: 'Azimpur ⇄ Banani ⇄ Gazipur',
-    stops: ['azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
+    routeString: 'Sadarghat ⇄ Diabari',
+    stops: ['sadarghat', 'victoria_park', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'merul', 'badda', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'diabari'],
     type: 'Local',
     hours: '6:00 AM - 11:00 PM'
   },
   {
-    id: 'welcome',
-    name: 'Welcome',
-    bnName: 'ওয়েলকাম',
-    routeString: 'Savar ⇄ Gabtoli ⇄ Farmgate ⇄ Motijheel',
-    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
-    type: 'Local',
-    hours: '5:30 AM - 10:30 PM'
-  },
-  {
-    id: 'winner',
-    name: 'Winner',
-    bnName: 'উইনার',
-    routeString: 'Azimpur ⇄ Mohakhali ⇄ Kuril',
-    stops: ['azimpur', 'eden_college', 'nilkhet', 'newmarket', 'science_lab', 'city_college', 'kalabagan', 'kawran_bazar', 'nabisco', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: '8no',
-    name: '8 No. Bus',
-    bnName: '৮নং বাস',
-    routeString: 'Gabtoli ⇄ Farmgate ⇄ Jatrabari',
-    stops: ['gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'motijheel', 'sayedabad', 'jatrabari'],
-    type: 'Local',
-    hours: '5:30 AM - 11:00 PM'
-  },
-  {
-    id: '6no',
-    name: '6 No. Bus',
-    bnName: '৬নং বাস',
-    routeString: 'Motijheel ⇄ Mohakhali ⇄ Notun Bazar',
-    stops: ['motijheel', 'gulistan', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'mogbazar', 'kawran_bazar', 'farmgate', 'bijoy_sarani', 'mohakhali', 'gulshan1', 'notun_bazar'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: '13no',
-    name: '13 No. Bus',
-    bnName: '১৩নং বাস',
-    routeString: 'Mohammadpur ⇄ Science Lab ⇄ Azimpur',
-    stops: ['mohammadpur', 'shankar', 'dhanmondi27', 'jigatola', 'city_college', 'science_lab', 'newmarket', 'nilkhet', 'azimpur'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  // Added Routes
-  {
-    id: '7no',
-    name: '7 No. Bus',
-    bnName: '৭নং বাস',
-    routeString: 'Gabtoli ⇄ Sadarghat',
-    stops: ['gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'dhanmondi27', 'science_lab', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'naya_bazar', 'sadarghat'],
-    type: 'Local',
-    hours: '6:00 AM - 11:00 PM'
-  },
-  {
-    id: '9no',
-    name: '9 No. Bus',
-    bnName: '৯নং বাস',
-    routeString: 'College Gate ⇄ Pallabi',
-    stops: ['college_gate', 'shyamoli', 'kallyanpur', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'pallabi'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'champion',
-    name: 'Champion',
-    bnName: 'চ্যাম্পিয়ন',
-    routeString: 'Vashantek ⇄ Gabtoli',
-    stops: ['vashantek', 'mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'gabtoli'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'd_link',
-    name: 'D Link',
-    bnName: 'ডি লিংক',
-    routeString: 'Fulbaria ⇄ Dhamrai',
-    stops: ['fulbaria', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'dhamrai'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'deepan',
-    name: 'Deepan',
-    bnName: 'দিপান',
-    routeString: 'Mohammadpur ⇄ Arambagh',
-    stops: ['tajmahal_road', 'shankar', 'jigatola', 'city_college', 'science_lab', 'shahbag', 'matsya_bhaban', 'paltan', 'gulistan', 'motijheel', 'arambagh'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'gazipur_paribahan',
-    name: 'Gazipur Paribahan',
-    bnName: 'গাজীপুর পরিবহন',
-    routeString: 'Motijheel ⇄ Shib Bari',
-    stops: ['motijheel', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'mogbazar', 'nabisco', 'mohakhali', 'chairman_bari', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur', 'shib_bari'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'green_anabil',
-    name: 'Green Anabil',
-    bnName: 'গ্রীন অনাবিল',
-    routeString: 'Sign Board ⇄ Gazipur',
-    stops: ['chashara', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'green_dhaka',
-    name: 'Green Dhaka',
-    bnName: 'গ্রীন ঢাকা',
-    routeString: 'Motijheel ⇄ Abdullahpur',
-    stops: ['motijheel', 'gulistan', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
-    type: 'Sitting',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'himachal',
-    name: 'Himachal',
-    bnName: 'হিমাচল',
-    routeString: 'Mirpur ⇄ Khilgaon',
-    stops: ['sony_cinema', 'mirpur10', 'kazipara', 'shewrapara', 'mohakhali', 'gulshan1', 'badda', 'rampura', 'khilgaon'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'itihash',
-    name: 'Itihash',
-    bnName: 'ইতিহাস',
-    routeString: 'Mirpur 14 ⇄ Chandra',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'nobinagar', 'baipayl', 'nandan_park', 'chandra'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'jm_super',
-    name: 'JM Super',
-    bnName: 'জে এম সুপার',
+    id: 'turag',
+    name: 'Turag',
+    bnName: 'তুরাগ',
     routeString: 'Jatrabari ⇄ Tongi',
-    stops: ['jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi'],
+    stops: ['jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'rampura', 'merul', 'badda', 'uttar_badda', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'khajababa',
-    name: 'Khajababa',
-    bnName: 'খাজা বাবা',
-    routeString: 'Jatrabari ⇄ Mirpur 12',
-    stops: ['jatrabari', 'sayedabad', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'agargaon', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'purobi', 'pallabi', 'mirpur12'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'kironmala',
-    name: 'Kironmala',
-    bnName: 'কিরণমালা',
-    routeString: 'Chiriyakhana ⇄ Konabari',
-    stops: ['chiriyakhana', 'mirpur1', 'sony_cinema', 'rupnagar', 'birulia', 'ashulia', 'zirabo', 'konabari'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'lal_sabuj',
-    name: 'Lal Sabuj (AC)',
-    bnName: 'লাল সবুজ এসি',
-    routeString: 'Nandan Park ⇄ Motijheel',
-    stops: ['nandan_park', 'baipayl', 'nobinagar', 'savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
-    type: 'AC',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'meshkat',
-    name: 'Meshkat',
-    bnName: 'মেসকাত',
-    routeString: 'Mohammadpur ⇄ Chittagong Road',
-    stops: ['mohammadpur', 'asad_gate', 'farmgate', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'paltan', 'motijheel', 'sayedabad', 'jatrabari', 'shonir_akhra', 'rayerbag', 'matuail', 'signboard', 'chittagong_road'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'mirpur_united',
-    name: 'Mirpur United',
-    bnName: 'মিরপুর ইউনাইটেড',
-    routeString: 'Sadarghat ⇄ Mirpur 12',
-    stops: ['sadarghat', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'agargaon', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'purobi', 'pallabi', 'mirpur12'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'mm_lovely',
-    name: 'MM Lovely',
-    bnName: 'এম এম লাভলী',
-    routeString: 'Savar ⇄ Sign Board',
-    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'mogbazar', 'mouchak', 'malibagh', 'bashabo', 'mugdapara', 'maniknagar', 'sayedabad', 'jatrabari', 'shonir_akhra', 'rayerbag', 'matuail', 'signboard'],
-    type: 'Sitting',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'moitri',
-    name: 'Moitri',
-    bnName: 'মৈত্রী',
-    routeString: 'Mohammadpur ⇄ Arambagh',
-    stops: ['mohammadpur', 'shankar', 'dhanmondi27', 'jigatola', 'city_college', 'science_lab', 'bata_signal', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel', 'arambagh'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'nabakali',
-    name: 'Nabakali',
-    bnName: 'নবকালি',
-    routeString: 'Chiriyakhana ⇄ Keraniganj',
-    stops: ['chiriyakhana', 'mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'dhanmondi27', 'shukrabad', 'kalabagan', 'science_lab', 'katabon', 'shahbag', 'high_court', 'fulbaria', 'naya_bazar', 'babubazar', 'keraniganj'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'nilachol',
-    name: 'Nilachol',
-    bnName: 'নিলাচল',
-    routeString: 'Chittagong Road ⇄ Paturia',
-    stops: ['chittagong_road', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'nobinagar', 'manikganj', 'paturia'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'nishorgo',
-    name: 'Nishorgo',
-    bnName: 'নিসর্গ',
-    routeString: 'Mirpur 14 ⇄ Azimpur',
-    stops: ['mirpur14', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'asad_gate', 'shyamoli', 'mohammadpur', 'shankar', 'jigatola', 'science_lab', 'newmarket', 'nilkhet', 'eden_college', 'azimpur'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'omama',
-    name: 'Omama',
-    bnName: 'ওমামা',
-    routeString: 'Motijheel ⇄ Airport',
-    stops: ['motijheel', 'paltan', 'press_club', 'matsya_bhaban', 'high_court', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'jahangir_gate', 'mohakhali', 'chairman_bari', 'sainik_club', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'one_transport',
-    name: 'One Transport',
-    bnName: 'ওয়ান ট্রান্সপোর্ট',
-    routeString: 'Nandan Park ⇄ Motijheel',
-    stops: ['nandan_park', 'baipayl', 'nobinagar', 'savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'paristhan',
-    name: 'Paristhan',
-    bnName: 'পরিস্থান',
-    routeString: 'Bosila ⇄ Abdullahpur',
-    stops: ['bosila', 'mohammadpur', 'asad_gate', 'college_gate', 'shyamoli', 'kallyanpur', 'technical', 'ansar_camp', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'abdullahpur'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'power_paribahan',
-    name: 'Power Paribahan',
-    bnName: 'পাওয়ার পরিবহন',
-    routeString: 'Mirpur 14 ⇄ Konabari',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'konabari', 'rupnagar', 'beribadh', 'birulia', 'ashulia', 'zirabo', 'konabari'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'prattay',
-    name: 'Prattay',
-    bnName: 'প্রত্যয়',
-    routeString: 'Gabtoli ⇄ Babubazar',
-    stops: ['gabtoli', 'beribadh', 'keraniganj', 'babubazar'],
+    id: 'akash',
+    name: 'Akash',
+    bnName: 'আকাশ',
+    routeString: 'Kadamtali ⇄ Tongi',
+    stops: ['keraniganj', 'babubazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'merul', 'badda', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1191,233 +244,846 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Prochesta',
     bnName: 'প্রচেষ্টা',
     routeString: 'Maowa ⇄ Abdullahpur',
-    stops: ['maowa', 'keraniganj', 'babubazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
+    stops: ['maowa', 'keraniganj', 'babubazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'merul', 'badda', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'onabil',
+    name: 'Anabil',
+    bnName: 'অনাবিল',
+    routeString: 'Signboard ⇄ Gazipur',
+    stops: ['signboard', 'shonir_akhra', 'jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'hazipara', 'rampura', 'merul', 'badda', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
+    type: 'Sitting',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'chhayabithi',
+    name: 'Chhayabithi',
+    bnName: 'ছায়াবীথি',
+    routeString: 'Savar ⇄ Jatrabari',
+    stops: ['savar', 'hemayetpur', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'asad_gate', 'kalabagan', 'science_lab', 'shahbag', 'press_club', 'gulistan', 'sayedabad', 'jatrabari'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'provati_banasree',
-    name: 'Provati Banasree',
-    bnName: 'প্রভাতী বনশ্রী',
-    routeString: 'Gulistan ⇄ Gazipur',
-    stops: ['fulbaria', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mogbazar', 'satrasta', 'nabisco', 'mohakhali', 'chairman_bari', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
+    id: 'bihanga',
+    name: 'Bihanga',
+    bnName: 'বিহঙ্গ',
+    routeString: 'Mirpur 12 ⇄ Azimpur',
+    stops: ['mirpur12', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'newmarket', 'nilkhet', 'azimpur'],
+    type: 'Sitting',
+    hours: '6:30 AM - 10:30 PM'
+  },
+  {
+    id: 'projapoti',
+    name: 'Projapoti',
+    bnName: 'প্রজাপতি',
+    routeString: 'Bosila ⇄ Abdullahpur',
+    stops: ['bosila', 'mohammadpur', 'asad_gate', 'college_gate', 'shyamoli', 'kallyanpur', 'technical', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'uttara', 'abdullahpur'],
+    type: 'Local',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'paristhan',
+    name: 'Paristhan',
+    bnName: 'পরিস্থান',
+    routeString: 'Bosila ⇄ Abdullahpur',
+    stops: ['bosila', 'mohammadpur', 'asad_gate', 'college_gate', 'shyamoli', 'kallyanpur', 'technical', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'uttara', 'abdullahpur'],
+    type: 'Local',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'alif_mirpur',
+    name: 'Alif (Mirpur)',
+    bnName: 'আলিফ (মিরপুর)',
+    routeString: 'Mirpur 1 ⇄ Banasree',
+    stops: ['mirpur1', 'mirpur2', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda', 'merul', 'rampura', 'banasree'],
+    type: 'Local',
+    hours: '6:30 AM - 10:00 PM'
+  },
+  {
+    id: 'alif_azampur',
+    name: 'Alif (Azampur)',
+    bnName: 'আলিফ (আজমপুর)',
+    routeString: 'Mohammadpur ⇄ Abdullahpur',
+    stops: ['mohammadpur', 'adabor', 'shyamoli', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'banani', 'kakali', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'raja_city',
-    name: 'Raja City',
-    bnName: 'রাজা সিটি',
-    routeString: 'Postagola ⇄ Ghatar Char',
-    stops: ['postagola', 'jurain', 'dayaganj', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'shahbag', 'bata_signal', 'science_lab', 'city_college', 'jigatola', 'shankar', 'mohammadpur', 'bosila', 'ghatar_char'],
+    id: 'bahon',
+    name: 'Bahon',
+    bnName: 'বাহন',
+    routeString: 'Mirpur 14 ⇄ Kamlapur',
+    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'mirpur1', 'technical', 'kallyanpur', 'shyamoli', 'asad_gate', 'dhanmondi27', 'kalabagan', 'science_lab', 'shahbag', 'press_club', 'paltan', 'motijheel', 'kamalapur'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'bikalpa',
+    name: 'Bikalpa',
+    bnName: 'বিকল্প',
+    routeString: 'Mirpur 12 ⇄ Motijheel',
+    stops: ['mirpur12', 'pallabi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'press_club', 'paltan', 'motijheel'],
+    type: 'Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'shikhor',
+    name: 'Shikhor',
+    bnName: 'শিখর',
+    routeString: 'Mirpur 12 ⇄ Jatrabari',
+    stops: ['mirpur12', 'pallabi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gulistan', 'sayedabad', 'jatrabari'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'rajdhani',
-    name: 'Rajdhani',
-    bnName: 'রাজধানী',
-    routeString: 'Hemayetpur ⇄ Demra',
-    stops: ['hemayetpur', 'gabtoli', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'kuril', 'jamuna_future_park', 'bashundhara', 'nadda', 'notun_bazar', 'bashtola', 'shahjadpur', 'badda', 'merul', 'rampura', 'banasree', 'demra'],
+    id: 'himachal',
+    name: 'Himachal',
+    bnName: 'হিমাচল',
+    routeString: 'Mirpur 12 ⇄ Narayanganj',
+    stops: ['mirpur12', 'pallabi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'farmgate', 'shahbag', 'gulistan', 'signboard', 'chashara', 'narayanganj'],
+    type: 'Sitting',
+    hours: '6:30 AM - 9:30 PM'
+  },
+  {
+    id: 'transilva',
+    name: 'Transilva',
+    bnName: 'ট্রান্সিল্ভা',
+    routeString: 'Mirpur 1 ⇄ Jatrabari',
+    stops: ['mirpur1', 'technical', 'kallyanpur', 'shyamoli', 'asad_gate', 'dhanmondi27', 'kalabagan', 'science_lab', 'shahbag', 'press_club', 'paltan', 'gulistan', 'sayedabad', 'jatrabari'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'ramjan',
-    name: 'Ramjan',
-    bnName: 'রমজান',
+    id: 'winner',
+    name: 'Winner',
+    bnName: 'উইনার',
+    routeString: 'Azimpur ⇄ Kuril',
+    stops: ['azimpur', 'newmarket', 'science_lab', 'kalabagan', 'panthapath', 'kawran_bazar', 'nabisco', 'mohakhali', 'gulshan1', 'badda', 'notun_bazar', 'bashundhara', 'jamuna_future_park', 'kuril'],
+    type: 'Local',
+    hours: '6:30 AM - 10:00 PM'
+  },
+  {
+    id: 'vip27',
+    name: 'VIP 27',
+    bnName: 'ভিআইপি ২৭',
+    routeString: 'Azimpur ⇄ Gazipur',
+    stops: ['azimpur', 'newmarket', 'kalabagan', 'asad_gate', 'khamar_bari', 'bijoy_sarani', 'mohakhali', 'banani', 'airport', 'uttara', 'abdullahpur', 'tongi', 'gazipur'],
+    type: 'Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'bhuiyan',
+    name: 'Bhuiyan',
+    bnName: 'ভূঁইয়া',
+    routeString: 'Mohammadpur ⇄ Abdullahpur',
+    stops: ['mohammadpur', 'shyamoli', 'agargaon', 'bijoy_sarani', 'mohakhali', 'banani', 'airport', 'uttara', 'abdullahpur'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'brtc_ac_motijheel',
+    name: 'BRTC (AC)',
+    bnName: 'বিআরটিসি (এসি)',
+    routeString: 'Abdullahpur ⇄ Motijheel',
+    stops: ['abdullahpur', 'uttara', 'airport', 'khilkhet', 'banani', 'mohakhali', 'farmgate', 'shahbag', 'paltan', 'motijheel'],
+    type: 'AC',
+    hours: '7:00 AM - 9:00 PM'
+  },
+  {
+    id: 'achim',
+    name: 'Achim Paribahan',
+    bnName: 'আছিম পরিবহন',
     routeString: 'Gabtoli ⇄ Demra',
-    stops: ['gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'mohammadpur', 'shankar', 'jigatola', 'city_college', 'science_lab', 'bata_signal', 'shahbag', 'matsya_bhaban', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'banasree', 'demra'],
+    stops: ['gabtoli', 'technical', 'mirpur1', 'mirpur2', 'mirpur10', 'kalshi', 'ecb', 'kuril', 'bashundhara', 'notun_bazar', 'badda', 'rampura', 'banasree', 'demra'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'agradut',
+    name: 'Agradut',
+    bnName: 'অগ্রদূত',
+    routeString: 'Savar ⇄ Notun Bazar',
+    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'agargaon', 'mohakhali', 'gulshan1', 'badda', 'notun_bazar'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'rois',
-    name: 'Rois',
-    bnName: 'রাইস',
-    routeString: 'Mirpur ⇄ Banasree',
-    stops: ['sony_cinema', 'mirpur2', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'mohakhali', 'gulshan1', 'badda', 'rampura', 'banasree'],
+    id: 'ajmeri',
+    name: 'Ajmeri Glory',
+    bnName: 'আজমেরী গ্লোরী',
+    routeString: 'Sadarghat ⇄ Chandra',
+    stops: ['sadarghat', 'gulistan', 'paltan', 'mouchak', 'mohakhali', 'banani', 'airport', 'tongi', 'gazipur', 'chandra'],
+    type: 'Local',
+    hours: '5:30 AM - 10:00 PM'
+  },
+  {
+    id: 'akik',
+    name: 'Akik',
+    bnName: 'আকিক',
+    routeString: 'Ansar Camp ⇄ Badda',
+    stops: ['ansar_camp', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'kalshi', 'ecb', 'kuril', 'bashundhara', 'notun_bazar', 'badda', 'uttar_badda'],
+    type: 'Local',
+    hours: '6:30 AM - 10:00 PM'
+  },
+  {
+    id: 'al_makka',
+    name: 'Al Makka',
+    bnName: 'আল মক্কা',
+    routeString: 'Motijheel ⇄ Mirpur 1',
+    stops: ['motijheel', 'gulistan', 'paltan', 'kakrail', 'mouchak', 'mogbazar', 'mohakhali', 'banani', 'kalshi', 'mirpur10', 'mirpur1'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'rongdhonu',
-    name: 'Rongdhonu',
-    bnName: 'রংধনু',
-    routeString: 'Adabor ⇄ Postagola',
-    stops: ['adabor', 'mohammadpur', 'shia_masjid', 'shyamoli', 'college_gate', 'asad_gate', 'kalabagan', 'science_lab', 'katabon', 'bata_signal', 'shahbag', 'kakrail', 'fokirapul', 'motijheel', 'dayaganj', 'postagola'],
+    id: 'arnob',
+    name: 'Arnob',
+    bnName: 'অরনব',
+    routeString: 'Hemayetpur ⇄ Demra',
+    stops: ['hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'agargaon', 'mohakhali', 'gulshan1', 'badda', 'rampura', 'banasree', 'demra'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'rupa',
-    name: 'Rupa Paribahan',
-    bnName: 'রুপা পরিবহন',
-    routeString: 'Gabtoli ⇄ Vashantek',
-    stops: ['gabtoli', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur14', 'vashantek'],
+    id: 'ashulia_classic',
+    name: 'Ashulia Classic',
+    bnName: 'আশুলিয়া ক্লাসিক',
+    routeString: 'Nobinagar ⇄ Satrasta',
+    stops: ['nobinagar', 'baipayl', 'ashulia', 'abdullahpur', 'uttara', 'airport', 'khilkhet', 'kuril', 'kakali', 'mohakhali', 'nabisco', 'satrasta'],
     type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
+    hours: '6:00 AM - 9:00 PM'
   },
   {
-    id: 'rupkotha',
-    name: 'Rupkotha',
-    bnName: 'রুপকথা',
-    routeString: 'Gabtoli ⇄ Abdullahpur',
-    stops: ['gabtoli', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
+    id: 'asmani',
+    name: 'Asmani',
+    bnName: 'আসমানী',
+    routeString: 'Dhour ⇄ Madanpur',
+    stops: ['dhour', 'abdullahpur', 'uttara', 'airport', 'khilkhet', 'kuril', 'bashundhara', 'notun_bazar', 'badda', 'rampura', 'banasree', 'demra', 'signboard', 'madanpur'],
     type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
+    hours: '6:00 AM - 9:00 PM'
   },
   {
-    id: 'sakalpa',
-    name: 'Sakalpa',
-    bnName: 'স্বকল্প',
+    id: 'ayat',
+    name: 'Ayat',
+    bnName: 'আয়াত',
     routeString: 'Chiriyakhana ⇄ Kamalapur',
-    stops: ['chiriyakhana', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'farmgate', 'bangla_motor', 'mogbazar', 'malibagh', 'kamalapur'],
+    stops: ['chiriyakhana', 'mirpur2', 'mirpur10', 'kazipara', 'agargaon', 'farmgate', 'kawran_bazar', 'mogbazar', 'malibagh', 'kamalapur'],
+    type: 'Semi-Sitting',
+    hours: '6:30 AM - 10:00 PM'
+  },
+  {
+    id: 'baishakhi',
+    name: 'Baishakhi',
+    bnName: 'বৈশাখী',
+    routeString: 'Savar ⇄ Notun Bazar',
+    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'agargaon', 'mohakhali', 'gulshan1', 'badda', 'notun_bazar'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'shadhin',
-    name: 'Shadhin',
-    bnName: 'স্বাধীন',
-    routeString: 'Bosila ⇄ Demra',
-    stops: ['bosila', 'mohammadpur', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'mogbazar', 'mouchak', 'hazipara', 'rampura', 'banasree', 'demra'],
+    id: 'balaka',
+    name: 'Balaka',
+    bnName: 'বলাকা',
+    routeString: 'Sayedabad ⇄ Gazipur',
+    stops: ['sayedabad', 'kamalapur', 'malibagh', 'mogbazar', 'mohakhali', 'banani', 'airport', 'uttara', 'tongi', 'gazipur'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'basumati',
+    name: 'Basumati',
+    bnName: 'বাসুমতি',
+    routeString: 'Gabtoli ⇄ Gazipur',
+    stops: ['gabtoli', 'mirpur1', 'mirpur10', 'kalshi', 'ecb', 'kuril', 'airport', 'uttara', 'tongi', 'gazipur'],
+    type: 'Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'dewan',
+    name: 'Dewan',
+    bnName: 'দেওয়ান',
+    routeString: 'Azimpur ⇄ Kuril',
+    stops: ['azimpur', 'newmarket', 'science_lab', 'shahbag', 'kawran_bazar', 'farmgate', 'mohakhali', 'gulshan1', 'badda', 'notun_bazar', 'kuril'],
+    type: 'Local',
+    hours: '6:30 AM - 10:00 PM'
+  },
+  {
+    id: 'dhaka_paribahan',
+    name: 'Dhaka Paribahan',
+    bnName: 'ঢাকা পরিবহন',
+    routeString: 'Gulistan ⇄ Gazipur',
+    stops: ['gulistan', 'shahbag', 'farmgate', 'mohakhali', 'banani', 'uttara', 'gazipur'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'shadhin_express',
-    name: 'Shadhin Express',
-    bnName: 'স্বাধীন এক্সপ্রেস',
-    routeString: 'Mirpur 12 ⇄ Maowa',
-    stops: ['mirpur12', 'pallabi', 'purobi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'golap_shah_mazar', 'naya_bazar', 'babubazar', 'keraniganj', 'maowa'],
+    id: 'falgun',
+    name: 'Falgun',
+    bnName: 'ফাল্গুন',
+    routeString: 'Azimpur ⇄ Uttara',
+    stops: ['azimpur', 'newmarket', 'shahbag', 'kakrail', 'malibagh', 'rampura', 'badda', 'notun_bazar', 'kuril', 'airport', 'uttara'],
+    type: 'Local',
+    hours: '6:30 AM - 10:00 PM'
+  },
+  {
+    id: 'gazipur_paribahan',
+    name: 'Gazipur Paribahan',
+    bnName: 'গাজীপুর পরিবহন',
+    routeString: 'Motijheel ⇄ Gazipur',
+    stops: ['motijheel', 'paltan', 'kakrail', 'malibagh', 'mohakhali', 'banani', 'airport', 'uttara', 'tongi', 'gazipur'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'jabale_noor',
+    name: 'Jabale Noor',
+    bnName: 'জাবালে নুর',
+    routeString: 'Agargaon ⇄ Abdullahpur',
+    stops: ['agargaon', 'shewrapara', 'mirpur10', 'pallabi', 'kalshi', 'kuril', 'airport', 'abdullahpur'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'kanak',
+    name: 'Kanak',
+    bnName: 'কনক',
+    routeString: 'Mirpur 1 ⇄ Abdullahpur',
+    stops: ['mirpur1', 'mirpur2', 'mirpur10', 'kalshi', 'ecb', 'kuril', 'airport', 'uttara', 'abdullahpur'],
+    type: 'Local',
+    hours: '6:30 AM - 10:30 PM'
+  },
+  {
+    id: 'labbaik',
+    name: 'Labbaik',
+    bnName: 'লাব্বাইক',
+    routeString: 'Savar ⇄ Signboard',
+    stops: ['savar', 'hemayetpur', 'gabtoli', 'shyamoli', 'asad_gate', 'farmgate', 'mogbazar', 'malibagh', 'bashabo', 'sayedabad', 'jatrabari', 'signboard'],
+    type: 'Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'manjil',
+    name: 'Manjil Express',
+    bnName: 'মাঞ্জিল এক্সপ্রেস',
+    routeString: 'Chittagong Road ⇄ Abdullahpur',
+    stops: ['chittagong_road', 'signboard', 'jatrabari', 'sayedabad', 'gulistan', 'paltan', 'malibagh', 'mohakhali', 'banani', 'airport', 'abdullahpur'],
+    type: 'Local',
+    hours: '5:30 AM - 10:30 PM'
+  },
+  {
+    id: 'modhumita',
+    name: 'Modhumita',
+    bnName: 'মধুমিতা',
+    routeString: 'Chiriyakhana ⇄ Demra',
+    stops: ['chiriyakhana', 'mirpur1', 'technical', 'shyamoli', 'agargaon', 'mohakhali', 'gulshan1', 'rampura', 'banasree', 'demra'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'shahria',
-    name: 'Shahria Enterprise',
-    bnName: 'শাহরিয়া এন্টারপ্রাইজ',
-    routeString: 'Gabtoli ⇄ Postagola',
-    stops: ['gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'dhanmondi27', 'shukrabad', 'kalabagan', 'city_college', 'science_lab', 'katabon', 'shahbag', 'matsya_bhaban', 'kakrail', 'fokirapul', 'arambagh', 'motijheel', 'tikatuli', 'dayaganj', 'gandaria', 'jurain', 'postagola'],
+    id: 'moitri',
+    name: 'Moitri',
+    bnName: 'মৈত্রী',
+    routeString: 'Mohammadpur ⇄ Arambagh',
+    stops: ['mohammadpur', 'jigatola', 'science_lab', 'shahbag', 'press_club', 'gulistan', 'motijheel', 'arambagh'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'moumita',
+    name: 'Moumita',
+    bnName: 'মৌমিতা',
+    routeString: 'Chashara ⇄ Chandra',
+    stops: ['chashara', 'signboard', 'jatrabari', 'gulistan', 'azimpur', 'newmarket', 'kalabagan', 'shyamoli', 'technical', 'gabtoli', 'savar', 'nandan_park', 'chandra'],
+    type: 'Local',
+    hours: '5:30 AM - 10:00 PM'
+  },
+  {
+    id: 'nur_e_makka',
+    name: 'Nur E Makka',
+    bnName: 'নূর এ মক্কা',
+    routeString: 'Chiriyakhana ⇄ Malibagh',
+    stops: ['chiriyakhana', 'mirpur2', 'mirpur10', 'kalshi', 'ecb', 'kuril', 'bashundhara', 'notun_bazar', 'badda', 'rampura', 'malibagh'],
+    type: 'Sitting',
+    hours: '5:30 AM - 10:30 PM'
+  },
+  {
+    id: 'pallabi_super',
+    name: 'Pallabi Super',
+    bnName: 'পল্লবী সুপার',
+    routeString: 'Gabtoli ⇄ Abdullahpur',
+    stops: ['gabtoli', 'mirpur1', 'mirpur10', 'kalshi', 'ecb', 'kuril', 'airport', 'uttara', 'abdullahpur'],
+    type: 'Local',
+    hours: '6:00 AM - 10:30 PM'
+  },
+  {
+    id: 'rajanigandha',
+    name: 'Rajanigandha',
+    bnName: 'রজনীগন্ধা',
+    routeString: 'Chittagong Road ⇄ Mohammadpur',
+    stops: ['chittagong_road', 'signboard', 'jatrabari', 'gulistan', 'press_club', 'shahbag', 'science_lab', 'jigatola', 'mohammadpur'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'safety',
+    name: 'Safety Druti',
+    bnName: 'সেফটি দ্রুতি',
+    routeString: 'Mirpur 12 ⇄ Azimpur',
+    stops: ['mirpur12', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'khamar_bari', 'dhanmondi27', 'newmarket', 'azimpur'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
     id: 'shatabdi',
     name: 'Shatabdi',
-    bnName: 'শতাব্দী',
-    routeString: 'Motijheel ⇄ Kamarpara',
-    stops: ['motijheel', 'paltan', 'kakrail', 'malibagh', 'mouchak', 'mogbazar', 'satrasta', 'nabisco', 'mohakhali', 'chairman_bari', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'kamarpara'],
+    bnName: 'শতাব্দি',
+    routeString: 'Motijheel ⇄ Abdullahpur',
+    stops: ['motijheel', 'paltan', 'malibagh', 'mohakhali', 'banani', 'airport', 'uttara', 'abdullahpur'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'siam',
-    name: 'Siam Transport',
-    bnName: 'সিয়াম ট্রান্সপোর্ট',
-    routeString: 'Banasree ⇄ Nobinagar',
-    stops: ['banasree', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'kamarpara', 'dhour', 'beribadh', 'ashulia', 'zirabo', 'fantasy_kingdom', 'baipayl', 'nobinagar'],
+    id: 'somoy',
+    name: 'Somoy',
+    bnName: 'সময়',
+    routeString: 'Signboard ⇄ Mirpur 12',
+    stops: ['signboard', 'jatrabari', 'gulistan', 'press_club', 'shahbag', 'kawran_bazar', 'farmgate', 'agargaon', 'kazipara', 'mirpur10', 'mirpur12'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'skyline',
-    name: 'Skyline',
-    bnName: 'স্কাই লাইন',
-    routeString: 'Sadarghat ⇄ Gazipur',
-    stops: ['sadarghat', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'nabisco', 'mohakhali', 'chairman_bari', 'sainik_club', 'banani', 'kakali', 'mes', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'somota',
-    name: 'Somota',
-    bnName: 'সমতা',
-    routeString: 'Chittagong Road ⇄ Chiriyakhana',
-    stops: ['chittagong_road', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'chankhar_pul', 'bakshi_bazar', 'dhakeshwari', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'ansar_camp', 'mirpur1', 'chiriyakhana'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'somoy_niyantran',
-    name: 'Somoy Niyantran',
-    bnName: 'সময় নিয়ন্ত্রণ',
-    routeString: 'Mirpur 12 ⇄ Keraniganj',
-    stops: ['mirpur12', 'pallabi', 'purobi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'golap_shah_mazar', 'naya_bazar', 'babubazar', 'keraniganj'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'super',
-    name: 'Super',
-    bnName: 'সুপার',
-    routeString: 'Gulistan ⇄ Nobinagar',
-    stops: ['gulistan', 'shahbag', 'farmgate', 'shyamoli', 'gabtoli', 'savar', 'nobinagar'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'supravat',
-    name: 'Supravat',
+    id: 'suprobhat',
+    name: 'Suprovat',
     bnName: 'সুপ্রভাত',
     routeString: 'Sadarghat ⇄ Tongi',
-    stops: ['victoria_park', 'sadarghat', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi'],
+    stops: ['sadarghat', 'gulistan', 'malibagh', 'rampura', 'badda', 'notun_bazar', 'kuril', 'airport', 'uttara', 'tongi'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'swajan',
-    name: 'Swajan',
-    bnName: 'স্বজন',
-    routeString: 'Savar ⇄ Sadarghat',
-    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'golap_shah_mazar', 'naya_bazar', 'sadarghat'],
+    id: 'thikana',
+    name: 'Thikana',
+    bnName: 'ঠিকানা',
+    routeString: 'Signboard ⇄ Chandra',
+    stops: ['signboard', 'jatrabari', 'gulistan', 'azimpur', 'newmarket', 'shyamoli', 'technical', 'gabtoli', 'savar', 'nandan_park', 'chandra'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'talukdar',
-    name: 'Talukdar',
-    bnName: 'তালুকদার',
-    routeString: 'Chiriyakhana ⇄ Chittagong Road',
-    stops: ['chiriyakhana', 'mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'mogbazar', 'mouchak', 'malibagh', 'rajarbag', 'bashabo', 'mugdapara', 'maniknagar', 'sayedabad', 'jatrabari', 'shonir_akhra', 'rayerbag', 'matuail', 'signboard', 'chittagong_road'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'taranga_plus',
-    name: 'Taranga Plus',
-    bnName: 'তরঙ্গ প্লাস',
-    routeString: 'Mohammadpur ⇄ Banasree',
-    stops: ['mohammadpur', 'shankar', 'dhanmondi27', 'jigatola', 'city_college', 'science_lab', 'bata_signal', 'shahbag', 'matsya_bhaban', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'banasree'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'titas',
-    name: 'Titas',
-    bnName: 'তিতাস',
-    routeString: 'Chiriyakhana ⇄ Chandra',
-    stops: ['chiriyakhana', 'mirpur1', 'gabtoli', 'savar', 'nobinagar', 'chandra'],
-    type: 'Local',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
-    id: 'trust_ac',
-    name: 'Trust Transport (AC)',
-    bnName: 'ট্রাষ্ট ট্রান্সপোর্ট এসি',
-    routeString: 'Mirpur DOHS ⇄ Kawran Bazar',
-    stops: ['mirpur12', 'ecb', 'kachukhet', 'jahangir_gate', 'farmgate', 'kawran_bazar'],
+    id: 'trust',
+    name: 'Trust Transport',
+    bnName: 'ট্রাষ্ট ট্রান্সপোর্ট',
+    routeString: 'Mirpur DOHS ⇄ Motijheel',
+    stops: ['mirpur12', 'ecb', 'kachukhet', 'jahangir_gate', 'farmgate', 'shahbag', 'press_club', 'motijheel'],
     type: 'AC',
+    hours: '7:00 AM - 9:00 PM'
+  },
+  {
+    id: 'welcome',
+    name: 'Welcome',
+    bnName: 'ওয়েলকাম',
+    routeString: 'Nandan Park ⇄ Motijheel',
+    stops: ['nandan_park', 'savar', 'gabtoli', 'technical', 'shyamoli', 'asad_gate', 'farmgate', 'shahbag', 'press_club', 'gulistan', 'motijheel'],
+    type: 'Sitting',
+    hours: '5:30 AM - 10:30 PM'
+  },
+  // NEW ROUTES FROM DHAKA METRO FARE CHART VOL 1-5 (2022)
+  {
+    id: 'raja_city_malancha',
+    name: 'Raja City / Malancha',
+    bnName: 'রাজা সিটি / মালঞ্চ',
+    routeString: 'Ghatarchar ⇄ Mohammadpur ⇄ Demra',
+    stops: ['ghatar_char', 'washpur', 'bosila', 'mohammadpur', 'town_hall', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'kakrail', 'fokirapul', 'motijheel', 'tikatuli', 'kajla', 'konapara', 'demra'],
+    type: 'Local',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'tanjil_savar',
+    name: 'Tanjil / Savar',
+    bnName: 'তানজিল / সাভার',
+    routeString: 'Jagannath Univ ⇄ Gulistan ⇄ Chandra',
+    stops: ['jagannath_university', 'fulbaria', 'paltan', 'kakrail', 'mogbazar', 'mohakhali', 'airport', 'tongi', 'gazipur', 'konabari', 'chandra'],
+    type: 'Local',
+    hours: '5:30 AM - 10:00 PM'
+  },
+  {
+    id: 'meshkat_new',
+    name: 'Meshkat',
+    bnName: 'মেসকাত',
+    routeString: 'Gabtoli ⇄ Mirpur 10 ⇄ Rampura',
+    stops: ['gabtoli', 'technical', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'kakali', 'mohakhali', 'gulshan1', 'badda', 'merul', 'rampura'], // Approx based on chart
+    type: 'Local',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'himalay_chart',
+    name: 'Himalay',
+    bnName: 'হিমালয়',
+    routeString: 'Chiriyakhana ⇄ Jatrabari',
+    stops: ['chiriyakhana', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'kuril', 'notun_bazar', 'badda', 'rampura', 'malibagh', 'mugdapara', 'sayedabad', 'jatrabari'],
+    type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'victor_paribahan',
-    name: 'Victor Paribahan',
-    bnName: 'ভিক্টর পরিবহন',
-    routeString: 'Sadarghat ⇄ Kuril',
-    stops: ['sadarghat', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'hazipara', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 10:30 PM'
+    id: 'ghatarchar_sonargaon',
+    name: 'Ghatarchar-Sonargaon',
+    bnName: 'ঘাটারচর-সোনারগাঁও',
+    routeString: 'Ghatarchar ⇄ Mohammadpur ⇄ Sonargaon',
+    stops: ['ghatar_char', 'bosila', 'mohammadpur', 'shankar', 'shyamoli', 'dhanmondi27', 'jigatola', 'science_lab', 'shahbag', 'press_club', 'gulistan', 'sayedabad', 'shonir_akhra', 'rayerbag', 'signboard', 'madanpur'], // Approx
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'uttara_ghatarchar',
+    name: 'Uttara-Ghatarchar',
+    bnName: 'উত্তরা-ঘাটারচর',
+    routeString: 'Uttara (Diabari) ⇄ Mirpur ⇄ Ghatarchar',
+    stops: ['diabari', 'uttara', 'abdullahpur', 'kamarpara', 'dhour', 'mirpur1', 'technical', 'shyamoli', 'asad_gate', 'mohammadpur', 'bosila', 'ghatar_char'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'signboard_nobinagar',
+    name: 'Signboard-Nobinagar',
+    bnName: 'সাইনবোর্ড-নবীনগর',
+    routeString: 'Signboard ⇄ Farmgate ⇄ Nobinagar',
+    stops: ['signboard', 'jatrabari', 'sayedabad', 'mugdapara', 'khilgaon', 'rajarbag', 'mogbazar', 'bangla_motor', 'farmgate', 'asad_gate', 'kallyanpur', 'gabtoli', 'savar', 'nobinagar'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'kamrangirchar_konabari',
+    name: 'Kamrangirchar-Konabari',
+    bnName: 'কামরাঙ্গীরচর-কোনাবাড়ী',
+    routeString: 'Kamrangirchar ⇄ Mirpur ⇄ Konabari',
+    stops: ['kamrangirchar', 'mohammadpur', 'asad_gate', 'technical', 'mirpur1', 'rupnagar', 'diabari', 'dhour', 'zirabo', 'konabari'],
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'manikdi_azimpur',
+    name: 'Manikdi-Azimpur',
+    bnName: 'মানিকদি-আজিমপুর',
+    routeString: 'Manikdi ⇄ ECB ⇄ Azimpur',
+    stops: ['manikdi', 'kalshi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'shishu_mela', 'college_gate', 'shukrabad', 'newmarket', 'azimpur'],
+    type: 'Local',
+    hours: '6:30 AM - 10:00 PM'
+  },
+  {
+    id: 'japan_garden_dhour',
+    name: 'Japan Garden-Dhour',
+    bnName: 'জাপান গার্ডেন-ধউর',
+    routeString: 'Adabor ⇄ Agargaon ⇄ Dhour',
+    stops: ['adabor', 'shyamoli', 'agargaon', 'shewrapara', 'mirpur10', 'kalshi', 'ecb', 'airport', 'abdullahpur', 'dhour'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'banasree_savar',
+    name: 'Banasree-Savar',
+    bnName: 'বনশ্রী-সাভার',
+    routeString: 'Banasree ⇄ Mohakhali ⇄ Savar',
+    stops: ['banasree', 'rampura', 'gulshan1', 'mohakhali', 'agargaon', 'shyamoli', 'kallyanpur', 'gabtoli', 'amin_bazar', 'savar'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'basila_dhour',
+    name: 'Bosila-Dhour',
+    bnName: 'বসিলা-ধউর',
+    routeString: 'Bosila ⇄ Mirpur ⇄ Dhour',
+    stops: ['bosila', 'asad_gate', 'shyamoli', 'kallyanpur', 'technical', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'kuril', 'airport', 'jashimuddin', 'abdullahpur', 'kamarpara', 'dhour'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'vashantek_nandan',
+    name: 'Vashantek-Nandan',
+    bnName: 'ভাষানটেক-নন্দন',
+    routeString: 'Vashantek ⇄ Mirpur ⇄ Nandan Park',
+    stops: ['vashantek', 'mirpur14', 'mirpur10', 'mirpur1', 'technical', 'gabtoli', 'hemayetpur', 'savar', 'nobinagar', 'nandan_park'],
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'kuril_azimpur',
+    name: 'Kuril-Azimpur',
+    bnName: 'কুড়িল-আজিমপুর',
+    routeString: 'Kuril ⇄ Mohakhali ⇄ Azimpur',
+    stops: ['kuril', 'notun_bazar', 'badda', 'gulshan1', 'mohakhali', 'farmgate', 'shahbag', 'science_lab', 'newmarket', 'azimpur'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'azimpur_dhour',
+    name: 'Azimpur-Dhour',
+    bnName: 'আজিমপুর-ধউর',
+    routeString: 'Azimpur ⇄ Farmgate ⇄ Dhour',
+    stops: ['azimpur', 'newmarket', 'kalabagan', 'asad_gate', 'shyamoli', 'technical', 'mirpur1', 'mirpur10', 'kalshi', 'kuril', 'airport', 'abdullahpur', 'kamarpara', 'dhour'], // Composite of segments
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'dhour_madanpur',
+    name: 'Dhour-Madanpur',
+    bnName: 'ধউর-মদনপুর',
+    routeString: 'Dhour ⇄ Airport ⇄ Madanpur',
+    stops: ['dhour', 'abdullahpur', 'airport', 'kuril', 'badda', 'rampura', 'banasree', 'demra', 'signboard', 'madanpur'],
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'nobinagar_dhour',
+    name: 'Nobinagar-Dhour',
+    bnName: 'নবীনগর-ধউর',
+    routeString: 'Nobinagar ⇄ Mirpur ⇄ Dhour',
+    stops: ['nobinagar', 'savar', 'gabtoli', 'mirpur1', 'rupnagar', 'kalshi', 'kuril', 'airport', 'abdullahpur', 'kamarpara', 'dhour'],
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'signboard_fantasy',
+    name: 'Signboard-Fantasy',
+    bnName: 'সাইনবোর্ড-ফ্যান্টাসি',
+    routeString: 'Signboard ⇄ Farmgate ⇄ Fantasy Kingdom',
+    stops: ['signboard', 'jatrabari', 'gulistan', 'paltan', 'shahbag', 'farmgate', 'mohakhali', 'banani', 'airport', 'ashulia', 'fantasy_kingdom'],
+    type: 'Sitting',
+    hours: '6:30 AM - 10:00 PM'
+  },
+  {
+    id: 'gabtoli_rampura',
+    name: 'Gabtoli-Rampura',
+    bnName: 'গাবতলী-রামপুরা',
+    routeString: 'Gabtoli ⇄ Mirpur 10 ⇄ Rampura',
+    stops: ['gabtoli', 'technical', 'mirpur1', 'mirpur10', 'kalshi', 'ecb', 'kakali', 'gulshan1', 'merul', 'rampura'],
+    type: 'Local',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'demra_nobinagar',
+    name: 'Demra-Nobinagar',
+    bnName: 'ডেমরা-নবীনগর',
+    routeString: 'Demra ⇄ Banasree ⇄ Nobinagar',
+    stops: ['demra', 'banasree', 'rampura', 'mouchak', 'kakrail', 'shahbag', 'science_lab', 'asad_gate', 'kallyanpur', 'gabtoli', 'savar', 'nobinagar'],
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'shialbari_kamalapur',
+    name: 'Shialbari-Kamalapur',
+    bnName: 'শিয়ালবাড়ী-কমলাপুর',
+    routeString: 'Mirpur 2 ⇄ Farmgate ⇄ Kamalapur',
+    stops: ['rupnagar', 'mirpur2', 'mirpur10', 'kazipara', 'agargaon', 'farmgate', 'mogbazar', 'malibagh', 'kamalapur'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'gulistan_vulta',
+    name: 'Gulistan-Vulta',
+    bnName: 'গুলিস্তান-ভুলতা',
+    routeString: 'Gulistan ⇄ Demra ⇄ Vulta',
+    stops: ['gulistan', 'demra', 'rupganj', 'vulta'], // Simplified
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'madanpur_nandan',
+    name: 'Madanpur-Nandan',
+    bnName: 'মদনপুর-নন্দন',
+    routeString: 'Madanpur ⇄ Signboard ⇄ Nandan Park',
+    stops: ['madanpur', 'signboard', 'jatrabari', 'gulistan', 'farmgate', 'gabtoli', 'savar', 'nandan_park'],
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'kalampur_victoria',
+    name: 'Kalampur-Victoria Park',
+    bnName: 'কালামপুর-ভিক্টোরিয়া',
+    routeString: 'Kalampur ⇄ Savar ⇄ Sadarghat',
+    stops: ['dhamrai', 'savar', 'hemayetpur', 'gabtoli', 'technical', 'shyamoli', 'asad_gate', 'farmgate', 'shahbag', 'press_club', 'gulistan', 'victoria_park'],
+    type: 'Local',
+    hours: '5:30 AM - 9:00 PM'
+  },
+  {
+    id: 'savar_amulia',
+    name: 'Savar-Amulia',
+    bnName: 'সাভার-আমুলিয়া',
+    routeString: 'Savar ⇄ Banasree ⇄ Amulia',
+    stops: ['savar', 'gabtoli', 'mirpur1', 'mirpur10', 'mohakhali', 'gulshan1', 'banasree', 'amulia'],
+    type: 'Local',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'tongi_dhakeshwari',
+    name: 'Tongi-Dhakeshwari',
+    bnName: 'টঙ্গী-ঢাকেশ্বরী',
+    routeString: 'Tongi ⇄ Mohakhali ⇄ Dhakeshwari',
+    stops: ['tongi', 'azampur', 'mohakhali', 'farmgate', 'city_college', 'nilkhet', 'dhakeshwari'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'fulbaria_kapasia',
+    name: 'Fulbaria-Kapasia',
+    bnName: 'ফুলবাড়িয়া-কাপাসিয়া',
+    routeString: 'Fulbaria ⇄ Gazipur ⇄ Kapasia',
+    stops: ['fulbaria', 'mogbazar', 'mohakhali', 'banani', 'airport', 'tongi', 'gazipur', 'rajendrapur', 'kapasia'],
+    type: 'Local',
+    hours: '6:00 AM - 8:00 PM'
+  },
+  {
+    id: 'sayedabad_gazipur',
+    name: 'Sayedabad-Gazipur',
+    bnName: 'সায়েদাবাদ-গাজীপুর',
+    routeString: 'Sayedabad ⇄ Malibagh ⇄ Gazipur',
+    stops: ['sayedabad', 'malibagh', 'satrasta', 'mohakhali', 'airport', 'tongi', 'board_bazar', 'gazipur'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'kanchpur_tongi',
+    name: 'Kanchpur-Tongi',
+    bnName: 'কাঁচপুর-টঙ্গী',
+    routeString: 'Kanchpur ⇄ Badda ⇄ Tongi',
+    stops: ['signboard', 'jatrabari', 'bashabo', 'rampura', 'badda', 'kuril', 'airport', 'tongi'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'dhaleshwar_tongi',
+    name: 'Dhaleshwar-Tongi',
+    bnName: 'ধলেশ্বর-টঙ্গী',
+    routeString: 'Dhaleshwar ⇄ Pragati Sarani ⇄ Tongi',
+    stops: ['signboard', 'jatrabari', 'malibagh', 'kuril', 'abdullahpur', 'tongi'], // Approx
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'madanpur_abdullahpur',
+    name: 'Madanpur-Abdullahpur',
+    bnName: 'মদনপুর-আব্দুল্লাহপুর',
+    routeString: 'Madanpur ⇄ Rampura ⇄ Abdullahpur',
+    stops: ['madanpur', 'motijheel', 'malibagh', 'mohakhali', 'kakali', 'abdullahpur'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'fulbaria_khasia',
+    name: 'Fulbaria-Khasiakhali',
+    bnName: 'ফুলবাড়িয়া-খাসিয়াখালী',
+    routeString: 'Fulbaria ⇄ Paturia ⇄ Khasiakhali',
+    stops: ['fulbaria', 'naya_bazar', 'keraniganj', 'maowa', 'paturia'], // Adjusted
+    type: 'Local',
+    hours: '6:00 AM - 8:00 PM'
+  },
+  {
+    id: 'vulta_science_lab',
+    name: 'Vulta-Science Lab',
+    bnName: 'ভুলতা-সায়েন্সল্যাব',
+    routeString: 'Vulta ⇄ Signboard ⇄ Science Lab',
+    stops: ['vulta', 'signboard', 'jatrabari', 'gulistan', 'shahbag', 'science_lab'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'palashi_meghna',
+    name: 'Palashi-Meghna',
+    bnName: 'পলাশী-মেঘনা',
+    routeString: 'Palashi ⇄ Jatrabari ⇄ Meghna Ghat',
+    stops: ['palashi', 'eden_college', 'shahbag', 'gulistan', 'jatrabari', 'shonir_akhra', 'signboard', 'meghna_ghat'],
+    type: 'Local',
+    hours: '6:30 AM - 9:00 PM'
+  },
+  {
+    id: 'mirpur_keraniganj',
+    name: 'Mirpur-Keraniganj',
+    bnName: 'মিরপুর-কেরানীগঞ্জ',
+    routeString: 'Mirpur 1 ⇄ Gabtoli ⇄ Keraniganj',
+    stops: ['mirpur1', 'ansar_camp', 'gabtoli', 'babubazar', 'keraniganj'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'basila_kamarpara',
+    name: 'Bosila-Kamarpara',
+    bnName: 'বসিলা-কামারপাড়া',
+    routeString: 'Bosila ⇄ Mirpur ⇄ Kamarpara',
+    stops: ['bosila', 'asad_gate', 'shyamoli', 'technical', 'mirpur1', 'mirpur10', 'kalshi', 'airport', 'kamarpara'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'gabtoli_gazipur',
+    name: 'Gabtoli-Gazipur',
+    bnName: 'গাবতলী-গাজীপুর',
+    routeString: 'Gabtoli ⇄ Mirpur 10 ⇄ Gazipur',
+    stops: ['gabtoli', 'mirpur1', 'mirpur10', 'kalshi', 'khilkhet', 'airport', 'abdullahpur', 'gazipur'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'mirpur_beraid',
+    name: 'Mirpur 1-Beraid',
+    bnName: 'মিরপুর ১-বেরাইদ',
+    routeString: 'Mirpur 1 ⇄ Gulshan ⇄ Beraid',
+    stops: ['mirpur1', 'mirpur2', 'kachukhet', 'sainik_club', 'banani', 'mohakhali', 'gulshan1', 'badda', 'notun_bazar', 'beraid'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'mirpur_dohs_motijheel',
+    name: 'Mirpur DOHS-Motijheel',
+    bnName: 'মিরপুর ডিওএইচএস-মতিঝিল',
+    routeString: 'Mirpur DOHS ⇄ Farmgate ⇄ Motijheel',
+    stops: ['mirpur12', 'ecb', 'kachukhet', 'jahangir_gate', 'farmgate', 'shahbag', 'gulistan', 'motijheel'],
+    type: 'AC',
+    hours: '7:00 AM - 9:00 PM'
+  },
+  {
+    id: 'mirpur_new_jail',
+    name: 'Mirpur-New Jail',
+    bnName: 'মিরপুর-নিউ জেল',
+    routeString: 'Chiriyakhana ⇄ Gabtoli ⇄ New Jail',
+    stops: ['chiriyakhana', 'mirpur1', 'technical', 'gabtoli', 'babubazar', 'new_jail'],
+    type: 'Local',
+    hours: '6:00 AM - 8:00 PM'
+  },
+  {
+    id: 'mirpur12_narayanganj',
+    name: 'Mirpur 12-Narayanganj',
+    bnName: 'মিরপুর ১২-নারায়ণগঞ্জ',
+    routeString: 'Mirpur 12 ⇄ Farmgate ⇄ Narayanganj',
+    stops: ['mirpur12', 'mirpur10', 'kazipara', 'farmgate', 'shahbag', 'gulistan', 'signboard', 'chashara', 'narayanganj'], // Generalized
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'shia_nobinagar',
+    name: 'Shia Masjid-Nobinagar',
+    bnName: 'শিয়া মসজিদ-নবীনগর',
+    routeString: 'Shia Masjid ⇄ Gabtoli ⇄ Nobinagar',
+    stops: ['shia_masjid', 'shyamoli', 'agargaon', 'mohakhali', 'banani', 'airport', 'abdullahpur', 'dhour', 'ashulia', 'nobinagar'], // Based on chart
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'mirpur12_maowa',
+    name: 'Mirpur 12-Maowa',
+    bnName: 'মিরপুর ১২-মাওয়া',
+    routeString: 'Mirpur 12 ⇄ Farmgate ⇄ Maowa',
+    stops: ['mirpur12', 'mirpur10', 'farmgate', 'gulistan', 'babubazar', 'maowa'],
+    type: 'Local',
+    hours: '5:30 AM - 9:00 PM'
+  },
+  {
+    id: 'uttara_sadarghat',
+    name: 'Uttara-Sadarghat',
+    bnName: 'উত্তরা-সদরঘাট',
+    routeString: 'Uttara ⇄ Mohakhali ⇄ Sadarghat',
+    stops: ['uttara', 'notun_bazar', 'rampura', 'malibagh', 'kakrail', 'victoria_park', 'sadarghat'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
   }
 ];
