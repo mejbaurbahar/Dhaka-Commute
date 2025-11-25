@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles } from 'lucide-react';
 import { BusRoute, AppView, UserLocation } from './types';
 import { BUS_DATA, STATIONS, METRO_STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
@@ -1180,16 +1180,23 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Mobile Bottom Navigation - AI Button Removed */}
+      {/* Mobile Bottom Navigation */}
       {view === AppView.HOME && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
-          <div className="grid grid-cols-1 h-16">
+          <div className="grid grid-cols-2 h-16">
             <button
               onClick={() => setView(AppView.HOME)}
               className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
               <MapIcon className={`w-6 h-6 ${view === AppView.HOME ? 'fill-current' : ''}`} />
               <span className="text-[10px] font-bold uppercase tracking-wide">Routes</span>
+            </button>
+            <button
+              onClick={() => setView(AppView.AI_ASSISTANT)}
+              className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
+            >
+              <Sparkles className="w-6 h-6" />
+              <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
             </button>
           </div>
         </nav>

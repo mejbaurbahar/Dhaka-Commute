@@ -1365,15 +1365,6 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'supravat',
-    name: 'Supravat',
-    bnName: 'সুপ্রভাত',
-    routeString: 'Victoria Park ⇄ Tongi',
-    stops: ['victoria_park', 'sadarghat', 'ray_saheb_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 10:00 PM'
-  },
-  {
     id: 'trust_1',
     name: 'Trust Transport (Mirpur 10-Banani)',
     bnName: 'ট্রাষ্ট ট্রান্সপোর্ট',
@@ -1559,7 +1550,7 @@ export const BUS_DATA: BusRoute[] = [
 export const METRO_STATIONS: Record<string, MetroStation> = {
   'uttara_north': {
     id: 'uttara_north',
-    name: 'Uttara North',
+    name: 'Uttara North Metro Station',
     bnName: 'উত্তরা উত্তর',
     lat: 23.8753,
     lng: 90.3956,
@@ -1567,7 +1558,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'uttara_center': {
     id: 'uttara_center',
-    name: 'Uttara Center',
+    name: 'Uttara Center Metro Station',
     bnName: 'উত্তরা কেন্দ্র',
     lat: 23.8690,
     lng: 90.3967,
@@ -1575,7 +1566,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'uttara_south': {
     id: 'uttara_south',
-    name: 'Uttara South',
+    name: 'Uttara South Metro Station',
     bnName: 'উত্তরা দক্ষিণ',
     lat: 23.8627,
     lng: 90.3978,
@@ -1583,7 +1574,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'pallabi': {
     id: 'pallabi',
-    name: 'Pallabi',
+    name: 'Pallabi Metro Station',
     bnName: 'পল্লবী',
     lat: 23.8250,
     lng: 90.3600,
@@ -1591,7 +1582,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'mirpur_11': {
     id: 'mirpur_11',
-    name: 'Mirpur 11',
+    name: 'Mirpur 11 Metro Station',
     bnName: 'মিরপুর ১১',
     lat: 23.8150,
     lng: 90.3650,
@@ -1599,7 +1590,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'mirpur_10': {
     id: 'mirpur_10',
-    name: 'Mirpur 10',
+    name: 'Mirpur 10 Metro Station',
     bnName: 'মিরপুর ১০',
     lat: 23.8071,
     lng: 90.3686,
@@ -1607,7 +1598,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'kazipara': {
     id: 'kazipara',
-    name: 'Kazipara',
+    name: 'Kazipara Metro Station',
     bnName: 'কাজীপাড়া',
     lat: 23.7970,
     lng: 90.3700,
@@ -1615,7 +1606,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'shewrapara': {
     id: 'shewrapara',
-    name: 'Shewrapara',
+    name: 'Shewrapara Metro Station',
     bnName: 'শেওড়াপাড়া',
     lat: 23.7900,
     lng: 90.3750,
@@ -1623,7 +1614,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'agargaon': {
     id: 'agargaon',
-    name: 'Agargaon',
+    name: 'Agargaon Metro Station',
     bnName: 'আগারগাঁও',
     lat: 23.7780,
     lng: 90.3800,
@@ -1631,7 +1622,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'bijoy_sarani': {
     id: 'bijoy_sarani',
-    name: 'Bijoy Sarani',
+    name: 'Bijoy Sarani Metro Station',
     bnName: 'বিজয় সরণি',
     lat: 23.7630,
     lng: 90.3880,
@@ -1639,7 +1630,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'farmgate': {
     id: 'farmgate',
-    name: 'Farmgate',
+    name: 'Farmgate Metro Station',
     bnName: 'ফার্মগেট',
     lat: 23.7561,
     lng: 90.3872,
@@ -1647,7 +1638,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'karwan_bazar': {
     id: 'karwan_bazar',
-    name: 'Karwan Bazar',
+    name: 'Karwan Bazar Metro Station',
     bnName: 'কারওয়ান বাজার',
     lat: 23.7500,
     lng: 90.3930,
@@ -1655,7 +1646,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'shahbagh': {
     id: 'shahbagh',
-    name: 'Shahbagh',
+    name: 'Shahbagh Metro Station',
     bnName: 'শাহবাগ',
     lat: 23.7400,
     lng: 90.3950,
@@ -1663,7 +1654,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'dhaka_university': {
     id: 'dhaka_university',
-    name: 'Dhaka University',
+    name: 'Dhaka University Metro Station',
     bnName: 'ঢাকা বিশ্ববিদ্যালয়',
     lat: 23.7350,
     lng: 90.3950,
@@ -1679,7 +1670,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
   },
   'motijheel': {
     id: 'motijheel',
-    name: 'Motijheel',
+    name: 'Motijheel Metro Station',
     bnName: 'মতিঝিল',
     lat: 23.7330,
     lng: 90.4170,
