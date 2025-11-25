@@ -130,7 +130,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
   // Base Dimensions
   const height = 600;
-  const padding = 60;
+  const padding = 120; // Increased to prevent edge cutoff
   const baseWidth = Math.max(stations.length * 120, 1000);
 
   // Dynamic dimensions based on zoom
@@ -330,6 +330,93 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
     return connections;
   }, [stations, nodePositions, metroConnections]);
+
+  // Calculate nearby airports and their positions
+  const airportConnections = React.useMemo(() => {
+    const connections: Array<{
+      airport: typeof AIRPORTS[string];
+      busStopIndex: number;
+      distance: number;
+      airportX: number;
+      airportY: number;
+    }> = [];
+
+    Object.values(AIRPORTS).forEach(airport => {
+      let closestDistance = Infinity;
+      let closestIndex = -1;
+
+      stations.forEach((busStation, idx) => {
+        const R = 6371e3;
+        const φ1 = (busStation.lat * Math.PI) / 180;
+        const φ2 = (airport.lat * Math.PI) / 180;
+        const Δφ = ((airport.lat - busStation.lat) * Math.PI) / 180;
+        const Δλ = ((airport.lng - busStation.lng) * Math.PI) / 180;
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+          Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = idx;
+        }
+      });
+
+      // Only show airports within 5km of route
+      if (closestDistance < 5000 && closestIndex !== -1) {
+        connections.push({
+          airport,
+          busStopIndex: closestIndex,
+          distance: closestDistance,
+          airportX: 0,
+          airportY: 0
+        });
+      }
+    });
+
+    // Group airports by their nearest bus stop
+    const groupedByStop: Record<number, typeof connections> = {};
+    connections.forEach(conn => {
+      if (!groupedByStop[conn.busStopIndex]) {
+        groupedByStop[conn.busStopIndex] = [];
+      }
+      groupedByStop[conn.busStopIndex].push(conn);
+    });
+
+    // Position airports to avoid overlap with metros and railways
+    Object.entries(groupedByStop).forEach(([stopIdx, airports]) => {
+      const busStopPos = nodePositions[parseInt(stopIdx)];
+      const airportCount = airports.length;
+
+      // Check if there are metros or railways at this same stop
+      const hasMetrosAtStop = metroConnections.some(m => m.busStopIndex === parseInt(stopIdx));
+      const hasRailwaysAtStop = railwayConnections.some(r => r.busStopIndex === parseInt(stopIdx));
+
+      airports.forEach((airport, idx) => {
+        if (airportCount === 1) {
+          // Position airports on the side, away from metros and railways
+          let offsetX = 180; // Far to the right
+          let offsetY = 0;
+
+          if (hasMetrosAtStop || hasRailwaysAtStop) {
+            offsetX = 200; // Even further if other stations present
+            offsetY = parseInt(stopIdx) % 2 === 0 ? -60 : 60;
+          }
+
+          airport.airportX = busStopPos.x + offsetX;
+          airport.airportY = busStopPos.y + offsetY;
+        } else {
+          // Multiple airports - stack vertically on the right
+          const offsetX = 180;
+          const offsetY = (idx - (airportCount - 1) / 2) * 80;
+          airport.airportX = busStopPos.x + offsetX;
+          airport.airportY = busStopPos.y + offsetY;
+        }
+      });
+    });
+
+    return connections;
+  }, [stations, nodePositions, metroConnections, railwayConnections]);
 
   const totalSegments = stations.length - 1;
   const exactProgress = simulationStep * totalSegments;
@@ -711,7 +798,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     y1={busStopPos.y}
                     x2={railwayX}
                     y2={railwayY}
-                    stroke="#ea580c"
+                    stroke="#14b8a6"
                     strokeWidth="2"
                     strokeDasharray="5,5"
                     className="opacity-60"
@@ -722,7 +809,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     cx={railwayX}
                     cy={railwayY}
                     r="18"
-                    fill="#fed7aa"
+                    fill="#99f6e4"
                     className="opacity-30"
                   >
                     <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
@@ -733,7 +820,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     cx={railwayX}
                     cy={railwayY}
                     r="10"
-                    fill="#ea580c"
+                    fill="#14b8a6"
                     stroke="white"
                     strokeWidth="2.5"
                     className="cursor-pointer hover:r-12 transition-all"
@@ -753,12 +840,82 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     className="pointer-events-none overflow-visible"
                   >
                     <div className="text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-1 rounded backdrop-blur-sm shadow-md border bg-orange-50 border-orange-200 text-orange-900 font-bold whitespace-nowrap">
+                      <span className="px-2 py-1 rounded backdrop-blur-sm shadow-md border bg-teal-50 border-teal-200 text-teal-900 font-bold whitespace-nowrap">
                         <div className="flex items-center gap-1 justify-center">
                           <Train className="w-3 h-3" />
                           <span>{railwayStation.name}</span>
                         </div>
-                        <span className="block text-[8px] text-orange-700 mt-0.5">
+                        <span className="block text-[8px] text-teal-700 mt-0.5">
+                          {(distance / 1000).toFixed(2)}km from {stations[busStopIndex].name}
+                        </span>
+                      </span>
+                    </div>
+                  </foreignObject>
+                </g>
+              );
+            })}
+
+            {/* Airports */}
+            {airportConnections.map((connection, idx) => {
+              const { airport, busStopIndex, distance, airportX, airportY } = connection;
+              const busStopPos = nodePositions[busStopIndex];
+
+              return (
+                <g key={airport.id} className="pointer-events-auto">
+                  {/* Connection Line to Bus Stop */}
+                  <line
+                    x1={busStopPos.x}
+                    y1={busStopPos.y}
+                    x2={airportX}
+                    y2={airportY}
+                    stroke="#3b82f6"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                    className="opacity-60"
+                  />
+
+                  {/* Airport Node */}
+                  <circle
+                    cx={airportX}
+                    cy={airportY}
+                    r="18"
+                    fill="#bfdbfe"
+                    className="opacity-30"
+                  >
+                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
+                  </circle>
+
+                  <circle
+                    cx={airportX}
+                    cy={airportY}
+                    r="10"
+                    fill="#3b82f6"
+                    stroke="white"
+                    strokeWidth="2.5"
+                    className="cursor-pointer hover:r-12 transition-all"
+                  />
+
+                  {/* Plane Icon */}
+                  <foreignObject x={airportX - 6} y={airportY - 6} width="12" height="12" className="pointer-events-none">
+                    <Plane className="w-3 h-3 text-white" />
+                  </foreignObject>
+
+                  {/* Airport Label */}
+                  <foreignObject
+                    x={airportX - 100}
+                    y={airportY > busStopPos.y ? airportY + 15 : airportY - 55}
+                    width="200"
+                    height="50"
+                    className="pointer-events-none overflow-visible"
+                  >
+                    <div className="text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full">
+                      <span className="px-2 py-1 rounded backdrop-blur-sm shadow-md border bg-blue-50 border-blue-200 text-blue-900 font-bold whitespace-nowrap">
+                        <div className="flex items-center gap-1 justify-center">
+                          <Plane className="w-3 h-3" />
+                          <span>{airport.name}</span>
+                        </div>
+                        <span className="block text-[8px] text-blue-700 mt-0.5">
                           {(distance / 1000).toFixed(2)}km from {stations[busStopIndex].name}
                         </span>
                       </span>
