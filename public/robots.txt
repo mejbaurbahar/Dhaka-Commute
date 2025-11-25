@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://dhakacommute.netlify.app/sitemap.xml
+Sitemap: https://dhaka-commute.vercel.app/sitemap.xml
 
 # AI Crawlers
 User-agent: GPTBot
