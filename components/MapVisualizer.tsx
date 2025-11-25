@@ -145,6 +145,55 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     return { x, y };
   });
 
+  // Calculate nearby metro stations and their positions
+  const metroConnections = React.useMemo(() => {
+    const connections: Array<{
+      metroStation: typeof METRO_STATIONS[string];
+      busStopIndex: number;
+      distance: number;
+      metroX: number;
+      metroY: number;
+    }> = [];
+
+    Object.values(METRO_STATIONS).forEach(metroStation => {
+      let closestDistance = Infinity;
+      let closestIndex = -1;
+
+      stations.forEach((busStation, idx) => {
+        const R = 6371e3;
+        const φ1 = (busStation.lat * Math.PI) / 180;
+        const φ2 = (metroStation.lat * Math.PI) / 180;
+        const Δφ = ((metroStation.lat - busStation.lat) * Math.PI) / 180;
+        const Δλ = ((metroStation.lng - busStation.lng) * Math.PI) / 180;
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+          Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = idx;
+        }
+      });
+
+      // Only show metros within 1km of route
+      if (closestDistance < 1000 && closestIndex !== -1) {
+        const busStopPos = nodePositions[closestIndex];
+        // Position metro station offset from bus route
+        const offsetY = closestIndex % 2 === 0 ? -80 : 80;
+        connections.push({
+          metroStation,
+          busStopIndex: closestIndex,
+          distance: closestDistance,
+          metroX: busStopPos.x,
+          metroY: busStopPos.y + offsetY
+        });
+      }
+    });
+
+    return connections;
+  }, [stations, nodePositions]);
+
   const totalSegments = stations.length - 1;
   const exactProgress = simulationStep * totalSegments;
   const currentSegmentIndex = Math.floor(exactProgress);
@@ -207,9 +256,10 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
       )}
 
       {/* Metro Stations Indicator */}
-      {React.useMemo(() => {
-        const nearbyMetros = Object.values(METRO_STATIONS)
-          .map((metroStation) => {
+      {(() => {
+        const METRO_STATIONS_IMPORT = require('../constants').METRO_STATIONS;
+        const nearbyMetros = Object.values(METRO_STATIONS_IMPORT)
+          .map((metroStation: any) => {
             let closestDistance = Infinity;
             stations.forEach(busStation => {
               const R = 6371e3;
@@ -226,8 +276,10 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             return closestDistance < 2000 ? { station: metroStation, distance: closestDistance } : null;
           })
           .filter(Boolean)
-          .sort((a, b) => a!.distance - b!.distance)
+          .sort((a: any, b: any) => a.distance - b.distance)
           .slice(0, 3);
+
+        const Train = require('lucide-react').Train;
 
         return nearbyMetros.length > 0 ? (
           <div className="absolute bottom-4 left-4 z-20 bg-purple-600/95 backdrop-blur border border-purple-400 px-3 py-2 rounded-xl shadow-lg max-w-[280px]">
@@ -236,18 +288,18 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
               <p className="text-[10px] font-bold text-white uppercase">Metro Connections</p>
             </div>
             <div className="space-y-1">
-              {nearbyMetros.map((metro) => (
-                <div key={metro!.station.id} className="flex items-center justify-between gap-2 text-white/90">
-                  <span className="text-xs font-medium truncate">{metro!.station.name}</span>
+              {nearbyMetros.map((metro: any) => (
+                <div key={metro.station.id} className="flex items-center justify-between gap-2 text-white/90">
+                  <span className="text-xs font-medium truncate">{metro.station.name}</span>
                   <span className="text-[10px] bg-purple-500 px-1.5 py-0.5 rounded-full shrink-0">
-                    {(metro!.distance / 1000).toFixed(1)}km
+                    {(metro.distance / 1000).toFixed(1)}km
                   </span>
                 </div>
               ))}
             </div>
           </div>
         ) : null;
-      }, [stations])}
+      })()}
 
       {/* Top Right Controls */}
       <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 items-end">
@@ -478,6 +530,76 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                         {s.name}
                         {isCurrent && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">You are here</span>}
                         {isNearestButFar && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">Start Here</span>}
+                      </span>
+                    </div>
+                  </foreignObject>
+                </g>
+              );
+            })}
+
+            {/* Metro Stations */}
+            {metroConnections.map((connection, idx) => {
+              const { metroStation, busStopIndex, distance, metroX, metroY } = connection;
+              const busStopPos = nodePositions[busStopIndex];
+
+              return (
+                <g key={metroStation.id} className="pointer-events-auto">
+                  {/* Connection Line to Bus Stop */}
+                  <line
+                    x1={busStopPos.x}
+                    y1={busStopPos.y}
+                    x2={metroX}
+                    y2={metroY}
+                    stroke="#9333ea"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                    className="opacity-60"
+                  />
+
+                  {/* Metro Station Node */}
+                  <circle
+                    cx={metroX}
+                    cy={metroY}
+                    r="18"
+                    fill="#f3e8ff"
+                    className="opacity-30"
+                  >
+                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
+                  </circle>
+
+                  <circle
+                    cx={metroX}
+                    cy={metroY}
+                    r="10"
+                    fill="#9333ea"
+                    stroke="white"
+                    strokeWidth="2.5"
+                    className="cursor-pointer hover:r-12 transition-all"
+                  />
+
+                  {/* Train Icon */}
+                  <foreignObject x={metroX - 6} y={metroY - 6} width="12" height="12" className="pointer-events-none">
+                    <Train className="w-3 h-3 text-white" />
+                  </foreignObject>
+
+                  {/* Metro Station Label */}
+                  <foreignObject
+                    x={metroX - 70}
+                    y={metroY > busStopPos.y ? metroY + 15 : metroY - 50}
+                    width="140"
+                    height="45"
+                    className="pointer-events-none"
+                  >
+                    <div className="text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full">
+                      <span className="px-2 py-1 rounded backdrop-blur-sm truncate max-w-full shadow-md border bg-purple-50 border-purple-200 text-purple-900 font-bold">
+                        <div className="flex items-center gap-1 justify-center">
+                          <Train className="w-3 h-3" />
+                          <span>{metroStation.name}</span>
+                        </div>
+                        <span className="block text-[8px] text-purple-700 mt-0.5">
+                          {(distance / 1000).toFixed(2)}km from {stations[busStopIndex].name}
+                        </span>
                       </span>
                     </div>
                   </foreignObject>
