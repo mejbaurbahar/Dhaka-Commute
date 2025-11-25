@@ -1706,3 +1706,62 @@ export const METRO_LINES: Record<string, MetroLine> = {
   }
 };
 
+// Railway Stations
+export const RAILWAY_STATIONS: Record<string, MetroStation> = {
+  'kamalapur': {
+    id: 'kamalapur',
+    name: 'Kamalapur Railway Station',
+    bnName: 'কমলাপুর রেলওয়ে স্টেশন',
+    lat: 23.7333191,
+    lng: 90.4265487,
+    description: 'Main railway station in Dhaka, connects to all major cities'
+  },
+  'tejgaon_railway': {
+    id: 'tejgaon_railway',
+    name: 'Tejgaon Railway Station',
+    bnName: 'তেজগাঁও রেলওয়ে স্টেশন',
+    lat: 23.7601822,
+    lng: 90.3947722,
+    description: 'Railway station in Tejgaon industrial area'
+  },
+  'airport_railway': {
+    id: 'airport_railway',
+    name: 'Dhaka Airport Railway Station',
+    bnName: 'ঢাকা বিমানবন্দর রেলওয়ে স্টেশন',
+    lat: 23.8518873,
+    lng: 90.4081706,
+    description: 'Railway station near Hazrat Shahjalal International Airport'
+  },
+  'tongi_junction': {
+    id: 'tongi_junction',
+    name: 'Tongi Junction',
+    bnName: 'টঙ্গী জংশন',
+    lat: 23.89859,
+    lng: 90.4084504,
+    description: 'Major railway junction connecting northern routes'
+  },
+  'banani_railway': {
+    id: 'banani_railway',
+    name: 'Banani Railway Station',
+    bnName: 'বনানী রেলওয়ে স্টেশন',
+    lat: 23.79558,
+    lng: 90.400856,
+    description: 'Railway station in Banani diplomatic zone'
+  },
+  'cantonment_railway': {
+    id: 'cantonment_railway',
+    name: 'Dhaka Cantonment Railway Station',
+    bnName: 'ঢাকা ক্যান্টনমেন্ট রেলওয়ে স্টেশন',
+    lat: 23.81557,
+    lng: 90.41036,
+    description: 'Railway station in Dhaka Cantonment area'
+  },
+  'gandaria_railway': {
+    id: 'gandaria_railway',
+    name: 'Gandaria Railway Station',
+    bnName: 'গেন্ডারিয়া রেলওয়ে স্টেশন',
+    lat: 23.7014878,
+    lng: 90.4289931,
+    description: 'Railway station in Gandaria residential area'
+  }
+};

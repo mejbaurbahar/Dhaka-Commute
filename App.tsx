@@ -8,8 +8,6 @@ import LiveTracker from './components/LiveTracker';
 import { askGeminiRoute } from './services/geminiService';
 import { getCurrentLocation, findNearestStation, getDistance } from './services/locationService';
 import { findNearestMetroStation } from './services/metroService';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
 
 
 interface ChatMessage {
@@ -1202,8 +1200,6 @@ const App: React.FC = () => {
           </div>
         </nav>
       )}
-      <Analytics />
-      <SpeedInsights />
     </div>
   );
 };

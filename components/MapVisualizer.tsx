@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { BusRoute, UserLocation } from '../types';
-import { STATIONS, METRO_STATIONS } from '../constants';
+import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS } from '../constants';
 import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train } from 'lucide-react';
 
 interface MapVisualizerProps {
@@ -231,6 +231,86 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
           const offsetY = -Math.abs(Math.cos(angle)) * radius - 20; // Higher up
           metro.metroX = busStopPos.x + offsetX;
           metro.metroY = busStopPos.y + offsetY;
+        }
+      });
+    });
+
+    return connections;
+  }, [stations, nodePositions]);
+
+  // Calculate nearby railway stations and their positions
+  const railwayConnections = React.useMemo(() => {
+    const connections: Array<{
+      railwayStation: typeof RAILWAY_STATIONS[string];
+      busStopIndex: number;
+      distance: number;
+      railwayX: number;
+      railwayY: number;
+    }> = [];
+
+    Object.values(RAILWAY_STATIONS).forEach(railwayStation => {
+      let closestDistance = Infinity;
+      let closestIndex = -1;
+
+      stations.forEach((busStation, idx) => {
+        const R = 6371e3;
+        const φ1 = (busStation.lat * Math.PI) / 180;
+        const φ2 = (railwayStation.lat * Math.PI) / 180;
+        const Δφ = ((railwayStation.lat - busStation.lat) * Math.PI) / 180;
+        const Δλ = ((railwayStation.lng - busStation.lng) * Math.PI) / 180;
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+          Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = idx;
+        }
+      });
+
+      // Only show railway stations within 3km of route
+      if (closestDistance < 3000 && closestIndex !== -1) {
+        connections.push({
+          railwayStation,
+          busStopIndex: closestIndex,
+          distance: closestDistance,
+          railwayX: 0,
+          railwayY: 0
+        });
+      }
+    });
+
+    // Group railways by their nearest bus stop
+    const groupedByStop: Record<number, typeof connections> = {};
+    connections.forEach(conn => {
+      if (!groupedByStop[conn.busStopIndex]) {
+        groupedByStop[conn.busStopIndex] = [];
+      }
+      groupedByStop[conn.busStopIndex].push(conn);
+    });
+
+    // Position railways to avoid overlap with metros
+    Object.entries(groupedByStop).forEach(([stopIdx, railways]) => {
+      const busStopPos = nodePositions[parseInt(stopIdx)];
+      const railwayCount = railways.length;
+
+      railways.forEach((railway, idx) => {
+        if (railwayCount === 1) {
+          const offsetY = parseInt(stopIdx) % 2 === 0 ? 100 : -100; // Opposite side of metros
+          railway.railwayX = busStopPos.x;
+          railway.railwayY = busStopPos.y + offsetY;
+        } else if (railwayCount === 2) {
+          const offsetX = idx === 0 ? -120 : 120;
+          const offsetY = parseInt(stopIdx) % 2 === 0 ? 100 : -100;
+          railway.railwayX = busStopPos.x + offsetX;
+          railway.railwayY = busStopPos.y + offsetY;
+        } else {
+          const positions = [-150, 0, 150];
+          const offsetX = positions[idx] || 0;
+          const offsetY = 110; // Below route
+          railway.railwayX = busStopPos.x + offsetX;
+          railway.railwayY = busStopPos.y + offsetY;
         }
       });
     });
@@ -596,6 +676,76 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                           <span>{metroStation.name}</span>
                         </div>
                         <span className="block text-[8px] text-purple-700 mt-0.5">
+                          {(distance / 1000).toFixed(2)}km from {stations[busStopIndex].name}
+                        </span>
+                      </span>
+                    </div>
+                  </foreignObject>
+                </g>
+              );
+            })}
+
+            {/* Railway Stations */}
+            {railwayConnections.map((connection, idx) => {
+              const { railwayStation, busStopIndex, distance, railwayX, railwayY } = connection;
+              const busStopPos = nodePositions[busStopIndex];
+
+              return (
+                <g key={railwayStation.id} className="pointer-events-auto">
+                  {/* Connection Line to Bus Stop */}
+                  <line
+                    x1={busStopPos.x}
+                    y1={busStopPos.y}
+                    x2={railwayX}
+                    y2={railwayY}
+                    stroke="#ea580c"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                    className="opacity-60"
+                  />
+
+                  {/* Railway Station Node */}
+                  <circle
+                    cx={railwayX}
+                    cy={railwayY}
+                    r="18"
+                    fill="#fed7aa"
+                    className="opacity-30"
+                  >
+                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
+                  </circle>
+
+                  <circle
+                    cx={railwayX}
+                    cy={railwayY}
+                    r="10"
+                    fill="#ea580c"
+                    stroke="white"
+                    strokeWidth="2.5"
+                    className="cursor-pointer hover:r-12 transition-all"
+                  />
+
+                  {/* Train Icon */}
+                  <foreignObject x={railwayX - 6} y={railwayY - 6} width="12" height="12" className="pointer-events-none">
+                    <Train className="w-3 h-3 text-white" />
+                  </foreignObject>
+
+                  {/* Railway Station Label */}
+                  <foreignObject
+                    x={railwayX - 100}
+                    y={railwayY > busStopPos.y ? railwayY + 15 : railwayY - 55}
+                    width="200"
+                    height="50"
+                    className="pointer-events-none overflow-visible"
+                  >
+                    <div className="text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full">
+                      <span className="px-2 py-1 rounded backdrop-blur-sm shadow-md border bg-orange-50 border-orange-200 text-orange-900 font-bold whitespace-nowrap">
+                        <div className="flex items-center gap-1 justify-center">
+                          <Train className="w-3 h-3" />
+                          <span>{railwayStation.name}</span>
+                        </div>
+                        <span className="block text-[8px] text-orange-700 mt-0.5">
                           {(distance / 1000).toFixed(2)}km from {stations[busStopIndex].name}
                         </span>
                       </span>
