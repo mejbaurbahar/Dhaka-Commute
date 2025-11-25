@@ -176,8 +176,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         }
       });
 
-      // Only show metros within 1km of route
-      if (closestDistance < 1000 && closestIndex !== -1) {
+      // Only show metros within 2km of route
+      if (closestDistance < 2000 && closestIndex !== -1) {
         const busStopPos = nodePositions[closestIndex];
         // Position metro station offset from bus route
         const offsetY = closestIndex % 2 === 0 ? -80 : 80;
