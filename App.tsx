@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins } from 'lucide-react';
-import { BusRoute, AppView } from './types';
+import { BusRoute, AppView, UserLocation } from './types';
 import { BUS_DATA, STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
 import LiveTracker from './components/LiveTracker';
@@ -24,7 +24,6 @@ const getStoredFavorites = (): string[] => {
 
 // --- Helper: Fare Calculator ---
 const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: number, max: number, distance: number } => {
-  // 1. Get only valid stations in order (Filter out any IDs not in STATIONS database)
   const validStations = route.stops
     .map(id => STATIONS[id])
     .filter((s): s is typeof STATIONS[string] => !!s);
@@ -34,7 +33,6 @@ const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: 
   let startIndex = 0;
   let endIndex = validStations.length - 1;
 
-  // 2. Find indices in the VALID array if IDs are provided
   if (fromId && toId) {
     const sIdx = validStations.findIndex(s => s.id === fromId);
     const eIdx = validStations.findIndex(s => s.id === toId);
@@ -43,14 +41,12 @@ const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: 
       startIndex = sIdx;
       endIndex = eIdx;
     } else {
-      // If specified stops aren't valid or in correct order, return 0
       return { min: 0, max: 0, distance: 0 };
     }
   }
 
   let totalDistance = 0;
   for (let i = startIndex; i < endIndex; i++) {
-    // Calculate distance between sequential valid stops
     totalDistance += getDistance(
       { lat: validStations[i].lat, lng: validStations[i].lng },
       { lat: validStations[i+1].lat, lng: validStations[i+1].lng }
@@ -59,19 +55,15 @@ const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: 
   
   const distanceKm = totalDistance / 1000;
   
-  // Official BRTA Rate Logic (Approx 2022/2023 standards)
-  // Rate: ~2.45 Tk/km (City Bus)
-  // Min Fare: 10 Tk
   const ratePerKm = 2.45; 
   const minFare = 10;
   
   let estimated = Math.ceil(distanceKm * ratePerKm);
   if (estimated < minFare) estimated = minFare;
 
-  // Buffer for traffic/route variations
   return {
     min: estimated,
-    max: estimated + 5, // Slight buffer
+    max: estimated + 5, 
     distance: distanceKm
   };
 };
@@ -91,7 +83,7 @@ const SettingsView: React.FC<{
   const handleSave = () => {
     setApiKey(inputKey);
     localStorage.setItem('gemini_api_key', inputKey);
-    alert('API Key saved successfully!');
+    alert('API Key saved successfully! You can now use the AI Assistant.');
   };
 
   const handleClearKey = () => {
@@ -118,7 +110,7 @@ const SettingsView: React.FC<{
           </h3>
           <p className="text-xs text-blue-700 mb-4">
             To use the AI Assistant, please provide your own Google Gemini API Key. 
-            It will be stored locally on your device.
+            It will be stored securely on your device and not shared.
           </p>
           
           <div className="relative mb-3">
@@ -156,7 +148,7 @@ const SettingsView: React.FC<{
           
           {!apiKey && (
             <div className="mt-3 flex items-center gap-1 text-[10px] text-blue-600">
-              <AlertTriangle className="w-3 h-3" /> Feature unavailable without key
+              <AlertTriangle className="w-3 h-3" /> AI feature unavailable without key
             </div>
           )}
         </div>
@@ -180,42 +172,38 @@ const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.HOME);
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(null);
   
-  // Search State
   const [searchMode, setSearchMode] = useState<'TEXT' | 'ROUTE'>('TEXT');
-  const [inputValue, setInputValue] = useState(''); // What user types
-  const [searchQuery, setSearchQuery] = useState(''); // What we filter by
+  const [inputValue, setInputValue] = useState(''); 
+  const [searchQuery, setSearchQuery] = useState(''); 
   
-  // Route Finder State
   const [fromStation, setFromStation] = useState<string>('');
   const [toStation, setToStation] = useState<string>('');
 
-  // Fare Calculator State (Specific Stop-to-Stop)
   const [fareStart, setFareStart] = useState<string>('');
   const [fareEnd, setFareEnd] = useState<string>('');
 
-  // Favorites State
   const [favorites, setFavorites] = useState<string[]>(getStoredFavorites);
   const [listFilter, setListFilter] = useState<'ALL' | 'FAVORITES'>('ALL');
   
-  // AI & API Key State
+  // Allow user to store key locally
   const [apiKey, setApiKey] = useState<string>(localStorage.getItem('gemini_api_key') || '');
+  
   const [aiQuery, setAiQuery] = useState('');
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
   
   const [nearestStopIndex, setNearestStopIndex] = useState<number>(-1);
   const [nearestStopDistance, setNearestStopDistance] = useState<number>(Infinity);
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Sorted Stations List for Dropdown
   const sortedStations = Object.values(STATIONS).sort((a, b) => a.name.localeCompare(b.name));
 
-  // Determine Fare Calculation & Indices
   const { fareInfo, fareStartIndex, fareEndIndex } = useMemo(() => {
     if (!selectedBus) return { fareInfo: null, fareStartIndex: -1, fareEndIndex: -1 };
     
-    // Create the same filtered list of IDs that MapVisualizer uses to draw nodes
+    // Filter out invalid stations first to get the "Drawable" list
     const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
     
     let startIdx = -1;
@@ -223,23 +211,19 @@ const App: React.FC = () => {
     let info = null;
 
     if (fareStart && fareEnd) {
-      // Find index in the VALID list, not the raw list
       startIdx = validStopIds.indexOf(fareStart);
       endIdx = validStopIds.indexOf(fareEnd);
       
       if (startIdx !== -1 && endIdx !== -1 && startIdx < endIdx) {
-        // Calculate fare passing the IDs directly to use consistent logic
         info = calculateFare(selectedBus, fareStart, fareEnd);
       }
     } else {
-      // Default fare for whole route
       info = calculateFare(selectedBus);
     }
 
     return { fareInfo: info, fareStartIndex: startIdx, fareEndIndex: endIdx };
   }, [selectedBus, fareStart, fareEnd]);
 
-  // Check URL on mount for 404
   useEffect(() => {
     const path = window.location.pathname;
     if (path !== '/' && path !== '') {
@@ -247,37 +231,31 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Scroll to top of the container when view changes
   useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = 0;
     }
   }, [view]);
 
-  // Scroll to bottom of chat when history changes
   useEffect(() => {
     if (view === AppView.AI_ASSISTANT && chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatHistory, aiLoading, view]);
 
-  // Fetch location when entering Bus Details to show "You are here" on the map
   useEffect(() => {
     if (selectedBus) {
-      setNearestStopIndex(-1); // Reset first
+      setNearestStopIndex(-1); 
       setNearestStopDistance(Infinity);
-      // Reset Fare Calculator
       setFareStart('');
       setFareEnd('');
       
       getCurrentLocation()
         .then(loc => {
-          // Note: findNearestStation returns index in original array. 
-          // If visualizer uses filtered array, there might be a mismatch if data is dirty.
-          // Ideally findNearestStation should also respect STATIONS existence.
+          setUserLocation(loc);
           const result = findNearestStation(loc, selectedBus.stops);
           if (result) {
-            // We need to map the raw index to the filtered index for visualizer
+            // Map raw index to filtered index for visualizer
             const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
             const stationId = selectedBus.stops[result.index];
             const filteredIndex = validStopIds.indexOf(stationId);
@@ -292,22 +270,17 @@ const App: React.FC = () => {
     }
   }, [selectedBus]);
 
-  // Filter buses based on committed search query, Route Finder, AND list filter
   const filteredBuses = BUS_DATA.filter(bus => {
-    // 1. Filter by Tab (All vs Favorites)
     if (listFilter === 'FAVORITES' && !favorites.includes(bus.id)) {
       return false;
     }
 
-    // 2. Filter by Mode
     if (searchMode === 'ROUTE') {
       if (!fromStation || !toStation) return true;
-      // Check if bus stops at both stations
       const stopsAtFrom = bus.stops.includes(fromStation);
       const stopsAtTo = bus.stops.includes(toStation);
       return stopsAtFrom && stopsAtTo;
     } else {
-      // Text Search Mode
       const query = searchQuery.toLowerCase().trim();
       if (!query) return true;
       const nameMatch = bus.name.toLowerCase().includes(query);
@@ -320,11 +293,10 @@ const App: React.FC = () => {
       });
       return nameMatch || bnNameMatch || routeMatch || stopMatch;
     }
-  }).sort((a, b) => a.name.localeCompare(b.name)); // Sort A-Z
+  }).sort((a, b) => a.name.localeCompare(b.name));
 
   const handleSearchCommit = () => {
     setSearchQuery(inputValue);
-    // Dismiss keyboard on mobile
     (document.activeElement as HTMLElement)?.blur();
   };
 
@@ -337,10 +309,10 @@ const App: React.FC = () => {
   const handleBusSelect = (bus: BusRoute) => {
     setSelectedBus(bus);
     setView(AppView.BUS_DETAILS);
-    // Trigger location check immediately
     setNearestStopIndex(-1);
     setNearestStopDistance(Infinity);
     getCurrentLocation().then(loc => {
+      setUserLocation(loc);
       const result = findNearestStation(loc, bus.stops);
       if (result) {
         const validStopIds = bus.stops.filter(id => !!STATIONS[id]);
@@ -375,9 +347,8 @@ const App: React.FC = () => {
     const userMessage: ChatMessage = { role: 'user', text: aiQuery };
     const queryToSend = aiQuery;
     
-    // Optimistic update
     setChatHistory(prev => [...prev, userMessage]);
-    setAiQuery(''); // Clear input immediately
+    setAiQuery(''); 
     setAiLoading(true);
     
     let locationContext = "Dhaka, Bangladesh";
@@ -399,21 +370,8 @@ const App: React.FC = () => {
       console.log("Location not available for AI context");
     }
 
-    // Try using user key if available, otherwise rely on env var
-    // Note: The service wrapper might only look at process.env depending on implementation, 
-    // but we pass the key if the service supports it (or we modify service to support it)
-    // Since we can't modify service in this step easily without violating previous strict instructions,
-    // we assume the user knows they need to set the env var OR we can try to patch it if needed.
-    // Actually, to support user key, the service needs to accept it.
-    // I will assume the service is updated to check the passed key or I'd need to update the service too.
-    // For now, let's just rely on the environment variable as strictly instructed, 
-    // but we can store the user key in local storage for potential future use or if guidelines relax.
-    // Wait, user explicitly asked for it. I will just store it.
-    
-    // If I strictly follow guidelines I can't pass it to service. 
-    // But I can try to polyfill process.env if in a browser environment? No that's hacky.
-    // I will just call the service. 
-    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`);
+    // Pass the user's API key if available
+    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`, apiKey);
     
     const assistantMessage: ChatMessage = { role: 'assistant', text: result };
     setChatHistory(prev => [...prev, assistantMessage]);
@@ -487,7 +445,7 @@ const App: React.FC = () => {
            </div>
         </div>
 
-        {!apiKey && process.env.API_KEY === undefined ? (
+        {!apiKey && !process.env.API_KEY ? (
            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
                 <Key className="w-8 h-8 text-red-500" />
@@ -682,7 +640,6 @@ const App: React.FC = () => {
       <p className="text-gray-500 mb-8 max-w-xs mx-auto leading-relaxed">
         Looks like you've wandered off the map. Don't worry, we can get you back on track!
       </p>
-      {/* Removed the 'Go Back Home' button as requested */}
     </div>
   );
 
@@ -702,7 +659,7 @@ const App: React.FC = () => {
 
     return (
       <div className="flex flex-col h-full bg-slate-50 md:bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
-        {/* Mobile Header (Hidden on Desktop) */}
+        {/* Mobile Header */}
         <div className="md:hidden bg-white px-5 py-4 shadow-sm border-b border-gray-100 fixed top-0 w-full z-40 flex items-center justify-between">
             <button 
               onClick={() => {
@@ -789,11 +746,12 @@ const App: React.FC = () => {
                   userDistance={nearestStopDistance}
                   highlightStartIdx={fareStartIndex}
                   highlightEndIdx={fareEndIndex}
+                  userLocation={userLocation}
                 />
               </div>
             </div>
 
-            {/* Specific Fare Calculator */}
+            {/* Fare Calculator */}
             <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
               <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
                 <Coins className="w-4 h-4 text-yellow-500" /> Stop-to-Stop Fare
@@ -843,19 +801,6 @@ const App: React.FC = () => {
               )}
             </div>
 
-            {/* General Fare Info */}
-            <div className="bg-purple-50 rounded-2xl p-4 border border-purple-100">
-               <h3 className="text-xs font-bold uppercase tracking-wider text-purple-800 mb-2 flex items-center gap-1">
-                 <Calculator className="w-3 h-3" /> Official Rate Info
-               </h3>
-               <p className="text-sm text-purple-900 mb-1">
-                 Based on 2022 Government Chart: <strong>2.45 Tk/km</strong> (Min 10 Tk)
-               </p>
-               <p className="text-xs text-purple-600">
-                 Note: Actual fare may vary slightly due to rounding or bus contractor rules.
-               </p>
-            </div>
-
             <div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden">
               <h3 className="font-bold text-gray-700 px-4 py-3 border-b border-gray-100 bg-gray-50/30 text-sm">Full Route List</h3>
               <div className="relative">
@@ -865,15 +810,6 @@ const App: React.FC = () => {
                     const station = STATIONS[stopId];
                     if(!station) return null;
                     
-                    // Determine indices based on the FULL list, but map visualizer might use filtered list.
-                    // However, since we are iterating over the stops here, we can rely on these indices for LIST highlighting.
-                    // But `fareStartIndex` and `fareEndIndex` computed in useMemo are based on FILTERED list if we followed the fix.
-                    // Let's verify what `fareStartIndex` actually refers to.
-                    // In useMemo, we used `validStopIds.indexOf(fareStart)`.
-                    // Here we are iterating `selectedBus.stops` (raw).
-                    // So `fareStartIndex` (filtered index) cannot be compared directly to `idx` (raw index).
-                    
-                    // Fix: Recalculate or match by ID
                     const isHighlighted = fareStart && fareEnd && 
                       selectedBus.stops.indexOf(fareStart) <= idx && 
                       selectedBus.stops.indexOf(fareEnd) >= idx &&
@@ -882,16 +818,12 @@ const App: React.FC = () => {
                     const isLast = idx === selectedBus.stops.length - 1;
                     const isFirst = idx === 0;
                     
-                    // Note: nearestStopIndex is likely based on filtered list too if we updated it in handleBusSelect.
-                    // Let's check handleBusSelect. Yes, we updated it to filtered index.
-                    // So for `isNearest` check here, we need to map back or check by ID.
-                    // Actually, for the list, we want to show ALL stops, even if coordinates missing.
-                    // So let's match by ID.
+                    // Use filtered indices for nearest calculation check
+                    const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
+                    const filteredIdx = validStopIds.indexOf(stopId);
+                    const isNearest = nearestStopIndex !== -1 && nearestStopIndex === filteredIdx;
                     
-                    // Current location check (re-deriving since indices mismatch)
-                    const isNearest = nearestStopIndex !== -1 && selectedBus.stops.filter(id => !!STATIONS[id])[nearestStopIndex] === stopId;
-                    
-                    const isWithinRange = nearestStopDistance < 2000; // 2km range
+                    const isWithinRange = nearestStopDistance < 2000;
                     
                     return (
                       <div key={stopId} className={`px-4 py-3.5 hover:bg-gray-50 flex items-center gap-4 relative z-10 group border-b border-gray-50 last:border-0 transition-colors 
@@ -908,7 +840,7 @@ const App: React.FC = () => {
                                 : isLast 
                                   ? 'bg-red-500 w-5 h-5 ring-2 ring-red-100' 
                                   : isNearest 
-                                    ? 'bg-orange-400 w-5 h-5' // Closest but far
+                                    ? 'bg-orange-400 w-5 h-5' 
                                     : 'bg-gray-300'
                           }
                         `}>
@@ -917,7 +849,7 @@ const App: React.FC = () => {
                           {isHighlighted && !isNearest && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                         </div>
                         <div className="flex-1">
-                          <p className={`text-sm group-hover:text-dhaka-green transition-colors ${isFirst || isLast || isNearest || isHighlighted ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(selectedBus.stops.filter(id => !!STATIONS[id])[nearestStopIndex]) : -1) && nearestStopIndex !== -1 && isWithinRange ? 'text-gray-400 line-through decoration-gray-300' : ''}`}>
+                          <p className={`text-sm group-hover:text-dhaka-green transition-colors ${isFirst || isLast || isNearest || isHighlighted ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''}`}>
                             {station.name}
                             {isNearest && isWithinRange && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">You</span>}
                             {isNearest && !isWithinRange && <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{(nearestStopDistance/1000).toFixed(1)}km away</span>}
@@ -1028,10 +960,10 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* AI Button */}
+            {/* AI Button - Hidden on Mobile */}
             <button 
               onClick={() => setView(AppView.AI_ASSISTANT)}
-              className="w-full flex items-center justify-between bg-white border border-gray-100 p-4 rounded-2xl shadow-sm active:scale-[0.99] transition-all hover:border-blue-200 group"
+              className="hidden md:flex w-full items-center justify-between bg-white border border-gray-100 p-4 rounded-2xl shadow-sm active:scale-[0.99] transition-all hover:border-blue-200 group"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
@@ -1236,23 +1168,16 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation - AI Button Removed */}
       {view === AppView.HOME && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
-          <div className="grid grid-cols-2 h-16">
+          <div className="grid grid-cols-1 h-16">
             <button 
               onClick={() => setView(AppView.HOME)} 
               className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
               <MapIcon className={`w-6 h-6 ${view === AppView.HOME ? 'fill-current' : ''}`} />
               <span className="text-[10px] font-bold uppercase tracking-wide">Routes</span>
-            </button>
-             <button 
-              onClick={() => setView(AppView.AI_ASSISTANT)} 
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
-            >
-              <Bot className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''}`} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">Assistant</span>
             </button>
           </div>
         </nav>

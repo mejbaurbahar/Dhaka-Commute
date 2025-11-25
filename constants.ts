@@ -2,7 +2,7 @@
 
 import { BusRoute, Station } from './types';
 
-// Expanded coordinate mapping (Approximate Lat/Lng for Dhaka)
+// Coordinate mapping for major Dhaka locations
 export const STATIONS: Record<string, Station> = {
   'gabtoli': { id: 'gabtoli', name: 'Gabtoli', lat: 23.7831, lng: 90.3475 },
   'technical': { id: 'technical', name: 'Technical', lat: 23.7800, lng: 90.3550 },
@@ -157,7 +157,7 @@ export const STATIONS: Record<string, Station> = {
   'staff_road': { id: 'staff_road', name: 'Staff Road', lat: 23.8000, lng: 90.4020 },
   'sainik_club': { id: 'sainik_club', name: 'Sainik Club', lat: 23.7950, lng: 90.4000 },
   'shishu_mela': { id: 'shishu_mela', name: 'Shishu Mela', lat: 23.7720, lng: 90.3700 },
-  'shibur_market': { id: 'shibur_market', name: 'Shibur Market', lat: 23.6500, lng: 90.4800 },
+  'shibu_market': { id: 'shibu_market', name: 'Shibu Market', lat: 23.6500, lng: 90.4800 },
   'chashara': { id: 'chashara', name: 'Chashara', lat: 23.6200, lng: 90.5000 },
   'dhamrai': { id: 'dhamrai', name: 'Dhamrai', lat: 23.9200, lng: 90.2100 },
   'manikganj': { id: 'manikganj', name: 'Manikganj', lat: 23.8600, lng: 90.0000 },
@@ -225,7 +225,6 @@ export const STATIONS: Record<string, Station> = {
   'zia_uddyan': { id: 'zia_uddyan', name: 'Zia Uddyan', lat: 23.7600, lng: 90.3800 },
   'old_airport': { id: 'old_airport', name: 'Old Airport', lat: 23.7700, lng: 90.3900 },
   'metro_hall': { id: 'metro_hall', name: 'Metro Hall', lat: 23.6300, lng: 90.5000 },
-  'shibu_market': { id: 'shibu_market', name: 'Shibu Market', lat: 23.6500, lng: 90.4800 },
   'jalkuri': { id: 'jalkuri', name: 'Jalkuri', lat: 23.6600, lng: 90.4800 },
   'bangladesh_bank': { id: 'bangladesh_bank', name: 'Bangladesh Bank', lat: 23.7300, lng: 90.4200 },
   'barmi': { id: 'barmi', name: 'Barmi', lat: 24.1500, lng: 90.4500 },
@@ -660,6 +659,15 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
   {
+    id: 'nur_e_makka',
+    name: 'Nur E Makka',
+    bnName: 'নূর এ মক্কা',
+    routeString: 'Chiriyakhana ⇄ Malibagh Railgate',
+    stops: ['chiriyakhana', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'jamuna_future_park', 'bashundhara', 'nadda', 'notun_bazar', 'bashtola', 'shahjadpur', 'uttar_badda', 'badda', 'madhya_badda', 'merul', 'rampura', 'rampura_bazar', 'hazipara', 'malibagh_railgate'],
+    type: 'Sitting',
+    hours: '5:30 AM - 10:30 PM'
+  },
+  {
     id: 'nabakali',
     name: 'Nabakali',
     bnName: 'নবকালি',
@@ -692,6 +700,15 @@ export const BUS_DATA: BusRoute[] = [
     bnName: 'নিসর্গ',
     routeString: 'Mirpur 14 ⇄ Azimpur',
     stops: ['mirpur14', 'mirpur10', 'kazipara', 'shewrapara', 'taltola', 'agargaon', 'asad_gate', 'shyamoli', 'mohammadpur', 'shankar', 'dhanmondi15', 'jigatola', 'science_lab', 'newmarket', 'nilkhet', 'eden_college', 'azimpur'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'omama',
+    name: 'Omama International',
+    bnName: 'ওমামা ইন্টারন্যাশনাল',
+    routeString: 'Motijheel ⇄ Airport',
+    stops: ['motijheel', 'paltan', 'press_club', 'matsya_bhaban', 'high_court', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'jahangir_gate', 'mohakhali', 'chairman_bari', 'sainik_club', 'banani', 'kakali', 'staff_road', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },

@@ -1,13 +1,13 @@
+
 import { GoogleGenAI } from '@google/genai';
 import { BUS_DATA } from '../constants';
 
-export const askGeminiRoute = async (userQuery: string): Promise<string> => {
-  // Exclusively use environment variable as per guidelines
-  const apiKey = process.env.API_KEY;
+export const askGeminiRoute = async (userQuery: string, userApiKey?: string): Promise<string> => {
+  // Prioritize user-provided key, then environment variable
+  const apiKey = userApiKey || process.env.API_KEY;
   
   if (!apiKey) {
-    console.warn("Gemini API Key is missing from environment variables.");
-    return "The AI Assistant is currently unavailable due to configuration issues.";
+    return "Please set your Google Gemini API Key in Settings to use the Assistant.";
   }
 
   try {
@@ -60,6 +60,6 @@ export const askGeminiRoute = async (userQuery: string): Promise<string> => {
 
   } catch (error: any) {
     console.error("Gemini API Error:", error);
-    return "I'm having trouble connecting to the AI assistant. Please try again later.";
+    return "I'm having trouble connecting to the AI assistant. Please check your API Key in settings.";
   }
 };
