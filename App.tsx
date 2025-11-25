@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, Settings, Lock, Key, ChevronRight, CheckCircle2, User, Linkedin } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft } from 'lucide-react';
 import { BusRoute, AppView } from './types';
 import { BUS_DATA, STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
@@ -13,13 +13,12 @@ interface ChatMessage {
   text: string;
 }
 
-// Safe LocalStorage Helper
-const getStoredApiKey = () => {
+const getStoredFavorites = (): string[] => {
   try {
-    return localStorage.getItem('dhaka_commute_gemini_key') || '';
+    const stored = localStorage.getItem('dhaka_commute_favorites');
+    return stored ? JSON.parse(stored) : [];
   } catch (e) {
-    console.warn("LocalStorage access denied");
-    return '';
+    return [];
   }
 };
 
@@ -28,12 +27,17 @@ const App: React.FC = () => {
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(null);
   
   // Search State
+  const [searchMode, setSearchMode] = useState<'TEXT' | 'ROUTE'>('TEXT');
   const [inputValue, setInputValue] = useState(''); // What user types
   const [searchQuery, setSearchQuery] = useState(''); // What we filter by
   
-  // API Key State
-  const [apiKey, setApiKey] = useState<string>(getStoredApiKey);
-  const [tempApiKey, setTempApiKey] = useState('');
+  // Route Finder State
+  const [fromStation, setFromStation] = useState<string>('');
+  const [toStation, setToStation] = useState<string>('');
+
+  // Favorites State
+  const [favorites, setFavorites] = useState<string[]>(getStoredFavorites);
+  const [listFilter, setListFilter] = useState<'ALL' | 'FAVORITES'>('ALL');
   
   const [aiQuery, setAiQuery] = useState('');
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
@@ -42,6 +46,9 @@ const App: React.FC = () => {
   const [nearestStopDistance, setNearestStopDistance] = useState<number>(Infinity);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Sorted Stations List for Dropdown
+  const sortedStations = Object.values(STATIONS).sort((a, b) => a.name.localeCompare(b.name));
 
   // Check URL on mount for 404
   useEffect(() => {
@@ -65,13 +72,6 @@ const App: React.FC = () => {
     }
   }, [chatHistory, aiLoading, view]);
 
-  // Sync temp key when entering settings
-  useEffect(() => {
-    if (view === AppView.SETTINGS) {
-      setTempApiKey(apiKey);
-    }
-  }, [view, apiKey]);
-
   // Fetch location when entering Bus Details to show "You are here" on the map
   useEffect(() => {
     if (selectedBus) {
@@ -89,19 +89,34 @@ const App: React.FC = () => {
     }
   }, [selectedBus]);
 
-  // Filter buses based on committed search query
+  // Filter buses based on committed search query, Route Finder, AND list filter
   const filteredBuses = BUS_DATA.filter(bus => {
-    const query = searchQuery.toLowerCase().trim();
-    if (!query) return true;
-    const nameMatch = bus.name.toLowerCase().includes(query);
-    const bnNameMatch = bus.bnName.includes(query);
-    const routeMatch = bus.routeString.toLowerCase().includes(query);
-    const stopMatch = bus.stops.some(stopId => {
-      const station = STATIONS[stopId];
-      if (!station) return false;
-      return station.name.toLowerCase().includes(query) || (station.bnName && station.bnName.includes(query));
-    });
-    return nameMatch || bnNameMatch || routeMatch || stopMatch;
+    // 1. Filter by Tab (All vs Favorites)
+    if (listFilter === 'FAVORITES' && !favorites.includes(bus.id)) {
+      return false;
+    }
+
+    // 2. Filter by Mode
+    if (searchMode === 'ROUTE') {
+      if (!fromStation || !toStation) return true;
+      // Check if bus stops at both stations
+      const stopsAtFrom = bus.stops.includes(fromStation);
+      const stopsAtTo = bus.stops.includes(toStation);
+      return stopsAtFrom && stopsAtTo;
+    } else {
+      // Text Search Mode
+      const query = searchQuery.toLowerCase().trim();
+      if (!query) return true;
+      const nameMatch = bus.name.toLowerCase().includes(query);
+      const bnNameMatch = bus.bnName.includes(query);
+      const routeMatch = bus.routeString.toLowerCase().includes(query);
+      const stopMatch = bus.stops.some(stopId => {
+        const station = STATIONS[stopId];
+        if (!station) return false;
+        return station.name.toLowerCase().includes(query) || (station.bnName && station.bnName.includes(query));
+      });
+      return nameMatch || bnNameMatch || routeMatch || stopMatch;
+    }
   });
 
   const handleSearchCommit = () => {
@@ -131,25 +146,22 @@ const App: React.FC = () => {
     }).catch(console.error);
   };
 
-  const handleSaveApiKey = () => {
-    const trimmed = tempApiKey.trim();
-    try {
-      localStorage.setItem('dhaka_commute_gemini_key', trimmed);
-    } catch (e) {
-      console.warn("LocalStorage save failed");
-    }
-    setApiKey(trimmed);
-    setView(AppView.HOME); 
+  const toggleFavorite = (e: React.MouseEvent, busId: string) => {
+    e.stopPropagation();
+    setFavorites(prev => {
+      const newFavs = prev.includes(busId) 
+        ? prev.filter(id => id !== busId)
+        : [...prev, busId];
+      try {
+        localStorage.setItem('dhaka_commute_favorites', JSON.stringify(newFavs));
+      } catch (err) { console.warn("Fav save failed"); }
+      return newFavs;
+    });
   };
 
   const handleAiSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!aiQuery.trim()) return;
-    
-    if (!apiKey) {
-      setChatHistory(prev => [...prev, { role: 'assistant', text: "Please configure your Gemini API Key in Settings first." }]);
-      return;
-    }
 
     const userMessage: ChatMessage = { role: 'user', text: aiQuery };
     const queryToSend = aiQuery;
@@ -178,15 +190,236 @@ const App: React.FC = () => {
       console.log("Location not available for AI context");
     }
 
-    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`, apiKey);
+    // Use environment API key implicitly
+    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`);
     
     const assistantMessage: ChatMessage = { role: 'assistant', text: result };
     setChatHistory(prev => [...prev, assistantMessage]);
     setAiLoading(false);
   };
 
+  // --- Render Functions ---
+
+  const EmptyState = () => (
+    <div className="flex flex-col items-center justify-center h-full text-center p-8 text-gray-400 bg-white">
+      <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+        <MapIcon className="w-10 h-10 opacity-20 text-gray-400" />
+      </div>
+      <h2 className="text-xl font-bold text-gray-500 mb-2">Select a Route</h2>
+      <p className="max-w-xs mx-auto text-sm">Choose a bus from the list to view its route map, stops, and live status.</p>
+    </div>
+  );
+
+  const renderLiveNav = () => {
+    if (!selectedBus) {
+       return (
+         <div className="flex flex-col items-center justify-center h-full text-center p-6">
+            <h2 className="text-xl font-bold text-dhaka-dark">No Bus Selected</h2>
+            <button onClick={() => setView(AppView.HOME)} className="mt-4 text-dhaka-green font-bold">Go Home</button>
+         </div>
+       );
+    }
+    
+    return (
+      <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
+         <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20">
+            <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <div>
+              <h2 className="text-lg font-bold text-dhaka-dark flex items-center gap-2">
+                Live Navigation
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              </h2>
+              <p className="text-xs text-gray-500">{selectedBus.name}</p>
+            </div>
+         </div>
+         <div className="flex-1 relative">
+            <LiveTracker bus={selectedBus} />
+         </div>
+      </div>
+    );
+  };
+
+  const renderAiAssistant = () => (
+    <div className="flex flex-col h-full bg-slate-50 md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden w-full">
+        <div className="flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20">
+          <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors md:hidden">
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+           <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+             <Bot className="w-6 h-6" />
+           </div>
+           <div>
+             <h2 className="text-lg font-bold text-gray-900">Dhaka AI Guide</h2>
+             <p className="text-xs text-green-600 font-bold flex items-center gap-1">
+               <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> Online
+             </p>
+           </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+          {chatHistory.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
+               <Bot className="w-16 h-16 text-gray-300 mb-4" />
+               <p className="text-sm font-medium text-gray-500">Ask me anything about Dhaka buses!</p>
+               <div className="flex flex-wrap gap-2 justify-center mt-4">
+                 <button onClick={() => setAiQuery("How to go from Mirpur 10 to Banani?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">Mirpur 10 to Banani?</button>
+                 <button onClick={() => setAiQuery("Best bus for Farmgate?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">Best bus for Farmgate?</button>
+               </div>
+            </div>
+          )}
+          
+          {chatHistory.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-dhaka-dark text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none'}`}>
+                 <div className="whitespace-pre-wrap">{msg.text.replace(/\*\*/g, '')}</div>
+              </div>
+            </div>
+          ))}
+          {aiLoading && (
+            <div className="flex justify-start">
+               <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm">
+                 <div className="flex gap-1">
+                   <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></div>
+                   <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                   <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                 </div>
+               </div>
+            </div>
+          )}
+          <div ref={chatEndRef}></div>
+        </div>
+
+        <div className="p-4 bg-white border-t border-gray-200">
+          <form onSubmit={handleAiSubmit} className="flex gap-2 relative">
+             <input
+               type="text"
+               value={aiQuery}
+               onChange={(e) => setAiQuery(e.target.value)}
+               placeholder="Ask about a route..."
+               className="w-full bg-gray-100 border-0 rounded-xl pl-4 pr-12 py-3 text-sm focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all"
+             />
+             <button 
+               type="submit" 
+               disabled={!aiQuery.trim() || aiLoading}
+               className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:bg-gray-400 transition-all hover:bg-blue-700"
+             >
+               <Navigation className="w-4 h-4 rotate-90" />
+             </button>
+          </form>
+        </div>
+    </div>
+  );
+
+  const renderAbout = () => (
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
+        <button onClick={() => setView(AppView.HOME)} className="mb-6 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark md:hidden">
+          <ArrowLeft className="w-4 h-4" /> Back
+        </button>
+        <div className="max-w-2xl mx-auto text-center">
+           <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
+              <Bus className="w-10 h-10" />
+           </div>
+           <h1 className="text-3xl font-bold text-gray-900 mb-2">Dhaka<span className="text-dhaka-red">Commute</span></h1>
+           <p className="text-gray-500 mb-8">Version 1.0.0</p>
+           
+           <div className="text-left space-y-6 bg-slate-50 p-8 rounded-3xl border border-gray-100">
+              <p className="leading-relaxed text-gray-700">
+                DhakaCommute is your ultimate companion for navigating the chaotic but vibrant streets of Dhaka. 
+                Whether you need to find a local bus, check a route, or estimate travel time, we've got you covered.
+              </p>
+              
+              <div>
+                <h3 className="font-bold text-gray-900 mb-2">Features</h3>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> Offline-ready Route Database</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> Live Navigation Simulation</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500"/> AI-Powered Route Assistant</li>
+                </ul>
+              </div>
+
+              <div className="pt-6 border-t border-gray-200">
+                 <h3 className="font-bold text-gray-900 mb-4">Connect</h3>
+                 <div className="flex gap-4">
+                    <a href="https://github.com" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold hover:bg-gray-50 transition-colors">
+                      <User className="w-4 h-4" /> Developer
+                    </a>
+                    <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 text-blue-700 rounded-lg text-sm font-bold hover:bg-blue-100 transition-colors">
+                      <Linkedin className="w-4 h-4" /> LinkedIn
+                    </a>
+                 </div>
+                 <p className="text-xs text-gray-400 mt-4">Developed by Mejbaur Bahar Fagun</p>
+              </div>
+           </div>
+           
+           <div className="mt-8 flex justify-center gap-6 text-xs font-bold text-gray-400">
+              <button onClick={() => setView(AppView.PRIVACY)} className="hover:text-gray-600">Privacy Policy</button>
+              <button onClick={() => setView(AppView.TERMS)} className="hover:text-gray-600">Terms of Service</button>
+           </div>
+        </div>
+    </div>
+  );
+
+  const renderPrivacyPolicy = () => (
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
+      <button onClick={() => setView(AppView.ABOUT)} className="mb-4 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark">
+        <ArrowLeft className="w-4 h-4" /> Back to About
+      </button>
+      <div className="max-w-2xl mx-auto">
+        <h2 className="text-2xl font-bold mb-6">Privacy Policy</h2>
+        <div className="space-y-4 text-sm text-gray-600">
+          <p>This application does not collect any personal data. Location data is processed locally on your device to show your position on the map and is not transmitted to any server.</p>
+        </div>
+      </div>
+      <div className="mt-8 md:hidden">
+         <button onClick={() => setView(AppView.ABOUT)} className="w-full py-3 bg-gray-100 font-bold rounded-xl text-gray-600">Back</button>
+      </div>
+    </div>
+  );
+
+  const renderTerms = () => (
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
+       <button onClick={() => setView(AppView.ABOUT)} className="mb-4 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark">
+        <ArrowLeft className="w-4 h-4" /> Back to About
+      </button>
+      <div className="max-w-2xl mx-auto">
+        <h2 className="text-2xl font-bold mb-6">Terms of Service</h2>
+        <div className="space-y-4 text-sm text-gray-600">
+          <p>DhakaCommute is provided "as is" without warranty of any kind. Bus routes and timings are subject to change by transport authorities.</p>
+          <p>We are not responsible for any inaccuracies in the data provided.</p>
+        </div>
+      </div>
+      <div className="mt-8 md:hidden">
+         <button onClick={() => setView(AppView.ABOUT)} className="w-full py-3 bg-gray-100 font-bold rounded-xl text-gray-600">Back</button>
+      </div>
+    </div>
+  );
+
+  const renderNotFound = () => (
+    <div className="flex flex-col items-center justify-center h-full text-center p-6 bg-white overflow-hidden relative">
+      <div className="absolute top-1/2 left-0 w-full -translate-y-1/2 h-20 bg-gray-100"></div>
+      <div className="relative z-10 animate-drive">
+         <Bus className="w-24 h-24 text-dhaka-green" />
+      </div>
+      <h1 className="text-2xl font-bold text-dhaka-dark mt-8 mb-2">Off Route?</h1>
+      <p className="text-gray-500 mb-6 max-w-xs mx-auto">Looks like you've wandered off the map. Don't worry, we can get you back on track!</p>
+    </div>
+  );
+
+  const renderServerError = () => (
+    <div className="flex flex-col items-center justify-center h-full text-center p-6 bg-white">
+       <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
+      <h1 className="text-2xl font-bold text-dhaka-dark mb-2">Server Error</h1>
+      <p className="text-gray-500 mb-6">Something went wrong.</p>
+      <button onClick={() => window.location.reload()} className="bg-dhaka-green text-white px-6 py-2 rounded-xl font-bold">Reload</button>
+    </div>
+  );
+
   const renderBusDetails = () => {
     if (!selectedBus) return <EmptyState />;
+    const isFav = favorites.includes(selectedBus.id);
+
     return (
       <div className="flex flex-col h-full bg-slate-50 md:bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
         {/* Mobile Header (Hidden on Desktop) */}
@@ -201,17 +434,31 @@ const App: React.FC = () => {
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="text-center">
-              <h1 className="text-lg font-bold text-dhaka-dark leading-none truncate max-w-[200px]">{selectedBus.name}</h1>
+              <h1 className="text-lg font-bold text-dhaka-dark leading-none truncate max-w-[180px]">{selectedBus.name}</h1>
               <p className="text-xs text-gray-400 font-bengali mt-0.5">{selectedBus.bnName}</p>
             </div>
-            <div className="w-10"></div> 
+            <button 
+              onClick={(e) => toggleFavorite(e, selectedBus.id)}
+              className="w-10 h-10 flex items-center justify-center hover:bg-red-50 rounded-full transition-colors"
+            >
+              <Heart className={`w-5 h-5 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+            </button>
         </div>
 
         {/* Desktop Header */}
         <div className="hidden md:flex px-8 py-6 border-b border-gray-100 items-center justify-between bg-white/50 backdrop-blur z-20 sticky top-0 w-full">
-           <div>
-              <h1 className="text-2xl font-bold text-dhaka-dark leading-none">{selectedBus.name}</h1>
-              <p className="text-sm text-gray-500 font-bengali mt-1">{selectedBus.bnName}</p>
+           <div className="flex items-center gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-dhaka-dark leading-none">{selectedBus.name}</h1>
+                <p className="text-sm text-gray-500 font-bengali mt-1">{selectedBus.bnName}</p>
+              </div>
+              <button 
+                onClick={(e) => toggleFavorite(e, selectedBus.id)}
+                className="w-10 h-10 flex items-center justify-center hover:bg-red-50 rounded-full transition-colors border border-gray-200 hover:border-red-200"
+                title={isFav ? "Remove from Favorites" : "Add to Favorites"}
+              >
+                <Heart className={`w-5 h-5 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+              </button>
            </div>
            <button 
               onClick={() => setView(AppView.LIVE_NAV)}
@@ -314,456 +561,196 @@ const App: React.FC = () => {
     );
   };
 
-  const renderLiveNav = () => {
-    if (!selectedBus) return <EmptyState />;
-    return (
-      <div className="flex flex-col h-full bg-slate-50 md:bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
-        <div className="flex-none bg-white px-4 py-3 border-b border-gray-200 shadow-sm z-20 flex justify-between items-center pb-safe-top pt-safe-top fixed md:sticky top-0 w-full">
-          <button 
-            onClick={() => setView(AppView.BUS_DETAILS)}
-            className="flex items-center gap-1.5 text-red-600 font-bold text-xs bg-red-50 px-4 py-2 rounded-xl active:bg-red-100 transition-colors"
-          >
-            <div className="w-2 h-2 bg-red-500 rounded-sm"></div> STOP
-          </button>
-          <div className="text-right">
-             <div className="text-xs font-bold text-dhaka-dark uppercase tracking-wide">Live Mode</div>
-             <div className="text-[10px] text-gray-500 flex items-center justify-end gap-1.5 mt-0.5">
-               <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                </span> 
-               GPS Active
-             </div>
-          </div>
-        </div>
-        <div className="flex-1 overflow-hidden pt-16 md:pt-0">
-          <LiveTracker bus={selectedBus} />
-        </div>
-      </div>
-    );
-  };
-
-  const renderAiAssistant = () => (
-    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full">
-      <div className="flex-none p-4 border-b border-gray-100 flex items-center gap-3 bg-white z-40 fixed md:sticky top-0 w-full">
-        <button 
-          onClick={() => setView(AppView.HOME)}
-          className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors md:hidden"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </button>
-        <div>
-          <h2 className="text-lg font-bold text-dhaka-dark flex items-center gap-2">
-            AI Assistant
-          </h2>
-          <p className="text-[10px] text-gray-400">Powered by Gemini</p>
-        </div>
-      </div>
-      
-      {!apiKey ? (
-         <div className="flex-1 flex flex-col items-center justify-center p-8 bg-slate-50 text-center">
-             <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mb-6">
-                <Lock className="w-10 h-10 text-gray-500" />
-             </div>
-             <h3 className="text-xl font-bold text-gray-800 mb-2">Setup Required</h3>
-             <p className="text-gray-500 max-w-xs mb-8">
-               To use the AI Assistant, you need to provide your own Google Gemini API Key.
-             </p>
-             <button 
-                onClick={() => setView(AppView.SETTINGS)}
-                className="px-6 py-3 bg-dhaka-green text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors flex items-center gap-2"
-             >
-                <Settings className="w-4 h-4" /> Open Settings
-             </button>
-         </div>
-      ) : (
-        <>
-          <div className="flex-1 overflow-y-auto p-4 space-y-5 bg-slate-50" ref={scrollContainerRef}>
-            {/* Welcome Message */}
-            {chatHistory.length === 0 && (
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-dhaka-green to-teal-600 flex items-center justify-center shrink-0 shadow-sm mt-1">
-                   <Bot className="w-4 h-4 text-white" />
-                </div>
-                <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-sm text-gray-700 max-w-[85%]">
-                   <p className="font-bold text-gray-900 mb-2">Hello! 👋</p>
-                   I can help you find bus routes in Dhaka. Try asking:
-                   <div className="mt-3 space-y-2">
-                     <button onClick={() => setAiQuery('How to go from Mirpur to Gulshan?')} className="block text-left w-full text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-600 p-2.5 rounded-xl border border-gray-200 hover:border-blue-200 text-gray-600 transition-colors">
-                       "How to go from Mirpur to Gulshan?"
-                     </button>
-                     <button onClick={() => setAiQuery('Direct bus to Airport?')} className="block text-left w-full text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-600 p-2.5 rounded-xl border border-gray-200 hover:border-blue-200 text-gray-600 transition-colors">
-                       "Direct bus to Airport?"
-                     </button>
-                   </div>
-                </div>
+  const renderHomeContent = () => (
+    <div className="flex flex-col h-full w-full">
+      {/* Sticky Top Section */}
+      <div className="flex-none bg-white z-20">
+        <div className="p-4 space-y-4">
+            {/* Colorful Header with Tabs */}
+             <div className="bg-gradient-to-br from-dhaka-green to-[#004d38] rounded-[2rem] shadow-lg shadow-green-900/20 relative overflow-hidden text-white transition-all duration-300">
+               <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
+               <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
+              
+              <div className="p-6 pb-2">
+                <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
+                <p className="text-green-100 text-sm opacity-90">Find your bus route in seconds</p>
               </div>
-            )}
-            
-            {/* Chat History */}
-            {chatHistory.map((msg, index) => (
-              <div key={index} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm mt-1 ${msg.role === 'user' ? 'bg-blue-600' : 'bg-gradient-to-br from-dhaka-green to-teal-600'}`}>
-                   {msg.role === 'user' ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-white" />}
-                 </div>
-                 <div className={`p-4 rounded-2xl shadow-sm border text-sm max-w-[90%] whitespace-pre-line leading-relaxed
-                   ${msg.role === 'user' 
-                     ? 'bg-blue-600 text-white border-blue-600 rounded-tr-none' 
-                     : 'bg-white text-gray-800 border-gray-100 rounded-tl-none'
-                   }
-                 `}>
-                   {msg.text.replace(/\*\*/g, '')}
-                 </div>
-              </div>
-            ))}
 
-            {/* Loading Indicator */}
-            {aiLoading && (
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center shrink-0 opacity-50 mt-1">
-                   <Bot className="w-4 h-4 text-white" />
-                </div>
-                <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100">
-                  <div className="flex gap-1.5">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-75"></div>
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></div>
-                  </div>
-                </div>
-              </div>
-            )}
-            <div ref={chatEndRef} />
-          </div>
-          <div className="flex-none p-4 border-t border-gray-100 bg-white pb-safe z-30">
-            <form onSubmit={handleAiSubmit} className="relative">
-              <input
-                type="text"
-                className="w-full bg-gray-100 border border-transparent rounded-2xl pl-5 pr-12 py-3.5 focus:bg-white focus:outline-none focus:border-dhaka-green focus:ring-1 focus:ring-dhaka-green transition-all shadow-inner text-sm placeholder:text-gray-400"
-                placeholder="Type your question..."
-                value={aiQuery}
-                onChange={(e) => setAiQuery(e.target.value)}
-              />
-              <button 
-                type="submit"
-                disabled={aiLoading || !aiQuery.trim()}
-                className="absolute right-2 top-2 p-2 bg-dhaka-green text-white rounded-xl hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-green-200"
-              >
-                <Navigation className="w-4 h-4 rotate-90" />
-              </button>
-            </form>
-          </div>
-        </>
-      )}
-    </div>
-  );
-
-  const renderSettings = () => (
-    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full">
-       <div className="flex-none p-4 border-b border-gray-100 flex items-center gap-3 bg-white z-40 fixed md:sticky top-0 w-full">
-        <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"><ArrowLeft className="w-5 h-5 text-gray-600" /></button>
-        <h2 className="text-lg font-bold text-dhaka-dark">Settings</h2>
-      </div>
-      <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-           <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-             <Key className="w-5 h-5 text-dhaka-green" /> API Key Configuration
-           </h3>
-           <p className="text-sm text-gray-500 mb-6">
-             To use the AI Assistant features, you must provide your own Google Gemini API Key. The key is stored locally on your device.
-           </p>
-           
-           <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Gemini API Key</label>
-           <input 
-             type="password" 
-             value={tempApiKey}
-             onChange={(e) => setTempApiKey(e.target.value)}
-             placeholder="AIzaSy..."
-             className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-dhaka-green focus:ring-1 focus:ring-dhaka-green transition-all mb-4 font-mono"
-           />
-           
-           <button 
-             onClick={handleSaveApiKey}
-             disabled={!tempApiKey.trim()}
-             className="w-full bg-dhaka-green text-white py-3 rounded-xl font-bold shadow-lg shadow-green-100 hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-           >
-             <CheckCircle2 className="w-4 h-4" /> Save Configuration
-           </button>
-           
-           <div className="mt-6 pt-6 border-t border-gray-100">
-             <a 
-               href="https://aistudio.google.com/app/apikey" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               className="flex items-center justify-between text-sm text-blue-600 hover:underline bg-blue-50 px-4 py-3 rounded-xl"
-             >
-               <span>Get a Gemini API Key</span>
-               <ExternalLink className="w-4 h-4" />
-             </a>
-           </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderPrivacyPolicy = () => (
-    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full relative">
-      <div className="flex-none p-4 border-b border-gray-100 flex items-center gap-3 bg-white z-40 fixed md:sticky top-0 w-full">
-        <button onClick={() => setView(AppView.ABOUT)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"><ArrowLeft className="w-5 h-5 text-gray-600" /></button>
-        <h2 className="text-lg font-bold text-dhaka-dark">Privacy Policy</h2>
-      </div>
-      <div className="flex-1 overflow-y-auto p-6 bg-slate-50 space-y-4 text-sm text-gray-700 pb-20">
-        <p><strong>Last Updated: 2025</strong></p>
-        <p>At DhakaCommute, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your information.</p>
-        <h3 className="font-bold text-gray-900 mt-4">1. Information We Collect</h3>
-        <ul className="list-disc pl-5 space-y-1">
-          <li><strong>Location Data:</strong> We access your device's geolocation to provide real-time navigation and nearby bus station information. This data is processed locally on your device and is not stored on our servers.</li>
-          <li><strong>API Keys:</strong> If you use the AI features, your Google Gemini API Key is stored securely in your browser's local storage and is sent directly to Google's servers only when making requests. We do not log or save your keys on our servers.</li>
-        </ul>
-        <h3 className="font-bold text-gray-900 mt-4">2. How We Use Your Information</h3>
-        <p>We use your information solely to provide the core functionality of the app, such as calculating routes and showing your position on the map.</p>
-      </div>
-      {/* Sticky Back Button */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur border-t border-gray-100 z-50 pb-safe">
-        <button 
-          onClick={() => setView(AppView.ABOUT)}
-          className="w-full bg-gray-100 text-gray-700 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to About
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderTerms = () => (
-    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full relative">
-      <div className="flex-none p-4 border-b border-gray-100 flex items-center gap-3 bg-white z-40 fixed md:sticky top-0 w-full">
-        <button onClick={() => setView(AppView.ABOUT)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"><ArrowLeft className="w-5 h-5 text-gray-600" /></button>
-        <h2 className="text-lg font-bold text-dhaka-dark">Terms & Conditions</h2>
-      </div>
-      <div className="flex-1 overflow-y-auto p-6 bg-slate-50 space-y-4 text-sm text-gray-700 pb-20">
-        <h3 className="font-bold text-gray-900">1. Acceptance of Terms</h3>
-        <p>By accessing and using DhakaCommute, you accept and agree to be bound by the terms and provision of this agreement.</p>
-        <h3 className="font-bold text-gray-900 mt-4">2. Use of Service</h3>
-        <p>This service is provided for informational purposes only. While we strive for accuracy, bus routes and schedules in Dhaka are subject to change without notice.</p>
-        <h3 className="font-bold text-gray-900 mt-4">3. Limitation of Liability</h3>
-        <p>DhakaCommute shall not be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses.</p>
-      </div>
-      {/* Sticky Back Button */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur border-t border-gray-100 z-50 pb-safe">
-        <button 
-          onClick={() => setView(AppView.ABOUT)}
-          className="w-full bg-gray-100 text-gray-700 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to About
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderNotFound = () => (
-    <div className="flex flex-col items-center justify-center h-full text-center bg-cyan-100 md:rounded-l-3xl md:border-l md:border-gray-200 w-full overflow-hidden relative">
-       {/* Background Animation Layers */}
-       <div className="absolute top-10 left-0 w-full h-20 opacity-30">
-          <div className="w-20 h-8 bg-white rounded-full absolute top-2 animate-cloud-1"></div>
-          <div className="w-16 h-6 bg-white rounded-full absolute top-10 animate-cloud-2"></div>
-       </div>
-
-      <div className="relative z-10 p-8 bg-white/60 backdrop-blur-md rounded-3xl border border-white/50 shadow-xl max-w-sm mx-6">
-        <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-6 mx-auto animate-bounce">
-          <MapIcon className="w-10 h-10 text-orange-500" />
-        </div>
-        <h2 className="text-xl font-bold text-gray-800 mb-2">Off Route?</h2>
-        <p className="text-gray-600 mb-8 text-sm leading-relaxed">
-          Looks like you've wandered off the map. Don't worry, we can get you back on track!
-        </p>
-      </div>
-
-      {/* Moving Bus Animation at Bottom */}
-      <div className="absolute bottom-0 w-full h-48 overflow-hidden pointer-events-none">
-         <div className="absolute bottom-10 w-full h-1 bg-gray-400"></div>
-         <div className="absolute bottom-0 w-full h-10 bg-gray-300"></div>
-         
-         <div className="absolute bottom-11 animate-drive">
-            <div className="relative">
-                <div className="w-32 h-16 bg-dhaka-red rounded-t-lg rounded-r-lg relative z-10 flex items-center justify-center">
-                   <div className="text-white font-bold text-xs uppercase tracking-widest border border-white px-2 py-0.5">Dhaka</div>
-                   <div className="absolute top-2 right-4 w-8 h-6 bg-blue-200 border border-white/20"></div>
-                   <div className="absolute top-2 left-4 w-8 h-6 bg-blue-200 border border-white/20"></div>
-                </div>
-                <div className="absolute -bottom-3 left-4 w-6 h-6 bg-gray-800 rounded-full border-2 border-gray-400 z-20 animate-spin"></div>
-                <div className="absolute -bottom-3 right-4 w-6 h-6 bg-gray-800 rounded-full border-2 border-gray-400 z-20 animate-spin"></div>
-            </div>
-         </div>
-      </div>
-    </div>
-  );
-
-  const renderServerError = () => (
-    <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-white md:rounded-l-3xl md:border-l md:border-gray-200 w-full">
-      <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6">
-        <AlertTriangle className="w-10 h-10 text-red-500" />
-      </div>
-      <h1 className="text-4xl font-bold text-red-500 mb-2">500</h1>
-      <h2 className="text-xl font-bold text-gray-700 mb-4">Server Error</h2>
-      <p className="text-gray-500 max-w-xs mb-8">
-        Something went wrong on our end. Please try again later.
-      </p>
-      <button 
-        onClick={() => setView(AppView.HOME)}
-        className="px-6 py-3 bg-dhaka-green text-white rounded-xl font-bold hover:bg-green-800 transition-colors"
-      >
-        Go Back Home
-      </button>
-    </div>
-  );
-
-  const renderAbout = () => (
-    <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden pt-16 md:pt-0 w-full">
-       <div className="flex-none p-4 border-b border-gray-100 flex items-center gap-3 bg-white z-40 fixed md:sticky top-0 w-full">
-        <button 
-          onClick={() => setView(AppView.HOME)}
-          className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </button>
-        <div>
-          <h2 className="text-lg font-bold text-dhaka-dark">
-            About Us
-          </h2>
-        </div>
-      </div>
-      <div className="flex-1 overflow-y-auto bg-slate-50 pb-20" ref={scrollContainerRef}>
-         {/* Hero */}
-         <div className="bg-gradient-to-b from-dhaka-green to-[#004d38] text-white py-12 px-6 text-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-2xl"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full -ml-10 -mb-10 blur-2xl"></div>
-            
-            <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-dhaka-red font-bold text-4xl shadow-2xl mx-auto mb-6 relative z-10">
-               D
-            </div>
-            <h1 className="text-3xl font-bold mb-2 relative z-10">DhakaCommute</h1>
-            <p className="text-green-100 max-w-md mx-auto relative z-10">
-              Simplifying public transport in Dhaka with real-time insights and smart navigation.
-            </p>
-         </div>
-
-         <div className="px-4 -mt-8 relative z-10 pb-24 space-y-6">
-            {/* Mission Card */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg shadow-gray-200/50 border border-gray-100">
-               <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-                 <Heart className="w-5 h-5 text-red-500 fill-current" /> Our Mission
-               </h3>
-               <p className="text-gray-600 text-sm leading-relaxed">
-                 Dhaka is a vibrant city, but navigating its bus network can be challenging. Our goal is to empower every commuter with accurate, accessible, and easy-to-use information to make daily travel less stressful and more predictable.
-               </p>
-            </div>
-
-             {/* Features */}
-            <div className="grid grid-cols-2 gap-4">
-               <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                  <Zap className="w-6 h-6 text-yellow-500 mb-3" />
-                  <h4 className="font-bold text-gray-800 text-sm mb-1">Fast Search</h4>
-                  <p className="text-xs text-gray-500">Find routes instantly by name or location.</p>
-               </div>
-               <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                  <Bot className="w-6 h-6 text-blue-500 mb-3" />
-                  <h4 className="font-bold text-gray-800 text-sm mb-1">AI Guide</h4>
-                  <p className="text-xs text-gray-500">Ask natural questions about your commute.</p>
-               </div>
-               <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                  <Navigation className="w-6 h-6 text-dhaka-green mb-3" />
-                  <h4 className="font-bold text-gray-800 text-sm mb-1">Live Nav</h4>
-                  <p className="text-xs text-gray-500">Track your journey stop by stop.</p>
-               </div>
-               <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                  <Users className="w-6 h-6 text-purple-500 mb-3" />
-                  <h4 className="font-bold text-gray-800 text-sm mb-1">Crowdsourced</h4>
-                  <p className="text-xs text-gray-500">Data updated by community insights.</p>
-               </div>
-            </div>
-
-            {/* Links */}
-            <div className="bg-white rounded-2xl p-2 border border-gray-100 shadow-sm">
-               <button onClick={() => setView(AppView.SETTINGS)} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors group">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center group-hover:bg-green-100 transition-colors">
-                      <Settings className="w-4 h-4 text-dhaka-green" />
-                    </div>
-                    <div className="text-left">
-                      <span className="font-bold text-gray-800 text-sm block">Settings</span>
-                      <span className="text-[10px] text-gray-500 block">Manage API Keys & Preferences</span>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-               </button>
-               <div className="h-px bg-gray-100 mx-4"></div>
-               <button onClick={() => setView(AppView.PRIVACY)} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors group">
-                  <div className="flex items-center gap-3">
-                     <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                        <Shield className="w-4 h-4 text-blue-500" />
-                     </div>
-                    <span className="font-bold text-gray-700 text-sm">Privacy Policy</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-               </button>
-               <div className="h-px bg-gray-100 mx-4"></div>
-               <button onClick={() => setView(AppView.TERMS)} className="w-full flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors group">
-                  <div className="flex items-center gap-3">
-                     <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                        <FileText className="w-4 h-4 text-orange-500" />
-                     </div>
-                    <span className="font-bold text-gray-700 text-sm">Terms & Conditions</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-               </button>
-            </div>
-             
-             {/* Version & Developer Info */}
-            <div className="text-center pt-6">
-               <div className="flex justify-center items-center gap-2 mb-2">
-                 <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 font-bold text-xs">D</div>
-               </div>
-               <p className="text-xs text-gray-400 font-medium">DhakaCommute v1.0.0</p>
-               
-               <div className="mt-4 pt-4 border-t border-gray-200/50 inline-block w-full max-w-xs">
-                 <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-2">Developed By</p>
-                 <a 
-                    href="https://www.linkedin.com/in/mejbaur/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-white px-4 py-2 rounded-full border border-gray-100 shadow-sm hover:shadow-md transition-shadow mx-auto w-fit"
+              {/* Mode Toggle */}
+              <div className="flex px-6 pb-4 gap-4">
+                 <button 
+                   onClick={() => setSearchMode('TEXT')}
+                   className={`text-xs font-bold uppercase tracking-wider py-2 border-b-2 transition-colors ${searchMode === 'TEXT' ? 'border-white text-white' : 'border-transparent text-green-200 hover:text-white'}`}
                  >
-                    <Linkedin className="w-4 h-4 text-[#0077b5]" />
-                    <span className="text-xs font-bold text-gray-700">Mejbaur Bahar Fagun</span>
-                 </a>
-               </div>
-               
-               <p className="text-[10px] text-gray-300 mt-4">© 2025 All Rights Reserved</p>
+                   Search
+                 </button>
+                 <button 
+                   onClick={() => setSearchMode('ROUTE')}
+                   className={`text-xs font-bold uppercase tracking-wider py-2 border-b-2 transition-colors ${searchMode === 'ROUTE' ? 'border-white text-white' : 'border-transparent text-green-200 hover:text-white'}`}
+                 >
+                   Route Finder
+                 </button>
+              </div>
+
+              <div className="px-6 pb-6">
+                {searchMode === 'TEXT' ? (
+                  <div className="relative group flex items-center">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
+                    <input
+                      type="text"
+                      placeholder="Search bus or place..."
+                      className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                    />
+                    <button 
+                      onClick={handleSearchCommit}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
+                      title="Click to Search"
+                    >
+                       <Search className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                     <div className="flex-1 relative">
+                        <select 
+                          value={fromStation}
+                          onChange={(e) => setFromStation(e.target.value)}
+                          className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer"
+                        >
+                          <option value="">From...</option>
+                          {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                        </select>
+                        <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                     </div>
+                     <div className="flex items-center justify-center">
+                        <ArrowRightLeft className="w-5 h-5 text-white/80" />
+                     </div>
+                     <div className="flex-1 relative">
+                        <select 
+                          value={toStation}
+                          onChange={(e) => setToStation(e.target.value)}
+                          className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer"
+                        >
+                          <option value="">To...</option>
+                          {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                        </select>
+                        <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                     </div>
+                  </div>
+                )}
+              </div>
             </div>
-         </div>
+
+            {/* AI Button */}
+            <button 
+              onClick={() => setView(AppView.AI_ASSISTANT)}
+              className="w-full flex items-center justify-between bg-white border border-gray-100 p-4 rounded-2xl shadow-sm active:scale-[0.99] transition-all hover:border-blue-200 group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                   <Bot className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <h3 className="font-bold text-gray-800 text-sm">Ask AI Assistant</h3>
+                  <p className="text-xs text-gray-500">Not sure which bus to take?</p>
+                </div>
+              </div>
+              <div className="bg-gray-50 p-2 rounded-full">
+                 <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
+              </div>
+            </button>
+
+            {/* List Filter Tabs */}
+            <div className="flex p-1 bg-gray-100 rounded-xl">
+              <button 
+                onClick={() => setListFilter('ALL')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                All Buses
+              </button>
+              <button 
+                onClick={() => setListFilter('FAVORITES')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                <Heart className="w-3 h-3 fill-current" /> Favorites
+              </button>
+            </div>
+            
+            <div className="flex items-center justify-between px-2">
+                <h3 className="font-bold text-dhaka-dark text-lg">{listFilter === 'FAVORITES' ? 'Saved Routes' : 'All Buses'}</h3>
+                <span className="text-[10px] bg-gray-200 px-2 py-0.5 rounded-full text-gray-600 font-bold">{filteredBuses.length}</span>
+            </div>
+        </div>
       </div>
       
-      {/* Sticky Back Button for About Page */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur border-t border-gray-100 z-50 pb-safe">
-        <button 
-          onClick={() => setView(AppView.HOME)}
-          className="w-full bg-gray-900 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-gray-200 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
-        >
-          <Home className="w-4 h-4" /> Back to Home
-        </button>
+      {/* Scrollable Bus List */}
+      <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-4 space-y-3">
+        {filteredBuses.map(bus => {
+          const isFav = favorites.includes(bus.id);
+          return (
+            <button 
+              key={bus.id}
+              onClick={() => handleBusSelect(bus)}
+              className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
+            >
+              {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex items-start gap-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shadow-sm shrink-0
+                      ${bus.type === 'AC' ? 'bg-blue-100 text-blue-700' : 
+                        bus.type === 'Sitting' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}
+                  `}>
+                    {bus.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-base text-gray-900 leading-tight group-hover:text-dhaka-green transition-colors">{bus.name}</h4>
+                    <span className="text-xs font-bengali text-gray-400">{bus.bnName}</span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                    <button 
+                      onClick={(e) => toggleFavorite(e, bus.id)}
+                      className="p-1.5 -mr-1.5 hover:bg-gray-100 rounded-full transition-colors z-20"
+                    >
+                      <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
+                    </button>
+                    <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
+                    ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
+                    bus.type === 'AC' ? 'bg-blue-50 text-blue-600' :
+                    'bg-orange-50 text-orange-600'
+                  }`}>
+                    {bus.type}
+                  </span>
+                </div>
+              </div>
+              <div className="relative pl-3 border-l-2 border-gray-100 ml-5 space-y-1 py-1">
+                <div className="text-xs text-gray-500 font-medium truncate pr-4">
+                    <span className="text-gray-300 mr-1">●</span> {bus.routeString.split('⇄')[0]}
+                </div>
+                <div className="text-xs text-gray-500 font-medium truncate pr-4">
+                    <span className="text-gray-300 mr-1">●</span> {bus.routeString.split('⇄').pop()}
+                </div>
+              </div>
+            </button>
+          );
+        })}
+        {filteredBuses.length === 0 && (
+          <div className="text-center py-16 text-gray-400">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Bus className="w-8 h-8 opacity-40" />
+            </div>
+            <p>No buses found {searchMode === 'ROUTE' ? `between selected stations` : listFilter === 'FAVORITES' ? 'in favorites' : `matching "${searchQuery}"`}</p>
+            {inputValue && inputValue !== searchQuery && searchMode === 'TEXT' && (
+              <button onClick={handleSearchCommit} className="mt-2 text-xs text-dhaka-green underline">
+                Click to search for "{inputValue}"
+              </button>
+            )}
+          </div>
+        )}
       </div>
-    </div>
-  );
-
-  const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center h-full text-center p-8 bg-slate-50 md:rounded-l-3xl md:border-l md:border-gray-200 w-full">
-      <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-6 animate-pulse">
-        <MapIcon className="w-10 h-10 text-dhaka-green" />
-      </div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">Select a Route</h2>
-      <p className="text-gray-500 max-w-xs">
-        Choose a bus from the list to see the full route map, live tracking details, and station list.
-      </p>
     </div>
   );
 
@@ -800,12 +787,6 @@ const App: React.FC = () => {
           </button>
           <div className="flex items-center gap-4">
              <button 
-                onClick={() => setView(AppView.SETTINGS)}
-                className="text-sm font-bold text-gray-500 hover:text-dhaka-green transition-colors flex items-center gap-2"
-             >
-               <Settings className="w-4 h-4" />
-             </button>
-             <button 
                 onClick={() => setView(AppView.AI_ASSISTANT)}
                 className="text-sm font-bold text-gray-600 hover:text-dhaka-green transition-colors"
              >
@@ -826,112 +807,8 @@ const App: React.FC = () => {
           ${'w-full md:w-1/3 md:min-w-[320px] md:max-w-md md:flex md:flex-col border-r border-gray-200 bg-white z-0 h-full'}
           ${view !== AppView.HOME && 'hidden md:flex'}
         `}>
-           <div className="h-full overflow-y-auto no-scrollbar pt-16 md:pt-0">
-             <div className="p-4 space-y-5">
-                {/* Search Header */}
-                 <div className="bg-gradient-to-br from-dhaka-green to-[#004d38] p-6 rounded-[2rem] shadow-lg shadow-green-900/20 relative overflow-hidden text-white mt-2">
-                   <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
-                   <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
-                  <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
-                  <p className="text-green-100 text-sm mb-5 opacity-90">Find your bus route in seconds</p>
-                  <div className="relative group flex items-center">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
-                    <input
-                      type="text"
-                      placeholder="Search bus or place..."
-                      className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                    />
-                    <button 
-                      onClick={handleSearchCommit}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
-                      title="Click to Search"
-                    >
-                       <Search className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* AI Button */}
-                <button 
-                  onClick={() => setView(AppView.AI_ASSISTANT)}
-                  className="w-full flex items-center justify-between bg-white border border-gray-100 p-4 rounded-2xl shadow-sm active:scale-[0.99] transition-all hover:border-blue-200 group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
-                       <Bot className="w-5 h-5" />
-                    </div>
-                    <div className="text-left">
-                      <h3 className="font-bold text-gray-800 text-sm">Ask AI Assistant</h3>
-                      <p className="text-xs text-gray-500">Not sure which bus to take?</p>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 p-2 rounded-full">
-                     <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
-                  </div>
-                </button>
-
-                {/* Bus List */}
-                <div className="space-y-3 pb-24 md:pb-4">
-                  <div className="flex items-center justify-between px-2 pt-2">
-                    <h3 className="font-bold text-dhaka-dark text-lg">All Buses</h3>
-                    <span className="text-[10px] bg-gray-200 px-2 py-0.5 rounded-full text-gray-600 font-bold">{filteredBuses.length}</span>
-                  </div>
-                  {filteredBuses.map(bus => (
-                    <button 
-                      key={bus.id}
-                      onClick={() => handleBusSelect(bus)}
-                      className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
-                    >
-                      {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex items-start gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shadow-sm shrink-0
-                             ${bus.type === 'AC' ? 'bg-blue-100 text-blue-700' : 
-                               bus.type === 'Sitting' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}
-                          `}>
-                            {bus.name.charAt(0)}
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-base text-gray-900 leading-tight group-hover:text-dhaka-green transition-colors">{bus.name}</h4>
-                            <span className="text-xs font-bengali text-gray-400">{bus.bnName}</span>
-                          </div>
-                        </div>
-                        <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
-                          ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
-                          bus.type === 'AC' ? 'bg-blue-50 text-blue-600' :
-                          'bg-orange-50 text-orange-600'
-                        }`}>
-                          {bus.type}
-                        </span>
-                      </div>
-                      <div className="relative pl-3 border-l-2 border-gray-100 ml-5 space-y-1 py-1">
-                        <div className="text-xs text-gray-500 font-medium truncate pr-4">
-                           <span className="text-gray-300 mr-1">●</span> {bus.routeString.split('⇄')[0]}
-                        </div>
-                        <div className="text-xs text-gray-500 font-medium truncate pr-4">
-                           <span className="text-gray-300 mr-1">●</span> {bus.routeString.split('⇄').pop()}
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                  {filteredBuses.length === 0 && (
-                    <div className="text-center py-16 text-gray-400">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Bus className="w-8 h-8 opacity-40" />
-                      </div>
-                      <p>No buses found matching "{searchQuery}"</p>
-                      {inputValue && inputValue !== searchQuery && (
-                        <button onClick={handleSearchCommit} className="mt-2 text-xs text-dhaka-green underline">
-                          Click to search for "{inputValue}"
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
+           <div className="h-full pt-16 md:pt-0">
+             {renderHomeContent()}
            </div>
         </div>
 
@@ -947,7 +824,6 @@ const App: React.FC = () => {
            {view === AppView.ABOUT && renderAbout()}
            {view === AppView.PRIVACY && renderPrivacyPolicy()}
            {view === AppView.TERMS && renderTerms()}
-           {view === AppView.SETTINGS && renderSettings()}
            {view === AppView.NOT_FOUND && renderNotFound()}
            {view === AppView.SERVER_ERROR && renderServerError()}
         </div>

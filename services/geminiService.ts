@@ -1,13 +1,17 @@
 import { GoogleGenAI } from '@google/genai';
 import { BUS_DATA } from '../constants';
 
-export const askGeminiRoute = async (userQuery: string, apiKey: string): Promise<string> => {
+export const askGeminiRoute = async (userQuery: string): Promise<string> => {
+  // Use environment variable exclusively as per guidelines
+  const apiKey = process.env.API_KEY;
+  
   if (!apiKey) {
-    return "Please configure your Gemini API Key in Settings to use the Assistant.";
+    console.error("API Key not found");
+    return "The AI service is currently unavailable. Please check the system configuration.";
   }
 
   try {
-    // Initialize client with the provided key
+    // Initialize client with the key
     const ai = new GoogleGenAI({ apiKey: apiKey });
     const model = 'gemini-2.5-flash';
     
@@ -49,8 +53,8 @@ export const askGeminiRoute = async (userQuery: string, apiKey: string): Promise
   } catch (error: any) {
     console.error("Gemini API Error:", error);
     if (error.message?.includes('API_KEY_INVALID') || error.status === 400 || error.status === 403) {
-      return "Invalid API Key. Please check your key in Settings.";
+      return "The configured API Key is invalid.";
     }
-    return "I'm having trouble connecting to the AI assistant. Please check your internet connection or API key.";
+    return "I'm having trouble connecting to the AI assistant. Please check your internet connection.";
   }
 };
