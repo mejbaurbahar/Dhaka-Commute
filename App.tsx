@@ -602,18 +602,87 @@ const App: React.FC = () => {
 
   const renderPrivacyPolicy = () => (
     <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
-      {/* Fixed Back Button */}
+      {/* Back Button - Responsive positioning */}
       <button
         onClick={() => setView(AppView.ABOUT)}
-        className="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-dhaka-dark hover:bg-gray-800 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
+        className="sticky top-4 left-4 md:fixed md:top-6 md:left-6 z-50 flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-dhaka-dark hover:bg-gray-800 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95 w-fit ml-4 mt-4 md:ml-0 md:mt-0"
       >
         <ArrowLeft className="w-4 h-4" /> Back to About
       </button>
 
-      <div className="max-w-2xl mx-auto p-6 md:p-12 pt-20">
-        <h2 className="text-2xl font-bold mb-6">Privacy Policy</h2>
-        <div className="space-y-4 text-sm text-gray-600">
-          <p>This application does not collect any personal data. Location data is processed locally on your device to show your position on the map and is not transmitted to any server.</p>
+      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-4 md:pt-20">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Privacy Policy</h1>
+        <p className="text-sm text-gray-500 mb-8">Last updated: November 26, 2025</p>
+
+        <div className="space-y-6 text-gray-700 leading-relaxed">
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">1. Introduction</h2>
+            <p>Welcome to DhakaCommute. We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we handle your information when you use our bus route finder application.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">2. Data We Do NOT Collect</h2>
+            <p>DhakaCommute is designed with privacy in mind. We do NOT collect, store, or transmit:</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
+              <li>Personal identification information (name, email, phone number)</li>
+              <li>Your location data to any server</li>
+              <li>Your search history or route preferences</li>
+              <li>Any browsing behavior or analytics</li>
+              <li>Device information or IP addresses</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">3. Local Data Processing</h2>
+            <p><strong>Location Services:</strong> When you grant location permission, your GPS coordinates are processed entirely on your device to:</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
+              <li>Show your position on the route map</li>
+              <li>Find the nearest bus stop to your current location</li>
+              <li>Calculate distances to stations</li>
+            </ul>
+            <p className="mt-3">This data never leaves your device and is not stored permanently.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">4. Local Storage</h2>
+            <p>We use your browser's local storage to save:</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
+              <li><strong>Favorite buses:</strong> Your saved bus routes (stored locally on your device)</li>
+              <li><strong>API Key:</strong> Your Google Gemini API key for the AI assistant (if provided, stored locally)</li>
+            </ul>
+            <p className="mt-3">You can clear this data anytime through your browser settings or the app's settings page.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">5. Third-Party Services</h2>
+            <p><strong>Google Gemini AI:</strong> If you use the AI Assistant feature with your own API key, your queries are sent to Google's Gemini API. Please refer to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Google's Privacy Policy</a> for how they handle this data.</p>
+            <p className="mt-3"><strong>Google Maps:</strong> When you click "Real Map" to view routes in Google Maps, you'll be redirected to Google Maps. Google's privacy policy applies to that service.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">6. Cookies</h2>
+            <p>DhakaCommute does not use cookies for tracking or analytics. We only use browser local storage for the features mentioned above.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">7. Children's Privacy</h2>
+            <p>Our service is available to users of all ages. Since we don't collect any personal data, there are no special considerations for children's privacy.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">8. Changes to This Policy</h2>
+            <p>We may update this privacy policy from time to time. Any changes will be posted on this page with an updated "Last updated" date.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">9. Contact Us</h2>
+            <p>If you have any questions about this privacy policy, please contact us through our <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">LinkedIn profile</a>.</p>
+          </section>
+
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-8">
+            <p className="text-sm font-bold text-green-800">✓ Privacy-First Design</p>
+            <p className="text-sm text-green-700 mt-1">DhakaCommute is built with your privacy as a top priority. All data processing happens on your device, and nothing is sent to our servers.</p>
+          </div>
         </div>
 
         {/* Bottom padding for better scrolling */}
@@ -624,19 +693,119 @@ const App: React.FC = () => {
 
   const renderTerms = () => (
     <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
-      {/* Fixed Back Button */}
+      {/* Back Button - Responsive positioning */}
       <button
         onClick={() => setView(AppView.ABOUT)}
-        className="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-dhaka-dark hover:bg-gray-800 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
+        className="sticky top-4 left-4 md:fixed md:top-6 md:left-6 z-50 flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-dhaka-dark hover:bg-gray-800 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95 w-fit ml-4 mt-4 md:ml-0 md:mt-0"
       >
         <ArrowLeft className="w-4 h-4" /> Back to About
       </button>
 
-      <div className="max-w-2xl mx-auto p-6 md:p-12 pt-20">
-        <h2 className="text-2xl font-bold mb-6">Terms of Service</h2>
-        <div className="space-y-4 text-sm text-gray-600">
-          <p>DhakaCommute is provided "as is" without warranty of any kind. Bus routes and timings are subject to change by transport authorities.</p>
-          <p>We are not responsible for any inaccuracies in the data provided.</p>
+      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-4 md:pt-20">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Terms of Service</h1>
+        <p className="text-sm text-gray-500 mb-8">Last updated: November 26, 2025</p>
+
+        <div className="space-y-6 text-gray-700 leading-relaxed">
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">1. Acceptance of Terms</h2>
+            <p>By accessing and using DhakaCommute, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">2. Service Description</h2>
+            <p>DhakaCommute is a free, web-based application that provides:</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
+              <li>Bus route information for Dhaka city</li>
+              <li>Metro rail station information</li>
+              <li>Fare estimation based on official 2022 rates</li>
+              <li>Route visualization and mapping</li>
+              <li>AI-powered route assistance (when you provide your own API key)</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">3. No Warranty</h2>
+            <p>DhakaCommute is provided "AS IS" and "AS AVAILABLE" without any warranties of any kind, either express or implied, including but not limited to:</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
+              <li>Accuracy of bus routes, schedules, or fare information</li>
+              <li>Availability or reliability of the service</li>
+              <li>Fitness for a particular purpose</li>
+              <li>Non-infringement of third-party rights</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">4. Data Accuracy</h2>
+            <p><strong>Important Notice:</strong> Bus routes, stops, timings, and fares are subject to change by transport authorities without notice. We make reasonable efforts to keep information current, but:</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
+              <li>Routes may be modified or discontinued</li>
+              <li>Fares may change based on government regulations</li>
+              <li>Bus schedules may vary due to traffic, weather, or other factors</li>
+              <li>Station locations and names may be updated</li>
+            </ul>
+            <p className="mt-3">Always verify critical information with official sources or bus operators.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">5. Limitation of Liability</h2>
+            <p>To the maximum extent permitted by law, DhakaCommute and its developers shall not be liable for:</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
+              <li>Any direct, indirect, incidental, or consequential damages</li>
+              <li>Loss of time, money, or opportunities due to inaccurate information</li>
+              <li>Missed buses, wrong routes, or incorrect fare calculations</li>
+              <li>Any damages arising from the use or inability to use the service</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">6. User Responsibilities</h2>
+            <p>When using DhakaCommute, you agree to:</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
+              <li>Use the service for lawful purposes only</li>
+              <li>Not attempt to reverse engineer or modify the application</li>
+              <li>Not use automated systems to scrape or download data</li>
+              <li>Verify important information with official sources</li>
+              <li>Keep your API keys (if used) secure and confidential</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">7. Third-Party Services</h2>
+            <p><strong>Google Gemini AI:</strong> If you use the AI Assistant with your own API key, you are subject to Google's terms of service and pricing.</p>
+            <p className="mt-2"><strong>Google Maps:</strong> Links to Google Maps are provided for convenience and are subject to Google's terms of service.</p>
+            <p className="mt-2">We are not responsible for the availability, accuracy, or terms of these third-party services.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">8. Intellectual Property</h2>
+            <p>The DhakaCommute application, including its design, code, and content, is the property of its developers. Bus route data is compiled from publicly available sources and transport authority information.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">9. Service Modifications</h2>
+            <p>We reserve the right to:</p>
+            <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
+              <li>Modify or discontinue the service at any time</li>
+              <li>Update features, routes, or information</li>
+              <li>Change these terms of service</li>
+            </ul>
+            <p className="mt-3">Continued use of the service after changes constitutes acceptance of the new terms.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">10. Governing Law</h2>
+            <p>These terms shall be governed by and construed in accordance with the laws of Bangladesh, without regard to its conflict of law provisions.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold mb-3 text-gray-900">11. Contact Information</h2>
+            <p>For questions about these terms, please contact us through our <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">LinkedIn profile</a>.</p>
+          </section>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-8">
+            <p className="text-sm font-bold text-blue-800">📱 Free & Open Service</p>
+            <p className="text-sm text-blue-700 mt-1">DhakaCommute is provided as a free public service to help Dhaka commuters navigate the city. Use it as a helpful guide, but always exercise your own judgment when traveling.</p>
+          </div>
         </div>
 
         {/* Bottom padding for better scrolling */}
