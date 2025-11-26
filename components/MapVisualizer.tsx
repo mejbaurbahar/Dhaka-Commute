@@ -24,7 +24,13 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   userLocation
 }) => {
   const [simulationStep, setSimulationStep] = useState(0);
-  const [zoom, setZoom] = useState(0.8); // Better initial zoom for overview
+  // Responsive initial zoom: smaller on mobile for better overview
+  const [zoom, setZoom] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768 ? 0.5 : 0.8; // Mobile: 0.5, Desktop: 0.8
+    }
+    return 0.8;
+  });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Mouse Dragging State
@@ -36,7 +42,12 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
   // Pinch-to-zoom state for mobile
   const [initialPinchDistance, setInitialPinchDistance] = useState<number | null>(null);
-  const [initialZoom, setInitialZoom] = useState(0.8);
+  const [initialZoom, setInitialZoom] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768 ? 0.5 : 0.8;
+    }
+    return 0.8;
+  });
 
   const isUserFar = userDistance > 1000; // 1km threshold for "Far" connection line
   const showUserOnNode = userStationIndex !== -1 && !isUserFar;

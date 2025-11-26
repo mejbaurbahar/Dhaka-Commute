@@ -814,11 +814,12 @@ const App: React.FC = () => {
                 <div>
                   <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">To</label>
                   <select
-                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-dhaka-green/20"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-dhaka-green/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     value={fareEnd}
                     onChange={e => setFareEnd(e.target.value)}
+                    disabled={!fareStart}
                   >
-                    <option value="">Select...</option>
+                    <option value="">{fareStart ? 'Select...' : 'Select From first'}</option>
                     {selectedBus.stops.map(id => {
                       const s = STATIONS[id];
                       return s ? <option key={id} value={id}>{s.name}</option> : null;
@@ -988,9 +989,10 @@ const App: React.FC = () => {
                     <select
                       value={toStation}
                       onChange={(e) => setToStation(e.target.value)}
-                      className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer"
+                      className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
+                      disabled={!fromStation}
                     >
-                      <option value="">To...</option>
+                      <option value="">{fromStation ? 'To...' : 'Select From first'}</option>
                       {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                     </select>
                     <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
