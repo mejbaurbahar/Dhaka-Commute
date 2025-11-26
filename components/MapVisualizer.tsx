@@ -10,6 +10,7 @@ interface MapVisualizerProps {
   userDistance?: number;
   highlightStartIdx?: number;
   highlightEndIdx?: number;
+  isReversed?: boolean;
   userLocation?: UserLocation | null;
 }
 
@@ -19,10 +20,11 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   userDistance = Infinity,
   highlightStartIdx = -1,
   highlightEndIdx = -1,
+  isReversed = false,
   userLocation
 }) => {
   const [simulationStep, setSimulationStep] = useState(0);
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(0.8); // Better initial zoom for overview
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Mouse Dragging State
@@ -31,6 +33,10 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   const [startY, setStartY] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
+
+  // Pinch-to-zoom state for mobile
+  const [initialPinchDistance, setInitialPinchDistance] = useState<number | null>(null);
+  const [initialZoom, setInitialZoom] = useState(0.8);
 
   const isUserFar = userDistance > 1000; // 1km threshold for "Far" connection line
   const showUserOnNode = userStationIndex !== -1 && !isUserFar;
@@ -418,7 +424,18 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     return connections;
   }, [stations, nodePositions, metroConnections, railwayConnections]);
 
-  const totalSegments = stations.length - 1;
+  // Bus animation - move within highlighted segment if fare is selected
+  let totalSegments = stations.length - 1;
+  let animationStartIdx = 0;
+  let animationEndIdx = totalSegments;
+
+  // If there's a highlighted segment (fare selected), animate only within that segment
+  if (hasHighlight) {
+    animationStartIdx = highlightStartIdx;
+    animationEndIdx = highlightEndIdx;
+    totalSegments = animationEndIdx - animationStartIdx;
+  }
+
   const exactProgress = simulationStep * totalSegments;
   const currentSegmentIndex = Math.floor(exactProgress);
   const segmentProgress = exactProgress - currentSegmentIndex;
@@ -426,11 +443,35 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   let busX = 0;
   let busY = 0;
 
-  if (currentSegmentIndex >= 0 && currentSegmentIndex < totalSegments) {
-    const startNode = nodePositions[currentSegmentIndex];
-    const endNode = nodePositions[currentSegmentIndex + 1];
-    busX = startNode.x + (endNode.x - startNode.x) * segmentProgress;
-    busY = startNode.y + (endNode.y - startNode.y) * segmentProgress;
+  if (hasHighlight) {
+    // Animate within the highlighted segment
+    let actualSegmentIdx: number;
+    let actualProgress: number;
+
+    if (isReversed) {
+      // Reverse animation: start from end, move to start
+      actualSegmentIdx = animationEndIdx - 1 - currentSegmentIndex;
+      actualProgress = 1 - segmentProgress; // Reverse the progress within segment
+    } else {
+      // Normal animation: start to end
+      actualSegmentIdx = animationStartIdx + currentSegmentIndex;
+      actualProgress = segmentProgress;
+    }
+
+    if (actualSegmentIdx >= animationStartIdx && actualSegmentIdx < animationEndIdx) {
+      const startNode = nodePositions[actualSegmentIdx];
+      const endNode = nodePositions[actualSegmentIdx + 1];
+      busX = startNode.x + (endNode.x - startNode.x) * actualProgress;
+      busY = startNode.y + (endNode.y - startNode.y) * actualProgress;
+    }
+  } else {
+    // Animate across the entire route
+    if (currentSegmentIndex >= 0 && currentSegmentIndex < totalSegments) {
+      const startNode = nodePositions[currentSegmentIndex];
+      const endNode = nodePositions[currentSegmentIndex + 1];
+      busX = startNode.x + (endNode.x - startNode.x) * segmentProgress;
+      busY = startNode.y + (endNode.y - startNode.y) * segmentProgress;
+    }
   }
 
   const googleMapsUrl = React.useMemo(() => {
@@ -521,22 +562,53 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         onMouseLeave={onMouseLeave}
         onMouseUp={onMouseUp}
         onMouseMove={onMouseMove}
-        // Touch events for mobile drag
+        // Touch events for mobile drag and pinch-to-zoom
         onTouchStart={(e) => {
-          const touch = e.touches[0];
-          setStartX(touch.pageX - scrollContainerRef.current!.offsetLeft);
-          setStartY(touch.pageY - scrollContainerRef.current!.offsetTop);
-          setScrollLeft(scrollContainerRef.current!.scrollLeft);
-          setScrollTop(scrollContainerRef.current!.scrollTop);
+          if (e.touches.length === 1) {
+            // Single touch - drag
+            const touch = e.touches[0];
+            setStartX(touch.pageX - scrollContainerRef.current!.offsetLeft);
+            setStartY(touch.pageY - scrollContainerRef.current!.offsetTop);
+            setScrollLeft(scrollContainerRef.current!.scrollLeft);
+            setScrollTop(scrollContainerRef.current!.scrollTop);
+          } else if (e.touches.length === 2) {
+            // Two fingers - pinch to zoom
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            const distance = Math.hypot(
+              touch2.pageX - touch1.pageX,
+              touch2.pageY - touch1.pageY
+            );
+            setInitialPinchDistance(distance);
+            setInitialZoom(zoom);
+          }
         }}
         onTouchMove={(e) => {
-          const touch = e.touches[0];
-          const x = touch.pageX - scrollContainerRef.current!.offsetLeft;
-          const y = touch.pageY - scrollContainerRef.current!.offsetTop;
-          const walkX = (x - startX) * 1.5;
-          const walkY = (y - startY) * 1.5;
-          scrollContainerRef.current!.scrollLeft = scrollLeft - walkX;
-          scrollContainerRef.current!.scrollTop = scrollTop - walkY;
+          if (e.touches.length === 1 && initialPinchDistance === null) {
+            // Single touch - drag
+            const touch = e.touches[0];
+            const x = touch.pageX - scrollContainerRef.current!.offsetLeft;
+            const y = touch.pageY - scrollContainerRef.current!.offsetTop;
+            const walkX = (x - startX) * 1.5;
+            const walkY = (y - startY) * 1.5;
+            scrollContainerRef.current!.scrollLeft = scrollLeft - walkX;
+            scrollContainerRef.current!.scrollTop = scrollTop - walkY;
+          } else if (e.touches.length === 2 && initialPinchDistance !== null) {
+            // Two fingers - pinch to zoom
+            e.preventDefault(); // Prevent default pinch behavior
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            const currentDistance = Math.hypot(
+              touch2.pageX - touch1.pageX,
+              touch2.pageY - touch1.pageY
+            );
+            const scale = currentDistance / initialPinchDistance;
+            const newZoom = Math.max(0.5, Math.min(2.5, initialZoom * scale));
+            setZoom(newZoom);
+          }
+        }}
+        onTouchEnd={() => {
+          setInitialPinchDistance(null);
         }}
       >
         <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-300 origin-top-left">

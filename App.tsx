@@ -39,9 +39,19 @@ const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: 
     const sIdx = validStations.findIndex(s => s.id === fromId);
     const eIdx = validStations.findIndex(s => s.id === toId);
 
-    if (sIdx !== -1 && eIdx !== -1 && sIdx < eIdx) {
-      startIndex = sIdx;
-      endIndex = eIdx;
+    // Handle bidirectional routes - swap if needed
+    if (sIdx !== -1 && eIdx !== -1) {
+      if (sIdx < eIdx) {
+        startIndex = sIdx;
+        endIndex = eIdx;
+      } else if (eIdx < sIdx) {
+        // Reverse direction - swap the indices
+        startIndex = eIdx;
+        endIndex = sIdx;
+      } else {
+        // Same station selected for both
+        return { min: 0, max: 0, distance: 0 };
+      }
     } else {
       return { min: 0, max: 0, distance: 0 };
     }
@@ -203,8 +213,8 @@ const App: React.FC = () => {
 
   const sortedStations = Object.values(STATIONS).sort((a, b) => a.name.localeCompare(b.name));
 
-  const { fareInfo, fareStartIndex, fareEndIndex } = useMemo(() => {
-    if (!selectedBus) return { fareInfo: null, fareStartIndex: -1, fareEndIndex: -1 };
+  const { fareInfo, fareStartIndex, fareEndIndex, isReversed } = useMemo(() => {
+    if (!selectedBus) return { fareInfo: null, fareStartIndex: -1, fareEndIndex: -1, isReversed: false };
 
     // Filter out invalid stations first to get the "Drawable" list
     const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
@@ -212,19 +222,30 @@ const App: React.FC = () => {
     let startIdx = -1;
     let endIdx = -1;
     let info = null;
+    let reversed = false;
 
     if (fareStart && fareEnd) {
       startIdx = validStopIds.indexOf(fareStart);
       endIdx = validStopIds.indexOf(fareEnd);
 
-      if (startIdx !== -1 && endIdx !== -1 && startIdx < endIdx) {
+      if (startIdx !== -1 && endIdx !== -1) {
+        // Calculate fare (the calculateFare function handles bidirectional)
         info = calculateFare(selectedBus, fareStart, fareEnd);
+
+        // Check if user selected in reverse order
+        if (startIdx > endIdx) {
+          reversed = true;
+          // For visualization, ensure startIdx < endIdx by swapping
+          const temp = startIdx;
+          startIdx = endIdx;
+          endIdx = temp;
+        }
       }
     } else {
       info = calculateFare(selectedBus);
     }
 
-    return { fareInfo: info, fareStartIndex: startIdx, fareEndIndex: endIdx };
+    return { fareInfo: info, fareStartIndex: startIdx, fareEndIndex: endIdx, isReversed: reversed };
   }, [selectedBus, fareStart, fareEnd]);
 
   useEffect(() => {
@@ -583,36 +604,46 @@ const App: React.FC = () => {
   );
 
   const renderPrivacyPolicy = () => (
-    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
-      <button onClick={() => setView(AppView.ABOUT)} className="mb-4 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark">
+    <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
+      {/* Fixed Back Button */}
+      <button
+        onClick={() => setView(AppView.ABOUT)}
+        className="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-dhaka-dark hover:bg-gray-800 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
+      >
         <ArrowLeft className="w-4 h-4" /> Back to About
       </button>
-      <div className="max-w-2xl mx-auto">
+
+      <div className="max-w-2xl mx-auto p-6 md:p-12 pt-20">
         <h2 className="text-2xl font-bold mb-6">Privacy Policy</h2>
         <div className="space-y-4 text-sm text-gray-600">
           <p>This application does not collect any personal data. Location data is processed locally on your device to show your position on the map and is not transmitted to any server.</p>
         </div>
-      </div>
-      <div className="mt-8 md:hidden">
-        <button onClick={() => setView(AppView.ABOUT)} className="w-full py-3 bg-gray-100 font-bold rounded-xl text-gray-600">Back</button>
+
+        {/* Bottom padding for better scrolling */}
+        <div className="h-20"></div>
       </div>
     </div>
   );
 
   const renderTerms = () => (
-    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
-      <button onClick={() => setView(AppView.ABOUT)} className="mb-4 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark">
+    <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
+      {/* Fixed Back Button */}
+      <button
+        onClick={() => setView(AppView.ABOUT)}
+        className="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-dhaka-dark hover:bg-gray-800 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
+      >
         <ArrowLeft className="w-4 h-4" /> Back to About
       </button>
-      <div className="max-w-2xl mx-auto">
+
+      <div className="max-w-2xl mx-auto p-6 md:p-12 pt-20">
         <h2 className="text-2xl font-bold mb-6">Terms of Service</h2>
         <div className="space-y-4 text-sm text-gray-600">
           <p>DhakaCommute is provided "as is" without warranty of any kind. Bus routes and timings are subject to change by transport authorities.</p>
           <p>We are not responsible for any inaccuracies in the data provided.</p>
         </div>
-      </div>
-      <div className="mt-8 md:hidden">
-        <button onClick={() => setView(AppView.ABOUT)} className="w-full py-3 bg-gray-100 font-bold rounded-xl text-gray-600">Back</button>
+
+        {/* Bottom padding for better scrolling */}
+        <div className="h-20"></div>
       </div>
     </div>
   );
@@ -756,6 +787,7 @@ const App: React.FC = () => {
                   userDistance={nearestStopDistance}
                   highlightStartIdx={fareStartIndex}
                   highlightEndIdx={fareEndIndex}
+                  isReversed={isReversed}
                   userLocation={userLocation}
                 />
               </div>
