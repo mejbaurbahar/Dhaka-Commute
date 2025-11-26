@@ -419,12 +419,93 @@ const App: React.FC = () => {
   // --- Render Functions ---
 
   const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center h-full text-center p-8 text-gray-400 bg-white">
-      <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-        <MapIcon className="w-10 h-10 opacity-20 text-gray-400" />
+    <div className="flex flex-col items-center justify-center h-full text-center p-8 bg-gradient-to-br from-green-50 via-white to-red-50 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-green-600 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-red-600 rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-green-600 rounded-full blur-3xl opacity-30 animate-pulse delay-1000"></div>
       </div>
-      <h2 className="text-xl font-bold text-gray-500 mb-2">Select a Route</h2>
-      <p className="max-w-xs mx-auto text-sm">Choose a bus from the list to view its route map, stops, and live status.</p>
+
+      {/* Main Content */}
+      <div className="relative z-10 max-w-2xl">
+        {/* Icon */}
+        <div className="mb-8 relative">
+          <div className="w-32 h-32 mx-auto bg-gradient-to-br from-green-600 to-green-700 rounded-3xl flex items-center justify-center shadow-2xl shadow-green-200 transform hover:scale-110 transition-transform duration-500 rotate-3 hover:rotate-6">
+            <Bus className="w-16 h-16 text-white" />
+          </div>
+          <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+            <MapPin className="w-4 h-4 text-white" />
+          </div>
+        </div>
+
+        {/* Title */}
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-green-600 via-green-700 to-red-600 bg-clip-text text-transparent">
+          Welcome to DhakaCommute
+        </h1>
+
+        {/* Subtitle */}
+        <p className="text-xl text-gray-600 mb-2 font-medium">
+          Your Ultimate Dhaka Transport Companion
+        </p>
+
+        {/* Description */}
+        <p className="text-gray-500 mb-8 max-w-md mx-auto leading-relaxed">
+          Navigate Dhaka's vibrant streets with ease. Find bus routes, calculate fares, track live locations, and discover the best way to reach your destination.
+        </p>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white/80 backdrop-blur p-4 rounded-xl shadow-sm border border-green-100 hover:shadow-md transition-shadow">
+            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <Bus className="w-5 h-5 text-green-600" />
+            </div>
+            <p className="text-xs font-bold text-gray-700">Bus Routes</p>
+          </div>
+          <div className="bg-white/80 backdrop-blur p-4 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <Navigation className="w-5 h-5 text-blue-600" />
+            </div>
+            <p className="text-xs font-bold text-gray-700">Live Tracking</p>
+          </div>
+          <div className="bg-white/80 backdrop-blur p-4 rounded-xl shadow-sm border border-purple-100 hover:shadow-md transition-shadow">
+            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <Bot className="w-5 h-5 text-purple-600" />
+            </div>
+            <p className="text-xs font-bold text-gray-700">AI Assistant</p>
+          </div>
+          <div className="bg-white/80 backdrop-blur p-4 rounded-xl shadow-sm border border-orange-100 hover:shadow-md transition-shadow">
+            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <MapIcon className="w-5 h-5 text-orange-600" />
+            </div>
+            <p className="text-xs font-bold text-gray-700">Route Maps</p>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-200 animate-pulse">
+            <ArrowLeft className="w-5 h-5 rotate-180" />
+            <span>Select a bus from the list</span>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="mt-8 flex justify-center gap-8 text-sm">
+          <div>
+            <p className="text-2xl font-bold text-green-600">{BUS_DATA.length}+</p>
+            <p className="text-gray-500">Bus Routes</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-blue-600">{Object.keys(STATIONS).length}+</p>
+            <p className="text-gray-500">Stations</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-purple-600">{Object.keys(METRO_STATIONS).length}</p>
+            <p className="text-gray-500">Metro Stations</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
