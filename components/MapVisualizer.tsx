@@ -49,6 +49,11 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     return 0.8;
   });
 
+  // Layer visibility toggles - Metro off by default, others off
+  const [showMetro, setShowMetro] = useState(false);
+  const [showRailway, setShowRailway] = useState(false);
+  const [showAirport, setShowAirport] = useState(false);
+
   const isUserFar = userDistance > 1000; // 1km threshold for "Far" connection line
   const showUserOnNode = userStationIndex !== -1 && !isUserFar;
   const hasHighlight = highlightStartIdx !== -1 && highlightEndIdx !== -1 && highlightStartIdx < highlightEndIdx;
@@ -546,7 +551,44 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         </div>
       </div>
 
-      {/* Bottom Zoom Controls */}
+      {/* Bottom Left - Layer Toggles */}
+      <div className="absolute bottom-4 left-4 z-10 bg-white/95 backdrop-blur rounded-lg border border-gray-200 shadow-lg p-2 max-w-[180px]">
+        <p className="text-[10px] font-bold text-gray-600 uppercase mb-2 px-1">Map Layers</p>
+        <div className="space-y-1.5">
+          <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
+            <input
+              type="checkbox"
+              checked={showMetro}
+              onChange={(e) => setShowMetro(e.target.checked)}
+              className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
+            />
+            <Train className="w-3.5 h-3.5 text-blue-600" />
+            <span className="text-[11px] font-medium text-gray-700">Metro Stations</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
+            <input
+              type="checkbox"
+              checked={showRailway}
+              onChange={(e) => setShowRailway(e.target.checked)}
+              className="w-3.5 h-3.5 rounded border-gray-300 text-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-0"
+            />
+            <Train className="w-3.5 h-3.5 text-green-700" />
+            <span className="text-[11px] font-medium text-gray-700">Railway Stations</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
+            <input
+              type="checkbox"
+              checked={showAirport}
+              onChange={(e) => setShowAirport(e.target.checked)}
+              className="w-3.5 h-3.5 rounded border-gray-300 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-0"
+            />
+            <Plane className="w-3.5 h-3.5 text-purple-600" />
+            <span className="text-[11px] font-medium text-gray-700">Airports</span>
+          </label>
+        </div>
+      </div>
+
+      {/* Bottom Right - Zoom Controls */}
       <div className="absolute bottom-4 right-4 z-10 flex gap-1 bg-white/90 backdrop-blur rounded-lg border border-gray-200 shadow-sm p-1">
         <button
           onClick={handleZoomOut}
@@ -622,7 +664,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
           setInitialPinchDistance(null);
         }}
       >
-        <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-300 origin-top-left">
+        <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-500 ease-out origin-top-left">
           <svg className="w-full h-full block select-none pointer-events-none" viewBox={`0 0 ${baseWidth} ${height}`}>
 
             {/* Base Path (Grey) */}
@@ -799,7 +841,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             })}
 
             {/* Metro Stations */}
-            {metroConnections.map((connection, idx) => {
+            {showMetro && metroConnections.map((connection, idx) => {
               const { metroStation, busStopIndex, distance, metroX, metroY } = connection;
               const busStopPos = nodePositions[busStopIndex];
 
@@ -869,7 +911,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             })}
 
             {/* Railway Stations */}
-            {railwayConnections.map((connection, idx) => {
+            {showRailway && railwayConnections.map((connection, idx) => {
               const { railwayStation, busStopIndex, distance, railwayX, railwayY } = connection;
               const busStopPos = nodePositions[busStopIndex];
 
@@ -939,7 +981,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             })}
 
             {/* Airports */}
-            {airportConnections.map((connection, idx) => {
+            {showAirport && airportConnections.map((connection, idx) => {
               const { airport, busStopIndex, distance, airportX, airportY } = connection;
               const busStopPos = nodePositions[busStopIndex];
 

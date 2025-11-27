@@ -70,8 +70,9 @@ const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: 
 
   const distanceKm = totalDistance / 1000;
 
-  const ratePerKm = 2.45;
-  const minFare = 10;
+  // Official BRTA rate as of April 2, 2024
+  const ratePerKm = 2.42; // Tk per kilometer for city buses
+  const minFare = 10; // Minimum fare for buses
 
   let estimated = Math.ceil(distanceKm * ratePerKm);
   if (estimated < minFare) estimated = minFare;
