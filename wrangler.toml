@@ -1,0 +1,8 @@
+name = "dhaka-commute"
+compatibility_date = "2025-11-27"
+
+[site]
+bucket = "./dist"
+
+# Cloudflare Pages configuration
+pages_build_output_dir = "dist"

@@ -53,15 +53,20 @@ npm run preview
 
 ## 📦 Deployment
 
-This project is deployed on **Netlify** with automatic deployments from the `main` branch.
+This project is deployed on **Cloudflare Pages** with automatic deployments from the `main` branch.
 
 **Live URLs:**
 - Primary: https://dhakacommute.sqatesting.com
-- Netlify: https://dhaka-commute.netlify.app
+- Cloudflare: https://dhaka-commute.pages.dev
 
 ### Automatic Deployment
 
-Every push to `main` triggers an automatic build and deployment on Netlify.
+Every push to `main` triggers an automatic build and deployment on Cloudflare Pages.
+
+**Build Settings:**
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Node version: 18
 
 ### Manual Deployment
 
@@ -69,11 +74,11 @@ Every push to `main` triggers an automatic build and deployment on Netlify.
 # Build the project
 npm run build
 
-# Deploy using Netlify CLI (if installed)
-netlify deploy --prod
+# Deploy using Wrangler CLI (if installed)
+npx wrangler pages deploy dist
 ```
 
-For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+For detailed deployment instructions, see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md)
 
 ## 🛠️ Technologies Used
 
@@ -115,10 +120,11 @@ If you encounter build errors:
 
 ### Deployment Issues
 
-1. **Check Netlify Build Logs**: Go to Netlify Dashboard → Deploys → View build logs
+1. **Check Cloudflare Build Logs**: Go to Cloudflare Dashboard → Workers & Pages → dhaka-commute → View build logs
 2. **Clear Browser Cache**: Hard refresh with Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
-3. **Verify DNS**: Ensure DNS is properly configured (see [DEPLOYMENT.md](./DEPLOYMENT.md))
-4. **503 Error**: Add custom domain in Netlify site settings
+3. **Verify DNS**: Ensure DNS is properly configured (see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md))
+4. **503 Error**: Add custom domain in Cloudflare Pages settings
+5. **Build Fails**: Update package-lock.json with `npm install` and commit
 
 ### API Key Issues
 
