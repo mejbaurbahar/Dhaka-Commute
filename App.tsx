@@ -602,15 +602,15 @@ const App: React.FC = () => {
 
   const renderPrivacyPolicy = () => (
     <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
-      {/* Back Button - Responsive positioning */}
-      <button
-        onClick={() => setView(AppView.ABOUT)}
-        className="sticky top-4 left-4 md:fixed md:top-6 md:left-6 z-50 flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-dhaka-dark hover:bg-gray-800 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95 w-fit ml-4 mt-4 md:ml-0 md:mt-0"
-      >
-        <ArrowLeft className="w-4 h-4" /> Back to About
-      </button>
-
       <div className="max-w-3xl mx-auto p-6 md:p-12 pt-4 md:pt-20">
+        {/* Back Button - Now inside container */}
+        <button
+          onClick={() => setView(AppView.ABOUT)}
+          className="mb-6 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to About
+        </button>
+
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Privacy Policy</h1>
         <p className="text-sm text-gray-500 mb-8">Last updated: November 26, 2025</p>
 
@@ -693,15 +693,14 @@ const App: React.FC = () => {
 
   const renderTerms = () => (
     <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
-      {/* Back Button - Responsive positioning */}
-      <button
-        onClick={() => setView(AppView.ABOUT)}
-        className="sticky top-4 left-4 md:fixed md:top-6 md:left-6 z-50 flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-dhaka-dark hover:bg-gray-800 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95 w-fit ml-4 mt-4 md:ml-0 md:mt-0"
-      >
-        <ArrowLeft className="w-4 h-4" /> Back to About
-      </button>
-
       <div className="max-w-3xl mx-auto p-6 md:p-12 pt-4 md:pt-20">
+        {/* Back Button - Now inside container */}
+        <button
+          onClick={() => setView(AppView.ABOUT)}
+          className="mb-6 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to About
+        </button>
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Terms of Service</h1>
         <p className="text-sm text-gray-500 mb-8">Last updated: November 26, 2025</p>
 
@@ -1382,7 +1381,7 @@ const App: React.FC = () => {
       {/* Mobile Bottom Navigation */}
       {view === AppView.HOME && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
-          <div className="grid grid-cols-2 h-16">
+          <div className="grid grid-cols-3 h-16">
             <button
               onClick={() => setView(AppView.HOME)}
               className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
@@ -1396,6 +1395,13 @@ const App: React.FC = () => {
             >
               <Sparkles className="w-6 h-6" />
               <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
+            </button>
+            <button
+              onClick={() => setView(AppView.ABOUT)}
+              className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
+            >
+              <Info className="w-6 h-6" />
+              <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
             </button>
           </div>
         </nav>
