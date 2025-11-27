@@ -6,12 +6,12 @@ import { X, Sparkles } from 'lucide-react';
 
 // --- Fixed Landmark Data ---
 const landmarkData: Record<string, string> = {
-    "National Martyrs' Memorial": "Built to honour those who died in the Bangladesh Liberation War of 1971, this monument in Savar is composed of seven pairs of triangular-shaped walls that gradually widen, symbolizing the scale of the sacrifice.",
-    "Ahsan Manzil": "Also known as the Pink Palace, this was the official residential palace and seat of the Nawab of Dhaka. Situated on the banks of the Buriganga River, it is a masterpiece of Indo-Saracenic Revival architecture.",
-    "Lalbagh Fort": "An incomplete 17th-century Mughal fort complex in Old Dhaka. It houses the tomb of Pari Bibi, a mosque, and the Diwan-i-Aam, standing as a silent witness to the Mughal era's grandeur.",
-    "Shaheed Minar": "A powerful national monument established to commemorate those killed during the Bengali Language Movement demonstrations of 1952. It symbolizes the resilience and love for the Bengali language.",
-    "Curzon Hall": "A magnificent blend of European and Mughal architectural styles, this building is part of the University of Dhaka's Faculty of Science. It was originally intended to be a town hall named after Lord Curzon.",
-    "Jatiya Sangsad Bhaban": "The National Parliament House of Bangladesh, designed by the legendary architect Louis Kahn. It is one of the largest legislative complexes in the world, famous for its monolithic concrete aesthetic and use of geometric shapes."
+    "National Martyrs' Memorial": "১৯৭১ সালের বাংলাদেশের স্বাধীনতা যুদ্ধে শহীদদের স্মরণে নির্মিত সাভারের এই স্মৃতিসৌধটি সাত জোড়া ত্রিভুজাকার দেয়াল নিয়ে গঠিত, যা পর্যায়ক্রমে প্রশস্ত হয়ে ত্যাগের বিশালতাকে প্রতীকায়িত করে।",
+    "Ahsan Manzil": "পিংক প্যালেস বা গোলাপী প্রাসাদ নামেও পরিচিত, এটি ছিল ঢাকার নবাবদের আনুষ্ঠানিক আবাসিক প্রাসাদ ও দপ্তর। বুড়িগঙ্গা নদীর তীরে অবস্থিত এই ভবনটি ইন্দো-সারাসেনিক রিভাইভাল স্থাপত্যশৈলীর এক অনন্য নিদর্শন।",
+    "Lalbagh Fort": "পুরান ঢাকায় অবস্থিত ১৭শ শতাব্দীর একটি অসমাপ্ত মুঘল দুর্গ কমপ্লেক্স। এখানে পরী বিবির সমাধি, একটি মসজিদ এবং দেওয়ান-ই-আম রয়েছে, যা মুঘল আমলের জাঁকজমকের নীরব সাক্ষী হিসেবে দাঁড়িয়ে আছে।",
+    "Shaheed Minar": "১৯৫২ সালের ভাষা আন্দোলনের মিছিলে নিহতদের স্মরণে নির্মিত একটি শক্তিশালী জাতীয় স্মৃতিস্তম্ভ। এটি বাংলা ভাষার প্রতি ভালোবাসা এবং অদম্য সাহসের প্রতীক।",
+    "Curzon Hall": "ইউরোপীয় ও মুঘল স্থাপত্যশৈলীর এক অপূর্ব সংমিশ্রণ, এই ভবনটি ঢাকা বিশ্ববিদ্যালয়ের বিজ্ঞান অনুষদের অংশ। মূলত লর্ড কার্জনের নামানুসারে এটি একটি টাউন হল হিসেবে নির্মাণের উদ্দেশ্য ছিল।",
+    "Jatiya Sangsad Bhaban": "বাংলাদেশের জাতীয় সংসদ ভবন, যা প্রখ্যাত স্থপতি লুই আই কান নকশা করেছিলেন। এটি বিশ্বের অন্যতম বৃহত্তম আইনসভা কমপ্লেক্স, যা এর বিশাল কংক্রিটের নান্দনিকতা এবং জ্যামিতিক আকৃতির ব্যবহারের জন্য বিখ্যাত।"
 };
 
 const DhakaAlive: React.FC = () => {
