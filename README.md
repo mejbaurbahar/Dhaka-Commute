@@ -53,44 +53,27 @@ npm run preview
 
 ## 📦 Deployment
 
-### GitHub Pages (Automatic)
+This project is deployed on **Netlify** with automatic deployments from the `main` branch.
 
-This project is configured to automatically deploy to GitHub Pages when you push to the `main` branch.
+**Live URLs:**
+- Primary: https://dhakacommute.sqatesting.com
+- Netlify: https://dhaka-commute.netlify.app
 
-**Setup Steps:**
+### Automatic Deployment
 
-1. **Set GitHub Secret for API Key**
-   - Go to your repository → Settings → Secrets and variables → Actions
-   - Click "New repository secret"
-   - Name: `GEMINI_API_KEY`
-   - Value: Your Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+Every push to `main` triggers an automatic build and deployment on Netlify.
 
-2. **Enable GitHub Pages**
-   - Go to Settings → Pages
-   - Source: Deploy from a branch
-   - Branch: `gh-pages` / `root`
-   - Save
+### Manual Deployment
 
-3. **Push to main branch**
-   ```bash
-   git add .
-   git commit -m "Deploy to GitHub Pages"
-   git push origin main
-   ```
+```bash
+# Build the project
+npm run build
 
-The GitHub Actions workflow will automatically:
-- Install dependencies
-- Build the project
-- Deploy to the `gh-pages` branch
+# Deploy using Netlify CLI (if installed)
+netlify deploy --prod
+```
 
-### Custom Domain
-
-The CNAME file is already configured for `dhaka-commute.sqatesting.com`. To use your own domain:
-
-1. Update `public/CNAME` with your domain
-2. Configure your DNS provider:
-   - Add a CNAME record pointing to `mejbaurbahar.github.io`
-   - Or add A records pointing to GitHub Pages IPs
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ## 🛠️ Technologies Used
 
@@ -130,12 +113,12 @@ If you encounter build errors:
    npm run build
    ```
 
-### GitHub Pages Not Loading
+### Deployment Issues
 
-1. **Check GitHub Actions**: Go to Actions tab and verify the deployment succeeded
+1. **Check Netlify Build Logs**: Go to Netlify Dashboard → Deploys → View build logs
 2. **Clear Browser Cache**: Hard refresh with Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
-3. **Verify DNS**: If using custom domain, ensure DNS is properly configured
-4. **Check CNAME**: Ensure `public/CNAME` contains the correct domain
+3. **Verify DNS**: Ensure DNS is properly configured (see [DEPLOYMENT.md](./DEPLOYMENT.md))
+4. **503 Error**: Add custom domain in Netlify site settings
 
 ### API Key Issues
 
