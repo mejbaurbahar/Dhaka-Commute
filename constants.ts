@@ -397,7 +397,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Alif (Japan Garden-Abdullahpur)',
     bnName: 'আলিফ',
     routeString: 'Japan Garden City ⇄ Abdullahpur',
-    stops: ['japan_garden', 'ring_road', 'adabor', 'shyamoli', 'shishu_mela', 'agargaon', 'zia_uddyan', 'bijoy_sarani', 'abdullahpur', 'jahangir_gate', 'mohakhali', 'chairman_bari', 'sainik_club', 'kakali', 'banani', 'staff_road', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
+    stops: ['japan_garden', 'ring_road', 'adabor', 'shyamoli', 'shishu_mela', 'agargaon', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'chairman_bari', 'sainik_club', 'kakali', 'banani', 'staff_road', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },

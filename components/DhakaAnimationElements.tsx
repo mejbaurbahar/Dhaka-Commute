@@ -287,7 +287,7 @@ export const MetroTrain = ({ isNight }: { isNight: boolean }) => {
 
       {/* Thought Bubble */}
       <div className="absolute -top-28 left-1/2 bubble-anim w-56 z-30" style={{ animationDuration: '20s' }}>
-        <ThoughtBubble text={message} />
+        <ThoughtBubble text={message} className="opacity-80" />
       </div>
 
       {/* HEAD CAR */}
