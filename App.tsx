@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X } from 'lucide-react';
+import { Analytics } from "@vercel/analytics/react";
 import { BusRoute, AppView, UserLocation } from './types';
 import { BUS_DATA, STATIONS, METRO_STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
@@ -1440,6 +1441,8 @@ const App: React.FC = () => {
           </div>
         </nav>
       )}
+      {/* Vercel Analytics */}
+      <Analytics />
     </div>
   );
 };
