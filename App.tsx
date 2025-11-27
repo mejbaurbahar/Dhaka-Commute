@@ -866,7 +866,7 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full bg-slate-50 md:bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
         {/* Mobile Header */}
-        <div className="md:hidden bg-white px-5 py-4 shadow-sm border-b border-gray-100 fixed top-0 w-full z-40 flex items-center justify-between">
+        <div className="md:hidden bg-white px-5 py-4 shadow-sm border-b border-gray-100 fixed top-[57px] w-full z-40 flex items-center justify-between">
           <button
             onClick={() => {
               setSelectedBus(null);
@@ -911,7 +911,7 @@ const App: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto pb-32 md:pb-0 no-scrollbar md:px-8 md:py-6 pt-16 md:pt-0" ref={scrollContainerRef}>
+        <div className="flex-1 overflow-y-auto pb-32 md:pb-0 no-scrollbar md:px-8 md:py-6 pt-[121px] md:pt-0" ref={scrollContainerRef}>
           <div className="p-4 md:p-0 space-y-5">
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
@@ -1378,8 +1378,8 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      {view === AppView.HOME && (
+      {/* Mobile Bottom Navigation - Show on all pages except BUS_DETAILS and LIVE_NAV */}
+      {view !== AppView.BUS_DETAILS && view !== AppView.LIVE_NAV && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
           <div className="grid grid-cols-3 h-16">
             <button
@@ -1391,16 +1391,16 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={() => setView(AppView.AI_ASSISTANT)}
-              className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
-              <Sparkles className="w-6 h-6" />
+              <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''}`} />
               <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
             </button>
             <button
               onClick={() => setView(AppView.ABOUT)}
-              className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT || view === AppView.SETTINGS || view === AppView.PRIVACY || view === AppView.TERMS ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
-              <Info className="w-6 h-6" />
+              <Info className={`w-6 h-6 ${view === AppView.ABOUT || view === AppView.SETTINGS || view === AppView.PRIVACY || view === AppView.TERMS ? 'fill-current' : ''}`} />
               <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
             </button>
           </div>
