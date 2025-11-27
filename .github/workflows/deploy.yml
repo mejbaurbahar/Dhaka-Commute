@@ -43,6 +43,13 @@ jobs:
           test -f dist/index.html || (echo "ERROR: dist/index.html not found!" && exit 1)
           echo "Checking for assets folder..."
           test -d dist/assets || (echo "ERROR: dist/assets not found!" && exit 1)
+          echo "Checking dist/index.html content..."
+          cat dist/index.html | grep -E "assets/.*\.js" || (echo "ERROR: Built index.html doesn't reference assets!" && exit 1)
+          echo "Verifying no TypeScript references..."
+          if cat dist/index.html | grep -E "\.tsx|\.ts\""; then
+            echo "ERROR: Built index.html still references TypeScript files!"
+            exit 1
+          fi
           echo "Build verification successful!"
         
       - name: Setup Pages
