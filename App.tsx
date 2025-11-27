@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X } from 'lucide-react';
 import { BusRoute, AppView, UserLocation } from './types';
 import { BUS_DATA, STATIONS, METRO_STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
@@ -587,13 +587,26 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-center gap-4 text-xs font-bold text-gray-400">
-          <button onClick={() => setView(AppView.SETTINGS)} className="flex items-center gap-2 hover:text-dhaka-dark">
+        <div className="mt-8 flex flex-col items-center gap-3 pb-20 md:pb-0">
+          <button
+            onClick={() => setView(AppView.SETTINGS)}
+            className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm rounded-xl transition-all hover:scale-105 active:scale-95 shadow-sm"
+          >
             <Settings className="w-4 h-4" /> App Settings
           </button>
-          <div className="flex gap-6">
-            <button onClick={() => setView(AppView.PRIVACY)} className="hover:text-gray-600">Privacy Policy</button>
-            <button onClick={() => setView(AppView.TERMS)} className="hover:text-gray-600">Terms of Service</button>
+          <div className="flex flex-col md:flex-row gap-3 w-full max-w-xs">
+            <button
+              onClick={() => setView(AppView.PRIVACY)}
+              className="flex-1 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs rounded-lg transition-all border border-blue-200"
+            >
+              Privacy Policy
+            </button>
+            <button
+              onClick={() => setView(AppView.TERMS)}
+              className="flex-1 px-4 py-2.5 bg-green-50 hover:bg-green-100 text-green-700 font-bold text-xs rounded-lg transition-all border border-green-200"
+            >
+              Terms of Service
+            </button>
           </div>
         </div>
       </div>
@@ -1129,13 +1142,26 @@ const App: React.FC = () => {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                   />
-                  <button
-                    onClick={handleSearchCommit}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
-                    title="Click to Search"
-                  >
-                    <Search className="w-4 h-4" />
-                  </button>
+                  {inputValue || searchQuery ? (
+                    <button
+                      onClick={() => {
+                        setInputValue('');
+                        setSearchQuery('');
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
+                      title="Clear Search"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleSearchCommit}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
+                      title="Click to Search"
+                    >
+                      <Search className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div className="flex gap-2">
