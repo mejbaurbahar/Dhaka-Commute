@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { BusRoute, UserLocation } from '../types';
 import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
+import { findNearestStation } from '../services/locationService';
 import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train, Plane } from 'lucide-react';
 
 interface MapVisualizerProps {
@@ -57,6 +58,14 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   const isUserFar = userDistance > 1000; // 1km threshold for "Far" connection line
   const showUserOnNode = userStationIndex !== -1 && !isUserFar;
   const hasHighlight = highlightStartIdx !== -1 && highlightEndIdx !== -1 && highlightStartIdx < highlightEndIdx;
+
+  // Calculate global nearest station for display
+  const globalNearestName = React.useMemo(() => {
+    if (!userLocation) return null;
+    const allStationIds = Object.keys(STATIONS);
+    const nearest = findNearestStation(userLocation, allStationIds);
+    return nearest ? nearest.station.name : null;
+  }, [userLocation]);
 
   // Auto-scroll to user location or start of highlight
   useEffect(() => {
@@ -532,6 +541,11 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             <p className="text-xs font-medium text-orange-900 leading-tight">
               Go {(userDistance / 1000).toFixed(1)}km to start at <b>{stations[userStationIndex].name}</b>
             </p>
+            {globalNearestName && (
+              <p className="text-[10px] text-orange-800 mt-1 border-t border-orange-200 pt-1">
+                Near: <b>{globalNearestName}</b>
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -734,7 +748,9 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                 <g transform={`translate(${userRelativeX}, ${userRelativeY})`}>
                   <circle r="12" fill="#fb923c" fillOpacity="0.2" className="animate-ping" />
                   <circle r="6" fill="#f97316" stroke="white" strokeWidth="2" />
-                  <text y="20" textAnchor="middle" fontSize="12" fontWeight="bold" fill="#ea580c">You</text>
+                  <text y="20" textAnchor="middle" fontSize="12" fontWeight="bold" fill="#ea580c">
+                    {globalNearestName || "You"}
+                  </text>
                   <text y="32" textAnchor="middle" fontSize="10" fill="#9a3412" className="uppercase font-bold">
                     {((userDistance) / 1000).toFixed(1)}km
                   </text>
