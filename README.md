@@ -53,20 +53,20 @@ npm run preview
 
 ## 📦 Deployment
 
-This project is deployed on **Cloudflare Pages** with automatic deployments from the `main` branch.
+This project is deployed on **Vercel** with automatic deployments from the `main` branch.
 
 **Live URLs:**
-- Primary: https://dhakacommute.sqatesting.com
-- Cloudflare: https://dhaka-commute.pages.dev
+- Primary: https://dhaka-commute.sqatesting.com
+- Vercel: https://dhaka-commute.vercel.app
 
 ### Automatic Deployment
 
-Every push to `main` triggers an automatic build and deployment on Cloudflare Pages.
+Every push to `main` triggers an automatic build and deployment on Vercel.
 
 **Build Settings:**
 - Build command: `npm run build`
-- Build output directory: `dist`
-- Node version: 18
+- Output directory: `dist`
+- Install command: `npm install`
 
 ### Manual Deployment
 
@@ -74,11 +74,11 @@ Every push to `main` triggers an automatic build and deployment on Cloudflare Pa
 # Build the project
 npm run build
 
-# Deploy using Wrangler CLI (if installed)
-npx wrangler pages deploy dist
+# Deploy using Vercel CLI (if installed)
+vercel --prod
 ```
 
-For detailed deployment instructions, see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md)
+For DNS troubleshooting, see [VERCEL_DNS_FIX.md](./VERCEL_DNS_FIX.md)
 
 ## 🛠️ Technologies Used
 
@@ -120,11 +120,11 @@ If you encounter build errors:
 
 ### Deployment Issues
 
-1. **Check Cloudflare Build Logs**: Go to Cloudflare Dashboard → Workers & Pages → dhaka-commute → View build logs
+1. **Check Vercel Build Logs**: Go to Vercel Dashboard → Deployments → View build logs
 2. **Clear Browser Cache**: Hard refresh with Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
-3. **Verify DNS**: Ensure DNS is properly configured (see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md))
-4. **503 Error**: Add custom domain in Cloudflare Pages settings
-5. **Build Fails**: Update package-lock.json with `npm install` and commit
+3. **DNS Issues**: See [VERCEL_DNS_FIX.md](./VERCEL_DNS_FIX.md) for custom domain troubleshooting
+4. **404 on Custom Domain**: Wait 5-30 minutes for DNS propagation or use incognito mode
+5. **Build Fails**: Check build logs in Vercel dashboard
 
 ### API Key Issues
 
