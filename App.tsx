@@ -174,8 +174,8 @@ const SettingsView: React.FC<{
             <button
               onClick={handleSave}
               className={`flex-1 py-2 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 ${saveStatus === 'success' ? 'bg-green-600 text-white' :
-                  saveStatus === 'error' ? 'bg-red-600 text-white' :
-                    'bg-blue-600 text-white hover:bg-blue-700'
+                saveStatus === 'error' ? 'bg-red-600 text-white' :
+                  'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
             >
               <Save className="w-4 h-4" />
@@ -442,7 +442,7 @@ const App: React.FC = () => {
 
           },
           (err) => console.error("Watch Error", err),
-          { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+          { enableHighAccuracy: true, maximumAge: 5000, timeout: 30000 }
         );
       }
     } else {
@@ -460,7 +460,7 @@ const App: React.FC = () => {
     };
   }, [selectedBus]);
 
-  const filteredBuses = BUS_DATA.filter(bus => {
+  const filteredBuses = useMemo(() => BUS_DATA.filter(bus => {
     if (listFilter === 'FAVORITES' && !favorites.includes(bus.id)) {
       return false;
     }
@@ -483,7 +483,7 @@ const App: React.FC = () => {
       });
       return nameMatch || bnNameMatch || routeMatch || stopMatch;
     }
-  }).sort((a, b) => a.name.localeCompare(b.name));
+  }).sort((a, b) => a.name.localeCompare(b.name)), [listFilter, favorites, searchMode, fromStation, toStation, searchQuery]);
 
   const handleSearchCommit = () => {
     setSearchQuery(inputValue);

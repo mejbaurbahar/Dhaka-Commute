@@ -75,8 +75,8 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
         },
         {
           enableHighAccuracy: true,
-          maximumAge: 0,
-          timeout: 10000
+          maximumAge: 5000,
+          timeout: 30000
         }
       );
     }
