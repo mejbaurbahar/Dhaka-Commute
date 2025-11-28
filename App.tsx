@@ -1214,25 +1214,43 @@ const App: React.FC = () => {
                   <Bus className="w-4 h-4" />
                 </div>
                 <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Stops</span>
-                <span className="font-bold text-gray-800 text-sm mt-0.5">{selectedBus.stops.length}</span>
+                <span className="font-bold text-gray-800 text-sm mt-0.5">
+                  {fareStart && fareEnd ? (
+                    Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
+                  ) : (
+                    selectedBus.stops.length
+                  )}
+                </span>
               </div>
               <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
                 <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
                   <Coins className="w-4 h-4" />
                 </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Max Fare</span>
-                <span className="font-bold text-gray-800 text-sm mt-0.5">~৳{generalFareInfo.max}</span>
+                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{fareStart && fareEnd ? 'Fare' : 'Max Fare'}</span>
+                <span className="font-bold text-gray-800 text-sm mt-0.5">
+                  {fareStart && fareEnd && fareInfo ? (
+                    `৳${fareInfo.min}${fareInfo.max !== fareInfo.min ? ` - ${fareInfo.max}` : ''}`
+                  ) : (
+                    `~৳${generalFareInfo.max}`
+                  )}
+                </span>
               </div>
             </div>
 
-            {fareStart && fareEnd && userLocation && (
+            {fareStart && fareEnd && (
               <div className="grid grid-cols-3 gap-3 animate-in fade-in slide-in-from-top-4">
                 <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
                   <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
                     <Gauge className="w-4 h-4" />
                   </div>
-                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Speed</span>
-                  <span className="font-bold text-gray-800 text-sm mt-0.5">{(speed || 0).toFixed(0)} km/h</span>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{userLocation ? 'Speed' : 'Stops'}</span>
+                  <span className="font-bold text-gray-800 text-sm mt-0.5">
+                    {userLocation ? (
+                      `${(speed || 0).toFixed(0)} km/h`
+                    ) : (
+                      Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
+                    )}
+                  </span>
                 </div>
                 <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
                   <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
@@ -1240,7 +1258,7 @@ const App: React.FC = () => {
                   </div>
                   <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Distance</span>
                   <span className="font-bold text-gray-800 text-sm mt-0.5">
-                    {calculateRouteStats(userLocation, selectedBus.stops, selectedBus.stops.indexOf(fareEnd)).distance.toFixed(1)} km
+                    {fareInfo ? `${fareInfo.distance.toFixed(1)} km` : '-- km'}
                   </span>
                 </div>
                 <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
@@ -1249,7 +1267,7 @@ const App: React.FC = () => {
                   </div>
                   <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ETA</span>
                   <span className="font-bold text-gray-800 text-sm mt-0.5">
-                    {formatETA(calculateRouteStats(userLocation, selectedBus.stops, selectedBus.stops.indexOf(fareEnd)).eta)}
+                    {fareInfo ? formatETA((fareInfo.distance / 15) * 60) : '--'}
                   </span>
                 </div>
               </div>
