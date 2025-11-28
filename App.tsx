@@ -1427,6 +1427,7 @@ const App: React.FC = () => {
             <button
               key={bus.id}
               onClick={() => handleBusSelect(bus)}
+              aria-label={`Select ${bus.name} bus route from ${bus.routeString}`}
               className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
             >
               {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
@@ -1446,6 +1447,7 @@ const App: React.FC = () => {
                 <div className="flex flex-col items-end gap-2">
                   <button
                     onClick={(e) => toggleFavorite(e, bus.id)}
+                    aria-label={isFav ? `Remove ${bus.name} from favorites` : `Add ${bus.name} to favorites`}
                     className="p-1.5 -mr-1.5 hover:bg-gray-100 rounded-full transition-colors z-20"
                   >
                     <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
@@ -1461,12 +1463,12 @@ const App: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="relative pl-3 border-l-2 border-gray-100 ml-5 space-y-1 py-1">
-                <div className="text-xs text-gray-500 font-medium truncate pr-4">
-                  <span className="text-gray-300 mr-1">●</span> {bus.routeString.split('⇄')[0]}
+              <div className="relative pl-3 border-l-2 border-gray-100 ml-5 space-y-1 py-1" role="presentation">
+                <div className="text-xs text-gray-600 font-medium truncate pr-4">
+                  <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄')[0]}
                 </div>
-                <div className="text-xs text-gray-500 font-medium truncate pr-4">
-                  <span className="text-gray-300 mr-1">●</span> {bus.routeString.split('⇄').pop()}
+                <div className="text-xs text-gray-600 font-medium truncate pr-4">
+                  <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄').pop()}
                 </div>
               </div>
               <div className="mt-3 flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-md w-fit">
