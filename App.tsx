@@ -1667,16 +1667,22 @@ const App: React.FC = () => {
 
             <div className="space-y-2 flex-1">
               <button
+                onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Info className="w-5 h-5 text-green-500" /> About
+              </button>
+              <button
                 onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Settings className="w-5 h-5 text-blue-500" /> App Settings
               </button>
               <button
-                onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
+                onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
-                <Info className="w-5 h-5 text-green-500" /> About & Privacy
+                <Shield className="w-5 h-5 text-purple-500" /> Privacy Policy
               </button>
               <button
                 onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
