@@ -191,7 +191,12 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
                 <Clock className="w-3 h-3" />
                 <span className="text-[10px] font-bold uppercase">ETA</span>
               </div>
-              <p className="text-lg font-bold text-green-900">{etaMinutes.toFixed(0)} <span className="text-[10px] font-normal text-green-600">min</span></p>
+              <p className="text-lg font-bold text-green-900">
+                {etaMinutes < 60
+                  ? `${etaMinutes.toFixed(0)} min`
+                  : `${Math.floor(etaMinutes / 60)}h ${Math.round(etaMinutes % 60)}m`
+                }
+              </p>
             </div>
           </div>
         ) : (

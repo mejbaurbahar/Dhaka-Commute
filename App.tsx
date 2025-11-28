@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
 import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { BusRoute, AppView, UserLocation } from './types';
@@ -83,6 +83,19 @@ const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: 
     max: estimated + 5,
     distance: distanceKm
   };
+};
+
+// Helper: Format ETA
+const formatETA = (minutes: number): string => {
+  if (minutes < 60) {
+    return `${Math.round(minutes)} min`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  if (mins === 0) {
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+  }
+  return `${hours} ${hours === 1 ? 'hour' : 'hours'} ${mins} min`;
 };
 
 
@@ -168,6 +181,29 @@ const SettingsView: React.FC<{
               <AlertTriangle className="w-3 h-3" /> AI feature unavailable without key
             </div>
           )}
+
+          {/* API Key Instructions */}
+          <div className="mt-4 bg-white p-4 rounded-xl border border-blue-100">
+            <h4 className="text-xs font-bold text-gray-800 mb-2 flex items-center gap-2">
+              <Info className="w-3 h-3 text-blue-600" /> How to Get Your API Key
+            </h4>
+            <ol className="text-xs text-gray-600 space-y-2 ml-4 list-decimal">
+              <li>Visit <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">Google AI Studio</a></li>
+              <li>Sign in with your Google account</li>
+              <li>Click "Get API Key" or "Create API Key"</li>
+              <li>Select "Create API key in new project" (or use existing)</li>
+              <li>Copy the generated API key</li>
+              <li>Paste it in the field above and click "Save Key"</li>
+            </ol>
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              <ExternalLink className="w-3 h-3" /> Open Google AI Studio
+            </a>
+          </div>
         </div>
 
         {/* About the App */}
@@ -212,6 +248,14 @@ const App: React.FC = () => {
 
   const [favorites, setFavorites] = useState<string[]>(getStoredFavorites);
   const [listFilter, setListFilter] = useState<'ALL' | 'FAVORITES'>('ALL');
+  const [isPending, startTransition] = useTransition();
+
+  // Optimized filter handler to prevent UI blocking
+  const handleFilterChange = useCallback((filter: 'ALL' | 'FAVORITES') => {
+    startTransition(() => {
+      setListFilter(filter);
+    });
+  }, []);
 
   // Allow user to store key locally
   const [apiKey, setApiKey] = useState<string>(localStorage.getItem('gemini_api_key') || '');
@@ -1073,7 +1117,7 @@ const App: React.FC = () => {
                   </div>
                   <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ETA</span>
                   <span className="font-bold text-gray-800 text-sm mt-0.5">
-                    {calculateRouteStats(userLocation, selectedBus.stops, selectedBus.stops.indexOf(fareEnd)).eta.toFixed(0)} min
+                    {formatETA(calculateRouteStats(userLocation, selectedBus.stops, selectedBus.stops.indexOf(fareEnd)).eta)}
                   </span>
                 </div>
               </div>
@@ -1347,13 +1391,13 @@ const App: React.FC = () => {
           {/* List Filter Tabs */}
           <div className="flex p-1 bg-gray-100 rounded-xl">
             <button
-              onClick={() => setListFilter('ALL')}
+              onClick={() => handleFilterChange('ALL')}
               className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
             >
               All Buses
             </button>
             <button
-              onClick={() => setListFilter('FAVORITES')}
+              onClick={() => handleFilterChange('FAVORITES')}
               className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-500 hover:text-gray-700'}`}
             >
               <Heart className="w-3 h-3 fill-current" /> Favorites
