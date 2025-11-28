@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { BusRoute, AppView, UserLocation } from './types';
 import { BUS_DATA, STATIONS, METRO_STATIONS } from './constants';
@@ -205,6 +205,9 @@ const App: React.FC = () => {
   // Allow user to store key locally
   const [apiKey, setApiKey] = useState<string>(localStorage.getItem('gemini_api_key') || '');
 
+  const [speed, setSpeed] = useState<number | null>(null);
+  const watchIdRef = useRef<number | null>(null);
+
   const [aiQuery, setAiQuery] = useState('');
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
@@ -279,38 +282,101 @@ const App: React.FC = () => {
     }
   }, [chatHistory, aiLoading, view]);
 
+  // Improved Distance Calculation: Sum of segments
+  const calculateRouteStats = (currentLoc: UserLocation, stops: string[], destIdx: number) => {
+    if (!currentLoc || destIdx === -1) return { distance: 0, eta: 0 };
+
+    // Find nearest stop index
+    const nearest = findNearestStation(currentLoc, stops);
+    if (!nearest) return { distance: 0, eta: 0 };
+
+    let totalDist = 0;
+    let startIndex = nearest.index;
+
+    // Distance from User to Nearest Stop
+    totalDist += nearest.distance;
+
+    // If nearest stop is "behind" us (we are past it), we might want to skip it, 
+    // but for simplicity, we'll just sum from nearest. 
+    // A better heuristic: if dist(User, Stop[i+1]) < dist(Stop[i], Stop[i+1]), maybe we are closer to next.
+    // For now, just sum segments from nearest to dest.
+
+    // Sum distance between stops
+    for (let i = startIndex; i < destIdx; i++) {
+      const s1 = STATIONS[stops[i]];
+      const s2 = STATIONS[stops[i + 1]];
+      if (s1 && s2) {
+        totalDist += getDistance({ lat: s1.lat, lng: s1.lng }, { lat: s2.lat, lng: s2.lng });
+      }
+    }
+
+    // ETA Calculation
+    // If speed is available and > 5km/h, use it. Else default to 15km/h (Dhaka traffic).
+    const effectiveSpeed = (speed && speed > 5) ? speed : 15;
+    const etaMin = (totalDist / 1000) / effectiveSpeed * 60;
+
+    return { distance: totalDist / 1000, eta: etaMin };
+  };
+
   useEffect(() => {
     if (selectedBus) {
       setNearestStopIndex(-1);
       setNearestStopDistance(Infinity);
       setNearestMetro(null);
-      setFareStart('');
-      setFareEnd('');
+      // Don't reset fare selection here if we want to keep it when switching views, 
+      // but the requirement implies we might want to. 
+      // For now, let's keep them if they exist, or reset if it's a *new* bus.
+      // Actually the previous logic reset them. Let's keep that behavior for now 
+      // unless we are just returning to the view.
+      // setFareStart(''); 
+      // setFareEnd(''); 
 
-      getCurrentLocation()
-        .then(loc => {
-          setUserLocation(loc);
-          const result = findNearestStation(loc, selectedBus.stops);
-          if (result) {
-            // Map raw index to filtered index for visualizer
-            const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
-            const stationId = selectedBus.stops[result.index];
-            const filteredIndex = validStopIds.indexOf(stationId);
+      // Start Watching Location
+      if ('geolocation' in navigator) {
+        watchIdRef.current = navigator.geolocation.watchPosition(
+          (position) => {
+            const { latitude, longitude, speed: rawSpeed } = position.coords;
+            const loc = { lat: latitude, lng: longitude };
+            const speedKmh = rawSpeed ? rawSpeed * 3.6 : 0;
 
-            if (filteredIndex !== -1) {
-              setNearestStopIndex(filteredIndex);
-              setNearestStopDistance(result.distance);
+            setUserLocation(loc);
+            setSpeed(speedKmh);
+
+            // Update nearest stop logic
+            const result = findNearestStation(loc, selectedBus.stops);
+            if (result) {
+              const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
+              const stationId = selectedBus.stops[result.index];
+              const filteredIndex = validStopIds.indexOf(stationId);
+
+              if (filteredIndex !== -1) {
+                setNearestStopIndex(filteredIndex);
+                setNearestStopDistance(result.distance);
+              }
             }
-          }
 
-          // Find nearest metro station
-          const metroResult = findNearestMetroStation(loc);
-          if (metroResult) {
-            setNearestMetro(metroResult);
-          }
-        })
-        .catch(err => console.log("Location access denied for map preview"));
+            // Metro logic
+            const metroResult = findNearestMetroStation(loc);
+            if (metroResult) setNearestMetro(metroResult);
+
+          },
+          (err) => console.error("Watch Error", err),
+          { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+        );
+      }
+    } else {
+      // Stop watching if no bus selected
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      }
     }
+
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+    };
   }, [selectedBus]);
 
   const filteredBuses = BUS_DATA.filter(bus => {
@@ -433,7 +499,6 @@ const App: React.FC = () => {
 
   const EmptyState = () => <DhakaAlive />;
 
-
   const renderLiveNav = () => {
     if (!selectedBus) {
       return (
@@ -446,7 +511,7 @@ const App: React.FC = () => {
 
     return (
       <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
-        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20">
+        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0">
           <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -458,11 +523,13 @@ const App: React.FC = () => {
             <p className="text-xs text-gray-500">{selectedBus.name}</p>
           </div>
         </div>
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-h-0">
           <LiveTracker
             bus={selectedBus}
             highlightStartIdx={fareStartIndex}
             highlightEndIdx={fareEndIndex}
+            userLocation={userLocation}
+            speed={speed}
           />
         </div>
       </div>
@@ -962,6 +1029,36 @@ const App: React.FC = () => {
                 <span className="font-bold text-gray-800 text-sm mt-0.5">~৳{generalFareInfo.max}</span>
               </div>
             </div>
+
+            {fareStart && fareEnd && userLocation && (
+              <div className="grid grid-cols-3 gap-3 animate-in fade-in slide-in-from-top-4">
+                <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
+                    <Gauge className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Speed</span>
+                  <span className="font-bold text-gray-800 text-sm mt-0.5">{(speed || 0).toFixed(0)} km/h</span>
+                </div>
+                <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
+                    <Flag className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Distance</span>
+                  <span className="font-bold text-gray-800 text-sm mt-0.5">
+                    {calculateRouteStats(userLocation, selectedBus.stops, selectedBus.stops.indexOf(fareEnd)).distance.toFixed(1)} km
+                  </span>
+                </div>
+                <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-2">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ETA</span>
+                  <span className="font-bold text-gray-800 text-sm mt-0.5">
+                    {calculateRouteStats(userLocation, selectedBus.stops, selectedBus.stops.indexOf(fareEnd)).eta.toFixed(0)} min
+                  </span>
+                </div>
+              </div>
+            )}
 
             <div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden w-full">
               <div className="px-4 py-3 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
