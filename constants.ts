@@ -88,7 +88,7 @@ export const STATIONS: Record<string, Station> = {
   'jigatola': { id: 'jigatola', name: 'Jigatola', lat: 23.7420, lng: 90.3750 },
   'madanpur': { id: 'madanpur', name: 'Madanpur', lat: 23.6700, lng: 90.5200 },
   'chandra': { id: 'chandra', name: 'Chandra', lat: 24.0300, lng: 90.2300 },
-  'kamalapur': { id: 'kamalapur', name: 'Kamalapur', lat: 23.7310, lng: 90.4250 },
+  'kamalapur': { id: 'kamalapur', name: 'Kamalapur Railway Station', bnName: 'কমলাপুর রেলওয়ে স্টেশন', lat: 23.7310, lng: 90.4250 },
   'high_court': { id: 'high_court', name: 'High Court', lat: 23.7270, lng: 90.4020 },
   'sony_cinema': { id: 'sony_cinema', name: 'Sony Cinema Hall', lat: 23.8030, lng: 90.3620 },
   'ansar_camp': { id: 'ansar_camp', name: 'Ansar Camp', lat: 23.7900, lng: 90.3520 },
@@ -1895,7 +1895,7 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 11:00 PM'
   },
   {
-    id: 'baishakhi',
+    id: 'baishakhi-2',
     name: 'Baishakhi Paribahan',
     bnName: 'বৈশাখী পরিবহন',
     routeString: 'Hemayetpur ⇄ Gulshan',
