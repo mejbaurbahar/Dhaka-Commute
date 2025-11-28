@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { BusRoute, AppView, UserLocation } from './types';
 import { BUS_DATA, STATIONS, METRO_STATIONS } from './constants';
@@ -263,6 +263,7 @@ const App: React.FC = () => {
 
   const [view, setView] = useState<AppView>(AppView.HOME);
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [searchMode, setSearchMode] = useState<'TEXT' | 'ROUTE'>('TEXT');
   const [inputValue, setInputValue] = useState('');
@@ -370,6 +371,16 @@ const App: React.FC = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
+  }, []);
+
+  // Initial Location Fetch
+  useEffect(() => {
+    getCurrentLocation()
+      .then(loc => {
+        setUserLocation(loc);
+        console.log("Initial location fetched:", loc);
+      })
+      .catch(err => console.log("Initial location fetch failed:", err));
   }, []);
 
   useEffect(() => {
@@ -1403,9 +1414,17 @@ const App: React.FC = () => {
             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
 
-            <div className="p-6 pb-2">
-              <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
-              <p className="text-green-100 text-sm opacity-90">Find your bus route in seconds</p>
+            <div className="p-6 pb-2 flex justify-between items-start">
+              <div>
+                <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
+                <p className="text-green-100 text-sm opacity-90">Find your bus route in seconds</p>
+              </div>
+              <button
+                onClick={() => setIsMenuOpen(true)}
+                className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors md:hidden z-10"
+              >
+                <Menu className="w-6 h-6 text-white" />
+              </button>
             </div>
 
             {/* Mode Toggle */}
@@ -1633,6 +1652,48 @@ const App: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
+          <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-xl font-bold text-dhaka-dark">Menu</h2>
+              <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                <X className="w-6 h-6 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="space-y-2 flex-1">
+              <button
+                onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Settings className="w-5 h-5 text-blue-500" /> App Settings
+              </button>
+              <button
+                onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Info className="w-5 h-5 text-green-500" /> About & Privacy
+              </button>
+              <button
+                onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <FileText className="w-5 h-5 text-orange-500" /> Terms of Service
+              </button>
+            </div>
+
+            <div className="pt-6 border-t border-gray-100">
+              <p className="text-xs text-center text-gray-400">
+                DhakaCommute v1.0.0
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -1693,9 +1754,9 @@ const App: React.FC = () => {
       <main className="flex flex-1 overflow-hidden relative w-full mx-auto bg-slate-50 h-full">
         {/* Left Sidebar (Desktop) / Main View (Mobile Home) */}
         <div className={`
-          ${'w-full md:w-1/3 md:min-w-[320px] md:max-w-md md:flex md:flex-col border-r border-gray-200 bg-white z-0 h-full'}
-          ${view !== AppView.HOME && 'hidden md:flex'}
-        `}>
+            ${'w-full md:w-1/3 md:min-w-[320px] md:max-w-md md:flex md:flex-col border-r border-gray-200 bg-white z-0 h-full'}
+            ${view !== AppView.HOME && 'hidden md:flex'}
+          `}>
           <div className="h-full pt-16 md:pt-0">
             {renderHomeContent()}
           </div>
@@ -1703,9 +1764,9 @@ const App: React.FC = () => {
 
         {/* Right Content Area (Desktop) / Views (Mobile) */}
         <div className={`
-          ${'w-full md:flex-1 bg-slate-50 md:bg-white relative h-full overflow-hidden'}
-          ${view === AppView.HOME && 'hidden md:block'}
-        `}>
+            ${'w-full md:flex-1 bg-slate-50 md:bg-white relative h-full overflow-hidden'}
+            ${view === AppView.HOME && 'hidden md:block'}
+          `}>
           {view === AppView.HOME && <div className="hidden md:block h-full"><DhakaAlive /></div>}
           {view === AppView.BUS_DETAILS && renderBusDetails()}
           {view === AppView.LIVE_NAV && renderLiveNav()}
