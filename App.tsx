@@ -1599,9 +1599,11 @@ const App: React.FC = () => {
                   const fromStopId = findClosestStationId(originStation);
                   const toStopId = findClosestStationId(destinationStation);
 
-                  // Set fare calculator values
-                  setFareStart(fromStopId);
-                  setFareEnd(toStopId);
+                  // Set fare calculator values after a brief delay to ensure component is rendered
+                  setTimeout(() => {
+                    setFareStart(fromStopId);
+                    setFareEnd(toStopId);
+                  }, 100);
                 }
                 // Override the null set by handleBusSelect
                 setSelectedTrip(route);
