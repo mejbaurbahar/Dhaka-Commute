@@ -92,6 +92,8 @@ export const STATIONS: Record<string, Station> = {
   'high_court': { id: 'high_court', name: 'High Court', lat: 23.7270, lng: 90.4020 },
   'sony_cinema': { id: 'sony_cinema', name: 'Sony Cinema Hall', lat: 23.8030, lng: 90.3620 },
   'ansar_camp': { id: 'ansar_camp', name: 'Ansar Camp', lat: 23.7900, lng: 90.3520 },
+  'kadamtoli': { id: 'kadamtoli', name: 'Kadamtoli', lat: 23.6900, lng: 90.4400 },
+  'dholpur': { id: 'dholpur', name: 'Dholpur', lat: 23.7100, lng: 90.4300 },
   'kazipara': { id: 'kazipara', name: 'Kazipara', lat: 23.7970, lng: 90.3700 },
   'shewrapara': { id: 'shewrapara', name: 'Shewrapara', lat: 23.7900, lng: 90.3750 },
   'idb': { id: 'idb', name: 'IDB Bhaban', lat: 23.7750, lng: 90.3820 },
@@ -1895,13 +1897,58 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 11:00 PM'
   },
   {
-    id: 'baishakhi-2',
-    name: 'Baishakhi Paribahan',
-    bnName: 'বৈশাখী পরিবহন',
-    routeString: 'Hemayetpur ⇄ Gulshan',
-    stops: ['hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'bijoy_sarani', 'mohakhali', 'wireless', 'gulshan1', 'gulshan2'],
-    type: 'Semi-Sitting',
+    id: 'raida',
+    name: 'Raida Enterprise',
+    bnName: 'রাইদা এন্টারপ্রাইজ',
+    routeString: 'Postagola ⇄ Diabari',
+    stops: ['postagola', 'jurain', 'dholpur', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'rampura', 'badda', 'notun_bazar', 'kuril', 'khilkhet', 'airport', 'uttara', 'diabari'],
+    type: 'Sitting',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'victor_classic',
+    name: 'Victor Classic',
+    bnName: 'ভিক্টর ক্লাসিক',
+    routeString: 'Sadarghat ⇄ Abdullahpur',
+    stops: ['sadarghat', 'ray_saheb_bazar', 'naya_bazar', 'gulistan', 'paltan', 'kakrail', 'malibagh', 'mogbazar', 'mohakhali', 'banani', 'kuril', 'airport', 'uttara', 'abdullahpur'],
+    type: 'Local',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'akash',
+    name: 'Akash Paribahan',
+    bnName: 'আকাশ পরিবহন',
+    routeString: 'Kadamtoli ⇄ Tongi',
+    stops: ['kadamtoli', 'keraniganj', 'babubazar', 'naya_bazar', 'gulistan', 'paltan', 'shahbag', 'farmgate', 'mohakhali', 'banani', 'airport', 'uttara', 'tongi'],
+    type: 'Local',
     hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'projapoti',
+    name: 'Projapoti Paribahan',
+    bnName: 'প্রজাপতি পরিবহন',
+    routeString: 'Mohammadpur ⇄ Abdullahpur',
+    stops: ['mohammadpur', 'asad_gate', 'farmgate', 'mohakhali', 'banani', 'kuril', 'airport', 'uttara', 'abdullahpur'],
+    type: 'Sitting',
+    hours: '6:30 AM - 10:30 PM'
+  },
+  {
+    id: 'turag',
+    name: 'Turag',
+    bnName: 'তুরাগ',
+    routeString: 'Jatrabari ⇄ Tongi',
+    stops: ['jatrabari', 'sayedabad', 'mugdapara', 'bashabo', 'rampura', 'badda', 'notun_bazar', 'kuril', 'airport', 'uttara', 'tongi'],
+    type: 'Local',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'balaka',
+    name: 'Balaka',
+    bnName: 'বলাকা',
+    routeString: 'Sayedabad ⇄ Gazipur',
+    stops: ['sayedabad', 'mugdapara', 'bashabo', 'rampura', 'badda', 'kuril', 'airport', 'uttara', 'tongi', 'gazipur'],
+    type: 'Sitting',
+    hours: '6:00 AM - 11:00 PM'
   }
 ];
 
