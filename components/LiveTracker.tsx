@@ -45,12 +45,15 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
 
   useEffect(() => {
     setLoading(true);
+    setError(null);
 
     // Initial fetch
     getCurrentLocation().then(loc => {
       processLocation(loc, null);
     }).catch(err => {
       console.error("Initial Loc Error", err);
+      setError(err.message || "Location access denied");
+      setLoading(false);
     });
 
     // Start Watch
@@ -64,7 +67,11 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
         },
         (err) => {
           console.error("Watch Error", err);
-          // Don't set error state here to avoid blocking UI if initial fetch worked
+          // Set error if we don't have location yet
+          if (!location) {
+            setError(err.message || "Location access denied");
+            setLoading(false);
+          }
         },
         {
           enableHighAccuracy: true,
@@ -79,7 +86,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
     };
-  }, [bus]);
+  }, [bus, location]);
 
   if (error) {
     return (

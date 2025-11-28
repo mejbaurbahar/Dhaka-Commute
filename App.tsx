@@ -550,6 +550,12 @@ const App: React.FC = () => {
     setAiLoading(false);
   };
 
+  const handleStartNavigation = useCallback(() => {
+    startTransition(() => {
+      setView(AppView.LIVE_NAV);
+    });
+  }, []);
+
   const handleClearFavorites = () => {
     if (confirm('Are you sure you want to clear all favorite buses?')) {
       setFavorites([]);
@@ -1060,7 +1066,7 @@ const App: React.FC = () => {
             </button>
           </div>
           <button
-            onClick={() => setView(AppView.LIVE_NAV)}
+            onClick={handleStartNavigation}
             className="bg-dhaka-green text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors flex items-center gap-2"
           >
             <Navigation className="w-4 h-4" /> Start Navigation
