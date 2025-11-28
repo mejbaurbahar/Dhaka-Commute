@@ -276,6 +276,75 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         </button>
       </div>
 
+      {/* Bottom Left - Layer Toggles */}
+      <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 items-start">
+
+        {/* Collapsible Panel */}
+        {showLayers && (
+          <div className="bg-white/95 backdrop-blur rounded-xl border border-gray-200 shadow-xl p-3 w-[180px] mb-2 animate-in slide-in-from-bottom-2 fade-in duration-200">
+            <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-100">
+              <p className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Map Layers</p>
+              <button onClick={() => setShowLayers(false)} className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-full transition-colors">
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors group">
+                <div className={`w-4 h-4 rounded flex items-center justify-center border ${showMetro ? 'bg-blue-500 border-blue-500' : 'border-gray-300 bg-white'}`}>
+                  {showMetro && <Train className="w-2.5 h-2.5 text-white" />}
+                </div>
+                <input
+                  type="checkbox"
+                  checked={showMetro}
+                  onChange={(e) => setShowMetro(e.target.checked)}
+                  className="hidden"
+                />
+                <span className="text-[11px] font-medium text-gray-700 group-hover:text-gray-900">Metro Rail</span>
+              </label>
+
+              <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors group">
+                <div className={`w-4 h-4 rounded flex items-center justify-center border ${showRailway ? 'bg-green-500 border-green-500' : 'border-gray-300 bg-white'}`}>
+                  {showRailway && <Train className="w-2.5 h-2.5 text-white" />}
+                </div>
+                <input
+                  type="checkbox"
+                  checked={showRailway}
+                  onChange={(e) => setShowRailway(e.target.checked)}
+                  className="hidden"
+                />
+                <span className="text-[11px] font-medium text-gray-700 group-hover:text-gray-900">Railway</span>
+              </label>
+
+              <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors group">
+                <div className={`w-4 h-4 rounded flex items-center justify-center border ${showAirport ? 'bg-purple-500 border-purple-500' : 'border-gray-300 bg-white'}`}>
+                  {showAirport && <Plane className="w-2.5 h-2.5 text-white" />}
+                </div>
+                <input
+                  type="checkbox"
+                  checked={showAirport}
+                  onChange={(e) => setShowAirport(e.target.checked)}
+                  className="hidden"
+                />
+                <span className="text-[11px] font-medium text-gray-700 group-hover:text-gray-900">Airports</span>
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* Toggle Button */}
+        <button
+          onClick={() => setShowLayers(!showLayers)}
+          className={`flex items-center gap-2 px-3 py-2 rounded-full border shadow-lg transition-all duration-300 group ${showLayers
+              ? 'bg-gray-900 border-gray-900 text-white'
+              : 'bg-white/95 backdrop-blur border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+            }`}
+        >
+          <Layers className={`w-4 h-4 ${!showLayers && 'group-hover:scale-110 transition-transform'}`} />
+          <span className="text-xs font-bold">Layers</span>
+        </button>
+      </div>
+
       {/* Scrollable Container */}
       <div
         ref={scrollContainerRef}
