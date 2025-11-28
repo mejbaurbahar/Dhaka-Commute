@@ -1,0 +1,184 @@
+import React from 'react';
+import { SuggestedRoute, RouteStep } from '../services/routePlanner';
+import { Bus, Train, Navigation, Clock, Coins, ArrowRight, MapPin, TrendingUp, Zap, Award } from 'lucide-react';
+
+interface RouteSuggestionsProps {
+    routes: SuggestedRoute[];
+    onSelectRoute: (route: SuggestedRoute) => void;
+    currentLocation?: string;
+}
+
+const RouteStepIcon: React.FC<{ type: RouteStep['type'] }> = ({ type }) => {
+    switch (type) {
+        case 'bus':
+            return <Bus className="w-4 h-4" />;
+        case 'metro':
+            return <Train className="w-4 h-4" />;
+        case 'walk':
+            return <Navigation className="w-4 h-4" />;
+        case 'railway':
+            return <Train className="w-4 h-4" />;
+        default:
+            return <MapPin className="w-4 h-4" />;
+    }
+};
+
+const RouteTypeBadge: React.FC<{ type: SuggestedRoute['routeType'] }> = ({ type }) => {
+    const badges = {
+        'fastest': { icon: Zap, text: 'Fastest', color: 'bg-green-100 text-green-700 border-green-200' },
+        'direct': { icon: TrendingUp, text: 'Direct', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+        'cheapest': { icon: Coins, text: 'Cheapest', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
+        'least-transfers': { icon: Award, text: 'Easy', color: 'bg-purple-100 text-purple-700 border-purple-200' }
+    };
+
+    const badge = badges[type];
+    const Icon = badge.icon;
+
+    return (
+        <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold border ${badge.color}`}>
+            <Icon className="w-3 h-3" />
+            {badge.text}
+        </div>
+    );
+};
+
+const RouteSuggestions: React.FC<RouteSuggestionsProps> = ({ routes, onSelectRoute, currentLocation }) => {
+    if (routes.length === 0) {
+        return (
+            <div className="text-center py-8 text-gray-400">
+                <MapPin className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p className="text-sm">No routes found</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-4">
+            {/* Current Location Badge */}
+            {currentLocation && (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                        <MapPin className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] text-blue-600 font-bold uppercase">You are at</p>
+                        <p className="text-sm font-bold text-blue-900">{currentLocation}</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Route Cards */}
+            {routes.map((route, idx) => (
+                <div
+                    key={route.id}
+                    className="bg-white rounded-2xl border-2 border-gray-100 hover:border-dhaka-green transition-all shadow-sm hover:shadow-md overflow-hidden group cursor-pointer"
+                    onClick={() => onSelectRoute(route)}
+                >
+                    {/* Route Header */}
+                    <div className="p-4 bg-gradient-to-r from-slate-50 to-white border-b border-gray-100">
+                        <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-lg font-bold text-gray-900">Route {idx + 1}</span>
+                                    <RouteTypeBadge type={route.routeType} />
+                                </div>
+                                <h3 className="text-sm font-semibold text-gray-700">{route.title}</h3>
+                            </div>
+                        </div>
+
+                        {/* Stats */}
+                        <div className="grid grid-cols-3 gap-2 mt-3">
+                            <div className="bg-white rounded-lg p-2 border border-gray-100">
+                                <div className="flex items-center gap-1 text-gray-500 mb-1">
+                                    <Clock className="w-3 h-3" />
+                                    <span className="text-[9px] font-bold uppercase">Time</span>
+                                </div>
+                                <p className="text-sm font-bold text-gray-900">{Math.round(route.totalDuration)} min</p>
+                            </div>
+                            <div className="bg-white rounded-lg p-2 border border-gray-100">
+                                <div className="flex items-center gap-1 text-gray-500 mb-1">
+                                    <Coins className="w-3 h-3" />
+                                    <span className="text-[9px] font-bold uppercase">Fare</span>
+                                </div>
+                                <p className="text-sm font-bold text-gray-900">৳{route.totalFare}</p>
+                            </div>
+                            <div className="bg-white rounded-lg p-2 border border-gray-100">
+                                <div className="flex items-center gap-1 text-gray-500 mb-1">
+                                    <ArrowRight className="w-3 h-3" />
+                                    <span className="text-[9px] font-bold uppercase">Changes</span>
+                                </div>
+                                <p className="text-sm font-bold text-gray-900">{route.transfers}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Route Steps */}
+                    <div className="p-4 space-y-3">
+                        {route.steps.map((step, stepIdx) => (
+                            <div key={stepIdx} className="flex gap-3">
+                                {/* Step Icon */}
+                                <div className="flex flex-col items-center">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step.type === 'bus' ? 'bg-green-100 text-green-700' :
+                                            step.type === 'metro' ? 'bg-blue-100 text-blue-700' :
+                                                step.type === 'walk' ? 'bg-gray-100 text-gray-600' :
+                                                    'bg-purple-100 text-purple-700'
+                                        }`}>
+                                        <RouteStepIcon type={step.type} />
+                                    </div>
+                                    {stepIdx < route.steps.length - 1 && (
+                                        <div className="w-0.5 h-full bg-gray-200 my-1"></div>
+                                    )}
+                                </div>
+
+                                {/* Step Details */}
+                                <div className="flex-1">
+                                    <p className="text-sm font-semibold text-gray-800 leading-tight">{step.instruction}</p>
+
+                                    {step.busRoute && (
+                                        <div className="mt-1 inline-flex items-center gap-1 bg-green-50 border border-green-200 px-2 py-0.5 rounded-md">
+                                            <Bus className="w-3 h-3 text-green-700" />
+                                            <span className="text-[10px] font-bold text-green-700">{step.busRoute.name}</span>
+                                            <span className="text-[10px] text-green-600">({step.busRoute.bnName})</span>
+                                        </div>
+                                    )}
+
+                                    {step.metroLine && (
+                                        <div className="mt-1 inline-flex items-center gap-1 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md">
+                                            <Train className="w-3 h-3 text-blue-700" />
+                                            <span className="text-[10px] font-bold text-blue-700">{step.metroLine}</span>
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center gap-3 mt-1 text-[10px] text-gray-500">
+                                        {step.duration && (
+                                            <span className="flex items-center gap-1">
+                                                <Clock className="w-3 h-3" />
+                                                {Math.round(step.duration)} min
+                                            </span>
+                                        )}
+                                        {step.fare && (
+                                            <span className="flex items-center gap-1">
+                                                <Coins className="w-3 h-3" />
+                                                ৳{step.fare}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Action Button */}
+                    <div className="px-4 pb-4">
+                        <button className="w-full bg-dhaka-green text-white py-2.5 rounded-xl font-bold text-sm hover:bg-green-800 transition-colors flex items-center justify-center gap-2 group-hover:scale-[1.02] transition-transform">
+                            <Navigation className="w-4 h-4" />
+                            Start This Route
+                        </button>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default RouteSuggestions;

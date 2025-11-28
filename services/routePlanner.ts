@@ -1,0 +1,342 @@
+import { BusRoute, UserLocation } from '../types';
+import { BUS_DATA, STATIONS, METRO_STATIONS } from '../constants';
+import { TRANSFER_POINTS, TransferPoint, findNearestTransferPoint } from './transferPoints';
+import { getDistance, findNearestStation } from './locationService';
+
+export interface RouteStep {
+    type: 'walk' | 'bus' | 'metro' | 'railway';
+    instruction: string;
+    from: string;
+    to: string;
+    distance?: number;
+    duration?: number; // in minutes
+    busRoute?: BusRoute;
+    metroLine?: string;
+    fare?: number;
+}
+
+export interface SuggestedRoute {
+    id: string;
+    title: string;
+    totalDuration: number; // minutes
+    totalFare: number;
+    totalDistance: number; // km
+    transfers: number;
+    steps: RouteStep[];
+    routeType: 'fastest' | 'cheapest' | 'least-transfers' | 'direct';
+}
+
+// Calculate walking time (average 5 km/h)
+const calculateWalkingTime = (distanceMeters: number): number => {
+    return (distanceMeters / 1000) / 5 * 60; // minutes
+};
+
+// Calculate bus travel time (average 15 km/h in Dhaka traffic)
+const calculateBusTime = (distanceKm: number): number => {
+    return (distanceKm / 15) * 60; // minutes
+};
+
+// Calculate metro travel time (average 35 km/h)
+const calculateMetroTime = (distanceKm: number): number => {
+    return (distanceKm / 35) * 60; // minutes
+};
+
+// Find direct bus routes
+const findDirectBuses = (fromStationId: string, toStationId: string): BusRoute[] => {
+    return BUS_DATA.filter(bus => {
+        const fromIdx = bus.stops.indexOf(fromStationId);
+        const toIdx = bus.stops.indexOf(toStationId);
+        return fromIdx !== -1 && toIdx !== -1;
+    });
+};
+
+// Find buses passing through a station
+const findBusesAtStation = (stationId: string): BusRoute[] => {
+    return BUS_DATA.filter(bus => bus.stops.includes(stationId));
+};
+
+// Calculate fare for a bus route segment
+const calculateBusFare = (bus: BusRoute, fromId: string, toId: string): number => {
+    const fromIdx = bus.stops.indexOf(fromId);
+    const toIdx = bus.stops.indexOf(toId);
+
+    if (fromIdx === -1 || toIdx === -1) return 0;
+
+    let distance = 0;
+    const start = Math.min(fromIdx, toIdx);
+    const end = Math.max(fromIdx, toIdx);
+
+    for (let i = start; i < end; i++) {
+        const s1 = STATIONS[bus.stops[i]];
+        const s2 = STATIONS[bus.stops[i + 1]];
+        if (s1 && s2) {
+            distance += getDistance({ lat: s1.lat, lng: s1.lng }, { lat: s2.lat, lng: s2.lng });
+        }
+    }
+
+    const distanceKm = distance / 1000;
+    const fare = Math.max(10, Math.ceil(distanceKm * 2.42));
+    return fare;
+};
+
+// Calculate distance between stations
+const calculateRouteDistance = (stops: string[]): number => {
+    let totalDistance = 0;
+    for (let i = 0; i < stops.length - 1; i++) {
+        const s1 = STATIONS[stops[i]];
+        const s2 = STATIONS[stops[i + 1]];
+        if (s1 && s2) {
+            totalDistance += getDistance({ lat: s1.lat, lng: s1.lng }, { lat: s2.lat, lng: s2.lng });
+        }
+    }
+    return totalDistance / 1000; // km
+};
+
+// Main intelligent route planner
+export const planRoutes = (
+    userLocation: UserLocation | null,
+    destinationQuery: string
+): SuggestedRoute[] => {
+    const routes: SuggestedRoute[] = [];
+
+    // Find destination station
+    const destStation = Object.values(STATIONS).find(s =>
+        s.name.toLowerCase().includes(destinationQuery.toLowerCase()) ||
+        (s.bnName && s.bnName.includes(destinationQuery))
+    );
+
+    if (!destStation) return routes;
+
+    // Find user's current location
+    let startStation = null;
+    let startTransferPoint: TransferPoint | null = null;
+
+    if (userLocation) {
+        const nearestResult = findNearestStation(userLocation, Object.keys(STATIONS));
+        if (nearestResult) {
+            startStation = nearestResult.station;
+        }
+        startTransferPoint = findNearestTransferPoint(userLocation.lat, userLocation.lng);
+    }
+
+    if (!startStation) return routes;
+
+    // Strategy 1: Direct Bus Routes
+    const directBuses = findDirectBuses(startStation.id, destStation.id);
+    directBuses.slice(0, 3).forEach((bus, idx) => {
+        const distance = calculateRouteDistance([startStation.id, destStation.id]);
+        const duration = calculateBusTime(distance);
+        const fare = calculateBusFare(bus, startStation.id, destStation.id);
+
+        routes.push({
+            id: `direct-${idx}`,
+            title: 'Direct Bus',
+            totalDuration: duration,
+            totalFare: fare,
+            totalDistance: distance,
+            transfers: 0,
+            routeType: 'direct',
+            steps: [
+                {
+                    type: 'bus',
+                    instruction: `Take ${bus.name} (${bus.bnName}) from ${startStation.name} to ${destStation.name}`,
+                    from: startStation.name,
+                    to: destStation.name,
+                    distance: distance,
+                    duration: duration,
+                    busRoute: bus,
+                    fare: fare
+                }
+            ]
+        });
+    });
+
+    // Strategy 2: Metro + Bus Combination (if metro nearby)
+    if (startTransferPoint && startTransferPoint.metroStations && startTransferPoint.metroStations.length > 0) {
+        const metroStation = METRO_STATIONS[startTransferPoint.metroStations[0]];
+
+        if (metroStation) {
+            // Find a good metro destination
+            const metroDestinations = ['mirpur_10', 'uttara_south', 'agargaon'];
+
+            metroDestinations.forEach((metroDestId, idx) => {
+                const metroDest = METRO_STATIONS[metroDestId];
+                if (!metroDest) return;
+
+                // Find transfer point near metro destination
+                const destTransfer = Object.values(TRANSFER_POINTS).find(tp =>
+                    tp.metroStations?.includes(metroDestId)
+                );
+
+                if (!destTransfer) return;
+
+                // Find buses from metro destination to final destination
+                const connectingBuses = destTransfer.nearbyStations
+                    .flatMap(stId => findDirectBuses(stId, destStation.id))
+                    .filter((bus, index, self) =>
+                        index === self.findIndex(b => b.id === bus.id)
+                    );
+
+                if (connectingBuses.length > 0) {
+                    const bus = connectingBuses[0];
+                    const busStartStation = STATIONS[destTransfer.nearbyStations[0]];
+
+                    if (!busStartStation) return;
+
+                    const walkToMetro = getDistance(
+                        { lat: startStation.lat, lng: startStation.lng },
+                        { lat: metroStation.lat, lng: metroStation.lng }
+                    );
+
+                    const metroDistance = getDistance(
+                        { lat: metroStation.lat, lng: metroStation.lng },
+                        { lat: metroDest.lat, lng: metroDest.lng }
+                    ) / 1000;
+
+                    const busDistance = calculateRouteDistance([busStartStation.id, destStation.id]);
+
+                    const walkTime = calculateWalkingTime(walkToMetro);
+                    const metroTime = calculateMetroTime(metroDistance);
+                    const busTime = calculateBusTime(busDistance);
+
+                    const totalDuration = walkTime + metroTime + busTime + 10; // 10 min transfer time
+                    const totalFare = 60 + calculateBusFare(bus, busStartStation.id, destStation.id); // Metro fare + bus fare
+
+                    routes.push({
+                        id: `metro-bus-${idx}`,
+                        title: 'Fastest Route (Metro + Bus)',
+                        totalDuration: totalDuration,
+                        totalFare: totalFare,
+                        totalDistance: (walkToMetro / 1000) + metroDistance + busDistance,
+                        transfers: 2,
+                        routeType: 'fastest',
+                        steps: [
+                            {
+                                type: 'walk',
+                                instruction: `Walk to ${metroStation.name} Metro Station`,
+                                from: startStation.name,
+                                to: metroStation.name,
+                                distance: walkToMetro / 1000,
+                                duration: walkTime
+                            },
+                            {
+                                type: 'metro',
+                                instruction: `Take MRT Line 6 from ${metroStation.name} to ${metroDest.name}`,
+                                from: metroStation.name,
+                                to: metroDest.name,
+                                distance: metroDistance,
+                                duration: metroTime,
+                                metroLine: 'MRT Line 6',
+                                fare: 60
+                            },
+                            {
+                                type: 'walk',
+                                instruction: `Walk to ${busStartStation.name}`,
+                                from: metroDest.name,
+                                to: busStartStation.name,
+                                distance: 0.2,
+                                duration: 3
+                            },
+                            {
+                                type: 'bus',
+                                instruction: `Take ${bus.name} (${bus.bnName}) to ${destStation.name}`,
+                                from: busStartStation.name,
+                                to: destStation.name,
+                                distance: busDistance,
+                                duration: busTime,
+                                busRoute: bus,
+                                fare: calculateBusFare(bus, busStartStation.id, destStation.id)
+                            }
+                        ]
+                    });
+                }
+            });
+        }
+
+        // Strategy 3: Transfer via major hub
+        const majorHubs = ['mogbazar', 'gabtoli', 'gulistan', 'farmgate'];
+
+        majorHubs.forEach((hubId, idx) => {
+            const hub = STATIONS[hubId];
+            if (!hub) return;
+
+            // Find buses from start to hub
+            const busesToHub = findDirectBuses(startStation.id, hubId);
+            // Find buses from hub to destination
+            const busesFromHub = findDirectBuses(hubId, destStation.id);
+
+            if (busesToHub.length > 0 && busesFromHub.length > 0) {
+                const bus1 = busesToHub[0];
+                const bus2 = busesFromHub[0];
+
+                const dist1 = calculateRouteDistance([startStation.id, hubId]);
+                const dist2 = calculateRouteDistance([hubId, destStation.id]);
+
+                const time1 = calculateBusTime(dist1);
+                const time2 = calculateBusTime(dist2);
+
+                const fare1 = calculateBusFare(bus1, startStation.id, hubId);
+                const fare2 = calculateBusFare(bus2, hubId, destStation.id);
+
+                routes.push({
+                    id: `transfer-${idx}`,
+                    title: `Via ${hub.name}`,
+                    totalDuration: time1 + time2 + 5, // 5 min transfer
+                    totalFare: fare1 + fare2,
+                    totalDistance: dist1 + dist2,
+                    transfers: 1,
+                    routeType: 'least-transfers',
+                    steps: [
+                        {
+                            type: 'bus',
+                            instruction: `Take ${bus1.name} (${bus1.bnName}) to ${hub.name}`,
+                            from: startStation.name,
+                            to: hub.name,
+                            distance: dist1,
+                            duration: time1,
+                            busRoute: bus1,
+                            fare: fare1
+                        },
+                        {
+                            type: 'walk',
+                            instruction: `Transfer at ${hub.name}`,
+                            from: hub.name,
+                            to: hub.name,
+                            distance: 0.1,
+                            duration: 5
+                        },
+                        {
+                            type: 'bus',
+                            instruction: `Take ${bus2.name} (${bus2.bnName}) to ${destStation.name}`,
+                            from: hub.name,
+                            to: destStation.name,
+                            distance: dist2,
+                            duration: time2,
+                            busRoute: bus2,
+                            fare: fare2
+                        }
+                    ]
+                });
+            }
+        });
+
+        // Sort routes: fastest first, then by transfers, then by fare
+        routes.sort((a, b) => {
+            if (a.routeType === 'direct' && b.routeType !== 'direct') return -1;
+            if (a.routeType !== 'direct' && b.routeType === 'direct') return 1;
+            if (a.routeType === 'fastest' && b.routeType !== 'fastest') return -1;
+            if (a.routeType !== 'fastest' && b.routeType === 'fastest') return 1;
+
+            const durationDiff = a.totalDuration - b.totalDuration;
+            if (Math.abs(durationDiff) > 10) return durationDiff;
+
+            const transferDiff = a.transfers - b.transfers;
+            if (transferDiff !== 0) return transferDiff;
+
+            return a.totalFare - b.totalFare;
+        });
+
+        // Return top 3 routes
+    }
+    return routes.slice(0, 3);
+};

@@ -11,6 +11,8 @@ import DhakaAlive from './components/DhakaAlive';
 import { askGeminiRoute } from './services/geminiService';
 import { getCurrentLocation, findNearestStation, getDistance } from './services/locationService';
 import { findNearestMetroStation } from './services/metroService';
+import { planRoutes, SuggestedRoute } from './services/routePlanner';
+import RouteSuggestions from './components/RouteSuggestions';
 
 
 
@@ -297,6 +299,7 @@ const App: React.FC = () => {
   const [nearestStopDistance, setNearestStopDistance] = useState<number>(Infinity);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [nearestMetro, setNearestMetro] = useState<{ stationId: string; distance: number } | null>(null);
+  const [suggestedRoutes, setSuggestedRoutes] = useState<SuggestedRoute[]>([]);
 
   const globalNearestStationName = useMemo(() => {
     if (!userLocation) return null;
@@ -488,6 +491,14 @@ const App: React.FC = () => {
   const handleSearchCommit = () => {
     setSearchQuery(inputValue);
     (document.activeElement as HTMLElement)?.blur();
+
+    // Generate intelligent route suggestions
+    if (inputValue.trim()) {
+      const routes = planRoutes(userLocation, inputValue);
+      setSuggestedRoutes(routes);
+    } else {
+      setSuggestedRoutes([]);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -1443,8 +1454,32 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Scrollable Bus List */}
+      {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-4 space-y-3">
+
+        {/* Intelligent Route Suggestions */}
+        {searchMode === 'TEXT' && suggestedRoutes.length > 0 && (
+          <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="flex items-center gap-2 mb-3 px-1">
+              <Sparkles className="w-4 h-4 text-dhaka-green fill-current" />
+              <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">Smart Suggestions</h3>
+            </div>
+            <RouteSuggestions
+              routes={suggestedRoutes}
+              onSelectRoute={(route) => {
+                // If route has a bus segment, select that bus
+                const busStep = route.steps.find(step => step.type === 'bus' && step.busRoute);
+                if (busStep && busStep.busRoute) {
+                  handleBusSelect(busStep.busRoute);
+                }
+              }}
+              currentLocation={globalNearestStationName || undefined}
+            />
+            <div className="my-6 border-t border-gray-100 relative">
+              <span className="absolute left-1/2 -top-2.5 -translate-x-1/2 bg-gray-50 px-2 text-xs font-bold text-gray-400">OR BROWSE ALL</span>
+            </div>
+          </div>
+        )}
         {filteredBuses.map(bus => {
           const isFav = favorites.includes(bus.id);
           const estimatedFare = calculateFare(bus);
