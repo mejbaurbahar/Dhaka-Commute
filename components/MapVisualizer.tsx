@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { BusRoute, UserLocation } from '../types';
 import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
 import { findNearestStation } from '../services/locationService';
-import { getSegmentTrafficLevel, getTrafficColor, prefetchRouteTraffic, TrafficLevel } from '../services/trafficSimulator';
+import { getTrafficColor, TrafficLevel } from '../services/trafficSimulator';
 import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train, Plane, Layers, X } from 'lucide-react';
 
 interface MapVisualizerProps {
@@ -25,7 +25,6 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   userLocation
 }) => {
   const [simulationStep, setSimulationStep] = useState(0);
-  const [trafficData, setTrafficData] = useState<Map<string, TrafficLevel>>(new Map());
 
   // Layer visibility toggles - Metro off by default, others off
   const [showMetro, setShowMetro] = useState(false);
@@ -125,47 +124,6 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     }, 50);
     return () => clearInterval(interval);
   }, [stations.length]);
-
-  // Real-time Traffic Fetching
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadTraffic = async () => {
-      if (!route) return;
-
-      try {
-        // Prefetch data for the whole route (waits for API calls)
-        await prefetchRouteTraffic(route.stops);
-
-        if (!isMounted) return;
-
-        // Build the map for rendering
-        const newTrafficData = new Map<string, TrafficLevel>();
-        for (let i = 0; i < route.stops.length - 1; i++) {
-          const fromId = route.stops[i];
-          const toId = route.stops[i + 1];
-          const key = `${fromId}-${toId}`;
-          // This will now return the cached API data
-          const level = getSegmentTrafficLevel(fromId, toId);
-          newTrafficData.set(key, level);
-        }
-
-        setTrafficData(newTrafficData);
-      } catch (error) {
-        console.error("Failed to load traffic data", error);
-      }
-    };
-
-    loadTraffic();
-
-    // Refresh every 2 minutes
-    const interval = setInterval(loadTraffic, 2 * 60 * 1000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, [route]);
 
   // Drag Handlers
   const onMouseDown = (e: React.MouseEvent) => {
@@ -478,12 +436,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             {!hasHighlight && nodePositions.map((pos, idx) => {
               if (idx === nodePositions.length - 1) return null;
 
-              const fromStationId = route.stops[idx];
-              const toStationId = route.stops[idx + 1];
-              const key = `${fromStationId}-${toStationId}`;
-
-              // Use fetched data if available, otherwise fallback to Green (Free Flow)
-              const trafficLevel = trafficData.get(key) || 'free';
+              // Always use 'free' traffic as requested
+              const trafficLevel = 'free';
               const segmentColor = getTrafficColor(trafficLevel);
 
               return (
@@ -524,33 +478,6 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                 strokeLinejoin="round"
                 className="opacity-100"
               />
-            )}
-
-            {/* Connection Line for Far Users */}
-            {isUserFar && userStationIndex !== -1 && (
-              <g>
-                <line
-                  x1={nearestNodeX}
-                  y1={nearestNodeY}
-                  x2={userRelativeX}
-                  y2={userRelativeY}
-                  stroke="#f97316"
-                  strokeWidth="3"
-                  strokeDasharray="8,6"
-                  className="animate-pulse opacity-70"
-                />
-                {/* User Node */}
-                <g transform={`translate(${userRelativeX}, ${userRelativeY})`}>
-                  <circle r="12" fill="#fb923c" fillOpacity="0.2" className="animate-ping" />
-                  <circle r="6" fill="#f97316" stroke="white" strokeWidth="2" />
-                  <text y="20" textAnchor="middle" fontSize="12" fontWeight="bold" fill="#ea580c">
-                    {globalNearestName || "You"}
-                  </text>
-                  <text y="32" textAnchor="middle" fontSize="10" fill="#9a3412" className="uppercase font-bold">
-                    {((userDistance) / 1000).toFixed(1)}km
-                  </text>
-                </g>
-              </g>
             )}
 
             {/* Stations */}
