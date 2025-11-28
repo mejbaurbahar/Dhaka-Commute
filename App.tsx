@@ -300,6 +300,7 @@ const App: React.FC = () => {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [nearestMetro, setNearestMetro] = useState<{ stationId: string; distance: number } | null>(null);
   const [suggestedRoutes, setSuggestedRoutes] = useState<SuggestedRoute[]>([]);
+  const [selectedTrip, setSelectedTrip] = useState<SuggestedRoute | null>(null);
 
   const globalNearestStationName = useMemo(() => {
     if (!userLocation) return null;
@@ -513,6 +514,7 @@ const App: React.FC = () => {
     setView(AppView.BUS_DETAILS);
     setNearestStopIndex(-1);
     setNearestStopDistance(Infinity);
+    setSelectedTrip(null);
 
     // Defer location fetch to avoid blocking UI
     requestIdleCallback(() => {
@@ -1112,6 +1114,37 @@ const App: React.FC = () => {
 
         <div className="flex-1 overflow-y-auto pb-32 md:pb-0 no-scrollbar md:px-8 md:py-6 pt-[121px] md:pt-0" ref={scrollContainerRef}>
           <div className="p-4 md:p-0 space-y-5">
+            {selectedTrip && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-4 mb-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="w-4 h-4 text-blue-600" />
+                  <h3 className="font-bold text-blue-900 text-sm uppercase tracking-wider">Your Trip Plan</h3>
+                </div>
+                <div className="space-y-3">
+                  {selectedTrip.steps.map((step, idx) => (
+                    <div key={idx} className={`flex gap-3 ${step.type === 'bus' && step.busRoute?.id === selectedBus.id ? 'opacity-100' : 'opacity-70'}`}>
+                      <div className="flex flex-col items-center">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold
+                          ${step.type === 'walk' ? 'bg-gray-200 text-gray-600' :
+                            step.type === 'metro' ? 'bg-blue-200 text-blue-700' :
+                              'bg-green-200 text-green-700'
+                          }
+                        `}>
+                          {idx + 1}
+                        </div>
+                        {idx < selectedTrip.steps.length - 1 && <div className="w-0.5 h-full bg-gray-200 my-1"></div>}
+                      </div>
+                      <div className="pb-2">
+                        <p className="text-sm font-semibold text-gray-800">{step.instruction}</p>
+                        {step.type === 'bus' && step.busRoute?.id === selectedBus.id && (
+                          <span className="inline-block mt-1 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Current Step</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
                 <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
@@ -1472,6 +1505,8 @@ const App: React.FC = () => {
                 if (busStep && busStep.busRoute) {
                   handleBusSelect(busStep.busRoute);
                 }
+                // Override the null set by handleBusSelect
+                setSelectedTrip(route);
               }}
               currentLocation={globalNearestStationName || undefined}
             />
