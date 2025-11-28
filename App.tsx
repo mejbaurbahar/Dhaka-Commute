@@ -1626,7 +1626,7 @@ const App: React.FC = () => {
           ${'w-full md:flex-1 bg-slate-50 md:bg-white relative h-full overflow-hidden'}
           ${view === AppView.HOME && 'hidden md:block'}
         `}>
-          {view === AppView.HOME && <div className="hidden md:block h-full"><EmptyState /></div>}
+          {view === AppView.HOME && <div className="hidden md:block h-full"><DhakaAlive /></div>}
           {view === AppView.BUS_DETAILS && renderBusDetails()}
           {view === AppView.LIVE_NAV && renderLiveNav()}
           {view === AppView.AI_ASSISTANT && renderAiAssistant()}

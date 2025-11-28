@@ -286,4 +286,4 @@ const DhakaAlive: React.FC = () => {
     );
 };
 
-export default DhakaAlive;
+export default React.memo(DhakaAlive);

@@ -117,6 +117,11 @@ export const planRoutes = (
             startStation = nearestResult.station;
         }
         startTransferPoint = findNearestTransferPoint(userLocation.lat, userLocation.lng);
+    } else {
+        // Fallback: Assume start from Motijheel (Center) if location not found
+        // This ensures the feature works for desktop users without GPS
+        startStation = STATIONS['motijheel'];
+        startTransferPoint = TRANSFER_POINTS['motijheel'];
     }
 
     if (!startStation) return routes;
