@@ -32,25 +32,10 @@ const trafficCache: TrafficCache = {
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Known congestion-prone areas in Dhaka (fallback for simulation)
-const CONGESTION_ZONES = {
-    motijheel: ['motijheel', 'dilkusha', 'paltan'],
-    gulshan: ['gulshan1', 'gulshan2', 'banani'],
-    dhanmondi: ['dhanmondi', 'dhanmondi_27', 'science_lab'],
-    mirpur: ['mirpur1', 'mirpur10', 'mirpur11', 'mirpur12'],
-    farmgate: ['farmgate', 'karwan_bazar'],
-    shahbag: ['shahbag', 'tsc'],
-    mohakhali: ['mohakhali', 'wireless_gate'],
-    tejgaon: ['tejgaon', 'mogbazar'],
-    uttara: ['uttara', 'abdullahpur', 'jasimuddin'],
-};
-
 // Fetch real-time traffic data from TomTom API
 async function fetchTomTomTraffic(lat: number, lng: number): Promise<TrafficLevel | null> {
     try {
         const apiKey = getTomTomApiKey();
-        const zoom = 15; // Zoom level for traffic flow
-        const thickness = 10; // Line thickness
 
         // TomTom Traffic Flow Segment Data API
         const url = `https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json?point=${lat},${lng}&unit=KMPH&key=${apiKey}`;
@@ -84,13 +69,16 @@ async function fetchTomTomTraffic(lat: number, lng: number): Promise<TrafficLeve
         const freeFlowSpeed = flowData.freeFlowSpeed || 50;
         const confidence = flowData.confidence || 0.5;
 
+        // Log for verification
+        console.log(`[TomTom API] Speed: ${currentSpeed}/${freeFlowSpeed} km/h (Confidence: ${confidence})`);
+
         // Calculate speed ratio (how much slower than free flow)
         const speedRatio = currentSpeed / freeFlowSpeed;
 
         // Determine traffic level based on speed ratio
         // Only trust the data if confidence is reasonable
-        if (confidence < 0.3) {
-            return null; // Low confidence, use fallback
+        if (confidence < 0.1) { // Lowered threshold slightly, but still require SOME confidence
+            return null;
         }
 
         if (speedRatio >= 0.8) return 'free';      // 80%+ of free flow speed
@@ -104,62 +92,18 @@ async function fetchTomTomTraffic(lat: number, lng: number): Promise<TrafficLeve
     }
 }
 
-// Fallback simulation (used when API fails)
-function getSimulatedTrafficLevel(stationId: string, currentTime: Date = new Date()): TrafficLevel {
-    const hour = currentTime.getHours();
-    const dayOfWeek = currentTime.getDay();
-    const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
-
-    const isInCongestionZone = Object.values(CONGESTION_ZONES).some(zone =>
-        zone.includes(stationId)
-    );
-
-    const isMorningRush = hour >= 8 && hour < 10 && !isWeekend;
-    const isEveningRush = hour >= 17 && hour < 20 && !isWeekend;
-    const isRushHour = isMorningRush || isEveningRush;
-    const isLateNight = hour >= 23 || hour < 6;
-
-    const weekendFactor = isWeekend ? 0.6 : 1.0;
-
-    let congestionScore = 0;
-
-    if (isLateNight) {
-        congestionScore = 0;
-    } else if (isRushHour && isInCongestionZone) {
-        congestionScore = 0.9 * weekendFactor;
-    } else if (isRushHour) {
-        congestionScore = 0.6 * weekendFactor;
-    } else if (isInCongestionZone) {
-        congestionScore = 0.5 * weekendFactor;
-    } else {
-        congestionScore = 0.2 * weekendFactor;
-    }
-
-    const randomFactor = 0.85 + Math.random() * 0.3;
-    congestionScore *= randomFactor;
-
-    if (congestionScore < 0.25) return 'free';
-    if (congestionScore < 0.5) return 'moderate';
-    if (congestionScore < 0.75) return 'heavy';
-    return 'severe';
-}
-
-// Get traffic level with API + fallback
-export async function getTrafficLevel(stationId: string, currentTime: Date = new Date()): Promise<TrafficLevel> {
+// Get traffic level with API ONLY (No Simulation)
+export async function getTrafficLevel(stationId: string, currentTime: Date = new Date()): Promise<TrafficLevel | null> {
     const station = STATIONS[stationId];
     if (!station) {
-        return 'free';
+        return null;
     }
 
     // Try to get from API
     const apiLevel = await fetchTomTomTraffic(station.lat, station.lng);
 
-    if (apiLevel) {
-        return apiLevel;
-    }
-
-    // Fallback to simulation
-    return getSimulatedTrafficLevel(stationId, currentTime);
+    // If API returns data, return it. If not, return NULL (do not simulate)
+    return apiLevel;
 }
 
 // Get traffic level for a segment (synchronous version for rendering)
@@ -167,7 +111,7 @@ export function getSegmentTrafficLevel(
     fromStationId: string,
     toStationId: string,
     currentTime: Date = new Date()
-): TrafficLevel {
+): TrafficLevel | null {
     // Check cache first
     const cacheKey = `${fromStationId}-${toStationId}`;
     const now = Date.now();
@@ -176,21 +120,10 @@ export function getSegmentTrafficLevel(
         return trafficCache.data.get(cacheKey)!;
     }
 
-    // Use simulation for immediate rendering (API calls happen in background)
-    const fromLevel = getSimulatedTrafficLevel(fromStationId, currentTime);
-    const toLevel = getSimulatedTrafficLevel(toStationId, currentTime);
+    // If no cache, return null (loading/unknown) - DO NOT SIMULATE
+    // This ensures we never show fake data
 
-    const levels: TrafficLevel[] = ['free', 'moderate', 'heavy', 'severe'];
-    const fromIndex = levels.indexOf(fromLevel);
-    const toIndex = levels.indexOf(toLevel);
-
-    const result = levels[Math.max(fromIndex, toIndex)];
-
-    // Cache the result
-    trafficCache.data.set(cacheKey, result);
-    trafficCache.timestamp = now;
-
-    // Fetch real data in background for next render
+    // Fetch real data in background
     const fromStation = STATIONS[fromStationId];
     const toStation = STATIONS[toStationId];
 
@@ -198,19 +131,26 @@ export function getSegmentTrafficLevel(
         const midLat = (fromStation.lat + toStation.lat) / 2;
         const midLng = (fromStation.lng + toStation.lng) / 2;
 
+        // Check if we already have a pending request to avoid duplicate calls
+        // (Simple implementation: just fire and forget, cache handles the rest)
         fetchTomTomTraffic(midLat, midLng).then(apiLevel => {
             if (apiLevel) {
+                console.log(`[Traffic] Real data for ${fromStationId}-${toStationId}: ${apiLevel}`);
                 trafficCache.data.set(cacheKey, apiLevel);
                 trafficCache.timestamp = Date.now();
+            } else {
+                console.warn(`[Traffic] No real data available for ${fromStationId}-${toStationId}`);
             }
         });
     }
 
-    return result;
+    return null; // Return null to indicate "waiting for real data"
 }
 
-// Get color for traffic level (Google Maps style)
-export function getTrafficColor(level: TrafficLevel): string {
+// Get color for traffic level
+export function getTrafficColor(level: TrafficLevel | null): string {
+    if (!level) return '#e5e7eb'; // Grey for unknown/loading
+
     switch (level) {
         case 'free':
             return '#34A853'; // Green
@@ -221,12 +161,14 @@ export function getTrafficColor(level: TrafficLevel): string {
         case 'severe':
             return '#9C27B0'; // Dark Red/Purple
         default:
-            return '#006a4e'; // Default green
+            return '#e5e7eb';
     }
 }
 
 // Get human-readable traffic description
-export function getTrafficDescription(level: TrafficLevel): string {
+export function getTrafficDescription(level: TrafficLevel | null): string {
+    if (!level) return 'Loading data...';
+
     switch (level) {
         case 'free':
             return 'Free flow';
@@ -242,7 +184,9 @@ export function getTrafficDescription(level: TrafficLevel): string {
 }
 
 // Get estimated delay multiplier based on traffic
-export function getDelayMultiplier(level: TrafficLevel): number {
+export function getDelayMultiplier(level: TrafficLevel | null): number {
+    if (!level) return 1.0;
+
     switch (level) {
         case 'free':
             return 1.0;

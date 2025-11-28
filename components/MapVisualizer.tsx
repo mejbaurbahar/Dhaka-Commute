@@ -657,7 +657,12 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
         {/* Traffic Legend */}
         <div className="mt-3 pt-3 border-t border-gray-200">
-          <p className="text-[10px] font-bold text-gray-600 uppercase mb-2 px-1">Traffic Status</p>
+          <div className="flex justify-between items-center mb-2 px-1">
+            <p className="text-[10px] font-bold text-gray-600 uppercase">Traffic Status</p>
+            <span className="text-[8px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">
+              Source: TomTom
+            </span>
+          </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2 px-1">
               <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#34A853' }}></div>
@@ -1168,7 +1173,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
           </svg>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
