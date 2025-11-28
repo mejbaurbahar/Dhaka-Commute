@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { BusRoute, AppView, UserLocation } from './types';
@@ -186,6 +186,17 @@ const SettingsView: React.FC<{
 
 
 const App: React.FC = () => {
+  // Polyfill for requestIdleCallback (Safari support)
+  const requestIdleCallback = window.requestIdleCallback || ((cb: IdleRequestCallback) => {
+    const start = Date.now();
+    return setTimeout(() => {
+      cb({
+        didTimeout: false,
+        timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
+      });
+    }, 1);
+  });
+
   const [view, setView] = useState<AppView>(AppView.HOME);
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(null);
 
@@ -415,39 +426,47 @@ const App: React.FC = () => {
     }
   };
 
-  const handleBusSelect = (bus: BusRoute) => {
+  const handleBusSelect = useCallback((bus: BusRoute) => {
+    // Immediately update UI state (non-blocking)
     setSelectedBus(bus);
     setView(AppView.BUS_DETAILS);
     setNearestStopIndex(-1);
     setNearestStopDistance(Infinity);
-    getCurrentLocation().then(loc => {
-      setUserLocation(loc);
-      const result = findNearestStation(loc, bus.stops);
-      if (result) {
-        const validStopIds = bus.stops.filter(id => !!STATIONS[id]);
-        const stationId = bus.stops[result.index];
-        const filteredIndex = validStopIds.indexOf(stationId);
 
-        if (filteredIndex !== -1) {
-          setNearestStopIndex(filteredIndex);
-          setNearestStopDistance(result.distance);
+    // Defer location fetch to avoid blocking UI
+    requestIdleCallback(() => {
+      getCurrentLocation().then(loc => {
+        setUserLocation(loc);
+        const result = findNearestStation(loc, bus.stops);
+        if (result) {
+          const validStopIds = bus.stops.filter(id => !!STATIONS[id]);
+          const stationId = bus.stops[result.index];
+          const filteredIndex = validStopIds.indexOf(stationId);
+
+          if (filteredIndex !== -1) {
+            setNearestStopIndex(filteredIndex);
+            setNearestStopDistance(result.distance);
+          }
         }
-      }
-    }).catch(console.error);
-  };
+      }).catch(console.error);
+    }, { timeout: 2000 });
+  }, []);
 
-  const toggleFavorite = (e: React.MouseEvent, busId: string) => {
+  const toggleFavorite = useCallback((e: React.MouseEvent, busId: string) => {
     e.stopPropagation();
     setFavorites(prev => {
       const newFavs = prev.includes(busId)
         ? prev.filter(id => id !== busId)
         : [...prev, busId];
       try {
-        localStorage.setItem('dhaka_commute_favorites', JSON.stringify(newFavs));
+        // Defer localStorage write to avoid blocking
+        requestIdleCallback(() => {
+          localStorage.setItem('dhaka_commute_favorites', JSON.stringify(newFavs));
+        });
       } catch (err) { console.warn("Fav save failed"); }
       return newFavs;
     });
-  };
+  }, [requestIdleCallback]);
 
   const handleAiSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
