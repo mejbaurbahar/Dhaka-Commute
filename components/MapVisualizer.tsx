@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { BusRoute, UserLocation } from '../types';
 import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
 import { findNearestStation } from '../services/locationService';
-import { getSegmentTrafficLevel, getTrafficColor } from '../services/trafficSimulator';
+import { getSegmentTrafficLevel, getTrafficColor, prefetchRouteTraffic, TrafficLevel } from '../services/trafficSimulator';
 import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train, Plane } from 'lucide-react';
 
 interface MapVisualizerProps {
@@ -26,6 +26,9 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   userLocation
 }) => {
   const [simulationStep, setSimulationStep] = useState(0);
+  const [trafficData, setTrafficData] = useState<Map<string, TrafficLevel>>(new Map());
+  const [isLoadingTraffic, setIsLoadingTraffic] = useState(true);
+
   // Responsive initial zoom: smaller on mobile for better overview
   const [zoom, setZoom] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -112,7 +115,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
   const stations = route.stops.map(id => STATIONS[id]).filter(Boolean);
 
-  // Simulation Logic
+  // Simulation Logic (Visual effect only)
   useEffect(() => {
     if (stations.length < 2) return;
     const interval = setInterval(() => {
@@ -123,6 +126,56 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     }, 50);
     return () => clearInterval(interval);
   }, [stations.length]);
+
+  // Real-time Traffic Fetching
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadTraffic = async () => {
+      if (!route) return;
+
+      // Only show loading on first load
+      if (trafficData.size === 0) {
+        setIsLoadingTraffic(true);
+      }
+
+      try {
+        // Prefetch data for the whole route (waits for API calls)
+        await prefetchRouteTraffic(route.stops);
+
+        if (!isMounted) return;
+
+        // Build the map for rendering
+        const newTrafficData = new Map<string, TrafficLevel>();
+        for (let i = 0; i < route.stops.length - 1; i++) {
+          const fromId = route.stops[i];
+          const toId = route.stops[i + 1];
+          const key = `${fromId}-${toId}`;
+          // This will now return the cached API data
+          const level = getSegmentTrafficLevel(fromId, toId);
+          newTrafficData.set(key, level);
+        }
+
+        setTrafficData(newTrafficData);
+      } catch (error) {
+        console.error("Failed to load traffic data", error);
+      } finally {
+        if (isMounted) {
+          setIsLoadingTraffic(false);
+        }
+      }
+    };
+
+    loadTraffic();
+
+    // Refresh every 2 minutes
+    const interval = setInterval(loadTraffic, 2 * 60 * 1000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [route]);
 
   // Drag Handlers
   const onMouseDown = (e: React.MouseEvent) => {
@@ -722,8 +775,11 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
               const fromStationId = route.stops[idx];
               const toStationId = route.stops[idx + 1];
-              const trafficLevel = getSegmentTrafficLevel(fromStationId, toStationId);
-              const segmentColor = getTrafficColor(trafficLevel);
+              const key = `${fromStationId}-${toStationId}`;
+
+              // Use fetched data if available, otherwise fallback (or loading state)
+              const trafficLevel = trafficData.get(key);
+              const segmentColor = trafficLevel ? getTrafficColor(trafficLevel) : '#e5e7eb'; // Grey if loading
 
               return (
                 <line
@@ -733,14 +789,13 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   x2={nodePositions[idx + 1].x}
                   y2={nodePositions[idx + 1].y}
                   stroke={segmentColor}
-                  strokeWidth="4"
+                  strokeWidth={isLoadingTraffic && !trafficLevel ? "6" : "4"}
                   strokeLinecap="round"
-                  className="opacity-100 transition-all duration-300"
+                  className={`transition-all duration-500 ${isLoadingTraffic && !trafficLevel ? 'animate-pulse opacity-50' : 'opacity-100'}`}
                 />
               );
             })}
 
-            {/* Highlighted Segment Path (Green) */}
             {hasHighlight && (
               <polyline
                 points={nodePositions.slice(highlightStartIdx, highlightEndIdx + 1).map(p => `${p.x},${p.y}`).join(' ')}
