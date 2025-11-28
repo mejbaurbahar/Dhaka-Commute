@@ -482,28 +482,32 @@ const App: React.FC = () => {
   }, [selectedBus]);
 
   const filteredBuses = useMemo(() => BUS_DATA.filter(bus => {
-    if (listFilter === 'FAVORITES' && !favorites.includes(bus.id)) {
-      return false;
+    // Favorites tab: show ONLY favorites, ignore search
+    if (listFilter === 'FAVORITES') {
+      return favorites.includes(bus.id);
     }
 
+    // Route search mode
     if (searchMode === 'ROUTE') {
       if (!fromStation || !toStation) return true;
       const stopsAtFrom = bus.stops.includes(fromStation);
       const stopsAtTo = bus.stops.includes(toStation);
       return stopsAtFrom && stopsAtTo;
-    } else {
-      const query = searchQuery.toLowerCase().trim();
-      if (!query) return true;
-      const nameMatch = bus.name.toLowerCase().includes(query);
-      const bnNameMatch = bus.bnName.includes(query);
-      const routeMatch = bus.routeString.toLowerCase().includes(query);
-      const stopMatch = bus.stops.some(stopId => {
-        const station = STATIONS[stopId];
-        if (!station) return false;
-        return station.name.toLowerCase().includes(query) || (station.bnName && station.bnName.includes(query));
-      });
-      return nameMatch || bnNameMatch || routeMatch || stopMatch;
     }
+
+    // Text search mode
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return true;
+
+    const nameMatch = bus.name.toLowerCase().includes(query);
+    const bnNameMatch = bus.bnName.includes(query);
+    const routeMatch = bus.routeString.toLowerCase().includes(query);
+    const stopMatch = bus.stops.some(stopId => {
+      const station = STATIONS[stopId];
+      if (!station) return false;
+      return station.name.toLowerCase().includes(query) || (station.bnName && station.bnName.includes(query));
+    });
+    return nameMatch || bnNameMatch || routeMatch || stopMatch;
   }).sort((a, b) => a.name.localeCompare(b.name)), [listFilter, favorites, searchMode, fromStation, toStation, searchQuery]);
 
   const handleSearchCommit = () => {

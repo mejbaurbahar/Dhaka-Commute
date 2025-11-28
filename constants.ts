@@ -1893,6 +1893,15 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['sadarghat', 'victoria_park', 'ray_saheb_bazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'mogbazar', 'nabisco', 'mohakhali', 'chairman_bari', 'banani', 'kakali', 'staff_road', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'baishakhi',
+    name: 'Baishakhi Paribahan',
+    bnName: 'বৈশাখী পরিবহন',
+    routeString: 'Hemayetpur ⇄ Gulshan',
+    stops: ['hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'bijoy_sarani', 'mohakhali', 'wireless', 'gulshan1', 'gulshan2'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
   }
 ];
 
