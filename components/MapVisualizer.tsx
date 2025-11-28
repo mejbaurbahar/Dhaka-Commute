@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { BusRoute, UserLocation } from '../types';
 import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
@@ -27,7 +26,6 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 }) => {
   const [simulationStep, setSimulationStep] = useState(0);
   const [trafficData, setTrafficData] = useState<Map<string, TrafficLevel>>(new Map());
-  const [isLoadingTraffic, setIsLoadingTraffic] = useState(true);
 
   // Responsive initial zoom: smaller on mobile for better overview
   const [zoom, setZoom] = useState(() => {
@@ -134,11 +132,6 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     const loadTraffic = async () => {
       if (!route) return;
 
-      // Only show loading on first load
-      if (trafficData.size === 0) {
-        setIsLoadingTraffic(true);
-      }
-
       try {
         // Prefetch data for the whole route (waits for API calls)
         await prefetchRouteTraffic(route.stops);
@@ -159,10 +152,6 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         setTrafficData(newTrafficData);
       } catch (error) {
         console.error("Failed to load traffic data", error);
-      } finally {
-        if (isMounted) {
-          setIsLoadingTraffic(false);
-        }
       }
     };
 
@@ -233,355 +222,49 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   // Calculate nearby metro stations and their positions
   const metroConnections = React.useMemo(() => {
     const connections: Array<{
-      metroStation: typeof METRO_STATIONS[string];
-      busStopIndex: number;
-      distance: number;
-      metroX: number;
-      metroY: number;
+      metroStation: typeof METRO_STATIONS[keyof typeof METRO_STATIONS],
+      busStopIndex: number,
+      distance: number,
+      metroX: number,
+      metroY: number
     }> = [];
 
-    Object.values(METRO_STATIONS).forEach(metroStation => {
-      let closestDistance = Infinity;
-      let closestIndex = -1;
+    Object.values(METRO_STATIONS).forEach(metro => {
+      let minDistance = Infinity;
+      let nearestBusStopIndex = -1;
 
-      stations.forEach((busStation, idx) => {
-        const R = 6371e3;
-        const φ1 = (busStation.lat * Math.PI) / 180;
-        const φ2 = (metroStation.lat * Math.PI) / 180;
-        const Δφ = ((metroStation.lat - busStation.lat) * Math.PI) / 180;
-        const Δλ = ((metroStation.lng - busStation.lng) * Math.PI) / 180;
-        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-          Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const distance = R * c;
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = idx;
+      stations.forEach((station, idx) => {
+        const d = Math.hypot(station.lat - metro.lat, station.lng - metro.lng);
+        if (d < minDistance) {
+          minDistance = d;
+          nearestBusStopIndex = idx;
         }
       });
 
-      // Only show metros within 2km of route
-      if (closestDistance < 2000 && closestIndex !== -1) {
+      // If close enough (approx < 2km), show connection
+      if (minDistance < 0.02 && nearestBusStopIndex !== -1) {
+        const busStopPos = nodePositions[nearestBusStopIndex];
+        // Position metro relative to bus stop, but offset
+        // We use a fixed offset direction for simplicity, or random based on ID
+        const offsetX = (metro.lng > stations[nearestBusStopIndex].lng ? 1 : -1) * 60;
+        const offsetY = (metro.lat > stations[nearestBusStopIndex].lat ? -1 : 1) * 60;
+
         connections.push({
-          metroStation,
-          busStopIndex: closestIndex,
-          distance: closestDistance,
-          metroX: 0, // Will be calculated after grouping
-          metroY: 0
+          metroStation: metro,
+          busStopIndex: nearestBusStopIndex,
+          distance: minDistance,
+          metroX: busStopPos.x + offsetX,
+          metroY: busStopPos.y + offsetY
         });
       }
-    });
-
-    // Group metros by their nearest bus stop to prevent overlap
-    const groupedByStop: Record<number, typeof connections> = {};
-    connections.forEach(conn => {
-      if (!groupedByStop[conn.busStopIndex]) {
-        groupedByStop[conn.busStopIndex] = [];
-      }
-      groupedByStop[conn.busStopIndex].push(conn);
-    });
-
-    // Position metros to avoid overlap
-    Object.entries(groupedByStop).forEach(([stopIdx, metros]) => {
-      const busStopPos = nodePositions[parseInt(stopIdx)];
-      const metroCount = metros.length;
-
-      metros.forEach((metro, idx) => {
-        if (metroCount === 1) {
-          // Single metro - position above or below based on stop index
-          const offsetY = parseInt(stopIdx) % 2 === 0 ? -100 : 100;
-          metro.metroX = busStopPos.x;
-          metro.metroY = busStopPos.y + offsetY;
-        } else if (metroCount === 2) {
-          // Two metros - spread horizontally with more space
-          const offsetX = idx === 0 ? -120 : 120;
-          const offsetY = parseInt(stopIdx) % 2 === 0 ? -100 : 100;
-          metro.metroX = busStopPos.x + offsetX;
-          metro.metroY = busStopPos.y + offsetY;
-        } else if (metroCount === 3) {
-          // Three metros - wider horizontal spread
-          const positions = [-150, 0, 150]; // Left, center, right
-          const offsetX = positions[idx];
-          const offsetY = -110; // All above, slightly higher
-          metro.metroX = busStopPos.x + offsetX;
-          metro.metroY = busStopPos.y + offsetY;
-        } else {
-          // Four or more metros - wider arc pattern
-          const angleStep = 80 / (metroCount - 1); // Spread across 80 degrees
-          const startAngle = -40; // Start from -40 degrees
-          const angle = (startAngle + (angleStep * idx)) * (Math.PI / 180);
-          const radius = 140; // Larger radius
-          const offsetX = Math.sin(angle) * radius;
-          const offsetY = -Math.abs(Math.cos(angle)) * radius - 20; // Higher up
-          metro.metroX = busStopPos.x + offsetX;
-          metro.metroY = busStopPos.y + offsetY;
-        }
-      });
     });
 
     return connections;
   }, [stations, nodePositions]);
 
-  // Calculate nearby railway stations and their positions
-  const railwayConnections = React.useMemo(() => {
-    const connections: Array<{
-      railwayStation: typeof RAILWAY_STATIONS[string];
-      busStopIndex: number;
-      distance: number;
-      railwayX: number;
-      railwayY: number;
-    }> = [];
-
-    Object.values(RAILWAY_STATIONS).forEach(railwayStation => {
-      let closestDistance = Infinity;
-      let closestIndex = -1;
-
-      stations.forEach((busStation, idx) => {
-        const R = 6371e3;
-        const φ1 = (busStation.lat * Math.PI) / 180;
-        const φ2 = (railwayStation.lat * Math.PI) / 180;
-        const Δφ = ((railwayStation.lat - busStation.lat) * Math.PI) / 180;
-        const Δλ = ((railwayStation.lng - busStation.lng) * Math.PI) / 180;
-        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-          Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const distance = R * c;
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = idx;
-        }
-      });
-
-      // Only show railway stations within 3km of route
-      if (closestDistance < 3000 && closestIndex !== -1) {
-        connections.push({
-          railwayStation,
-          busStopIndex: closestIndex,
-          distance: closestDistance,
-          railwayX: 0,
-          railwayY: 0
-        });
-      }
-    });
-
-    // Group railways by their nearest bus stop
-    const groupedByStop: Record<number, typeof connections> = {};
-    connections.forEach(conn => {
-      if (!groupedByStop[conn.busStopIndex]) {
-        groupedByStop[conn.busStopIndex] = [];
-      }
-      groupedByStop[conn.busStopIndex].push(conn);
-    });
-
-    // Position railways to avoid overlap with metros
-    Object.entries(groupedByStop).forEach(([stopIdx, railways]) => {
-      const busStopPos = nodePositions[parseInt(stopIdx)];
-      const railwayCount = railways.length;
-
-      // Check if there are metros at this same stop
-      const hasMetrosAtStop = metroConnections.some(m => m.busStopIndex === parseInt(stopIdx));
-
-      railways.forEach((railway, idx) => {
-        if (railwayCount === 1) {
-          // If metros exist at this stop, position railway further away
-          if (hasMetrosAtStop) {
-            const offsetY = parseInt(stopIdx) % 2 === 0 ? 140 : -140; // Further away
-            const offsetX = 60; // Shift horizontally too
-            railway.railwayX = busStopPos.x + offsetX;
-            railway.railwayY = busStopPos.y + offsetY;
-          } else {
-            const offsetY = parseInt(stopIdx) % 2 === 0 ? 100 : -100;
-            railway.railwayX = busStopPos.x;
-            railway.railwayY = busStopPos.y + offsetY;
-          }
-        } else if (railwayCount === 2) {
-          const offsetX = idx === 0 ? -120 : 120;
-          const offsetY = hasMetrosAtStop ?
-            (parseInt(stopIdx) % 2 === 0 ? 140 : -140) :
-            (parseInt(stopIdx) % 2 === 0 ? 100 : -100);
-          railway.railwayX = busStopPos.x + offsetX;
-          railway.railwayY = busStopPos.y + offsetY;
-        } else {
-          const positions = [-150, 0, 150];
-          const offsetX = positions[idx] || 0;
-          const offsetY = hasMetrosAtStop ? 140 : 110;
-          railway.railwayX = busStopPos.x + offsetX;
-          railway.railwayY = busStopPos.y + offsetY;
-        }
-      });
-    });
-
-    return connections;
-  }, [stations, nodePositions, metroConnections]);
-
-  // Calculate nearby airports and their positions
-  const airportConnections = React.useMemo(() => {
-    const connections: Array<{
-      airport: typeof AIRPORTS[string];
-      busStopIndex: number;
-      distance: number;
-      airportX: number;
-      airportY: number;
-    }> = [];
-
-    Object.values(AIRPORTS).forEach(airport => {
-      let closestDistance = Infinity;
-      let closestIndex = -1;
-
-      stations.forEach((busStation, idx) => {
-        const R = 6371e3;
-        const φ1 = (busStation.lat * Math.PI) / 180;
-        const φ2 = (airport.lat * Math.PI) / 180;
-        const Δφ = ((airport.lat - busStation.lat) * Math.PI) / 180;
-        const Δλ = ((airport.lng - busStation.lng) * Math.PI) / 180;
-        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-          Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const distance = R * c;
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = idx;
-        }
-      });
-
-      // Only show airports within 5km of route
-      if (closestDistance < 5000 && closestIndex !== -1) {
-        connections.push({
-          airport,
-          busStopIndex: closestIndex,
-          distance: closestDistance,
-          airportX: 0,
-          airportY: 0
-        });
-      }
-    });
-
-    // Group airports by their nearest bus stop
-    const groupedByStop: Record<number, typeof connections> = {};
-    connections.forEach(conn => {
-      if (!groupedByStop[conn.busStopIndex]) {
-        groupedByStop[conn.busStopIndex] = [];
-      }
-      groupedByStop[conn.busStopIndex].push(conn);
-    });
-
-    // Position airports to avoid overlap with metros and railways
-    Object.entries(groupedByStop).forEach(([stopIdx, airports]) => {
-      const busStopPos = nodePositions[parseInt(stopIdx)];
-      const airportCount = airports.length;
-
-      // Check if there are metros or railways at this same stop
-      const hasMetrosAtStop = metroConnections.some(m => m.busStopIndex === parseInt(stopIdx));
-      const hasRailwaysAtStop = railwayConnections.some(r => r.busStopIndex === parseInt(stopIdx));
-
-      airports.forEach((airport, idx) => {
-        if (airportCount === 1) {
-          // Position airports on the side, away from metros and railways
-          let offsetX = 180; // Far to the right
-          let offsetY = 0;
-
-          if (hasMetrosAtStop || hasRailwaysAtStop) {
-            offsetX = 200; // Even further if other stations present
-            offsetY = parseInt(stopIdx) % 2 === 0 ? -60 : 60;
-          }
-
-          airport.airportX = busStopPos.x + offsetX;
-          airport.airportY = busStopPos.y + offsetY;
-        } else {
-          // Multiple airports - stack vertically on the right
-          const offsetX = 180;
-          const offsetY = (idx - (airportCount - 1) / 2) * 80;
-          airport.airportX = busStopPos.x + offsetX;
-          airport.airportY = busStopPos.y + offsetY;
-        }
-      });
-    });
-
-    return connections;
-  }, [stations, nodePositions, metroConnections, railwayConnections]);
-
-  // Bus animation - move within highlighted segment if fare is selected
-  let totalSegments = stations.length - 1;
-  let animationStartIdx = 0;
-  let animationEndIdx = totalSegments;
-
-  // If there's a highlighted segment (fare selected), animate only within that segment
-  if (hasHighlight) {
-    animationStartIdx = highlightStartIdx;
-    animationEndIdx = highlightEndIdx;
-    totalSegments = animationEndIdx - animationStartIdx;
-  }
-
-  const exactProgress = simulationStep * totalSegments;
-  const currentSegmentIndex = Math.floor(exactProgress);
-  const segmentProgress = exactProgress - currentSegmentIndex;
-
-  let busX = 0;
-  let busY = 0;
-
-  if (hasHighlight) {
-    // Animate within the highlighted segment
-    let actualSegmentIdx: number;
-    let actualProgress: number;
-
-    if (isReversed) {
-      // Reverse animation: start from end, move to start
-      actualSegmentIdx = animationEndIdx - 1 - currentSegmentIndex;
-      actualProgress = 1 - segmentProgress; // Reverse the progress within segment
-    } else {
-      // Normal animation: start to end
-      actualSegmentIdx = animationStartIdx + currentSegmentIndex;
-      actualProgress = segmentProgress;
-    }
-
-    if (actualSegmentIdx >= animationStartIdx && actualSegmentIdx < animationEndIdx) {
-      const startNode = nodePositions[actualSegmentIdx];
-      const endNode = nodePositions[actualSegmentIdx + 1];
-      busX = startNode.x + (endNode.x - startNode.x) * actualProgress;
-      busY = startNode.y + (endNode.y - startNode.y) * actualProgress;
-    }
-  } else {
-    // Animate across the entire route
-    if (currentSegmentIndex >= 0 && currentSegmentIndex < totalSegments) {
-      const startNode = nodePositions[currentSegmentIndex];
-      const endNode = nodePositions[currentSegmentIndex + 1];
-      busX = startNode.x + (endNode.x - startNode.x) * segmentProgress;
-      busY = startNode.y + (endNode.y - startNode.y) * segmentProgress;
-    }
-  }
-
-  const googleMapsUrl = React.useMemo(() => {
-    if (stations.length < 2) return '';
-    const origin = `${stations[0].lat},${stations[0].lng}`;
-    const destination = `${stations[stations.length - 1].lat},${stations[stations.length - 1].lng}`;
-    const midPoints = stations.slice(1, -1)
-      .filter((_, i) => i % Math.ceil(stations.length / 8) === 0)
-      .map(s => `${s.lat},${s.lng}`).join('|');
-
-    return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${midPoints}&travelmode=transit`;
-  }, [stations]);
-
+  // Zoom handlers
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.2, 2.5));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.2, 0.5));
-
-  // Calculate relative user position for connection line
-  let userRelativeX = 0;
-  let userRelativeY = 0;
-  let nearestNodeX = 0;
-  let nearestNodeY = 0;
-
-  if (isUserFar && userStationIndex !== -1 && nodePositions[userStationIndex]) {
-    nearestNodeX = nodePositions[userStationIndex].x;
-    nearestNodeY = nodePositions[userStationIndex].y;
-    // We visually offset the user based on the distance, but cap it so it fits in view
-    // A simple heuristic: If distance is huge, put user "below" the node
-    const offsetAmount = Math.min(userDistance / 20, 150); // Scale pixels
-    userRelativeX = nearestNodeX;
-    userRelativeY = nearestNodeY + offsetAmount;
-  }
 
   return (
     <div className="w-full h-80 md:h-[500px] bg-slate-50 border-t border-b border-gray-100 relative group overflow-hidden">
@@ -607,7 +290,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
       {/* Top Right Controls */}
       <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 items-end">
         <a
-          href={googleMapsUrl}
+          href={`https://www.google.com/maps/dir/?api=1&destination=${route.stops[route.stops.length - 1]}`}
           target="_blank"
           rel="noopener noreferrer"
           className="bg-white/90 backdrop-blur px-3 py-1.5 rounded-full border border-gray-200 text-[10px] font-bold text-blue-600 shadow-sm flex items-center gap-1 hover:bg-blue-50 transition-colors"
@@ -657,12 +340,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
         {/* Traffic Legend */}
         <div className="mt-3 pt-3 border-t border-gray-200">
-          <div className="flex justify-between items-center mb-2 px-1">
-            <p className="text-[10px] font-bold text-gray-600 uppercase">Traffic Status</p>
-            <span className="text-[8px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">
-              Source: TomTom
-            </span>
-          </div>
+          <p className="text-[10px] font-bold text-gray-600 uppercase mb-2 px-1">Traffic Status</p>
           <div className="space-y-1">
             <div className="flex items-center gap-2 px-1">
               <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#34A853' }}></div>
@@ -782,9 +460,9 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
               const toStationId = route.stops[idx + 1];
               const key = `${fromStationId}-${toStationId}`;
 
-              // Use fetched data if available, otherwise fallback (or loading state)
-              const trafficLevel = trafficData.get(key);
-              const segmentColor = trafficLevel ? getTrafficColor(trafficLevel) : '#e5e7eb'; // Grey if loading
+              // Use fetched data if available, otherwise fallback to Green (Free Flow)
+              const trafficLevel = trafficData.get(key) || 'free';
+              const segmentColor = getTrafficColor(trafficLevel);
 
               return (
                 <line
@@ -794,9 +472,9 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   x2={nodePositions[idx + 1].x}
                   y2={nodePositions[idx + 1].y}
                   stroke={segmentColor}
-                  strokeWidth={isLoadingTraffic && !trafficLevel ? "6" : "4"}
+                  strokeWidth="4"
                   strokeLinecap="round"
-                  className={`transition-all duration-500 ${isLoadingTraffic && !trafficLevel ? 'animate-pulse opacity-50' : 'opacity-100'}`}
+                  className="opacity-100 transition-all duration-500"
                 />
               );
             })}
@@ -1000,20 +678,14 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   {/* Metro Station Label */}
                   <foreignObject
                     x={metroX - 100}
-                    y={metroY > busStopPos.y ? metroY + 15 : metroY - 55}
+                    y={metroY + 15}
                     width="200"
-                    height="50"
-                    className="pointer-events-none overflow-visible"
+                    height="40"
+                    className="pointer-events-none"
                   >
-                    <div className="text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-1 rounded backdrop-blur-sm shadow-md border bg-purple-50 border-purple-200 text-purple-900 font-bold whitespace-nowrap">
-                        <div className="flex items-center gap-1 justify-center">
-                          <Train className="w-3 h-3" />
-                          <span>{metroStation.name}</span>
-                        </div>
-                        <span className="block text-[8px] text-purple-700 mt-0.5">
-                          {(distance / 1000).toFixed(2)}km from {stations[busStopIndex].name}
-                        </span>
+                    <div className="text-center flex flex-col items-center justify-center h-full">
+                      <span className="px-2 py-0.5 rounded bg-purple-50 border border-purple-100 text-purple-700 text-[10px] font-bold shadow-sm">
+                        {metroStation.name}
                       </span>
                     </div>
                   </foreignObject>
@@ -1021,159 +693,47 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
               );
             })}
 
-            {/* Railway Stations */}
-            {showRailway && railwayConnections.map((connection, idx) => {
-              const { railwayStation, busStopIndex, distance, railwayX, railwayY } = connection;
-              const busStopPos = nodePositions[busStopIndex];
+            {/* Simulation Bus */}
+            {hasHighlight && (
+              <g transform={`translate(${
+                // Interpolate position along the highlighted path
+                (() => {
+                  const totalSegments = highlightEndIdx - highlightStartIdx;
+                  const segmentIndex = Math.floor(simulationStep * totalSegments);
+                  const segmentProgress = (simulationStep * totalSegments) % 1;
 
-              return (
-                <g key={railwayStation.id} className="pointer-events-auto">
-                  {/* Connection Line to Bus Stop */}
-                  <line
-                    x1={busStopPos.x}
-                    y1={busStopPos.y}
-                    x2={railwayX}
-                    y2={railwayY}
-                    stroke="#14b8a6"
-                    strokeWidth="2"
-                    strokeDasharray="5,5"
-                    className="opacity-60"
-                  />
+                  const currentIdx = highlightStartIdx + segmentIndex;
+                  if (currentIdx >= highlightEndIdx) return nodePositions[highlightEndIdx].x;
 
-                  {/* Railway Station Node */}
-                  <circle
-                    cx={railwayX}
-                    cy={railwayY}
-                    r="18"
-                    fill="#99f6e4"
-                    className="opacity-30"
-                  >
-                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
-                  </circle>
+                  const p1 = nodePositions[currentIdx];
+                  const p2 = nodePositions[currentIdx + 1];
+                  return p1.x + (p2.x - p1.x) * segmentProgress;
+                })()
+                }, ${(() => {
+                  const totalSegments = highlightEndIdx - highlightStartIdx;
+                  const segmentIndex = Math.floor(simulationStep * totalSegments);
+                  const segmentProgress = (simulationStep * totalSegments) % 1;
 
-                  <circle
-                    cx={railwayX}
-                    cy={railwayY}
-                    r="10"
-                    fill="#14b8a6"
-                    stroke="white"
-                    strokeWidth="2.5"
-                    className="cursor-pointer hover:r-12 transition-all"
-                  />
+                  const currentIdx = highlightStartIdx + segmentIndex;
+                  if (currentIdx >= highlightEndIdx) return nodePositions[highlightEndIdx].y;
 
-                  {/* Train Icon */}
-                  <foreignObject x={railwayX - 6} y={railwayY - 6} width="12" height="12" className="pointer-events-none">
-                    <Train className="w-3 h-3 text-white" />
-                  </foreignObject>
-
-                  {/* Railway Station Label */}
-                  <foreignObject
-                    x={railwayX - 100}
-                    y={railwayY > busStopPos.y ? railwayY + 15 : railwayY - 55}
-                    width="200"
-                    height="50"
-                    className="pointer-events-none overflow-visible"
-                  >
-                    <div className="text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-1 rounded backdrop-blur-sm shadow-md border bg-teal-50 border-teal-200 text-teal-900 font-bold whitespace-nowrap">
-                        <div className="flex items-center gap-1 justify-center">
-                          <Train className="w-3 h-3" />
-                          <span>{railwayStation.name}</span>
-                        </div>
-                        <span className="block text-[8px] text-teal-700 mt-0.5">
-                          {(distance / 1000).toFixed(2)}km from {stations[busStopIndex].name}
-                        </span>
-                      </span>
-                    </div>
-                  </foreignObject>
-                </g>
-              );
-            })}
-
-            {/* Airports */}
-            {showAirport && airportConnections.map((connection, idx) => {
-              const { airport, busStopIndex, distance, airportX, airportY } = connection;
-              const busStopPos = nodePositions[busStopIndex];
-
-              return (
-                <g key={airport.id} className="pointer-events-auto">
-                  {/* Connection Line to Bus Stop */}
-                  <line
-                    x1={busStopPos.x}
-                    y1={busStopPos.y}
-                    x2={airportX}
-                    y2={airportY}
-                    stroke="#3b82f6"
-                    strokeWidth="2"
-                    strokeDasharray="5,5"
-                    className="opacity-60"
-                  />
-
-                  {/* Airport Node */}
-                  <circle
-                    cx={airportX}
-                    cy={airportY}
-                    r="18"
-                    fill="#bfdbfe"
-                    className="opacity-30"
-                  >
-                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
-                  </circle>
-
-                  <circle
-                    cx={airportX}
-                    cy={airportY}
-                    r="10"
-                    fill="#3b82f6"
-                    stroke="white"
-                    strokeWidth="2.5"
-                    className="cursor-pointer hover:r-12 transition-all"
-                  />
-
-                  {/* Plane Icon */}
-                  <foreignObject x={airportX - 6} y={airportY - 6} width="12" height="12" className="pointer-events-none">
-                    <Plane className="w-3 h-3 text-white" />
-                  </foreignObject>
-
-                  {/* Airport Label */}
-                  <foreignObject
-                    x={airportX - 100}
-                    y={airportY > busStopPos.y ? airportY + 15 : airportY - 55}
-                    width="200"
-                    height="50"
-                    className="pointer-events-none overflow-visible"
-                  >
-                    <div className="text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-1 rounded backdrop-blur-sm shadow-md border bg-blue-50 border-blue-200 text-blue-900 font-bold whitespace-nowrap">
-                        <div className="flex items-center gap-1 justify-center">
-                          <Plane className="w-3 h-3" />
-                          <span>{airport.name}</span>
-                        </div>
-                        <span className="block text-[8px] text-blue-700 mt-0.5">
-                          {(distance / 1000).toFixed(2)}km from {stations[busStopIndex].name}
-                        </span>
-                      </span>
-                    </div>
-                  </foreignObject>
-                </g>
-              );
-            })}
-
-            {/* Simulated Bus */}
-            <g style={{ transform: `translate(${busX}px, ${busY}px)` }} className="transition-transform duration-75 ease-linear pointer-events-none">
-              <circle r="14" fill="#f42a41" className="shadow-lg opacity-20 animate-ping" />
-              <circle r="10" fill="white" stroke="#f42a41" strokeWidth="2" />
-              <foreignObject x="-6" y="-6" width="12" height="12">
-                <Bus className="w-3 h-3 text-dhaka-red" />
-              </foreignObject>
-            </g>
+                  const p1 = nodePositions[currentIdx];
+                  const p2 = nodePositions[currentIdx + 1];
+                  return p1.y + (p2.y - p1.y) * segmentProgress;
+                })()
+                })`}>
+                <circle r="12" fill="#006a4e" className="animate-pulse opacity-50" />
+                <circle r="8" fill="#006a4e" stroke="white" strokeWidth="2" />
+                <foreignObject x="-6" y="-6" width="12" height="12">
+                  <Bus className="w-3 h-3 text-white" />
+                </foreignObject>
+              </g>
+            )}
 
           </svg>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 

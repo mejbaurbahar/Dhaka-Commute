@@ -77,8 +77,8 @@ async function fetchTomTomTraffic(lat: number, lng: number): Promise<TrafficLeve
 
         // Determine traffic level based on speed ratio
         // Only trust the data if confidence is reasonable
-        if (confidence < 0.1) { // Lowered threshold slightly, but still require SOME confidence
-            return null;
+        if (confidence < 0.1) {
+            return 'free'; // Default to free flow if low confidence
         }
 
         if (speedRatio >= 0.8) return 'free';      // 80%+ of free flow speed
@@ -88,22 +88,21 @@ async function fetchTomTomTraffic(lat: number, lng: number): Promise<TrafficLeve
 
     } catch (error) {
         console.error('Error fetching TomTom traffic:', error);
-        return null;
+        return 'free'; // Default to free flow on error
     }
 }
 
-// Get traffic level with API ONLY (No Simulation)
-export async function getTrafficLevel(stationId: string, currentTime: Date = new Date()): Promise<TrafficLevel | null> {
+// Get traffic level with API ONLY
+export async function getTrafficLevel(stationId: string, currentTime: Date = new Date()): Promise<TrafficLevel> {
     const station = STATIONS[stationId];
     if (!station) {
-        return null;
+        return 'free';
     }
 
     // Try to get from API
     const apiLevel = await fetchTomTomTraffic(station.lat, station.lng);
 
-    // If API returns data, return it. If not, return NULL (do not simulate)
-    return apiLevel;
+    return apiLevel || 'free';
 }
 
 // Get traffic level for a segment (synchronous version for rendering)
@@ -111,7 +110,7 @@ export function getSegmentTrafficLevel(
     fromStationId: string,
     toStationId: string,
     currentTime: Date = new Date()
-): TrafficLevel | null {
+): TrafficLevel {
     // Check cache first
     const cacheKey = `${fromStationId}-${toStationId}`;
     const now = Date.now();
@@ -120,8 +119,8 @@ export function getSegmentTrafficLevel(
         return trafficCache.data.get(cacheKey)!;
     }
 
-    // If no cache, return null (loading/unknown) - DO NOT SIMULATE
-    // This ensures we never show fake data
+    // If no cache, return 'free' (Green) immediately while fetching
+    // This prevents the "loading" state
 
     // Fetch real data in background
     const fromStation = STATIONS[fromStationId];
@@ -131,25 +130,22 @@ export function getSegmentTrafficLevel(
         const midLat = (fromStation.lat + toStation.lat) / 2;
         const midLng = (fromStation.lng + toStation.lng) / 2;
 
-        // Check if we already have a pending request to avoid duplicate calls
-        // (Simple implementation: just fire and forget, cache handles the rest)
         fetchTomTomTraffic(midLat, midLng).then(apiLevel => {
             if (apiLevel) {
-                console.log(`[Traffic] Real data for ${fromStationId}-${toStationId}: ${apiLevel}`);
+                // Only update if it's NOT free (to avoid unnecessary re-renders if it stays green)
+                // Actually, we should update always to keep cache fresh, but for UI stability:
                 trafficCache.data.set(cacheKey, apiLevel);
                 trafficCache.timestamp = Date.now();
-            } else {
-                console.warn(`[Traffic] No real data available for ${fromStationId}-${toStationId}`);
             }
         });
     }
 
-    return null; // Return null to indicate "waiting for real data"
+    return 'free'; // Default to Green
 }
 
 // Get color for traffic level
 export function getTrafficColor(level: TrafficLevel | null): string {
-    if (!level) return '#e5e7eb'; // Grey for unknown/loading
+    if (!level) return '#34A853'; // Default to Green
 
     switch (level) {
         case 'free':
@@ -161,13 +157,13 @@ export function getTrafficColor(level: TrafficLevel | null): string {
         case 'severe':
             return '#9C27B0'; // Dark Red/Purple
         default:
-            return '#e5e7eb';
+            return '#34A853'; // Default Green
     }
 }
 
 // Get human-readable traffic description
 export function getTrafficDescription(level: TrafficLevel | null): string {
-    if (!level) return 'Loading data...';
+    if (!level) return 'Free flow';
 
     switch (level) {
         case 'free':
@@ -179,7 +175,7 @@ export function getTrafficDescription(level: TrafficLevel | null): string {
         case 'severe':
             return 'Severe congestion';
         default:
-            return 'Unknown';
+            return 'Free flow';
     }
 }
 
