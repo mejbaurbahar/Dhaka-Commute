@@ -3,7 +3,7 @@ import { BusRoute, UserLocation } from '../types';
 import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
 import { findNearestStation } from '../services/locationService';
 import { getSegmentTrafficLevel, getTrafficColor, prefetchRouteTraffic, TrafficLevel } from '../services/trafficSimulator';
-import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train, Plane } from 'lucide-react';
+import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train, Plane, Layers, X } from 'lucide-react';
 
 interface MapVisualizerProps {
   route: BusRoute | null;
@@ -26,6 +26,12 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 }) => {
   const [simulationStep, setSimulationStep] = useState(0);
   const [trafficData, setTrafficData] = useState<Map<string, TrafficLevel>>(new Map());
+
+  // Layer visibility toggles - Metro off by default, others off
+  const [showMetro, setShowMetro] = useState(false);
+  const [showRailway, setShowRailway] = useState(false);
+  const [showAirport, setShowAirport] = useState(false);
+  const [showLayers, setShowLayers] = useState(false);
 
   // Responsive initial zoom: smaller on mobile for better overview
   const [zoom, setZoom] = useState(() => {
@@ -51,11 +57,6 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     }
     return 0.8;
   });
-
-  // Layer visibility toggles - Metro off by default, others off
-  const [showMetro, setShowMetro] = useState(false);
-  const [showRailway, setShowRailway] = useState(false);
-  const [showAirport, setShowAirport] = useState(false);
 
   const isUserFar = userDistance > 1000; // 1km threshold for "Far" connection line
   const showUserOnNode = userStationIndex !== -1 && !isUserFar;
@@ -302,64 +303,85 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         </div>
       </div>
 
-      {/* Bottom Left - Layer Toggles */}
-      <div className="absolute bottom-4 left-4 z-10 bg-white/95 backdrop-blur rounded-lg border border-gray-200 shadow-lg p-2 max-w-[180px]">
-        <p className="text-[10px] font-bold text-gray-600 uppercase mb-2 px-1">Map Layers</p>
-        <div className="space-y-1.5">
-          <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
-            <input
-              type="checkbox"
-              checked={showMetro}
-              onChange={(e) => setShowMetro(e.target.checked)}
-              className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
-            />
-            <Train className="w-3.5 h-3.5 text-blue-600" />
-            <span className="text-[11px] font-medium text-gray-700">Metro Stations</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
-            <input
-              type="checkbox"
-              checked={showRailway}
-              onChange={(e) => setShowRailway(e.target.checked)}
-              className="w-3.5 h-3.5 rounded border-gray-300 text-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-0"
-            />
-            <Train className="w-3.5 h-3.5 text-green-700" />
-            <span className="text-[11px] font-medium text-gray-700">Railway Stations</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
-            <input
-              type="checkbox"
-              checked={showAirport}
-              onChange={(e) => setShowAirport(e.target.checked)}
-              className="w-3.5 h-3.5 rounded border-gray-300 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-0"
-            />
-            <Plane className="w-3.5 h-3.5 text-purple-600" />
-            <span className="text-[11px] font-medium text-gray-700">Airports</span>
-          </label>
-        </div>
+      {/* Bottom Left - Layer Toggles (Collapsible) */}
+      <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 items-start">
 
-        {/* Traffic Legend */}
-        <div className="mt-3 pt-3 border-t border-gray-200">
-          <p className="text-[10px] font-bold text-gray-600 uppercase mb-2 px-1">Traffic Status</p>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 px-1">
-              <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#34A853' }}></div>
-              <span className="text-[10px] text-gray-600">Free flow</span>
+        {/* Collapsible Panel */}
+        {showLayers && (
+          <div className="bg-white/95 backdrop-blur rounded-lg border border-gray-200 shadow-lg p-3 w-[180px] mb-1 animate-in slide-in-from-bottom-2 fade-in duration-200">
+            <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-100">
+              <p className="text-[10px] font-bold text-gray-600 uppercase">Map Layers</p>
+              <button onClick={() => setShowLayers(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-3 h-3" />
+              </button>
             </div>
-            <div className="flex items-center gap-2 px-1">
-              <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#FBBC04' }}></div>
-              <span className="text-[10px] text-gray-600">Moderate</span>
+
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={showMetro}
+                  onChange={(e) => setShowMetro(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
+                />
+                <Train className="w-3.5 h-3.5 text-blue-600" />
+                <span className="text-[11px] font-medium text-gray-700">Metro Stations</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={showRailway}
+                  onChange={(e) => setShowRailway(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded border-gray-300 text-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-0"
+                />
+                <Train className="w-3.5 h-3.5 text-green-700" />
+                <span className="text-[11px] font-medium text-gray-700">Railway Stations</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={showAirport}
+                  onChange={(e) => setShowAirport(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded border-gray-300 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-0"
+                />
+                <Plane className="w-3.5 h-3.5 text-purple-600" />
+                <span className="text-[11px] font-medium text-gray-700">Airports</span>
+              </label>
             </div>
-            <div className="flex items-center gap-2 px-1">
-              <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#EA4335' }}></div>
-              <span className="text-[10px] text-gray-600">Heavy</span>
-            </div>
-            <div className="flex items-center gap-2 px-1">
-              <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#9C27B0' }}></div>
-              <span className="text-[10px] text-gray-600">Severe</span>
+
+            {/* Traffic Legend */}
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <p className="text-[10px] font-bold text-gray-600 uppercase mb-2">Traffic Status</p>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#34A853' }}></div>
+                  <span className="text-[10px] text-gray-600">Free flow</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#FBBC04' }}></div>
+                  <span className="text-[10px] text-gray-600">Moderate</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#EA4335' }}></div>
+                  <span className="text-[10px] text-gray-600">Heavy</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#9C27B0' }}></div>
+                  <span className="text-[10px] text-gray-600">Severe</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Toggle Button */}
+        <button
+          onClick={() => setShowLayers(!showLayers)}
+          className={`w-8 h-8 flex items-center justify-center rounded-lg border shadow-sm transition-all duration-200 ${showLayers ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-white/90 backdrop-blur border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+          title="Map Layers"
+        >
+          <Layers className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Bottom Right - Zoom Controls */}
