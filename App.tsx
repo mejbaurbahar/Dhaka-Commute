@@ -511,12 +511,12 @@ const App: React.FC = () => {
     if (!query) return true;
 
     const nameMatch = bus.name.toLowerCase().includes(query);
-    const bnNameMatch = bus.bnName.includes(query);
+    const bnNameMatch = bus.bnName.toLowerCase().includes(query);
     const routeMatch = bus.routeString.toLowerCase().includes(query);
     const stopMatch = bus.stops.some(stopId => {
       const station = STATIONS[stopId];
       if (!station) return false;
-      return station.name.toLowerCase().includes(query) || (station.bnName && station.bnName.includes(query));
+      return station.name.toLowerCase().includes(query) || (station.bnName && station.bnName.toLowerCase().includes(query));
     });
     return nameMatch || bnNameMatch || routeMatch || stopMatch;
   }).sort((a, b) => a.name.localeCompare(b.name)), [listFilter, favorites, searchMode, fromStation, toStation, searchQuery]);
