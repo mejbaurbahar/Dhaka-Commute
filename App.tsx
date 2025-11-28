@@ -459,7 +459,11 @@ const App: React.FC = () => {
           </div>
         </div>
         <div className="flex-1 relative">
-          <LiveTracker bus={selectedBus} />
+          <LiveTracker
+            bus={selectedBus}
+            highlightStartIdx={fareStartIndex}
+            highlightEndIdx={fareEndIndex}
+          />
         </div>
       </div>
     );
