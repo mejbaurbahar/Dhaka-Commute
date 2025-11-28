@@ -81,10 +81,10 @@ if (rootElement) {
 import { registerSW } from 'virtual:pwa-register';
 
 const updateSW = registerSW({
+  immediate: false,
   onNeedRefresh() {
-    if (confirm('New content available. Reload?')) {
-      updateSW(true);
-    }
+    // Don't auto-reload, just log
+    console.log('New content available. Will update on next visit.');
   },
   onOfflineReady() {
     console.log('App is ready to work offline');

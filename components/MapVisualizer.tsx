@@ -101,7 +101,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         });
       }
     }
-  }, [userStationIndex, hasHighlight, highlightStartIdx, zoom, route]);
+  }, [userStationIndex, hasHighlight, highlightStartIdx, zoom, route, userLocation]);
 
   if (!route) return (
     <div className="w-full h-40 bg-gray-50 flex items-center justify-center text-gray-400 text-sm">
