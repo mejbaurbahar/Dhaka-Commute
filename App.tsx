@@ -1460,6 +1460,7 @@ const App: React.FC = () => {
                       onClick={() => {
                         setInputValue('');
                         setSearchQuery('');
+                        setSuggestedRoutes([]);
                       }}
                       className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
                       title="Clear Search"
@@ -1813,9 +1814,9 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={() => setView(AppView.ABOUT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT || view === AppView.SETTINGS || view === AppView.PRIVACY || view === AppView.TERMS ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
-              <Info className={`w-6 h-6 ${view === AppView.ABOUT || view === AppView.SETTINGS || view === AppView.PRIVACY || view === AppView.TERMS ? 'fill-current' : ''}`} />
+              <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'fill-current' : ''}`} />
               <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
             </button>
           </div>
