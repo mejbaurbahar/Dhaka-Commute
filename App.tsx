@@ -109,17 +109,28 @@ const SettingsView: React.FC<{
 }> = ({ onBack, onClearFavorites, apiKey, setApiKey }) => {
   const [inputKey, setInputKey] = useState(apiKey);
   const [showKey, setShowKey] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleSave = () => {
-    setApiKey(inputKey);
-    localStorage.setItem('gemini_api_key', inputKey);
-    alert('API Key saved successfully! You can now use the AI Assistant.');
+    const trimmedKey = inputKey.trim();
+
+    if (!trimmedKey || trimmedKey.length < 20) {
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
+      return;
+    }
+
+    setApiKey(trimmedKey);
+    localStorage.setItem('gemini_api_key', trimmedKey);
+    setSaveStatus('success');
+    setTimeout(() => setSaveStatus('idle'), 3000);
   };
 
   const handleClearKey = () => {
     setInputKey('');
     setApiKey('');
     localStorage.removeItem('gemini_api_key');
+    setSaveStatus('idle');
   };
 
   return (
@@ -159,12 +170,16 @@ const SettingsView: React.FC<{
             </button>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 relative">
             <button
               onClick={handleSave}
-              className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+              className={`flex-1 py-2 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 ${saveStatus === 'success' ? 'bg-green-600 text-white' :
+                  saveStatus === 'error' ? 'bg-red-600 text-white' :
+                    'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
             >
-              <Save className="w-4 h-4" /> Save Key
+              <Save className="w-4 h-4" />
+              {saveStatus === 'success' ? 'Saved!' : saveStatus === 'error' ? 'Invalid' : 'Save Key'}
             </button>
             {apiKey && (
               <button
@@ -173,6 +188,17 @@ const SettingsView: React.FC<{
               >
                 <Trash2 className="w-4 h-4" />
               </button>
+            )}
+
+            {saveStatus === 'error' && (
+              <div className="absolute -bottom-12 left-0 right-0 bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-xs font-medium animate-in fade-in">
+                Please enter a valid API key (minimum 20 characters)
+              </div>
+            )}
+            {saveStatus === 'success' && (
+              <div className="absolute -bottom-12 left-0 right-0 bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-lg text-xs font-medium animate-in fade-in">
+                ✓ API Key saved! You can now use the AI Assistant.
+              </div>
             )}
           </div>
 
