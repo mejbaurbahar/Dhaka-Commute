@@ -1569,6 +1569,39 @@ const App: React.FC = () => {
                 const busStep = route.steps.find(step => step.type === 'bus' && step.busRoute);
                 if (busStep && busStep.busRoute) {
                   handleBusSelect(busStep.busRoute);
+
+                  // Auto-populate fare calculator with route origin and destination
+                  const bus = busStep.busRoute;
+                  const originStation = busStep.from;
+                  const destinationStation = busStep.to;
+
+                  // Find the closest matching station IDs in the bus route
+                  const findClosestStationId = (stationName: string): string => {
+                    const nameLower = stationName.toLowerCase();
+                    // First try exact match
+                    for (const stopId of bus.stops) {
+                      const station = STATIONS[stopId];
+                      if (station && station.name.toLowerCase() === nameLower) {
+                        return stopId;
+                      }
+                    }
+                    // Then try partial match
+                    for (const stopId of bus.stops) {
+                      const station = STATIONS[stopId];
+                      if (station && (station.name.toLowerCase().includes(nameLower) || nameLower.includes(station.name.toLowerCase()))) {
+                        return stopId;
+                      }
+                    }
+                    // Return first stop if no match
+                    return bus.stops[0];
+                  };
+
+                  const fromStopId = findClosestStationId(originStation);
+                  const toStopId = findClosestStationId(destinationStation);
+
+                  // Set fare calculator values
+                  setFareStart(fromStopId);
+                  setFareEnd(toStopId);
                 }
                 // Override the null set by handleBusSelect
                 setSelectedTrip(route);
