@@ -1,6 +1,3 @@
-
-
-
 import { BusRoute, Station, MetroStation, MetroLine } from './types';
 
 // Coordinate mapping for major Dhaka locations
@@ -158,6 +155,8 @@ export const STATIONS: Record<string, Station> = {
   'staff_road': { id: 'staff_road', name: 'Staff Road', lat: 23.8000, lng: 90.4020 },
   'sainik_club': { id: 'sainik_club', name: 'Sainik Club', lat: 23.7950, lng: 90.4000 },
   'shishu_mela': { id: 'shishu_mela', name: 'Shishu Mela', lat: 23.7720, lng: 90.3700 },
+
+
   'shibu_market': { id: 'shibu_market', name: 'Shibu Market', lat: 23.6500, lng: 90.4800 },
   'chashara': { id: 'chashara', name: 'Chashara', lat: 23.6200, lng: 90.5000 },
   'dhamrai': { id: 'dhamrai', name: 'Dhamrai', lat: 23.9200, lng: 90.2100 },
@@ -250,60 +249,14 @@ export const STATIONS: Record<string, Station> = {
   'sikder_medical': { id: 'sikder_medical', name: 'Sikder Medical', lat: 23.7400, lng: 90.3600 },
   'hazaribag': { id: 'hazaribag', name: 'Hazaribag', lat: 23.7300, lng: 90.3700 },
   'showari_ghat': { id: 'showari_ghat', name: 'Showari Ghat', lat: 23.7100, lng: 90.3900 },
-  'kadamtali': { id: 'kadamtali', name: 'Kadamtali', lat: 23.6900, lng: 90.4100 },
-  'ittefaq_moor': { id: 'ittefaq_moor', name: 'Ittefaq Moor', lat: 23.7200, lng: 90.4200 },
-  'bot_tola': { id: 'bot_tola', name: 'Bot Tola', lat: 23.7600, lng: 90.4000 },
-  'ray_saheb_bazar': { id: 'ray_saheb_bazar', name: 'Ray Saheb Bazar', lat: 23.7100, lng: 90.4100 },
-  'dholairpar': { id: 'dholairpar', name: 'Dholairpar', lat: 23.7000, lng: 90.4400 },
-  'mazar_road': { id: 'mazar_road', name: 'Mazar Road', lat: 23.7900, lng: 90.3500 },
-  'star_kabab': { id: 'star_kabab', name: 'Star Kabab', lat: 23.7500, lng: 90.3680 },
-  'kalabagan': { id: 'kalabagan', name: 'Kalabagan', lat: 23.7450, lng: 90.3780 },
-  'zirani_bazar': { id: 'zirani_bazar', name: 'Zirani Bazar', lat: 23.9800, lng: 90.2400 },
-  'kuril_chourasta': { id: 'kuril_chourasta', name: 'Kuril Chourasta', lat: 23.8220, lng: 90.4100 },
-  'kazla': { id: 'kazla', name: 'Kazla', lat: 23.7080, lng: 90.4400 },
-  'tarabo': { id: 'tarabo', name: 'Tarabo', lat: 23.7000, lng: 90.4700 },
-  'sanarpar': { id: 'sanarpar', name: 'Sanarpar', lat: 23.6700, lng: 90.4800 },
-  'kashimpur': { id: 'kashimpur', name: 'Kashimpur', lat: 24.0000, lng: 90.3100 },
-  'dainik_bangla_moor': { id: 'dainik_bangla_moor', name: 'Dainik Bangla Moor', lat: 23.7320, lng: 90.4180 },
-  'janapath_moor': { id: 'janapath_moor', name: 'Janapath Moor', lat: 23.7100, lng: 90.4300 },
-  'khidma_hospital': { id: 'khidma_hospital', name: 'Khidma Hospital', lat: 23.7500, lng: 90.4200 },
-  'balughat': { id: 'balughat', name: 'Balughat', lat: 23.8400, lng: 90.3900 },
-  'cantonment': { id: 'cantonment', name: 'Cantonment', lat: 23.8200, lng: 90.3950 },
-  'adamjee_college': { id: 'adamjee_college', name: 'Adamjee College', lat: 23.8100, lng: 90.3950 },
-  'workshop': { id: 'workshop', name: 'Workshop', lat: 23.8050, lng: 90.3950 },
-  'saudi_colony': { id: 'saudi_colony', name: 'Saudi Colony', lat: 23.7900, lng: 90.3950 },
-  'cmh': { id: 'cmh', name: 'CMH', lat: 23.8300, lng: 90.3950 },
-  'signal': { id: 'signal', name: 'Signal', lat: 23.8350, lng: 90.3950 },
-  'mitford_ghat': { id: 'mitford_ghat', name: 'Mitford Ghat', lat: 23.7100, lng: 90.4000 },
-  'nawabganj': { id: 'nawabganj', name: 'Nawabganj', lat: 23.7150, lng: 90.3750 },
-  'rayer_bazar': { id: 'rayer_bazar', name: 'Rayer Bazar', lat: 23.7500, lng: 90.3500 },
-  'beribadh_tin_rastar_moor': { id: 'beribadh_tin_rastar_moor', name: 'Beribadh Tin Rastar Moor', lat: 23.7600, lng: 90.3450 },
-  'dhaka_college': { id: 'dhaka_college', name: 'Dhaka College', lat: 23.7380, lng: 90.3850 },
-  'notre_dame': { id: 'notre_dame', name: 'Notre Dame College', lat: 23.7280, lng: 90.4100 },
-  'khejur_bagan': { id: 'khejur_bagan', name: 'Khejur Bagan', lat: 23.7550, lng: 90.3900 },
-  'songsod_bhaban': { id: 'songsod_bhaban', name: 'Songsod Bhaban', lat: 23.7420, lng: 90.3950 },
-  'kawlar': { id: 'kawlar', name: 'Kawlar', lat: 23.8400, lng: 90.4050 },
-  'tejgaon_college': { id: 'tejgaon_college', name: 'Tejgaon College', lat: 23.7600, lng: 90.3900 },
-  'bashundhara_300_feet': { id: 'bashundhara_300_feet', name: 'Bashundhara (300 Feet Gate)', lat: 23.8200, lng: 90.4500 },
-  'cantonment_mini': { id: 'cantonment_mini', name: 'Cantonment Mini', lat: 23.8200, lng: 90.3950 },
-  'bhogra': { id: 'bhogra', name: 'Bhogra Bypass', lat: 23.9880, lng: 90.3950 },
-  'tongi_college_gate': { id: 'tongi_college_gate', name: 'Tongi College Gate', lat: 23.9050, lng: 90.4000 },
-  'kadamtali': { id: 'kadamtali', name: 'Kadamtali', lat: 23.6900, lng: 90.4100 },
-  'konabari': { id: 'konabari', name: 'Konabari', lat: 24.0200, lng: 90.3200 },
-  'sreenagar': { id: 'sreenagar', name: 'Sreenagar', lat: 23.5300, lng: 90.2800 },
-  'nimtola': { id: 'nimtola', name: 'Nimtola', lat: 23.5500, lng: 90.3000 },
-  'kuchimura': { id: 'kuchimura', name: 'Kuchimura', lat: 23.6000, lng: 90.3500 },
-  'rajendrapur': { id: 'rajendrapur', name: 'Rajendrapur', lat: 24.0800, lng: 90.3800 },
-  'hasnabad': { id: 'hasnabad', name: 'Hasnabad', lat: 23.6700, lng: 90.4200 },
-  'zirani': { id: 'zirani', name: 'Zirani', lat: 23.9800, lng: 90.2400 },
+
 };
 
 export const BUS_DATA: BusRoute[] = [
-  // ... (previous existing buses)
   {
     id: 'raida',
-    name: 'Raida',
-    bnName: 'রাইদা',
+    name: 'Raida Enterprise',
+    bnName: 'রাইদা এন্টারপ্রাইজ',
     routeString: 'Postagola ⇄ Diabari',
     stops: ['postagola', 'jurain', 'dayaganj', 'tikatuli', 'maniknagar', 'mugdapara', 'bashabo', 'khilgaon', 'malibagh', 'rampura', 'merul', 'badda', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'diabari'],
     type: 'Local',

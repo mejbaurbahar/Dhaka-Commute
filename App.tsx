@@ -288,6 +288,9 @@ const App: React.FC = () => {
   // Allow user to store key locally
   const [apiKey, setApiKey] = useState<string>(localStorage.getItem('gemini_api_key') || '');
 
+  // Offline detection
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
   const [speed, setSpeed] = useState<number | null>(null);
   const watchIdRef = useRef<number | null>(null);
 
@@ -353,6 +356,20 @@ const App: React.FC = () => {
     if (path !== '/' && path !== '') {
       setView(AppView.NOT_FOUND);
     }
+  }, []);
+
+  // Online/Offline detection
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   useEffect(() => {
@@ -553,7 +570,7 @@ const App: React.FC = () => {
 
   const handleAiSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!aiQuery.trim()) return;
+    if (!aiQuery.trim() || !isOnline) return;
 
     const userMessage: ChatMessage = { role: 'user', text: aiQuery };
     const queryToSend = aiQuery;
@@ -650,18 +667,35 @@ const App: React.FC = () => {
         <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors md:hidden">
           <ArrowLeft className="w-5 h-5 text-gray-600" />
         </button>
-        <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+        <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'}`}>
           <Bot className="w-6 h-6" />
         </div>
         <div>
           <h2 className="text-lg font-bold text-gray-900">Dhaka AI Guide</h2>
-          <p className="text-xs text-green-600 font-bold flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> Online
+          <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
           </p>
         </div>
       </div>
 
-      {!apiKey && !process.env.API_KEY ? (
+
+      {!isOnline ? (
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+            <AlertTriangle className="w-8 h-8 text-orange-500" />
+          </div>
+          <h3 className="text-lg font-bold text-gray-800 mb-2">You're Offline</h3>
+          <p className="text-sm text-gray-500 mb-6 max-w-xs">
+            AI Assistant requires an internet connection. You can still add or update your API key while offline.
+          </p>
+          <button
+            onClick={() => setView(AppView.SETTINGS)}
+            className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-200"
+          >
+            Manage API Key
+          </button>
+        </div>
+      ) : !apiKey && !process.env.API_KEY ? (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
             <Key className="w-8 h-8 text-red-500" />
@@ -714,17 +748,24 @@ const App: React.FC = () => {
           </div>
 
           <div className="p-4 bg-white border-t border-gray-200">
+            {!isOnline && (
+              <div className="mb-3 bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" />
+                You need to be online to use AI Assistant
+              </div>
+            )}
             <form onSubmit={handleAiSubmit} className="flex gap-2 relative">
               <input
                 type="text"
                 value={aiQuery}
                 onChange={(e) => setAiQuery(e.target.value)}
-                placeholder="Ask about a route..."
-                className="w-full bg-gray-100 border-0 rounded-xl pl-4 pr-12 py-3 text-sm focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all"
+                placeholder={isOnline ? "Ask about a route..." : "Connect to internet to use AI"}
+                disabled={!isOnline}
+                className="w-full bg-gray-100 border-0 rounded-xl pl-4 pr-12 py-3 text-sm focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
-                disabled={!aiQuery.trim() || aiLoading}
+                disabled={!aiQuery.trim() || aiLoading || !isOnline}
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:bg-gray-400 transition-all hover:bg-blue-700"
               >
                 <Navigation className="w-4 h-4 rotate-90" />
