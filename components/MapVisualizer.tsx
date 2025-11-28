@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { BusRoute, UserLocation } from '../types';
 import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
 import { findNearestStation } from '../services/locationService';
+import { getSegmentTrafficLevel, getTrafficColor } from '../services/trafficSimulator';
 import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train, Plane } from 'lucide-react';
 
 interface MapVisualizerProps {
@@ -600,6 +601,29 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             <span className="text-[11px] font-medium text-gray-700">Airports</span>
           </label>
         </div>
+
+        {/* Traffic Legend */}
+        <div className="mt-3 pt-3 border-t border-gray-200">
+          <p className="text-[10px] font-bold text-gray-600 uppercase mb-2 px-1">Traffic Status</p>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 px-1">
+              <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#34A853' }}></div>
+              <span className="text-[10px] text-gray-600">Free flow</span>
+            </div>
+            <div className="flex items-center gap-2 px-1">
+              <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#FBBC04' }}></div>
+              <span className="text-[10px] text-gray-600">Moderate</span>
+            </div>
+            <div className="flex items-center gap-2 px-1">
+              <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#EA4335' }}></div>
+              <span className="text-[10px] text-gray-600">Heavy</span>
+            </div>
+            <div className="flex items-center gap-2 px-1">
+              <div className="w-4 h-1.5 rounded-full" style={{ backgroundColor: '#9C27B0' }}></div>
+              <span className="text-[10px] text-gray-600">Severe</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Bottom Right - Zoom Controls */}
@@ -692,18 +716,29 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
               className="opacity-100"
             />
 
-            {/* Default Route Path (Green) */}
-            {!hasHighlight && (
-              <polyline
-                points={nodePositions.map(p => `${p.x},${p.y}`).join(' ')}
-                fill="none"
-                stroke="#006a4e"
-                strokeWidth="4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="opacity-100"
-              />
-            )}
+            {/* Traffic-Aware Route Segments */}
+            {!hasHighlight && nodePositions.map((pos, idx) => {
+              if (idx === nodePositions.length - 1) return null;
+
+              const fromStationId = route.stops[idx];
+              const toStationId = route.stops[idx + 1];
+              const trafficLevel = getSegmentTrafficLevel(fromStationId, toStationId);
+              const segmentColor = getTrafficColor(trafficLevel);
+
+              return (
+                <line
+                  key={`traffic-segment-${idx}`}
+                  x1={pos.x}
+                  y1={pos.y}
+                  x2={nodePositions[idx + 1].x}
+                  y2={nodePositions[idx + 1].y}
+                  stroke={segmentColor}
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  className="opacity-100 transition-all duration-300"
+                />
+              );
+            })}
 
             {/* Highlighted Segment Path (Green) */}
             {hasHighlight && (
