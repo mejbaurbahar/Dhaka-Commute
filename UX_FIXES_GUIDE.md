@@ -215,6 +215,7 @@ Make sure `userLocation` is passed correctly:
 **File**: `components/MapVisualizer.tsx` (search for "showAirports" and "showRailway")
 
 **Verify this code exists and is working**:
+{% raw %}
 ```typescript
 {/* Airport Markers */}
 {showAirports && Object.values(AIRPORTS).map(airport => (
@@ -260,6 +261,7 @@ Make sure `userLocation` is passed correctly:
   </div>
 ))}
 ```
+{% endraw %}
 
 ---
 
@@ -272,6 +274,7 @@ Make sure `userLocation` is passed correctly:
 **File**: `components/LiveTracker.tsx`
 
 **Add user location marker** (after bus route rendering):
+{% raw %}
 ```typescript
 {/* User Location Marker */}
 {userLocation && (
@@ -312,6 +315,7 @@ Make sure `userLocation` is passed correctly:
   </svg>
 )}
 ```
+{% endraw %}
 
 ---
 
