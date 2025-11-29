@@ -1,6 +1,6 @@
 {
-    "name": "DhakaCommute - Dhaka Bus Route Finder",
-    "short_name": "DhakaCommute",
+    "name": "কই যাবো - Dhaka Bus Route Finder",
+    "short_name": "কই যাবো",
     "description": "Find Dhaka bus routes instantly! 200+ buses, metro rail guide, AI assistant, and fare calculator.",
     "start_url": "/",
     "display": "standalone",
@@ -39,7 +39,7 @@
             "src": "/og-image.png",
             "sizes": "1200x630",
             "type": "image/png",
-            "label": "DhakaCommute Home Screen"
+            "label": "কই যাবো Home Screen"
         }
     ],
     "shortcuts": [
