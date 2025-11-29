@@ -1205,20 +1205,23 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full bg-slate-50 overflow-hidden w-full">
         {/* Mobile Header */}
-        <div className="md:hidden bg-white px-5 py-4 shadow-sm border-b border-gray-100 fixed top-[65px] w-full z-40 flex items-center justify-between">
-          <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <div className="flex-1 ml-3">
-            <h2 className="text-lg font-bold text-dhaka-dark">{selectedBus.name}</h2>
-            <p className="text-xs text-gray-500">{selectedBus.bnName}</p>
+        {/* Mobile Header */}
+        <div className="md:hidden fixed top-[65px] w-full z-40">
+          <div className="bg-white px-5 py-4 shadow-sm border-b border-gray-100 flex items-center justify-between">
+            <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <div className="flex-1 ml-3">
+              <h2 className="text-lg font-bold text-dhaka-dark">{selectedBus.name}</h2>
+              <p className="text-xs text-gray-500">{selectedBus.bnName}</p>
+            </div>
+            <button
+              onClick={(e) => toggleFavorite(e, selectedBus.id)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
+            </button>
           </div>
-          <button
-            onClick={(e) => toggleFavorite(e, selectedBus.id)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
-          </button>
         </div>
 
         {/* Desktop Header */}
