@@ -739,6 +739,7 @@ const App: React.FC = () => {
             highlightEndIdx={fareEndIndex}
             userLocation={userLocation}
             speed={speed}
+            onBack={() => setView(AppView.BUS_DETAILS)}
           />
         </div>
       </div>
@@ -809,7 +810,7 @@ const App: React.FC = () => {
         </div>
       ) : (
         <>
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 pt-[130px] md:pt-4 pb-[100px] md:pb-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 pt-[130px] md:pt-4 pb-[180px] md:pb-4">
             {chatHistory.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
                 <Bot className="w-16 h-16 text-gray-300 mb-4" />
@@ -1249,7 +1250,7 @@ const App: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto pb-32 md:pb-0 no-scrollbar md:px-8 md:py-6 pt-[121px] md:pt-0" ref={scrollContainerRef}>
+        <div className="flex-1 overflow-y-auto pb-32 md:pb-0 no-scrollbar md:px-8 md:py-6 pt-[130px] md:pt-0" ref={scrollContainerRef}>
           <div className="p-4 md:p-0 space-y-5">
             {selectedTrip && (
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-4 mb-4">
