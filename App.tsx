@@ -706,7 +706,8 @@ const App: React.FC = () => {
 
     return (
       <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
-        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0">
+        {/* Mobile Header */}
+        <div className="md:hidden flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0 fixed top-[65px] left-0 right-0">
           <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -718,7 +719,20 @@ const App: React.FC = () => {
             <p className="text-xs text-gray-500">{selectedBus.name}</p>
           </div>
         </div>
-        <div className="flex-1 relative min-h-0">
+        {/* Desktop Header */}
+        <div className="hidden md:flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0">
+          <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <div>
+            <h2 className="text-lg font-bold text-dhaka-dark flex items-center gap-2">
+              Live Navigation
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            </h2>
+            <p className="text-xs text-gray-500">{selectedBus.name}</p>
+          </div>
+        </div>
+        <div className="flex-1 relative min-h-0 pt-[65px] md:pt-0">
           <LiveTracker
             bus={selectedBus}
             highlightStartIdx={fareStartIndex}
@@ -733,8 +747,9 @@ const App: React.FC = () => {
 
   const renderAiAssistant = () => (
     <div className="flex flex-col h-full bg-slate-50 md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden w-full">
-      <div className="flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20">
-        <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors md:hidden">
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20 fixed top-[65px] left-0 right-0">
+        <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
           <ArrowLeft className="w-5 h-5 text-gray-600" />
         </button>
         <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'}`}>
@@ -747,10 +762,21 @@ const App: React.FC = () => {
           </p>
         </div>
       </div>
-
+      {/* Desktop Header */}
+      <div className="hidden md:flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20">
+        <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'}`}>
+          <Bot className="w-6 h-6" />
+        </div>
+        <div>
+          <h2 className="text-lg font-bold text-gray-900">Dhaka AI Guide</h2>
+          <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
+          </p>
+        </div>
+      </div>
 
       {!isOnline ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center pt-[130px] md:pt-8">
           <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
             <AlertTriangle className="w-8 h-8 text-orange-500" />
           </div>
@@ -766,7 +792,7 @@ const App: React.FC = () => {
           </button>
         </div>
       ) : !apiKey && !process.env.API_KEY ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center pt-[130px] md:pt-8">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
             <Key className="w-8 h-8 text-red-500" />
           </div>
@@ -783,7 +809,7 @@ const App: React.FC = () => {
         </div>
       ) : (
         <>
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 pt-[130px] md:pt-4 pb-[100px] md:pb-4">
             {chatHistory.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
                 <Bot className="w-16 h-16 text-gray-300 mb-4" />
@@ -817,7 +843,7 @@ const App: React.FC = () => {
             <div ref={chatEndRef}></div>
           </div>
 
-          <div className="p-4 bg-white border-t border-gray-200 pb-safe z-30 relative">
+          <div className="p-4 bg-white border-t border-gray-200 pb-safe z-30 fixed md:relative bottom-0 left-0 right-0">
             {!isOnline && (
               <div className="mb-3 bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" />
