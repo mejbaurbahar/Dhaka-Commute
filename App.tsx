@@ -317,8 +317,8 @@ const App: React.FC = () => {
 
   const sortedStations = Object.values(STATIONS).sort((a, b) => a.name.localeCompare(b.name));
 
-  const { fareInfo, fareStartIndex, fareEndIndex, isReversed } = useMemo(() => {
-    if (!selectedBus) return { fareInfo: null, fareStartIndex: -1, fareEndIndex: -1, isReversed: false };
+  const { fareInfo, fareStartIndex, fareEndIndex, isReversed, actualStartStation, actualEndStation } = useMemo(() => {
+    if (!selectedBus) return { fareInfo: null, fareStartIndex: -1, fareEndIndex: -1, isReversed: false, actualStartStation: null, actualEndStation: null };
 
     // Filter out invalid stations first to get the "Drawable" list
     const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
@@ -327,10 +327,16 @@ const App: React.FC = () => {
     let endIdx = -1;
     let info = null;
     let reversed = false;
+    let actualStart = null;
+    let actualEnd = null;
 
     if (fareStart && fareEnd) {
       startIdx = validStopIds.indexOf(fareStart);
       endIdx = validStopIds.indexOf(fareEnd);
+
+      // Store the actual user-selected stations (Fix Issue #3)
+      actualStart = STATIONS[fareStart];
+      actualEnd = STATIONS[fareEnd];
 
       if (startIdx !== -1 && endIdx !== -1) {
         // Calculate fare (the calculateFare function handles bidirectional)
@@ -349,7 +355,7 @@ const App: React.FC = () => {
       info = calculateFare(selectedBus);
     }
 
-    return { fareInfo: info, fareStartIndex: startIdx, fareEndIndex: endIdx, isReversed: reversed };
+    return { fareInfo: info, fareStartIndex: startIdx, fareEndIndex: endIdx, isReversed: reversed, actualStartStation: actualStart, actualEndStation: actualEnd };
   }, [selectedBus, fareStart, fareEnd]);
 
   useEffect(() => {
@@ -524,6 +530,11 @@ const App: React.FC = () => {
   const handleSearchCommit = () => {
     setSearchQuery(inputValue);
     (document.activeElement as HTMLElement)?.blur();
+
+    // Scroll to top to show search results (Fix Issue #1)
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
 
     // Generate intelligent route suggestions
     if (inputValue.trim()) {

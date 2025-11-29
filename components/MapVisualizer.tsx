@@ -336,8 +336,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         <button
           onClick={() => setShowLayers(!showLayers)}
           className={`flex items-center gap-2 px-3 py-2 rounded-full border shadow-lg transition-all duration-300 group ${showLayers
-              ? 'bg-gray-900 border-gray-900 text-white'
-              : 'bg-white/95 backdrop-blur border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+            ? 'bg-gray-900 border-gray-900 text-white'
+            : 'bg-white/95 backdrop-blur border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
             }`}
         >
           <Layers className={`w-4 h-4 ${!showLayers && 'group-hover:scale-110 transition-transform'}`} />
@@ -619,6 +619,144 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     <div className="text-center flex flex-col items-center justify-center h-full">
                       <span className="px-2 py-0.5 rounded bg-purple-50 border border-purple-100 text-purple-700 text-[10px] font-bold shadow-sm">
                         {metroStation.name}
+                      </span>
+                    </div>
+                  </foreignObject>
+                </g>
+              );
+            })}
+
+            {/* Railway Stations (Fix Issue #6) */}
+            {showRailway && Object.values(RAILWAY_STATIONS).map(station => {
+              // Find nearest bus stop for positioning
+              let minDist = Infinity;
+              let nearestIdx = 0;
+              stations.forEach((s, idx) => {
+                const d = Math.hypot(s.lat - station.lat, s.lng - station.lng);
+                if (d < minDist) {
+                  minDist = d;
+                  nearestIdx = idx;
+                }
+              });
+
+              if (minDist > 0.05) return null; // Too far from route
+
+              const busPos = nodePositions[nearestIdx];
+              const offsetX = (station.lng > stations[nearestIdx].lng ? 1 : -1) * 70;
+              const offsetY = (station.lat > stations[nearestIdx].lat ? -1 : 1) * 70;
+              const railX = busPos.x + offsetX;
+              const railY = busPos.y + offsetY;
+
+              return (
+                <g key={station.id} className="pointer-events-auto">
+                  {/* Connection Line */}
+                  <line
+                    x1={busPos.x}
+                    y1={busPos.y}
+                    x2={railX}
+                    y2={railY}
+                    stroke="#22c55e"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                    className="opacity-60"
+                  />
+
+                  {/* Railway Station Ripple */}
+                  <circle cx={railX} cy={railY} r="18" fill="#dcfce7" className="opacity-30">
+                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
+                  </circle>
+
+                  {/* Railway Station Node */}
+                  <circle
+                    cx={railX}
+                    cy={railY}
+                    r="10"
+                    fill="#22c55e"
+                    stroke="white"
+                    strokeWidth="2.5"
+                    className="cursor-pointer hover:r-12 transition-all"
+                  />
+
+                  {/* Train Icon */}
+                  <foreignObject x={railX - 6} y={railY - 6} width="12" height="12" className="pointer-events-none">
+                    <Train className="w-3 h-3 text-white" />
+                  </foreignObject>
+
+                  {/* Label */}
+                  <foreignObject x={railX - 100} y={railY + 15} width="200" height="40" className="pointer-events-none">
+                    <div className="text-center flex flex-col items-center justify-center h-full">
+                      <span className="px-2 py-0.5 rounded bg-green-50 border border-green-100 text-green-700 text-[10px] font-bold shadow-sm">
+                        {station.name}
+                      </span>
+                    </div>
+                  </foreignObject>
+                </g>
+              );
+            })}
+
+            {/* Airports (Fix Issue #6) */}
+            {showAirport && Object.values(AIRPORTS).map(airport => {
+              // Find nearest bus stop for positioning
+              let minDist = Infinity;
+              let nearestIdx = 0;
+              stations.forEach((s, idx) => {
+                const d = Math.hypot(s.lat - airport.lat, s.lng - airport.lng);
+                if (d < minDist) {
+                  minDist = d;
+                  nearestIdx = idx;
+                }
+              });
+
+              if (minDist > 0.1) return null; // Too far from route
+
+              const busPos = nodePositions[nearestIdx];
+              const offsetX = (airport.lng > stations[nearestIdx].lng ? 1 : -1) * 80;
+              const offsetY = (airport.lat > stations[nearestIdx].lat ? -1 : 1) * 80;
+              const airX = busPos.x + offsetX;
+              const airY = busPos.y + offsetY;
+
+              return (
+                <g key={airport.id} className="pointer-events-auto">
+                  {/* Connection Line */}
+                  <line
+                    x1={busPos.x}
+                    y1={busPos.y}
+                    x2={airX}
+                    y2={airY}
+                    stroke="#a855f7"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                    className="opacity-60"
+                  />
+
+                  {/* Airport Ripple */}
+                  <circle cx={airX} cy={airY} r="18" fill="#faf5ff" className="opacity-30">
+                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
+                  </circle>
+
+                  {/* Airport Node */}
+                  <circle
+                    cx={airX}
+                    cy={airY}
+                    r="10"
+                    fill="#a855f7"
+                    stroke="white"
+                    strokeWidth="2.5"
+                    className="cursor-pointer hover:r-12 transition-all"
+                  />
+
+                  {/* Plane Icon */}
+                  <foreignObject x={airX - 6} y={airY - 6} width="12" height="12" className="pointer-events-none">
+                    <Plane className="w-3 h-3 text-white" />
+                  </foreignObject>
+
+                  {/* Label */}
+                  <foreignObject x={airX - 100} y={airY + 15} width="200" height="40" className="pointer-events-none">
+                    <div className="text-center flex flex-col items-center justify-center h-full">
+                      <span className="px-2 py-0.5 rounded bg-purple-50 border border-purple-100 text-purple-700 text-[10px] font-bold shadow-sm">
+                        {airport.name}
                       </span>
                     </div>
                   </foreignObject>
