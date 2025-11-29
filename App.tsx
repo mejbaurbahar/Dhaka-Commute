@@ -747,9 +747,9 @@ const App: React.FC = () => {
   };
 
   const renderAiAssistant = () => (
-    <div className="flex flex-col h-full bg-slate-50 md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden w-full">
+    <div className="flex flex-col h-full bg-slate-50 md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden w-full pt-[65px] md:pt-0">
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20 fixed top-[65px] left-0 right-0">
+      <div className="md:hidden flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20 absolute top-0 left-0 right-0 h-[65px]">
         <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
           <ArrowLeft className="w-5 h-5 text-gray-600" />
         </button>
@@ -777,7 +777,7 @@ const App: React.FC = () => {
       </div>
 
       {!isOnline ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center pt-[130px] md:pt-8">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
           <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
             <AlertTriangle className="w-8 h-8 text-orange-500" />
           </div>
@@ -793,7 +793,7 @@ const App: React.FC = () => {
           </button>
         </div>
       ) : !apiKey && !process.env.API_KEY ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center pt-[130px] md:pt-8">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
             <Key className="w-8 h-8 text-red-500" />
           </div>
@@ -810,7 +810,7 @@ const App: React.FC = () => {
         </div>
       ) : (
         <>
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 pt-[130px] md:pt-4 pb-[180px] md:pb-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 pb-[140px] md:pb-4">
             {chatHistory.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
                 <Bot className="w-16 h-16 text-gray-300 mb-4" />
@@ -844,7 +844,7 @@ const App: React.FC = () => {
             <div ref={chatEndRef}></div>
           </div>
 
-          <div className="p-4 bg-white border-t border-gray-200 pb-safe z-30 fixed md:relative bottom-0 left-0 right-0">
+          <div className="p-4 bg-white border-t border-gray-200 pb-safe z-30 fixed md:relative bottom-16 md:bottom-0 left-0 right-0">
             {!isOnline && (
               <div className="mb-3 bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" />
@@ -1198,186 +1198,130 @@ const App: React.FC = () => {
   );
 
   const renderBusDetails = () => {
-    if (!selectedBus) return <EmptyState />;
-    const isFav = favorites.includes(selectedBus.id);
-    const generalFareInfo = calculateFare(selectedBus);
-
-    return (
-      <div className="flex flex-col h-full bg-slate-50 md:bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
-        {/* Mobile Header */}
-        <div className="md:hidden bg-white px-5 py-4 shadow-sm border-b border-gray-100 fixed top-[65px] w-full z-40 flex items-center justify-between">
-          <button
-            onClick={() => {
-              setSelectedBus(null);
-              setView(AppView.HOME);
-            }}
-            className="w-10 h-10 flex items-center justify-center -ml-2 hover:bg-gray-50 rounded-full text-gray-600 active:text-dhaka-dark transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div className="text-center">
-            <h1 className="text-lg font-bold text-dhaka-dark leading-none truncate max-w-[180px]">{selectedBus.name}</h1>
-            <p className="text-xs text-gray-400 font-bengali mt-0.5">{selectedBus.bnName}</p>
-          </div>
-          <button
-            onClick={(e) => toggleFavorite(e, selectedBus.id)}
-            className="w-10 h-10 flex items-center justify-center hover:bg-red-50 rounded-full transition-colors"
-          >
-            <Heart className={`w-5 h-5 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
-          </button>
-        </div>
-
-        {/* Desktop Header */}
-        <div className="hidden md:flex px-8 py-6 border-b border-gray-100 items-center justify-between bg-white z-20 relative w-full">
-          <div className="flex items-center gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-dhaka-dark leading-none">{selectedBus.name}</h1>
-              <p className="text-sm text-gray-500 font-bengali mt-1">{selectedBus.bnName}</p>
-            </div>
-            <button
-              onClick={(e) => toggleFavorite(e, selectedBus.id)}
-              className="w-10 h-10 flex items-center justify-center hover:bg-red-50 rounded-full transition-colors border border-gray-200 hover:border-red-200"
-              title={isFav ? "Remove from Favorites" : "Add to Favorites"}
-            >
-              <Heart className={`w-5 h-5 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
-            </button>
-          </div>
-          <button
-            onClick={handleStartNavigation}
-            className="bg-dhaka-green text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-800 transition-colors flex items-center gap-2"
-          >
-            <Navigation className="w-4 h-4" /> Start Navigation
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto pb-32 md:pb-0 no-scrollbar md:px-8 md:py-6 pt-[130px] md:pt-0" ref={scrollContainerRef}>
-          <div className="p-4 md:p-0 space-y-5">
-            {selectedTrip && (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-4 mb-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles className="w-4 h-4 text-blue-600" />
-                  <h3 className="font-bold text-blue-900 text-sm uppercase tracking-wider">Your Trip Plan</h3>
-                </div>
-                <div className="space-y-3">
-                  {selectedTrip.steps.map((step, idx) => (
-                    <div key={idx} className={`flex gap-3 ${step.type === 'bus' && step.busRoute?.id === selectedBus.id ? 'opacity-100' : 'opacity-70'}`}>
-                      <div className="flex flex-col items-center">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold
+    <h3 className="font-bold text-blue-900 text-sm uppercase tracking-wider">Your Trip Plan</h3>
+                </div >
+  <div className="space-y-3">
+    {selectedTrip.steps.map((step, idx) => (
+      <div key={idx} className={`flex gap-3 ${step.type === 'bus' && step.busRoute?.id === selectedBus.id ? 'opacity-100' : 'opacity-70'}`}>
+        <div className="flex flex-col items-center">
+          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold
                           ${step.type === 'walk' ? 'bg-gray-200 text-gray-600' :
-                            step.type === 'metro' ? 'bg-blue-200 text-blue-700' :
-                              'bg-green-200 text-green-700'
-                          }
+              step.type === 'metro' ? 'bg-blue-200 text-blue-700' :
+                'bg-green-200 text-green-700'
+            }
                         `}>
-                          {idx + 1}
-                        </div>
-                        {idx < selectedTrip.steps.length - 1 && <div className="w-0.5 h-full bg-gray-200 my-1"></div>}
-                      </div>
-                      <div className="pb-2">
-                        <p className="text-sm font-semibold text-gray-800">{step.instruction}</p>
-                        {step.type === 'bus' && step.busRoute?.id === selectedBus.id && (
-                          <span className="inline-block mt-1 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Current Step</span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            {idx + 1}
+          </div>
+          {idx < selectedTrip.steps.length - 1 && <div className="w-0.5 h-full bg-gray-200 my-1"></div>}
+        </div>
+        <div className="pb-2">
+          <p className="text-sm font-semibold text-gray-800">{step.instruction}</p>
+          {step.type === 'bus' && step.busRoute?.id === selectedBus.id && (
+            <span className="inline-block mt-1 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Current Step</span>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+              </div >
             )}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
-                  <Info className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Type</span>
-                <span className="font-bold text-gray-800 text-sm mt-0.5">{selectedBus.type}</span>
-              </div>
-              <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-2">
-                  <Bus className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Stops</span>
-                <span className="font-bold text-gray-800 text-sm mt-0.5">
-                  {fareStart && fareEnd ? (
-                    Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
-                  ) : (
-                    selectedBus.stops.length
-                  )}
-                </span>
-              </div>
-              <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
-                  <Coins className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{fareStart && fareEnd ? 'Fare' : 'Max Fare'}</span>
-                <span className="font-bold text-gray-800 text-sm mt-0.5">
-                  {fareStart && fareEnd && fareInfo ? (
-                    `৳${fareInfo.min}${fareInfo.max !== fareInfo.min ? ` - ${fareInfo.max}` : ''}`
-                  ) : (
-                    `~৳${generalFareInfo.max}`
-                  )}
-                </span>
-              </div>
-            </div>
+<div className="grid grid-cols-3 gap-3">
+  <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+    <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
+      <Info className="w-4 h-4" />
+    </div>
+    <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Type</span>
+    <span className="font-bold text-gray-800 text-sm mt-0.5">{selectedBus.type}</span>
+  </div>
+  <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+    <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-2">
+      <Bus className="w-4 h-4" />
+    </div>
+    <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Stops</span>
+    <span className="font-bold text-gray-800 text-sm mt-0.5">
+      {fareStart && fareEnd ? (
+        Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
+      ) : (
+        selectedBus.stops.length
+      )}
+    </span>
+  </div>
+  <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+    <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
+      <Coins className="w-4 h-4" />
+    </div>
+    <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{fareStart && fareEnd ? 'Fare' : 'Max Fare'}</span>
+    <span className="font-bold text-gray-800 text-sm mt-0.5">
+      {fareStart && fareEnd && fareInfo ? (
+        `৳${fareInfo.min}${fareInfo.max !== fareInfo.min ? ` - ${fareInfo.max}` : ''}`
+      ) : (
+        `~৳${generalFareInfo.max}`
+      )}
+    </span>
+  </div>
+</div>
 
-            {fareStart && fareEnd && (
-              <div className="grid grid-cols-3 gap-3 animate-in fade-in slide-in-from-top-4">
-                <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
-                    <Gauge className="w-4 h-4" />
-                  </div>
-                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{userLocation ? 'Speed' : 'Stops'}</span>
-                  <span className="font-bold text-gray-800 text-sm mt-0.5">
-                    {userLocation ? (
-                      `${(speed || 0).toFixed(0)} km/h`
-                    ) : (
-                      Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
-                    )}
-                  </span>
-                </div>
-                <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
-                    <Flag className="w-4 h-4" />
-                  </div>
-                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Distance</span>
-                  <span className="font-bold text-gray-800 text-sm mt-0.5">
-                    {fareInfo ? `${fareInfo.distance.toFixed(1)} km` : '-- km'}
-                  </span>
-                </div>
-                <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-2">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ETA</span>
-                  <span className="font-bold text-gray-800 text-sm mt-0.5">
-                    {fareInfo ? formatETA((fareInfo.distance / 15) * 60) : '--'}
-                  </span>
-                </div>
-              </div>
-            )}
+{
+  fareStart && fareEnd && (
+    <div className="grid grid-cols-3 gap-3 animate-in fade-in slide-in-from-top-4">
+      <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
+          <Gauge className="w-4 h-4" />
+        </div>
+        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{userLocation ? 'Speed' : 'Stops'}</span>
+        <span className="font-bold text-gray-800 text-sm mt-0.5">
+          {userLocation ? (
+            `${(speed || 0).toFixed(0)} km/h`
+          ) : (
+            Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
+          )}
+        </span>
+      </div>
+      <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
+          <Flag className="w-4 h-4" />
+        </div>
+        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Distance</span>
+        <span className="font-bold text-gray-800 text-sm mt-0.5">
+          {fareInfo ? `${fareInfo.distance.toFixed(1)} km` : '-- km'}
+        </span>
+      </div>
+      <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-2">
+          <Clock className="w-4 h-4" />
+        </div>
+        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ETA</span>
+        <span className="font-bold text-gray-800 text-sm mt-0.5">
+          {fareInfo ? formatETA((fareInfo.distance / 15) * 60) : '--'}
+        </span>
+      </div>
+    </div>
+  )
+}
 
-            <div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden w-full">
-              <div className="px-4 py-3 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-                <h3 className="font-bold text-gray-700 text-sm flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div> Live View
-                </h3>
-                <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded text-gray-500 font-medium hidden md:block">Click & Drag to pan</span>
-                <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded text-gray-500 font-medium md:hidden">Scroll to pan</span>
-              </div>
-              <div className="w-full">
-                <MapVisualizer
-                  route={selectedBus}
-                  userStationIndex={nearestStopIndex}
-                  userDistance={nearestStopDistance}
-                  highlightStartIdx={fareStartIndex}
-                  highlightEndIdx={fareEndIndex}
-                  isReversed={isReversed}
-                  userLocation={userLocation}
-                />
-              </div>
-            </div>
+<div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden w-full">
+  <div className="px-4 py-3 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
+    <h3 className="font-bold text-gray-700 text-sm flex items-center gap-2">
+      <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div> Live View
+    </h3>
+    <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded text-gray-500 font-medium hidden md:block">Click & Drag to pan</span>
+    <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded text-gray-500 font-medium md:hidden">Scroll to pan</span>
+  </div>
+  <div className="w-full">
+    <MapVisualizer
+      route={selectedBus}
+      userStationIndex={nearestStopIndex}
+      userDistance={nearestStopDistance}
+      highlightStartIdx={fareStartIndex}
+      highlightEndIdx={fareEndIndex}
+      isReversed={isReversed}
+      userLocation={userLocation}
+    />
+  </div>
+</div>
 
 
-            {/* Fare Calculator */}
+{/* Fare Calculator */ }
             <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
               <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
                 <Coins className="w-4 h-4 text-yellow-500" /> Stop-to-Stop Fare
@@ -1488,479 +1432,479 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        {/* Mobile Sticky CTA */}
-        <div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md p-4 border-t border-gray-200 pb-safe z-30 md:hidden">
-          <button
-            onClick={() => setView(AppView.LIVE_NAV)}
-            className="w-full bg-gradient-to-r from-dhaka-green to-[#005c44] text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-          >
-            <Navigation className="w-5 h-5" />
-            Start Live Navigation
-          </button>
-        </div>
-      </div>
+          </div >
+        </div >
+  {/* Mobile Sticky CTA */ }
+  < div className = "absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md p-4 border-t border-gray-200 pb-safe z-30 md:hidden" >
+    <button
+      onClick={() => setView(AppView.LIVE_NAV)}
+      className="w-full bg-gradient-to-r from-dhaka-green to-[#005c44] text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+    >
+      <Navigation className="w-5 h-5" />
+      Start Live Navigation
+    </button>
+        </div >
+      </div >
     );
   };
 
-  const renderHomeContent = () => (
-    <div className="flex flex-col h-full w-full">
-      {/* Sticky Top Section */}
-      <div className="flex-none bg-white z-20">
-        <div className="p-4 space-y-4">
-          {/* Colorful Header with Tabs */}
-          <div className="bg-gradient-to-br from-dhaka-green to-[#004d38] rounded-[2rem] shadow-lg shadow-green-900/20 relative overflow-hidden text-white transition-all duration-300">
-            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
-            <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
+const renderHomeContent = () => (
+  <div className="flex flex-col h-full w-full">
+    {/* Sticky Top Section */}
+    <div className="flex-none bg-white z-20">
+      <div className="p-4 space-y-4">
+        {/* Colorful Header with Tabs */}
+        <div className="bg-gradient-to-br from-dhaka-green to-[#004d38] rounded-[2rem] shadow-lg shadow-green-900/20 relative overflow-hidden text-white transition-all duration-300">
+          <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
+          <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
 
-            <div className="p-6 pb-2 flex justify-between items-start">
-              <div>
-                <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
-                <p className="text-green-100 text-sm opacity-90">Find your bus route in seconds</p>
-              </div>
-              <button
-                onClick={() => setIsMenuOpen(true)}
-                className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors md:hidden z-10"
-              >
-                <Menu className="w-6 h-6 text-white" />
-              </button>
+          <div className="p-6 pb-2 flex justify-between items-start">
+            <div>
+              <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
+              <p className="text-green-100 text-sm opacity-90">Find your bus route in seconds</p>
             </div>
-
-            {/* Mode Toggle */}
-            <div className="flex px-6 pb-4 gap-4">
-              <button
-                onClick={() => setSearchMode('TEXT')}
-                className={`text-xs font-bold uppercase tracking-wider py-2 border-b-2 transition-colors ${searchMode === 'TEXT' ? 'border-white text-white' : 'border-transparent text-green-200 hover:text-white'}`}
-              >
-                Search
-              </button>
-              <button
-                onClick={() => setSearchMode('ROUTE')}
-                className={`text-xs font-bold uppercase tracking-wider py-2 border-b-2 transition-colors ${searchMode === 'ROUTE' ? 'border-white text-white' : 'border-transparent text-green-200 hover:text-white'}`}
-              >
-                Route Finder
-              </button>
-            </div>
-
-            <div className="px-6 pb-6">
-              {searchMode === 'TEXT' ? (
-                <div className="relative group flex items-center">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
-                  <input
-                    type="text"
-                    placeholder="Search bus or place..."
-                    className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  {inputValue || searchQuery ? (
-                    <button
-                      onClick={() => {
-                        setInputValue('');
-                        setSearchQuery('');
-                        setSuggestedRoutes([]);
-                      }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
-                      title="Clear Search"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleSearchCommit}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
-                      title="Click to Search"
-                    >
-                      <Search className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <div className="flex-1 relative">
-                    <select
-                      value={fromStation}
-                      onChange={(e) => setFromStation(e.target.value)}
-                      className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer"
-                    >
-                      <option value="">From...</option>
-                      {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                    </select>
-                    <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <ArrowRightLeft className="w-5 h-5 text-white/80" />
-                  </div>
-                  <div className="flex-1 relative">
-                    <select
-                      value={toStation}
-                      onChange={(e) => setToStation(e.target.value)}
-                      className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
-                      disabled={!fromStation}
-                    >
-                      <option value="">{fromStation ? 'To...' : 'Select From first'}</option>
-                      {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                    </select>
-                    <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* AI Button - Hidden on Mobile */}
-          <button
-            onClick={() => setView(AppView.AI_ASSISTANT)}
-            className="hidden md:flex w-full items-center justify-between bg-white border border-gray-100 p-4 rounded-2xl shadow-sm active:scale-[0.99] transition-all hover:border-blue-200 group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
-                <Bot className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <h3 className="font-bold text-gray-800 text-sm">Ask AI Assistant</h3>
-                <p className="text-xs text-gray-500">Not sure which bus to take?</p>
-              </div>
-            </div>
-            <div className="bg-gray-50 p-2 rounded-full">
-              <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
-            </div>
-          </button>
-
-          {/* List Filter Tabs */}
-          <div className="flex p-1 bg-gray-100 rounded-xl">
             <button
-              onClick={() => handleFilterChange('ALL')}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setIsMenuOpen(true)}
+              className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors md:hidden z-10"
             >
-              All Buses
-            </button>
-            <button
-              onClick={() => handleFilterChange('FAVORITES')}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-500 hover:text-gray-700'}`}
-            >
-              <Heart className="w-3 h-3 fill-current" /> Favorites
+              <Menu className="w-6 h-6 text-white" />
             </button>
           </div>
 
-          <div className="flex items-center justify-between px-2">
-            <h3 className="font-bold text-dhaka-dark text-lg">{listFilter === 'FAVORITES' ? 'Saved Routes' : 'All Buses'}</h3>
-            <span className="text-[10px] bg-gray-200 px-2 py-0.5 rounded-full text-gray-600 font-bold">{filteredBuses.length}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-4 space-y-3">
-
-        {/* Intelligent Route Suggestions */}
-        {searchMode === 'TEXT' && suggestedRoutes.length > 0 && (
-          <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <Sparkles className="w-4 h-4 text-dhaka-green fill-current" />
-              <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">Smart Suggestions</h3>
-            </div>
-            <RouteSuggestions
-              routes={suggestedRoutes}
-              onSelectRoute={(route) => {
-                // If route has a bus segment, select that bus
-                const busStep = route.steps.find(step => step.type === 'bus' && step.busRoute);
-                if (busStep && busStep.busRoute) {
-                  handleBusSelect(busStep.busRoute);
-
-                  // Auto-populate fare calculator with route origin and destination
-                  const bus = busStep.busRoute;
-                  const originStation = busStep.from;
-                  const destinationStation = busStep.to;
-
-                  // Find the closest matching station IDs in the bus route
-                  const findClosestStationId = (stationName: string): string => {
-                    const nameLower = stationName.toLowerCase();
-                    // First try exact match
-                    for (const stopId of bus.stops) {
-                      const station = STATIONS[stopId];
-                      if (station && station.name.toLowerCase() === nameLower) {
-                        return stopId;
-                      }
-                    }
-                    // Then try partial match
-                    for (const stopId of bus.stops) {
-                      const station = STATIONS[stopId];
-                      if (station && (station.name.toLowerCase().includes(nameLower) || nameLower.includes(station.name.toLowerCase()))) {
-                        return stopId;
-                      }
-                    }
-                    // Return first stop if no match
-                    return bus.stops[0];
-                  };
-
-                  const fromStopId = findClosestStationId(originStation);
-                  const toStopId = findClosestStationId(destinationStation);
-
-                  // Set fare calculator values after a brief delay to ensure component is rendered
-                  setTimeout(() => {
-                    setFareStart(fromStopId);
-                    setFareEnd(toStopId);
-                  }, 100);
-                }
-                // Override the null set by handleBusSelect
-                setSelectedTrip(route);
-              }}
-              currentLocation={globalNearestStationName || undefined}
-            />
-            <div className="my-6 border-t border-gray-100 relative">
-              <span className="absolute left-1/2 -top-2.5 -translate-x-1/2 bg-gray-50 px-2 text-xs font-bold text-gray-400">OR BROWSE ALL</span>
-            </div>
-          </div>
-        )}
-        {filteredBuses.map(bus => {
-          const isFav = favorites.includes(bus.id);
-          const estimatedFare = calculateFare(bus);
-
-          return (
+          {/* Mode Toggle */}
+          <div className="flex px-6 pb-4 gap-4">
             <button
-              key={bus.id}
-              onClick={() => handleBusSelect(bus)}
-              aria-label={`Select ${bus.name} bus route from ${bus.routeString}`}
-              className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
+              onClick={() => setSearchMode('TEXT')}
+              className={`text-xs font-bold uppercase tracking-wider py-2 border-b-2 transition-colors ${searchMode === 'TEXT' ? 'border-white text-white' : 'border-transparent text-green-200 hover:text-white'}`}
             >
-              {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shadow-sm shrink-0
-                      ${bus.type === 'AC' ? 'bg-blue-100 text-blue-700' :
-                      bus.type === 'Sitting' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}
-                  `}>
-                    {bus.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-base text-gray-900 leading-tight group-hover:text-dhaka-green transition-colors">{bus.name}</h4>
-                    <span className="text-xs font-bengali text-gray-400">{bus.bnName}</span>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-2">
+              Search
+            </button>
+            <button
+              onClick={() => setSearchMode('ROUTE')}
+              className={`text-xs font-bold uppercase tracking-wider py-2 border-b-2 transition-colors ${searchMode === 'ROUTE' ? 'border-white text-white' : 'border-transparent text-green-200 hover:text-white'}`}
+            >
+              Route Finder
+            </button>
+          </div>
+
+          <div className="px-6 pb-6">
+            {searchMode === 'TEXT' ? (
+              <div className="relative group flex items-center">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
+                <input
+                  type="text"
+                  placeholder="Search bus or place..."
+                  className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                {inputValue || searchQuery ? (
                   <button
-                    onClick={(e) => toggleFavorite(e, bus.id)}
-                    aria-label={isFav ? `Remove ${bus.name} from favorites` : `Add ${bus.name} to favorites`}
-                    className="p-1.5 -mr-1.5 hover:bg-gray-100 rounded-full transition-colors z-20"
+                    onClick={() => {
+                      setInputValue('');
+                      setSearchQuery('');
+                      setSuggestedRoutes([]);
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
+                    title="Clear Search"
                   >
-                    <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
+                    <X className="w-4 h-4" />
                   </button>
-                  <div className="flex flex-col items-end">
-                    <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
-                      ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
-                        bus.type === 'AC' ? 'bg-blue-50 text-blue-600' :
-                          'bg-orange-50 text-orange-600'
-                      }`}>
-                      {bus.type}
-                    </span>
-                  </div>
+                ) : (
+                  <button
+                    onClick={handleSearchCommit}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
+                    title="Click to Search"
+                  >
+                    <Search className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <select
+                    value={fromStation}
+                    onChange={(e) => setFromStation(e.target.value)}
+                    className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer"
+                  >
+                    <option value="">From...</option>
+                    {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                  <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
+                <div className="flex items-center justify-center">
+                  <ArrowRightLeft className="w-5 h-5 text-white/80" />
+                </div>
+                <div className="flex-1 relative">
+                  <select
+                    value={toStation}
+                    onChange={(e) => setToStation(e.target.value)}
+                    className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
+                    disabled={!fromStation}
+                  >
+                    <option value="">{fromStation ? 'To...' : 'Select From first'}</option>
+                    {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                  <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
               </div>
-              <div className="relative pl-3 border-l-2 border-gray-100 ml-5 space-y-1 py-1" role="presentation">
-                <div className="text-xs text-gray-600 font-medium truncate pr-4">
-                  <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄')[0]}
-                </div>
-                <div className="text-xs text-gray-600 font-medium truncate pr-4">
-                  <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄').pop()}
-                </div>
-              </div>
-              <div className="mt-3 flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-md w-fit">
-                <Coins className="w-3 h-3" />
-                <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
-              </div>
-            </button>
-          );
-        })}
-        {filteredBuses.length === 0 && (
-          <div className="text-center py-16 text-gray-400">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Bus className="w-8 h-8 opacity-40" />
-            </div>
-            <p>No buses found {searchMode === 'ROUTE' ? `between selected stations` : listFilter === 'FAVORITES' ? 'in favorites' : `matching "${searchQuery}"`}</p>
-            {inputValue && inputValue !== searchQuery && searchMode === 'TEXT' && (
-              <button onClick={handleSearchCommit} className="mt-2 text-xs text-dhaka-green underline">
-                Click to search for "{inputValue}"
-              </button>
             )}
           </div>
-        )}
+        </div>
+
+        {/* AI Button - Hidden on Mobile */}
+        <button
+          onClick={() => setView(AppView.AI_ASSISTANT)}
+          className="hidden md:flex w-full items-center justify-between bg-white border border-gray-100 p-4 rounded-2xl shadow-sm active:scale-[0.99] transition-all hover:border-blue-200 group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+              <Bot className="w-5 h-5" />
+            </div>
+            <div className="text-left">
+              <h3 className="font-bold text-gray-800 text-sm">Ask AI Assistant</h3>
+              <p className="text-xs text-gray-500">Not sure which bus to take?</p>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-2 rounded-full">
+            <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
+          </div>
+        </button>
+
+        {/* List Filter Tabs */}
+        <div className="flex p-1 bg-gray-100 rounded-xl">
+          <button
+            onClick={() => handleFilterChange('ALL')}
+            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            All Buses
+          </button>
+          <button
+            onClick={() => handleFilterChange('FAVORITES')}
+            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            <Heart className="w-3 h-3 fill-current" /> Favorites
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between px-2">
+          <h3 className="font-bold text-dhaka-dark text-lg">{listFilter === 'FAVORITES' ? 'Saved Routes' : 'All Buses'}</h3>
+          <span className="text-[10px] bg-gray-200 px-2 py-0.5 rounded-full text-gray-600 font-bold">{filteredBuses.length}</span>
+        </div>
       </div>
+    </div>
 
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
-          <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-bold text-dhaka-dark">Menu</h2>
-              <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                <X className="w-6 h-6 text-gray-500" />
-              </button>
-            </div>
+    {/* Scrollable Content */}
+    <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-4 space-y-3">
 
-            <div className="space-y-2 flex-1">
-              <button
-                onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Info className="w-5 h-5 text-green-500" /> About
-              </button>
-              <button
-                onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Settings className="w-5 h-5 text-blue-500" /> App Settings
-              </button>
-              <button
-                onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Shield className="w-5 h-5 text-purple-500" /> Privacy Policy
-              </button>
-              <button
-                onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <FileText className="w-5 h-5 text-orange-500" /> Terms of Service
-              </button>
-            </div>
+      {/* Intelligent Route Suggestions */}
+      {searchMode === 'TEXT' && suggestedRoutes.length > 0 && (
+        <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-2 mb-3 px-1">
+            <Sparkles className="w-4 h-4 text-dhaka-green fill-current" />
+            <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">Smart Suggestions</h3>
+          </div>
+          <RouteSuggestions
+            routes={suggestedRoutes}
+            onSelectRoute={(route) => {
+              // If route has a bus segment, select that bus
+              const busStep = route.steps.find(step => step.type === 'bus' && step.busRoute);
+              if (busStep && busStep.busRoute) {
+                handleBusSelect(busStep.busRoute);
 
-            <div className="pt-6 border-t border-gray-100">
-              <p className="text-xs text-center text-gray-400">
-                ?? ???? v1.0.0
-              </p>
-            </div>
+                // Auto-populate fare calculator with route origin and destination
+                const bus = busStep.busRoute;
+                const originStation = busStep.from;
+                const destinationStation = busStep.to;
+
+                // Find the closest matching station IDs in the bus route
+                const findClosestStationId = (stationName: string): string => {
+                  const nameLower = stationName.toLowerCase();
+                  // First try exact match
+                  for (const stopId of bus.stops) {
+                    const station = STATIONS[stopId];
+                    if (station && station.name.toLowerCase() === nameLower) {
+                      return stopId;
+                    }
+                  }
+                  // Then try partial match
+                  for (const stopId of bus.stops) {
+                    const station = STATIONS[stopId];
+                    if (station && (station.name.toLowerCase().includes(nameLower) || nameLower.includes(station.name.toLowerCase()))) {
+                      return stopId;
+                    }
+                  }
+                  // Return first stop if no match
+                  return bus.stops[0];
+                };
+
+                const fromStopId = findClosestStationId(originStation);
+                const toStopId = findClosestStationId(destinationStation);
+
+                // Set fare calculator values after a brief delay to ensure component is rendered
+                setTimeout(() => {
+                  setFareStart(fromStopId);
+                  setFareEnd(toStopId);
+                }, 100);
+              }
+              // Override the null set by handleBusSelect
+              setSelectedTrip(route);
+            }}
+            currentLocation={globalNearestStationName || undefined}
+          />
+          <div className="my-6 border-t border-gray-100 relative">
+            <span className="absolute left-1/2 -top-2.5 -translate-x-1/2 bg-gray-50 px-2 text-xs font-bold text-gray-400">OR BROWSE ALL</span>
           </div>
         </div>
       )}
-    </div>
-  );
+      {filteredBuses.map(bus => {
+        const isFav = favorites.includes(bus.id);
+        const estimatedFare = calculateFare(bus);
 
-  return (
-    <div className="flex flex-col h-screen bg-slate-50 font-sans text-gray-800 overflow-hidden">
-      {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden">
-        <div className="flex justify-between items-center">
+        return (
           <button
-            onClick={() => setView(AppView.HOME)}
-            className="flex items-center gap-2.5 outline-none cursor-pointer"
+            key={bus.id}
+            onClick={() => handleBusSelect(bus)}
+            aria-label={`Select ${bus.name} bus route from ${bus.routeString}`}
+            className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
           >
-            <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
-              <Bus className="w-5 h-5 text-white" />
+            {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex items-start gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shadow-sm shrink-0
+                      ${bus.type === 'AC' ? 'bg-blue-100 text-blue-700' :
+                    bus.type === 'Sitting' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}
+                  `}>
+                  {bus.name.charAt(0)}
+                </div>
+                <div>
+                  <h4 className="font-bold text-base text-gray-900 leading-tight group-hover:text-dhaka-green transition-colors">{bus.name}</h4>
+                  <span className="text-xs font-bengali text-gray-400">{bus.bnName}</span>
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                <button
+                  onClick={(e) => toggleFavorite(e, bus.id)}
+                  aria-label={isFav ? `Remove ${bus.name} from favorites` : `Add ${bus.name} to favorites`}
+                  className="p-1.5 -mr-1.5 hover:bg-gray-100 rounded-full transition-colors z-20"
+                >
+                  <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
+                </button>
+                <div className="flex flex-col items-end">
+                  <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
+                      ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
+                      bus.type === 'AC' ? 'bg-blue-50 text-blue-600' :
+                        'bg-orange-50 text-orange-600'
+                    }`}>
+                    {bus.type}
+                  </span>
+                </div>
+              </div>
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">কই<span className="text-dhaka-red">যাবো</span></h1>
+            <div className="relative pl-3 border-l-2 border-gray-100 ml-5 space-y-1 py-1" role="presentation">
+              <div className="text-xs text-gray-600 font-medium truncate pr-4">
+                <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄')[0]}
+              </div>
+              <div className="text-xs text-gray-600 font-medium truncate pr-4">
+                <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄').pop()}
+              </div>
+            </div>
+            <div className="mt-3 flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-md w-fit">
+              <Coins className="w-3 h-3" />
+              <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
+            </div>
           </button>
-          <button onClick={() => setView(AppView.ABOUT)} className="bg-gray-100 p-2.5 rounded-full text-gray-500 hover:text-dhaka-green hover:bg-green-50 transition-all">
-            <Info className="w-4 h-4" />
-          </button>
+        );
+      })}
+      {filteredBuses.length === 0 && (
+        <div className="text-center py-16 text-gray-400">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <Bus className="w-8 h-8 opacity-40" />
+          </div>
+          <p>No buses found {searchMode === 'ROUTE' ? `between selected stations` : listFilter === 'FAVORITES' ? 'in favorites' : `matching "${searchQuery}"`}</p>
+          {inputValue && inputValue !== searchQuery && searchMode === 'TEXT' && (
+            <button onClick={handleSearchCommit} className="mt-2 text-xs text-dhaka-green underline">
+              Click to search for "{inputValue}"
+            </button>
+          )}
         </div>
-      </header>
+      )}
+    </div>
 
-      {/* Desktop Header */}
-      <header className="hidden md:flex bg-white border-b border-gray-200 px-8 py-4 shadow-sm z-50 items-center justify-between shrink-0">
+    {/* Mobile Menu Overlay */}
+    {isMenuOpen && (
+      <div className="fixed inset-0 z-50 md:hidden">
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
+        <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-xl font-bold text-dhaka-dark">Menu</h2>
+            <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
+              <X className="w-6 h-6 text-gray-500" />
+            </button>
+          </div>
+
+          <div className="space-y-2 flex-1">
+            <button
+              onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
+              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+            >
+              <Info className="w-5 h-5 text-green-500" /> About
+            </button>
+            <button
+              onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
+              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+            >
+              <Settings className="w-5 h-5 text-blue-500" /> App Settings
+            </button>
+            <button
+              onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
+              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+            >
+              <Shield className="w-5 h-5 text-purple-500" /> Privacy Policy
+            </button>
+            <button
+              onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
+              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+            >
+              <FileText className="w-5 h-5 text-orange-500" /> Terms of Service
+            </button>
+          </div>
+
+          <div className="pt-6 border-t border-gray-100">
+            <p className="text-xs text-center text-gray-400">
+              কই যাবো v1.0.0
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+);
+
+return (
+  <div className="flex flex-col h-screen bg-slate-50 font-sans text-gray-800 overflow-hidden">
+    {/* Mobile Header */}
+    <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden">
+      <div className="flex justify-between items-center">
         <button
           onClick={() => setView(AppView.HOME)}
-          className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
+          className="flex items-center gap-2.5 outline-none cursor-pointer"
         >
-          <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
-            <Bus className="w-6 h-6 text-white" />
+          <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
+            <Bus className="w-5 h-5 text-white" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই<span className="text-dhaka-red">যাবো</span></h1>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">কই<span className="text-dhaka-red">যাবো</span></h1>
         </button>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setView(AppView.AI_ASSISTANT)}
-            className="text-sm font-bold text-gray-600 hover:text-dhaka-green transition-colors"
-          >
-            AI Assistant
-          </button>
-          <button
-            onClick={() => setView(AppView.SETTINGS)}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-            title="Settings"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => setView(AppView.ABOUT)}
-            className="bg-gray-100 px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all flex items-center gap-2"
-          >
-            About <Info className="w-3 h-3" />
-          </button>
-        </div>
-      </header>
+        <button onClick={() => setView(AppView.ABOUT)} className="bg-gray-100 p-2.5 rounded-full text-gray-500 hover:text-dhaka-green hover:bg-green-50 transition-all">
+          <Info className="w-4 h-4" />
+        </button>
+      </div>
+    </header>
 
-      <main className="flex flex-1 overflow-hidden relative w-full mx-auto bg-slate-50 h-full">
-        {/* Left Sidebar (Desktop) / Main View (Mobile Home) */}
-        <div className={`
+    {/* Desktop Header */}
+    <header className="hidden md:flex bg-white border-b border-gray-200 px-8 py-4 shadow-sm z-50 items-center justify-between shrink-0">
+      <button
+        onClick={() => setView(AppView.HOME)}
+        className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
+      >
+        <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
+          <Bus className="w-6 h-6 text-white" />
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই<span className="text-dhaka-red">যাবো</span></h1>
+      </button>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => setView(AppView.AI_ASSISTANT)}
+          className="text-sm font-bold text-gray-600 hover:text-dhaka-green transition-colors"
+        >
+          AI Assistant
+        </button>
+        <button
+          onClick={() => setView(AppView.SETTINGS)}
+          className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          title="Settings"
+        >
+          <Settings className="w-5 h-5" />
+        </button>
+        <button
+          onClick={() => setView(AppView.ABOUT)}
+          className="bg-gray-100 px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all flex items-center gap-2"
+        >
+          About <Info className="w-3 h-3" />
+        </button>
+      </div>
+    </header>
+
+    <main className="flex flex-1 overflow-hidden relative w-full mx-auto bg-slate-50 h-full">
+      {/* Left Sidebar (Desktop) / Main View (Mobile Home) */}
+      <div className={`
             ${'w-full md:w-1/3 md:min-w-[320px] md:max-w-md md:flex md:flex-col border-r border-gray-200 bg-white z-0 h-full'}
             ${view !== AppView.HOME && 'hidden md:flex'}
           `}>
-          <div className="h-full pt-16 md:pt-0">
-            {renderHomeContent()}
-          </div>
+        <div className="h-full pt-16 md:pt-0">
+          {renderHomeContent()}
         </div>
+      </div>
 
-        {/* Right Content Area (Desktop) / Views (Mobile) */}
-        <div className={`
+      {/* Right Content Area (Desktop) / Views (Mobile) */}
+      <div className={`
             ${'w-full md:flex-1 bg-slate-50 md:bg-white relative h-full overflow-hidden'}
             ${view === AppView.HOME && 'hidden md:block'}
           `}>
-          {view === AppView.HOME && <div className="hidden md:block h-full"><DhakaAlive /></div>}
-          {view === AppView.BUS_DETAILS && renderBusDetails()}
-          {view === AppView.LIVE_NAV && renderLiveNav()}
-          {view === AppView.AI_ASSISTANT && renderAiAssistant()}
-          {view === AppView.SETTINGS && (
-            <SettingsView
-              onBack={() => setView(AppView.HOME)}
-              onClearFavorites={handleClearFavorites}
-              apiKey={apiKey}
-              setApiKey={setApiKey}
-            />
-          )}
-          {view === AppView.ABOUT && renderAbout()}
-          {view === AppView.PRIVACY && renderPrivacyPolicy()}
-          {view === AppView.TERMS && renderTerms()}
-          {view === AppView.NOT_FOUND && renderNotFound()}
-          {view === AppView.SERVER_ERROR && renderServerError()}
-        </div>
-      </main>
+        {view === AppView.HOME && <div className="hidden md:block h-full"><DhakaAlive /></div>}
+        {view === AppView.BUS_DETAILS && renderBusDetails()}
+        {view === AppView.LIVE_NAV && renderLiveNav()}
+        {view === AppView.AI_ASSISTANT && renderAiAssistant()}
+        {view === AppView.SETTINGS && (
+          <SettingsView
+            onBack={() => setView(AppView.HOME)}
+            onClearFavorites={handleClearFavorites}
+            apiKey={apiKey}
+            setApiKey={setApiKey}
+          />
+        )}
+        {view === AppView.ABOUT && renderAbout()}
+        {view === AppView.PRIVACY && renderPrivacyPolicy()}
+        {view === AppView.TERMS && renderTerms()}
+        {view === AppView.NOT_FOUND && renderNotFound()}
+        {view === AppView.SERVER_ERROR && renderServerError()}
+      </div>
+    </main>
 
-      {/* Mobile Bottom Navigation - Show on all pages except BUS_DETAILS and LIVE_NAV */}
-      {view !== AppView.BUS_DETAILS && view !== AppView.LIVE_NAV && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
-          <div className="grid grid-cols-3 h-16">
-            <button
-              onClick={() => setView(AppView.HOME)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
-            >
-              <MapIcon className={`w-6 h-6 ${view === AppView.HOME ? 'fill-current' : ''}`} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">Routes</span>
-            </button>
-            <button
-              onClick={() => setView(AppView.AI_ASSISTANT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
-            >
-              <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''}`} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
-            </button>
-            <button
-              onClick={() => setView(AppView.ABOUT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
-            >
-              <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'fill-current' : ''}`} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
-            </button>
-          </div>
-        </nav>
-      )}
-      {/* Vercel Analytics */}
-      <Analytics />
-    </div>
-  );
+    {/* Mobile Bottom Navigation - Show on all pages except BUS_DETAILS and LIVE_NAV */}
+    {view !== AppView.BUS_DETAILS && view !== AppView.LIVE_NAV && (
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
+        <div className="grid grid-cols-3 h-16">
+          <button
+            onClick={() => setView(AppView.HOME)}
+            className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+          >
+            <MapIcon className={`w-6 h-6 ${view === AppView.HOME ? 'fill-current' : ''}`} />
+            <span className="text-[10px] font-bold uppercase tracking-wide">Routes</span>
+          </button>
+          <button
+            onClick={() => setView(AppView.AI_ASSISTANT)}
+            className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+          >
+            <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''}`} />
+            <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
+          </button>
+          <button
+            onClick={() => setView(AppView.ABOUT)}
+            className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+          >
+            <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'fill-current' : ''}`} />
+            <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
+          </button>
+        </div>
+      </nav>
+    )}
+    {/* Vercel Analytics */}
+    <Analytics />
+  </div>
+);
 };
 
 export default App;
