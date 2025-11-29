@@ -1134,7 +1134,7 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full bg-slate-50 md:bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
         {/* Mobile Header */}
-        <div className="md:hidden bg-white px-5 py-4 shadow-sm border-b border-gray-100 fixed top-[57px] w-full z-40 flex items-center justify-between">
+        <div className="md:hidden bg-white px-5 py-4 shadow-sm border-b border-gray-100 fixed top-[65px] w-full z-40 flex items-center justify-between">
           <button
             onClick={() => {
               setSelectedBus(null);
@@ -1157,7 +1157,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden md:flex px-8 py-6 border-b border-gray-100 items-center justify-between bg-white/50 backdrop-blur z-20 sticky top-0 w-full">
+        <div className="hidden md:flex px-8 py-6 border-b border-gray-100 items-center justify-between bg-white z-20 relative w-full">
           <div className="flex items-center gap-4">
             <div>
               <h1 className="text-2xl font-bold text-dhaka-dark leading-none">{selectedBus.name}</h1>
@@ -1780,7 +1780,7 @@ const App: React.FC = () => {
             <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
               <Bus className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">Dhaka<span className="text-dhaka-red">Commute</span></h1>
+            <h1 className="text-xl font-bold tracking-tight text-gray-900">কই<span className="text-dhaka-red">যাবো</span></h1>
           </button>
           <button onClick={() => setView(AppView.ABOUT)} className="bg-gray-100 p-2.5 rounded-full text-gray-500 hover:text-dhaka-green hover:bg-green-50 transition-all">
             <Info className="w-4 h-4" />
@@ -1797,7 +1797,7 @@ const App: React.FC = () => {
           <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
             <Bus className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Dhaka<span className="text-dhaka-red">Commute</span></h1>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই<span className="text-dhaka-red">যাবো</span></h1>
         </button>
         <div className="flex items-center gap-4">
           <button

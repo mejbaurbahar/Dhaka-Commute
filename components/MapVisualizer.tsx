@@ -802,7 +802,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             )}
 
             {/* User Location Marker (Fix Issue #7) */}
-            {userLocation && (
+            {userLocation && userDistance > 500 && (
               <>
                 {/* Calculate user position on map */}
                 {(() => {
@@ -821,8 +821,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
                   return (
                     <g>
-                      {/* Connection Line to Nearest Stop */}
-                      {nearestStationPos && userDistance < 5000 && (
+                      {/* Connection Line to Nearest Stop - Always show when user is away */}
+                      {nearestStationPos && (
                         <line
                           x1={userX}
                           y1={userY}
