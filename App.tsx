@@ -365,6 +365,50 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // Update document title based on view
+  useEffect(() => {
+    const baseTitle = "কই যাবো";
+    let pageTitle = "";
+
+    switch (view) {
+      case AppView.HOME:
+        pageTitle = "";
+        break;
+      case AppView.BUS_DETAILS:
+        pageTitle = selectedBus ? `${selectedBus.name}` : "Bus Details";
+        break;
+      case AppView.LIVE_NAV:
+        pageTitle = "Live Navigation";
+        break;
+      case AppView.AI_ASSISTANT:
+        pageTitle = "AI Assistant";
+        break;
+      case AppView.ABOUT:
+        pageTitle = "About";
+        break;
+      case AppView.SETTINGS:
+        pageTitle = "App Settings";
+        break;
+      case AppView.PRIVACY:
+        pageTitle = "Privacy Policy";
+        break;
+      case AppView.TERMS:
+        pageTitle = "Terms of Service";
+        break;
+      case AppView.NOT_FOUND:
+        pageTitle = "Page Not Found";
+        break;
+      default:
+        pageTitle = "";
+    }
+
+    if (pageTitle) {
+      document.title = `${pageTitle} | ${baseTitle}`;
+    } else {
+      document.title = baseTitle;
+    }
+  }, [view, selectedBus]);
+
   // Online/Offline detection
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
