@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+        // Inline workbox runtime to avoid network dependency
+        injectRegister: 'auto',
         manifest: {
           name: 'DhakaCommute',
           short_name: 'DhakaCommute',
@@ -46,9 +48,13 @@ export default defineConfig(({ mode }) => {
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2,ttf}'],
           navigateFallback: 'index.html',
+          navigateFallbackDenylist: [/^\/api/],
           cleanupOutdatedCaches: true,
           clientsClaim: true,
           skipWaiting: true,
+          // Inline the workbox runtime instead of loading from CDN
+          mode: 'production',
+          sourcemap: false,
           runtimeCaching: [
             // Tailwind CSS CDN - Critical for offline styling
             {
@@ -111,6 +117,9 @@ export default defineConfig(({ mode }) => {
               }
             }
           ]
+        },
+        devOptions: {
+          enabled: false
         }
       })
     ],
