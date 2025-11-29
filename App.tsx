@@ -773,7 +773,7 @@ const App: React.FC = () => {
             <div ref={chatEndRef}></div>
           </div>
 
-          <div className="p-4 bg-white border-t border-gray-200">
+          <div className="p-4 bg-white border-t border-gray-200 pb-safe z-30 relative">
             {!isOnline && (
               <div className="mb-3 bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" />

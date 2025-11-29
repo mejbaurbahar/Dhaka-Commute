@@ -801,6 +801,85 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
               </g>
             )}
 
+            {/* User Location Marker (Fix Issue #7) */}
+            {userLocation && (
+              <>
+                {/* Calculate user position on map */}
+                {(() => {
+                  const lngs = stations.map(s => s.lng);
+                  const minLng = Math.min(...lngs);
+                  const maxLng = Math.max(...lngs);
+
+                  const userX = ((userLocation.lng - minLng) / (maxLng - minLng || 1)) * (baseWidth - (padding * 2)) + padding;
+                  const userY = (height - 200) / 2 + (200 - (normalizeLat(userLocation.lat) * 200));
+
+                  // Find nearest station for connection line
+                  let nearestStationPos = null;
+                  if (userStationIndex >= 0 && userStationIndex < nodePositions.length) {
+                    nearestStationPos = nodePositions[userStationIndex];
+                  }
+
+                  return (
+                    <g>
+                      {/* Connection Line to Nearest Stop */}
+                      {nearestStationPos && userDistance < 5000 && (
+                        <line
+                          x1={userX}
+                          y1={userY}
+                          x2={nearestStationPos.x}
+                          y2={nearestStationPos.y}
+                          stroke="#3b82f6"
+                          strokeWidth="2"
+                          strokeDasharray="5,5"
+                          className="opacity-60"
+                        />
+                      )}
+
+                      {/* Pulsing Circle Animation */}
+                      <circle cx={userX} cy={userY} r="15" fill="#3b82f6" className="opacity-30">
+                        <animate attributeName="r" from="15" to="25" dur="1.5s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" from="0.3" to="0" dur="1.5s" repeatCount="indefinite" />
+                      </circle>
+
+                      {/* User Location Marker */}
+                      <circle
+                        cx={userX}
+                        cy={userY}
+                        r="8"
+                        fill="#3b82f6"
+                        stroke="white"
+                        strokeWidth="3"
+                        className="cursor-pointer"
+                      />
+
+                      {/* Inner dot */}
+                      <circle
+                        cx={userX}
+                        cy={userY}
+                        r="3"
+                        fill="white"
+                      />
+
+                      {/* Label */}
+                      <foreignObject
+                        x={userX - 60}
+                        y={userY + 15}
+                        width="120"
+                        height="30"
+                        className="pointer-events-none"
+                      >
+                        <div className="text-center flex flex-col items-center justify-center h-full">
+                          <span className="px-2 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold shadow-lg">
+                            You are here
+                          </span>
+                        </div>
+                      </foreignObject>
+                    </g>
+                  );
+                })()}
+              </>
+            )}
+
           </svg>
         </div>
       </div>
