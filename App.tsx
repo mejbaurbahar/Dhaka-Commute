@@ -883,7 +883,7 @@ const App: React.FC = () => {
         <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
           <Bus className="w-10 h-10" />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dhaka<span className="text-dhaka-red">Commute</span></h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">কই<span className="text-dhaka-red"> যাবো</span></h1>
         <p className="text-gray-500 mb-8">Version 1.0.0</p>
 
         <div className="text-left space-y-6 bg-slate-50 p-8 rounded-3xl border border-gray-100">
@@ -1231,6 +1231,13 @@ const App: React.FC = () => {
             <p className="text-xs text-gray-500">{selectedBus.bnName}</p>
           </div>
           <button
+            onClick={() => setView(AppView.LIVE_NAV)}
+            className="bg-dhaka-green text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-green-700 transition-colors flex items-center gap-2 mr-2"
+          >
+            <Navigation className="w-4 h-4" />
+            Start Navigation
+          </button>
+          <button
             onClick={(e) => toggleFavorite(e, selectedBus.id)}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
@@ -1517,21 +1524,8 @@ const App: React.FC = () => {
               </button>
             </div>
 
-            {/* Mode Toggle */}
-            <div className="flex px-6 pb-4 gap-4">
-              <button
-                onClick={() => setSearchMode('TEXT')}
-                className={`text-xs font-bold uppercase tracking-wider py-2 border-b-2 transition-colors ${searchMode === 'TEXT' ? 'border-white text-white' : 'border-transparent text-green-200 hover:text-white'}`}
-              >
-                Search
-              </button>
-              <button
-                onClick={() => setSearchMode('ROUTE')}
-                className={`text-xs font-bold uppercase tracking-wider py-2 border-b-2 transition-colors ${searchMode === 'ROUTE' ? 'border-white text-white' : 'border-transparent text-green-200 hover:text-white'}`}
-              >
-                Route Finder
-              </button>
-            </div>
+            {/* Mode Toggle Removed as per request */}
+            {/* <div className="flex px-6 pb-4 gap-4">...</div> */}
 
             <div className="px-6 pb-6">
               {searchMode === 'TEXT' ? (
