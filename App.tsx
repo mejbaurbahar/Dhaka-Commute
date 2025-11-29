@@ -1521,9 +1521,9 @@ const App: React.FC = () => {
               </div>
               <button
                 onClick={() => setIsMenuOpen(true)}
-                className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors md:hidden z-10"
+                className="bg-gray-100 p-2.5 rounded-full text-gray-500 hover:text-dhaka-green hover:bg-green-50 transition-all md:hidden z-10"
               >
-                <Menu className="w-6 h-6 text-white" />
+                <Menu className="w-6 h-6" />
               </button>
             </div>
 
