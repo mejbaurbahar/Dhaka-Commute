@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
 import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { BusRoute, AppView, UserLocation } from './types';
 import { BUS_DATA, STATIONS, METRO_STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
@@ -871,72 +872,59 @@ const App: React.FC = () => {
           </div>
         </>
       )}
-    </div>
-  );
+      <p className="text-gray-500 mb-8">Version 1.0.0</p>
 
-  const renderAbout = () => (
-    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
-      <button onClick={() => setView(AppView.HOME)} className="mb-6 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark md:hidden">
-        <ArrowLeft className="w-4 h-4" /> Back
-      </button>
-      <div className="max-w-2xl mx-auto text-center">
-        <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
-          <Bus className="w-10 h-10" />
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">কই<span className="text-dhaka-red"> যাবো</span></h1>
-        <p className="text-gray-500 mb-8">Version 1.0.0</p>
+      <div className="text-left space-y-6 bg-slate-50 p-8 rounded-3xl border border-gray-100">
+        <p className="leading-relaxed text-gray-700">
+          কই যাবো is your ultimate companion for navigating the chaotic but vibrant streets of Dhaka.
+          Whether you need to find a local bus, check a route, or estimate travel time, we've got you covered.
+        </p>
 
-        <div className="text-left space-y-6 bg-slate-50 p-8 rounded-3xl border border-gray-100">
-          <p className="leading-relaxed text-gray-700">
-            কই যাবো is your ultimate companion for navigating the chaotic but vibrant streets of Dhaka.
-            Whether you need to find a local bus, check a route, or estimate travel time, we've got you covered.
-          </p>
-
-          <div>
-            <h3 className="font-bold text-gray-900 mb-2">Features</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Offline-ready Route Database</li>
-              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Live Navigation Simulation</li>
-              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> AI-Powered Route Assistant</li>
-              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Official 2022 Fare Calculation</li>
-            </ul>
-          </div>
-
-          <div className="pt-6 border-t border-gray-200">
-            <h3 className="font-bold text-gray-900 mb-4">Connect</h3>
-            <div className="flex gap-4">
-              <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 text-blue-700 rounded-lg text-sm font-bold hover:bg-blue-100 transition-colors">
-                <Linkedin className="w-4 h-4" /> LinkedIn
-              </a>
-            </div>
-            <p className="text-xs text-gray-400 mt-4">Developed by Mejbaur Bahar Fagun</p>
-          </div>
+        <div>
+          <h3 className="font-bold text-gray-900 mb-2">Features</h3>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Offline-ready Route Database</li>
+            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Live Navigation Simulation</li>
+            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> AI-Powered Route Assistant</li>
+            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Official 2022 Fare Calculation</li>
+          </ul>
         </div>
 
-        <div className="mt-8 flex flex-col items-center gap-3 pb-20 md:pb-0">
+        <div className="pt-6 border-t border-gray-200">
+          <h3 className="font-bold text-gray-900 mb-4">Connect</h3>
+          <div className="flex gap-4">
+            <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 text-blue-700 rounded-lg text-sm font-bold hover:bg-blue-100 transition-colors">
+              <Linkedin className="w-4 h-4" /> LinkedIn
+            </a>
+          </div>
+          <p className="text-xs text-gray-400 mt-4">Developed by Mejbaur Bahar Fagun</p>
+        </div>
+      </div>
+
+      <div className="mt-8 flex flex-col items-center gap-3 pb-20 md:pb-0">
+        <button
+          onClick={() => setView(AppView.SETTINGS)}
+          className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm rounded-xl transition-all hover:scale-105 active:scale-95 shadow-sm"
+        >
+          <Settings className="w-4 h-4" /> App Settings
+        </button>
+        <div className="flex flex-col md:flex-row gap-3 w-full max-w-xs">
           <button
-            onClick={() => setView(AppView.SETTINGS)}
-            className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-sm rounded-xl transition-all hover:scale-105 active:scale-95 shadow-sm"
+            onClick={() => setView(AppView.PRIVACY)}
+            className="flex-1 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs rounded-lg transition-all border border-blue-200"
           >
-            <Settings className="w-4 h-4" /> App Settings
+            Privacy Policy
           </button>
-          <div className="flex flex-col md:flex-row gap-3 w-full max-w-xs">
-            <button
-              onClick={() => setView(AppView.PRIVACY)}
-              className="flex-1 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs rounded-lg transition-all border border-blue-200"
-            >
-              Privacy Policy
-            </button>
-            <button
-              onClick={() => setView(AppView.TERMS)}
-              className="flex-1 px-4 py-2.5 bg-green-50 hover:bg-green-100 text-green-700 font-bold text-xs rounded-lg transition-all border border-green-200"
-            >
-              Terms of Service
-            </button>
-          </div>
+          <button
+            onClick={() => setView(AppView.TERMS)}
+            className="flex-1 px-4 py-2.5 bg-green-50 hover:bg-green-100 text-green-700 font-bold text-xs rounded-lg transition-all border border-green-200"
+          >
+            Terms of Service
+          </button>
         </div>
       </div>
     </div>
+
   );
 
   const renderPrivacyPolicy = () => (
@@ -1946,6 +1934,7 @@ const App: React.FC = () => {
       )}
       {/* Vercel Analytics */}
       <Analytics />
+      <SpeedInsights />
     </div>
   );
 };
