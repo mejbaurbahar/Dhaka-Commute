@@ -817,7 +817,7 @@ const App: React.FC = () => {
 
         <div className="text-left space-y-6 bg-slate-50 p-8 rounded-3xl border border-gray-100">
           <p className="leading-relaxed text-gray-700">
-            DhakaCommute is your ultimate companion for navigating the chaotic but vibrant streets of Dhaka.
+            ?? ???? is your ultimate companion for navigating the chaotic but vibrant streets of Dhaka.
             Whether you need to find a local bus, check a route, or estimate travel time, we've got you covered.
           </p>
 
@@ -885,12 +885,12 @@ const App: React.FC = () => {
         <div className="space-y-6 text-gray-700 leading-relaxed">
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">1. Introduction</h2>
-            <p>Welcome to DhakaCommute. We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we handle your information when you use our bus route finder application.</p>
+            <p>Welcome to ?? ????. We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we handle your information when you use our bus route finder application.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">2. Data We Do NOT Collect</h2>
-            <p>DhakaCommute is designed with privacy in mind. We do NOT collect, store, or transmit:</p>
+            <p>?? ???? is designed with privacy in mind. We do NOT collect, store, or transmit:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Personal identification information (name, email, phone number)</li>
               <li>Your location data to any server</li>
@@ -929,7 +929,7 @@ const App: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">6. Cookies</h2>
-            <p>DhakaCommute does not use cookies for tracking or analytics. We only use browser local storage for the features mentioned above.</p>
+            <p>?? ???? does not use cookies for tracking or analytics. We only use browser local storage for the features mentioned above.</p>
           </section>
 
           <section>
@@ -949,7 +949,7 @@ const App: React.FC = () => {
 
           <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-8">
             <p className="text-sm font-bold text-green-800">✓ Privacy-First Design</p>
-            <p className="text-sm text-green-700 mt-1">DhakaCommute is built with your privacy as a top priority. All data processing happens on your device, and nothing is sent to our servers.</p>
+            <p className="text-sm text-green-700 mt-1">?? ???? is built with your privacy as a top priority. All data processing happens on your device, and nothing is sent to our servers.</p>
           </div>
         </div>
 
@@ -975,12 +975,12 @@ const App: React.FC = () => {
         <div className="space-y-6 text-gray-700 leading-relaxed">
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">1. Acceptance of Terms</h2>
-            <p>By accessing and using DhakaCommute, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.</p>
+            <p>By accessing and using ?? ????, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">2. Service Description</h2>
-            <p>DhakaCommute is a free, web-based application that provides:</p>
+            <p>?? ???? is a free, web-based application that provides:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Bus route information for Dhaka city</li>
               <li>Metro rail station information</li>
@@ -992,7 +992,7 @@ const App: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">3. No Warranty</h2>
-            <p>DhakaCommute is provided "AS IS" and "AS AVAILABLE" without any warranties of any kind, either express or implied, including but not limited to:</p>
+            <p>?? ???? is provided "AS IS" and "AS AVAILABLE" without any warranties of any kind, either express or implied, including but not limited to:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Accuracy of bus routes, schedules, or fare information</li>
               <li>Availability or reliability of the service</li>
@@ -1015,7 +1015,7 @@ const App: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">5. Limitation of Liability</h2>
-            <p>To the maximum extent permitted by law, DhakaCommute and its developers shall not be liable for:</p>
+            <p>To the maximum extent permitted by law, ?? ???? and its developers shall not be liable for:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Any direct, indirect, incidental, or consequential damages</li>
               <li>Loss of time, money, or opportunities due to inaccurate information</li>
@@ -1026,7 +1026,7 @@ const App: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">6. User Responsibilities</h2>
-            <p>When using DhakaCommute, you agree to:</p>
+            <p>When using ?? ????, you agree to:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Use the service for lawful purposes only</li>
               <li>Not attempt to reverse engineer or modify the application</li>
@@ -1045,7 +1045,7 @@ const App: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">8. Intellectual Property</h2>
-            <p>The DhakaCommute application, including its design, code, and content, is the property of its developers. Bus route data is compiled from publicly available sources and transport authority information.</p>
+            <p>The ?? ???? application, including its design, code, and content, is the property of its developers. Bus route data is compiled from publicly available sources and transport authority information.</p>
           </section>
 
           <section>
@@ -1071,7 +1071,7 @@ const App: React.FC = () => {
 
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-8">
             <p className="text-sm font-bold text-blue-800">📱 Free & Open Service</p>
-            <p className="text-sm text-blue-700 mt-1">DhakaCommute is provided as a free public service to help Dhaka commuters navigate the city. Use it as a helpful guide, but always exercise your own judgment when traveling.</p>
+            <p className="text-sm text-blue-700 mt-1">?? ???? is provided as a free public service to help Dhaka commuters navigate the city. Use it as a helpful guide, but always exercise your own judgment when traveling.</p>
           </div>
         </div>
 
@@ -1759,7 +1759,7 @@ const App: React.FC = () => {
 
             <div className="pt-6 border-t border-gray-100">
               <p className="text-xs text-center text-gray-400">
-                DhakaCommute v1.0.0
+                ?? ???? v1.0.0
               </p>
             </div>
           </div>

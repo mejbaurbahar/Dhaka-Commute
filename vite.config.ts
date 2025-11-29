@@ -19,8 +19,8 @@ export default defineConfig(({ mode }) => {
         // Inline workbox runtime to avoid network dependency
         injectRegister: 'auto',
         manifest: {
-          name: 'DhakaCommute',
-          short_name: 'DhakaCommute',
+          name: 'কই যাবো',
+          short_name: 'কই যাবো',
           description: 'Find Dhaka bus routes instantly! Real-time tracking & Metro Rail guide.',
           theme_color: '#006a4e',
           background_color: '#ffffff',

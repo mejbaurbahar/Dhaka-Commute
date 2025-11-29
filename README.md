@@ -1,4 +1,4 @@
-# 🚌 DhakaCommute - Dhaka Bus Route Finder
+# 🚌 কই যাবো - Dhaka Bus Route Finder
 
 Find Dhaka bus routes instantly! 200+ buses, real-time tracking, metro rail guide (MRT Line 6), AI assistant, and fare calculator.
 
