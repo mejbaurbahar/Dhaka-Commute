@@ -1512,17 +1512,11 @@ const App: React.FC = () => {
             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
 
-            <div className="p-6 pb-2 flex justify-between items-start">
+            <div className="p-6 pb-2">
               <div>
                 <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
                 <p className="text-green-100 text-sm opacity-90">Find your bus route in seconds</p>
               </div>
-              <button
-                onClick={() => setIsMenuOpen(true)}
-                className="bg-gray-100 p-2.5 rounded-full text-gray-500 hover:text-dhaka-green hover:bg-green-50 transition-all md:hidden z-10"
-              >
-                <Menu className="w-6 h-6" />
-              </button>
             </div>
 
             {/* Mode Toggle Removed as per request */}
