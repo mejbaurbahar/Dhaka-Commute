@@ -385,6 +385,15 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
   {
+    id: 'baishakhi',
+    name: 'Baishakhi',
+    bnName: 'বৈশাখী',
+    routeString: 'Savar ⇄ Notun Bazar',
+    stops: ['savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda_link_road', 'bashtola', 'shahjadpur', 'uttar_badda', 'notun_bazar'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
     id: 'bondhu',
     name: 'Bondhu Paribahan',
     bnName: 'বন্ধু পরিবহন',
