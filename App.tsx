@@ -1778,59 +1778,7 @@ const App: React.FC = () => {
         )}
       </div>
 
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
-          <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-bold text-dhaka-dark">Menu</h2>
-              <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                <X className="w-6 h-6 text-gray-500" />
-              </button>
-            </div>
 
-            <div className="space-y-2 flex-1">
-              <button
-                onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Bot className="w-5 h-5 text-dhaka-green" /> AI Assistant
-              </button>
-              <button
-                onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Info className="w-5 h-5 text-green-500" /> About
-              </button>
-              <button
-                onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Settings className="w-5 h-5 text-blue-500" /> App Settings
-              </button>
-              <button
-                onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Shield className="w-5 h-5 text-purple-500" /> Privacy Policy
-              </button>
-              <button
-                onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <FileText className="w-5 h-5 text-orange-500" /> Terms of Service
-              </button>
-            </div>
-
-            <div className="pt-6 border-t border-gray-100">
-              <p className="text-xs text-center text-gray-400">
-                কই যাবো v1.0.0
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -1942,6 +1890,60 @@ const App: React.FC = () => {
       {/* Vercel Analytics */}
       <Analytics />
       <SpeedInsights />
+
+      {/* Menu Overlay - Works on all pages */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-[100]">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
+          <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-xl font-bold text-dhaka-dark">Menu</h2>
+              <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                <X className="w-6 h-6 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="space-y-2 flex-1">
+              <button
+                onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Bot className="w-5 h-5 text-dhaka-green" /> AI Assistant
+              </button>
+              <button
+                onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Info className="w-5 h-5 text-green-500" /> About
+              </button>
+              <button
+                onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Settings className="w-5 h-5 text-blue-500" /> App Settings
+              </button>
+              <button
+                onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Shield className="w-5 h-5 text-purple-500" /> Privacy Policy
+              </button>
+              <button
+                onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <FileText className="w-5 h-5 text-orange-500" /> Terms of Service
+              </button>
+            </div>
+
+            <div className="pt-6 border-t border-gray-100">
+              <p className="text-xs text-center text-gray-400">
+                কই যাবো v1.0.0
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
