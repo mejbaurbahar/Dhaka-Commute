@@ -1223,6 +1223,13 @@ const App: React.FC = () => {
             >
               <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
             </button>
+            <button
+              onClick={() => setView(AppView.LIVE_NAV)}
+              className="ml-2 bg-gradient-to-r from-dhaka-green to-[#005c44] text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center gap-2"
+            >
+              <Navigation className="w-4 h-4" />
+              Navigate
+            </button>
           </div>
         </div>
 
@@ -1489,17 +1496,6 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Mobile Sticky CTA */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md p-4 border-t border-gray-200 pb-safe z-30">
-          <button
-            onClick={() => setView(AppView.LIVE_NAV)}
-            className="w-full bg-gradient-to-r from-dhaka-green to-[#005c44] text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-          >
-            <Navigation className="w-5 h-5" />
-            Start Live Navigation
-          </button>
         </div>
       </div>
     );
