@@ -558,16 +558,21 @@ const App: React.FC = () => {
     }
 
     // Text search mode
-    const query = searchQuery.toLowerCase().trim();
+    const query = searchQuery.trim();
     if (!query) return true;
 
-    const nameMatch = bus.name.toLowerCase().includes(query);
-    const bnNameMatch = bus.bnName.toLowerCase().includes(query);
-    const routeMatch = bus.routeString.toLowerCase().includes(query);
+    // Case-insensitive search that works with both English and Bengali
+    const matchText = (text: string, searchTerm: string) => {
+      return text.toLowerCase().includes(searchTerm.toLowerCase());
+    };
+
+    const nameMatch = matchText(bus.name, query);
+    const bnNameMatch = matchText(bus.bnName, query);
+    const routeMatch = matchText(bus.routeString, query);
     const stopMatch = bus.stops.some(stopId => {
       const station = STATIONS[stopId];
       if (!station) return false;
-      return station.name.toLowerCase().includes(query) || (station.bnName && station.bnName.toLowerCase().includes(query));
+      return matchText(station.name, query) || (station.bnName && matchText(station.bnName, query));
     });
     return nameMatch || bnNameMatch || routeMatch || stopMatch;
   }).sort((a, b) => a.name.localeCompare(b.name)), [listFilter, favorites, searchMode, fromStation, toStation, searchQuery]);
@@ -817,8 +822,8 @@ const App: React.FC = () => {
                 <Bot className="w-16 h-16 text-gray-300 mb-4" />
                 <p className="text-sm font-medium text-gray-500">ঢাকার বাস সম্পর্কে কিছু জানতে চাইলে, আমাকে জিজ্ঞেস করুন</p>
                 <div className="flex flex-wrap gap-2 justify-center mt-4">
-                  <button onClick={() => setAiQuery("How to go from Mirpur 10 to Banani?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">মিরপুর ১০ থেকে বনানী?</button>
-                  <button onClick={() => setAiQuery("Best bus for Farmgate?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">ফার্মগেটের জন্য সেরা বাস কোনটি?</button>
+                  <button onClick={() => setAiQuery("মিরপুর ১০ থেকে বনানী যাওয়ার উপায় কি?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">মিরপুর ১০ থেকে বনানী?</button>
+                  <button onClick={() => setAiQuery("ফার্মগেটের জন্য সেরা বাস কোনটি?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">ফার্মগেটের জন্য সেরা বাস কোনটি?</button>
                 </div>
               </div>
             ) : (
