@@ -317,7 +317,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
               </label>
 
               <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors group">
-                <div className={`w-4 h-4 rounded flex items-center justify-center border ${showAirport ? 'bg-purple-500 border-purple-500' : 'border-gray-300 bg-white'}`}>
+                <div className={`w-4 h-4 rounded flex items-center justify-center border ${showAirport ? 'bg-orange-500 border-orange-500' : 'border-gray-300 bg-white'}`}>
                   {showAirport && <Plane className="w-2.5 h-2.5 text-white" />}
                 </div>
                 <input
@@ -617,7 +617,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     className="pointer-events-none"
                   >
                     <div className="text-center flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-0.5 rounded bg-purple-50 border border-purple-100 text-purple-700 text-[10px] font-bold shadow-sm">
+                      <span className="px-2 py-0.5 rounded bg-orange-50 border border-orange-200 text-orange-700 text-[10px] font-bold shadow-sm">
                         {metroStation.name}
                       </span>
                     </div>
@@ -724,14 +724,14 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     y1={busPos.y}
                     x2={airX}
                     y2={airY}
-                    stroke="#a855f7"
+                    stroke="#f97316"
                     strokeWidth="2"
                     strokeDasharray="5,5"
                     className="opacity-60"
                   />
 
                   {/* Airport Ripple */}
-                  <circle cx={airX} cy={airY} r="18" fill="#faf5ff" className="opacity-30">
+                  <circle cx={airX} cy={airY} r="18" fill="#ffedd5" className="opacity-30">
                     <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
                     <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
                   </circle>
@@ -741,7 +741,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     cx={airX}
                     cy={airY}
                     r="10"
-                    fill="#a855f7"
+                    fill="#f97316"
                     stroke="white"
                     strokeWidth="2.5"
                     className="cursor-pointer hover:r-12 transition-all"
@@ -755,7 +755,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   {/* Label */}
                   <foreignObject x={airX - 100} y={airY + 15} width="200" height="40" className="pointer-events-none">
                     <div className="text-center flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-0.5 rounded bg-purple-50 border border-purple-100 text-purple-700 text-[10px] font-bold shadow-sm">
+                      <span className="px-2 py-0.5 rounded bg-orange-50 border border-orange-200 text-orange-700 text-[10px] font-bold shadow-sm">
                         {airport.name}
                       </span>
                     </div>
