@@ -1848,8 +1848,8 @@ const App: React.FC = () => {
             </div>
             <h1 className="text-xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
           </button>
-          <button onClick={() => setView(AppView.ABOUT)} className="bg-gray-100 p-2.5 rounded-full text-gray-500 hover:text-dhaka-green hover:bg-green-50 transition-all">
-            <Info className="w-4 h-4" />
+          <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors">
+            <Menu className="w-6 h-6" />
           </button>
         </div>
       </header>
