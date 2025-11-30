@@ -617,7 +617,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     className="pointer-events-none"
                   >
                     <div className="text-center flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-0.5 rounded bg-orange-50 border border-orange-200 text-orange-700 text-[10px] font-bold shadow-sm">
+                      <span className="px-2 py-0.5 rounded bg-purple-50 border border-purple-200 text-purple-700 text-[10px] font-bold shadow-sm">
                         {metroStation.name}
                       </span>
                     </div>

@@ -713,7 +713,7 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
         {/* Mobile Header */}
-        <div className="md:hidden flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0 fixed top-[65px] left-0 right-0">
+        <div className="md:hidden flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0 fixed top-0 left-0 right-0">
           <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -1208,12 +1208,10 @@ const App: React.FC = () => {
     if (!selectedBus) return null;
 
     const generalFareInfo = calculateFare(selectedBus);
-
     return (
       <div className="flex flex-col h-full bg-slate-50 overflow-hidden w-full">
         {/* Mobile Header */}
-        {/* Mobile Header */}
-        <div className="md:hidden fixed top-[65px] w-full z-40">
+        <div className="md:hidden fixed top-0 w-full z-40">
           <div className="bg-white px-5 py-4 shadow-sm border-b border-gray-100 flex items-center justify-between">
             <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
               <ArrowLeft className="w-5 h-5 text-gray-600" />
@@ -1263,7 +1261,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-[130px] md:pt-4 pb-24 md:pb-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-[80px] md:pt-4 pb-24 md:pb-4">
           {/* Trip Plan (if selected from suggestions) */}
           {selectedTrip && (
             <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
@@ -1332,41 +1330,43 @@ const App: React.FC = () => {
           </div>
 
           {/* Additional Stats when fare is selected */}
-          {fareStart && fareEnd && (
-            <div className="grid grid-cols-3 gap-3 animate-in fade-in slide-in-from-top-4">
-              <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
-                  <Gauge className="w-4 h-4" />
+          {
+            fareStart && fareEnd && (
+              <div className="grid grid-cols-3 gap-3 animate-in fade-in slide-in-from-top-4">
+                <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
+                    <Gauge className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{userLocation ? 'Speed' : 'Stops'}</span>
+                  <span className="font-bold text-gray-800 text-sm mt-0.5">
+                    {userLocation ? (
+                      `${(speed || 0).toFixed(0)} km/h`
+                    ) : (
+                      Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
+                    )}
+                  </span>
                 </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{userLocation ? 'Speed' : 'Stops'}</span>
-                <span className="font-bold text-gray-800 text-sm mt-0.5">
-                  {userLocation ? (
-                    `${(speed || 0).toFixed(0)} km/h`
-                  ) : (
-                    Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
-                  )}
-                </span>
-              </div>
-              <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
-                  <Flag className="w-4 h-4" />
+                <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
+                    <Flag className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Distance</span>
+                  <span className="font-bold text-gray-800 text-sm mt-0.5">
+                    {fareInfo ? `${fareInfo.distance.toFixed(1)} km` : '-- km'}
+                  </span>
                 </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Distance</span>
-                <span className="font-bold text-gray-800 text-sm mt-0.5">
-                  {fareInfo ? `${fareInfo.distance.toFixed(1)} km` : '-- km'}
-                </span>
-              </div>
-              <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-2">
-                  <Clock className="w-4 h-4" />
+                <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-2">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ETA</span>
+                  <span className="font-bold text-gray-800 text-sm mt-0.5">
+                    {fareInfo ? formatETA((fareInfo.distance / 15) * 60) : '--'}
+                  </span>
                 </div>
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ETA</span>
-                <span className="font-bold text-gray-800 text-sm mt-0.5">
-                  {fareInfo ? formatETA((fareInfo.distance / 15) * 60) : '--'}
-                </span>
               </div>
-            </div>
-          )}
+            )
+          }
 
           {/* Map Visualizer */}
           <div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 overflow-hidden w-full">
@@ -1501,8 +1501,8 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
     );
   };
 
