@@ -1780,7 +1780,7 @@ const App: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
           <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
             <div className="flex justify-between items-center mb-8">
@@ -1791,6 +1791,12 @@ const App: React.FC = () => {
             </div>
 
             <div className="space-y-2 flex-1">
+              <button
+                onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Bot className="w-5 h-5 text-dhaka-green" /> AI Assistant
+              </button>
               <button
                 onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
@@ -1861,23 +1867,10 @@ const App: React.FC = () => {
         </button>
         <div className="flex items-center gap-4">
           <button
-            onClick={() => setView(AppView.AI_ASSISTANT)}
-            className="text-sm font-bold text-gray-600 hover:text-dhaka-green transition-colors"
+            onClick={() => setIsMenuOpen(true)}
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
           >
-            AI Assistant
-          </button>
-          <button
-            onClick={() => setView(AppView.SETTINGS)}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-            title="Settings"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => setView(AppView.ABOUT)}
-            className="bg-gray-100 px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-200 transition-all flex items-center gap-2"
-          >
-            About <Info className="w-3 h-3" />
+            <Menu className="w-6 h-6" />
           </button>
         </div>
       </header>
