@@ -815,10 +815,10 @@ const App: React.FC = () => {
             {chatHistory.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
                 <Bot className="w-16 h-16 text-gray-300 mb-4" />
-                <p className="text-sm font-medium text-gray-500">Ask me anything about Dhaka buses!</p>
+                <p className="text-sm font-medium text-gray-500">ঢাকার বাস সম্পর্কে কিছু জানতে চাইলে, আমাকে জিজ্ঞেস করুন</p>
                 <div className="flex flex-wrap gap-2 justify-center mt-4">
-                  <button onClick={() => setAiQuery("How to go from Mirpur 10 to Banani?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">Mirpur 10 to Banani?</button>
-                  <button onClick={() => setAiQuery("Best bus for Farmgate?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">Best bus for Farmgate?</button>
+                  <button onClick={() => setAiQuery("How to go from Mirpur 10 to Banani?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">মিরপুর ১০ থেকে বনানী?</button>
+                  <button onClick={() => setAiQuery("Best bus for Farmgate?")} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors">ফার্মগেটের জন্য সেরা বাস কোনটি?</button>
                 </div>
               </div>
             ) : (
@@ -1515,7 +1515,7 @@ const App: React.FC = () => {
             <div className="p-6 pb-2">
               <div>
                 <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
-                <p className="text-green-100 text-sm opacity-90">Find your bus route in seconds</p>
+                <p className="text-green-100 text-sm opacity-90">এক ক্লিকে, আপনার বাসের সঠিক রুট</p>
               </div>
             </div>
 
