@@ -1840,7 +1840,7 @@ const App: React.FC = () => {
             <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
               <Bus className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">কই<span className="text-dhaka-red">যাবো</span></h1>
+            <h1 className="text-xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
           </button>
           <button onClick={() => setView(AppView.ABOUT)} className="bg-gray-100 p-2.5 rounded-full text-gray-500 hover:text-dhaka-green hover:bg-green-50 transition-all">
             <Info className="w-4 h-4" />
@@ -1857,7 +1857,7 @@ const App: React.FC = () => {
           <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
             <Bus className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই<span className="text-dhaka-red">যাবো</span></h1>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
         </button>
         <div className="flex items-center gap-4">
           <button
