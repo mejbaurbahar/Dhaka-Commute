@@ -1251,7 +1251,7 @@ const App: React.FC = () => {
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Why Use <span className="text-dhaka-green">কই যাবো</span>?</h1>
+        <h1 className="text-2xl md:text-4xl font-bold mb-3 text-gray-900 leading-tight">Why Use <span className="text-dhaka-green whitespace-nowrap">কই যাবো</span>?</h1>
         <p className="text-gray-500 mb-8">Your smart companion for navigating Dhaka's bus network</p>
 
         <div className="space-y-6">
@@ -1400,7 +1400,7 @@ const App: React.FC = () => {
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Frequently Asked Questions</h1>
+        <h1 className="text-2xl md:text-4xl font-bold mb-3 text-gray-900 leading-tight">Frequently Asked Questions</h1>
         <p className="text-gray-500 mb-8">Everything you need to know about কই যাবো</p>
 
         <div className="space-y-4">
