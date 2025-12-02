@@ -713,7 +713,7 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
         {/* Mobile Header */}
-        <div className="md:hidden flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0 fixed top-0 left-0 right-0">
+        <div className="hidden md:hidden flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0 fixed top-0 left-0 right-0">
           <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -726,7 +726,7 @@ const App: React.FC = () => {
           </div>
         </div>
         {/* Desktop Header */}
-        <div className="hidden md:flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0">
+        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0">
           <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -738,7 +738,7 @@ const App: React.FC = () => {
             <p className="text-xs text-gray-500">{selectedBus.name}</p>
           </div>
         </div>
-        <div className="flex-1 relative min-h-0 pt-[65px] md:pt-0">
+        <div className="flex-1 relative min-h-0">
           <LiveTracker
             bus={selectedBus}
             highlightStartIdx={fareStartIndex}
@@ -1211,7 +1211,7 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full bg-slate-50 overflow-hidden w-full">
         {/* Mobile Header */}
-        <div className="md:hidden fixed top-0 w-full z-40">
+        <div className="hidden md:hidden fixed top-0 w-full z-40">
           <div className="bg-white px-5 py-4 shadow-sm border-b border-gray-100 flex items-center justify-between">
             <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
               <ArrowLeft className="w-5 h-5 text-gray-600" />
@@ -1237,7 +1237,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden md:flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0">
+        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0">
           <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -1261,7 +1261,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-[80px] md:pt-4 pb-24 md:pb-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 md:pb-4">
           {/* Trip Plan (if selected from suggestions) */}
           {selectedTrip && (
             <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
