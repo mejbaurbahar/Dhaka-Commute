@@ -1254,7 +1254,7 @@ const App: React.FC = () => {
         {/* Mobile Header */}
         <div className="hidden md:hidden fixed top-0 w-full z-40">
           <div className="bg-white px-5 py-4 shadow-sm border-b border-gray-100 flex items-center justify-between">
-            <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+            <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Go back to home">
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
             <div className="flex-1 ml-3">
@@ -1264,6 +1264,7 @@ const App: React.FC = () => {
             <button
               onClick={(e) => toggleFavorite(e, selectedBus.id)}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label={favorites.includes(selectedBus.id) ? "Remove from favorites" : "Add to favorites"}
             >
               <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
             </button>
@@ -1279,7 +1280,7 @@ const App: React.FC = () => {
 
         {/* Desktop Header */}
         <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-50 shrink-0 md:relative fixed top-0 left-0 right-0 md:top-0 pt-safe-top md:pt-4">
-          <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+          <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Go back to home">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div className="flex-1">
@@ -1296,6 +1297,7 @@ const App: React.FC = () => {
           <button
             onClick={(e) => toggleFavorite(e, selectedBus.id)}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label={favorites.includes(selectedBus.id) ? "Remove from favorites" : "Add to favorites"}
           >
             <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
           </button>
@@ -1339,14 +1341,14 @@ const App: React.FC = () => {
               <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
                 <Info className="w-4 h-4" />
               </div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Type</span>
+              <span className="text-[10px] text-gray-600 uppercase font-bold tracking-wider">Type</span>
               <span className="font-bold text-gray-800 text-sm mt-0.5">{selectedBus.type}</span>
             </div>
             <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
               <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-2">
                 <Bus className="w-4 h-4" />
               </div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Stops</span>
+              <span className="text-[10px] text-gray-600 uppercase font-bold tracking-wider">Stops</span>
               <span className="font-bold text-gray-800 text-sm mt-0.5">
                 {fareStart && fareEnd ? (
                   Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
@@ -1359,7 +1361,7 @@ const App: React.FC = () => {
               <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
                 <Coins className="w-4 h-4" />
               </div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{fareStart && fareEnd ? 'Fare' : 'Max Fare'}</span>
+              <span className="text-[10px] text-gray-600 uppercase font-bold tracking-wider">{fareStart && fareEnd ? 'Fare' : 'Max Fare'}</span>
               <span className="font-bold text-gray-800 text-sm mt-0.5">
                 {fareStart && fareEnd && fareInfo ? (
                   `৳${fareInfo.min}${fareInfo.max !== fareInfo.min ? ` - ${fareInfo.max}` : ''}`
@@ -1558,7 +1560,7 @@ const App: React.FC = () => {
             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
 
-            <div className="p-6 pb-2">
+            <div>
               <div>
                 <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
                 <p className="text-green-100 text-sm opacity-90">এক ক্লিকে, আপনার বাসের সঠিক রুট</p>
@@ -1589,6 +1591,7 @@ const App: React.FC = () => {
                       }}
                       className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
                       title="Clear Search"
+                      aria-label="Clear search"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -1597,6 +1600,7 @@ const App: React.FC = () => {
                       onClick={handleSearchCommit}
                       className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
                       title="Click to Search"
+                      aria-label="Search"
                     >
                       <Search className="w-4 h-4" />
                     </button>
@@ -1658,13 +1662,13 @@ const App: React.FC = () => {
           <div className="flex p-1 bg-gray-100 rounded-xl">
             <button
               onClick={() => handleFilterChange('ALL')}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-700 hover:text-gray-900'}`}
             >
               All Buses
             </button>
             <button
               onClick={() => handleFilterChange('FAVORITES')}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-700 hover:text-gray-900'}`}
             >
               <Heart className="w-3 h-3 fill-current" /> Favorites
             </button>
@@ -1762,7 +1766,7 @@ const App: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-base text-gray-900 leading-tight group-hover:text-dhaka-green transition-colors">{bus.name}</h4>
-                    <span className="text-xs font-bengali text-gray-400">{bus.bnName}</span>
+                    <span className="text-xs font-bengali text-gray-600">{bus.bnName}</span>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
@@ -1776,8 +1780,8 @@ const App: React.FC = () => {
                   <div className="flex flex-col items-end">
                     <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
                       ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
-                        bus.type === 'AC' ? 'bg-blue-50 text-blue-600' :
-                          'bg-orange-50 text-orange-600'
+                        bus.type === 'AC' ? 'bg-blue-50 text-blue-700' :
+                          'bg-orange-50 text-orange-700'
                       }`}>
                       {bus.type}
                     </span>
@@ -1792,7 +1796,7 @@ const App: React.FC = () => {
                   <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄').pop()}
                 </div>
               </div>
-              <div className="mt-3 flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-md w-fit">
+              <div className="mt-3 flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-md w-fit">
                 <Coins className="w-3 h-3" />
                 <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
               </div>
@@ -1826,13 +1830,14 @@ const App: React.FC = () => {
           <button
             onClick={() => setView(AppView.HOME)}
             className="flex items-center gap-2.5 outline-none cursor-pointer"
+            aria-label="Go to home"
           >
             <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
               <Bus className="w-5 h-5 text-white" />
             </div>
             <h1 className="text-xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
           </button>
-          <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors">
+          <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
             <Menu className="w-6 h-6" />
           </button>
         </div>
@@ -1843,6 +1848,7 @@ const App: React.FC = () => {
         <button
           onClick={() => setView(AppView.HOME)}
           className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
+          aria-label="Go to home"
         >
           <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
             <Bus className="w-6 h-6 text-white" />
@@ -1853,6 +1859,7 @@ const App: React.FC = () => {
           <button
             onClick={() => setIsMenuOpen(true)}
             className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
+            aria-label="Open menu"
           >
             <Menu className="w-6 h-6" />
           </button>
@@ -1904,21 +1911,21 @@ const App: React.FC = () => {
               className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
               <MapIcon className={`w-6 h-6 ${view === AppView.HOME ? 'fill-current' : ''}`} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">Routes</span>
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
             </button>
             <button
               onClick={() => setView(AppView.AI_ASSISTANT)}
               className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
               <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''}`} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">AI Help</span>
             </button>
             <button
               onClick={() => setView(AppView.ABOUT)}
               className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
               <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'fill-current' : ''}`} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">About</span>
             </button>
           </div>
         </nav>
@@ -1934,7 +1941,7 @@ const App: React.FC = () => {
           <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-xl font-bold text-dhaka-dark">Menu</h2>
-              <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
+              <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-full" aria-label="Close menu">
                 <X className="w-6 h-6 text-gray-500" />
               </button>
             </div>
