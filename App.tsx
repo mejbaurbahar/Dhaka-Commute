@@ -1246,7 +1246,7 @@ const App: React.FC = () => {
   );
 
   const renderWhyUse = () => (
-    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
       <button onClick={() => setView(AppView.HOME)} className="md:hidden mb-3 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-dhaka-dark transition-colors">
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
@@ -1410,7 +1410,7 @@ const App: React.FC = () => {
   );
 
   const renderFAQ = () => (
-    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
       <button onClick={() => setView(AppView.HOME)} className="md:hidden mb-3 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-dhaka-dark transition-colors">
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
