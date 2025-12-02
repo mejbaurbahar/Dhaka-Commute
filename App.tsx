@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { BusRoute, AppView, UserLocation } from './types';
@@ -1340,6 +1340,21 @@ const App: React.FC = () => {
                 <h3 className="text-xl font-bold text-gray-900 mb-2">❤️ Save Your Favorites</h3>
                 <p className="text-gray-700 leading-relaxed">
                   Take the same route every day? Save your favorite buses for quick access. Your daily commute just got a whole lot easier!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Offline Support */}
+          <div className="bg-gradient-to-br from-slate-50 to-gray-50 p-6 rounded-2xl border border-slate-200">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-slate-600 rounded-xl flex items-center justify-center text-white shrink-0">
+                <WifiOff className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">📡 Works Offline</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  No internet? No problem! The entire bus route database is stored on your device, so you can search for routes and check bus details even without a data connection.
                 </p>
               </div>
             </div>
