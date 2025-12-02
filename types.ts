@@ -52,6 +52,8 @@ export enum AppView {
   LIVE_NAV = 'LIVE_NAV',
   AI_ASSISTANT = 'AI_ASSISTANT',
   ABOUT = 'ABOUT',
+  WHY_USE = 'WHY_USE',
+  FAQ = 'FAQ',
   SETTINGS = 'SETTINGS',
   PRIVACY = 'PRIVACY',
   TERMS = 'TERMS',

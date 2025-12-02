@@ -1245,6 +1245,313 @@ const App: React.FC = () => {
     </div>
   );
 
+  const renderWhyUse = () => (
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
+      <button onClick={() => setView(AppView.HOME)} className="md:hidden mb-3 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-dhaka-dark transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Why Use <span className="text-dhaka-green">কই যাবো</span>?</h1>
+        <p className="text-gray-500 mb-8">Your smart companion for navigating Dhaka's bus network</p>
+
+        <div className="space-y-6">
+          {/* Benefit 1 */}
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-100">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white shrink-0">
+                <Zap className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">⚡ Lightning Fast Search</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Find your bus route in seconds! Search in English or Bengali - our smart search understands both languages and finds the perfect bus for your journey.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Benefit 2 */}
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-2xl border border-blue-100">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white shrink-0">
+                <MapIcon className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">🗺️ Complete Route Database</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Access 200+ bus routes covering all major areas of Dhaka. From Mirpur to Motijheel, Uttara to Sadarghat - we've got every route mapped out for you.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Benefit 3 */}
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center text-white shrink-0">
+                <Bot className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">🤖 AI-Powered Assistant</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Not sure which bus to take? Ask our AI assistant! Get personalized route suggestions, travel tips, and answers to all your commute questions in natural language.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Benefit 4 */}
+          <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl border border-orange-100">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-white shrink-0">
+                <Coins className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">💰 Accurate Fare Calculator</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Know exactly how much your trip will cost before you board! Our fare calculator uses official 2022 rates and calculates based on actual distance traveled.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Benefit 5 */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border border-green-100">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center text-white shrink-0">
+                <Navigation className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">🧭 Live Navigation</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Never miss your stop again! Our live navigation feature tracks your location and shows you exactly where you are on the route, with real-time updates.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Benefit 6 */}
+          <div className="bg-gradient-to-br from-red-50 to-rose-50 p-6 rounded-2xl border border-red-100">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white shrink-0">
+                <Heart className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">❤️ Save Your Favorites</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Take the same route every day? Save your favorite buses for quick access. Your daily commute just got a whole lot easier!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Metro Integration */}
+          <div className="bg-gradient-to-br from-indigo-50 to-violet-50 p-6 rounded-2xl border border-indigo-100">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center text-white shrink-0">
+                <Train className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">🚇 Metro Rail Integration</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Complete MRT Line 6 information included! Find the best combination of bus and metro for your journey across Dhaka.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="mt-12 bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-2xl p-8 text-white text-center">
+          <h2 className="text-2xl font-bold mb-3">Ready to Navigate Dhaka Like a Pro?</h2>
+          <p className="mb-6 opacity-90">Join thousands of commuters who trust কই যাবো for their daily travels</p>
+          <button
+            onClick={() => setView(AppView.HOME)}
+            className="bg-white text-emerald-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg"
+          >
+            Start Finding Routes
+          </button>
+        </div>
+
+        {/* Bottom padding for mobile */}
+        <div className="h-20"></div>
+      </div>
+    </div>
+  );
+
+  const renderFAQ = () => (
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
+      <button onClick={() => setView(AppView.HOME)} className="md:hidden mb-3 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-dhaka-dark transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Frequently Asked Questions</h1>
+        <p className="text-gray-500 mb-8">Everything you need to know about কই যাবো</p>
+
+        <div className="space-y-4">
+          {/* FAQ 1 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>What is কই যাবো?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> কই যাবো (Koi Jabo) means "Where to go?" in Bengali. It's a free web app that helps you find bus routes in Dhaka. Simply search for your destination or starting point, and we'll show you which buses to take, their routes, and estimated fares.
+            </p>
+          </div>
+
+          {/* FAQ 2 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>How do I search for a bus route?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> You can search in two ways: (1) Type the name of a bus, station, or area in the search box (works in both English and Bengali), or (2) Use the Route Finder to select your starting point and destination from the dropdown menus.
+            </p>
+          </div>
+
+          {/* FAQ 3 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>Is the app free to use?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> Yes! কই যাবো is completely free. No registration, no subscription, no hidden fees. We built this app to help Dhaka commuters navigate the city more easily.
+            </p>
+          </div>
+
+          {/* FAQ 4 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>Does it work offline?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> Yes! All bus routes and station data are stored locally on your device, so you can search for routes even without an internet connection. The AI Assistant and live navigation features require internet connectivity.
+            </p>
+          </div>
+
+          {/* FAQ 5 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>How accurate are the bus fares?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> Our fare calculator uses the official 2022 government-approved fare structure for Dhaka buses. Fares are calculated based on actual distance traveled. However, actual fares may vary slightly depending on the bus operator and current regulations.
+            </p>
+          </div>
+
+          {/* FAQ 6 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>What is the AI Assistant?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> The AI Assistant is powered by Google Gemini and can answer questions about bus routes, suggest the best routes for your journey, and provide travel tips. You can ask questions in natural language, just like talking to a friend!
+            </p>
+          </div>
+
+          {/* FAQ 7 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>How do I use Live Navigation?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> Select a bus route, then click "Start Navigation". The app will use your device's GPS to show your current location on the route and alert you as you approach each stop. Make sure to allow location access when prompted.
+            </p>
+          </div>
+
+          {/* FAQ 8 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>Can I search in Bengali?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> Absolutely! You can search for buses and stations in both English and Bengali. For example, search "ফার্মগেট" or "Farmgate" - both will work perfectly.
+            </p>
+          </div>
+
+          {/* FAQ 9 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>How many bus routes are included?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> We currently have 200+ bus routes covering all major areas of Dhaka, including popular services like Raida, Victor, Shyamoli, BRTC, and many more. We're constantly updating our database to include new routes.
+            </p>
+          </div>
+
+          {/* FAQ 10 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>Does it include Metro Rail information?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> Yes! We include complete information about Dhaka Metro Rail MRT Line 6, including all 16 stations from Uttara North to Motijheel. The app can suggest routes that combine both bus and metro for your journey.
+            </p>
+          </div>
+
+          {/* FAQ 11 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>Is my location data private?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> Yes! Your location data is only used locally on your device for navigation purposes and is never sent to our servers or shared with third parties. Check our Privacy Policy for more details.
+            </p>
+          </div>
+
+          {/* FAQ 12 */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-emerald-500">Q:</span>
+              <span>Who built this app?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> কই যাবো was developed by Mejbaur Bahar Fagun, a software engineer passionate about solving real-world problems for Dhaka commuters. Connect on <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">LinkedIn</a>.
+            </p>
+          </div>
+        </div>
+
+        {/* Still have questions? */}
+        <div className="mt-12 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8 text-center border border-blue-100">
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Still Have Questions?</h2>
+          <p className="text-gray-700 mb-6">Try asking our AI Assistant or reach out to us!</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => setView(AppView.AI_ASSISTANT)}
+              className="bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-600 transition-all shadow-lg flex items-center justify-center gap-2"
+            >
+              <Bot className="w-5 h-5" />
+              Ask AI Assistant
+            </button>
+            <a
+              href="https://linkedin.com/in/mejbaur/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg flex items-center justify-center gap-2"
+            >
+              <Linkedin className="w-5 h-5" />
+              Contact Developer
+            </a>
+          </div>
+        </div>
+
+        {/* Bottom padding for mobile */}
+        <div className="h-20"></div>
+      </div>
+    </div>
+  );
+
   const renderBusDetails = () => {
     if (!selectedBus) return null;
 
@@ -1898,6 +2205,8 @@ const App: React.FC = () => {
             />
           )}
           {view === AppView.ABOUT && renderAbout()}
+          {view === AppView.WHY_USE && renderWhyUse()}
+          {view === AppView.FAQ && renderFAQ()}
           {view === AppView.PRIVACY && renderPrivacyPolicy()}
           {view === AppView.TERMS && renderTerms()}
           {view === AppView.NOT_FOUND && renderNotFound()}
@@ -1961,6 +2270,18 @@ const App: React.FC = () => {
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Info className="w-5 h-5 text-green-500" /> About
+              </button>
+              <button
+                onClick={() => { setView(AppView.WHY_USE); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Zap className="w-5 h-5 text-emerald-500" /> Why Use কই যাবো
+              </button>
+              <button
+                onClick={() => { setView(AppView.FAQ); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <FileText className="w-5 h-5 text-cyan-500" /> Q&A
               </button>
               <button
                 onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
