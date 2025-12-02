@@ -1556,14 +1556,17 @@ const App: React.FC = () => {
       <div className="flex-none bg-white z-20">
         <div className="p-4 space-y-4">
           {/* Colorful Header with Tabs */}
-          <div className="bg-gradient-to-br from-dhaka-green to-[#004d38] rounded-[2rem] shadow-lg shadow-green-900/20 relative overflow-hidden text-white transition-all duration-300">
-            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
-            <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
+          <div className="bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-[2rem] shadow-xl shadow-emerald-500/30 relative overflow-hidden text-white transition-all duration-300">
+            {/* Decorative Elements */}
+            <div className="absolute top-0 right-0 -mr-12 -mt-12 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-white/5 blur-3xl"></div>
 
-            <div>
+            {/* Text Content */}
+            <div className="px-6 pt-6 pb-4 relative z-10">
               <div>
-                <h2 className="text-3xl font-bold mb-1 font-bengali">কোথায় যেতে চান?</h2>
-                <p className="text-green-100 text-sm opacity-90">এক ক্লিকে, আপনার বাসের সঠিক রুট</p>
+                <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg">কোথায় যেতে চান?</h2>
+                <p className="text-white/90 text-sm font-medium">এক ক্লিকে, আপনার বাসের সঠিক রুট</p>
               </div>
             </div>
 
