@@ -225,6 +225,15 @@ const saveGlobalStats = (stats: GlobalStats): void => {
 
 // Increment visit count
 export const incrementVisitCount = (): void => {
+    // Check if this is a new session (not just a page refresh)
+    const SESSION_KEY = 'dhaka_commute_session_counted';
+    const hasCountedThisSession = sessionStorage.getItem(SESSION_KEY);
+
+    // If we've already counted this session, don't increment again
+    if (hasCountedThisSession) {
+        return;
+    }
+
     const stats = getGlobalStats();
     const visitorId = getVisitorId();
 
@@ -233,6 +242,9 @@ export const incrementVisitCount = (): void => {
     stats.uniqueVisitors.add(visitorId);
 
     saveGlobalStats(stats);
+
+    // Mark this session as counted (will be cleared when browser tab/window is closed)
+    sessionStorage.setItem(SESSION_KEY, 'true');
 };
 
 // Get most used buses (sorted by usage count)

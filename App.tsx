@@ -954,23 +954,41 @@ const App: React.FC = () => {
         <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
           <Bus className="w-10 h-10" />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">কই<span className="text-dhaka-red ml-2"> যাবো</span></h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">🚍 Find Bus Routes Across Bangladesh</h1>
+        <h2 className="text-2xl font-bold mb-2">কই<span className="text-dhaka-red ml-2">যাবো</span> <span className="text-gray-600 text-lg">(KoyJabo)</span></h2>
         <p className="text-gray-500 mb-8">Version 1.0.0</p>
 
         <div className="text-left space-y-6 bg-slate-50 p-8 rounded-3xl border border-gray-100">
-          <p className="leading-relaxed text-gray-700">
-            কই যাবো is your ultimate companion for navigating the chaotic but vibrant streets of Dhaka.
-            Whether you need to find a local bus, check a route, or estimate travel time, we've got you covered.
+          <p className="leading-relaxed text-gray-700 text-lg">
+            Travel anywhere in Bangladesh with confidence. Whether you're moving between districts, cities, towns, or local areas,
+            <span className="font-bold text-dhaka-green"> কই যাবো (KoyJabo)</span> helps you discover the best and most accurate route instantly.
           </p>
 
           <div>
-            <h3 className="font-bold text-gray-900 mb-2">Features</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Offline-ready Route Database</li>
-              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Live Navigation Simulation</li>
-              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> AI-Powered Route Assistant</li>
-              <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-500" /> Official 2022 Fare Calculation</li>
+            <h3 className="font-bold text-gray-900 mb-3 text-lg">✨ What You Get:</h3>
+            <ul className="space-y-2 text-sm text-gray-700">
+              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Nationwide bus route coverage</strong> across Bangladesh</span></li>
+              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Inter-district, inter-city, local, and highway routes</strong></span></li>
+              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Fare, stops, timing, and distance</strong> — all in one place</span></li>
+              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Metro, train, and launch guides</strong> (where available)</span></li>
+              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Smart real-time route suggestions</strong></span></li>
+              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Built-in AI assistant</strong> — ask any route, get instant answers</span></li>
+              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Works offline</strong> — no internet needed for route search</span></li>
             </ul>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-gray-200">
+            <h3 className="font-bold text-gray-900 mb-3 text-lg">👥 Who Is It For?</h3>
+            <p className="text-gray-700 leading-relaxed">
+              Daily commuters, students, office goers, travelers, and anyone who wants a smooth, stress-free travel plan across Bangladesh.
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-200">
+            <h3 className="font-bold text-gray-900 mb-3 text-lg">🎯 Our Goal:</h3>
+            <p className="text-gray-700 leading-relaxed font-medium">
+              Make travel across Bangladesh simpler, smarter, and more accessible for everyone.
+            </p>
           </div>
 
           <div className="pt-6 border-t border-gray-200">
@@ -1028,7 +1046,7 @@ const App: React.FC = () => {
         <div className="space-y-6 text-gray-700 leading-relaxed">
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900">1. Introduction</h2>
-            <p>Welcome to কই যাবো. We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we handle your information when you use our bus route finder application.</p>
+            <p>Welcome to কই যাবো. We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we handle your information when you use our bus route finder application for traveling across Bangladesh.</p>
           </section>
 
           <section>
@@ -1125,9 +1143,9 @@ const App: React.FC = () => {
             <h2 className="text-xl font-bold mb-3 text-gray-900">2. Service Description</h2>
             <p>কই যাবো is a free, web-based application that provides:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
-              <li>Bus route information for Dhaka city</li>
-              <li>Metro rail station information</li>
-              <li>Fare estimation based on official 2022 rates</li>
+              <li>Bus route information across Bangladesh (inter-district, inter-city, local, and highway routes)</li>
+              <li>Metro rail, train, and launch station information (where available)</li>
+              <li>Fare estimation based on official rates</li>
               <li>Route visualization and mapping</li>
               <li>AI-powered route assistance (when you provide your own API key)</li>
             </ul>
@@ -1276,7 +1294,7 @@ const App: React.FC = () => {
       </button>
       <div className="max-w-3xl mx-auto">
         <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 leading-tight">Why Use <span className="text-dhaka-green">কই যাবো</span>?</h1>
-        <p className="text-gray-500 mb-8">Your smart companion for navigating Dhaka's bus network</p>
+        <p className="text-gray-500 mb-8">Your smart companion for navigating Bangladesh's bus network</p>
 
         <div className="space-y-6">
           {/* Benefit 1 */}
@@ -1450,7 +1468,7 @@ const App: React.FC = () => {
               <span>What is কই যাবো?</span>
             </h3>
             <p className="text-gray-700 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900">A:</span> কই যাবো (Koi Jabo) means "Where to go?" in Bengali. It's a free web app that helps you find bus routes in Dhaka. Simply search for your destination or starting point, and we'll show you which buses to take, their routes, and estimated fares.
+              <span className="font-semibold text-gray-900">A:</span> কই যাবো (Koi Jabo) means "Where to go?" in Bengali. It's a free web app that helps you find bus routes across Bangladesh. Simply search for your destination or starting point, and we'll show you which buses to take, their routes, and estimated fares - whether you're traveling within cities or between districts.
             </p>
           </div>
 
@@ -1867,10 +1885,18 @@ const App: React.FC = () => {
                   const station = STATIONS[stopId];
                   if (!station) return null;
 
-                  const isHighlighted = fareStart && fareEnd &&
-                    selectedBus.stops.indexOf(fareStart) <= idx &&
-                    selectedBus.stops.indexOf(fareEnd) >= idx &&
-                    selectedBus.stops.indexOf(fareStart) !== -1;
+                  // Check if this stop is highlighted (part of the selected route)
+                  // Handle both forward and reverse directions
+                  const fareStartIdx = fareStart ? selectedBus.stops.indexOf(fareStart) : -1;
+                  const fareEndIdx = fareEnd ? selectedBus.stops.indexOf(fareEnd) : -1;
+
+                  const isHighlighted = fareStartIdx !== -1 && fareEndIdx !== -1 &&
+                    ((fareStartIdx <= idx && idx <= fareEndIdx) ||
+                      (fareEndIdx <= idx && idx <= fareStartIdx));
+
+                  // Check if this is the user's selected start or end station
+                  const isUserStart = fareStart === stopId;
+                  const isUserEnd = fareEnd === stopId;
 
                   const isLast = idx === selectedBus.stops.length - 1;
                   const isFirst = idx === 0;
@@ -1889,26 +1915,30 @@ const App: React.FC = () => {
                       <div className={`w-4 h-4 rounded-full border-2 border-white shadow-sm flex items-center justify-center shrink-0 transition-all
                         ${isNearest && isWithinRange
                           ? 'bg-dhaka-red w-6 h-6 ring-2 ring-red-100 animate-pulse'
-                          : isHighlighted
+                          : isUserStart || isUserEnd
                             ? 'bg-dhaka-green w-5 h-5 ring-2 ring-green-100 scale-110'
-                            : isFirst
-                              ? 'bg-green-600 w-5 h-5 ring-2 ring-green-100'
-                              : isLast
-                                ? 'bg-red-500 w-5 h-5 ring-2 ring-red-100'
-                                : isNearest
-                                  ? 'bg-orange-400 w-5 h-5'
-                                  : 'bg-gray-300'
+                            : isHighlighted
+                              ? 'bg-dhaka-green w-5 h-5 ring-2 ring-green-100 scale-110'
+                              : isFirst
+                                ? 'bg-green-600 w-5 h-5 ring-2 ring-green-100'
+                                : isLast
+                                  ? 'bg-red-500 w-5 h-5 ring-2 ring-red-100'
+                                  : isNearest
+                                    ? 'bg-orange-400 w-5 h-5'
+                                    : 'bg-gray-300'
                         }
                       `}>
-                        {(isFirst || isLast) && !isNearest && !isHighlighted && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                        {(isFirst || isLast) && !isNearest && !isHighlighted && !isUserStart && !isUserEnd && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                         {isNearest && isWithinRange && <MapPin className="w-3 h-3 text-white" />}
-                        {isHighlighted && !isNearest && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                        {(isHighlighted || isUserStart || isUserEnd) && !isNearest && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                       </div>
                       <div className="flex-1">
-                        <p className={`text-sm group-hover:text-dhaka-green transition-colors ${isFirst || isLast || isNearest || isHighlighted ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''}`}>
+                        <p className={`text-sm group-hover:text-dhaka-green transition-colors ${isFirst || isLast || isNearest || isHighlighted || isUserStart || isUserEnd ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''}`}>
                           {station.name}
                           {isNearest && isWithinRange && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">You</span>}
                           {isNearest && !isWithinRange && <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{(nearestStopDistance / 1000).toFixed(1)}km away from {globalNearestStationName || 'location'}</span>}
+                          {isUserStart && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Start</span>}
+                          {isUserEnd && <span className="ml-2 text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Destination</span>}
                         </p>
                       </div>
                     </div>
