@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { BusRoute, AppView, UserLocation } from './types';
@@ -1251,7 +1251,7 @@ const App: React.FC = () => {
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl md:text-4xl font-bold mb-3 text-gray-900 leading-tight">Why Use <span className="text-dhaka-green whitespace-nowrap">কই যাবো</span>?</h1>
+        <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 leading-tight">Why Use <span className="text-dhaka-green">কই যাবো</span>?</h1>
         <p className="text-gray-500 mb-8">Your smart companion for navigating Dhaka's bus network</p>
 
         <div className="space-y-6">
@@ -1374,6 +1374,21 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Railway & Airport Locator */}
+          <div className="bg-gradient-to-br from-amber-50 to-yellow-50 p-6 rounded-2xl border border-amber-100">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-white shrink-0">
+                <Plane className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">✈️ Railway & Airport Finder</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Easily locate the nearest railway station and airport from your current location. Perfect for planning intercity travel and catching flights on time!
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* CTA Section */}
@@ -1400,7 +1415,7 @@ const App: React.FC = () => {
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl md:text-4xl font-bold mb-3 text-gray-900 leading-tight">Frequently Asked Questions</h1>
+        <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 leading-tight">Frequently Asked Questions</h1>
         <p className="text-gray-500 mb-8">Everything you need to know about কই যাবো</p>
 
         <div className="space-y-4">

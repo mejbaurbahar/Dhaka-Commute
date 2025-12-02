@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 Sitemap: https://dhaka-commute.sqatesting.com/sitemap.xml
 
-# Block common bad bots
+# Block AI/ML Training Bots
 User-agent: GPTBot
 Disallow: /
 
@@ -12,8 +12,57 @@ Disallow: /
 User-agent: anthropic-ai
 Disallow: /
 
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+# Block Social Media Bots
 User-agent: Omgilibot
 Disallow: /
 
 User-agent: FacebookBot
 Disallow: /
+
+User-agent: facebookexternalhit
+Disallow: /
+
+# Block Scrapers and Bad Bots
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: YandexBot
+Disallow: /
+
+# Block Generic Scrapers
+User-agent: *Scraper*
+Disallow: /
+
+User-agent: *Bot*
+Allow: /
+Disallow: /api/
+
+# Crawl Delay for allowed bots
+Crawl-delay: 10
