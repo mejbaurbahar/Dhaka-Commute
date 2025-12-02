@@ -31,6 +31,34 @@ const getStoredFavorites = (): string[] => {
   }
 };
 
+const getStoredBus = (): BusRoute | null => {
+  try {
+    const stored = localStorage.getItem('dhaka_commute_selected_bus');
+    if (!stored) return null;
+    const busId = JSON.parse(stored);
+    return BUS_DATA.find(bus => bus.id === busId) || null;
+  } catch (e) {
+    return null;
+  }
+};
+
+const getStoredView = (): AppView => {
+  try {
+    const stored = localStorage.getItem('dhaka_commute_view');
+    if (!stored) return AppView.HOME;
+    const view = JSON.parse(stored);
+
+    // Views that require a selected bus
+    if (view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) {
+      return getStoredBus() ? view : AppView.HOME;
+    }
+
+    return view;
+  } catch (e) {
+    return AppView.HOME;
+  }
+};
+
 // --- Helper: Fare Calculator ---
 const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: number, max: number, distance: number } => {
   const validStations = route.stops
@@ -262,8 +290,8 @@ const App: React.FC = () => {
     }, 1);
   });
 
-  const [view, setView] = useState<AppView>(AppView.HOME);
-  const [selectedBus, setSelectedBus] = useState<BusRoute | null>(null);
+  const [view, setView] = useState<AppView>(getStoredView);
+  const [selectedBus, setSelectedBus] = useState<BusRoute | null>(getStoredBus);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [searchMode, setSearchMode] = useState<'TEXT' | 'ROUTE'>('TEXT');
@@ -433,6 +461,19 @@ const App: React.FC = () => {
       })
       .catch(err => console.log("Initial location fetch failed:", err));
   }, []);
+
+  // Persist View and Selected Bus
+  useEffect(() => {
+    localStorage.setItem('dhaka_commute_view', JSON.stringify(view));
+  }, [view]);
+
+  useEffect(() => {
+    if (selectedBus) {
+      localStorage.setItem('dhaka_commute_selected_bus', JSON.stringify(selectedBus.id));
+    } else {
+      localStorage.removeItem('dhaka_commute_selected_bus');
+    }
+  }, [selectedBus]);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -726,7 +767,7 @@ const App: React.FC = () => {
           </div>
         </div>
         {/* Desktop Header */}
-        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0">
+        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-50 shrink-0 md:relative fixed top-0 left-0 right-0 md:top-0 pt-safe-top md:pt-4">
           <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -738,7 +779,7 @@ const App: React.FC = () => {
             <p className="text-xs text-gray-500">{selectedBus.name}</p>
           </div>
         </div>
-        <div className="flex-1 relative min-h-0">
+        <div className="flex-1 relative min-h-0 pt-[80px] md:pt-0">
           <LiveTracker
             bus={selectedBus}
             highlightStartIdx={fareStartIndex}
@@ -1237,7 +1278,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Desktop Header */}
-        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0">
+        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-50 shrink-0 md:relative fixed top-0 left-0 right-0 md:top-0 pt-safe-top md:pt-4">
           <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -1261,7 +1302,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 md:pb-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-[90px] md:pt-4 pb-24 md:pb-4">
           {/* Trip Plan (if selected from suggestions) */}
           {selectedTrip && (
             <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
@@ -1780,7 +1821,7 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-slate-50 font-sans text-gray-800 overflow-hidden">
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden">
+      <header className={`fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden transition-transform duration-300 ${(view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) ? '-translate-y-full' : 'translate-y-0'}`}>
         <div className="flex justify-between items-center">
           <button
             onClick={() => setView(AppView.HOME)}
