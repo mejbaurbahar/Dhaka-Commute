@@ -9,11 +9,13 @@ import { BUS_DATA, STATIONS, METRO_STATIONS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
 import LiveTracker from './components/LiveTracker';
 import DhakaAlive from './components/DhakaAlive';
+import HistoryView from './components/HistoryView';
 import { askGeminiRoute } from './services/geminiService';
 import { getCurrentLocation, findNearestStation, getDistance } from './services/locationService';
 import { findNearestMetroStation } from './services/metroService';
 import { planRoutes, SuggestedRoute } from './services/routePlanner';
 import RouteSuggestions from './components/RouteSuggestions';
+import { incrementVisitCount, trackBusSearch, trackRouteSearch } from './services/analyticsService';
 
 
 
@@ -387,6 +389,11 @@ const App: React.FC = () => {
     return { fareInfo: info, fareStartIndex: startIdx, fareEndIndex: endIdx, isReversed: reversed, actualStartStation: actualStart, actualEndStation: actualEnd };
   }, [selectedBus, fareStart, fareEnd]);
 
+  // Track visit on mount
+  useEffect(() => {
+    incrementVisitCount();
+  }, []);
+
   useEffect(() => {
     const path = window.location.pathname;
     if (path !== '/' && path !== '') {
@@ -417,6 +424,9 @@ const App: React.FC = () => {
         break;
       case AppView.SETTINGS:
         pageTitle = "App Settings";
+        break;
+      case AppView.HISTORY:
+        pageTitle = "History & Analytics";
         break;
       case AppView.PRIVACY:
         pageTitle = "Privacy Policy";
@@ -595,6 +605,15 @@ const App: React.FC = () => {
       if (!fromStation || !toStation) return true;
       const stopsAtFrom = bus.stops.includes(fromStation);
       const stopsAtTo = bus.stops.includes(toStation);
+
+      // Track route search if both stations are selected
+      if (fromStation && toStation && stopsAtFrom && stopsAtTo) {
+        // Use requestIdleCallback to avoid blocking
+        requestIdleCallback(() => {
+          trackRouteSearch(fromStation, toStation);
+        });
+      }
+
       return stopsAtFrom && stopsAtTo;
     }
 
@@ -642,7 +661,12 @@ const App: React.FC = () => {
     }
   };
 
-  const handleBusSelect = useCallback((bus: BusRoute) => {
+  const handleBusSelect = useCallback((bus: BusRoute, fromHistory: boolean = false) => {
+    // Track bus search only if not from history
+    if (!fromHistory) {
+      trackBusSearch(bus.id, bus.name);
+    }
+
     // Immediately update UI state (non-blocking)
     setSelectedBus(bus);
     setView(AppView.BUS_DETAILS);
@@ -1781,7 +1805,13 @@ const App: React.FC = () => {
                 <select
                   className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-dhaka-green/20"
                   value={fareStart}
-                  onChange={e => setFareStart(e.target.value)}
+                  onChange={e => {
+                    const newStart = e.target.value;
+                    setFareStart(newStart);
+                    if (newStart && fareEnd) {
+                      requestIdleCallback(() => trackRouteSearch(newStart, fareEnd));
+                    }
+                  }}
                 >
                   <option value="">Select...</option>
                   {selectedBus.stops.map(id => {
@@ -1795,7 +1825,13 @@ const App: React.FC = () => {
                 <select
                   className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-dhaka-green/20 disabled:opacity-50 disabled:cursor-not-allowed"
                   value={fareEnd}
-                  onChange={e => setFareEnd(e.target.value)}
+                  onChange={e => {
+                    const newEnd = e.target.value;
+                    setFareEnd(newEnd);
+                    if (fareStart && newEnd) {
+                      requestIdleCallback(() => trackRouteSearch(fareStart, newEnd));
+                    }
+                  }}
                   disabled={!fareStart}
                 >
                   <option value="">{fareStart ? 'Select...' : 'Select From first'}</option>
@@ -2072,6 +2108,11 @@ const App: React.FC = () => {
                   setTimeout(() => {
                     setFareStart(fromStopId);
                     setFareEnd(toStopId);
+
+                    // Track this as a route search
+                    requestIdleCallback(() => {
+                      trackRouteSearch(fromStopId, toStopId);
+                    });
                   }, 100);
                 }
                 // Override the null set by handleBusSelect
@@ -2237,6 +2278,12 @@ const App: React.FC = () => {
           {view === AppView.ABOUT && renderAbout()}
           {view === AppView.WHY_USE && renderWhyUse()}
           {view === AppView.FAQ && renderFAQ()}
+          {view === AppView.HISTORY && (
+            <HistoryView
+              onBack={() => setView(AppView.HOME)}
+              onBusSelect={handleBusSelect}
+            />
+          )}
           {view === AppView.PRIVACY && renderPrivacyPolicy()}
           {view === AppView.TERMS && renderTerms()}
           {view === AppView.NOT_FOUND && renderNotFound()}
@@ -2318,6 +2365,12 @@ const App: React.FC = () => {
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Settings className="w-5 h-5 text-blue-500" /> App Settings
+              </button>
+              <button
+                onClick={() => { setView(AppView.HISTORY); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+              >
+                <Clock className="w-5 h-5 text-amber-500" /> History
               </button>
               <button
                 onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
