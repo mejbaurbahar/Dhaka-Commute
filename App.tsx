@@ -416,12 +416,14 @@ const App: React.FC = () => {
       e.preventDefault();
       setDeferredPrompt(e);
 
-      // Show install prompt for mobile users after 3 seconds
+      // Show install prompt for mobile users only after 3 seconds
       setTimeout(() => {
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        if (!isStandalone && !isIOS) {
+        // Only show auto-prompt on mobile devices
+        if (!isStandalone && !isIOS && isMobile) {
           setShowInstallPrompt(true);
         }
       }, 3000);
