@@ -337,6 +337,7 @@ const App: React.FC = () => {
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
 
   const globalNearestStationName = useMemo(() => {
     if (!userLocation) return null;
@@ -435,11 +436,22 @@ const App: React.FC = () => {
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
 
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    setIsInstalling(true);
+    try {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
 
-    if (outcome === 'accepted') {
-      setDeferredPrompt(null);
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        // Keep installing state for a moment to show success
+        setTimeout(() => {
+          setIsInstalling(false);
+        }, 2000);
+      } else {
+        setIsInstalling(false);
+      }
+    } catch (error) {
+      setIsInstalling(false);
     }
     setShowInstallPrompt(false);
   };
@@ -2471,60 +2483,27 @@ const App: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Install Button - Show for all browsers */}
-                    {deferredPrompt ? (
+                    {/* Install Button */}
+                    {deferredPrompt && (
                       <div>
                         <button
                           onClick={handleInstallClick}
-                          className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-4"
+                          disabled={isInstalling}
+                          className={`w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-4 ${isInstalling ? 'opacity-75 cursor-not-allowed' : ''}`}
                         >
-                          <Download className="w-6 h-6" />
-                          Install Now
+                          {isInstalling ? (
+                            <>
+                              <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                              Installing...
+                            </>
+                          ) : (
+                            <>
+                              <Download className="w-6 h-6" />
+                              Install Now
+                            </>
+                          )}
                         </button>
                         <p className="text-xs text-gray-400 text-center">Free • No registration • Works on all devices</p>
-                      </div>
-                    ) : (
-                      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8">
-                        <Info className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold text-gray-900 mb-3">Manual Installation</h2>
-                        <p className="text-gray-700 mb-6">
-                          Your browser supports PWA installation. Follow these steps:
-                        </p>
-
-                        {/* Browser-specific Instructions */}
-                        <div className="space-y-4">
-                          <div className="bg-white rounded-xl p-6 text-left">
-                            <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                              <Info className="w-5 h-5 text-blue-500" /> For Chrome/Edge (Desktop)
-                            </h3>
-                            <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
-                              <li>Click the install icon (⊕) in the address bar</li>
-                              <li>Or click menu (⋮) → "Install কই যাবো"</li>
-                              <li>Click "Install" to confirm</li>
-                            </ol>
-                          </div>
-
-                          <div className="bg-white rounded-xl p-6 text-left">
-                            <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                              <Info className="w-5 h-5 text-blue-500" /> For iOS (Safari)
-                            </h3>
-                            <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
-                              <li>Tap the Share button (square with arrow)</li>
-                              <li>Scroll down and tap "Add to Home Screen"</li>
-                              <li>Tap "Add" to confirm</li>
-                            </ol>
-                          </div>
-
-                          <div className="bg-white rounded-xl p-6 text-left">
-                            <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                              <Info className="w-5 h-5 text-blue-500" /> For Android (Chrome)
-                            </h3>
-                            <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
-                              <li>Tap menu (⋮) → "Install app" or "Add to Home screen"</li>
-                              <li>Tap "Install" to confirm</li>
-                            </ol>
-                          </div>
-                        </div>
                       </div>
                     )}
                   </div>
