@@ -167,10 +167,7 @@ const SettingsView: React.FC<{
   };
 
   return (
-    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
-      <button onClick={onBack} className="mb-6 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark">
-        <ArrowLeft className="w-4 h-4" /> Back
-      </button>
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
 
       <h1 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
         <Settings className="w-6 h-6 text-gray-600" /> Settings
@@ -946,7 +943,7 @@ const App: React.FC = () => {
   );
 
   const renderAbout = () => (
-    <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
       <div className="max-w-2xl mx-auto text-center">
         <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
           <Bus className="w-10 h-10" />
@@ -1033,7 +1030,7 @@ const App: React.FC = () => {
 
   const renderPrivacyPolicy = () => (
     <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
-      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-4 md:pt-20">
+      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-20 md:pt-20">
 
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Privacy Policy</h1>
         <p className="text-sm text-gray-500 mb-8">Last updated: November 26, 2025</p>
@@ -1117,7 +1114,7 @@ const App: React.FC = () => {
 
   const renderTerms = () => (
     <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
-      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-4 md:pt-20">
+      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-20 md:pt-20">
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Terms of Service</h1>
         <p className="text-sm text-gray-500 mb-8">Last updated: November 26, 2025</p>
 
