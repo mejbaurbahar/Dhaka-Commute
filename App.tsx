@@ -443,6 +443,8 @@ const App: React.FC = () => {
 
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
+        // Save installation status to localStorage
+        localStorage.setItem('pwa_installed', 'true');
         // Keep installing state for a moment to show success
         setTimeout(() => {
           setIsInstalling(false);
@@ -2424,7 +2426,7 @@ const App: React.FC = () => {
                 <p className="text-gray-500 mb-8">Get the app on your device for a better experience</p>
 
                 {/* Check if already installed */}
-                {window.matchMedia('(display-mode: standalone)').matches ? (
+                {(window.matchMedia('(display-mode: standalone)').matches || localStorage.getItem('pwa_installed') === 'true') ? (
                   <div className="bg-green-50 border border-green-200 rounded-2xl p-8 mb-8">
                     <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
                     <h2 className="text-2xl font-bold text-gray-900 mb-3">App Already Installed!</h2>
