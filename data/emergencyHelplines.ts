@@ -584,5 +584,346 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         lat: 23.7600,
         lng: 90.3500,
         area: 'Pilkhana'
+    },
+
+    // === CHITTAGONG DIVISION ===
+
+    // Chittagong City
+    {
+        id: 'ctg_medical',
+        name: 'Chittagong Medical College Hospital',
+        bnName: 'চট্টগ্রাম মেডিকেল কলেজ হাসপাতাল',
+        type: 'hospital',
+        phone: '01819332288',
+        lat: 22.3569,
+        lng: 91.8325,
+        area: 'Chittagong'
+    },
+    {
+        id: 'ctg_police',
+        name: 'Chittagong Metropolitan Police',
+        bnName: 'চট্টগ্রাম মেট্রোপলিটন পুলিশ',
+        type: 'police',
+        phone: '01320024801',
+        lat: 22.3569,
+        lng: 91.7832,
+        area: 'Chittagong'
+    },
+    {
+        id: 'ctg_fire',
+        name: 'Chittagong Fire Station',
+        bnName: 'চট্টগ্রাম ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398901',
+        lat: 22.3384,
+        lng: 91.8317,
+        area: 'Chittagong'
+    },
+    {
+        id: 'ctg_general',
+        name: 'Chittagong General Hospital',
+        bnName: 'চট্টগ্রাম জেনারেল হাসপাতাল',
+        type: 'hospital',
+        phone: '01819332277',
+        lat: 22.3475,
+        lng: 91.8123,
+        area: 'Chittagong'
+    },
+
+    // === SYLHET DIVISION ===
+
+    {
+        id: 'sylhet_osmani',
+        name: 'Sylhet MAG Osmani Medical College',
+        bnName: 'সিলেট এমএজি ওসমানী মেডিকেল কলেজ',
+        type: 'hospital',
+        phone: '01819443388',
+        lat: 24.8949,
+        lng: 91.8687,
+        area: 'Sylhet'
+    },
+    {
+        id: 'sylhet_police',
+        name: 'Sylhet Metropolitan Police',
+        bnName: 'সিলেট মেট্রোপলিটন পুলিশ',
+        type: 'police',
+        phone: '01320034801',
+        lat: 24.8949,
+        lng: 91.8687,
+        area: 'Sylhet'
+    },
+    {
+        id: 'sylhet_fire',
+        name: 'Sylhet Fire Station',
+        bnName: 'সিলেট ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398902',
+        lat: 24.8897,
+        lng: 91.8697,
+        area: 'Sylhet'
+    },
+
+    // === RAJSHAHI DIVISION ===
+
+    {
+        id: 'rajshahi_medical',
+        name: 'Rajshahi Medical College Hospital',
+        bnName: 'রাজশাহী মেডিকেল কলেজ হাসপাতাল',
+        type: 'hospital',
+        phone: '01819554488',
+        lat: 24.3745,
+        lng: 88.6042,
+        area: 'Rajshahi'
+    },
+    {
+        id: 'rajshahi_police',
+        name: 'Rajshahi Metropolitan Police',
+        bnName: 'রাজশাহী মেট্রোপলিটন পুলিশ',
+        type: 'police',
+        phone: '01320044801',
+        lat: 24.3745,
+        lng: 88.6042,
+        area: 'Rajshahi'
+    },
+    {
+        id: 'rajshahi_fire',
+        name: 'Rajshahi Fire Station',
+        bnName: 'রাজশাহী ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398903',
+        lat: 24.3636,
+        lng: 88.6241,
+        area: 'Rajshahi'
+    },
+
+    // === KHULNA DIVISION ===
+
+    {
+        id: 'khulna_medical',
+        name: 'Khulna Medical College Hospital',
+        bnName: 'খুলনা মেডিকেল কলেজ হাসপাতাল',
+        type: 'hospital',
+        phone: '01819665588',
+        lat: 22.8456,
+        lng: 89.5403,
+        area: 'Khulna'
+    },
+    {
+        id: 'khulna_police',
+        name: 'Khulna Metropolitan Police',
+        bnName: 'খুলনা মেট্রোপলিটন পুলিশ',
+        type: 'police',
+        phone: '01320054801',
+        lat: 22.8456,
+        lng: 89.5403,
+        area: 'Khulna'
+    },
+    {
+        id: 'khulna_fire',
+        name: 'Khulna Fire Station',
+        bnName: 'খুলনা ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398904',
+        lat: 22.8092,
+        lng: 89.5680,
+        area: 'Khulna'
+    },
+
+    // === BARISAL DIVISION ===
+
+    {
+        id: 'barisal_medical',
+        name: 'Sher-e-Bangla Medical College',
+        bnName: 'শেরে বাংলা মেডিকেল কলেজ',
+        type: 'hospital',
+        phone: '01819776688',
+        lat: 22.7010,
+        lng: 90.3535,
+        area: 'Barisal'
+    },
+    {
+        id: 'barisal_police',
+        name: 'Barisal Metropolitan Police',
+        bnName: 'বরিশাল মেট্রোপলিটন পুলিশ',
+        type: 'police',
+        phone: '01320064801',
+        lat: 22.7010,
+        lng: 90.3535,
+        area: 'Barisal'
+    },
+    {
+        id: 'barisal_fire',
+        name: 'Barisal Fire Station',
+        bnName: 'বরিশাল ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398905',
+        lat: 22.7022,
+        lng: 90.3696,
+        area: 'Barisal'
+    },
+
+    // === RANGPUR DIVISION ===
+
+    {
+        id: 'rangpur_medical',
+        name: 'Rangpur Medical College Hospital',
+        bnName: 'রংপুর মেডিকেল কলেজ হাসপাতাল',
+        type: 'hospital',
+        phone: '01819887788',
+        lat: 25.7439,
+        lng: 89.2752,
+        area: 'Rangpur'
+    },
+    {
+        id: 'rangpur_police',
+        name: 'Rangpur Metropolitan Police',
+        bnName: 'রংপুর মেট্রোপলিটন পুলিশ',
+        type: 'police',
+        phone: '01320074801',
+        lat: 25.7439,
+        lng: 89.2752,
+        area: 'Rangpur'
+    },
+    {
+        id: 'rangpur_fire',
+        name: 'Rangpur Fire Station',
+        bnName: 'রংপুর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398906',
+        lat: 25.7558,
+        lng: 89.2444,
+        area: 'Rangpur'
+    },
+
+    // === MYMENSINGH DIVISION ===
+
+    {
+        id: 'mymensingh_medical',
+        name: 'Mymensingh Medical College Hospital',
+        bnName: 'ময়মনসিংহ মেডিকেল কলেজ হাসপাতাল',
+        type: 'hospital',
+        phone: '01819998888',
+        lat: 24.7471,
+        lng: 90.4203,
+        area: 'Mymensingh'
+    },
+    {
+        id: 'mymensingh_police',
+        name: 'Mymensingh Metropolitan Police',
+        bnName: 'ময়মনসিংহ মেট্রোপলিটন পুলিশ',
+        type: 'police',
+        phone: '01320084801',
+        lat: 24.7471,
+        lng: 90.4203,
+        area: 'Mymensingh'
+    },
+    {
+        id: 'mymensingh_fire',
+        name: 'Mymensingh Fire Station',
+        bnName: 'ময়মনসিংহ ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398907',
+        lat: 24.7636,
+        lng: 90.4203,
+        area: 'Mymensingh'
+    },
+
+    // === CUMILLA (COMILLA) ===
+
+    {
+        id: 'cumilla_medical',
+        name: 'Cumilla Medical College Hospital',
+        bnName: 'কুমিল্লা মেডিকেল কলেজ হাসপাতাল',
+        type: 'hospital',
+        phone: '01819111188',
+        lat: 23.4607,
+        lng: 91.1809,
+        area: 'Cumilla'
+    },
+    {
+        id: 'cumilla_police',
+        name: 'Cumilla Police Station',
+        bnName: 'কুমিল্লা থানা',
+        type: 'police',
+        phone: '01320094801',
+        lat: 23.4607,
+        lng: 91.1809,
+        area: 'Cumilla'
+    },
+    {
+        id: 'cumilla_fire',
+        name: 'Cumilla Fire Station',
+        bnName: 'কুমিল্লা ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398908',
+        lat: 23.4682,
+        lng: 91.1788,
+        area: 'Cumilla'
+    },
+
+    // === NARAYANGANJ ===
+
+    {
+        id: 'narayanganj_hospital',
+        name: 'Narayanganj General Hospital',
+        bnName: 'নারায়ণগঞ্জ জেনারেল হাসপাতাল',
+        type: 'hospital',
+        phone: '01819222288',
+        lat: 23.6238,
+        lng: 90.5000,
+        area: 'Narayanganj'
+    },
+    {
+        id: 'narayanganj_police',
+        name: 'Narayanganj Police Station',
+        bnName: 'নারায়ণগঞ্জ থানা',
+        type: 'police',
+        phone: '01320104801',
+        lat: 23.6238,
+        lng: 90.5000,
+        area: 'Narayanganj'
+    },
+    {
+        id: 'narayanganj_fire',
+        name: 'Narayanganj Fire Station',
+        bnName: 'নারায়ণগঞ্জ ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398909',
+        lat: 23.6150,
+        lng: 90.5050,
+        area: 'Narayanganj'
+    },
+
+    // === GAZIPUR ===
+
+    {
+        id: 'gazipur_hospital',
+        name: 'Shaheed Tajuddin Ahmad Medical College',
+        bnName: 'শহীদ তাজউদ্দীন আহমদ মেডিকেল কলেজ',
+        type: 'hospital',
+        phone: '01819333388',
+        lat: 23.9999,
+        lng: 90.4203,
+        area: 'Gazipur'
+    },
+    {
+        id: 'gazipur_police',
+        name: 'Gazipur Police Station',
+        bnName: 'গাজীপুর থানা',
+        type: 'police',
+        phone: '01320114801',
+        lat: 23.9999,
+        lng: 90.4203,
+        area: 'Gazipur'
+    },
+    {
+        id: 'gazipur_fire',
+        name: 'Gazipur Fire Station',
+        bnName: 'গাজীপুর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713398910',
+        lat: 24.0022,
+        lng: 90.4264,
+        area: 'Gazipur'
     }
 ];
