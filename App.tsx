@@ -1371,6 +1371,21 @@ const App: React.FC = () => {
             </div>
           </div>
 
+          {/* Emergency Helpline */}
+          <div className="bg-gradient-to-br from-red-50 to-orange-50 p-6 rounded-2xl border border-red-200">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center text-white shrink-0">
+                <Phone className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">🚨 Emergency Helpline Access</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Travel with peace of mind! Access emergency services (Police, Hospitals, Fire Stations) near your current location during navigation. One-tap calling to 80+ verified emergency contacts across Bangladesh including national helplines (999, 100, 102) and location-based services in all major cities.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Offline Support */}
           <div className="bg-gradient-to-br from-slate-50 to-gray-50 p-6 rounded-2xl border border-slate-200">
             <div className="flex items-start gap-4">
@@ -1508,7 +1523,18 @@ const App: React.FC = () => {
             </p>
           </div>
 
-          {/* FAQ 7 */}
+          {/* FAQ 7 - Emergency Helpline */}
+          <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-red-300 transition-colors">
+            <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
+              <span className="text-red-500">Q:</span>
+              <span>How do I access Emergency Helplines?</span>
+            </h3>
+            <p className="text-gray-700 ml-6 leading-relaxed">
+              <span className="font-semibold text-gray-900">A:</span> During live navigation, you'll see a red "Help Line" button beside your current location. Click it to access national emergency numbers (999, 100, 102, 199, 109) and nearest location-based services (Police Stations, Hospitals, Fire Stations). We cover 80+ emergency services across all major cities in Bangladesh with verified phone numbers for one-tap calling.
+            </p>
+          </div>
+
+          {/* FAQ 8 */}
           <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
