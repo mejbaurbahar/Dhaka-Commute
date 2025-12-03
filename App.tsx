@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, Facebook, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane, Phone } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, Facebook, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane, Phone, Download } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { BusRoute, AppView, UserLocation } from './types';
@@ -2485,6 +2485,17 @@ const App: React.FC = () => {
               >
                 <Clock className="w-5 h-5 text-amber-500" /> History
               </button>
+
+              {/* Install/Uninstall App */}
+              {deferredPrompt && !window.matchMedia('(display-mode: standalone)').matches && (
+                <button
+                  onClick={() => { handleInstallClick(); setIsMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50 text-emerald-700 font-medium transition-colors border border-emerald-200"
+                >
+                  <Download className="w-5 h-5 text-emerald-600" /> Install App
+                </button>
+              )}
+
               <button
                 onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
