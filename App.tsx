@@ -335,6 +335,8 @@ const App: React.FC = () => {
   const [suggestedRoutes, setSuggestedRoutes] = useState<SuggestedRoute[]>([]);
   const [selectedTrip, setSelectedTrip] = useState<SuggestedRoute | null>(null);
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
   const globalNearestStationName = useMemo(() => {
     if (!userLocation) return null;
@@ -387,6 +389,59 @@ const App: React.FC = () => {
 
     return { fareInfo: info, fareStartIndex: startIdx, fareEndIndex: endIdx, isReversed: reversed, actualStartStation: actualStart, actualEndStation: actualEnd };
   }, [selectedBus, fareStart, fareEnd]);
+
+  // Browser history integration - Handle phone back button
+  useEffect(() => {
+    const handlePopState = () => {
+      // When user presses back button, go to previous view
+      if (view !== AppView.HOME) {
+        setView(AppView.HOME);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [view]);
+
+  // Push state when view changes (for browser history)
+  useEffect(() => {
+    if (view !== AppView.HOME) {
+      window.history.pushState({ view }, '', `#${view}`);
+    }
+  }, [view]);
+
+  // PWA Install Prompt
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+
+      // Show install prompt for mobile users after 3 seconds
+      setTimeout(() => {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+        if (!isStandalone && !isIOS) {
+          setShowInstallPrompt(true);
+        }
+      }, 3000);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+    setShowInstallPrompt(false);
+  };
 
   // Track visit on mount
   useEffect(() => {
@@ -2449,6 +2504,70 @@ const App: React.FC = () => {
                 কই যাবো v1.0.0
               </p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* PWA Install Prompt */}
+      {showInstallPrompt && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-end md:items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white rounded-t-3xl md:rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
+                <Bus className="w-8 h-8 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-900 mb-1">Install কই যাবো</h3>
+                <p className="text-sm text-gray-600">
+                  Install our app for a better experience!
+                </p>
+              </div>
+              <button
+                onClick={() => setShowInstallPrompt(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center gap-3 text-sm text-gray-700">
+                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                <span>Works offline - No internet needed</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-gray-700">
+                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                <span>Faster loading & Better performance</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-gray-700">
+                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                <span>Add to home screen like a native app</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-gray-700">
+                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                <span>No app store required!</span>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowInstallPrompt(false)}
+                className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Maybe Later
+              </button>
+              <button
+                onClick={handleInstallClick}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl font-bold text-white shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 transition-all active:scale-95"
+              >
+                Install Now
+              </button>
+            </div>
+
+            <p className="text-xs text-center text-gray-400 mt-4">
+              Free • No registration • Works on all devices
+            </p>
           </div>
         </div>
       )}
