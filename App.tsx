@@ -2401,6 +2401,114 @@ const App: React.FC = () => {
           )}
           {view === AppView.PRIVACY && renderPrivacyPolicy()}
           {view === AppView.TERMS && renderTerms()}
+          {view === AppView.INSTALL_APP && (
+            <div className="flex flex-col h-full bg-white p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
+              <div className="max-w-2xl mx-auto text-center">
+                {/* App Icon */}
+                <div className="w-24 h-24 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200">
+                  <Bus className="w-12 h-12" />
+                </div>
+
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Install কই যাবো</h1>
+                <p className="text-gray-500 mb-8">Get the app on your device for a better experience</p>
+
+                {/* Check if already installed */}
+                {window.matchMedia('(display-mode: standalone)').matches ? (
+                  <div className="bg-green-50 border border-green-200 rounded-2xl p-8 mb-8">
+                    <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-gray-900 mb-3">App Already Installed!</h2>
+                    <p className="text-gray-700 mb-6">
+                      You're using the installed version of কই যাবো. Enjoy the full app experience!
+                    </p>
+
+                    {/* Uninstall Instructions */}
+                    <div className="bg-white rounded-xl p-6 text-left">
+                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <Info className="w-5 h-5 text-blue-500" /> How to Uninstall
+                      </h3>
+                      <div className="space-y-4 text-sm text-gray-700">
+                        <div>
+                          <p className="font-bold text-gray-900 mb-1">On Android (Chrome):</p>
+                          <ol className="list-decimal list-inside space-y-1 ml-2">
+                            <li>Go to Settings → Apps</li>
+                            <li>Find "কই যাবো"</li>
+                            <li>Tap "Uninstall"</li>
+                          </ol>
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900 mb-1">On iOS (Safari):</p>
+                          <ol className="list-decimal list-inside space-y-1 ml-2">
+                            <li>Long press the app icon on home screen</li>
+                            <li>Tap "Remove App"</li>
+                            <li>Confirm "Delete App"</li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : deferredPrompt ? (
+                  <div>
+                    {/* Benefits */}
+                    <div className="grid md:grid-cols-2 gap-4 mb-8 text-left">
+                      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-100">
+                        <CheckCircle2 className="w-8 h-8 text-emerald-600 mb-3" />
+                        <h3 className="font-bold text-gray-900 mb-2">Works Offline</h3>
+                        <p className="text-sm text-gray-700">Access bus routes without internet connection</p>
+                      </div>
+                      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-2xl border border-blue-100">
+                        <CheckCircle2 className="w-8 h-8 text-blue-600 mb-3" />
+                        <h3 className="font-bold text-gray-900 mb-2">Faster Loading</h3>
+                        <p className="text-sm text-gray-700">Instant access from your home screen</p>
+                      </div>
+                      <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
+                        <CheckCircle2 className="w-8 h-8 text-purple-600 mb-3" />
+                        <h3 className="font-bold text-gray-900 mb-2">Native Experience</h3>
+                        <p className="text-sm text-gray-700">Feels like a real app on your device</p>
+                      </div>
+                      <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl border border-orange-100">
+                        <CheckCircle2 className="w-8 h-8 text-orange-600 mb-3" />
+                        <h3 className="font-bold text-gray-900 mb-2">No App Store</h3>
+                        <p className="text-sm text-gray-700">Install directly without Play Store</p>
+                      </div>
+                    </div>
+
+                    {/* Install Button */}
+                    <button
+                      onClick={handleInstallClick}
+                      className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-4"
+                    >
+                      <Download className="w-6 h-6" />
+                      Install Now
+                    </button>
+                    <p className="text-xs text-gray-400">Free • No registration • Works on all devices</p>
+                  </div>
+                ) : (
+                  <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8">
+                    <Info className="w-16 h-16 text-blue-500 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-gray-900 mb-3">Installation Not Available</h2>
+                    <p className="text-gray-700 mb-6">
+                      Your browser doesn't support app installation, or you're using iOS Safari.
+                    </p>
+
+                    {/* iOS Instructions */}
+                    <div className="bg-white rounded-xl p-6 text-left">
+                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <Info className="w-5 h-5 text-blue-500" /> For iOS Users
+                      </h3>
+                      <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                        <li>Tap the Share button (square with arrow)</li>
+                        <li>Scroll down and tap "Add to Home Screen"</li>
+                        <li>Tap "Add" to confirm</li>
+                      </ol>
+                    </div>
+                  </div>
+                )}
+
+                {/* Bottom padding */}
+                <div className="h-20"></div>
+              </div>
+            </div>
+          )}
           {view === AppView.NOT_FOUND && renderNotFound()}
           {view === AppView.SERVER_ERROR && renderServerError()}
         </div>
@@ -2488,15 +2596,13 @@ const App: React.FC = () => {
                 <Clock className="w-5 h-5 text-amber-500" /> History
               </button>
 
-              {/* Install/Uninstall App */}
-              {deferredPrompt && !window.matchMedia('(display-mode: standalone)').matches && (
-                <button
-                  onClick={() => { handleInstallClick(); setIsMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50 text-emerald-700 font-medium transition-colors border border-emerald-200"
-                >
-                  <Download className="w-5 h-5 text-emerald-600" /> Install App
-                </button>
-              )}
+              {/* Install/Uninstall App - Always show */}
+              <button
+                onClick={() => { setView(AppView.INSTALL_APP); setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50 text-emerald-700 font-medium transition-colors border border-emerald-200"
+              >
+                <Download className="w-5 h-5 text-emerald-600" /> Install App
+              </button>
 
               <button
                 onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
