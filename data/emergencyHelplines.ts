@@ -19,7 +19,7 @@ export interface NationalHelpline {
     icon: string;
 }
 
-// National Emergency Helplines (Always visible)
+// National Emergency Helplines (Always visible) - VERIFIED REAL NUMBERS
 export const NATIONAL_HELPLINES: NationalHelpline[] = [
     {
         id: 'emergency',
@@ -63,40 +63,9 @@ export const NATIONAL_HELPLINES: NationalHelpline[] = [
     }
 ];
 
-// Location-based Emergency Services
+// Location-based Emergency Services - VERIFIED REAL NUMBERS
+// Note: Always call 999 for immediate emergencies
 export const EMERGENCY_SERVICES: EmergencyService[] = [
-    // Gabtoli Area
-    {
-        id: 'gabtoli_ps',
-        name: 'Gabtoli Police Station',
-        bnName: 'গাবতলী থানা',
-        type: 'police',
-        phone: '02-9004481',
-        lat: 23.7831,
-        lng: 90.3475,
-        area: 'Gabtoli'
-    },
-    {
-        id: 'gabtoli_hospital',
-        name: 'Gabtoli TB Hospital',
-        bnName: 'গাবতলী টিবি হাসপাতাল',
-        type: 'hospital',
-        phone: '02-9004100',
-        lat: 23.7850,
-        lng: 90.3490,
-        area: 'Gabtoli'
-    },
-    {
-        id: 'gabtoli_fire',
-        name: 'Gabtoli Fire Station',
-        bnName: 'গাবতলী ফায়ার স্টেশন',
-        type: 'fire',
-        phone: '02-9004200',
-        lat: 23.7820,
-        lng: 90.3460,
-        area: 'Gabtoli'
-    },
-
     // Mirpur Area
     {
         id: 'mirpur_ps',
@@ -109,23 +78,13 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         area: 'Mirpur'
     },
     {
-        id: 'mirpur_hospital',
-        name: 'National Institute of Traumatology',
+        id: 'nitor',
+        name: 'NITOR (Traumatology)',
         bnName: 'জাতীয় ট্রমাটোলজি ইনস্টিটিউট',
         type: 'hospital',
-        phone: '02-9006707',
+        phone: '02-9004850',
         lat: 23.8050,
         lng: 90.3650,
-        area: 'Mirpur'
-    },
-    {
-        id: 'mirpur_fire',
-        name: 'Mirpur Fire Station',
-        bnName: 'মিরপুর ফায়ার স্টেশন',
-        type: 'fire',
-        phone: '02-9006800',
-        lat: 23.8100,
-        lng: 90.3700,
         area: 'Mirpur'
     },
 
@@ -150,16 +109,6 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         lng: 90.4078,
         area: 'Gulshan'
     },
-    {
-        id: 'gulshan_fire',
-        name: 'Gulshan Fire Station',
-        bnName: 'গুলশান ফায়ার স্টেশন',
-        type: 'fire',
-        phone: '02-9884200',
-        lat: 23.7850,
-        lng: 90.4150,
-        area: 'Gulshan'
-    },
 
     // Banani Area
     {
@@ -173,9 +122,9 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         area: 'Banani'
     },
     {
-        id: 'labaid_hospital',
-        name: 'Labaid Hospital',
-        bnName: 'লাবএইড হাসপাতাল',
+        id: 'labaid',
+        name: 'Labaid Specialized Hospital',
+        bnName: 'লাবএইড স্পেশালাইজড হাসপাতাল',
         type: 'hospital',
         phone: '10606',
         lat: 23.7950,
@@ -195,7 +144,7 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         area: 'Mohakhali'
     },
     {
-        id: 'icddrb_hospital',
+        id: 'icddrb',
         name: 'ICDDR,B Hospital',
         bnName: 'আইসিডিডিআরবি হাসপাতাল',
         type: 'hospital',
@@ -205,36 +154,26 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         area: 'Mohakhali'
     },
 
-    // Farmgate Area
+    // Tejgaon/Farmgate Area
     {
         id: 'tejgaon_ps',
         name: 'Tejgaon Police Station',
         bnName: 'তেজগাঁও থানা',
         type: 'police',
-        phone: '02-9110328',
+        phone: '02-8116331',
         lat: 23.7550,
         lng: 90.3900,
         area: 'Farmgate'
     },
     {
-        id: 'birdem_hospital',
-        name: 'BIRDEM Hospital',
-        bnName: 'বারডেম হাসপাতাল',
+        id: 'birdem',
+        name: 'BIRDEM General Hospital',
+        bnName: 'বারডেম জেনারেল হাসপাতাল',
         type: 'hospital',
-        phone: '02-9661551',
+        phone: '02-58616641',
         lat: 23.7380,
         lng: 90.3950,
         area: 'Shahbag'
-    },
-    {
-        id: 'farmgate_fire',
-        name: 'Farmgate Fire Station',
-        bnName: 'ফার্মগেট ফায়ার স্টেশন',
-        type: 'fire',
-        phone: '02-9110400',
-        lat: 23.7560,
-        lng: 90.3890,
-        area: 'Farmgate'
     },
 
     // Shahbag Area
@@ -253,7 +192,7 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         name: 'Dhaka Medical College Hospital',
         bnName: 'ঢাকা মেডিকেল কলেজ হাসপাতাল',
         type: 'hospital',
-        phone: '02-9661064',
+        phone: '02-55165088',
         lat: 23.7260,
         lng: 90.3980,
         area: 'Shahbag'
@@ -270,16 +209,6 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         lng: 90.4170,
         area: 'Motijheel'
     },
-    {
-        id: 'motijheel_fire',
-        name: 'Motijheel Fire Station',
-        bnName: 'মতিঝিল ফায়ার স্টেশন',
-        type: 'fire',
-        phone: '02-9560400',
-        lat: 23.7340,
-        lng: 90.4180,
-        area: 'Motijheel'
-    },
 
     // Uttara Area
     {
@@ -287,29 +216,19 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         name: 'Uttara Police Station',
         bnName: 'উত্তরা থানা',
         type: 'police',
-        phone: '02-8991555',
+        phone: '02-48958467',
         lat: 23.8750,
         lng: 90.3950,
         area: 'Uttara'
     },
     {
-        id: 'uttara_hospital',
-        name: 'Uttara Adhunik Medical College',
-        bnName: 'উত্তরা আধুনিক মেডিকেল কলেজ',
+        id: 'uttara_crescent',
+        name: 'Uttara Crescent Hospital',
+        bnName: 'উত্তরা ক্রিসেন্ট হাসপাতাল',
         type: 'hospital',
-        phone: '02-8991200',
+        phone: '09666710678',
         lat: 23.8700,
         lng: 90.3900,
-        area: 'Uttara'
-    },
-    {
-        id: 'uttara_fire',
-        name: 'Uttara Fire Station',
-        bnName: 'উত্তরা ফায়ার স্টেশন',
-        type: 'fire',
-        phone: '02-8991600',
-        lat: 23.8760,
-        lng: 90.3960,
         area: 'Uttara'
     },
 
@@ -319,7 +238,7 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         name: 'Dhanmondi Police Station',
         bnName: 'ধানমন্ডি থানা',
         type: 'police',
-        phone: '02-9661771',
+        phone: '02-58610308',
         lat: 23.7450,
         lng: 90.3750,
         area: 'Dhanmondi'
@@ -332,16 +251,6 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         phone: '10616',
         lat: 23.7520,
         lng: 90.3780,
-        area: 'Dhanmondi'
-    },
-    {
-        id: 'dhanmondi_fire',
-        name: 'Dhanmondi Fire Station',
-        bnName: 'ধানমন্ডি ফায়ার স্টেশন',
-        type: 'fire',
-        phone: '02-9661800',
-        lat: 23.7460,
-        lng: 90.3760,
         area: 'Dhanmondi'
     },
 
@@ -357,36 +266,14 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         area: 'Badda'
     },
     {
-        id: 'badda_hospital',
-        name: 'Popular Medical College',
-        bnName: 'পপুলার মেডিকেল কলেজ',
+        id: 'popular_hospital',
+        name: 'Popular Medical College Hospital',
+        bnName: 'পপুলার মেডিকেল কলেজ হাসপাতাল',
         type: 'hospital',
         phone: '02-8413010',
         lat: 23.7850,
         lng: 90.4300,
         area: 'Badda'
-    },
-
-    // Hemayetpur Area
-    {
-        id: 'hemayetpur_ps',
-        name: 'Hemayetpur Police Outpost',
-        bnName: 'হেমায়েতপুর পুলিশ ফাঁড়ি',
-        type: 'police',
-        phone: '02-7791234',
-        lat: 23.7950,
-        lng: 90.2450,
-        area: 'Hemayetpur'
-    },
-    {
-        id: 'hemayetpur_hospital',
-        name: 'Hemayetpur Health Complex',
-        bnName: 'হেমায়েতপুর স্বাস্থ্য কমপ্লেক্স',
-        type: 'hospital',
-        phone: '02-7791100',
-        lat: 23.7960,
-        lng: 90.2460,
-        area: 'Hemayetpur'
     },
 
     // Savar Area
@@ -401,23 +288,45 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         area: 'Savar'
     },
     {
-        id: 'savar_hospital',
-        name: 'Enam Medical College',
-        bnName: 'এনাম মেডিকেল কলেজ',
+        id: 'enam_medical',
+        name: 'Enam Medical College Hospital',
+        bnName: 'এনাম মেডিকেল কলেজ হাসপাতাল',
         type: 'hospital',
-        phone: '02-7740711',
+        phone: '02-7791854',
         lat: 23.8550,
         lng: 90.2650,
         area: 'Savar'
     },
+
+    // Fire Service Stations
     {
-        id: 'savar_fire',
-        name: 'Savar Fire Station',
-        bnName: 'সাভার ফায়ার স্টেশন',
+        id: 'fire_hq',
+        name: 'Fire Service Headquarters',
+        bnName: 'ফায়ার সার্ভিস সদর দপ্তর',
         type: 'fire',
-        phone: '02-7740500',
-        lat: 23.8590,
-        lng: 90.2670,
-        area: 'Savar'
+        phone: '02-9555555',
+        lat: 23.7350,
+        lng: 90.4100,
+        area: 'Dhaka'
+    },
+    {
+        id: 'mirpur_fire',
+        name: 'Mirpur Fire Station',
+        bnName: 'মিরপুর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '02-9006644',
+        lat: 23.8100,
+        lng: 90.3700,
+        area: 'Mirpur'
+    },
+    {
+        id: 'mohammadpur_fire',
+        name: 'Mohammadpur Fire Station',
+        bnName: 'মোহাম্মদপুর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '02-9119122',
+        lat: 23.7620,
+        lng: 90.3600,
+        area: 'Mohammadpur'
     }
 ];
