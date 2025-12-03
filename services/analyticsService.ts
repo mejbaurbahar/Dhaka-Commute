@@ -245,6 +245,11 @@ export const incrementVisitCount = (): void => {
 
     // Mark this session as counted (will be cleared when browser tab/window is closed)
     sessionStorage.setItem(SESSION_KEY, 'true');
+
+    // Force a broadcast to ensure all listeners are notified
+    setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('globalStatsUpdated', { detail: stats }));
+    }, 100);
 };
 
 // Get most used buses (sorted by usage count)

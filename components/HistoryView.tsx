@@ -48,11 +48,11 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
             refreshHistoryData();
         });
 
-        // Refresh stats every 5 seconds to catch updates
+        // Refresh stats every 2 seconds for better real-time updates
         const interval = setInterval(() => {
             setGlobalStats(getGlobalStats());
             refreshHistoryData();
-        }, 5000);
+        }, 2000);
 
         return () => {
             unsubscribe();
@@ -140,13 +140,6 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
             {/* Header - Fixed on mobile with proper padding */}
             <div className="sticky top-0 bg-white border-b border-gray-200 z-10 pt-16 md:pt-0">
                 <div className="p-4 md:p-6">
-                    <button
-                        onClick={onBack}
-                        className="mb-4 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark transition-colors"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> Back
-                    </button>
-
                     <h1 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <Clock className="w-6 h-6 text-dhaka-green" />
                         History & Analytics

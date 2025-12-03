@@ -947,9 +947,6 @@ const App: React.FC = () => {
 
   const renderAbout = () => (
     <div className="flex flex-col h-full bg-white p-6 md:p-12 overflow-y-auto w-full">
-      <button onClick={() => setView(AppView.HOME)} className="md:hidden mb-3 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-dhaka-dark transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Back
-      </button>
       <div className="max-w-2xl mx-auto text-center">
         <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
           <Bus className="w-10 h-10" />
@@ -1037,13 +1034,6 @@ const App: React.FC = () => {
   const renderPrivacyPolicy = () => (
     <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
       <div className="max-w-3xl mx-auto p-6 md:p-12 pt-4 md:pt-20">
-        {/* Back Button - Now inside container */}
-        <button
-          onClick={() => setView(AppView.ABOUT)}
-          className="mb-6 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to About
-        </button>
 
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Privacy Policy</h1>
         <p className="text-sm text-gray-500 mb-8">Last updated: November 26, 2025</p>
@@ -1128,13 +1118,6 @@ const App: React.FC = () => {
   const renderTerms = () => (
     <div className="flex flex-col h-full bg-white overflow-y-auto w-full relative">
       <div className="max-w-3xl mx-auto p-6 md:p-12 pt-4 md:pt-20">
-        {/* Back Button - Now inside container */}
-        <button
-          onClick={() => setView(AppView.ABOUT)}
-          className="mb-6 flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-dhaka-dark transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to About
-        </button>
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">Terms of Service</h1>
         <p className="text-sm text-gray-500 mb-8">Last updated: November 26, 2025</p>
 
@@ -1294,9 +1277,6 @@ const App: React.FC = () => {
 
   const renderWhyUse = () => (
     <div className="flex flex-col h-full bg-white p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
-      <button onClick={() => setView(AppView.HOME)} className="md:hidden mb-3 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-dhaka-dark transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Back
-      </button>
       <div className="max-w-3xl mx-auto">
         <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 leading-tight">Why Use <span className="text-dhaka-green">কই যাবো</span>?</h1>
         <p className="text-gray-500 mb-8">Your smart companion for navigating Bangladesh's bus network</p>
@@ -1458,9 +1438,6 @@ const App: React.FC = () => {
 
   const renderFAQ = () => (
     <div className="flex flex-col h-full bg-white p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
-      <button onClick={() => setView(AppView.HOME)} className="md:hidden mb-3 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-dhaka-dark transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Back
-      </button>
       <div className="max-w-3xl mx-auto">
         <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 leading-tight">Frequently Asked Questions</h1>
         <p className="text-gray-500 mb-8">Everything you need to know about কই যাবো</p>
