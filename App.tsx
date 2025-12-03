@@ -416,14 +416,13 @@ const App: React.FC = () => {
       e.preventDefault();
       setDeferredPrompt(e);
 
-      // Show install prompt for mobile users only after 3 seconds
+      // Show install prompt after 3 seconds (all devices)
       setTimeout(() => {
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        // Only show auto-prompt on mobile devices
-        if (!isStandalone && !isIOS && isMobile) {
+        // Show prompt on all devices (desktop + mobile), but not if already installed or on iOS
+        if (!isStandalone && !isIOS) {
           setShowInstallPrompt(true);
         }
       }, 3000);
@@ -2627,8 +2626,8 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* PWA Install Prompt */}
-      {showInstallPrompt && (
+      {/* PWA Install Prompt - Don't show on INSTALL_APP page */}
+      {showInstallPrompt && view !== AppView.INSTALL_APP && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-end md:items-center justify-center p-4 animate-in fade-in">
           <div className="bg-white rounded-t-3xl md:rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0">
             <div className="flex items-start gap-4 mb-4">
