@@ -2443,9 +2443,9 @@ const App: React.FC = () => {
                         <div>
                           <p className="font-bold text-gray-900 mb-1">On Android (Chrome):</p>
                           <ol className="list-decimal list-inside space-y-1 ml-2">
-                            <li>Go to Settings → Apps</li>
-                            <li>Find "কই যাবো"</li>
-                            <li>Tap "Uninstall"</li>
+                            <li>Long press the app icon on home screen</li>
+                            <li>Tap "Uninstall" or "App info" → "Uninstall"</li>
+                            <li>Confirm "OK"</li>
                           </ol>
                         </div>
                         <div>
@@ -2568,37 +2568,37 @@ const App: React.FC = () => {
             <div className="space-y-2 flex-1">
               <button
                 onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.AI_ASSISTANT ? 'bg-green-50 border border-green-200' : ''}`}
               >
                 <Bot className="w-5 h-5 text-dhaka-green" /> AI Assistant
               </button>
               <button
                 onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.ABOUT ? 'bg-purple-50 border border-purple-200' : ''}`}
               >
-                <Info className="w-5 h-5 text-green-500" /> About
+                <Info className="w-5 h-5 text-purple-500" /> About
               </button>
               <button
                 onClick={() => { setView(AppView.WHY_USE); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.WHY_USE ? 'bg-pink-50 border border-pink-200' : ''}`}
               >
-                <Zap className="w-5 h-5 text-emerald-500" /> Why Use কই যাবো
+                <Sparkles className="w-5 h-5 text-pink-500" /> Why Use কই যাবো
               </button>
               <button
                 onClick={() => { setView(AppView.FAQ); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.FAQ ? 'bg-cyan-50 border border-cyan-200' : ''}`}
               >
                 <FileText className="w-5 h-5 text-cyan-500" /> Q&A
               </button>
               <button
                 onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.SETTINGS ? 'bg-blue-50 border border-blue-200' : ''}`}
               >
                 <Settings className="w-5 h-5 text-blue-500" /> App Settings
               </button>
               <button
                 onClick={() => { setView(AppView.HISTORY); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.HISTORY ? 'bg-amber-50 border border-amber-200' : ''}`}
               >
                 <Clock className="w-5 h-5 text-amber-500" /> History
               </button>
@@ -2606,7 +2606,7 @@ const App: React.FC = () => {
               {/* Install/Uninstall App - Always show */}
               <button
                 onClick={() => { setView(AppView.INSTALL_APP); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-emerald-50 text-emerald-700 font-medium transition-colors border border-emerald-200"
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.INSTALL_APP ? 'bg-emerald-50 border border-emerald-200' : ''}`}
               >
                 <Download className="w-5 h-5 text-emerald-600" /> Install App
               </button>
