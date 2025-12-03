@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, Facebook, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, Facebook, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane, Phone } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { BusRoute, AppView, UserLocation } from './types';
@@ -10,6 +10,7 @@ import MapVisualizer from './components/MapVisualizer';
 import LiveTracker from './components/LiveTracker';
 import DhakaAlive from './components/DhakaAlive';
 import HistoryView from './components/HistoryView';
+import EmergencyHelplineModal from './components/EmergencyHelplineModal';
 import { askGeminiRoute } from './services/geminiService';
 import { getCurrentLocation, findNearestStation, getDistance } from './services/locationService';
 import { findNearestMetroStation } from './services/metroService';
@@ -333,6 +334,7 @@ const App: React.FC = () => {
   const [nearestMetro, setNearestMetro] = useState<{ stationId: string; distance: number } | null>(null);
   const [suggestedRoutes, setSuggestedRoutes] = useState<SuggestedRoute[]>([]);
   const [selectedTrip, setSelectedTrip] = useState<SuggestedRoute | null>(null);
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
 
   const globalNearestStationName = useMemo(() => {
     if (!userLocation) return null;
@@ -1912,13 +1914,26 @@ const App: React.FC = () => {
                         {(isHighlighted || isUserStart || isUserEnd) && !isNearest && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                       </div>
                       <div className="flex-1">
-                        <p className={`text-sm group-hover:text-dhaka-green transition-colors ${isFirst || isLast || isNearest || isHighlighted || isUserStart || isUserEnd ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''}`}>
-                          {station.name}
-                          {isNearest && isWithinRange && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">You</span>}
-                          {isNearest && !isWithinRange && <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{(nearestStopDistance / 1000).toFixed(1)}km away from {globalNearestStationName || 'location'}</span>}
-                          {isUserStart && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Start</span>}
-                          {isUserEnd && <span className="ml-2 text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Destination</span>}
-                        </p>
+                        <div className="flex items-center justify-between gap-2">
+                          <p className={`text-sm group-hover:text-dhaka-green transition-colors ${isFirst || isLast || isNearest || isHighlighted || isUserStart || isUserEnd ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''}`}>
+                            {station.name}
+                            {isNearest && isWithinRange && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">You</span>}
+                            {isNearest && !isWithinRange && <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{(nearestStopDistance / 1000).toFixed(1)}km away from {globalNearestStationName || 'location'}</span>}
+                            {isUserStart && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Start</span>}
+                            {isUserEnd && <span className="ml-2 text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Destination</span>}
+                          </p>
+                          {/* Helpline Button - Show beside current location */}
+                          {isNearest && isWithinRange && userLocation && (
+                            <button
+                              onClick={() => setShowEmergencyModal(true)}
+                              className="shrink-0 bg-dhaka-red hover:bg-red-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-1"
+                              aria-label="Emergency Helplines"
+                            >
+                              <Phone className="w-3 h-3" />
+                              Help Line
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
@@ -1926,8 +1941,16 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-        </div >
-      </div >
+        </div>
+
+        {/* Emergency Helpline Modal */}
+        <EmergencyHelplineModal
+          isOpen={showEmergencyModal}
+          onClose={() => setShowEmergencyModal(false)}
+          userLocation={userLocation}
+          currentLocationName={globalNearestStationName || undefined}
+        />
+      </div>
     );
   };
 

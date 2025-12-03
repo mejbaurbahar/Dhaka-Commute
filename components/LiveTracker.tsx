@@ -3,7 +3,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { BusRoute, UserLocation, Station } from '../types';
 import { getCurrentLocation, findNearestStation, getDistance } from '../services/locationService';
 import { STATIONS } from '../constants';
-import { Navigation, Clock, MapPin, AlertCircle, RefreshCw, Compass, Gauge, Flag } from 'lucide-react';
+import { Navigation, Clock, MapPin, AlertCircle, RefreshCw, Compass, Gauge, Flag, Phone } from 'lucide-react';
+import EmergencyHelplineModal from './EmergencyHelplineModal';
 
 interface LiveTrackerProps {
   bus: BusRoute;
@@ -22,6 +23,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
   const [distanceToStation, setDistanceToStation] = useState<number>(Infinity);
   const [globalNearest, setGlobalNearest] = useState<{ station: Station, distance: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const watchIdRef = useRef<number | null>(null);
 
   const processLocation = (loc: UserLocation, speedVal: number | null) => {
@@ -288,9 +290,22 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
 
                 {/* Content */}
                 <div className={`${isCurrent ? '-mt-1.5' : '-mt-1'}`}>
-                  <p className={`font-medium ${isCurrent ? 'text-dhaka-dark text-xl font-bold' : isInRange ? 'text-green-800 font-bold' : 'text-gray-700'}`}>
-                    {station.name}
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className={`font-medium ${isCurrent ? 'text-dhaka-dark text-xl font-bold' : isInRange ? 'text-green-800 font-bold' : 'text-gray-700'}`}>
+                      {station.name}
+                    </p>
+                    {/* Helpline Button - Show beside current location */}
+                    {isCurrent && location && (
+                      <button
+                        onClick={() => setShowEmergencyModal(true)}
+                        className="shrink-0 bg-dhaka-red hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-1.5"
+                        aria-label="Emergency Helplines"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        Help Line
+                      </button>
+                    )}
+                  </div>
                   {isCurrent && isAtStation && (
                     <span className="inline-block mt-1 px-2 py-0.5 bg-dhaka-red text-white text-[10px] rounded font-bold uppercase tracking-wide shadow-sm">
                       Current Location
@@ -320,6 +335,14 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
           })}
         </div>
       </div>
+
+      {/* Emergency Helpline Modal */}
+      <EmergencyHelplineModal
+        isOpen={showEmergencyModal}
+        onClose={() => setShowEmergencyModal(false)}
+        userLocation={location}
+        currentLocationName={currentStation?.name}
+      />
     </div>
   );
 };
