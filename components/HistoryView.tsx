@@ -357,24 +357,28 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     Recent Intercity Trips
                                 </h2>
                                 <div className="space-y-2">
-                                    {recentIntercitySearches.map((record, index) => (
-                                        <div
-                                            key={index}
-                                            className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
-                                        >
-                                            <div className="flex items-center gap-2 flex-1 min-w-0">
-                                                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                    {record.transportType === 'AIR' ? <TrendingUp className="w-4 h-4 text-purple-600" /> : <Bus className="w-4 h-4 text-purple-600" />}
+                                    {recentIntercitySearches.map((record, index) => {
+                                        // Safely handle potentially incomplete records
+                                        if (!record || !record.from || !record.to) return null;
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                                            >
+                                                <div className="flex items-center gap-2 flex-1 min-w-0">
+                                                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                        {record.transportType === 'AIR' ? <TrendingUp className="w-4 h-4 text-purple-600" /> : <Bus className="w-4 h-4 text-purple-600" />}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-sm min-w-0">
+                                                        <span className="font-bold text-gray-900 truncate">{record.from}</span>
+                                                        <ArrowRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                                                        <span className="font-bold text-gray-900 truncate">{record.to}</span>
+                                                    </div>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-sm min-w-0">
-                                                    <span className="font-bold text-gray-900 truncate">{record.from}</span>
-                                                    <ArrowRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                                                    <span className="font-bold text-gray-900 truncate">{record.to}</span>
-                                                </div>
+                                                <span className="text-xs text-gray-500 ml-2">{formatDate(record.timestamp || Date.now())}</span>
                                             </div>
-                                            <span className="text-xs text-gray-500 ml-2">{formatDate(record.timestamp)}</span>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}
