@@ -363,7 +363,7 @@ const App: React.FC = () => {
     <div className="min-h-screen text-dhaka-dark pb-12">
       {/* Fixed Header */}
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-[3000] pt-safe-top md:hidden">
+      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-[5000] pt-safe-top md:hidden">
         <div className="flex justify-between items-center">
           <a
             href="/"
@@ -385,7 +385,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-4 shadow-sm z-[3000] items-center justify-between">
+      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-4 shadow-sm z-[5000] items-center justify-between">
         <a
           href="/"
           onClick={(e) => {
@@ -584,14 +584,24 @@ const App: React.FC = () => {
         <div className="max-w-4xl mx-auto px-3 mt-4">
 
           {/* 1. Landing State */}
-          {!loading && !data && !error && (
+          {/* 1. Offline State (No Data) */}
+          {isOffline && !data && !loading && (
+            <div className="flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in mt-8 bg-white/50 backdrop-blur-sm rounded-[2.5rem] border border-white/60 shadow-glass">
+              <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6 shadow-sm border border-red-100 animate-pulse">
+                <WifiOff className="w-10 h-10 text-dhaka-red" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-3">You Are Offline</h2>
+              <p className="text-gray-500 max-w-md mx-auto leading-relaxed mb-8">
+                Intercity search requires an internet connection to find the best routes.
+                Please check your connection or view your saved routes.
+              </p>
+            </div>
+          )}
+
+          {/* 2. Landing State (Online Only) */}
+          {!isOffline && !loading && !data && !error && (
             <div className="mt-8">
               <LoadingAnimation isLanding={true} />
-              {isOffline && (
-                <div className="text-center text-gray-500 mt-4 bg-white/60 backdrop-blur p-4 rounded-2xl border border-white shadow-sm text-sm mx-auto max-w-sm">
-                  Showing offline cached data.
-                </div>
-              )}
             </div>
           )}
 
@@ -604,7 +614,7 @@ const App: React.FC = () => {
               <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-1">
                 <Info className="w-8 h-8 text-red-500" />
               </div>
-              <h3 className="font-bold text-xl text-gray-800">No Routes Found</h3>
+              <h3 className="font-bold text-xl text-gray-800">{isOffline ? "Connection Error" : "No Routes Found"}</h3>
               <p className="text-gray-500 max-w-xs leading-relaxed">{error}</p>
             </div>
           )}
@@ -670,10 +680,10 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
           </a>
           <a
-            href={`${window.location.origin}/#ai-assistant`}
+            href={`${window.location.origin}/?view=ai`}
             onClick={(e) => {
               e.preventDefault();
-              window.top!.location.href = `${window.location.origin}/#ai-assistant`;
+              window.top!.location.href = `${window.location.origin}/?view=ai`;
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
@@ -685,10 +695,10 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
           </div>
           <a
-            href={`${window.location.origin}/#about`}
+            href={`${window.location.origin}/?view=about`}
             onClick={(e) => {
               e.preventDefault();
-              window.top!.location.href = `${window.location.origin}/#about`;
+              window.top!.location.href = `${window.location.origin}/?view=about`;
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
