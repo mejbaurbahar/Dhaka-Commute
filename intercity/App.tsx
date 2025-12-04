@@ -412,7 +412,7 @@ const App: React.FC = () => {
 
       {/* Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[4000]">
+        <div className="fixed inset-0 z-[6000]">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
           <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
             <div className="flex justify-between items-center mb-8">
