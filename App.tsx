@@ -327,6 +327,7 @@ const App: React.FC = () => {
   const [aiQuery, setAiQuery] = useState('');
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
+  const [intercityLoading, setIntercityLoading] = useState(false);
 
   const [nearestStopIndex, setNearestStopIndex] = useState<number>(-1);
   const [nearestStopDistance, setNearestStopDistance] = useState<number>(Infinity);
@@ -404,12 +405,64 @@ const App: React.FC = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [view]);
 
+  // Track if view was set from hash to prevent conflict
+  const viewSetFromHash = useRef(false);
+
+  // Reverse mapping: View to hash key
+  const viewToHash: Record<AppView, string> = {
+    [AppView.AI_ASSISTANT]: 'ai-assistant',
+    [AppView.ABOUT]: 'about',
+    [AppView.WHY_USE]: 'why-use',
+    [AppView.FAQ]: 'faq',
+    [AppView.SETTINGS]: 'settings',
+    [AppView.HISTORY]: 'history',
+    [AppView.INSTALL_APP]: 'install',
+    [AppView.PRIVACY]: 'privacy',
+    [AppView.TERMS]: 'terms',
+    [AppView.HOME]: '',
+    [AppView.BUS_DETAILS]: '',
+    [AppView.LIVE_NAV]: '',
+    [AppView.NOT_FOUND]: '',
+    [AppView.SERVER_ERROR]: ''
+  };
+
   // Push state when view changes (for browser history)
   useEffect(() => {
-    if (view !== AppView.HOME) {
-      window.history.pushState({ view }, '', `#${view}`);
+    // Don't push hash if view was just set from hash
+    if (viewSetFromHash.current) {
+      viewSetFromHash.current = false;
+      return;
+    }
+    if (view !== AppView.HOME && viewToHash[view]) {
+      window.history.pushState({ view }, '', `#${viewToHash[view]}`);
     }
   }, [view]);
+
+  // Check for hash on mount (e.g., #settings from intercity page)
+  useEffect(() => {
+    const hash = window.location.hash.slice(1); // Remove the #
+    const hashToView: Record<string, AppView> = {
+      'ai-assistant': AppView.AI_ASSISTANT,
+      'about': AppView.ABOUT,
+      'why-use': AppView.WHY_USE,
+      'faq': AppView.FAQ,
+      'settings': AppView.SETTINGS,
+      'history': AppView.HISTORY,
+      'install': AppView.INSTALL_APP,
+      'privacy': AppView.PRIVACY,
+      'terms': AppView.TERMS
+    };
+
+    if (hash && hashToView[hash]) {
+      console.log('Hash navigation:', hash, '→', hashToView[hash]);
+      viewSetFromHash.current = true; // Prevent push state
+      setView(hashToView[hash]);
+      // Clear the hash after a short delay
+      setTimeout(() => {
+        window.history.replaceState(null, '', window.location.pathname);
+      }, 100);
+    }
+  }, []);
 
   // PWA Install Prompt
   useEffect(() => {
@@ -2162,6 +2215,32 @@ const App: React.FC = () => {
             </div>
           </button>
 
+          {/* Intercity Bus Button */}
+          <a
+            href={window.location.hostname === 'localhost' ? 'http://localhost:3002' : '/intercity'}
+            onClick={(e) => {
+              e.preventDefault();
+              setIntercityLoading(true);
+              setTimeout(() => {
+                window.location.href = window.location.hostname === 'localhost' ? 'http://localhost:3002' : '/intercity';
+              }, 500);
+            }}
+            className="flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                <Train className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-white text-sm">Intercity Bus Search</h3>
+                <p className="text-xs text-white/90">Find buses between cities</p>
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
+              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+            </div>
+          </a>
+
           {/* List Filter Tabs */}
           <div className="flex p-1 bg-gray-100 rounded-xl">
             <button
@@ -2258,11 +2337,19 @@ const App: React.FC = () => {
           const estimatedFare = calculateFare(bus);
 
           return (
-            <button
+            <div
               key={bus.id}
               onClick={() => handleBusSelect(bus)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleBusSelect(bus);
+                }
+              }}
               aria-label={`Select ${bus.name} bus route from ${bus.routeString}`}
-              className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
+              className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden cursor-pointer ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
             >
               {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
               <div className="flex justify-between items-start mb-3">
@@ -2309,7 +2396,7 @@ const App: React.FC = () => {
                 <Coins className="w-3 h-3" />
                 <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
               </div>
-            </button>
+            </div>
           );
         })}
         {filteredBuses.length === 0 && (
@@ -2521,10 +2608,10 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Mobile Bottom Navigation - Show on all pages except BUS_DETAILS and LIVE_NAV */}
+      {/* Mobile Bottom Navigation - Always show except on BUS_DETAILS and LIVE_NAV */}
       {view !== AppView.BUS_DETAILS && view !== AppView.LIVE_NAV && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
-          <div className="grid grid-cols-3 h-16">
+          <div className="grid grid-cols-4 h-16">
             <button
               onClick={() => setView(AppView.HOME)}
               className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
@@ -2539,6 +2626,20 @@ const App: React.FC = () => {
               <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''}`} />
               <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">AI Help</span>
             </button>
+            <a
+              href={window.location.hostname === 'localhost' ? 'http://localhost:3002' : '/intercity'}
+              onClick={(e) => {
+                e.preventDefault();
+                setIntercityLoading(true);
+                setTimeout(() => {
+                  window.location.href = window.location.hostname === 'localhost' ? 'http://localhost:3002' : '/intercity';
+                }, 500);
+              }}
+              className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
+            >
+              <Train className="w-6 h-6" />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
+            </a>
             <button
               onClick={() => setView(AppView.ABOUT)}
               className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
@@ -2630,6 +2731,22 @@ const App: React.FC = () => {
                 কই যাবো v1.0.0
               </p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Intercity Loading Overlay - Using Main App Loader */}
+      {intercityLoading && (
+        <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #006a4e 0%, #00a86b 100%)' }}>
+          <div className="text-center p-5">
+            {/* Bus Icon Animation */}
+            <div className="text-6xl mb-5 animate-bounce">
+              🚌
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2.5 font-bengali">কই যাবো</h1>
+            <p className="text-lg text-white/90 mb-7">Loading your bus routes...</p>
+            {/* Loading Spinner */}
+            <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
           </div>
         </div>
       )}

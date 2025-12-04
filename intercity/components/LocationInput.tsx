@@ -1,0 +1,131 @@
+
+import React, { useState, useRef, useEffect } from 'react';
+import { MapPin } from 'lucide-react';
+
+interface LocationInputProps {
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  placeholder: string;
+  iconColorClass: string;
+  ringColorClass: string;
+  disabled?: boolean;
+}
+
+export const POPULAR_LOCATIONS = [
+  // --- Major Transport Hubs (Dhaka) ---
+  "Abdullahpur, Dhaka", "Airport, Dhaka", "Gabtoli, Dhaka", "Gulistan, Dhaka", 
+  "Jatrabari, Dhaka", "Komlapur, Dhaka", "Mohakhali, Dhaka", "Sayedabad, Dhaka",
+  
+  // --- Popular Tourist Destinations ---
+  "Bandarban", "Cox's Bazar", "Jaflong, Sylhet", "Khagrachari", "Kuakata", 
+  "Rangamati", "Saint Martin", "Sajek Valley", "Sreemangal", "Sundarbans",
+  
+  // --- Land Ports / Borders ---
+  "Akhaura", "Banglabandha", "Benapole", "Bhomra", "Burimari", "Darshana", "Hili", "Tamabil",
+  
+  // --- All 64 Districts & Major Cities ---
+  "Bagerhat", "Barishal", "Barguna", "Bhairab", "Bhola", "Bogura", "Brahmanbaria", 
+  "Chandpur", "Chapainawabganj", "Chattogram", "Chuadanga", "Cumilla", 
+  "Dhaka", "Dinajpur", "Faridpur", "Feni", "Gaibandha", "Gazipur", "Gopalganj", 
+  "Habiganj", "Ishwardi", "Jamalpur", "Jashore", "Jhalokathi", "Jhenaidah", "Joypurhat", 
+  "Khulna", "Kishoreganj", "Kurigram", "Kushtia", "Lakshmipur", "Lalmonirhat", 
+  "Madaripur", "Magura", "Manikganj", "Meherpur", "Mongla", "Moulvibazar", 
+  "Munshiganj", "Mymensingh", "Naogaon", "Narail", "Narayanganj", "Narsingdi", 
+  "Natore", "Netrokona", "Nilphamari", "Noakhali", "Pabna", "Panchagarh", 
+  "Patuakhali", "Pirojpur", "Rajbari", "Rajshahi", "Rangpur", "Satkhira", 
+  "Savar", "Shariatpur", "Sherpur", "Sirajganj", "Sunamganj", "Sylhet", 
+  "Tangail", "Teknaf", "Thakurgaon", "Tongi"
+].sort();
+
+export const LocationInput: React.FC<LocationInputProps> = ({
+  label, value, onChange, placeholder, iconColorClass, ringColorClass, disabled = false
+}) => {
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Close suggestions on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+        setIsFocused(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [wrapperRef]);
+
+  const filteredLocations = POPULAR_LOCATIONS.filter(loc =>
+    loc.toLowerCase().includes(value.toLowerCase())
+  );
+
+  return (
+    // Dynamic z-index: Increase to z-50 when suggestions are showing to overlay siblings
+    <div className={`flex-1 relative group ${showSuggestions ? 'z-50' : 'z-20'}`} ref={wrapperRef}>
+      <div className="flex justify-between items-center mb-1.5 ml-1">
+          <label className={`block text-[10px] font-bold uppercase tracking-wider transition-colors duration-200 ${isFocused ? 'text-gray-700' : 'text-gray-400'}`}>{label}</label>
+      </div>
+
+      <div className="relative">
+        <div className={`absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all duration-300 ${isFocused ? 'bg-white shadow-sm scale-110' : 'bg-transparent'}`}>
+           <MapPin className={`${iconColorClass} w-5 h-5`} />
+        </div>
+        <input
+          type="text"
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => {
+            if (!disabled) {
+              onChange(e.target.value);
+              setShowSuggestions(true);
+            }
+          }}
+          onFocus={() => {
+            if (!disabled) {
+              setShowSuggestions(true);
+              setIsFocused(true);
+            }
+          }}
+          disabled={disabled}
+          className={`
+            w-full pl-14 pr-4 py-3 md:py-4
+            bg-gray-50/50 backdrop-blur-sm
+            border border-gray-100 rounded-2xl
+            text-base font-bold text-dhaka-dark placeholder:text-gray-400 placeholder:font-normal
+            shadow-inner transition-all duration-300
+            focus:outline-none focus:ring-4 focus:bg-white focus:shadow-lg focus:border-transparent ${ringColorClass}
+            ${disabled ? 'opacity-60 cursor-not-allowed bg-gray-100' : ''}
+          `}
+        />
+        
+        {/* Glassmorphism Suggestions Dropdown */}
+        {showSuggestions && !disabled && (value.length > 0 || filteredLocations.length > 0) && (
+          <div className="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 max-h-64 overflow-y-auto custom-scrollbar animate-fade-in-up p-2">
+            {filteredLocations.length > 0 ? (
+              filteredLocations.map((loc, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => {
+                    onChange(loc);
+                    setShowSuggestions(false);
+                    setIsFocused(false);
+                  }}
+                  className="px-4 py-3 hover:bg-emerald-50/80 cursor-pointer rounded-xl text-sm font-semibold text-gray-700 flex items-center gap-3 transition-colors duration-200"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 text-gray-400">
+                     <MapPin size={14} />
+                  </div>
+                  <span>{loc}</span>
+                </div>
+              ))
+            ) : (
+               <div className="px-4 py-6 text-sm text-gray-400 italic text-center">No locations found...</div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
