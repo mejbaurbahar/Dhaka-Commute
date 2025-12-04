@@ -35,14 +35,21 @@
             ]
         }
     ],
-    "rewrites": [
+    "routes": [
         {
-            "source": "/intercity",
-            "destination": "/intercity/index.html"
+            "src": "/intercity",
+            "dest": "/intercity/index.html"
         },
         {
-            "source": "/intercity/(.*)",
-            "destination": "/intercity/$1"
+            "src": "/intercity/(.*)",
+            "dest": "/intercity/$1"
+        },
+        {
+            "handle": "filesystem"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/index.html"
         }
     ],
     "git": {
