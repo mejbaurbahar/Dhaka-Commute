@@ -9,6 +9,7 @@ import {
     getTodayRouteSearches,
     getRecentBusSearches,
     getRecentRouteSearches,
+    getRecentIntercitySearches,
     clearUserHistory,
     subscribeToGlobalStats,
     initStorageListener,
@@ -34,6 +35,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
     const [todayRoutes, setTodayRoutes] = useState(getTodayRouteSearches());
     const [recentBusSearches, setRecentBusSearches] = useState(getRecentBusSearches(10));
     const [recentRouteSearches, setRecentRouteSearches] = useState(getRecentRouteSearches(10));
+    const [recentIntercitySearches, setRecentIntercitySearches] = useState(getRecentIntercitySearches(10));
 
     // Subscribe to real-time updates
     useEffect(() => {
@@ -69,6 +71,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
         setTodayRoutes(getTodayRouteSearches());
         setRecentBusSearches(getRecentBusSearches(10));
         setRecentRouteSearches(getRecentRouteSearches(10));
+        setRecentIntercitySearches(getRecentIntercitySearches(10));
         setRefreshKey(prev => prev + 1);
     };
 
@@ -180,7 +183,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                 {activeTab === 'personal' ? (
                     <>
                         {/* Clear History Button */}
-                        {(recentBusSearches.length > 0 || recentRouteSearches.length > 0) && (
+                        {(recentBusSearches.length > 0 || recentRouteSearches.length > 0 || recentIntercitySearches.length > 0) && (
                             <div className="flex justify-end">
                                 <button
                                     onClick={handleClearHistory}
@@ -218,7 +221,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     Most Used Buses
                                 </h2>
                                 <div className="space-y-3">
-                                    {mostUsedBuses.map(({ busId, count }) => {
+                                    {(mostUsedBuses || []).map(({ busId, count }) => {
                                         const bus = getBusById(busId);
                                         if (!bus) return null;
                                         return (
@@ -259,7 +262,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     Most Used Routes
                                 </h2>
                                 <div className="space-y-3">
-                                    {mostUsedRoutes.map(({ from, to, count }, index) => (
+                                    {(mostUsedRoutes || []).map(({ from, to, count }, index) => (
                                         <div
                                             key={index}
                                             className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
@@ -346,8 +349,38 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                             </div>
                         )}
 
+                        {/* Recent Intercity Searches */}
+                        {(recentIntercitySearches || []).length > 0 && (
+                            <div className="bg-white border border-gray-200 rounded-2xl p-6">
+                                <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                    <TrendingUp className="w-5 h-5 text-purple-600" />
+                                    Recent Intercity Trips
+                                </h2>
+                                <div className="space-y-2">
+                                    {recentIntercitySearches.map((record, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                                        >
+                                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                                                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    {record.transportType === 'AIR' ? <TrendingUp className="w-4 h-4 text-purple-600" /> : <Bus className="w-4 h-4 text-purple-600" />}
+                                                </div>
+                                                <div className="flex items-center gap-2 text-sm min-w-0">
+                                                    <span className="font-bold text-gray-900 truncate">{record.from}</span>
+                                                    <ArrowRight className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                                                    <span className="font-bold text-gray-900 truncate">{record.to}</span>
+                                                </div>
+                                            </div>
+                                            <span className="text-xs text-gray-500 ml-2">{formatDate(record.timestamp)}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Empty State */}
-                        {recentBusSearches.length === 0 && recentRouteSearches.length === 0 && (
+                        {recentBusSearches.length === 0 && recentRouteSearches.length === 0 && recentIntercitySearches.length === 0 && (
                             <div className="text-center py-12">
                                 <Clock className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                                 <h3 className="text-lg font-bold text-gray-900 mb-2">No History Yet</h3>

@@ -352,8 +352,9 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen text-dhaka-dark pb-12">
       {/* Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-[3000] pt-safe-top">
-        <div className="flex justify-between items-center max-w-7xl mx-auto">
+      {/* Mobile Header */}
+      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-[3000] pt-safe-top md:hidden">
+        <div className="flex justify-between items-center">
           <a
             href="/"
             onClick={(e) => {
@@ -368,6 +369,32 @@ const App: React.FC = () => {
             <h1 className="text-xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
           </a>
           <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
+            <Menu className="w-6 h-6" />
+          </button>
+        </div>
+      </header>
+
+      {/* Desktop Header */}
+      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-4 shadow-sm z-[3000] items-center justify-between">
+        <a
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            window.top!.location.href = window.location.origin + '/';
+          }}
+          className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
+        >
+          <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
+            <Bus className="w-6 h-6 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
+        </a>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
+            aria-label="Open menu"
+          >
             <Menu className="w-6 h-6" />
           </button>
         </div>
@@ -458,7 +485,8 @@ const App: React.FC = () => {
       )}
 
       {/* Main Content - Add top padding for fixed header */}
-      <div className="pt-16">
+      {/* Main Content - Add top padding for fixed header */}
+      <div className="pt-16 md:pt-20">
         {/* Page Title */}
         <div className="max-w-4xl mx-auto px-3 mt-6 mb-4">
           <h1 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-center text-gray-800">
