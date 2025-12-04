@@ -7,6 +7,40 @@ import { RouteDetail } from './components/RouteDetail';
 import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
 import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield } from 'lucide-react';
 
+// Import analytics tracking from main app
+const trackIntercitySearch = (from: string, to: string, transportType: string) => {
+  try {
+    const history = JSON.parse(localStorage.getItem('dhaka_commute_user_history') || '{}');
+    const today = new Date().toISOString().split('T')[0];
+    const routeKey = `${from}-${to}`;
+
+    history.intercitySearches = history.intercitySearches || [];
+    history.intercitySearches.push({
+      from,
+      to,
+      transportType,
+      timestamp: Date.now(),
+      date: today
+    });
+
+    history.mostUsedIntercity = history.mostUsedIntercity || {};
+    history.mostUsedIntercity[routeKey] = (history.mostUsedIntercity[routeKey] || 0) + 1;
+
+    history.todayIntercity = history.todayIntercity || [];
+    if (!history.todayIntercity.includes(routeKey)) {
+      history.todayIntercity.push(routeKey);
+    }
+
+    if (history.intercitySearches.length > 100) {
+      history.intercitySearches = history.intercitySearches.slice(-100);
+    }
+
+    localStorage.setItem('dhaka_commute_user_history', JSON.stringify(history));
+  } catch (e) {
+    console.error('Failed to track intercity search:', e);
+  }
+};
+
 const SEARCH_MESSAGES = [
   { title: "Connecting to Transport Grids...", sub: "Fetching real-time data from bus and train networks" },
   { title: "Scanning Bus Schedules...", sub: "Checking Green Line, Hanif, Ena, and Shohoz availability" },
@@ -269,6 +303,11 @@ const App: React.FC = () => {
           timestamp: new Date().toISOString()
         }));
 
+        // Track intercity search in history
+        // Determine transport type from the first option
+        const transportType = result.options[0]?.steps?.[0]?.mode || 'combined';
+        trackIntercitySearch(origin, destination, transportType);
+
       } else {
         setError("No routes found. Please try different locations.");
       }
@@ -319,7 +358,7 @@ const App: React.FC = () => {
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              window.location.href = window.location.origin;
+              window.top!.location.href = window.location.origin + '/';
             }}
             className="flex items-center gap-2.5 outline-none cursor-pointer hover:opacity-80 transition-opacity"
           >
@@ -363,7 +402,7 @@ const App: React.FC = () => {
                   href={`${window.location.origin}/${item.hash}`}
                   onClick={(e) => {
                     e.preventDefault();
-                    window.location.href = `${window.location.origin}/${item.hash}`;
+                    window.top!.location.href = `${window.location.origin}/${item.hash}`;
                   }}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
                 >
@@ -400,7 +439,7 @@ const App: React.FC = () => {
                   href={`${window.location.origin}/#settings`}
                   onClick={(e) => {
                     e.preventDefault();
-                    window.location.href = `${window.location.origin}/#settings`;
+                    window.top!.location.href = `${window.location.origin}/#settings`;
                   }}
                   className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:shadow-lg transition-all"
                 >
@@ -570,7 +609,7 @@ const App: React.FC = () => {
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              window.location.href = window.location.origin;
+              window.top!.location.href = window.location.origin + '/';
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
@@ -581,7 +620,7 @@ const App: React.FC = () => {
             href={`${window.location.origin}/#ai-assistant`}
             onClick={(e) => {
               e.preventDefault();
-              window.location.href = `${window.location.origin}/#ai-assistant`;
+              window.top!.location.href = `${window.location.origin}/#ai-assistant`;
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
@@ -596,7 +635,7 @@ const App: React.FC = () => {
             href={`${window.location.origin}/#about`}
             onClick={(e) => {
               e.preventDefault();
-              window.location.href = `${window.location.origin}/#about`;
+              window.top!.location.href = `${window.location.origin}/#about`;
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >

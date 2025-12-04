@@ -4,10 +4,13 @@
 export interface UserHistory {
     busSearches: BusSearchRecord[];
     routeSearches: RouteSearchRecord[];
+    intercitySearches: IntercitySearchRecord[];
     mostUsedBuses: Record<string, number>; // busId -> count
     mostUsedRoutes: Record<string, number>; // "from-to" -> count
+    mostUsedIntercity: Record<string, number>; // "from-to" -> count
     todayBuses: string[]; // busIds searched today
     todayRoutes: string[]; // routes searched today
+    todayIntercity: string[]; // intercity routes searched today
     lastResetDate: string; // ISO date string for daily reset
 }
 
@@ -21,6 +24,14 @@ export interface BusSearchRecord {
 export interface RouteSearchRecord {
     from: string;
     to: string;
+    timestamp: number;
+    date: string; // YYYY-MM-DD
+}
+
+export interface IntercitySearchRecord {
+    from: string;
+    to: string;
+    transportType: string; // 'bus', 'train', 'flight', 'combined'
     timestamp: number;
     date: string; // YYYY-MM-DD
 }
@@ -61,10 +72,13 @@ export const getUserHistory = (): UserHistory => {
             return {
                 busSearches: [],
                 routeSearches: [],
+                intercitySearches: [],
                 mostUsedBuses: {},
                 mostUsedRoutes: {},
+                mostUsedIntercity: {},
                 todayBuses: [],
                 todayRoutes: [],
+                todayIntercity: [],
                 lastResetDate: getTodayDate()
             };
         }
@@ -76,6 +90,7 @@ export const getUserHistory = (): UserHistory => {
         if (history.lastResetDate !== today) {
             history.todayBuses = [];
             history.todayRoutes = [];
+            history.todayIntercity = [];
             history.lastResetDate = today;
             localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
         }
@@ -86,10 +101,13 @@ export const getUserHistory = (): UserHistory => {
         return {
             busSearches: [],
             routeSearches: [],
+            intercitySearches: [],
             mostUsedBuses: {},
             mostUsedRoutes: {},
+            mostUsedIntercity: {},
             todayBuses: [],
             todayRoutes: [],
+            todayIntercity: [],
             lastResetDate: getTodayDate()
         };
     }
@@ -158,6 +176,40 @@ export const trackRouteSearch = (from: string, to: string): void => {
     // Keep only last 100 searches
     if (history.routeSearches.length > 100) {
         history.routeSearches = history.routeSearches.slice(-100);
+    }
+
+    saveUserHistory(history);
+};
+
+// Track intercity search
+export const trackIntercitySearch = (from: string, to: string, transportType: string): void => {
+    const history = getUserHistory();
+    const today = getTodayDate();
+    const routeKey = `${from}-${to}`;
+
+    // Add to search history
+    history.intercitySearches = history.intercitySearches || [];
+    history.intercitySearches.push({
+        from,
+        to,
+        transportType,
+        timestamp: Date.now(),
+        date: today
+    });
+
+    // Update most used intercity routes
+    history.mostUsedIntercity = history.mostUsedIntercity || {};
+    history.mostUsedIntercity[routeKey] = (history.mostUsedIntercity[routeKey] || 0) + 1;
+
+    // Add to today's intercity if not already there
+    history.todayIntercity = history.todayIntercity || [];
+    if (!history.todayIntercity.includes(routeKey)) {
+        history.todayIntercity.push(routeKey);
+    }
+
+    // Keep only last 100 searches
+    if (history.intercitySearches.length > 100) {
+        history.intercitySearches = history.intercitySearches.slice(-100);
     }
 
     saveUserHistory(history);
@@ -302,6 +354,12 @@ export const getRecentBusSearches = (limit: number = 10): BusSearchRecord[] => {
 export const getRecentRouteSearches = (limit: number = 10): RouteSearchRecord[] => {
     const history = getUserHistory();
     return history.routeSearches.slice(-limit).reverse();
+};
+
+export const getRecentIntercitySearches = (limit: number = 10): IntercitySearchRecord[] => {
+    const history = getUserHistory();
+    const intercitySearches = history.intercitySearches || [];
+    return intercitySearches.slice(-limit).reverse();
 };
 
 // Subscribe to global stats updates (for real-time updates across tabs)
