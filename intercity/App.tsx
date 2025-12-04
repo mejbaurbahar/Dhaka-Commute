@@ -424,22 +424,23 @@ const App: React.FC = () => {
 
             <div className="space-y-2 flex-1">
               {[
-                { icon: Bot, label: 'AI Assistant', color: 'text-dhaka-green', hash: '#ai-assistant' },
-                { icon: Info, label: 'About', color: 'text-purple-500', hash: '#about' },
-                { icon: Sparkles, label: 'Why Use কই যাবো', color: 'text-pink-500', hash: '#why-use' },
-                { icon: FileText, label: 'Q&A', color: 'text-cyan-500', hash: '#faq' },
-                { icon: Settings, label: 'App Settings', color: 'text-blue-500', hash: '#settings' },
-                { icon: Clock, label: 'History', color: 'text-amber-500', hash: '#history' },
-                { icon: Download, label: 'Install App', color: 'text-emerald-600', hash: '#install' },
-                { icon: Shield, label: 'Privacy Policy', color: 'text-purple-500', hash: '#privacy' },
-                { icon: FileText, label: 'Terms of Service', color: 'text-orange-500', hash: '#terms' },
+                { icon: Bot, label: 'AI Assistant', color: 'text-dhaka-green', route: '?view=ai' },
+                { icon: Info, label: 'About', color: 'text-purple-500', route: '?view=about' },
+                { icon: Sparkles, label: 'Why Use কই যাবো', color: 'text-pink-500', route: '?view=why-use' },
+                { icon: FileText, label: 'Q&A', color: 'text-cyan-500', route: '?view=faq' },
+                { icon: Settings, label: 'App Settings', color: 'text-blue-500', route: '?view=settings' },
+                { icon: Clock, label: 'History', color: 'text-amber-500', route: '?view=history' },
+                { icon: Download, label: 'Install App', color: 'text-emerald-600', route: '?view=install' },
+                { icon: Shield, label: 'Privacy Policy', color: 'text-purple-500', route: '?view=privacy' },
+                { icon: FileText, label: 'Terms of Service', color: 'text-orange-500', route: '?view=terms' },
               ].map((item, idx) => (
                 <a
                   key={idx}
-                  href={`${window.location.origin}/${item.hash}`}
+                  href={`${window.location.origin}/${item.route}`}
                   onClick={(e) => {
                     e.preventDefault();
-                    window.top!.location.href = `${window.location.origin}/${item.hash}`;
+                    setIsMenuOpen(false);
+                    window.top!.location.href = `${window.location.origin}/${item.route}`;
                   }}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
                 >

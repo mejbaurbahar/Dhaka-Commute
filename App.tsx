@@ -47,6 +47,28 @@ const getStoredBus = (): BusRoute | null => {
 
 const getStoredView = (): AppView => {
   try {
+    // 1. Check URL Search Params first (Priority)
+    const params = new URLSearchParams(window.location.search);
+    const viewParam = params.get('view');
+
+    if (viewParam) {
+      // Clear the query param to clean up URL (optional, but good for UX)
+      window.history.replaceState({}, '', window.location.pathname);
+
+      switch (viewParam) {
+        case 'ai': return AppView.AI_ASSISTANT;
+        case 'about': return AppView.ABOUT;
+        case 'why-use': return AppView.WHY_USE;
+        case 'faq': return AppView.FAQ;
+        case 'settings': return AppView.SETTINGS;
+        case 'history': return AppView.HISTORY;
+        case 'install': return AppView.INSTALL_APP;
+        case 'privacy': return AppView.PRIVACY;
+        case 'terms': return AppView.TERMS;
+      }
+    }
+
+    // 2. Check Local Storage
     const stored = localStorage.getItem('dhaka_commute_view');
     if (!stored) return AppView.HOME;
     const view = JSON.parse(stored);
