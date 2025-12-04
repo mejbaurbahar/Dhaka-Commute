@@ -317,6 +317,10 @@ const App: React.FC = () => {
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <a
             href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.href = window.location.origin;
+            }}
             className="flex items-center gap-2.5 outline-none cursor-pointer hover:opacity-80 transition-opacity"
           >
             <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
@@ -343,63 +347,29 @@ const App: React.FC = () => {
             </div>
 
             <div className="space-y-2 flex-1">
-              <a
-                href="/#ai-assistant"
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Bot className="w-5 h-5 text-dhaka-green" /> AI Assistant
-              </a>
-              <a
-                href="/#about"
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Info className="w-5 h-5 text-purple-500" /> About
-              </a>
-              <a
-                href="/#why-use"
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Sparkles className="w-5 h-5 text-pink-500" /> Why Use কই যাবো
-              </a>
-              <a
-                href="/#faq"
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <FileText className="w-5 h-5 text-cyan-500" /> Q&A
-              </a>
-              <a
-                href="/#settings"
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Settings className="w-5 h-5 text-blue-500" /> App Settings
-              </a>
-              <a
-                href="/#history"
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Clock className="w-5 h-5 text-amber-500" /> History
-              </a>
-
-              {/* Install/Uninstall App - Always show */}
-              <a
-                href="/#install"
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Download className="w-5 h-5 text-emerald-600" /> Install App
-              </a>
-
-              <a
-                href="/#privacy"
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <Shield className="w-5 h-5 text-purple-500" /> Privacy Policy
-              </a>
-              <a
-                href="/#terms"
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-              >
-                <FileText className="w-5 h-5 text-orange-500" /> Terms of Service
-              </a>
+              {[
+                { icon: Bot, label: 'AI Assistant', color: 'text-dhaka-green', hash: '#ai-assistant' },
+                { icon: Info, label: 'About', color: 'text-purple-500', hash: '#about' },
+                { icon: Sparkles, label: 'Why Use কই যাবো', color: 'text-pink-500', hash: '#why-use' },
+                { icon: FileText, label: 'Q&A', color: 'text-cyan-500', hash: '#faq' },
+                { icon: Settings, label: 'App Settings', color: 'text-blue-500', hash: '#settings' },
+                { icon: Clock, label: 'History', color: 'text-amber-500', hash: '#history' },
+                { icon: Download, label: 'Install App', color: 'text-emerald-600', hash: '#install' },
+                { icon: Shield, label: 'Privacy Policy', color: 'text-purple-500', hash: '#privacy' },
+                { icon: FileText, label: 'Terms of Service', color: 'text-orange-500', hash: '#terms' },
+              ].map((item, idx) => (
+                <a
+                  key={idx}
+                  href={`/${item.hash}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = `${window.location.origin}/${item.hash}`;
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                >
+                  <item.icon className={`w-5 h-5 ${item.color}`} /> {item.label}
+                </a>
+              ))}
             </div>
 
             <div className="pt-6 border-t border-gray-100">
@@ -428,6 +398,10 @@ const App: React.FC = () => {
               <div className="flex flex-col gap-3">
                 <a
                   href="/#settings"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = `${window.location.origin}/#settings`;
+                  }}
                   className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:shadow-lg transition-all"
                 >
                   Go to Settings & Add API Key
@@ -594,13 +568,21 @@ const App: React.FC = () => {
         <div className="grid grid-cols-4 h-16">
           <a
             href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.href = window.location.origin;
+            }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
             <MapIcon className="w-6 h-6" />
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
           </a>
           <a
-            href="/"
+            href="/#ai-assistant"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.href = `${window.location.origin}/#ai-assistant`;
+            }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
             <Sparkles className="w-6 h-6" />
@@ -611,7 +593,11 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
           </div>
           <a
-            href="/"
+            href="/#about"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.href = `${window.location.origin}/#about`;
+            }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
             <Info className="w-6 h-6" />
