@@ -221,12 +221,14 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     Most Used Buses
                                 </h2>
                                 <div className="space-y-3">
-                                    {(mostUsedBuses || []).map(({ busId, count }) => {
+                                    {(mostUsedBuses || []).map((item, idx) => {
+                                        if (!item) return null;
+                                        const { busId, count } = item;
                                         const bus = getBusById(busId);
                                         if (!bus) return null;
                                         return (
                                             <div
-                                                key={busId}
+                                                key={`bus-${idx}-${busId}`}
                                                 onClick={() => onBusSelect(bus, true)}
                                                 className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-colors group"
                                             >
@@ -262,28 +264,32 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     Most Used Routes
                                 </h2>
                                 <div className="space-y-3">
-                                    {(mostUsedRoutes || []).map(({ from, to, count }, index) => (
-                                        <div
-                                            key={index}
-                                            className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
-                                        >
-                                            <div className="flex items-center gap-3 flex-1">
-                                                <div className="w-10 h-10 bg-dhaka-red rounded-lg flex items-center justify-center">
-                                                    <MapPin className="w-5 h-5 text-white" />
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-2 text-sm">
-                                                        <span className="font-bold text-gray-900 truncate">{getStationName(from)}</span>
-                                                        <ArrowRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                                                        <span className="font-bold text-gray-900 truncate">{getStationName(to)}</span>
+                                    {(mostUsedRoutes || []).map((item, index) => {
+                                        if (!item) return null;
+                                        const { from, to, count } = item;
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
+                                            >
+                                                <div className="flex items-center gap-3 flex-1">
+                                                    <div className="w-10 h-10 bg-dhaka-red rounded-lg flex items-center justify-center">
+                                                        <MapPin className="w-5 h-5 text-white" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 text-sm">
+                                                            <span className="font-bold text-gray-900 truncate">{getStationName(from)}</span>
+                                                            <ArrowRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                                            <span className="font-bold text-gray-900 truncate">{getStationName(to)}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <span className="px-3 py-1 bg-dhaka-red/10 text-dhaka-red rounded-full text-sm font-bold ml-2">
+                                                    {count}x
+                                                </span>
                                             </div>
-                                            <span className="px-3 py-1 bg-dhaka-red/10 text-dhaka-red rounded-full text-sm font-bold ml-2">
-                                                {count}x
-                                            </span>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}

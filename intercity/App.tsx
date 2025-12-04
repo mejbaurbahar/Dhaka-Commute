@@ -341,6 +341,14 @@ const App: React.FC = () => {
     setDestination(temp);
   };
 
+  const handleClearAll = () => {
+    setOrigin('');
+    setDestination('');
+    setData(null);
+    setSelectedOptionId(null);
+    setError(null);
+  };
+
   // Check if current inputs match allowed locations
   const isValidSearch =
     origin && destination &&
@@ -552,6 +560,20 @@ const App: React.FC = () => {
                   </button>
                 </div>
               </form>
+
+              {/* Clear All Button - Show when there's data to clear */}
+              {(origin || destination || data) && !loading && (
+                <div className="mt-3 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={handleClearAll}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all active:scale-95 border border-red-100"
+                  >
+                    <X className="w-4 h-4" />
+                    Clear All
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

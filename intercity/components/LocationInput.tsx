@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MapPin, X } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
 interface LocationInputProps {
   label: string;
@@ -90,7 +90,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           }}
           disabled={disabled}
           className={`
-            w-full pl-14 ${value ? 'pr-12' : 'pr-4'} py-3 md:py-4
+            w-full pl-14 pr-4 py-3 md:py-4
             bg-gray-50/50 backdrop-blur-sm
             border border-gray-100 rounded-2xl
             text-base font-bold text-dhaka-dark placeholder:text-gray-400 placeholder:font-normal
@@ -99,23 +99,6 @@ export const LocationInput: React.FC<LocationInputProps> = ({
             ${disabled ? 'opacity-60 cursor-not-allowed bg-gray-100' : ''}
           `}
         />
-
-        {/* Clear Button */}
-        {value && !disabled && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onChange('');
-              setShowSuggestions(false);
-            }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 bg-gray-200 hover:bg-red-100 rounded-lg text-gray-600 hover:text-red-600 transition-all active:scale-95"
-            title="Clear"
-            aria-label="Clear input"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
         {/* Glassmorphism Suggestions Dropdown */}
         {showSuggestions && !disabled && (value.length > 0 || filteredLocations.length > 0) && (
           <div className="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 max-h-64 overflow-y-auto custom-scrollbar animate-fade-in-up p-2">
