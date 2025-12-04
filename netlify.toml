@@ -1,0 +1,62 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Force correct MIME types for JavaScript modules
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/assets/*.js"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/*.mjs"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/src/*.tsx"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
+
+[[headers]]
+  for = "/src/*.ts"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
+
+# Cache control for assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self)"
+
+# SPA redirect - all routes to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Handle intercity subdirectory
+[[redirects]]
+  from = "/intercity"
+  to = "/intercity/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/intercity/*"
+  to = "/intercity/:splat"
+  status = 200
