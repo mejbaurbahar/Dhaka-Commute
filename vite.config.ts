@@ -54,7 +54,7 @@ export default defineConfig(({ mode }) => {
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2,ttf}'],
           navigateFallback: 'index.html',
-          navigateFallbackDenylist: [/^\/api/],
+          navigateFallbackDenylist: [/^\/api/, /^\/intercity/],
           cleanupOutdatedCaches: true,
           clientsClaim: true,
           skipWaiting: true,
