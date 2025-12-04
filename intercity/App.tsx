@@ -316,7 +316,7 @@ const App: React.FC = () => {
       <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-[3000] pt-safe-top">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <a
-            href={window.location.hostname === 'localhost' ? 'http://localhost:3003' : '/'}
+            href="/"
             className="flex items-center gap-2.5 outline-none cursor-pointer hover:opacity-80 transition-opacity"
           >
             <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
@@ -344,37 +344,37 @@ const App: React.FC = () => {
 
             <div className="space-y-2 flex-1">
               <a
-                href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#ai-assistant' : '/#ai-assistant'}
+                href="/#ai-assistant"
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Bot className="w-5 h-5 text-dhaka-green" /> AI Assistant
               </a>
               <a
-                href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#about' : '/#about'}
+                href="/#about"
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Info className="w-5 h-5 text-purple-500" /> About
               </a>
               <a
-                href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#why-use' : '/#why-use'}
+                href="/#why-use"
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Sparkles className="w-5 h-5 text-pink-500" /> Why Use কই যাবো
               </a>
               <a
-                href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#faq' : '/#faq'}
+                href="/#faq"
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <FileText className="w-5 h-5 text-cyan-500" /> Q&A
               </a>
               <a
-                href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#settings' : '/#settings'}
+                href="/#settings"
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Settings className="w-5 h-5 text-blue-500" /> App Settings
               </a>
               <a
-                href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#history' : '/#history'}
+                href="/#history"
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Clock className="w-5 h-5 text-amber-500" /> History
@@ -382,20 +382,20 @@ const App: React.FC = () => {
 
               {/* Install/Uninstall App - Always show */}
               <a
-                href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#install' : '/#install'}
+                href="/#install"
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Download className="w-5 h-5 text-emerald-600" /> Install App
               </a>
 
               <a
-                href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#privacy' : '/#privacy'}
+                href="/#privacy"
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <Shield className="w-5 h-5 text-purple-500" /> Privacy Policy
               </a>
               <a
-                href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#terms' : '/#terms'}
+                href="/#terms"
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 <FileText className="w-5 h-5 text-orange-500" /> Terms of Service
@@ -427,7 +427,7 @@ const App: React.FC = () => {
               </p>
               <div className="flex flex-col gap-3">
                 <a
-                  href={window.location.hostname === 'localhost' ? 'http://localhost:3003/#settings' : '/#settings'}
+                  href="/#settings"
                   className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:shadow-lg transition-all"
                 >
                   Go to Settings & Add API Key
@@ -593,14 +593,14 @@ const App: React.FC = () => {
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
         <div className="grid grid-cols-4 h-16">
           <a
-            href={window.location.hostname === 'localhost' ? 'http://localhost:3003' : '/'}
+            href="/"
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
             <MapIcon className="w-6 h-6" />
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
           </a>
           <a
-            href={window.location.hostname === 'localhost' ? 'http://localhost:3003' : '/'}
+            href="/"
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
             <Sparkles className="w-6 h-6" />
@@ -611,7 +611,7 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
           </div>
           <a
-            href={window.location.hostname === 'localhost' ? 'http://localhost:3003' : '/'}
+            href="/"
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
             <Info className="w-6 h-6" />

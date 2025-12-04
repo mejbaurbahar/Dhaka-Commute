@@ -2217,12 +2217,12 @@ const App: React.FC = () => {
 
           {/* Intercity Bus Button */}
           <a
-            href={window.location.hostname === 'localhost' ? 'http://localhost:3002' : '/intercity'}
+            href="/intercity"
             onClick={(e) => {
               e.preventDefault();
               setIntercityLoading(true);
               setTimeout(() => {
-                window.location.href = window.location.hostname === 'localhost' ? 'http://localhost:3002' : '/intercity';
+                window.location.href = '/intercity';
               }, 500);
             }}
             className="flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group"
@@ -2627,12 +2627,12 @@ const App: React.FC = () => {
               <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">AI Help</span>
             </button>
             <a
-              href={window.location.hostname === 'localhost' ? 'http://localhost:3002' : '/intercity'}
+              href="/intercity"
               onClick={(e) => {
                 e.preventDefault();
                 setIntercityLoading(true);
                 setTimeout(() => {
-                  window.location.href = window.location.hostname === 'localhost' ? 'http://localhost:3002' : '/intercity';
+                  window.location.href = '/intercity';
                 }, 500);
               }}
               className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
