@@ -347,6 +347,8 @@ const App: React.FC = () => {
     setData(null);
     setSelectedOptionId(null);
     setError(null);
+    // Clear saved route from localStorage to prevent it from reappearing after refresh
+    localStorage.removeItem('lastRoute');
   };
 
   // Check if current inputs match allowed locations
