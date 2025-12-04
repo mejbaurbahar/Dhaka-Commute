@@ -137,8 +137,8 @@ export default defineConfig(({ mode }) => {
       minify: 'esbuild',
       emptyOutDir: true,
       rollupOptions: {
+        external: ['react', 'react-dom', 'react-dom/client', 'lucide-react', '@google/genai'],
         output: {
-          manualChunks: undefined,
           entryFileNames: 'assets/[name]-[hash].js',
           chunkFileNames: 'assets/[name]-[hash].js',
           assetFileNames: 'assets/[name]-[hash].[ext]'
