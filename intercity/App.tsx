@@ -360,7 +360,7 @@ const App: React.FC = () => {
               ].map((item, idx) => (
                 <a
                   key={idx}
-                  href={`/${item.hash}`}
+                  href={`${window.location.origin}/${item.hash}`}
                   onClick={(e) => {
                     e.preventDefault();
                     window.location.href = `${window.location.origin}/${item.hash}`;
@@ -397,7 +397,7 @@ const App: React.FC = () => {
               </p>
               <div className="flex flex-col gap-3">
                 <a
-                  href="/#settings"
+                  href={`${window.location.origin}/#settings`}
                   onClick={(e) => {
                     e.preventDefault();
                     window.location.href = `${window.location.origin}/#settings`;
@@ -578,7 +578,7 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
           </a>
           <a
-            href="/#ai-assistant"
+            href={`${window.location.origin}/#ai-assistant`}
             onClick={(e) => {
               e.preventDefault();
               window.location.href = `${window.location.origin}/#ai-assistant`;
@@ -593,7 +593,7 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
           </div>
           <a
-            href="/#about"
+            href={`${window.location.origin}/#about`}
             onClick={(e) => {
               e.preventDefault();
               window.location.href = `${window.location.origin}/#about`;
