@@ -505,7 +505,7 @@ const App: React.FC = () => {
         <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
           <div className="max-w-4xl mx-auto relative">
             {/* Page Title */}
-            <h1 className="text-3xl font-bold mb-3 font-bengali drop-shadow-lg text-center text-gray-800">
+            <h1 className="hidden md:block text-3xl font-bold mb-3 font-bengali drop-shadow-lg text-center text-gray-800">
               কোথায় যেতে চান?
             </h1>
 
