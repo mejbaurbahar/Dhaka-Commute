@@ -187,10 +187,18 @@ const SettingsView: React.FC<{
   };
 
   const handleClearKey = () => {
+    console.log('🗑️ DELETE BUTTON CLICKED - NO CONFIRMATION');
+    console.log('Before delete - apiKey:', apiKey ? 'EXISTS' : 'EMPTY');
+    console.log('Before delete - inputKey:', inputKey);
+
     setInputKey('');
     setApiKey('');
     localStorage.removeItem('gemini_api_key');
     setSaveStatus('idle');
+
+    console.log('✅ DELETE COMPLETE');
+    console.log('After delete - localStorage:', localStorage.getItem('gemini_api_key'));
+    console.log('After delete - apiKey should be empty now');
   };
 
   return (

@@ -1,7 +1,6 @@
 
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { RoutingResponse } from "../types";
-import { getApiKeyForIntercitySearch } from "../../services/apiKeyManager";
 
 // --- Cache Configuration ---
 const CACHE_TTL = 1000 * 60 * 30; // 30 Minutes for "Fresh" data
@@ -506,16 +505,11 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
   const cacheKey = getCacheKey(origin, destination);
 
   try {
-    // Get API key - priority: user's key > managed keys (automatic rotation)
-    let apiKey = localStorage.getItem('gemini_api_key');
+    // Require user's own API key from Settings
+    const apiKey = localStorage.getItem('gemini_api_key');
 
-    // If no user key, use managed API keys with usage limits
     if (!apiKey || apiKey.trim() === '') {
-      apiKey = getApiKeyForIntercitySearch();
-
-      if (!apiKey) {
-        throw new Error('⚠️ Daily Limit Reached\n\nYou\'ve used your 2 free Intercity Bus Search for today. Your limit will reset in a few hours.\n\n📧 Need more queries? Contact Developer');
-      }
+      throw new Error('🔑 API Key Required\n\nTo use the Intercity Bus Search, you need to add your own Google Gemini API key.\n\n📍 How to get started:\n1. Go to Settings (menu → Settings)\n2. Click "Open Google AI Studio"\n3. Get your FREE API key from Google\n4. Paste it in Settings and save\n\n✨ It\'s completely free and takes less than 2 minutes!');
     }
 
     const ai = new GoogleGenAI({ apiKey });
@@ -628,7 +622,7 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-1.5-flash-latest", // Free tier - works with v1beta API
       contents: prompt,
       config: {
         responseMimeType: "application/json",

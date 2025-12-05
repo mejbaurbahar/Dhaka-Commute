@@ -1,75 +1,87 @@
-
-import { GoogleGenAI } from '@google/genai';
 import { BUS_DATA } from '../constants';
-import { getApiKeyForAiChat, canUseAiChat } from './apiKeyManager';
 
 export const askGeminiRoute = async (userQuery: string, userApiKey?: string): Promise<string> => {
-  // If user has their own key, use it (override system keys)
-  let apiKey = userApiKey;
+  const apiKey = userApiKey;
 
-  // Otherwise, use managed API keys with usage limits
-  if (!apiKey) {
-    if (!canUseAiChat()) {
-      return `⚠️ Daily Limit Reached\n\nYou've used your 2 free AI chat queries for today. Your limit will reset in a few hours.\n\n📧 Need more queries? Contact Developer`;
-    }
+  console.log('🔍 AI Chat Debug:');
+  console.log('  - API Key provided:', !!apiKey);
+  console.log('  - API Key length:', apiKey ? apiKey.length : 0);
+  console.log('  - API Key valid format:', apiKey ? apiKey.startsWith('AIzaSy') : false);
 
-    apiKey = getApiKeyForAiChat();
-
-    if (!apiKey) {
-      return "Service temporarily unavailable. Please try again later.";
-    }
+  if (!apiKey || apiKey.trim() === '') {
+    console.error('❌ No API key provided');
+    return `🔑 API Key Required\n\nTo use AI Chat, add your Google Gemini API key in Settings.\n\nIt's FREE and takes 2 minutes!`;
   }
 
-  try {
-    // Initialize client with the key
-    const ai = new GoogleGenAI({ apiKey: apiKey });
-    const model = 'gemini-2.5-flash';
+  console.log('✅ API Key found, making API call...');
 
-    // Construct a context-aware prompt with our bus data
-    // We stringify the whole object to ensure the AI sees all stops
+  try {
     const busContext = JSON.stringify(BUS_DATA.map(b => ({
       name: b.name,
-      bnName: b.bnName,
       route: b.routeString,
-      stops: b.stops // Important: Provide full stop list for connection logic
-    })));
+      stops: b.stops.slice(0, 10)
+    })).slice(0, 50));
 
-    const systemInstruction = `
-      You are an expert Dhaka City Transport Assistant. 
-      You help users find the best bus for their route based STRICTLY on the provided data.
-      
-      Here is the COMPLETE database of buses and their stops in JSON format:
-      ${busContext}
-      
-      Context: User is in Dhaka, Bangladesh.
-      
-      INSTRUCTIONS:
-      1. **Exhaustive Search**: When asked for a route (e.g., "Farmgate to Banani"), you MUST check the 'stops' array of EVERY bus in the data.
-      2. **Direct Routes**: First, list ALL buses that have BOTH the origin and destination in their 'stops' list.
-      3. **Connecting Routes**: If no direct bus exists, find a common stop. 
-         - Example: "Take Bus A from Origin to [Common Stop], then take Bus B from [Common Stop] to Destination."
-         - You MUST verify that Bus A goes to the common stop and Bus B goes from the common stop.
-      4. **Options**: Provide multiple options if available (Option 1, Option 2, etc.).
-      5. **Constraints**: 
-         - ONLY answer questions about Dhaka buses.
-         - Do not invent buses that are not in the list.
-         - If the user asks about something unrelated, politely refuse.
-      6. **Format**: Use clear bullet points and bold text for bus names.
-      7. **Language**: If the user asks in Bengali, reply in Bengali. Otherwise English.
-    `;
+    const prompt = `You are a Bangladesh Transport Expert.
 
-    const response = await ai.models.generateContent({
-      model: model,
-      contents: userQuery,
-      config: {
-        systemInstruction: systemInstruction,
-      },
+KNOWLEDGE: Dhaka buses: ${busContext}. Metro: Uttara to Motijheel. Intercity: Green Line, Hanif, Shohagh.
+
+RULES: Be brief (under 150 words). Suggest 2-3 options. Include transport name, time, cost.
+
+User: ${userQuery}`;
+
+    console.log('📡 Calling Gemini API...');
+
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
+      })
     });
 
-    return response.text || "Sorry, I couldn't process that request right now.";
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData));
+    }
+
+    const data = await response.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, couldn't process that.";
+
+    console.log('✅ API response received');
+    return text;
 
   } catch (error: any) {
-    console.error("Gemini API Error:", error);
-    return "I'm having trouble connecting to the AI assistant. Please check your API Key in settings.";
+    console.error("❌ API Error:", error);
+
+    let errorMsg = '';
+    try {
+      const errorData = JSON.parse(error.message);
+      errorMsg = errorData?.error?.message || error.message;
+    } catch (e) {
+      errorMsg = error.message || 'Unknown error';
+    }
+
+    if (errorMsg.includes('429') || errorMsg.includes('quota')) {
+      return `⏰ Rate Limit!\n\nWait 10 seconds and try again.\n\nFree tier: 15 requests/minute.`;
+    }
+
+    if (errorMsg.includes('leaked') || errorMsg.includes('PERMISSION_DENIED')) {
+      return `🔐 API Key Blocked\n\nYour key was flagged. Create a NEW key in Settings.`;
+    }
+
+    if (errorMsg.includes('invalid') || errorMsg.includes('API_KEY_INVALID')) {
+      return `❌ Invalid Key\n\nGet a new key from Google AI Studio.`;
+    }
+
+    if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
+      return `🌐 Connection Error\n\nCheck your internet!`;
+    }
+
+    const shortError = errorMsg.substring(0, 100);
+    return `⚠️ Error\n\n${shortError}\n\nTry refreshing or check your API key.`;
   }
 };
