@@ -509,12 +509,7 @@ const App: React.FC = () => {
               কোথায় যেতে চান?
             </h1>
 
-            {/* Offline Indicator Overlay */}
-            {isOffline && (
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[5000] flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg animate-pulse border-2 border-white">
-                <WifiOff size={12} /> You are offline
-              </div>
-            )}
+
 
             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-3 md:p-4 transition-all duration-300">
               {/* items-end aligns the input boxes and button to the bottom, ignoring the top labels */}
@@ -527,7 +522,7 @@ const App: React.FC = () => {
                   placeholder="Origin city..."
                   iconColorClass="text-gray-400"
                   ringColorClass="focus:ring-emerald-500/20"
-                  disabled={loading}
+                  disabled={loading || isOffline}
                 />
 
                 {/* Swap Button Wrapper - Adjusted margins for mobile/desktop spacing */}
@@ -535,7 +530,7 @@ const App: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleSwapLocations}
-                    disabled={loading}
+                    disabled={loading || isOffline}
                     className={`bg-white hover:bg-emerald-50 p-2.5 rounded-full text-gray-500 hover:text-emerald-600 transition-all active:scale-95 border border-gray-100 shadow-sm ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     title="Swap Locations"
                   >
@@ -550,7 +545,7 @@ const App: React.FC = () => {
                   placeholder="Destination city..."
                   iconColorClass="text-dhaka-red"
                   ringColorClass="focus:ring-red-500/20"
-                  disabled={loading}
+                  disabled={loading || isOffline}
                 />
 
                 <div className="w-full md:w-auto mt-2 md:mt-0">
