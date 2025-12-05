@@ -90,7 +90,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in">
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }} className="flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in">
             <div
                 className="bg-white w-full md:max-w-2xl md:rounded-2xl rounded-t-3xl max-h-[90vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0"
                 onClick={(e) => e.stopPropagation()}

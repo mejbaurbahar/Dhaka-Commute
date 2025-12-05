@@ -246,35 +246,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         </div>
       )}
 
-      {/* Top Right Controls */}
-      <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 items-end">
-        <a
-          href={`https://www.google.com/maps/dir/?api=1&destination=${route.stops[route.stops.length - 1]}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-white/90 backdrop-blur px-3 py-1.5 rounded-full border border-gray-200 text-[10px] font-bold text-blue-600 shadow-sm flex items-center gap-1 hover:bg-blue-50 transition-colors"
-        >
-          <Navigation className="w-3 h-3" /> Real Map
-        </a>
-        <div className="md:hidden bg-white/90 backdrop-blur px-3 py-1.5 rounded-full border border-gray-200 text-[10px] font-bold text-gray-500 shadow-sm flex items-center gap-1">
-          <Grip className="w-3 h-3" /> Drag Map
-        </div>
-        <button
-          onClick={handleZoomOut}
-          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 active:bg-gray-200 text-gray-600 transition-colors"
-          title="Zoom Out"
-        >
-          <Minus className="w-4 h-4" />
-        </button>
-        <div className="w-px bg-gray-200 my-1"></div>
-        <button
-          onClick={handleZoomIn}
-          className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 active:bg-gray-200 text-gray-600 transition-colors"
-          title="Zoom In"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
-      </div>
+
 
       {/* Bottom Left - Layer Toggles */}
       <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 items-start">

@@ -262,7 +262,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
             const isInRange = highlightStartIdx !== undefined && highlightEndIdx !== undefined && idx >= highlightStartIdx && idx <= highlightEndIdx;
 
             return (
-              <div key={stopId} className={`relative pl-10 pb-10 ${isPassed ? 'opacity-40 grayscale blur-[0.5px]' : 'opacity-100'}`}>
+              <div key={stopId} className={`relative pb-10 ${isPassed ? 'opacity-40 grayscale blur-[0.5px]' : 'opacity-100'}`}>
                 {/* Highlight Line Segment */}
                 {isInRange && idx < highlightEndIdx! && (
                   <div className="absolute left-[-2px] top-0 bottom-[-40px] w-1 bg-green-500 z-0"></div>
@@ -289,7 +289,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
                 </div>
 
                 {/* Content */}
-                <div className={`${isCurrent ? '-mt-1.5' : '-mt-1'}`}>
+                <div className={`${isCurrent ? '-mt-1.5' : '-mt-1'} pl-12`}>
                   <div className="flex items-center justify-between gap-2">
                     <p className={`font-medium ${isCurrent ? 'text-dhaka-dark text-xl font-bold' : isInRange ? 'text-green-800 font-bold' : 'text-gray-700'}`}>
                       {station.name}
