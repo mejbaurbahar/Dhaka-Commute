@@ -99,8 +99,8 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
         <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4 animate-pulse">
           <AlertCircle className="w-8 h-8 text-red-500" />
         </div>
-        <h3 className="text-lg font-bold text-gray-800 mb-2">Location Needed</h3>
-        <p className="mb-6 text-sm">{error}. We need your location to show which stop you are at.</p>
+        <h3 className="text-lg font-bold text-gray-800 mb-6">Location Needed</h3>
+
         <button
           onClick={() => { setLoading(true); window.location.reload(); }}
           className="px-6 py-3 bg-dhaka-green text-white rounded-xl font-bold shadow-lg shadow-green-200 active:scale-95 transition-transform"
