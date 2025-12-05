@@ -622,7 +622,7 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash-latest", // Free tier - works with v1beta API
+      model: "gemini-2.5-flash", // Free tier - works with v1beta API
       contents: prompt,
       config: {
         responseMimeType: "application/json",
