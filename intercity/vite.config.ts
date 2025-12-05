@@ -6,7 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
-    base: '/intercity/',  // Use /intercity/ base for proxy support
+    base: '/intercity',  // Use /intercity base (without trailing slash)
     server: {
       port: 3002,
       host: '0.0.0.0',
@@ -23,8 +23,8 @@ export default defineConfig(({ mode }) => {
           theme_color: '#006a4e',
           background_color: '#ffffff',
           display: 'standalone',
-          start_url: '/intercity/',
-          scope: '/intercity/',
+          start_url: '/intercity',
+          scope: '/intercity',
           icons: [
             {
               src: '/icon-192x192.png',

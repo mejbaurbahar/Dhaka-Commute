@@ -1,6 +1,7 @@
 
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { RoutingResponse } from "../types";
+import { getApiKeyForIntercitySearch } from "../../services/apiKeyManager";
 
 // --- Cache Configuration ---
 const CACHE_TTL = 1000 * 60 * 30; // 30 Minutes for "Fresh" data
@@ -505,13 +506,18 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
   const cacheKey = getCacheKey(origin, destination);
 
   try {
-    // Get API key from localStorage
-    const apiKey = localStorage.getItem('gemini_api_key');
-    if (!apiKey) {
-      throw new Error('API key not found. Please set your Gemini API key in settings.');
+    // Get API key - priority: user's key > managed keys (automatic rotation)
+    let apiKey = localStorage.getItem('gemini_api_key');
+
+    // If no user key, use managed API keys with usage limits
+    if (!apiKey || apiKey.trim() === '') {
+      apiKey = getApiKeyForIntercitySearch();
+
+      if (!apiKey) {
+        throw new Error('⚠️ Daily Limit Reached\n\nYou\'ve used your 2 free Intercity Bus Search for today. Your limit will reset in a few hours.\n\n📧 Need more queries? Contact Developer');
+      }
     }
 
-    // Create AI instance with user's API key
     const ai = new GoogleGenAI({ apiKey });
 
     // 0. Check Persistent Cache (LocalStorage) First

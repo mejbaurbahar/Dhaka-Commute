@@ -17,6 +17,7 @@ import { findNearestMetroStation } from './services/metroService';
 import { planRoutes, SuggestedRoute } from './services/routePlanner';
 import RouteSuggestions from './components/RouteSuggestions';
 import { incrementVisitCount, trackBusSearch, trackRouteSearch } from './services/analyticsService';
+import { getTotalUsageStats, USAGE_LIMITS } from './services/apiKeyManager';
 
 
 
@@ -971,24 +972,40 @@ const App: React.FC = () => {
         <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'}`}>
           <Bot className="w-6 h-6" />
         </div>
-        <div>
+        <div className="flex-1">
           <h2 className="text-lg font-bold text-gray-900">Dhaka AI Guide</h2>
           <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
           </p>
         </div>
+        {!apiKey && (
+          <div className="text-right">
+            <p className="text-xs font-bold text-gray-400">Usage</p>
+            <p className="text-sm font-bold text-blue-600">
+              {getTotalUsageStats().totalAiChatToday}/{USAGE_LIMITS.AI_CHAT_PER_DAY}
+            </p>
+          </div>
+        )}
       </div>
       {/* Desktop Header */}
       <div className="hidden md:flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20">
         <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'}`}>
           <Bot className="w-6 h-6" />
         </div>
-        <div>
+        <div className="flex-1">
           <h2 className="text-lg font-bold text-gray-900">Dhaka AI Guide</h2>
           <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
           </p>
         </div>
+        {!apiKey && (
+          <div className="text-right">
+            <p className="text-xs font-bold text-gray-400">Usage</p>
+            <p className="text-sm font-bold text-blue-600">
+              {getTotalUsageStats().totalAiChatToday}/{USAGE_LIMITS.AI_CHAT_PER_DAY}
+            </p>
+          </div>
+        )}
       </div>
 
       {!isOnline ? (
@@ -1005,22 +1022,6 @@ const App: React.FC = () => {
             className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-200"
           >
             Manage API Key
-          </button>
-        </div>
-      ) : !apiKey && !process.env.API_KEY ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <Key className="w-8 h-8 text-red-500" />
-          </div>
-          <h3 className="text-lg font-bold text-gray-800 mb-2">Setup Required</h3>
-          <p className="text-sm text-gray-500 mb-6 max-w-xs">
-            Please add your Google Gemini API Key in settings to use the AI Assistant.
-          </p>
-          <button
-            onClick={() => setView(AppView.SETTINGS)}
-            className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-200"
-          >
-            Go to Settings
           </button>
         </div>
       ) : (
@@ -2712,12 +2713,6 @@ const App: React.FC = () => {
                 className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.FAQ ? 'bg-cyan-50 border border-cyan-200' : ''}`}
               >
                 <FileText className="w-5 h-5 text-cyan-500" /> Q&A
-              </button>
-              <button
-                onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.SETTINGS ? 'bg-blue-50 border border-blue-200' : ''}`}
-              >
-                <Settings className="w-5 h-5 text-blue-500" /> App Settings
               </button>
               <button
                 onClick={() => { setView(AppView.HISTORY); setIsMenuOpen(false); }}

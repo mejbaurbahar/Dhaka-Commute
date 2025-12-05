@@ -1,16 +1,16 @@
 // Simple loader that works around GitHub Pages MIME type issues
 (async function () {
-    try {
-        // Dynamically import the main module
-        const module = await import('./src/main.tsx');
-        console.log('Application loaded successfully!');
-    } catch (error) {
-        console.error('Failed to load application:', error);
+  try {
+    // Dynamically import the main module
+    const module = await import('./src/main.tsx');
+    console.log('Application loaded successfully!');
+  } catch (error) {
+    console.error('Failed to load application:', error);
 
-        // Show error to user
-        const root = document.getElementById('root');
-        if (root) {
-            root.innerHTML = `
+    // Show error to user
+    const root = document.getElementById('root');
+    if (root) {
+      root.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: #f3f4f6; padding: 20px; font-family: system-ui, -apple-system, sans-serif;">
           <div style="background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 500px; text-align: center;">
             <div style="width: 64px; height: 64px; background: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
@@ -32,6 +32,6 @@
           </div>
         </div>
       `;
-        }
     }
+  }
 })();

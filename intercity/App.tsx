@@ -6,6 +6,7 @@ import { RouteCard } from './components/RouteCard';
 import { RouteDetail } from './components/RouteDetail';
 import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
 import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield } from 'lucide-react';
+import { getRemainingUses } from './services/apiKeyManager';
 
 // Import analytics tracking from main app
 const trackIntercitySearch = (from: string, to: string, transportType: string) => {
@@ -103,18 +104,31 @@ const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
       }
     `}</style>
 
-      <div className={`relative w-full max-w-4xl ${isLanding ? 'h-64 md:h-80' : 'h-64 md:h-72'} bg-gradient-to-b from-blue-50/50 to-white/50 backdrop-blur-md rounded-[2.5rem] overflow-hidden border border-white/60 shadow-glass mb-8 transition-all duration-700`}>
+      <div className={`relative w-full max-w-4xl ${isLanding ? 'h-64 md:h-80' : 'h-64 md:h-72'} bg-gradient-to-b from-sky-400/30 via-blue-100/40 to-emerald-50/30 rounded-3xl overflow-hidden border border-blue-200/40 shadow-2xl shadow-blue-500/10 mb-8 transition-all duration-700 backdrop-blur-sm`}>
 
-        {/* Sky Elements */}
-        <div className="absolute top-8 right-16 w-32 h-16 bg-white/40 rounded-full blur-2xl"></div>
-        <div className="absolute top-20 left-20 w-24 h-12 bg-blue-100/30 rounded-full blur-2xl"></div>
+        {/* Realistic Sky with Sun */}
+        <div className="absolute top-4 right-12 w-16 h-16 bg-yellow-200/60 rounded-full blur-xl"></div>
+        <div className="absolute top-6 right-14 w-12 h-12 bg-yellow-300/40 rounded-full blur-lg"></div>
+
+        {/* Clouds */}
+        <div className="absolute top-8 right-32 w-24 h-10 bg-white/50 rounded-full blur-lg"></div>
+        <div className="absolute top-12 left-24 w-32 h-12 bg-white/40 rounded-full blur-xl"></div>
 
         {isLanding ? (
           // --- LANDING MODE: SCENIC VIEW ---
           <>
-            {/* Road/Ground */}
-            <div className="absolute bottom-0 w-full h-28 bg-gradient-to-t from-gray-50/80 to-transparent border-t border-white/20 backdrop-blur-sm">
-              <div className="w-full h-full border-t-2 border-dashed border-gray-300/30 mt-8"></div>
+            {/* Realistic Road/Highway */}
+            <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-slate-700/60 via-slate-600/40 to-transparent">
+              {/* Highway center line */}
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-yellow-400/50"></div>
+              {/* Dashed road markings */}
+              <div className="absolute top-1/2 left-0 right-0 flex justify-around px-4 -translate-y-1/2">
+                <div className="w-12 h-1 bg-yellow-300/70 rounded"></div>
+                <div className="w-12 h-1 bg-yellow-300/70 rounded"></div>
+                <div className="w-12 h-1 bg-yellow-300/70 rounded"></div>
+                <div className="w-12 h-1 bg-yellow-300/70 rounded"></div>
+                <div className="w-12 h-1 bg-yellow-300/70 rounded"></div>
+              </div>
             </div>
 
             {/* Plane Animation (Slower: 12s) */}
@@ -147,13 +161,7 @@ const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
               <div className="w-16 h-1.5 bg-gray-300 rounded-full"></div>
             </div>
 
-            {/* Floating Central Icon */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center" style={{ animation: 'float 6s ease-in-out infinite' }}>
-              <div className="absolute top-0 w-full h-full bg-blue-400/20 rounded-full z-0 blur-xl scale-150" style={{ animation: 'pulse-ring 4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite' }}></div>
-              <div className="relative z-10 bg-white/80 backdrop-blur-xl p-5 rounded-3xl shadow-soft border border-white">
-                <Compass className="w-12 h-12 text-blue-600" />
-              </div>
-            </div>
+
           </>
         ) : (
           // --- SEARCHING MODE: ORBIT VIEW ---
@@ -274,12 +282,8 @@ const App: React.FC = () => {
     e.preventDefault();
     if (!origin || !destination) return;
 
-    // Check if API key is set
-    const apiKey = localStorage.getItem('gemini_api_key');
-    if (!apiKey) {
-      setShowApiKeyModal(true);
-      return;
-    }
+    // NOTE: API key management is now automatic via apiKeyManager
+    // Users don't need to manually add API keys anymore
 
     // NOTE: We allow search attempt even if offline, because the service layer 
     // checks the persistent cache.
@@ -316,7 +320,8 @@ const App: React.FC = () => {
       if (isOffline) {
         setError("You are offline and no cached route exists for this journey. Please connect to the internet.");
       } else {
-        setError("An error occurred while planning your trip. Please try again.");
+        // Preserve the actual error message (e.g., daily limit message)
+        setError(err.message || "An error occurred while planning your trip. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -369,7 +374,7 @@ const App: React.FC = () => {
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              window.top!.location.href = window.location.origin + '/';
+              window.location.href = window.location.origin + '/#home';
             }}
             className="flex items-center gap-2.5 outline-none cursor-pointer hover:opacity-80 transition-opacity"
           >
@@ -390,7 +395,7 @@ const App: React.FC = () => {
           href="/"
           onClick={(e) => {
             e.preventDefault();
-            window.top!.location.href = window.location.origin + '/';
+            window.location.href = window.location.origin + '/#home';
           }}
           className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
         >
@@ -424,23 +429,22 @@ const App: React.FC = () => {
 
             <div className="space-y-2 flex-1">
               {[
-                { icon: Bot, label: 'AI Assistant', color: 'text-dhaka-green', route: '?view=ai' },
-                { icon: Info, label: 'About', color: 'text-purple-500', route: '?view=about' },
-                { icon: Sparkles, label: 'Why Use কই যাবো', color: 'text-pink-500', route: '?view=why-use' },
-                { icon: FileText, label: 'Q&A', color: 'text-cyan-500', route: '?view=faq' },
-                { icon: Settings, label: 'App Settings', color: 'text-blue-500', route: '?view=settings' },
-                { icon: Clock, label: 'History', color: 'text-amber-500', route: '?view=history' },
-                { icon: Download, label: 'Install App', color: 'text-emerald-600', route: '?view=install' },
-                { icon: Shield, label: 'Privacy Policy', color: 'text-purple-500', route: '?view=privacy' },
-                { icon: FileText, label: 'Terms of Service', color: 'text-orange-500', route: '?view=terms' },
+                { icon: Bot, label: 'AI Assistant', color: 'text-dhaka-green', hash: 'ai-assistant' },
+                { icon: Info, label: 'About', color: 'text-purple-500', hash: 'about' },
+                { icon: Sparkles, label: 'Why Use কই যাবো', color: 'text-pink-500', hash: 'why-use' },
+                { icon: FileText, label: 'Q&A', color: 'text-cyan-500', hash: 'faq' },
+                { icon: Clock, label: 'History', color: 'text-amber-500', hash: 'history' },
+                { icon: Download, label: 'Install App', color: 'text-emerald-600', hash: 'install' },
+                { icon: Shield, label: 'Privacy Policy', color: 'text-purple-500', hash: 'privacy' },
+                { icon: FileText, label: 'Terms of Service', color: 'text-orange-500', hash: 'terms' },
               ].map((item, idx) => (
                 <a
                   key={idx}
-                  href={`${window.location.origin}/${item.route}`}
+                  href={`${window.location.origin}/#${item.hash}`}
                   onClick={(e) => {
                     e.preventDefault();
                     setIsMenuOpen(false);
-                    window.top!.location.href = `${window.location.origin}/${item.route}`;
+                    window.location.href = `${window.location.origin}/#${item.hash}`;
                   }}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
                 >
@@ -477,7 +481,7 @@ const App: React.FC = () => {
                   href={`${window.location.origin}/#settings`}
                   onClick={(e) => {
                     e.preventDefault();
-                    window.top!.location.href = `${window.location.origin}/#settings`;
+                    window.location.href = `${window.location.origin}/#settings`;
                   }}
                   className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:shadow-lg transition-all"
                 >
@@ -497,20 +501,18 @@ const App: React.FC = () => {
 
       {/* Main Content - Add top padding for fixed header */}
       {/* Main Content - Add top padding for fixed header */}
-      <div className="pt-16 md:pt-20">
-        {/* Page Title */}
-        <div className="max-w-4xl mx-auto px-3 mt-6 mb-4">
-          <h1 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-center text-gray-800">
-            কোথায় যেতে চান?
-          </h1>
-        </div>
+      <div className="pt-16 md:pt-20 min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
+        {/* Sticky Search Header with Title - Stays visible while scrolling */}
+        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-gradient-to-b from-white via-white to-white/80 pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
+          <div className="max-w-4xl mx-auto relative">
+            {/* Page Title */}
+            <h1 className="text-3xl font-bold mb-3 font-bengali drop-shadow-lg text-center text-gray-800">
+              কোথায় যেতে চান?
+            </h1>
 
-        {/* Floating Sticky Header */}
-        <div className="sticky top-2 z-[2000] w-full px-2 md:px-0">
-          <div className="max-w-4xl mx-auto">
             {/* Offline Indicator Overlay */}
             {isOffline && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-dhaka-red text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg shadow-red-500/30 animate-pulse border-2 border-white">
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[5000] flex items-center gap-2 bg-dhaka-red text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg shadow-red-500/30 animate-pulse border-2 border-white">
                 <WifiOff size={12} /> You are offline
               </div>
             )}
@@ -564,9 +566,20 @@ const App: React.FC = () => {
                 </div>
               </form>
 
-              {/* Clear All Button - Show when there's data to clear */}
-              {(origin || destination || data) && !loading && (
-                <div className="mt-3 flex justify-center">
+              {/* Usage Indicator and Clear All Button - Same Line */}
+              <div className="mt-2 flex items-center justify-between gap-3">
+                {/* Usage Indicator */}
+                <div className="bg-purple-50 px-3 py-1.5 rounded-full border border-purple-200">
+                  <p className="text-xs font-bold text-purple-700">
+                    Intercity Search Usage: {(() => {
+                      const remaining = getRemainingUses();
+                      return `${2 - remaining.intercitySearch}/2`;
+                    })()}
+                  </p>
+                </div>
+
+                {/* Clear All Button - Show when there's data to clear */}
+                {(origin || destination || data) && !loading && (
                   <button
                     type="button"
                     onClick={handleClearAll}
@@ -575,8 +588,8 @@ const App: React.FC = () => {
                     <X className="w-4 h-4" />
                     Clear All
                   </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -586,14 +599,16 @@ const App: React.FC = () => {
           {/* 1. Landing State */}
           {/* 1. Offline State (No Data) */}
           {isOffline && !data && !loading && (
-            <div className="flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in mt-8 bg-white/50 backdrop-blur-sm rounded-[2.5rem] border border-white/60 shadow-glass">
-              <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6 shadow-sm border border-red-100 animate-pulse">
-                <WifiOff className="w-10 h-10 text-dhaka-red" />
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in mt-8 bg-white/90 backdrop-blur-sm rounded-[2.5rem] border-2 border-red-100 shadow-xl">
+              <div className="w-24 h-24 bg-gradient-to-br from-red-50 to-red-100 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white animate-pulse">
+                <WifiOff className="w-12 h-12 text-dhaka-red" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-3">You Are Offline</h2>
-              <p className="text-gray-500 max-w-md mx-auto leading-relaxed mb-8">
-                Intercity search requires an internet connection to find the best routes.
-                Please check your connection or view your saved routes.
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">You Are Offline</h2>
+              <p className="text-gray-600 max-w-md mx-auto leading-relaxed mb-6 text-base">
+                Intercity bus search requires an internet connection to find the best routes.
+              </p>
+              <p className="text-gray-500 text-sm max-w-sm mx-auto">
+                Please check your connection and try again, or view your previously saved routes.
               </p>
             </div>
           )}
@@ -610,12 +625,26 @@ const App: React.FC = () => {
 
           {/* 3. Error State */}
           {!loading && error && (
-            <div className="bg-white/80 backdrop-blur rounded-[2rem] border border-red-100 p-8 flex flex-col items-center justify-center text-center shadow-soft mt-8 gap-3 animate-fade-in">
-              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-1">
-                <Info className="w-8 h-8 text-red-500" />
+            <div className={`backdrop-blur rounded-[2rem] p-8 flex flex-col items-center justify-center text-center shadow-soft mt-8 gap-3 animate-fade-in ${error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit')
+              ? 'bg-orange-50/80 border border-orange-200'
+              : 'bg-white/80 border border-red-100'
+              }`}>
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-1 ${error.includes('Daily Limit Reached') || error.includes('Daily limit')
+                ? 'bg-orange-100'
+                : 'bg-red-50'
+                }`}>
+                {error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit') ? (
+                  <Clock className="w-8 h-8 text-orange-500" />
+                ) : (
+                  <Info className="w-8 h-8 text-red-500" />
+                )}
               </div>
-              <h3 className="font-bold text-xl text-gray-800">{isOffline ? "Connection Error" : "No Routes Found"}</h3>
-              <p className="text-gray-500 max-w-xs leading-relaxed">{error}</p>
+              <h3 className="font-bold text-xl text-gray-800">
+                {error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit')
+                  ? "Daily Usage Limit Reached"
+                  : isOffline ? "Connection Error" : "No Routes Found"}
+              </h3>
+              <p className="text-gray-600 max-w-md leading-relaxed whitespace-pre-wrap">{error}</p>
             </div>
           )}
 
@@ -672,7 +701,7 @@ const App: React.FC = () => {
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              window.top!.location.href = window.location.origin + '/';
+              window.location.href = window.location.origin + '/';
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
@@ -680,10 +709,10 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
           </a>
           <a
-            href={`${window.location.origin}/?view=ai`}
+            href={`${window.location.origin}/#ai-assistant`}
             onClick={(e) => {
               e.preventDefault();
-              window.top!.location.href = `${window.location.origin}/?view=ai`;
+              window.location.href = `${window.location.origin}/#ai-assistant`;
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
@@ -695,10 +724,10 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
           </div>
           <a
-            href={`${window.location.origin}/?view=about`}
+            href={`${window.location.origin}/#about`}
             onClick={(e) => {
               e.preventDefault();
-              window.top!.location.href = `${window.location.origin}/?view=about`;
+              window.location.href = `${window.location.origin}/#about`;
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >

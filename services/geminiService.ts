@@ -1,20 +1,30 @@
 
 import { GoogleGenAI } from '@google/genai';
 import { BUS_DATA } from '../constants';
+import { getApiKeyForAiChat, canUseAiChat } from './apiKeyManager';
 
 export const askGeminiRoute = async (userQuery: string, userApiKey?: string): Promise<string> => {
-  // Prioritize user-provided key, then environment variable
-  const apiKey = userApiKey || process.env.API_KEY;
-  
+  // If user has their own key, use it (override system keys)
+  let apiKey = userApiKey;
+
+  // Otherwise, use managed API keys with usage limits
   if (!apiKey) {
-    return "Please set your Google Gemini API Key in Settings to use the Assistant.";
+    if (!canUseAiChat()) {
+      return `⚠️ Daily Limit Reached\n\nYou've used your 2 free AI chat queries for today. Your limit will reset in a few hours.\n\n📧 Need more queries? Contact Developer`;
+    }
+
+    apiKey = getApiKeyForAiChat();
+
+    if (!apiKey) {
+      return "Service temporarily unavailable. Please try again later.";
+    }
   }
 
   try {
     // Initialize client with the key
     const ai = new GoogleGenAI({ apiKey: apiKey });
     const model = 'gemini-2.5-flash';
-    
+
     // Construct a context-aware prompt with our bus data
     // We stringify the whole object to ensure the AI sees all stops
     const busContext = JSON.stringify(BUS_DATA.map(b => ({

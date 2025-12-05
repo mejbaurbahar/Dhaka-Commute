@@ -367,10 +367,15 @@ export const CityBus = ({ isNight, isStopped }: { isNight: boolean, isStopped: b
       const rect = busRef.current.getBoundingClientRect();
       const screenWidth = window.innerWidth;
       // Traffic police is around 80% of the screen (right-20%)
-      // If the bus is past 75% of the screen width, assume it's crossed or crossing the police
+      // If the bus is past 70% of the screen width, assume it's crossed or crossing the police
       // and shouldn't stop.
-      if (rect.left < (screenWidth * 0.75)) {
+      if (rect.left < (screenWidth * 0.70)) {
         setShouldHalt(true);
+        // Auto-resume after 3 seconds to prevent permanent stuck
+        const timer = setTimeout(() => {
+          setShouldHalt(false);
+        }, 3000);
+        return () => clearTimeout(timer);
       } else {
         setShouldHalt(false);
       }

@@ -340,9 +340,12 @@ export const getTodayRouteSearches = (): Array<{ from: string; to: string }> => 
     });
 };
 
-// Clear all user history
+// Clear all user history (does NOT clear global stats)
 export const clearUserHistory = (): void => {
     localStorage.removeItem(HISTORY_KEY);
+    // IMPORTANT: This intentionally does NOT remove global stats (totalVisits, todayVisits, uniqueVisitors)
+    // Global stats are community-wide metrics stored separately in GLOBAL_STATS_KEY
+    // They persist across all changes and user history clearings
 };
 
 // Get recent searches (last N searches)
