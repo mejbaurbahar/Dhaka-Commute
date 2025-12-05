@@ -627,7 +627,8 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
       config: {
         responseMimeType: "application/json",
         responseSchema: routeSchema,
-        temperature: 0.3, // Reduced temperature for less hallucination/repetition
+        temperature: 0.3,
+        maxOutputTokens: 8000,
       },
     });
 
