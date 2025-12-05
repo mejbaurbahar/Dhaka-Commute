@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { GoogleGenerativeAI, SchemaType, Schema } from "@google/generative-ai";
 import { RoutingResponse } from "../types";
 
 // --- Cache Configuration ---
@@ -408,82 +408,82 @@ USE THIS REAL-WORLD FLIGHT DATA FOR BANGLADESH DOMESTIC AIRLINES:
 
 // --- Schema Definition ---
 const routeSchema: Schema = {
-  type: Type.OBJECT,
+  type: SchemaType.OBJECT,
   properties: {
-    origin: { type: Type.STRING },
-    destination: { type: Type.STRING },
+    origin: { type: SchemaType.STRING },
+    destination: { type: SchemaType.STRING },
     options: {
-      type: Type.ARRAY,
+      type: SchemaType.ARRAY,
       items: {
-        type: Type.OBJECT,
+        type: SchemaType.OBJECT,
         properties: {
-          id: { type: Type.STRING },
-          type: { type: Type.STRING, enum: ["AIR", "BUS", "TRAIN", "FERRY"] },
-          title: { type: Type.STRING },
-          summary: { type: Type.STRING },
-          totalDuration: { type: Type.STRING },
-          totalCostRange: { type: Type.STRING },
-          recommended: { type: Type.BOOLEAN },
+          id: { type: SchemaType.STRING },
+          type: { type: SchemaType.STRING, enum: ["AIR", "BUS", "TRAIN", "FERRY"] },
+          title: { type: SchemaType.STRING },
+          summary: { type: SchemaType.STRING },
+          totalDuration: { type: SchemaType.STRING },
+          totalCostRange: { type: SchemaType.STRING },
+          recommended: { type: SchemaType.BOOLEAN },
           destinationWeather: {
-            type: Type.OBJECT,
+            type: SchemaType.OBJECT,
             description: "Predicted weather for the destination city",
             properties: {
-              temperature: { type: Type.STRING, description: "e.g. 30°C" },
-              condition: { type: Type.STRING, description: "e.g. Sunny, Rain" },
-              icon: { type: Type.STRING, enum: ["SUN", "CLOUD", "RAIN", "WIND"] },
-              advice: { type: Type.STRING, description: "Short advice e.g. Pack sunscreen" }
+              temperature: { type: SchemaType.STRING, description: "e.g. 30°C" },
+              condition: { type: SchemaType.STRING, description: "e.g. Sunny, Rain" },
+              icon: { type: SchemaType.STRING, enum: ["SUN", "CLOUD", "RAIN", "WIND"] },
+              advice: { type: SchemaType.STRING, description: "Short advice e.g. Pack sunscreen" }
             },
             required: ["temperature", "condition", "icon", "advice"]
           },
           steps: {
-            type: Type.ARRAY,
+            type: SchemaType.ARRAY,
             items: {
-              type: Type.OBJECT,
+              type: SchemaType.OBJECT,
               properties: {
-                mode: { type: Type.STRING, enum: ["BUS", "TRAIN", "AIR", "LOCAL_BUS", "RICKSHAW", "WALK", "CNG", "METRO_RAIL", "FERRY"] },
-                from: { type: Type.STRING },
-                to: { type: Type.STRING },
-                instruction: { type: Type.STRING },
-                duration: { type: Type.STRING },
-                distance: { type: Type.STRING },
-                cost: { type: Type.STRING },
+                mode: { type: SchemaType.STRING, enum: ["BUS", "TRAIN", "AIR", "LOCAL_BUS", "RICKSHAW", "WALK", "CNG", "METRO_RAIL", "FERRY"] },
+                from: { type: SchemaType.STRING },
+                to: { type: SchemaType.STRING },
+                instruction: { type: SchemaType.STRING },
+                duration: { type: SchemaType.STRING },
+                distance: { type: SchemaType.STRING },
+                cost: { type: SchemaType.STRING },
                 startCoordinates: {
-                  type: Type.OBJECT,
+                  type: SchemaType.OBJECT,
                   description: "Lat/Lng of the starting point of this step",
-                  properties: { lat: { type: Type.NUMBER }, lng: { type: Type.NUMBER } },
+                  properties: { lat: { type: SchemaType.NUMBER }, lng: { type: SchemaType.NUMBER } },
                   required: ["lat", "lng"]
                 },
                 endCoordinates: {
-                  type: Type.OBJECT,
+                  type: SchemaType.OBJECT,
                   description: "Lat/Lng of the ending point of this step",
-                  properties: { lat: { type: Type.NUMBER }, lng: { type: Type.NUMBER } },
+                  properties: { lat: { type: SchemaType.NUMBER }, lng: { type: SchemaType.NUMBER } },
                   required: ["lat", "lng"]
                 },
                 details: {
-                  type: Type.OBJECT,
+                  type: SchemaType.OBJECT,
                   properties: {
-                    busName: { type: Type.STRING, description: "Name of the local bus (e.g. Boishaki)" },
-                    busCounter: { type: Type.STRING },
-                    counterPhone: { type: Type.STRING },
-                    trainName: { type: Type.STRING },
-                    flightName: { type: Type.STRING, description: "Airline Name (e.g. US-Bangla)" },
-                    departureTime: { type: Type.STRING },
-                    arrivalTime: { type: Type.STRING },
-                    operator: { type: Type.STRING },
-                    ticketType: { type: Type.STRING },
+                    busName: { type: SchemaType.STRING, description: "Name of the local bus (e.g. Boishaki)" },
+                    busCounter: { type: SchemaType.STRING },
+                    counterPhone: { type: SchemaType.STRING },
+                    trainName: { type: SchemaType.STRING },
+                    flightName: { type: SchemaType.STRING, description: "Airline Name (e.g. US-Bangla)" },
+                    departureTime: { type: SchemaType.STRING },
+                    arrivalTime: { type: SchemaType.STRING },
+                    operator: { type: SchemaType.STRING },
+                    ticketType: { type: SchemaType.STRING },
                     schedules: {
-                      type: Type.ARRAY,
+                      type: SchemaType.ARRAY,
                       description: "List of available bus/train schedules for this leg",
                       items: {
-                        type: Type.OBJECT,
+                        type: SchemaType.OBJECT,
                         properties: {
-                          operator: { type: Type.STRING },
-                          type: { type: Type.STRING },
-                          departureTime: { type: Type.STRING },
-                          arrivalTime: { type: Type.STRING },
-                          price: { type: Type.STRING },
-                          counter: { type: Type.STRING },
-                          contactNumber: { type: Type.STRING }
+                          operator: { type: SchemaType.STRING },
+                          type: { type: SchemaType.STRING },
+                          departureTime: { type: SchemaType.STRING },
+                          arrivalTime: { type: SchemaType.STRING },
+                          price: { type: SchemaType.STRING },
+                          counter: { type: SchemaType.STRING },
+                          contactNumber: { type: SchemaType.STRING }
                         }
                       }
                     }
@@ -512,7 +512,16 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
       throw new Error('🔑 API Key Required\n\nTo use the Intercity Bus Search, you need to add your own Google Gemini API key.\n\n📍 How to get started:\n1. Go to Settings (menu → Settings)\n2. Click "Open Google AI Studio"\n3. Get your FREE API key from Google\n4. Paste it in Settings and save\n\n✨ It\'s completely free and takes less than 2 minutes!');
     }
 
-    const ai = new GoogleGenAI({ apiKey });
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: routeSchema,
+        temperature: 0.3,
+        maxOutputTokens: 8000,
+      }
+    });
 
     // 0. Check Persistent Cache (LocalStorage) First
     // This works both offline and online for instant loading
@@ -621,28 +630,20 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
       Output strictly in JSON format matching the schema.
     `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash", // Free tier - works with v1beta API
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: routeSchema,
-        temperature: 0.3,
-        maxOutputTokens: 8000,
-      },
-    });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
 
-    const text = response.text;
     if (!text) return null;
 
     // Clean and parse
     const cleanJsonText = cleanResponse(text);
-    const result = JSON.parse(cleanJsonText) as RoutingResponse;
+    const resultJson = JSON.parse(cleanJsonText) as RoutingResponse;
 
     // Save to Persistent Cache
     try {
       localStorage.setItem(cacheKey, JSON.stringify({
-        data: result,
+        data: resultJson,
         timestamp: Date.now()
       }));
     } catch (e) {
@@ -650,7 +651,7 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
       console.warn("Could not save route to local storage cache", e);
     }
 
-    return result;
+    return resultJson;
 
   } catch (error) {
     console.error("Error generating routes:", error);
