@@ -2677,8 +2677,8 @@ const App: React.FC = () => {
         </nav>
       )}
       {/* Vercel Analytics */}
-      <Analytics />
-      <SpeedInsights />
+      {/* <Analytics /> */}
+      {/* <SpeedInsights /> */}
 
       {/* Menu Overlay - Works on all pages */}
       {isMenuOpen && (
