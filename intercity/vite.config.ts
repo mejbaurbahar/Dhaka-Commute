@@ -44,6 +44,101 @@ export default defineConfig(({ mode }) => {
           cleanupOutdatedCaches: true,
           clientsClaim: true,
           skipWaiting: true,
+          // Cache versioning for proper updates
+          cacheId: 'dhaka-commute-intercity-v1',
+          // Runtime caching for intercity external resources
+          runtimeCaching: [
+            // Tailwind CSS CDN - Critical for offline styling
+            {
+              urlPattern: /^https:\/\/cdn\.tailwindcss\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'intercity-tailwind-cache',
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            // Google Fonts Stylesheets
+            {
+              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'intercity-fonts-cache',
+                expiration: {
+                  maxEntries: 20,
+                  maxAgeSeconds: 60 * 60 * 24 * 365
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            // Google Fonts Files
+            {
+              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'intercity-gstatic-cache',
+                expiration: {
+                  maxEntries: 30,
+                  maxAgeSeconds: 60 * 60 * 24 * 365
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            // Leaflet CSS and JS
+            {
+              urlPattern: /^https:\/\/unpkg\.com\/leaflet.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'intercity-leaflet-cache',
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 * 24 * 365
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            // AI Studio CDN (React, Lucide, etc.)
+            {
+              urlPattern: /^https:\/\/aistudiocdn\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'intercity-aistudio-cache',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 60 * 60 * 24 * 30
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            // ESM.sh modules (for leaflet)
+            {
+              urlPattern: /^https:\/\/esm\.sh\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'intercity-esm-cache',
+                expiration: {
+                  maxEntries: 30,
+                  maxAgeSeconds: 60 * 60 * 24 * 365
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            }
+          ]
         }
       })
     ],

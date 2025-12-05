@@ -1,32 +1,35 @@
 
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { BUS_DATA } from '../constants';
-import { getApiKeyForAiChat, canUseAiChat } from './apiKeyManager';
 
 export const askGeminiRoute = async (userQuery: string, userApiKey?: string): Promise<string> => {
-  // If user has their own key, use it (override system keys)
-  let apiKey = userApiKey;
+  // Check if user has their own API key saved in settings
+  const savedUserApiKey = localStorage.getItem('gemini_api_key');
+  const hasValidSavedKey = savedUserApiKey && savedUserApiKey.trim().length > 20;
 
-  // Otherwise, use managed API keys with usage limits
-  if (!apiKey) {
-    if (!canUseAiChat()) {
-      return `⚠️ Daily Limit Reached\n\nYou've used your 2 free AI chat queries for today. Your limit will reset in a few hours.\n\n📧 Need more queries? Contact Developer`;
-    }
+  // Check if API key was passed as parameter
+  const hasValidParamKey = userApiKey && userApiKey.trim().length > 20;
 
-    apiKey = getApiKeyForAiChat();
+  let apiKey: string = '';
 
-    if (!apiKey) {
-      return "Service temporarily unavailable. Please try again later.";
-    }
+  // Use user's personal API key
+  if (hasValidSavedKey) {
+    apiKey = savedUserApiKey as string;
+    console.log('✅ Using saved user API key from settings');
+  } else if (hasValidParamKey) {
+    apiKey = userApiKey as string;
+    console.log('✅ Using user API key from parameter');
+  } else {
+    // No API key provided - user must add one
+    console.log('❌ No API key found');
+    return `🔑 API Key Required\n\nPlease add your Gemini API key in Settings to use the AI Assistant.\n\n📍 How to get your API key:\n1. Visit https://aistudio.google.com/apikey\n2. Create a new API key\n3. Copy it and paste in Settings\n\n💡 It's free and takes less than a minute!`;
   }
 
   try {
-    // Initialize client with the key
-    const ai = new GoogleGenAI({ apiKey: apiKey });
-    const model = 'gemini-2.5-flash';
+    // Initialize standard Gemini SDK
+    const genAI = new GoogleGenerativeAI(apiKey);
 
     // Construct a context-aware prompt with our bus data
-    // We stringify the whole object to ensure the AI sees all stops
     const busContext = JSON.stringify(BUS_DATA.map(b => ({
       name: b.name,
       bnName: b.bnName,
@@ -58,18 +61,44 @@ export const askGeminiRoute = async (userQuery: string, userApiKey?: string): Pr
       7. **Language**: If the user asks in Bengali, reply in Bengali. Otherwise English.
     `;
 
-    const response = await ai.models.generateContent({
-      model: model,
-      contents: userQuery,
-      config: {
-        systemInstruction: systemInstruction,
+    // Use the official model initialization
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash-latest",
+      systemInstruction: systemInstruction
+    });
+
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: userQuery }] }],
+      generationConfig: {
+        temperature: 0.4,
+        topK: 20,
+        topP: 0.9,
+        maxOutputTokens: 512,
       },
     });
 
-    return response.text || "Sorry, I couldn't process that request right now.";
+    const response = await result.response;
+    const text = response.text();
+
+    return text || "Sorry, I couldn't process that request right now.";
 
   } catch (error: any) {
     console.error("Gemini API Error:", error);
-    return "I'm having trouble connecting to the AI assistant. Please check your API Key in settings.";
+    console.error("Error details:", {
+      message: error.message,
+      status: error.status,
+      response: error.response
+    });
+
+    // Provide more helpful error messages
+    if (error.message?.includes('API key')) {
+      return "❌ Invalid API Key\n\nYour API key appears to be invalid. Please check:\n\n1. Make sure you copied the complete API key\n2. Verify it's a valid Gemini API key from https://aistudio.google.com/apikey\n3. Try generating a new key if needed\n\nThen update it in Settings.";
+    }
+
+    if (error.message?.includes('quota') || error.message?.includes('limit')) {
+      return "⚠️ API Quota Exceeded\n\nYou've reached the limit for your Gemini API key.\n\nPlease check your usage at https://aistudio.google.com/apikey or wait for your quota to reset.";
+    }
+
+    return `❌ Error: ${error.message || 'Failed to connect to AI assistant'}\n\nPlease try again or check your API key in Settings.`;
   }
 };

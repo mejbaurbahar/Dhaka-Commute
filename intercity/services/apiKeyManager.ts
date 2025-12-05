@@ -15,12 +15,15 @@ interface KeyUsageStats {
 }
 
 // API Keys pool (direct storage for reliability)
+// ⚠️ WARNING: These keys are VISIBLE in your code!
+// For production, use environment variables or backend proxy
+// See: API_KEY_SECURITY_GUIDE.md
 const API_KEYS = [
-    'AIzaSyAUATfDS1vbTWWcHjpSQ3_7GR-zB1GNnQU',
-    'AIzaSyD_8TTAF5DZtZhwb9qoAsyu0mObWR6arRM',
-    'AIzaSyAfmELE0-ExlyIGYAORmvYVlnwDlk0JUQ4',
-    'AIzaSyByWBx5dRtb6s-yRx_iUdIkXS5Ii-QiSc0',
-    'AIzaSyDM8F8Yi55Ci4LAThxW99TNFQWacWZOJc0'
+    'AIzaSyBWwNCnxPBizcOU8J38ucXTasE2CuTUyfs',
+    'AIzaSyAT1RmkF7f2rQZ_X7aOJA3vRJyGiawAuow',
+    'AIzaSyB2TB6ZHqjHH0S1gQ4P8tGtNa6cpUrb7tI',
+    'AIzaSyDyZuQZvhfvr8TKLiKgBCkH4wSB8ms1EXs',
+    'AIzaSyB6FdQhBxh05Og6d4FC9znY9feerE31O1Y'
 ];
 
 const USAGE_LIMITS = {

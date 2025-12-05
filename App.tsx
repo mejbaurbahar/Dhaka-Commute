@@ -17,7 +17,6 @@ import { findNearestMetroStation } from './services/metroService';
 import { planRoutes, SuggestedRoute } from './services/routePlanner';
 import RouteSuggestions from './components/RouteSuggestions';
 import { incrementVisitCount, trackBusSearch, trackRouteSearch } from './services/analyticsService';
-import { getTotalUsageStats, USAGE_LIMITS } from './services/apiKeyManager';
 
 
 
@@ -170,8 +169,10 @@ const SettingsView: React.FC<{
 
   const handleSave = () => {
     const trimmedKey = inputKey.trim();
+    console.log('Saving API key, length:', trimmedKey.length);
 
     if (!trimmedKey || trimmedKey.length < 20) {
+      console.error('API key validation failed - too short or empty');
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 3000);
       return;
@@ -179,6 +180,8 @@ const SettingsView: React.FC<{
 
     setApiKey(trimmedKey);
     localStorage.setItem('gemini_api_key', trimmedKey);
+    console.log('✅ API key saved to localStorage');
+    console.log('Saved key starts with:', trimmedKey.substring(0, 20) + '...');
     setSaveStatus('success');
     setTimeout(() => setSaveStatus('idle'), 3000);
   };
@@ -338,8 +341,8 @@ const App: React.FC = () => {
     });
   }, []);
 
-  // Allow user to store key locally
-  const [apiKey, setApiKey] = useState<string>(localStorage.getItem('gemini_api_key') || '');
+  // Allow user to store key locally - sync with localStorage changes
+  const [apiKey, setApiKey] = useState<string>(() => localStorage.getItem('gemini_api_key') || '');
 
   // Offline detection
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -362,6 +365,7 @@ const App: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 
   const globalNearestStationName = useMemo(() => {
     if (!userLocation) return null;
@@ -493,13 +497,14 @@ const App: React.FC = () => {
       e.preventDefault();
       setDeferredPrompt(e);
 
-      // Show install prompt after 3 seconds (all devices)
+      // Show install prompt after 3 seconds (desktop only)
       setTimeout(() => {
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        // Show prompt on all devices (desktop + mobile), but not if already installed or on iOS
-        if (!isStandalone && !isIOS) {
+        // Show prompt ONLY on desktop (not mobile, not if already installed, not on iOS)
+        if (!isStandalone && !isIOS && !isMobile) {
           setShowInstallPrompt(true);
         }
       }, 3000);
@@ -884,8 +889,12 @@ const App: React.FC = () => {
       console.log("Location not available for AI context");
     }
 
-    // Pass the user's API key if available
-    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`, apiKey);
+    // Always read the latest API key from localStorage to ensure we use recently saved keys
+    const latestApiKey = localStorage.getItem('gemini_api_key') || '';
+    console.log('AI Chat - Reading API key from localStorage');
+    console.log('API key length:', latestApiKey.length);
+    console.log('API key present:', latestApiKey.length > 0 ? 'Yes' : 'No (will use managed keys)');
+    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`, latestApiKey);
 
     const assistantMessage: ChatMessage = { role: 'assistant', text: result };
     setChatHistory(prev => [...prev, assistantMessage]);
@@ -978,14 +987,7 @@ const App: React.FC = () => {
             <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
           </p>
         </div>
-        {!apiKey && (
-          <div className="text-right">
-            <p className="text-xs font-bold text-gray-400">Usage</p>
-            <p className="text-sm font-bold text-blue-600">
-              {getTotalUsageStats().totalAiChatToday}/{USAGE_LIMITS.AI_CHAT_PER_DAY}
-            </p>
-          </div>
-        )}
+
       </div>
       {/* Desktop Header */}
       <div className="hidden md:flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20">
@@ -998,14 +1000,7 @@ const App: React.FC = () => {
             <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
           </p>
         </div>
-        {!apiKey && (
-          <div className="text-right">
-            <p className="text-xs font-bold text-gray-400">Usage</p>
-            <p className="text-sm font-bold text-blue-600">
-              {getTotalUsageStats().totalAiChatToday}/{USAGE_LIMITS.AI_CHAT_PER_DAY}
-            </p>
-          </div>
-        )}
+
       </div>
 
       {!isOnline ? (
@@ -2248,7 +2243,7 @@ const App: React.FC = () => {
                 window.location.replace('/intercity');
               }, 500);
             }}
-            className="flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group"
+            className="hidden md:flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
@@ -2721,6 +2716,14 @@ const App: React.FC = () => {
                 <Clock className="w-5 h-5 text-amber-500" /> History
               </button>
 
+              {/* Settings */}
+              <button
+                onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.SETTINGS ? 'bg-blue-50 border border-blue-200' : ''}`}
+              >
+                <Settings className="w-5 h-5 text-blue-600" /> Settings
+              </button>
+
               {/* Install/Uninstall App - Always show */}
               <button
                 onClick={() => { setView(AppView.INSTALL_APP); setIsMenuOpen(false); }}
@@ -2831,6 +2834,8 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
+
+
     </div>
   );
 };

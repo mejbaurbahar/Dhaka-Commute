@@ -6,7 +6,6 @@ import { RouteCard } from './components/RouteCard';
 import { RouteDetail } from './components/RouteDetail';
 import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
 import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield } from 'lucide-react';
-import { getRemainingUses } from './services/apiKeyManager';
 
 // Import analytics tracking from main app
 const trackIntercitySearch = (from: string, to: string, transportType: string) => {
@@ -501,9 +500,9 @@ const App: React.FC = () => {
 
       {/* Main Content - Add top padding for fixed header */}
       {/* Main Content - Add top padding for fixed header */}
-      <div className="pt-16 md:pt-20 min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
+      <div className="pt-16 md:pt-20 min-h-screen bg-blue-50">
         {/* Sticky Search Header with Title - Stays visible while scrolling */}
-        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-gradient-to-b from-white via-white to-white/80 pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
+        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
           <div className="max-w-4xl mx-auto relative">
             {/* Page Title */}
             <h1 className="text-3xl font-bold mb-3 font-bengali drop-shadow-lg text-center text-gray-800">
@@ -512,12 +511,12 @@ const App: React.FC = () => {
 
             {/* Offline Indicator Overlay */}
             {isOffline && (
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[5000] flex items-center gap-2 bg-dhaka-red text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg shadow-red-500/30 animate-pulse border-2 border-white">
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[5000] flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg animate-pulse border-2 border-white">
                 <WifiOff size={12} /> You are offline
               </div>
             )}
 
-            <div className="bg-white/90 backdrop-blur-xl rounded-[2rem] shadow-glass border border-white/50 p-3 md:p-4 transition-all duration-300">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-3 md:p-4 transition-all duration-300">
               {/* items-end aligns the input boxes and button to the bottom, ignoring the top labels */}
               <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 md:gap-3 items-center md:items-end">
 
@@ -566,20 +565,9 @@ const App: React.FC = () => {
                 </div>
               </form>
 
-              {/* Usage Indicator and Clear All Button - Same Line */}
-              <div className="mt-2 flex items-center justify-between gap-3">
-                {/* Usage Indicator */}
-                <div className="bg-purple-50 px-3 py-1.5 rounded-full border border-purple-200">
-                  <p className="text-xs font-bold text-purple-700">
-                    Intercity Search Usage: {(() => {
-                      const remaining = getRemainingUses();
-                      return `${2 - remaining.intercitySearch}/2`;
-                    })()}
-                  </p>
-                </div>
-
-                {/* Clear All Button - Show when there's data to clear */}
-                {(origin || destination || data) && !loading && (
+              {/* Clear All Button - Show when there's data to clear */}
+              {(origin || destination || data) && !loading && (
+                <div className="mt-2 flex items-center justify-end gap-3">
                   <button
                     type="button"
                     onClick={handleClearAll}
@@ -588,8 +576,8 @@ const App: React.FC = () => {
                     <X className="w-4 h-4" />
                     Clear All
                   </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -599,9 +587,9 @@ const App: React.FC = () => {
           {/* 1. Landing State */}
           {/* 1. Offline State (No Data) */}
           {isOffline && !data && !loading && (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in mt-8 bg-white/90 backdrop-blur-sm rounded-[2.5rem] border-2 border-red-100 shadow-xl">
-              <div className="w-24 h-24 bg-gradient-to-br from-red-50 to-red-100 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white animate-pulse">
-                <WifiOff className="w-12 h-12 text-dhaka-red" />
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in mt-8 bg-white rounded-3xl border-2 border-red-100 shadow-xl">
+              <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white animate-pulse">
+                <WifiOff className="w-12 h-12 text-red-600" />
               </div>
               <h2 className="text-3xl font-bold text-gray-800 mb-4">You Are Offline</h2>
               <p className="text-gray-600 max-w-md mx-auto leading-relaxed mb-6 text-base">

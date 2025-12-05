@@ -1,7 +1,11 @@
 
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import { RoutingResponse } from "../types";
 import { getApiKeyForIntercitySearch } from "../../services/apiKeyManager";
+
+// Compatibility layer for existing schema definition
+const Type = SchemaType;
+type Schema = any; // SDK uses its own internal type, 'any' is safe here to avoid conflicts
 
 // --- Cache Configuration ---
 const CACHE_TTL = 1000 * 60 * 30; // 30 Minutes for "Fresh" data
@@ -518,7 +522,7 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
       }
     }
 
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenerativeAI(apiKey);
 
     // 0. Check Persistent Cache (LocalStorage) First
     // This works both offline and online for instant loading
@@ -627,27 +631,30 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
       Output strictly in JSON format matching the schema.
     `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
+    // Initialize model with standard SDK
+    const model = ai.getGenerativeModel({
+      model: "gemini-1.5-flash-latest",
+      generationConfig: {
         responseMimeType: "application/json",
-        responseSchema: routeSchema,
-        temperature: 0.3, // Reduced temperature for less hallucination/repetition
-      },
+        responseSchema: routeSchema as any, // Cast as any to bypass strict type check for compatibility
+        temperature: 0.3,
+      }
     });
 
-    const text = response.text;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+
+    const text = response.text();
     if (!text) return null;
 
     // Clean and parse
     const cleanJsonText = cleanResponse(text);
-    const result = JSON.parse(cleanJsonText) as RoutingResponse;
+    const resultData = JSON.parse(cleanJsonText) as RoutingResponse;
 
     // Save to Persistent Cache
     try {
       localStorage.setItem(cacheKey, JSON.stringify({
-        data: result,
+        data: resultData,
         timestamp: Date.now()
       }));
     } catch (e) {
@@ -655,7 +662,7 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
       console.warn("Could not save route to local storage cache", e);
     }
 
-    return result;
+    return resultData;
 
   } catch (error) {
     console.error("Error generating routes:", error);

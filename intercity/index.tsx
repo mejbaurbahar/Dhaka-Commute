@@ -13,3 +13,22 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+// Register PWA Service Worker for Intercity App
+import { registerSW } from 'virtual:pwa-register';
+
+const updateSW = registerSW({
+  immediate: false,
+  onNeedRefresh() {
+    console.log('🔄 New content available for intercity. Will update on next visit.');
+  },
+  onOfflineReady() {
+    console.log('✅ Intercity app is ready to work offline');
+  },
+  onRegistered(registration) {
+    console.log('📝 Intercity SW registered:', registration);
+  },
+  onRegisterError(error) {
+    console.error('❌ Intercity SW registration error:', error);
+  }
+});

@@ -61,7 +61,24 @@ export default defineConfig(({ mode }) => {
           // Inline the workbox runtime instead of loading from CDN
           mode: 'production',
           sourcemap: false,
+          // Cache versioning for proper updates
+          cacheId: 'dhaka-commute-v1',
           runtimeCaching: [
+            // Static Assets - Cache First (Offline First Strategy)
+            {
+              urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'images-cache',
+                expiration: {
+                  maxEntries: 60,
+                  maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
             // Tailwind CSS CDN - Critical for offline styling
             {
               urlPattern: /^https:\/\/cdn\.tailwindcss\.com\/.*/i,
@@ -120,6 +137,22 @@ export default defineConfig(({ mode }) => {
                 cacheableResponse: {
                   statuses: [0, 200]
                 }
+              }
+            },
+            // API Calls - Network First with Cache Fallback
+            {
+              urlPattern: /^https:\/\/api\.open-meteo\.com\/.*/i,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'api-cache',
+                networkTimeoutSeconds: 10,
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 5 * 60, // 5 minutes
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
               }
             }
           ]
