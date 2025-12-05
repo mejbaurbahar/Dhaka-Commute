@@ -426,13 +426,14 @@ const App: React.FC = () => {
               </button>
             </div>
 
-            <div className="space-y-2 flex-1">
+            <div className="space-y-2 flex-1 overflow-y-auto hidden-scrollbar">
               {[
                 { icon: Bot, label: 'AI Assistant', color: 'text-dhaka-green', hash: 'ai-assistant' },
                 { icon: Info, label: 'About', color: 'text-purple-500', hash: 'about' },
                 { icon: Sparkles, label: 'Why Use কই যাবো', color: 'text-pink-500', hash: 'why-use' },
                 { icon: FileText, label: 'Q&A', color: 'text-cyan-500', hash: 'faq' },
                 { icon: Clock, label: 'History', color: 'text-amber-500', hash: 'history' },
+                { icon: Settings, label: 'Settings', color: 'text-blue-600', hash: 'settings' },
                 { icon: Download, label: 'Install App', color: 'text-emerald-600', hash: 'install' },
                 { icon: Shield, label: 'Privacy Policy', color: 'text-purple-500', hash: 'privacy' },
                 { icon: FileText, label: 'Terms of Service', color: 'text-orange-500', hash: 'terms' },

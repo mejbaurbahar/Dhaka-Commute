@@ -2692,7 +2692,7 @@ const App: React.FC = () => {
               </button>
             </div>
 
-            <div className="space-y-2 flex-1">
+            <div className="space-y-2 flex-1 overflow-y-auto hidden-scrollbar">
               <button
                 onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.AI_ASSISTANT ? 'bg-green-50 border border-green-200' : ''}`}
