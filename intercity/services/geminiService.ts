@@ -418,7 +418,7 @@ const routeSchema: Schema = {
         type: SchemaType.OBJECT,
         properties: {
           id: { type: SchemaType.STRING },
-          type: { type: SchemaType.STRING, enum: ["AIR", "BUS", "TRAIN", "FERRY"] },
+          type: { type: SchemaType.STRING, format: "enum", enum: ["AIR", "BUS", "TRAIN", "FERRY"] },
           title: { type: SchemaType.STRING },
           summary: { type: SchemaType.STRING },
           totalDuration: { type: SchemaType.STRING },
@@ -430,7 +430,7 @@ const routeSchema: Schema = {
             properties: {
               temperature: { type: SchemaType.STRING, description: "e.g. 30°C" },
               condition: { type: SchemaType.STRING, description: "e.g. Sunny, Rain" },
-              icon: { type: SchemaType.STRING, enum: ["SUN", "CLOUD", "RAIN", "WIND"] },
+              icon: { type: SchemaType.STRING, format: "enum", enum: ["SUN", "CLOUD", "RAIN", "WIND"] },
               advice: { type: SchemaType.STRING, description: "Short advice e.g. Pack sunscreen" }
             },
             required: ["temperature", "condition", "icon", "advice"]
@@ -440,7 +440,7 @@ const routeSchema: Schema = {
             items: {
               type: SchemaType.OBJECT,
               properties: {
-                mode: { type: SchemaType.STRING, enum: ["BUS", "TRAIN", "AIR", "LOCAL_BUS", "RICKSHAW", "WALK", "CNG", "METRO_RAIL", "FERRY"] },
+                mode: { type: SchemaType.STRING, format: "enum", enum: ["BUS", "TRAIN", "AIR", "LOCAL_BUS", "RICKSHAW", "WALK", "CNG", "METRO_RAIL", "FERRY"] },
                 from: { type: SchemaType.STRING },
                 to: { type: SchemaType.STRING },
                 instruction: { type: SchemaType.STRING },
