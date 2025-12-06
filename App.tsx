@@ -361,14 +361,7 @@ const SettingsView: React.FC<{
 };
 
 
-const getStoredChatHistory = (): ChatMessage[] => {
-  try {
-    const stored = localStorage.getItem('dhaka_commute_chat_history');
-    return stored ? JSON.parse(stored) : [];
-  } catch (e) {
-    return [];
-  }
-};
+
 
 const App: React.FC = () => {
   // Polyfill for requestIdleCallback (Safari support)
@@ -417,17 +410,15 @@ const App: React.FC = () => {
   const watchIdRef = useRef<number | null>(null);
 
   const [aiQuery, setAiQuery] = useState('');
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>(getStoredChatHistory);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
 
-  // Persist Chat History
+  // Clear Chat History when leaving the AI View
   useEffect(() => {
-    try {
-      localStorage.setItem('dhaka_commute_chat_history', JSON.stringify(chatHistory));
-    } catch (e) {
-      console.warn("Failed to save chat history");
+    if (view !== AppView.AI_ASSISTANT) {
+      setChatHistory([]);
     }
-  }, [chatHistory]);
+  }, [view]);
 
   const [intercityLoading, setIntercityLoading] = useState(false);
 
