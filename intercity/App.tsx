@@ -381,9 +381,11 @@ const App: React.FC = () => {
             }}
             className="flex items-center gap-1 cursor-pointer outline-none hover:opacity-90 transition-opacity"
           >
-            <div className="scale-75 origin-left">
-              <AnimatedLogo />
-            </div>
+            <span className="text-xl">🚌</span>
+            <h1 className="text-xl font-bold font-bengali tracking-tight">
+              <span className="text-dhaka-green">কই</span>
+              <span className="text-dhaka-red">যাবো</span>
+            </h1>
           </a>
           <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
             <Menu className="w-6 h-6" />
@@ -401,7 +403,13 @@ const App: React.FC = () => {
           }}
           className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
         >
-          <AnimatedLogo />
+          <div className="bg-gradient-to-br from-dhaka-green to-teal-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
+            <span className="text-xl">🚌</span>
+          </div>
+          <h1 className="text-2xl font-black font-bengali tracking-tight">
+            <span className="text-dhaka-green">কই</span>
+            <span className="text-dhaka-red">যাবো</span>
+          </h1>
         </a>
         <div className="flex items-center gap-4">
           <button
