@@ -540,8 +540,19 @@ const App: React.FC = () => {
       viewSetFromHash.current = false;
       return;
     }
-    if (view !== AppView.HOME && viewToHash[view]) {
-      window.history.pushState({ view }, '', `#${viewToHash[view]}`);
+
+    // Check if we are already at the clean URL path, so we don't dirty it with a hash
+    // e.g. if we are at /for-ai, don't add #for-ai
+    const hash = viewToHash[view];
+    const currentPath = window.location.pathname.substring(1).replace(/\/$/, ''); // Remove trailing slash
+
+    // Simple check: if current path matches the intended view slug
+    if (hash && currentPath === hash) {
+      return;
+    }
+
+    if (view !== AppView.HOME && hash) {
+      window.history.pushState({ view }, '', `#${hash}`);
     }
   }, [view]);
 
@@ -557,7 +568,8 @@ const App: React.FC = () => {
       'history': AppView.HISTORY,
       'install': AppView.INSTALL_APP,
       'privacy': AppView.PRIVACY,
-      'terms': AppView.TERMS
+      'terms': AppView.TERMS,
+      'for-ai': AppView.FOR_AI
     };
 
     if (hash && hashToView[hash]) {
