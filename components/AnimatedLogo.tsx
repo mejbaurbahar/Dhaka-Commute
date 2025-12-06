@@ -15,7 +15,7 @@ export const AnimatedLogo = () => {
     const CurrentIcon = icons[iconIndex];
 
     return (
-        <div className="relative h-12 w-48 md:h-14 md:w-56 flex items-center justify-center select-none group cursor-pointer">
+        <div className="relative flex items-center justify-center select-none group cursor-pointer">
             {/* Text Layer - Enhanced with better gradients/shadows */}
             <h1 className="z-10 text-3xl md:text-4xl font-black tracking-tight font-bengali flex gap-1.5 md:gap-2 leading-none mt-1 transition-transform duration-300 group-hover:scale-105">
                 <span className="text-[#249F9C] drop-shadow-sm filter">কই</span>
