@@ -6,6 +6,7 @@ import { RouteCard } from './components/RouteCard';
 import { RouteDetail } from './components/RouteDetail';
 import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
 import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield, Ship, TramFront } from 'lucide-react';
+import { AnimatedLogo } from './components/AnimatedLogo';
 
 // Import analytics tracking from main app
 const trackIntercitySearch = (from: string, to: string, transportType: string) => {
@@ -50,61 +51,7 @@ const SEARCH_MESSAGES = [
   { title: "Finalizing Your Itinerary...", sub: "Calculating total costs and travel duration" }
 ];
 
-// --- Animated Logo Component ---
-const AnimatedLogo = () => {
-  const [iconIndex, setIconIndex] = useState(0);
-  const icons = [Bus, Train, Plane, Ship, TramFront];
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIconIndex((prev) => (prev + 1) % icons.length);
-    }, 2000); // Change icon every 2 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  const CurrentIcon = icons[iconIndex];
-
-  return (
-    <div className="relative h-10 w-40 md:w-48 flex items-center justify-center select-none">
-      {/* Text Layer */}
-      <h1 className="z-10 text-3xl md:text-4xl font-black tracking-tight font-bengali flex gap-1.5 md:gap-2 leading-none mt-1">
-        <span className="text-[#249F9C] drop-shadow-sm">কই</span>
-        <span className="text-[#FF0060] drop-shadow-sm">যাবো</span>
-      </h1>
-
-      {/* Graphics Layer */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
-        {/* Dashed Trajectory Line */}
-        <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 200 60" preserveAspectRatio="none">
-          <path
-            d="M 10 50 Q 80 50 190 10"
-            fill="none"
-            stroke="#FF0060"
-            strokeWidth="2.5"
-            strokeDasharray="6 6"
-            strokeLinecap="round"
-            className="opacity-60"
-          />
-        </svg>
-
-        {/* Start Icon: Minimalist Hiker (Teal) */}
-        <div className="absolute left-[-5px] bottom-[-2px] md:bottom-1 text-[#249F9C] animate-fade-in">
-          <svg width="18" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="5" r="4" />
-            <path d="M12 10L4 22H20L12 10Z" />
-          </svg>
-        </div>
-
-        {/* End Icon: Animated Vehicle (Pink) */}
-        <div className="absolute right-[-15px] top-[-10px] md:top-[-15px] text-[#FF0060] transform -rotate-12 transition-all duration-500 ease-in-out">
-          <div className="bg-white p-1 rounded-lg shadow-sm border border-pink-100">
-            <CurrentIcon size={22} className="md:w-7 md:h-7 animate-in fade-in zoom-in duration-500" strokeWidth={2.5} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // --- Animated Loading/Landing Component ---
 const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
@@ -434,7 +381,9 @@ const App: React.FC = () => {
             }}
             className="flex items-center gap-1 cursor-pointer outline-none hover:opacity-90 transition-opacity"
           >
-            <AnimatedLogo />
+            <div className="scale-75 origin-left">
+              <AnimatedLogo />
+            </div>
           </a>
           <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
             <Menu className="w-6 h-6" />

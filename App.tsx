@@ -11,6 +11,7 @@ import LiveTracker from './components/LiveTracker';
 import DhakaAlive from './components/DhakaAlive';
 import HistoryView from './components/HistoryView';
 import EmergencyHelplineModal from './components/EmergencyHelplineModal';
+import { AnimatedLogo } from './components/AnimatedLogo';
 import { askGeminiRoute } from './services/geminiService';
 import { getCurrentLocation, findNearestStation, getDistance } from './services/locationService';
 import { findNearestMetroStation } from './services/metroService';
@@ -92,24 +93,7 @@ const getStoredView = (): AppView => {
 };
 
 
-const AnimatedLogo = ({ size = "default" }: { size?: "default" | "large" }) => {
-  const [index, setIndex] = useState(0);
-  const icons = [Bus, Train, TramFront, Plane];
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % icons.length);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const CurrentIcon = icons[index];
-  const iconSize = size === "large" ? "w-6 h-6" : "w-5 h-5";
-
-  return (
-    <CurrentIcon className={`${iconSize} text-white animate-in zoom-in fade-in duration-500`} key={index} />
-  );
-};
 
 const AiThinkingIndicator = () => {
   const [step, setStep] = useState(0);
@@ -2448,8 +2432,13 @@ const App: React.FC = () => {
 
             {/* Text Content */}
             <div className="px-6 pt-6 pb-4 relative z-10">
+              <div className="mb-2">
+                <div className="bg-white/20 backdrop-blur-md rounded-2xl p-2 inline-block shadow-lg border border-white/10">
+                  <AnimatedLogo />
+                </div>
+              </div>
               <div>
-                <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg">কোথায় যেতে চান?</h2>
+                <h2 className="text-2xl font-bold mb-1 font-bengali drop-shadow-lg opacity-90">কোথায় যেতে চান?</h2>
                 <p className="text-white/90 text-sm font-medium">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
               </div>
             </div>
@@ -3072,13 +3061,13 @@ const App: React.FC = () => {
       {/* Intercity Loading Overlay - Using Main App Loader */}
       {intercityLoading && (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #006a4e 0%, #00a86b 100%)' }}>
-          <div className="text-center p-5">
-            {/* Bus Icon Animation */}
-            <div className="text-6xl mb-5 animate-bounce">
-              🚌
+          <div className="text-center p-5 flex flex-col items-center">
+            {/* Animated Logo */}
+            <div className="mb-6 scale-125 bg-white/10 p-4 rounded-3xl backdrop-blur-sm border border-white/10 shadow-xl">
+              <AnimatedLogo />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2.5 font-bengali">কই যাবো</h1>
-            <p className="text-lg text-white/90 mb-7">Loading...</p>
+
+            <p className="text-lg text-white/90 mb-7 font-bold tracking-widest uppercase text-sm">Loading...</p>
             {/* Loading Spinner */}
             <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
           </div>
