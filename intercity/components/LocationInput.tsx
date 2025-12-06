@@ -101,7 +101,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         />
         {/* Glassmorphism Suggestions Dropdown */}
         {showSuggestions && !disabled && (value.length > 0 || filteredLocations.length > 0) && (
-          <div className="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 max-h-96 overflow-y-auto custom-scrollbar animate-fade-in-up p-2">
+          <div className="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 max-h-96 overflow-y-auto overflow-x-hidden custom-scrollbar animate-fade-in-up p-2 min-w-[160px] md:min-w-0 z-[60]">
             {filteredLocations.length > 0 ? (
               filteredLocations.map((loc, idx) => (
                 <div
@@ -116,7 +116,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
                   <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 text-gray-400">
                     <MapPin size={14} />
                   </div>
-                  <span>{loc}</span>
+                  <span className="whitespace-normal leading-tight">{loc}</span>
                 </div>
               ))
             ) : (
