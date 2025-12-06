@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Intercity - কই যাবো">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#006a4e">
+  <meta name="theme-color" content="#121212">
 
   <!-- Manifest -->
   <link rel="manifest" href="/manifest.json">
@@ -109,40 +109,46 @@
         extend: {
           colors: {
             dhaka: {
-              green: '#006a4e',
-              red: '#f42a41',
-              dark: '#1f2937',
-              light: '#f3f4f6',
+              green: '#249F9C', // Neon Teal
+              red: '#FF0060',   // Neon Pink
+              dark: '#121212',  // Deep Black
+              light: '#EAEAEA', // Off White
+            },
+            squid: {
+              pink: '#FF0060',
+              teal: '#249F9C',
+              black: '#121212',
+              gray: '#2D2D2D',
             }
           },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            bengali: ['Hind Siliguri', 'sans-serif'],
+        },
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+          bengali: ['Hind Siliguri', 'sans-serif'],
+        },
+        animation: {
+          'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          'fade-in': 'fadeIn 0.5s ease-out',
+          'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+          'slide-in': 'slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        },
+        keyframes: {
+          fadeIn: {
+            '0%': { opacity: '0' },
+            '100%': { opacity: '1' },
           },
-          animation: {
-            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            'fade-in': 'fadeIn 0.5s ease-out',
-            'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-            'slide-in': 'slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          fadeInUp: {
+            '0%': { opacity: '0', transform: 'translateY(20px)' },
+            '100%': { opacity: '1', transform: 'translateY(0)' },
           },
-          keyframes: {
-            fadeIn: {
-              '0%': { opacity: '0' },
-              '100%': { opacity: '1' },
-            },
-            fadeInUp: {
-              '0%': { opacity: '0', transform: 'translateY(20px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            slideIn: {
-              '0%': { transform: 'translateX(-10px)', opacity: '0' },
-              '100%': { transform: 'translateX(0)', opacity: '1' }
-            }
-          },
-          boxShadow: {
-            'soft': '0 10px 40px -10px rgba(0,0,0,0.05)',
-            'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+          slideIn: {
+            '0%': { transform: 'translateX(-10px)', opacity: '0' },
+            '100%': { transform: 'translateX(0)', opacity: '1' }
           }
+        },
+        boxShadow: {
+          'soft': '0 10px 40px -10px rgba(0,0,0,0.05)',
+          'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
         }
       }
     }
@@ -151,11 +157,11 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f8fafc;
+      background-color: #121212;
+      color: #EAEAEA;
       background-image:
-        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.05) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(244, 42, 65, 0.03) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(36, 159, 156, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(255, 0, 96, 0.08) 0px, transparent 50%);
       background-attachment: fixed;
     }
 

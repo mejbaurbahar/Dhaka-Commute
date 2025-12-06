@@ -65,7 +65,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
     // Dynamic z-index: Increase to z-50 when suggestions are showing to overlay siblings
     <div className={`flex-1 relative group ${showSuggestions ? 'z-50' : 'z-20'}`} ref={wrapperRef}>
       <div className="flex justify-between items-center mb-1.5 ml-1">
-        <label className={`block text-[10px] font-bold uppercase tracking-wider transition-colors duration-200 ${isFocused ? 'text-gray-700' : 'text-gray-400'}`}>{label}</label>
+        <label className={`block text-[10px] font-bold uppercase tracking-wider transition-colors duration-200 ${isFocused ? 'text-[#249F9C]' : 'text-gray-400'}`}>{label}</label>
       </div>
 
       <div className="relative">
@@ -89,17 +89,16 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           disabled={disabled}
           className={`
             w-full pl-4 pr-4 py-3 md:py-4
-            bg-gray-50/50 backdrop-blur-sm
-            border border-gray-100 rounded-2xl
-            text-base font-bold text-dhaka-dark placeholder:text-gray-400 placeholder:font-normal
+            bg-[#2d2d2d] backdrop-blur-sm
+            border border-gray-700 rounded-2xl
+            text-base font-bold text-white placeholder:text-gray-500 placeholder:font-normal
             shadow-inner transition-all duration-300
-            focus:outline-none focus:ring-4 focus:bg-white focus:shadow-lg focus:border-transparent ${ringColorClass}
-            ${disabled ? 'opacity-60 cursor-not-allowed bg-gray-100' : ''}
+            focus:outline-none focus:ring-2 focus:bg-[#333] focus:shadow-lg focus:border-[#249F9C] ${ringColorClass}
+            ${disabled ? 'opacity-60 cursor-not-allowed bg-gray-800' : ''}
           `}
         />
-        {/* Glassmorphism Suggestions Dropdown */}
         {showSuggestions && !disabled && (value.length > 0 || filteredLocations.length > 0) && (
-          <div className="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 max-h-96 overflow-y-auto overflow-x-hidden custom-scrollbar animate-fade-in-up p-2 min-w-[160px] md:min-w-0 z-[60]">
+          <div className="absolute left-0 right-0 top-full mt-2 bg-[#2d2d2d]/95 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-700 max-h-96 overflow-y-auto overflow-x-hidden custom-scrollbar animate-fade-in-up p-2 min-w-[160px] md:min-w-0 z-[60]">
             {filteredLocations.length > 0 ? (
               filteredLocations.map((loc, idx) => (
                 <div
@@ -109,7 +108,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
                     setShowSuggestions(false);
                     setIsFocused(false);
                   }}
-                  className="px-4 py-3 hover:bg-emerald-50/80 cursor-pointer rounded-xl text-sm font-semibold text-gray-700 flex items-center gap-3 transition-colors duration-200"
+                  className="px-4 py-3 hover:bg-[#249F9C]/20 hover:text-[#249F9C] cursor-pointer rounded-xl text-sm font-semibold text-gray-300 flex items-center gap-3 transition-colors duration-200"
                 >
 
                   <span className="whitespace-normal leading-tight">{loc}</span>

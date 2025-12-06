@@ -368,7 +368,7 @@ const App: React.FC = () => {
     <div className="min-h-screen text-dhaka-dark pb-12">
       {/* Fixed Header */}
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-[5000] pt-safe-top md:hidden">
+      <header className="fixed top-0 left-0 right-0 bg-dhaka-dark/90 backdrop-blur-md border-b border-gray-800 px-5 py-3 shadow-lg z-[5000] pt-safe-top md:hidden">
         <div className="flex justify-between items-center">
           <a
             href="/"
@@ -378,19 +378,26 @@ const App: React.FC = () => {
             }}
             className="flex items-center gap-2.5 outline-none cursor-pointer hover:opacity-80 transition-opacity"
           >
-            <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
-              <Bus className="w-5 h-5 text-white" />
+            {/* Logo Icon Placeholder - ideally replace with the vector graphic */}
+            <div className="w-9 h-9 bg-gray-800 rounded-xl flex items-center justify-center border border-gray-700 shadow-lg shadow-pink-500/10">
+              {/* Minimalist Hiker/Triangle Icon simulation */}
+              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="none">
+                <path d="M12 2L2 22H22L12 2Z" fill="#ff0060" />
+                <circle cx="12" cy="8" r="3" fill="#121212" />
+              </svg>
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
+            <h1 className="text-xl font-black tracking-tighter text-white">
+              <span style={{ color: '#249F9C' }}>কই</span> <span style={{ color: '#FF0060' }}>যাবো</span>
+            </h1>
           </a>
-          <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
+          <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-800 rounded-full text-gray-300 transition-colors" aria-label="Open menu">
             <Menu className="w-6 h-6" />
           </button>
         </div>
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-4 shadow-sm z-[5000] items-center justify-between">
+      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-dhaka-dark border-b border-gray-800 px-8 py-4 shadow-lg z-[5000] items-center justify-between">
         <a
           href="/"
           onClick={(e) => {
@@ -399,15 +406,20 @@ const App: React.FC = () => {
           }}
           className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
         >
-          <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
-            <Bus className="w-6 h-6 text-white" />
+          <div className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center border border-gray-700 shadow-lg shadow-pink-500/10">
+            <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="none">
+              <path d="M12 2L2 22H22L12 2Z" fill="#ff0060" />
+              <circle cx="12" cy="8" r="3" fill="#121212" />
+            </svg>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
+          <h1 className="text-2xl font-black tracking-tighter text-white">
+            <span style={{ color: '#249F9C' }}>কই</span> <span style={{ color: '#FF0060' }}>যাবো</span>
+          </h1>
         </a>
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
+            className="p-2 hover:bg-gray-800 rounded-full text-gray-300 transition-colors"
             aria-label="Open menu"
           >
             <Menu className="w-6 h-6" />
@@ -502,18 +514,21 @@ const App: React.FC = () => {
 
       {/* Main Content - Add top padding for fixed header */}
       {/* Main Content - Add top padding for fixed header */}
-      <div className="pt-16 md:pt-20 min-h-screen bg-blue-50">
+      <div className="pt-16 md:pt-20 min-h-screen bg-[#121212] relative overflow-hidden">
+        {/* Background Gradients */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#249F9C] opacity-[0.05] blur-[100px] rounded-full"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#FF0060] opacity-[0.05] blur-[100px] rounded-full"></div>
+        </div>
         {/* Sticky Search Header with Title - Stays visible while scrolling */}
-        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
+        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-[#121212]/95 backdrop-blur-sm pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
           <div className="max-w-4xl mx-auto relative">
             {/* Page Title */}
-            <h1 className="hidden md:block text-3xl font-bold mb-3 font-bengali drop-shadow-lg text-center text-gray-800">
-              কোথায় যেতে চান?
+            <h1 className="hidden md:block text-3xl font-black mb-3 font-bengali drop-shadow-2xl text-center tracking-wide">
+              <span className="text-white">কোথায় যেতে চান?</span>
             </h1>
 
-
-
-            <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-3 md:p-4 transition-all duration-300 ${!isLanding ? 'scale-90 origin-top' : ''} md:scale-100`}>
+            <div className={`bg-[#1e1e1e] rounded-2xl shadow-2xl border border-gray-800 p-3 md:p-4 transition-all duration-300 ${!isLanding ? 'scale-90 origin-top' : ''} md:scale-100`}>
               {/* items-end aligns the input boxes and button to the bottom, ignoring the top labels */}
               <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 md:gap-3 w-full md:items-end">
                 {/* Row 1: From - Swap - To */}
@@ -528,16 +543,15 @@ const App: React.FC = () => {
                     disabled={loading || isOffline}
                   />
 
-                  {/* Swap Button */}
                   <div className="flex justify-center mb-2 md:mb-1 z-10">
                     <button
                       type="button"
                       onClick={handleSwapLocations}
                       disabled={loading || isOffline}
-                      className={`bg-white hover:bg-emerald-50 p-2 md:p-2.5 rounded-full text-gray-500 hover:text-emerald-600 transition-all active:scale-95 border border-gray-100 shadow-sm shrink-0 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`bg-[#2d2d2d] hover:bg-[#3d3d3d] p-2 md:p-2.5 rounded-full text-dhaka-light border border-gray-700 shadow-lg hover:shadow-[#249F9C]/20 hover:border-[#249F9C] transition-all active:scale-95 shrink-0 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                       title="Swap Locations"
                     >
-                      <ArrowRightLeft className="w-4 h-4 md:w-4 md:h-4 text-gray-500" />
+                      <ArrowRightLeft className="w-4 h-4 md:w-4 md:h-4 text-[#249F9C]" />
                     </button>
                   </div>
 
@@ -557,7 +571,7 @@ const App: React.FC = () => {
                   <button
                     type="submit"
                     disabled={loading || !isValidSearch}
-                    className={`flex-1 md:flex-none h-[48px] md:h-[56px] bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/30 active:scale-[0.98] flex items-center justify-center gap-2 px-6 min-w-[100px] ${(loading || !isValidSearch) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    className={`flex-1 md:flex-none h-[48px] md:h-[56px] bg-gradient-to-r from-[#249F9C] to-[#007f7c] hover:from-[#2acfcb] hover:to-[#009e9a] text-[#121212] font-black rounded-xl md:rounded-2xl transition-all shadow-lg shadow-[#249F9C]/20 active:scale-[0.98] flex items-center justify-center gap-2 px-6 min-w-[100px] ${(loading || !isValidSearch) ? 'opacity-60 cursor-not-allowed' : ''}`}
                   >
                     {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <Search className="w-5 h-5" />}
                     {loading ? 'Searching' : 'Search'}
@@ -568,7 +582,7 @@ const App: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleClearAll}
-                      className="h-[48px] md:h-[56px] px-4 bg-white text-red-600 border border-red-100 font-bold rounded-xl md:rounded-2xl hover:bg-red-50 transition-all active:scale-95 flex items-center justify-center"
+                      className="h-[48px] md:h-[56px] px-4 bg-[#2d2d2d] text-[#FF0060] border border-[#FF0060]/30 font-bold rounded-xl md:rounded-2xl hover:bg-[#FF0060]/10 transition-all active:scale-95 flex items-center justify-center"
                       title="Clear All"
                     >
                       <X className="w-5 h-5" />
@@ -683,7 +697,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#121212] border-t border-gray-800 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.2)] md:hidden">
         <div className="grid grid-cols-4 h-16">
           <a
             href="/"
@@ -694,7 +708,7 @@ const App: React.FC = () => {
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
             <MapIcon className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
+            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500">Routes</span>
           </a>
           <a
             href={`${window.location.origin}/#ai-assistant`}
@@ -705,11 +719,11 @@ const App: React.FC = () => {
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
             <Sparkles className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">AI Help</span>
+            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500">AI Help</span>
           </a>
-          <div className="flex flex-col items-center justify-center gap-1 border-t-2 border-dhaka-green text-dhaka-green bg-green-50/50 transition-all">
+          <div className="flex flex-col items-center justify-center gap-1 border-t-2 border-[#249F9C] text-[#249F9C] bg-[#249F9C]/10 transition-all">
             <Train className="w-6 h-6 fill-current" />
-            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
+            <span className="text-[10px] font-bold uppercase tracking-wide text-[#249F9C]">Intercity</span>
           </div>
           <a
             href={`${window.location.origin}/#about`}
@@ -720,7 +734,7 @@ const App: React.FC = () => {
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
             <Info className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">About</span>
+            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500">About</span>
           </a>
         </div>
       </nav>
