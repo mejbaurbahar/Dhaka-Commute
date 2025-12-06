@@ -515,66 +515,69 @@ const App: React.FC = () => {
 
             <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-3 md:p-4 transition-all duration-300 ${!isLanding ? 'scale-90 origin-top' : ''} md:scale-100`}>
               {/* items-end aligns the input boxes and button to the bottom, ignoring the top labels */}
-              <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 md:gap-3 items-center md:items-end">
-
-                <LocationInput
-                  label="From"
-                  value={origin}
-                  onChange={setOrigin}
-                  placeholder="Origin city..."
-                  iconColorClass="text-gray-400"
-                  ringColorClass="focus:ring-emerald-500/20"
-                  disabled={loading || isOffline}
-                />
-
-                {/* Swap Button Wrapper - Adjusted margins for mobile/desktop spacing */}
-                <div className="relative z-10 -mt-3 -mb-8 md:my-0 md:mb-1 md:mx-2">
-                  <button
-                    type="button"
-                    onClick={handleSwapLocations}
+              <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 md:gap-3 w-full">
+                {/* Row 1: From - Swap - To */}
+                <div className="grid grid-cols-[1fr_auto_1fr] md:flex md:flex-1 items-center gap-2 md:gap-3 w-full">
+                  <LocationInput
+                    label="From"
+                    value={origin}
+                    onChange={setOrigin}
+                    placeholder="Origin..."
+                    iconColorClass="text-gray-400"
+                    ringColorClass="focus:ring-emerald-500/20"
                     disabled={loading || isOffline}
-                    className={`bg-white hover:bg-emerald-50 p-2.5 rounded-full text-gray-500 hover:text-emerald-600 transition-all active:scale-95 border border-gray-100 shadow-sm ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    title="Swap Locations"
-                  >
-                    <ArrowRightLeft className="w-4 h-4 rotate-90 md:rotate-0" />
-                  </button>
+                  />
+
+                  {/* Swap Button */}
+                  <div className="flex justify-center -mb-6 md:mb-1 z-10">
+                    <button
+                      type="button"
+                      onClick={handleSwapLocations}
+                      disabled={loading || isOffline}
+                      className={`bg-white hover:bg-emerald-50 p-2 md:p-2.5 rounded-full text-gray-500 hover:text-emerald-600 transition-all active:scale-95 border border-gray-100 shadow-sm shrink-0 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      title="Swap Locations"
+                    >
+                      <ArrowRightLeft className="w-4 h-4 md:w-4 md:h-4 text-gray-500" />
+                    </button>
+                  </div>
+
+                  <LocationInput
+                    label="To"
+                    value={destination}
+                    onChange={setDestination}
+                    placeholder="Destination..."
+                    iconColorClass="text-dhaka-red"
+                    ringColorClass="focus:ring-red-500/20"
+                    disabled={loading || isOffline}
+                  />
                 </div>
 
-                <LocationInput
-                  label="To"
-                  value={destination}
-                  onChange={setDestination}
-                  placeholder="Destination city..."
-                  iconColorClass="text-dhaka-red"
-                  ringColorClass="focus:ring-red-500/20"
-                  disabled={loading || isOffline}
-                />
-
-                <div className="w-full md:w-auto mt-2 md:mt-0">
+                {/* Row 2: Search & Clear (Phone: Full width row below | Desktop: Inline) */}
+                <div className={`flex gap-2 ${!isLanding ? 'w-full md:w-auto mt-2 md:mt-0' : 'w-full md:w-auto mt-2 md:mt-0'}`}>
                   <button
                     type="submit"
                     disabled={loading || !isValidSearch}
-                    className={`w-full md:w-auto h-[56px] bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 active:scale-[0.98] flex items-center justify-center gap-2 px-8 min-w-[130px] ${(loading || !isValidSearch) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    className={`flex-1 md:flex-none h-[48px] md:h-[56px] bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/30 active:scale-[0.98] flex items-center justify-center gap-2 px-6 min-w-[100px] ${(loading || !isValidSearch) ? 'opacity-60 cursor-not-allowed' : ''}`}
                   >
                     {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <Search className="w-5 h-5" />}
                     {loading ? 'Searching' : 'Search'}
                   </button>
+
+                  {/* Clear Button - Inline with Search on Mobile */}
+                  {(origin || destination || data) && !loading && (
+                    <button
+                      type="button"
+                      onClick={handleClearAll}
+                      className="h-[48px] md:h-[56px] px-4 bg-white text-red-600 border border-red-100 font-bold rounded-xl md:rounded-2xl hover:bg-red-50 transition-all active:scale-95 flex items-center justify-center"
+                      title="Clear All"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
               </form>
 
-              {/* Clear All Button - Show when there's data to clear */}
-              {(origin || destination || data) && !loading && (
-                <div className="mt-2 flex items-center justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={handleClearAll}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all active:scale-95 border border-red-100"
-                  >
-                    <X className="w-4 h-4" />
-                    Clear All
-                  </button>
-                </div>
-              )}
+              {/* Old Clear Button Location Removed */}
             </div>
           </div>
         </div>
