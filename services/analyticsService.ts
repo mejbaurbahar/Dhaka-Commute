@@ -95,6 +95,17 @@ export const getUserHistory = (): UserHistory => {
             localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
         }
 
+        // Ensure all required fields exist (safety for older data)
+        if (!history.mostUsedBuses) history.mostUsedBuses = {};
+        if (!history.mostUsedRoutes) history.mostUsedRoutes = {};
+        if (!history.mostUsedIntercity) history.mostUsedIntercity = {};
+        if (!history.busSearches) history.busSearches = [];
+        if (!history.routeSearches) history.routeSearches = [];
+        if (!history.intercitySearches) history.intercitySearches = [];
+        if (!history.todayBuses) history.todayBuses = [];
+        if (!history.todayRoutes) history.todayRoutes = [];
+        if (!history.todayIntercity) history.todayIntercity = [];
+
         return history;
     } catch (e) {
         console.error('Error loading user history:', e);
@@ -309,7 +320,7 @@ export const incrementVisitCount = (): void => {
 // Get most used buses (sorted by usage count)
 export const getMostUsedBuses = (limit: number = 5): Array<{ busId: string; count: number }> => {
     const history = getUserHistory();
-    return Object.entries(history.mostUsedBuses)
+    return Object.entries(history.mostUsedBuses || {})
         .map(([busId, count]) => ({ busId, count }))
         .sort((a, b) => b.count - a.count)
         .slice(0, limit);
@@ -318,7 +329,7 @@ export const getMostUsedBuses = (limit: number = 5): Array<{ busId: string; coun
 // Get most used routes (sorted by usage count)
 export const getMostUsedRoutes = (limit: number = 5): Array<{ from: string; to: string; count: number }> => {
     const history = getUserHistory();
-    return Object.entries(history.mostUsedRoutes)
+    return Object.entries(history.mostUsedRoutes || {})
         .map(([routeKey, count]) => {
             const [from, to] = routeKey.split('-');
             return { from, to, count };

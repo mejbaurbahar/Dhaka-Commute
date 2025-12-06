@@ -437,6 +437,7 @@ const App: React.FC = () => {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [showClearChatConfirm, setShowClearChatConfirm] = useState(false);
 
   const globalNearestStationName = useMemo(() => {
     if (!userLocation) return null;
@@ -1043,7 +1044,40 @@ const App: React.FC = () => {
   };
 
   const renderAiAssistant = () => (
-    <div className="flex flex-col h-full bg-slate-50 md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden w-full pt-[65px] md:pt-0">
+    <div className="flex flex-col h-full bg-slate-50 md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden w-full pt-[65px] md:pt-0 relative">
+      {/* Clear Chat Confirmation Modal */}
+      {showClearChatConfirm && (
+        <div className="absolute inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Trash2 className="w-6 h-6 text-red-600" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 text-center mb-2">Clear History?</h3>
+            <p className="text-gray-500 text-center text-sm mb-6">
+              This will remove all your conversation history.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowClearChatConfirm(false)}
+                className="flex-1 py-2.5 rounded-xl font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setChatHistory([]);
+                  localStorage.removeItem('dhaka_commute_chat_history');
+                  setShowClearChatConfirm(false);
+                }}
+                className="flex-1 py-2.5 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition-colors"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Header */}
       <div className="md:hidden flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20 absolute top-0 left-0 right-0 h-[65px]">
         <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -1060,12 +1094,7 @@ const App: React.FC = () => {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => {
-              if (confirm('Clear chat history?')) {
-                setChatHistory([]);
-                localStorage.removeItem('dhaka_commute_chat_history');
-              }
-            }}
+            onClick={() => setShowClearChatConfirm(true)}
             className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
             title="Clear History"
           >
@@ -1091,12 +1120,7 @@ const App: React.FC = () => {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => {
-              if (confirm('Clear chat history?')) {
-                setChatHistory([]);
-                localStorage.removeItem('dhaka_commute_chat_history');
-              }
-            }}
+            onClick={() => setShowClearChatConfirm(true)}
             className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
             title="Clear History"
           >
