@@ -5,7 +5,7 @@ import { RoutingResponse } from './types';
 import { RouteCard } from './components/RouteCard';
 import { RouteDetail } from './components/RouteDetail';
 import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
-import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield } from 'lucide-react';
+import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield, Ship, TramFront } from 'lucide-react';
 
 // Import analytics tracking from main app
 const trackIntercitySearch = (from: string, to: string, transportType: string) => {
@@ -49,6 +49,31 @@ const SEARCH_MESSAGES = [
   { title: "Optimizing Local Transit...", sub: "Finding the best Dhaka Metro & Local Bus connections" },
   { title: "Finalizing Your Itinerary...", sub: "Calculating total costs and travel duration" }
 ];
+
+
+
+// --- Animated Logo Component ---
+const AnimatedLogo = () => {
+  const [iconIndex, setIconIndex] = useState(0);
+  const icons = [Bus, Train, Plane, Ship, TramFront];
+  const colors = ['text-emerald-500', 'text-orange-500', 'text-blue-500', 'text-cyan-500', 'text-purple-500'];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIconIndex((prev) => (prev + 1) % icons.length);
+    }, 2000); // Change every 2 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  const CurrentIcon = icons[iconIndex];
+
+  return (
+    <div className="w-9 h-9 md:w-10 md:h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg shadow-gray-200 transition-all duration-500 relative overflow-hidden group">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-black opacity-100"></div>
+      <CurrentIcon className={`w-5 h-5 md:w-6 md:h-6 ${colors[iconIndex]} relative z-10 transition-all duration-500 transform group-hover:scale-110`} />
+    </div>
+  );
+};
 
 // --- Animated Loading/Landing Component ---
 const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
@@ -378,10 +403,10 @@ const App: React.FC = () => {
             }}
             className="flex items-center gap-2.5 outline-none cursor-pointer hover:opacity-80 transition-opacity"
           >
-            <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
-              <Bus className="w-5 h-5 text-white" />
-            </div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
+            <AnimatedLogo />
+            <h1 className="text-xl font-black tracking-tight text-gray-900 font-bengali">
+              <span className="text-[#249F9C]">কই</span> <span className="text-[#FF0060]">যাবো</span>
+            </h1>
           </a>
           <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
             <Menu className="w-6 h-6" />
@@ -399,10 +424,10 @@ const App: React.FC = () => {
           }}
           className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
         >
-          <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
-            <Bus className="w-6 h-6 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
+          <AnimatedLogo />
+          <h1 className="text-2xl font-black tracking-tight text-gray-900 font-bengali">
+            <span className="text-[#249F9C]">কই</span> <span className="text-[#FF0060]">যাবো</span>
+          </h1>
         </a>
         <div className="flex items-center gap-4">
           <button
