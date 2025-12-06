@@ -55,7 +55,7 @@ export const askGeminiRoute = async (userQuery: string, userApiKey?: string): Pr
 
     // 3. Construct the comprehensive system prompt
     const prompt = `
-    You are the "AI Assistant" for the 'Dhaka Commute' app (কই যাবো).
+    You are the "AI Assistant" for the 'কই যাবো' app.
     
     **IDENTITY & ATTRIBUTION**:
     - You are a Bangladesh Transport Expert.
