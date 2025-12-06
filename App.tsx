@@ -48,15 +48,20 @@ const getStoredBus = (): BusRoute | null => {
 const getStoredView = (): AppView => {
   try {
     // 1. Check URL Search Params first (Priority)
+    // 1. Check URL Search Params or Hash
     const params = new URLSearchParams(window.location.search);
     const viewParam = params.get('view');
+    const hash = window.location.hash.substring(1); // Remove '#'
 
-    if (viewParam) {
-      // Clear the query param to clean up URL (optional, but good for UX)
-      window.history.replaceState({}, '', window.location.pathname);
+    const target = viewParam || hash;
 
-      switch (viewParam) {
-        case 'ai': return AppView.AI_ASSISTANT;
+    if (target) {
+      // Clear the query param/hash to clean up URL (optional, but good for UX)
+      if (viewParam) window.history.replaceState({}, '', window.location.pathname);
+
+      switch (target) {
+        case 'ai':
+        case 'ai-assistant': return AppView.AI_ASSISTANT;
         case 'about': return AppView.ABOUT;
         case 'why-use': return AppView.WHY_USE;
         case 'faq': return AppView.FAQ;
