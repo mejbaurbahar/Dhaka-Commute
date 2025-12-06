@@ -41,6 +41,7 @@ const fetchRealBusData = async (from: string, to: string) => {
       "teknaf": "Teknaf",
       "pabna": "Pabna",
       "ishwardi": "Ishwardi",
+      "jashre": "Jessore", // Common typo correction
 
       // Bangla Mappings
       "ঢাকা": "Dhaka",
@@ -127,6 +128,44 @@ const fetchRealBusData = async (from: string, to: string) => {
     clearTimeout(timeoutId);
   }
   return null;
+};
+
+// --- Sanitize Response: Ensure Fallback Names ---
+const sanitizeResponse = (response: RoutingResponse): RoutingResponse => {
+  if (!response || !response.options) return response;
+
+  response.options.forEach(option => {
+    if (!option.steps) return;
+
+    option.steps.forEach(step => {
+      // Ensure details object exists
+      if (!step.details) step.details = {};
+
+      const isBus = step.mode === 'BUS' || step.mode === 'LOCAL_BUS';
+
+      if (isBus) {
+        // Fix missing operator/busName
+        if (!step.details.operator && !step.details.busName) {
+          const fallback = "Local Bus";
+          step.details.operator = fallback;
+          step.details.busName = fallback;
+        }
+
+        // Fix schedules
+        if (step.details.schedules && Array.isArray(step.details.schedules)) {
+          step.details.schedules.forEach(sch => {
+            if (!sch.operator || sch.operator.trim() === "") {
+              sch.operator = "Local Bus";
+            }
+            if (!sch.type) sch.type = "Non-AC";
+            // Ensure price isn't empty
+            if (!sch.price) sch.price = "Check Counter";
+          });
+        }
+      }
+    });
+  });
+  return response;
 };
 
 // --- Dhaka Local Bus Knowledge Base ---
@@ -607,6 +646,26 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
          - **Direct Train**: Paharika Express / Udayan Express (Via Akhaura).
          - **Direct Bus**: Direct AC/Non-AC buses via Comilla (e.g. Ena, Hanif, Shyamoli).
 
+      **MISSING DIRECT ROUTES & BREAK JOURNEYS**:
+      - **If NO DIRECT BUS exists between Origin and Destination**:
+         - You **MUST** create a "Break Journey" route via a major transit hub (e.g. Dhaka, Jashore, Pabna, Bogura).
+         - **Specific Example (Bogura to Benapole)**: Use route Bogura -> Pabna -> Jashore -> Benapole.
+         - Explicitly state each leg of the journey in the steps.
+      
+      **Bogura to Benapole Specifics**:
+      - **Leg 1: Bogura to Pabna**:
+        - Operators: Al-Hamra, Shah Fateh Ali (Local/Direct). Time: ~2-3h.
+      - **Leg 2: Pabna to Jashore**:
+        - Operators: Local Bus, BRTC. Time: ~3-4h.
+      - **Leg 3: Jashore to Benapole**:
+        - Operators: Local Bus, BRTC. Time: ~1-1.5h.
+
+      **FALLBACK NAMING**:
+      - If a specific bus operator name is NOT found in the knowledge base or API data, you **MUST** use the text "Local Bus" or "Intercity Bus".
+      - **NEVER** leave the bus name/operator empty, and do not show blank names.
+      - **NEVER** invent a fake brand name if unknown. Just use "Local Bus".
+
+
       **Option 1: AIR (Flight) OR Premium Bus/Car**
       - Standard logic. (If Benapole->CXB, Use Jashore Airport -> Dhaka -> CXB).
       - Use **FLIGHT_KNOWLEDGE_BASE** to provide realistic departure times/frequencies.
@@ -638,7 +697,10 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
 
     // Clean and parse
     const cleanJsonText = cleanResponse(text);
-    const resultJson = JSON.parse(cleanJsonText) as RoutingResponse;
+    let resultJson = JSON.parse(cleanJsonText) as RoutingResponse;
+
+    // Post-process to ensure quality (Sanitization)
+    resultJson = sanitizeResponse(resultJson);
 
     // Save to Persistent Cache
     try {
