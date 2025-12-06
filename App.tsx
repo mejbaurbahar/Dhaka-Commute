@@ -2742,10 +2742,15 @@ const App: React.FC = () => {
             className="flex items-center gap-2.5 outline-none cursor-pointer"
             aria-label="Go to home"
           >
-            <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
-              <AnimatedLogo />
+            <div className="flex items-center gap-2 outline-none cursor-pointer">
+              <div className="bg-gradient-to-br from-dhaka-green to-teal-600 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-md shadow-green-500/20">
+                <span className="text-sm">🚌</span>
+              </div>
+              <h1 className="text-xl font-bold font-bengali tracking-tight text-gray-900">
+                <span className="text-dhaka-green">কই</span>
+                <span className="text-dhaka-red">যাবো</span>
+              </h1>
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
           </button>
           <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
             <Menu className="w-6 h-6" />
@@ -2760,10 +2765,13 @@ const App: React.FC = () => {
           className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
           aria-label="Go to home"
         >
-          <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
-            <AnimatedLogo size="large" />
+          <div className="bg-gradient-to-br from-dhaka-green to-teal-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
+            <span className="text-xl">🚌</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
+          <h1 className="text-2xl font-black font-bengali tracking-tight text-gray-900">
+            <span className="text-dhaka-green">কই</span>
+            <span className="text-dhaka-red">যাবো</span>
+          </h1>
         </button>
         <div className="flex items-center gap-4">
           <button
