@@ -2503,25 +2503,6 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* AI Button - Hidden on Mobile */}
-          <button
-            onClick={() => setView(AppView.AI_ASSISTANT)}
-            className="hidden md:flex w-full items-center justify-between bg-white border border-gray-100 p-4 rounded-2xl shadow-sm active:scale-[0.99] transition-all hover:border-blue-200 group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
-                <Bot className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <h3 className="font-bold text-gray-800 text-sm">Ask AI Assistant</h3>
-                <p className="text-xs text-gray-500">Not sure which bus to take?</p>
-              </div>
-            </div>
-            <div className="bg-gray-50 p-2 rounded-full">
-              <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
-            </div>
-          </button>
-
           {/* Intercity Bus Button */}
           <a
             href="/intercity"
@@ -2532,21 +2513,40 @@ const App: React.FC = () => {
                 window.location.replace('/intercity');
               }, 500);
             }}
-            className="hidden md:flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group"
+            className="hidden md:flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group mb-4"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                 <Train className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="font-bold text-white text-sm">Intercity Bus Search</h3>
-                <p className="text-xs text-white/90">Find buses between cities</p>
+                <h3 className="font-bold text-white text-sm">আন্তঃজেলা বাস খুঁজুন</h3>
+                <p className="text-xs text-white/90">শহর থেকে শহরে বাস খুঁজুন</p>
               </div>
             </div>
             <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
               <ArrowLeft className="w-4 h-4 text-white rotate-180" />
             </div>
           </a>
+
+          {/* AI Button - Hidden on Mobile */}
+          <button
+            onClick={() => setView(AppView.AI_ASSISTANT)}
+            className="hidden md:flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                <Bot className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-white text-sm">Ask AI Assistant</h3>
+                <p className="text-xs text-white/90">Not sure which bus to take?</p>
+              </div>
+            </div>
+            <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
+              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+            </div>
+          </button>
 
           {/* List Filter Tabs */}
           <div className="flex p-1 bg-gray-100 rounded-xl">
