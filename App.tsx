@@ -84,6 +84,45 @@ const getStoredView = (): AppView => {
   }
 };
 
+
+const AiThinkingIndicator = () => {
+  const [step, setStep] = useState(0);
+  const steps = [
+    "Thinking...",
+    "Understanding request...",
+    "Planning route...",
+    "Checking traffic...",
+    "Finalizing response..."
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep((prev) => (prev + 1) % steps.length);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300 my-2">
+      <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center gap-3 max-w-[85%]">
+        <div className="relative shrink-0">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+            <Bot size={16} />
+          </div>
+          <div className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-20"></div>
+        </div>
+
+        <div className="flex flex-col">
+          <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-0.5">AI Assistant</span>
+          <span key={step} className="text-sm text-gray-600 animate-in fade-in slide-in-from-bottom-1 duration-300 leading-snug">
+            {steps[step]}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Helper: Fare Calculator ---
 const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: number, max: number, distance: number } => {
   const validStations = route.stops
@@ -1049,17 +1088,7 @@ const App: React.FC = () => {
               ))
             )}
 
-            {aiLoading && (
-              <div className="flex justify-start">
-                <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                    <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce [animation-delay:0.4s]"></div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {aiLoading && <AiThinkingIndicator />}
             <div ref={chatEndRef}></div>
           </div>
 
