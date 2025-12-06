@@ -1138,16 +1138,55 @@ const App: React.FC = () => {
             <span className="font-bold text-dhaka-green"> কই যাবো (KoyJabo)</span> helps you discover the best and most accurate route instantly.
           </p>
 
+
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-6">
+            <h3 className="font-bold text-gray-900 mb-3 text-lg">🚀 Your All-in-One Bangladesh Route Finder</h3>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              KoyJabo is the ultimate <strong className="text-dhaka-green">Bangladesh route finder</strong> and travel companion. We bring together:
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <h4 className="font-bold text-gray-800 mb-1">🚌 Bus Routes</h4>
+                <p className="text-xs text-gray-600">Complete database of <strong>local bus routes in Bangladesh</strong> and <strong>intercity bus routes</strong> (Dhaka to Chittagong, Sylhet, Cox's Bazar, etc.).</p>
+              </div>
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <h4 className="font-bold text-gray-800 mb-1">🚆 Train & Metro</h4>
+                <p className="text-xs text-gray-600">Up-to-date <strong>Bangladesh train routes</strong> and <strong>Dhaka Metro (MRT Line 6)</strong> schedules.</p>
+              </div>
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <h4 className="font-bold text-gray-800 mb-1">✈️ Domestic Flights</h4>
+                <p className="text-xs text-gray-600">Find <strong>Bangladesh domestic flights</strong> and air travel options quickly.</p>
+              </div>
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <h4 className="font-bold text-gray-800 mb-1">🤖 AI Travel Assistant</h4>
+                <p className="text-xs text-gray-600">Get smart <strong>Bangladesh travel itinerary AI</strong> suggestions and route planning.</p>
+              </div>
+            </div>
+          </div>
+
           <div>
-            <h3 className="font-bold text-gray-900 mb-3 text-lg">✨ What You Get:</h3>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Nationwide bus route coverage</strong> across Bangladesh</span></li>
-              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Inter-district, inter-city, local, and highway routes</strong></span></li>
-              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Fare, stops, timing, and distance</strong> — all in one place</span></li>
-              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Metro, train, and launch guides</strong> (where available)</span></li>
-              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Smart real-time route suggestions</strong></span></li>
-              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Built-in AI assistant</strong> — ask any route, get instant answers</span></li>
-              <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" /> <span><strong>Works offline</strong> — no internet needed for route search</span></li>
+            <h3 className="font-bold text-gray-900 mb-3 text-lg">✨ Why Choose KoyJabo?</h3>
+            <ul className="space-y-3 text-sm text-gray-700">
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span><strong>Comprehensive Transport Search:</strong> From <strong>local bus routes</strong> to <strong>long-distance buses</strong>, we cover it all.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span><strong>Smart Fare Estimation:</strong> Use our <strong>travel cost calculator BD</strong> to plan your budget with accurate <strong>bus fare Bangladesh</strong> info.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span><strong>Tourist Friendly:</strong> Discover popular <strong>tourist spots in Bangladesh</strong> and <strong>how to reach Cox’s Bazar</strong> or Sylhet easily.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span><strong>Real-Time & Offline:</strong> Access <strong>Bangladesh railway schedules</strong> and maps offline, or track live status online.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                <span><strong>AI-Powered Planning:</strong> Our <strong>AI travel assistant Bangladesh</strong> helps you find the <strong>best way to travel across Bangladesh</strong>.</span>
+              </li>
             </ul>
           </div>
 
