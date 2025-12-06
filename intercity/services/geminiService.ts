@@ -184,6 +184,9 @@ const sanitizeResponse = (response: RoutingResponse): RoutingResponse => {
   if (!response || !response.options) return response;
 
   response.options.forEach(option => {
+    // Ensure summary exists
+    if (!option.summary) option.summary = `${response.origin} → ${response.destination}`;
+
     if (!option.steps) return;
 
     option.steps.forEach(step => {
@@ -582,7 +585,7 @@ const routeSchema: Schema = {
             }
           }
         },
-        required: ["id", "type", "title", "steps", "totalDuration", "totalCostRange"]
+        required: ["id", "type", "title", "summary", "steps", "totalDuration", "totalCostRange"]
       }
     }
   },

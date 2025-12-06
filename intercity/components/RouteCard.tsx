@@ -40,17 +40,17 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
   };
 
   // Extract origin/dest from summary if possible, purely for visual layout
-  const summaryParts = option.summary.split('→').map(s => s.trim());
+  const summaryParts = (option.summary || "").split('→').map(s => s.trim());
   const origin = summaryParts[0] || "Start";
   const dest = summaryParts[summaryParts.length - 1] || "End";
 
   return (
-    <div 
+    <div
       onClick={onClick}
       className={`
         relative group rounded-2xl p-4 cursor-pointer transition-all duration-300 border
-        ${isSelected 
-          ? 'bg-white ring-2 ring-emerald-500 shadow-xl border-transparent transform scale-[1.02] z-10' 
+        ${isSelected
+          ? 'bg-white ring-2 ring-emerald-500 shadow-xl border-transparent transform scale-[1.02] z-10'
           : `bg-white/80 backdrop-blur-sm border-white shadow-sm hover:shadow-lg hover:-translate-y-0.5 ${getThemeClass()}`
         }
       `}
@@ -60,7 +60,7 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
           Best Option
         </span>
       )}
-      
+
       {/* Header: Title and Icon */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -70,7 +70,7 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
           <div>
             <h3 className="font-bold text-gray-800 text-sm leading-tight">{option.title}</h3>
             <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md mt-1 inline-block bg-gray-100 text-gray-500`}>
-               {option.type}
+              {option.type}
             </span>
           </div>
         </div>
@@ -78,22 +78,22 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
 
       {/* Visual Route Flow */}
       <div className="relative py-2 mb-2">
-         <div className="flex items-center justify-between text-xs font-medium text-gray-500">
-             <span className="truncate max-w-[40%]">{origin}</span>
-             <span className="truncate max-w-[40%] text-right">{dest}</span>
-         </div>
-         <div className="flex items-center justify-between mt-1 relative">
-             <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-             <div className="flex-1 h-[2px] bg-gray-100 mx-2 relative">
-                {/* Dashed line */}
-                <div className="absolute inset-0 border-b border-dashed border-gray-300 w-full top-[1px]"></div>
-                {/* Plane/Icon moving on hover */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-1 rounded-full border border-gray-100 shadow-sm transform transition-transform duration-500 group-hover:scale-110">
-                   <ArrowRight size={10} className="text-gray-400" />
-                </div>
-             </div>
-             <div className="w-2 h-2 rounded-full bg-gray-800"></div>
-         </div>
+        <div className="flex items-center justify-between text-xs font-medium text-gray-500">
+          <span className="truncate max-w-[40%]">{origin}</span>
+          <span className="truncate max-w-[40%] text-right">{dest}</span>
+        </div>
+        <div className="flex items-center justify-between mt-1 relative">
+          <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+          <div className="flex-1 h-[2px] bg-gray-100 mx-2 relative">
+            {/* Dashed line */}
+            <div className="absolute inset-0 border-b border-dashed border-gray-300 w-full top-[1px]"></div>
+            {/* Plane/Icon moving on hover */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-1 rounded-full border border-gray-100 shadow-sm transform transition-transform duration-500 group-hover:scale-110">
+              <ArrowRight size={10} className="text-gray-400" />
+            </div>
+          </div>
+          <div className="w-2 h-2 rounded-full bg-gray-800"></div>
+        </div>
       </div>
 
       {/* Footer: Time and Cost */}
