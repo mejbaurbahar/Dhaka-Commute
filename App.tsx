@@ -438,6 +438,11 @@ const App: React.FC = () => {
   const [isInstalling, setIsInstalling] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [showClearChatConfirm, setShowClearChatConfirm] = useState(false);
+  const [showHistoryManager, setShowHistoryManager] = useState(false);
+
+  const handleDeleteMessage = (index: number) => {
+    setChatHistory(prev => prev.filter((_, i) => i !== index));
+  };
 
   const globalNearestStationName = useMemo(() => {
     if (!userLocation) return null;
@@ -733,8 +738,8 @@ const App: React.FC = () => {
     // Distance from User to Nearest Stop
     totalDist += nearest.distance;
 
-    // If nearest stop is "behind" us (we are past it), we might want to skip it, 
-    // but for simplicity, we'll just sum from nearest. 
+    // If nearest stop is "behind" us (we are past it), we might want to skip it,
+    // but for simplicity, we'll just sum from nearest.
     // A better heuristic: if dist(User, Stop[i+1]) < dist(Stop[i], Stop[i+1]), maybe we are closer to next.
     // For now, just sum segments from nearest to dest.
 
@@ -1045,9 +1050,66 @@ const App: React.FC = () => {
 
   const renderAiAssistant = () => (
     <div className="flex flex-col h-full bg-slate-50 md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden w-full pt-[65px] md:pt-0 relative">
+      {/* History Manager Modal */}
+      {showHistoryManager && (
+        <div className="absolute inset-0 z-[100] bg-white flex flex-col animate-in slide-in-from-right duration-300">
+          <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
+            <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-dhaka-green" /> Chat History
+            </h3>
+            <button
+              onClick={() => setShowHistoryManager(false)}
+              className="p-2 hover:bg-gray-100 rounded-full text-gray-500"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {chatHistory.length === 0 ? (
+              <div className="text-center py-10 text-gray-400">
+                <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                <p>No chat history yet</p>
+              </div>
+            ) : (
+              chatHistory.map((msg, idx) => (
+                <div key={idx} className="flex gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100 group">
+                  <div className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-dhaka-dark text-white' : 'bg-blue-600 text-white'}`}>
+                    {msg.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-gray-500 mb-1 uppercase">{msg.role === 'user' ? 'You' : 'AI Assistant'}</p>
+                    <p className="text-sm text-gray-800 leading-relaxed font-medium line-clamp-3">{msg.text}</p>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteMessage(idx)}
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg opacity-100 md:opacity-0 group-hover:opacity-100 transition-all self-start"
+                    title="Delete message"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="p-4 border-t border-gray-100 bg-gray-50 shrink-0 flex justify-between items-center">
+            <span className="text-xs text-gray-500">{chatHistory.length} messages saved</span>
+            {chatHistory.length > 0 && (
+              <button
+                onClick={() => setShowClearChatConfirm(true)}
+                className="text-xs font-bold text-red-600 hover:underline flex items-center gap-1"
+              >
+                <Trash2 className="w-3 h-3" /> Clear All
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Clear Chat Confirmation Modal */}
       {showClearChatConfirm && (
-        <div className="absolute inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="absolute inset-0 z-[110] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
             <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Trash2 className="w-6 h-6 text-red-600" />
@@ -1100,9 +1162,104 @@ const App: React.FC = () => {
           >
             <Trash2 className="w-5 h-5" />
           </button>
-          <div className="p-2 bg-blue-50 rounded-full text-blue-600" title="History Saved Locally">
+          <button
+            onClick={() => setShowHistoryManager(true)}
+            className="p-2 bg-blue-50 rounded-full text-blue-600 hover:bg-blue-100 transition-colors active:scale-95"
+            title="View History"
+          >
             <Clock className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+      {/* Desktop Header */}
+      <div className="hidden md:flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20">
+        <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'}`}>
+          <Bot className="w-6 h-6" />
+        </div>
+        <div className="flex-1">
+          <h2 className="text-lg font-bold text-gray-900">কই যাবো AI Assistant</h2>
+          <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowClearChatConfirm(true)}
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
+            title="Clear History"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => setShowHistoryManager(true)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-full text-blue-600 text-xs font-bold transition-all active:scale-95"
+            title="View History"
+          >
+            <Clock className="w-4 h-4" />
+            <span>History</span>
+          </button>
+        </div>
+      </div>
+      <div className="absolute inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Trash2 className="w-6 h-6 text-red-600" />
           </div>
+          <h3 className="text-lg font-bold text-gray-900 text-center mb-2">Clear History?</h3>
+          <p className="text-gray-500 text-center text-sm mb-6">
+            This will remove all your conversation history.
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowClearChatConfirm(false)}
+              className="flex-1 py-2.5 rounded-xl font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                setChatHistory([]);
+                localStorage.removeItem('dhaka_commute_chat_history');
+                setShowClearChatConfirm(false);
+              }}
+              className="flex-1 py-2.5 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition-colors"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+      )}
+
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20 absolute top-0 left-0 right-0 h-[65px]">
+        <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
+          <ArrowLeft className="w-5 h-5 text-gray-600" />
+        </button>
+        <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'}`}>
+          <Bot className="w-6 h-6" />
+        </div>
+        <div className="flex-1">
+          <h2 className="text-lg font-bold text-gray-900">কই যাবো AI Assistant</h2>
+          <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowClearChatConfirm(true)}
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
+            title="Clear History"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => setShowHistoryManager(true)}
+            className="p-2 bg-blue-50 rounded-full text-blue-600 hover:bg-blue-100 transition-colors active:scale-95"
+            title="View History"
+          >
+            <Clock className="w-5 h-5" />
+          </button>
         </div>
 
 
@@ -1126,10 +1283,14 @@ const App: React.FC = () => {
           >
             <Trash2 className="w-5 h-5" />
           </button>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-full text-blue-600 text-xs font-bold" title="History Saved Locally">
+          <button
+            onClick={() => setShowHistoryManager(true)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-full text-blue-600 text-xs font-bold transition-all active:scale-95"
+            title="View History"
+          >
             <Clock className="w-4 h-4" />
-            <span>History On</span>
-          </div>
+            <span>History</span>
+          </button>
         </div>
 
 
