@@ -11,11 +11,11 @@ interface RouteCardProps {
 export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClick }) => {
   const getIcon = () => {
     switch (option.type) {
-      case 'AIR': return <Plane className="w-5 h-5 text-blue-400" />;
-      case 'TRAIN': return <Train className="w-5 h-5 text-[#FF0060]" />; // Pink for Train
-      case 'BUS': return <Bus className="w-5 h-5 text-[#249F9C]" />;   // Teal for Bus
-      case 'FERRY': return <Ship className="w-5 h-5 text-cyan-400" />;
-      default: return <Bus className="w-5 h-5 text-gray-400" />;
+      case 'AIR': return <Plane className="w-5 h-5 text-blue-600" />;
+      case 'TRAIN': return <Train className="w-5 h-5 text-orange-600" />;
+      case 'BUS': return <Bus className="w-5 h-5 text-emerald-600" />;
+      case 'FERRY': return <Ship className="w-5 h-5 text-cyan-600" />;
+      default: return <Bus className="w-5 h-5 text-gray-600" />;
     }
   };
 
@@ -31,11 +31,11 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
 
   const getIconBg = () => {
     switch (option.type) {
-      case 'AIR': return 'bg-blue-500/10 text-blue-400';
-      case 'TRAIN': return 'bg-[#FF0060]/10 text-[#FF0060]';
-      case 'BUS': return 'bg-[#249F9C]/10 text-[#249F9C]';
-      case 'FERRY': return 'bg-cyan-500/10 text-cyan-400';
-      default: return 'bg-gray-700 text-gray-400';
+      case 'AIR': return 'bg-blue-50 text-blue-600';
+      case 'TRAIN': return 'bg-orange-50 text-orange-600';
+      case 'BUS': return 'bg-emerald-50 text-emerald-600';
+      case 'FERRY': return 'bg-cyan-50 text-cyan-600';
+      default: return 'bg-gray-50 text-gray-600';
     }
   };
 
@@ -50,13 +50,13 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
       className={`
         relative group rounded-2xl p-4 cursor-pointer transition-all duration-300 border
         ${isSelected
-          ? 'bg-[#252525] ring-2 ring-[#249F9C] shadow-2xl border-transparent transform scale-[1.02] z-10'
-          : `bg-[#1e1e1e] backdrop-blur-sm border-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-[#249F9C]/50`
+          ? 'bg-white ring-2 ring-emerald-500 shadow-xl border-transparent transform scale-[1.02] z-10'
+          : `bg-white/80 backdrop-blur-sm border-white shadow-sm hover:shadow-lg hover:-translate-y-0.5 ${getThemeClass()}`
         }
       `}
     >
       {option.recommended && (
-        <span className="absolute -top-2.5 right-4 bg-gradient-to-r from-[#249F9C] to-[#FF0060] text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg shadow-[#249F9C]/30 uppercase tracking-widest border border-[#1e1e1e]">
+        <span className="absolute -top-2.5 right-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg shadow-emerald-500/30 uppercase tracking-widest border border-white">
           Best Option
         </span>
       )}
@@ -68,8 +68,8 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
             {getIcon()}
           </div>
           <div>
-            <h3 className="font-bold text-gray-100 text-sm leading-tight">{option.title}</h3>
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md mt-1 inline-block bg-gray-800 text-gray-400`}>
+            <h3 className="font-bold text-gray-800 text-sm leading-tight">{option.title}</h3>
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md mt-1 inline-block bg-gray-100 text-gray-500`}>
               {option.type}
             </span>
           </div>
@@ -97,13 +97,13 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
       </div>
 
       {/* Footer: Time and Cost */}
-      <div className="flex items-center justify-between pt-3 border-t border-dashed border-gray-700">
-        <div className="flex items-center gap-1.5 text-gray-400 bg-gray-800/50 px-2.5 py-1.5 rounded-lg border border-gray-700">
-          <Clock className="w-3.5 h-3.5 text-gray-500" />
+      <div className="flex items-center justify-between pt-3 border-t border-dashed border-gray-200">
+        <div className="flex items-center gap-1.5 text-gray-600 bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-100">
+          <Clock className="w-3.5 h-3.5 text-gray-400" />
           <span className="text-xs font-bold">{option.totalDuration}</span>
         </div>
-        <div className="flex items-center gap-1.5 font-bold text-[#249F9C] bg-[#249F9C]/10 px-2.5 py-1.5 rounded-lg border border-[#249F9C]/20">
-          <DollarSign className="w-3.5 h-3.5 text-[#249F9C]" />
+        <div className="flex items-center gap-1.5 font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100">
+          <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
           <span className="text-sm">{option.totalCostRange}</span>
         </div>
       </div>
