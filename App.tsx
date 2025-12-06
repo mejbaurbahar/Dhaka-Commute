@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, Facebook, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane, Phone, Download } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, Facebook, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane, Phone, Download, TramFront } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { BusRoute, AppView, UserLocation } from './types';
@@ -91,6 +91,25 @@ const getStoredView = (): AppView => {
   }
 };
 
+
+const AnimatedLogo = ({ size = "default" }: { size?: "default" | "large" }) => {
+  const [index, setIndex] = useState(0);
+  const icons = [Bus, Train, TramFront, Plane];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % icons.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const CurrentIcon = icons[index];
+  const iconSize = size === "large" ? "w-6 h-6" : "w-5 h-5";
+
+  return (
+    <CurrentIcon className={`${iconSize} text-white animate-in zoom-in fade-in duration-500`} key={index} />
+  );
+};
 
 const AiThinkingIndicator = () => {
   const [step, setStep] = useState(0);
@@ -2740,7 +2759,7 @@ const App: React.FC = () => {
             aria-label="Go to home"
           >
             <div className="w-9 h-9 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-red-200">
-              <Bus className="w-5 h-5 text-white" />
+              <AnimatedLogo />
             </div>
             <h1 className="text-xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
           </button>
@@ -2758,7 +2777,7 @@ const App: React.FC = () => {
           aria-label="Go to home"
         >
           <div className="w-10 h-10 bg-dhaka-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-100">
-            <Bus className="w-6 h-6 text-white" />
+            <AnimatedLogo size="large" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">কই <span className="text-dhaka-red">যাবো</span></h1>
         </button>
