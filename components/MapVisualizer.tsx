@@ -166,9 +166,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   const padding = 120; // Increased to prevent edge cutoff
   const baseWidth = Math.max(stations.length * 120, 1000);
 
-  // Dynamic dimensions based on zoom
-  const zoomedWidth = baseWidth * zoom;
-  const zoomedHeight = height * zoom;
+
 
   const nodePositions = stations.map((s, i) => {
     const x = (i / (stations.length - 1)) * (baseWidth - (padding * 2)) + padding;
@@ -178,7 +176,45 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     return { x, y };
   });
 
-  // Calculate nearby metro stations and their positions
+  // Calculate User Position and Dynamic Map Bounds
+  let userPos: { x: number, y: number } | null = null;
+  let layout = { width: baseWidth, height: height, shiftX: 0, shiftY: 0 };
+  let nearestStationPosForLine: { x: number, y: number } | null = null;
+
+  if (userLocation) {
+    const lngs = stations.map(s => s.lng);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
+
+    // Calculate projected position
+    const uX = ((userLocation.lng - minLng) / (maxLng - minLng || 1)) * (baseWidth - (padding * 2)) + padding;
+    const uY = (height - 200) / 2 + (200 - (normalizeLat(userLocation.lat) * 200));
+
+    userPos = { x: uX, y: uY };
+
+    // Find nearest station position
+    if (userStationIndex >= 0 && userStationIndex < nodePositions.length) {
+      nearestStationPosForLine = nodePositions[userStationIndex];
+    }
+
+    if (isUserFar) { // Only expand bounds if user is far
+      const contentMinX = Math.min(0, uX - padding);
+      const contentMaxX = Math.max(baseWidth, uX + padding);
+      const contentMinY = Math.min(0, uY - padding);
+      const contentMaxY = Math.max(height, uY + padding);
+
+      layout = {
+        width: contentMaxX - contentMinX,
+        height: contentMaxY - contentMinY,
+        shiftX: -contentMinX,
+        shiftY: -contentMinY
+      };
+    }
+  }
+
+  // Adjusted dimensions for Zoom
+  const zoomedWidth = layout.width * zoom;
+  const zoomedHeight = layout.height * zoom;
   const metroConnections = React.useMemo(() => {
     const connections: Array<{
       metroStation: typeof METRO_STATIONS[keyof typeof METRO_STATIONS],
@@ -375,483 +411,500 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         }}
       >
         <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-500 ease-out origin-top-left min-w-full">
-          <svg className="w-full h-full block select-none pointer-events-none" viewBox={`0 0 ${baseWidth} ${height}`} preserveAspectRatio="xMinYMid meet">
+          <svg className="w-full h-full block select-none pointer-events-none" viewBox={`0 0 ${layout.width} ${layout.height}`} preserveAspectRatio="xMinYMid meet">
 
-            {/* Base Path (Grey) */}
-            <polyline
-              points={nodePositions.map(p => `${p.x},${p.y}`).join(' ')}
-              fill="none"
-              stroke="#e5e7eb"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="opacity-100"
-            />
+            <g transform={`translate(${layout.shiftX}, ${layout.shiftY})`}>
 
-            {/* Traffic-Aware Route Segments */}
-            {!hasHighlight && nodePositions.map((pos, idx) => {
-              if (idx === nodePositions.length - 1) return null;
+              {/* Connection Line layer - Render Highlight FIRST (Below Route) */}
+              {userPos && nearestStationPosForLine && isUserFar && (
+                <g className="animate-in fade-in duration-700">
+                  {/* White Halo for separation */}
+                  <line
+                    x1={userPos.x}
+                    y1={userPos.y}
+                    x2={nearestStationPosForLine.x}
+                    y2={nearestStationPosForLine.y}
+                    stroke="white"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    className="opacity-80"
+                  />
+                  {/* Actual Dashed Line */}
+                  <line
+                    x1={userPos.x}
+                    y1={userPos.y}
+                    x2={nearestStationPosForLine.x}
+                    y2={nearestStationPosForLine.y}
+                    stroke="#3b82f6"
+                    strokeWidth="2"
+                    strokeDasharray="6,4"
+                    className="opacity-70"
+                  />
+                </g>
+              )}
 
-              // Always use 'free' traffic as requested
-              const trafficLevel = 'free';
-              const segmentColor = getTrafficColor(trafficLevel);
-
-              return (
-                <line
-                  key={`traffic-segment-${idx}`}
-                  x1={pos.x}
-                  y1={pos.y}
-                  x2={nodePositions[idx + 1].x}
-                  y2={nodePositions[idx + 1].y}
-                  stroke={segmentColor}
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  className="opacity-100 transition-all duration-500"
-                />
-              );
-            })}
-
-            {hasHighlight && (
+              {/* Base Path (Grey) */}
               <polyline
-                points={nodePositions.slice(highlightStartIdx, highlightEndIdx + 1).map(p => `${p.x},${p.y}`).join(' ')}
+                points={nodePositions.map(p => `${p.x},${p.y}`).join(' ')}
                 fill="none"
-                stroke="#006a4e"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="opacity-100 shadow-lg"
-              />
-            )}
-
-            {/* Past Path (Greyed Out) */}
-            {showUserOnNode && !hasHighlight && (
-              <polyline
-                points={nodePositions.slice(0, userStationIndex + 1).map(p => `${p.x},${p.y}`).join(' ')}
-                fill="none"
-                stroke="#cbd5e1"
+                stroke="#e5e7eb"
                 strokeWidth="4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="opacity-100"
               />
-            )}
 
-            {/* Stations */}
-            {stations.map((s, idx) => {
-              const { x, y } = nodePositions[idx];
+              {/* Traffic-Aware Route Segments */}
+              {!hasHighlight && nodePositions.map((pos, idx) => {
+                if (idx === nodePositions.length - 1) return null;
 
-              const isPassed = showUserOnNode && idx < userStationIndex;
-              const isCurrent = showUserOnNode && idx === userStationIndex;
-              const isNearestButFar = isUserFar && idx === userStationIndex;
-              const isStart = idx === 0;
-              const isEnd = idx === stations.length - 1;
-              const isHighlighted = hasHighlight && idx >= highlightStartIdx && idx <= highlightEndIdx;
+                // Always use 'free' traffic as requested
+                const trafficLevel = 'free';
+                const segmentColor = getTrafficColor(trafficLevel);
 
-              let fill = "white";
-              let stroke = hasHighlight ? "#e5e7eb" : "#006a4e";
-              let r = 5;
-
-              if (isHighlighted) {
-                fill = "white";
-                stroke = "#006a4e";
-                r = 6;
-                if (idx === highlightStartIdx || idx === highlightEndIdx) {
-                  fill = "#006a4e";
-                  stroke = "white";
-                  r = 8;
-                }
-              } else if (!hasHighlight) {
-                if (isCurrent) {
-                  fill = "#f42a41";
-                  stroke = "#f42a41";
-                  r = 8;
-                } else if (isNearestButFar) {
-                  fill = "#fb923c";
-                  stroke = "#c2410c";
-                  r = 8;
-                } else if (isPassed) {
-                  fill = "#e2e8f0";
-                  stroke = "#cbd5e1";
-                } else if (isStart || isEnd) {
-                  r = 7;
-                  stroke = "#1f2937";
-                }
-              }
-
-              return (
-                <g key={s.id} className={`cursor-pointer group/node pointer-events-auto ${isHighlighted || !hasHighlight ? 'opacity-100' : 'opacity-50'}`}>
-                  {/* Hover Hit Area */}
-                  <circle cx={x} cy={y} r={25} fill="transparent" />
-
-                  {/* Current Location Ripple */}
-                  {isCurrent && !hasHighlight && (
-                    <circle cx={x} cy={y} r={20} fill="#f42a41" opacity="0.2">
-                      <animate attributeName="r" from="8" to="30" dur="1.5s" repeatCount="indefinite" />
-                      <animate attributeName="opacity" from="0.6" to="0" dur="1.5s" repeatCount="indefinite" />
-                    </circle>
-                  )}
-
-                  {/* Connect target ripple */}
-                  {isNearestButFar && (
-                    <circle cx={x} cy={y} r={20} fill="#f97316" opacity="0.2">
-                      <animate attributeName="r" from="8" to="25" dur="2s" repeatCount="indefinite" />
-                      <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
-                    </circle>
-                  )}
-
-                  {/* Visible Node */}
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r={r}
-                    fill={fill}
-                    stroke={stroke}
-                    strokeWidth="2.5"
-                    className="transition-all duration-300 group-hover/node:r-8"
-                  />
-
-                  {/* Label */}
-                  <foreignObject
-                    x={x - 60}
-                    y={idx % 2 === 0 ? y + 15 : y - 45}
-                    width="120"
-                    height="40"
-                    className="pointer-events-none"
-                  >
-                    <div className={`text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full ${isCurrent && !hasHighlight ? 'text-dhaka-red font-bold' : (isPassed && !hasHighlight) || (hasHighlight && !isHighlighted) ? 'text-gray-300' : 'text-gray-600'}`}>
-                      <span className={`px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-full shadow-sm border 
-                         ${isCurrent && !hasHighlight ? 'bg-red-50 border-red-100 text-red-600 scale-110'
-                          : isNearestButFar ? 'bg-orange-50 border-orange-200 text-orange-700 font-bold'
-                            : isHighlighted ? 'bg-green-50 border-green-200 text-green-800 font-bold'
-                              : 'bg-white/80 border-gray-100/50'}`}>
-                        {s.name}
-                        {isCurrent && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">You are here</span>}
-                        {isNearestButFar && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">Start Here</span>}
-                      </span>
-                    </div>
-                  </foreignObject>
-                </g>
-              );
-            })}
-
-            {/* Metro Stations */}
-            {showMetro && metroConnections.map((connection, idx) => {
-              const { metroStation, busStopIndex, distance, metroX, metroY } = connection;
-              const busStopPos = nodePositions[busStopIndex];
-
-              return (
-                <g key={metroStation.id} className="pointer-events-auto">
-                  {/* Connection Line to Bus Stop */}
+                return (
                   <line
-                    x1={busStopPos.x}
-                    y1={busStopPos.y}
-                    x2={metroX}
-                    y2={metroY}
-                    stroke="#9333ea"
-                    strokeWidth="2"
-                    strokeDasharray="5,5"
-                    className="opacity-60"
+                    key={`traffic-segment-${idx}`}
+                    x1={pos.x}
+                    y1={pos.y}
+                    x2={nodePositions[idx + 1].x}
+                    y2={nodePositions[idx + 1].y}
+                    stroke={segmentColor}
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    className="opacity-100 transition-all duration-500"
                   />
+                );
+              })}
 
-                  {/* Metro Station Node */}
-                  <circle
-                    cx={metroX}
-                    cy={metroY}
-                    r="18"
-                    fill="#f3e8ff"
-                    className="opacity-30"
-                  >
-                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
-                  </circle>
+              {hasHighlight && (
+                <polyline
+                  points={nodePositions.slice(highlightStartIdx, highlightEndIdx + 1).map(p => `${p.x},${p.y}`).join(' ')}
+                  fill="none"
+                  stroke="#006a4e"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="opacity-100 shadow-lg"
+                />
+              )}
 
-                  <circle
-                    cx={metroX}
-                    cy={metroY}
-                    r="10"
-                    fill="#9333ea"
-                    stroke="white"
-                    strokeWidth="2.5"
-                    className="cursor-pointer hover:r-12 transition-all"
-                  />
+              {/* Past Path (Greyed Out) */}
+              {showUserOnNode && !hasHighlight && (
+                <polyline
+                  points={nodePositions.slice(0, userStationIndex + 1).map(p => `${p.x},${p.y}`).join(' ')}
+                  fill="none"
+                  stroke="#cbd5e1"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="opacity-100"
+                />
+              )}
 
-                  {/* Train Icon */}
-                  <foreignObject x={metroX - 6} y={metroY - 6} width="12" height="12" className="pointer-events-none">
-                    <Train className="w-3 h-3 text-white" />
-                  </foreignObject>
+              {/* Stations */}
+              {stations.map((s, idx) => {
+                const { x, y } = nodePositions[idx];
 
-                  {/* Metro Station Label */}
-                  <foreignObject
-                    x={metroX - 100}
-                    y={metroY + 15}
-                    width="200"
-                    height="40"
-                    className="pointer-events-none"
-                  >
-                    <div className="text-center flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-0.5 rounded bg-purple-50 border border-purple-200 text-purple-700 text-[10px] font-bold shadow-sm">
-                        {metroStation.name}
-                      </span>
-                    </div>
-                  </foreignObject>
-                </g>
-              );
-            })}
+                const isPassed = showUserOnNode && idx < userStationIndex;
+                const isCurrent = showUserOnNode && idx === userStationIndex;
+                const isNearestButFar = isUserFar && idx === userStationIndex;
+                const isStart = idx === 0;
+                const isEnd = idx === stations.length - 1;
+                const isHighlighted = hasHighlight && idx >= highlightStartIdx && idx <= highlightEndIdx;
 
-            {/* Railway Stations (Fix Issue #6) */}
-            {showRailway && Object.values(RAILWAY_STATIONS).map(station => {
-              // Find nearest bus stop for positioning
-              let minDist = Infinity;
-              let nearestIdx = 0;
-              stations.forEach((s, idx) => {
-                const d = Math.hypot(s.lat - station.lat, s.lng - station.lng);
-                if (d < minDist) {
-                  minDist = d;
-                  nearestIdx = idx;
-                }
-              });
+                let fill = "white";
+                let stroke = hasHighlight ? "#e5e7eb" : "#006a4e";
+                let r = 5;
 
-              if (minDist > 0.05) return null; // Too far from route
-
-              const busPos = nodePositions[nearestIdx];
-              const offsetX = (station.lng > stations[nearestIdx].lng ? 1 : -1) * 70;
-              const offsetY = (station.lat > stations[nearestIdx].lat ? -1 : 1) * 70;
-              const railX = busPos.x + offsetX;
-              const railY = busPos.y + offsetY;
-
-              return (
-                <g key={station.id} className="pointer-events-auto">
-                  {/* Connection Line */}
-                  <line
-                    x1={busPos.x}
-                    y1={busPos.y}
-                    x2={railX}
-                    y2={railY}
-                    stroke="#22c55e"
-                    strokeWidth="2"
-                    strokeDasharray="5,5"
-                    className="opacity-60"
-                  />
-
-                  {/* Railway Station Ripple */}
-                  <circle cx={railX} cy={railY} r="18" fill="#dcfce7" className="opacity-30">
-                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
-                  </circle>
-
-                  {/* Railway Station Node */}
-                  <circle
-                    cx={railX}
-                    cy={railY}
-                    r="10"
-                    fill="#22c55e"
-                    stroke="white"
-                    strokeWidth="2.5"
-                    className="cursor-pointer hover:r-12 transition-all"
-                  />
-
-                  {/* Train Icon */}
-                  <foreignObject x={railX - 6} y={railY - 6} width="12" height="12" className="pointer-events-none">
-                    <Train className="w-3 h-3 text-white" />
-                  </foreignObject>
-
-                  {/* Label */}
-                  <foreignObject x={railX - 100} y={railY + 15} width="200" height="40" className="pointer-events-none">
-                    <div className="text-center flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-0.5 rounded bg-green-50 border border-green-100 text-green-700 text-[10px] font-bold shadow-sm">
-                        {station.name}
-                      </span>
-                    </div>
-                  </foreignObject>
-                </g>
-              );
-            })}
-
-            {/* Airports (Fix Issue #6) */}
-            {showAirport && Object.values(AIRPORTS).map(airport => {
-              // Find nearest bus stop for positioning
-              let minDist = Infinity;
-              let nearestIdx = 0;
-              stations.forEach((s, idx) => {
-                const d = Math.hypot(s.lat - airport.lat, s.lng - airport.lng);
-                if (d < minDist) {
-                  minDist = d;
-                  nearestIdx = idx;
-                }
-              });
-
-              if (minDist > 0.1) return null; // Too far from route
-
-              const busPos = nodePositions[nearestIdx];
-              const offsetX = (airport.lng > stations[nearestIdx].lng ? 1 : -1) * 80;
-              const offsetY = (airport.lat > stations[nearestIdx].lat ? -1 : 1) * 80;
-              const airX = busPos.x + offsetX;
-              const airY = busPos.y + offsetY;
-
-              return (
-                <g key={airport.id} className="pointer-events-auto">
-                  {/* Connection Line */}
-                  <line
-                    x1={busPos.x}
-                    y1={busPos.y}
-                    x2={airX}
-                    y2={airY}
-                    stroke="#f97316"
-                    strokeWidth="2"
-                    strokeDasharray="5,5"
-                    className="opacity-60"
-                  />
-
-                  {/* Airport Ripple */}
-                  <circle cx={airX} cy={airY} r="18" fill="#ffedd5" className="opacity-30">
-                    <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
-                  </circle>
-
-                  {/* Airport Node */}
-                  <circle
-                    cx={airX}
-                    cy={airY}
-                    r="10"
-                    fill="#f97316"
-                    stroke="white"
-                    strokeWidth="2.5"
-                    className="cursor-pointer hover:r-12 transition-all"
-                  />
-
-                  {/* Plane Icon */}
-                  <foreignObject x={airX - 6} y={airY - 6} width="12" height="12" className="pointer-events-none">
-                    <Plane className="w-3 h-3 text-white" />
-                  </foreignObject>
-
-                  {/* Label */}
-                  <foreignObject x={airX - 100} y={airY + 15} width="200" height="40" className="pointer-events-none">
-                    <div className="text-center flex flex-col items-center justify-center h-full">
-                      <span className="px-2 py-0.5 rounded bg-orange-50 border border-orange-200 text-orange-700 text-[10px] font-bold shadow-sm">
-                        {airport.name}
-                      </span>
-                    </div>
-                  </foreignObject>
-                </g>
-              );
-            })}
-
-            {/* Simulation Bus */}
-            {hasHighlight && (
-              <g transform={`translate(${
-                // Interpolate position along the highlighted path
-                (() => {
-                  const totalSegments = highlightEndIdx - highlightStartIdx;
-                  const segmentIndex = Math.floor(simulationStep * totalSegments);
-                  const segmentProgress = (simulationStep * totalSegments) % 1;
-
-                  const currentIdx = highlightStartIdx + segmentIndex;
-                  if (currentIdx >= highlightEndIdx) return nodePositions[highlightEndIdx].x;
-
-                  const p1 = nodePositions[currentIdx];
-                  const p2 = nodePositions[currentIdx + 1];
-                  return p1.x + (p2.x - p1.x) * segmentProgress;
-                })()
-                }, ${(() => {
-                  const totalSegments = highlightEndIdx - highlightStartIdx;
-                  const segmentIndex = Math.floor(simulationStep * totalSegments);
-                  const segmentProgress = (simulationStep * totalSegments) % 1;
-
-                  const currentIdx = highlightStartIdx + segmentIndex;
-                  if (currentIdx >= highlightEndIdx) return nodePositions[highlightEndIdx].y;
-
-                  const p1 = nodePositions[currentIdx];
-                  const p2 = nodePositions[currentIdx + 1];
-                  return p1.y + (p2.y - p1.y) * segmentProgress;
-                })()
-                })`}>
-                <circle r="12" fill="#006a4e" className="animate-pulse opacity-50" />
-                <circle r="8" fill="#006a4e" stroke="white" strokeWidth="2" />
-                <foreignObject x="-6" y="-6" width="12" height="12">
-                  <Bus className="w-3 h-3 text-white" />
-                </foreignObject>
-              </g>
-            )}
-
-            {/* User Location Marker (Fix Issue #7) */}
-            {userLocation && userDistance > 500 && (
-              <>
-                {/* Calculate user position on map */}
-                {(() => {
-                  const lngs = stations.map(s => s.lng);
-                  const minLng = Math.min(...lngs);
-                  const maxLng = Math.max(...lngs);
-
-                  const userX = ((userLocation.lng - minLng) / (maxLng - minLng || 1)) * (baseWidth - (padding * 2)) + padding;
-                  const userY = (height - 200) / 2 + (200 - (normalizeLat(userLocation.lat) * 200));
-
-                  // Find nearest station for connection line
-                  let nearestStationPos = null;
-                  if (userStationIndex >= 0 && userStationIndex < nodePositions.length) {
-                    nearestStationPos = nodePositions[userStationIndex];
+                if (isHighlighted) {
+                  fill = "white";
+                  stroke = "#006a4e";
+                  r = 6;
+                  if (idx === highlightStartIdx || idx === highlightEndIdx) {
+                    fill = "#006a4e";
+                    stroke = "white";
+                    r = 8;
                   }
+                } else if (!hasHighlight) {
+                  if (isCurrent) {
+                    fill = "#f42a41";
+                    stroke = "#f42a41";
+                    r = 8;
+                  } else if (isNearestButFar) {
+                    fill = "#fb923c";
+                    stroke = "#c2410c";
+                    r = 8;
+                  } else if (isPassed) {
+                    fill = "#e2e8f0";
+                    stroke = "#cbd5e1";
+                  } else if (isStart || isEnd) {
+                    r = 7;
+                    stroke = "#1f2937";
+                  }
+                }
 
-                  return (
-                    <g>
-                      {/* Connection Line to Nearest Stop - Always show when user is away */}
-                      {nearestStationPos && (
-                        <line
-                          x1={userX}
-                          y1={userY}
-                          x2={nearestStationPos.x}
-                          y2={nearestStationPos.y}
-                          stroke="#3b82f6"
-                          strokeWidth="2"
-                          strokeDasharray="5,5"
-                          className="opacity-60"
-                        />
-                      )}
+                return (
+                  <g key={s.id} className={`cursor-pointer group/node pointer-events-auto ${isHighlighted || !hasHighlight ? 'opacity-100' : 'opacity-50'}`}>
+                    {/* Hover Hit Area */}
+                    <circle cx={x} cy={y} r={25} fill="transparent" />
 
-                      {/* Pulsing Circle Animation */}
-                      <circle cx={userX} cy={userY} r="15" fill="#3b82f6" className="opacity-30">
-                        <animate attributeName="r" from="15" to="25" dur="1.5s" repeatCount="indefinite" />
-                        <animate attributeName="opacity" from="0.3" to="0" dur="1.5s" repeatCount="indefinite" />
+                    {/* Current Location Ripple */}
+                    {isCurrent && !hasHighlight && (
+                      <circle cx={x} cy={y} r={20} fill="#f42a41" opacity="0.2">
+                        <animate attributeName="r" from="8" to="30" dur="1.5s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" from="0.6" to="0" dur="1.5s" repeatCount="indefinite" />
                       </circle>
+                    )}
 
-                      {/* User Location Marker */}
-                      <circle
-                        cx={userX}
-                        cy={userY}
-                        r="8"
-                        fill="#3b82f6"
-                        stroke="white"
-                        strokeWidth="3"
-                        className="cursor-pointer"
-                      />
+                    {/* Connect target ripple */}
+                    {isNearestButFar && (
+                      <circle cx={x} cy={y} r={20} fill="#f97316" opacity="0.2">
+                        <animate attributeName="r" from="8" to="25" dur="2s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
+                      </circle>
+                    )}
 
-                      {/* Inner dot */}
-                      <circle
-                        cx={userX}
-                        cy={userY}
-                        r="3"
-                        fill="white"
-                      />
+                    {/* Visible Node */}
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r={r}
+                      fill={fill}
+                      stroke={stroke}
+                      strokeWidth="2.5"
+                      className="transition-all duration-300 group-hover/node:r-8"
+                    />
 
-                      {/* Label */}
-                      <foreignObject
-                        x={userX - 60}
-                        y={userY + 15}
-                        width="120"
-                        height="30"
-                        className="pointer-events-none"
-                      >
-                        <div className="text-center flex flex-col items-center justify-center h-full">
-                          <span className="px-2 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold shadow-lg">
-                            You are here
-                          </span>
-                        </div>
-                      </foreignObject>
-                    </g>
-                  );
-                })()}
-              </>
-            )}
+                    {/* Label */}
+                    <foreignObject
+                      x={x - 60}
+                      y={idx % 2 === 0 ? y + 15 : y - 45}
+                      width="120"
+                      height="40"
+                      className="pointer-events-none"
+                    >
+                      <div className={`text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full ${isCurrent && !hasHighlight ? 'text-dhaka-red font-bold' : (isPassed && !hasHighlight) || (hasHighlight && !isHighlighted) ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <span className={`px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-full shadow-sm border 
+                         ${isCurrent && !hasHighlight ? 'bg-red-50 border-red-100 text-red-600 scale-110'
+                            : isNearestButFar ? 'bg-orange-50 border-orange-200 text-orange-700 font-bold'
+                              : isHighlighted ? 'bg-green-50 border-green-200 text-green-800 font-bold'
+                                : 'bg-white/80 border-gray-100/50'}`}>
+                          {s.name}
+                          {isCurrent && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">You are here</span>}
+                          {isNearestButFar && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">Start Here</span>}
+                        </span>
+                      </div>
+                    </foreignObject>
+                  </g>
+                );
+              })}
 
+              {/* Metro Stations */}
+              {showMetro && metroConnections.map((connection, idx) => {
+                const { metroStation, busStopIndex, distance, metroX, metroY } = connection;
+                const busStopPos = nodePositions[busStopIndex];
+
+                return (
+                  <g key={metroStation.id} className="pointer-events-auto">
+                    {/* Connection Line to Bus Stop */}
+                    <line
+                      x1={busStopPos.x}
+                      y1={busStopPos.y}
+                      x2={metroX}
+                      y2={metroY}
+                      stroke="#9333ea"
+                      strokeWidth="2"
+                      strokeDasharray="5,5"
+                      className="opacity-60"
+                    />
+
+                    {/* Metro Station Node */}
+                    <circle
+                      cx={metroX}
+                      cy={metroY}
+                      r="18"
+                      fill="#f3e8ff"
+                      className="opacity-30"
+                    >
+                      <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
+                    </circle>
+
+                    <circle
+                      cx={metroX}
+                      cy={metroY}
+                      r="10"
+                      fill="#9333ea"
+                      stroke="white"
+                      strokeWidth="2.5"
+                      className="cursor-pointer hover:r-12 transition-all"
+                    />
+
+                    {/* Train Icon */}
+                    <foreignObject x={metroX - 6} y={metroY - 6} width="12" height="12" className="pointer-events-none">
+                      <Train className="w-3 h-3 text-white" />
+                    </foreignObject>
+
+                    {/* Metro Station Label */}
+                    <foreignObject
+                      x={metroX - 100}
+                      y={metroY + 15}
+                      width="200"
+                      height="40"
+                      className="pointer-events-none"
+                    >
+                      <div className="text-center flex flex-col items-center justify-center h-full">
+                        <span className="px-2 py-0.5 rounded bg-purple-50 border border-purple-200 text-purple-700 text-[10px] font-bold shadow-sm">
+                          {metroStation.name}
+                        </span>
+                      </div>
+                    </foreignObject>
+                  </g>
+                );
+              })}
+
+              {/* Railway Stations (Fix Issue #6) */}
+              {showRailway && Object.values(RAILWAY_STATIONS).map(station => {
+                // Find nearest bus stop for positioning
+                let minDist = Infinity;
+                let nearestIdx = 0;
+                stations.forEach((s, idx) => {
+                  const d = Math.hypot(s.lat - station.lat, s.lng - station.lng);
+                  if (d < minDist) {
+                    minDist = d;
+                    nearestIdx = idx;
+                  }
+                });
+
+                if (minDist > 0.05) return null; // Too far from route
+
+                const busPos = nodePositions[nearestIdx];
+                const offsetX = (station.lng > stations[nearestIdx].lng ? 1 : -1) * 70;
+                const offsetY = (station.lat > stations[nearestIdx].lat ? -1 : 1) * 70;
+                const railX = busPos.x + offsetX;
+                const railY = busPos.y + offsetY;
+
+                return (
+                  <g key={station.id} className="pointer-events-auto">
+                    {/* Connection Line */}
+                    <line
+                      x1={busPos.x}
+                      y1={busPos.y}
+                      x2={railX}
+                      y2={railY}
+                      stroke="#22c55e"
+                      strokeWidth="2"
+                      strokeDasharray="5,5"
+                      className="opacity-60"
+                    />
+
+                    {/* Railway Station Ripple */}
+                    <circle cx={railX} cy={railY} r="18" fill="#dcfce7" className="opacity-30">
+                      <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
+                    </circle>
+
+                    {/* Railway Station Node */}
+                    <circle
+                      cx={railX}
+                      cy={railY}
+                      r="10"
+                      fill="#22c55e"
+                      stroke="white"
+                      strokeWidth="2.5"
+                      className="cursor-pointer hover:r-12 transition-all"
+                    />
+
+                    {/* Train Icon */}
+                    <foreignObject x={railX - 6} y={railY - 6} width="12" height="12" className="pointer-events-none">
+                      <Train className="w-3 h-3 text-white" />
+                    </foreignObject>
+
+                    {/* Label */}
+                    <foreignObject x={railX - 100} y={railY + 15} width="200" height="40" className="pointer-events-none">
+                      <div className="text-center flex flex-col items-center justify-center h-full">
+                        <span className="px-2 py-0.5 rounded bg-green-50 border border-green-100 text-green-700 text-[10px] font-bold shadow-sm">
+                          {station.name}
+                        </span>
+                      </div>
+                    </foreignObject>
+                  </g>
+                );
+              })}
+
+              {/* Airports (Fix Issue #6) */}
+              {showAirport && Object.values(AIRPORTS).map(airport => {
+                // Find nearest bus stop for positioning
+                let minDist = Infinity;
+                let nearestIdx = 0;
+                stations.forEach((s, idx) => {
+                  const d = Math.hypot(s.lat - airport.lat, s.lng - airport.lng);
+                  if (d < minDist) {
+                    minDist = d;
+                    nearestIdx = idx;
+                  }
+                });
+
+                if (minDist > 0.1) return null; // Too far from route
+
+                const busPos = nodePositions[nearestIdx];
+                const offsetX = (airport.lng > stations[nearestIdx].lng ? 1 : -1) * 80;
+                const offsetY = (airport.lat > stations[nearestIdx].lat ? -1 : 1) * 80;
+                const airX = busPos.x + offsetX;
+                const airY = busPos.y + offsetY;
+
+                return (
+                  <g key={airport.id} className="pointer-events-auto">
+                    {/* Connection Line */}
+                    <line
+                      x1={busPos.x}
+                      y1={busPos.y}
+                      x2={airX}
+                      y2={airY}
+                      stroke="#f97316"
+                      strokeWidth="2"
+                      strokeDasharray="5,5"
+                      className="opacity-60"
+                    />
+
+                    {/* Airport Ripple */}
+                    <circle cx={airX} cy={airY} r="18" fill="#ffedd5" className="opacity-30">
+                      <animate attributeName="r" from="18" to="25" dur="2s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite" />
+                    </circle>
+
+                    {/* Airport Node */}
+                    <circle
+                      cx={airX}
+                      cy={airY}
+                      r="10"
+                      fill="#f97316"
+                      stroke="white"
+                      strokeWidth="2.5"
+                      className="cursor-pointer hover:r-12 transition-all"
+                    />
+
+                    {/* Plane Icon */}
+                    <foreignObject x={airX - 6} y={airY - 6} width="12" height="12" className="pointer-events-none">
+                      <Plane className="w-3 h-3 text-white" />
+                    </foreignObject>
+
+                    {/* Label */}
+                    <foreignObject x={airX - 100} y={airY + 15} width="200" height="40" className="pointer-events-none">
+                      <div className="text-center flex flex-col items-center justify-center h-full">
+                        <span className="px-2 py-0.5 rounded bg-orange-50 border border-orange-200 text-orange-700 text-[10px] font-bold shadow-sm">
+                          {airport.name}
+                        </span>
+                      </div>
+                    </foreignObject>
+                  </g>
+                );
+              })}
+
+              {/* Simulation Bus */}
+              {hasHighlight && (
+                <g transform={`translate(${
+                  // Interpolate position along the highlighted path
+                  (() => {
+                    const totalSegments = highlightEndIdx - highlightStartIdx;
+                    const segmentIndex = Math.floor(simulationStep * totalSegments);
+                    const segmentProgress = (simulationStep * totalSegments) % 1;
+
+                    const currentIdx = highlightStartIdx + segmentIndex;
+                    if (currentIdx >= highlightEndIdx) return nodePositions[highlightEndIdx].x;
+
+                    const p1 = nodePositions[currentIdx];
+                    const p2 = nodePositions[currentIdx + 1];
+                    return p1.x + (p2.x - p1.x) * segmentProgress;
+                  })()
+                  }, ${(() => {
+                    const totalSegments = highlightEndIdx - highlightStartIdx;
+                    const segmentIndex = Math.floor(simulationStep * totalSegments);
+                    const segmentProgress = (simulationStep * totalSegments) % 1;
+
+                    const currentIdx = highlightStartIdx + segmentIndex;
+                    if (currentIdx >= highlightEndIdx) return nodePositions[highlightEndIdx].y;
+
+                    const p1 = nodePositions[currentIdx];
+                    const p2 = nodePositions[currentIdx + 1];
+                    return p1.y + (p2.y - p1.y) * segmentProgress;
+                  })()
+                  })`}>
+                  <circle r="12" fill="#006a4e" className="animate-pulse opacity-50" />
+                  <circle r="8" fill="#006a4e" stroke="white" strokeWidth="2" />
+                  <foreignObject x="-6" y="-6" width="12" height="12">
+                    <Bus className="w-3 h-3 text-white" />
+                  </foreignObject>
+                </g>
+              )}
+
+              {/* User Location Marker (Fix Issue #7) */}
+              {userLocation && userDistance > 500 && (
+                <>
+                  {/* Calculate user position on map */}
+                  {(() => {
+                    const lngs = stations.map(s => s.lng);
+                    const minLng = Math.min(...lngs);
+                    const maxLng = Math.max(...lngs);
+
+                    const userX = ((userLocation.lng - minLng) / (maxLng - minLng || 1)) * (baseWidth - (padding * 2)) + padding;
+                    const userY = (height - 200) / 2 + (200 - (normalizeLat(userLocation.lat) * 200));
+
+                    // Find nearest station for connection line
+                    let nearestStationPos = null;
+                    if (userStationIndex >= 0 && userStationIndex < nodePositions.length) {
+                      nearestStationPos = nodePositions[userStationIndex];
+                    }
+
+                    return (
+                      <g>
+                        {/* Pulsing Circle Animation */}
+                        <circle cx={userPos?.x || 0} cy={userPos?.y || 0} r="15" fill="#3b82f6" className="opacity-30">
+                          <animate attributeName="r" from="15" to="25" dur="1.5s" repeatCount="indefinite" />
+                          <animate attributeName="opacity" from="0.3" to="0" dur="1.5s" repeatCount="indefinite" />
+                        </circle>
+
+                        {/* User Location Marker */}
+                        <circle
+                          cx={userPos?.x || 0}
+                          cy={userPos?.y || 0}
+                          r="8"
+                          fill="#3b82f6"
+                          stroke="white"
+                          strokeWidth="3"
+                          className="cursor-pointer"
+                        />
+
+                        {/* Inner dot */}
+                        <circle
+                          cx={userPos?.x || 0}
+                          cy={userPos?.y || 0}
+                          r="3"
+                          fill="white"
+                        />
+
+                        {/* Label */}
+                        <foreignObject
+                          x={(userPos?.x || 0) - 60}
+                          y={(userPos?.y || 0) + 15}
+                          width="120"
+                          height="30"
+                          className="pointer-events-none"
+                        >
+                          <div className="text-center flex flex-col items-center justify-center h-full">
+                            <span className="px-2 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold shadow-lg">
+                              You are here
+                            </span>
+                          </div>
+                        </foreignObject>
+                      </g>
+                    );
+                  })()}
+                </>
+              )}
+
+            </g>
           </svg>
         </div>
       </div>
