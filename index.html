@@ -63,24 +63,96 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "কই যাবো",
-      "url": "https://koyjabo.com/",
-      "description": "Find Dhaka bus routes instantly! 200+ buses, real-time tracking, metro rail guide (MRT Line 6), AI assistant, fare calculator. Best bus route finder for Dhaka, Bangladesh. ঢাকা বাস রুট খুঁজুন。",
-      "applicationCategory": "TravelApplication",
-      "operatingSystem": "Any",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "BDT"
-      },
-      "featureList": "Bus Route Finder, Metro Rail Guide, Fare Calculator, Live Navigation",
-      "screenshot": "https://koyjabo.com/og-image.png",
-      "author": {
-        "@type": "Person",
-        "name": "Mejbaur Bahar Fagun",
-        "url": "https://linkedin.com/in/mejbaur/"
-      }
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "কই যাবো",
+          "url": "https://koyjabo.com/",
+          "description": "Find Dhaka bus routes instantly! 200+ buses, real-time tracking, metro rail guide (MRT Line 6), AI assistant, fare calculator. Best bus route finder for Dhaka, Bangladesh.",
+          "applicationCategory": "TravelApplication",
+          "operatingSystem": "Any",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "BDT"
+          },
+          "featureList": "Bus Route Finder, Metro Rail Guide, Fare Calculator, Live Navigation",
+          "screenshot": "https://koyjabo.com/og-image.png",
+          "author": {
+            "@type": "Person",
+            "name": "Mejbaur Bahar Fagun",
+            "url": "https://linkedin.com/in/mejbaur/"
+          }
+        },
+        {
+          "@type": "Organization",
+          "name": "KoyJabo",
+          "url": "https://koyjabo.com/",
+          "logo": "https://koyjabo.com/icon-512x512.png",
+          "sameAs": [
+            "https://github.com/mejbaurbahar/Dhaka-Commute"
+          ]
+        },
+        {
+          "@type": "Website",
+          "name": "KoyJabo - Bangladesh Route Finder",
+          "url": "https://koyjabo.com/",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://koyjabo.com/?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://koyjabo.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "AI Dataset",
+              "item": "https://koyjabo.com/for-ai"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I find local bus routes in Dhaka?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Enter your starting point (From) and destination (To) in the KoyJabo search bar. The app will instantly show you all available bus routes, fares, and stops."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does KoyJabo cover intercity travel?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! KoyJabo provides route information for intercity buses, trains, and flights connecting major districts across Bangladesh."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is there an AI Assistant for travel?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, 'কই যাবো AI Assistant' can answer questions about routes, travel tips, and transport options in natural language."
+              }
+            }
+          ]
+        }
+      ]
     }
   </script>
 
