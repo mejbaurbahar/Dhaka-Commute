@@ -2146,7 +2146,7 @@ const App: React.FC = () => {
             <div className="px-6 pt-6 pb-4 relative z-10">
               <div>
                 <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg">কোথায় যেতে চান?</h2>
-                <p className="text-white/90 text-sm font-medium">এক ক্লিকে, আপনার বাসের সঠিক রুট</p>
+                <p className="text-white/90 text-sm font-medium">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
               </div>
             </div>
 
