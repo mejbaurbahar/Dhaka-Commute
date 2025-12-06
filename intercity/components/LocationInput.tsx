@@ -101,7 +101,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         />
         {/* Glassmorphism Suggestions Dropdown */}
         {showSuggestions && !disabled && (value.length > 0 || filteredLocations.length > 0) && (
-          <div className="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 max-h-64 overflow-y-auto custom-scrollbar animate-fade-in-up p-2">
+          <div className="absolute left-0 right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 max-h-96 overflow-y-auto custom-scrollbar animate-fade-in-up p-2">
             {filteredLocations.length > 0 ? (
               filteredLocations.map((loc, idx) => (
                 <div

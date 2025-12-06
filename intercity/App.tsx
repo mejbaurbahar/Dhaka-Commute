@@ -529,7 +529,7 @@ const App: React.FC = () => {
                   />
 
                   {/* Swap Button */}
-                  <div className="flex justify-center -mb-6 md:mb-1 z-10">
+                  <div className="flex justify-center mb-2 md:mb-1 z-10">
                     <button
                       type="button"
                       onClick={handleSwapLocations}
