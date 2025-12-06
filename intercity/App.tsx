@@ -379,10 +379,12 @@ const App: React.FC = () => {
               e.preventDefault();
               window.location.href = window.location.origin + '/#home';
             }}
-            className="flex items-center gap-1 cursor-pointer outline-none hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 cursor-pointer outline-none hover:opacity-90 transition-opacity"
           >
-            <span className="text-xl">🚌</span>
-            <h1 className="text-xl font-bold font-bengali tracking-tight">
+            <div className="bg-gradient-to-br from-dhaka-green to-teal-600 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-md shadow-green-500/20">
+              <span className="text-sm">🚌</span>
+            </div>
+            <h1 className="text-xl font-bold font-bengali tracking-tight text-dhaka-dark">
               <span className="text-dhaka-green">কই</span>
               <span className="text-dhaka-red">যাবো</span>
             </h1>
