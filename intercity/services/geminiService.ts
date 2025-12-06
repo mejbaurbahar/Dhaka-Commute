@@ -16,6 +16,51 @@ const cleanResponse = (text: string) => {
   return clean.trim();
 };
 
+const tryRepairJson = (jsonStr: string): string => {
+  let repaired = jsonStr.trim();
+  // 1. Check if it ends with a quote - if so, it might be an unclosed string value. 
+  // But wait, "Unterminated string" usually means the string didn't end with a quote.
+  // If the last char is NOT a quote or bracket, it might be a partial string.
+
+  // Rudimentary fix for "Unterminated string":
+  // This error happens in JSON.parse, so we can't easily detect *where* it is without a parser.
+  // But often it's the very end of the file.
+
+  // Strategy: Try to find the last valid structure.
+  // If it looks cut off, we can try to append closing characters.
+
+  const stack: string[] = [];
+  let inString = false;
+
+  for (let i = 0; i < repaired.length; i++) {
+    const char = repaired[i];
+    if (char === '"' && repaired[i - 1] !== '\\') {
+      inString = !inString;
+    }
+    if (!inString) {
+      if (char === '{') stack.push('}');
+      else if (char === '[') stack.push(']');
+      else if (char === '}' || char === ']') {
+        // If we see a closing bracket, check if it matches the stack
+        const last = stack[stack.length - 1];
+        if (last === char) stack.pop();
+      }
+    }
+  }
+
+  // If we are still in a string at the end, close it
+  if (inString) {
+    repaired += '"';
+  }
+
+  // Close remaining objects/arrays
+  while (stack.length > 0) {
+    repaired += stack.pop();
+  }
+
+  return repaired;
+};
+
 // --- Helper to attempt fetching real bus data ---
 const fetchRealBusData = async (from: string, to: string) => {
   const controller = new AbortController();
@@ -40,8 +85,12 @@ const fetchRealBusData = async (from: string, to: string) => {
       "kuakata": "Kuakata",
       "teknaf": "Teknaf",
       "pabna": "Pabna",
-      "ishwardi": "Ishwardi",
       "jashre": "Jessore", // Common typo correction
+      "vogura": "Bogura",
+      "bbenapole": "Benapole",
+
+      "ishwardi": "Ishwardi",
+
 
       // Bangla Mappings
       "ঢাকা": "Dhaka",
@@ -687,6 +736,7 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
       - Provide "startCoordinates" and "endCoordinates" (lat, lng) for EACH step.
       
       Output strictly in JSON format matching the schema.
+      IMPORTANT: Minimize whitespace (Output Minified JSON) to prevent truncation.
     `;
 
     const result = await model.generateContent(prompt);
@@ -696,8 +746,21 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
     if (!text) return null;
 
     // Clean and parse
-    const cleanJsonText = cleanResponse(text);
-    let resultJson = JSON.parse(cleanJsonText) as RoutingResponse;
+    let cleanJsonText = cleanResponse(text);
+    let resultJson: RoutingResponse;
+
+    try {
+      resultJson = JSON.parse(cleanJsonText) as RoutingResponse;
+    } catch (e) {
+      console.warn("Initial JSON Parse Failed, attempting repair...", e);
+      try {
+        const repaired = tryRepairJson(cleanJsonText);
+        resultJson = JSON.parse(repaired) as RoutingResponse;
+      } catch (repairError) {
+        console.error("JSON Repair Failed:", repairError);
+        throw new Error("The travel plan generated was too long and incomplete. Please try searching for a shorter route or try again.");
+      }
+    }
 
     // Post-process to ensure quality (Sanitization)
     resultJson = sanitizeResponse(resultJson);
