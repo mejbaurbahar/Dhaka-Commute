@@ -2737,25 +2737,14 @@ const App: React.FC = () => {
       {/* Mobile Header */}
       <header className={`fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden transition-transform duration-300 ${(view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) ? '-translate-y-full' : 'translate-y-0'}`}>
         <div className="flex justify-between items-center">
-          <button
-            onClick={() => setView(AppView.HOME)}
-            className="flex items-center gap-2.5 outline-none cursor-pointer"
-            aria-label="Go to home"
-          >
-            <div className="flex items-center gap-2 outline-none cursor-pointer">
-              <div className="bg-gradient-to-br from-dhaka-green to-teal-600 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-md shadow-green-500/20">
-                <span className="text-sm">🚌</span>
-              </div>
-              <h1 className="text-xl font-bold font-bengali tracking-tight text-gray-900">
-                <span className="text-dhaka-green">কই</span>
-                <span className="text-dhaka-red">যাবো</span>
-              </h1>
-            </div>
-          </button>
+          <div className="flex items-center gap-2 outline-none cursor-pointer" onClick={() => setView(AppView.HOME)}>
+            <AnimatedLogo size="small" />
+          </div>
           <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
             <Menu className="w-6 h-6" />
           </button>
         </div>
+
       </header>
 
       {/* Desktop Header */}
@@ -2765,13 +2754,7 @@ const App: React.FC = () => {
           className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
           aria-label="Go to home"
         >
-          <div className="bg-gradient-to-br from-dhaka-green to-teal-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
-            <span className="text-xl">🚌</span>
-          </div>
-          <h1 className="text-2xl font-black font-bengali tracking-tight text-gray-900">
-            <span className="text-dhaka-green">কই</span>
-            <span className="text-dhaka-red">যাবো</span>
-          </h1>
+          <AnimatedLogo size="large" />
         </button>
         <div className="flex items-center gap-4">
           <button
