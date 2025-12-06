@@ -442,9 +442,10 @@ const TOURIST_SPOTS: Record<string, Array<{ name: string; type: string; desc: st
 };
 
 // --- Helper to find spots based on location string ---
-const getSpotsForLocation = (location: string) => {
+const getSpotsForLocation = (location: string | undefined | null) => {
+  if (!location) return { city: 'Unknown', spots: [] };
   const locLower = location.toLowerCase();
-  
+
   // 1. Try to find specific curated spots
   for (const key of Object.keys(TOURIST_SPOTS)) {
     if (locLower.includes(key.toLowerCase())) {
@@ -475,12 +476,12 @@ const TouristSpotsModal: React.FC<{ city: string; spots: any[]; onClose: () => v
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
       <div className="bg-white/90 backdrop-blur-xl w-full max-w-2xl rounded-[2rem] shadow-2xl border border-white overflow-hidden flex flex-col max-h-[80vh] animate-fade-in-up">
-        
+
         {/* Header */}
         <div className="p-6 bg-gradient-to-r from-teal-500 to-emerald-600 text-white flex justify-between items-center shrink-0">
           <div>
             <h3 className="text-2xl font-bold flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-yellow-300 fill-current animate-pulse" /> 
+              <Sparkles className="w-6 h-6 text-yellow-300 fill-current animate-pulse" />
               Discover {city}
             </h3>
             <p className="text-teal-100 text-sm mt-1">Famous attractions & hidden gems</p>
@@ -497,7 +498,7 @@ const TouristSpotsModal: React.FC<{ city: string; spots: any[]; onClose: () => v
               let Icon = MapPin;
               let color = "text-gray-500";
               let bg = "bg-gray-100";
-              
+
               if (spot.type === "Nature") { Icon = Mountain; color = "text-emerald-600"; bg = "bg-emerald-50"; }
               else if (spot.type === "Water") { Icon = Waves; color = "text-blue-600"; bg = "bg-blue-50"; }
               else if (spot.type === "History") { Icon = History; color = "text-amber-600"; bg = "bg-amber-50"; }
@@ -527,7 +528,7 @@ const TouristSpotsModal: React.FC<{ city: string; spots: any[]; onClose: () => v
 
         {/* Footer */}
         <div className="p-4 bg-gray-50 border-t border-gray-200 text-center text-xs text-gray-400 shrink-0">
-           Explore these spots during your visit to {city}!
+          Explore these spots during your visit to {city}!
         </div>
       </div>
     </div>
@@ -549,7 +550,7 @@ const StepIcon: React.FC<{ mode: TransportMode }> = ({ mode }) => {
       Icon = Train;
       break;
     case TransportMode.METRO_RAIL:
-      bgClass = "bg-dhaka-red"; 
+      bgClass = "bg-dhaka-red";
       Icon = Train;
       break;
     case TransportMode.BUS:
@@ -613,62 +614,62 @@ const ScheduleList: React.FC<{ schedules: Schedule[], mode: TransportMode }> = (
 
   return (
     <div className="mt-4">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="group w-full flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
       >
         <span className="flex items-center gap-2.5">
           <div className={`w-8 h-8 rounded-full bg-${color}-50 flex items-center justify-center text-${color}-600`}>
-             <Ticket size={16} />
+            <Ticket size={16} />
           </div>
           <div className="text-left">
-             <div className="text-xs font-bold text-gray-800 uppercase tracking-wider">Available {label}</div>
-             <div className="text-[10px] text-gray-400 font-medium">{schedules.length} options found</div>
+            <div className="text-xs font-bold text-gray-800 uppercase tracking-wider">Available {label}</div>
+            <div className="text-[10px] text-gray-400 font-medium">{schedules.length} options found</div>
           </div>
         </span>
         <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isOpen ? 'bg-gray-100 text-gray-600' : 'bg-transparent text-gray-400'}`}>
-           {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </div>
       </button>
-      
+
       {isOpen && (
         <div className="mt-3 grid gap-3">
           {schedules.map((schedule, idx) => (
             <div key={idx} className="relative bg-white border border-gray-100 rounded-xl p-0 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group/item">
               {/* Ticket Left Color Bar */}
               <div className={`absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-${color}-400 to-${color}-500`}></div>
-              
-              <div className="pl-5 pr-4 py-3 flex flex-col gap-2">
-                 {/* Top Row: Operator & Price */}
-                 <div className="flex justify-between items-center border-b border-dashed border-gray-100 pb-2">
-                    <span className="font-bold text-gray-800 text-sm">{schedule.operator}</span>
-                    <span className={`font-bold text-${color}-600 bg-${color}-50 px-2 py-0.5 rounded text-xs`}>
-                      {schedule.price}
-                    </span>
-                 </div>
-                 
-                 {/* Middle Row: Time & Type */}
-                 <div className="flex items-center justify-between text-xs">
-                     <div className="flex items-center gap-2">
-                         <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded font-medium">{schedule.type}</span>
-                         <span className="flex items-center gap-1 text-gray-500 font-medium">
-                            <Clock size={12} className="text-gray-400"/> {schedule.departureTime}
-                         </span>
-                     </div>
-                     {schedule.contactNumber && (
-                        <a href={`tel:${schedule.contactNumber}`} className="text-[10px] font-bold text-blue-600 hover:underline flex items-center gap-1">
-                          <Phone size={10} /> Call
-                        </a>
-                     )}
-                 </div>
 
-                 {/* Bottom Row: Counter */}
-                 <div className="flex items-end justify-between pt-1">
-                    <div className="flex items-start gap-1.5">
-                        <MapPin size={12} className="text-gray-400 mt-0.5 shrink-0"/>
-                        <span className="text-[11px] text-gray-500 leading-tight">{schedule.counter}</span>
-                    </div>
-                 </div>
+              <div className="pl-5 pr-4 py-3 flex flex-col gap-2">
+                {/* Top Row: Operator & Price */}
+                <div className="flex justify-between items-center border-b border-dashed border-gray-100 pb-2">
+                  <span className="font-bold text-gray-800 text-sm">{schedule.operator}</span>
+                  <span className={`font-bold text-${color}-600 bg-${color}-50 px-2 py-0.5 rounded text-xs`}>
+                    {schedule.price}
+                  </span>
+                </div>
+
+                {/* Middle Row: Time & Type */}
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded font-medium">{schedule.type}</span>
+                    <span className="flex items-center gap-1 text-gray-500 font-medium">
+                      <Clock size={12} className="text-gray-400" /> {schedule.departureTime}
+                    </span>
+                  </div>
+                  {schedule.contactNumber && (
+                    <a href={`tel:${schedule.contactNumber}`} className="text-[10px] font-bold text-blue-600 hover:underline flex items-center gap-1">
+                      <Phone size={10} /> Call
+                    </a>
+                  )}
+                </div>
+
+                {/* Bottom Row: Counter */}
+                <div className="flex items-end justify-between pt-1">
+                  <div className="flex items-start gap-1.5">
+                    <MapPin size={12} className="text-gray-400 mt-0.5 shrink-0" />
+                    <span className="text-[11px] text-gray-500 leading-tight">{schedule.counter}</span>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
@@ -680,53 +681,54 @@ const ScheduleList: React.FC<{ schedules: Schedule[], mode: TransportMode }> = (
 
 export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
   const [showTouristModal, setShowTouristModal] = useState(false);
-  
+
   // Find tourist spots for the final destination
-  const destination = option.steps[option.steps.length - 1].to;
+  const lastStep = option.steps[option.steps.length - 1];
+  const destination = lastStep ? lastStep.to : 'Unknown';
   const nearbySpots = getSpotsForLocation(destination);
   const weather = option.destinationWeather;
 
   return (
     <>
       <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-glass border border-white overflow-hidden flex flex-col">
-        
+
         {/* Header Info */}
         <div className="p-6 md:p-8 bg-gradient-to-b from-white to-gray-50/50">
-           <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-              <div className="space-y-1">
-                 <h3 className="font-bold text-2xl text-gray-800 leading-tight">{option.title}</h3>
-                 <p className="text-sm text-gray-500 font-medium max-w-md leading-relaxed">{option.summary}</p>
-              </div>
-              <div className="flex md:flex-col items-center md:items-end gap-3 md:gap-1 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
-                 <div className="text-xl font-bold text-emerald-600">{option.totalCostRange}</div>
-                 <div className="text-xs font-bold text-gray-500 uppercase tracking-wide bg-gray-100 px-2 py-0.5 rounded-md">{option.totalDuration}</div>
-              </div>
-           </div>
+          <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+            <div className="space-y-1">
+              <h3 className="font-bold text-2xl text-gray-800 leading-tight">{option.title}</h3>
+              <p className="text-sm text-gray-500 font-medium max-w-md leading-relaxed">{option.summary}</p>
+            </div>
+            <div className="flex md:flex-col items-center md:items-end gap-3 md:gap-1 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
+              <div className="text-xl font-bold text-emerald-600">{option.totalCostRange}</div>
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wide bg-gray-100 px-2 py-0.5 rounded-md">{option.totalDuration}</div>
+            </div>
+          </div>
 
-           {/* Weather Forecast Widget (If available) */}
-           {weather && (
-             <div className="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-3">
-                   <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-blue-500 shadow-sm text-2xl">
-                      {weather.icon === 'SUN' ? <Sun size={24} className="text-amber-500" /> : 
-                       weather.icon === 'RAIN' ? <CloudRain size={24} className="text-blue-500" /> : 
-                       weather.icon === 'WIND' ? <Wind size={24} className="text-gray-500" /> : 
-                       <Cloud size={24} className="text-gray-400" />}
-                   </div>
-                   <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-gray-800 text-lg">{weather.temperature}</span>
-                        <span className="text-xs font-bold bg-white px-2 py-0.5 rounded-md text-blue-600 border border-blue-100">{weather.condition}</span>
-                      </div>
-                      <p className="text-xs text-gray-500 leading-tight mt-0.5">{weather.advice}</p>
-                   </div>
+          {/* Weather Forecast Widget (If available) */}
+          {weather && (
+            <div className="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-blue-500 shadow-sm text-2xl">
+                  {weather.icon === 'SUN' ? <Sun size={24} className="text-amber-500" /> :
+                    weather.icon === 'RAIN' ? <CloudRain size={24} className="text-blue-500" /> :
+                      weather.icon === 'WIND' ? <Wind size={24} className="text-gray-500" /> :
+                        <Cloud size={24} className="text-gray-400" />}
                 </div>
-                <div className="text-right hidden sm:block">
-                   <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider">Destination</span>
-                   <div className="text-sm font-bold text-gray-700">{destination}</div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-gray-800 text-lg">{weather.temperature}</span>
+                    <span className="text-xs font-bold bg-white px-2 py-0.5 rounded-md text-blue-600 border border-blue-100">{weather.condition}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 leading-tight mt-0.5">{weather.advice}</p>
                 </div>
-             </div>
-           )}
+              </div>
+              <div className="text-right hidden sm:block">
+                <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider">Destination</span>
+                <div className="text-sm font-bold text-gray-700">{destination}</div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Map Section */}
@@ -740,14 +742,14 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
         {/* Timeline Section */}
         <div className="p-6 md:p-8 bg-white">
           <div className="relative pl-4 md:pl-6 pb-4">
-            
+
             {/* Continuous Vertical Line */}
             <div className="absolute left-[19px] md:left-[23px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-gray-200 via-gray-300 to-gray-200"></div>
 
             <div className="space-y-10 md:space-y-12">
               {option.steps.map((step, index) => (
                 <div key={index} className="relative pl-12 md:pl-16">
-                  
+
                   {/* Step Icon */}
                   <div className="absolute left-0 top-0">
                     <StepIcon mode={step.mode as TransportMode} />
@@ -758,98 +760,98 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
                       <h4 className="font-bold text-gray-900 text-lg leading-tight group-hover:text-emerald-600 transition-colors">{step.instruction}</h4>
                       {step.duration && (
-                          <span className="text-[11px] font-bold bg-gray-50 px-2.5 py-1 rounded-lg text-gray-500 border border-gray-100 whitespace-nowrap self-start">
-                            {step.duration}
-                          </span>
+                        <span className="text-[11px] font-bold bg-gray-50 px-2.5 py-1 rounded-lg text-gray-500 border border-gray-100 whitespace-nowrap self-start">
+                          {step.duration}
+                        </span>
                       )}
                     </div>
-                    
+
                     {/* From -> To */}
                     <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-50/50 w-fit px-3 py-1.5 rounded-lg border border-gray-100/50">
-                       <span className="font-semibold text-gray-700">{step.from}</span> 
-                       <ArrowRight size={14} className="text-gray-300" />
-                       <span className="font-semibold text-gray-700">{step.to}</span>
+                      <span className="font-semibold text-gray-700">{step.from}</span>
+                      <ArrowRight size={14} className="text-gray-300" />
+                      <span className="font-semibold text-gray-700">{step.to}</span>
                     </div>
 
                     {/* Specific Details Cards */}
                     <div className="w-full">
-                        {/* Local Bus Detail */}
-                        {step.mode === TransportMode.LOCAL_BUS && step.details?.busName && (
-                          <div className="bg-teal-50 border border-teal-100 rounded-2xl p-4 mt-2 shadow-sm flex items-center gap-4">
-                              <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center shrink-0">
-                                 <Bus size={18} className="text-teal-700" />
-                              </div>
-                              <div>
-                                <span className="block text-[10px] text-teal-600 font-bold uppercase tracking-wider mb-0.5">Recommended Bus</span>
-                                <span className="font-bold text-teal-900 text-lg">{step.details.busName}</span>
-                              </div>
+                      {/* Local Bus Detail */}
+                      {step.mode === TransportMode.LOCAL_BUS && step.details?.busName && (
+                        <div className="bg-teal-50 border border-teal-100 rounded-2xl p-4 mt-2 shadow-sm flex items-center gap-4">
+                          <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center shrink-0">
+                            <Bus size={18} className="text-teal-700" />
                           </div>
-                        )}
-
-                        {/* Metro Rail Detail */}
-                        {step.mode === TransportMode.METRO_RAIL && (
-                          <div className="bg-red-50 border border-red-100 rounded-2xl p-4 mt-2 shadow-sm flex items-center gap-4">
-                              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0">
-                                 <Train size={18} className="text-red-700" />
-                              </div>
-                              <div>
-                                 <span className="block text-[10px] text-red-600 font-bold uppercase tracking-wider mb-0.5">Rapid Transit</span>
-                                 <span className="font-bold text-red-900 text-lg">MRT Line 6</span>
-                              </div>
+                          <div>
+                            <span className="block text-[10px] text-teal-600 font-bold uppercase tracking-wider mb-0.5">Recommended Bus</span>
+                            <span className="font-bold text-teal-900 text-lg">{step.details.busName}</span>
                           </div>
-                        )}
+                        </div>
+                      )}
 
-                        {/* Intercity Bus / Train / Ferry Schedules List */}
-                        {step.details?.schedules && step.details.schedules.length > 0 && (
-                          <ScheduleList schedules={step.details.schedules} mode={step.mode as TransportMode} />
-                        )}
+                      {/* Metro Rail Detail */}
+                      {step.mode === TransportMode.METRO_RAIL && (
+                        <div className="bg-red-50 border border-red-100 rounded-2xl p-4 mt-2 shadow-sm flex items-center gap-4">
+                          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0">
+                            <Train size={18} className="text-red-700" />
+                          </div>
+                          <div>
+                            <span className="block text-[10px] text-red-600 font-bold uppercase tracking-wider mb-0.5">Rapid Transit</span>
+                            <span className="font-bold text-red-900 text-lg">MRT Line 6</span>
+                          </div>
+                        </div>
+                      )}
 
-                        {/* Fallback info */}
-                        {!step.details?.schedules && (step.details?.flightName || step.details?.trainName || step.details?.operator) && (
-                           <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 mt-2 text-sm">
-                              <div className="font-bold text-blue-900 text-base mb-1">
-                                 {step.details.operator} {step.details.flightName} {step.details.trainName}
-                              </div>
-                              {step.details.busCounter && (
-                                <div className="text-xs text-blue-700 flex items-center gap-1.5 opacity-80">
-                                    <MapPin size={12}/> Counter: {step.details.busCounter}
-                                </div>
-                              )}
-                           </div>
-                        )}
+                      {/* Intercity Bus / Train / Ferry Schedules List */}
+                      {step.details?.schedules && step.details.schedules.length > 0 && (
+                        <ScheduleList schedules={step.details.schedules} mode={step.mode as TransportMode} />
+                      )}
+
+                      {/* Fallback info */}
+                      {!step.details?.schedules && (step.details?.flightName || step.details?.trainName || step.details?.operator) && (
+                        <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 mt-2 text-sm">
+                          <div className="font-bold text-blue-900 text-base mb-1">
+                            {step.details.operator} {step.details.flightName} {step.details.trainName}
+                          </div>
+                          {step.details.busCounter && (
+                            <div className="text-xs text-blue-700 flex items-center gap-1.5 opacity-80">
+                              <MapPin size={12} /> Counter: {step.details.busCounter}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    
+
                     {step.cost && (
-                       <div className="flex items-center gap-2 mt-1">
-                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Est. Cost</span>
-                         <span className="font-bold text-gray-700 text-xs bg-gray-100 px-2 py-0.5 rounded-md border border-gray-200">{step.cost}</span>
-                       </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Est. Cost</span>
+                        <span className="font-bold text-gray-700 text-xs bg-gray-100 px-2 py-0.5 rounded-md border border-gray-200">{step.cost}</span>
+                      </div>
                     )}
                   </div>
                 </div>
               ))}
-              
+
               {/* Destination Marker with Discovery */}
               <div className="relative pl-12 md:pl-16">
-                 <div className="absolute left-0 top-0 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-dhaka-red shadow-lg shadow-red-500/30 border-[3px] border-white z-10 animate-pulse-slow">
-                    <Flag className="text-white w-5 h-5 md:w-6 md:h-6 fill-current" />
-                 </div>
-                 <div className="flex flex-col pt-1">
-                    <h4 className="font-bold text-dhaka-dark text-xl">Arrive at {destination}</h4>
-                    <p className="text-sm text-gray-500 font-medium">Trip Completed</p>
-                    
-                    {/* Discovery Button */}
-                    {nearbySpots && (
-                      <button 
-                        onClick={() => setShowTouristModal(true)}
-                        className="mt-4 flex items-center gap-2 bg-gradient-to-r from-teal-400 to-emerald-500 text-white px-4 py-2.5 rounded-xl shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-0.5 transition-all duration-300 w-fit group"
-                      >
-                         <Sparkles className="w-4 h-4 text-yellow-200 fill-current animate-pulse" />
-                         <span className="font-bold text-sm">Discover {nearbySpots.city}</span>
-                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </button>
-                    )}
-                 </div>
+                <div className="absolute left-0 top-0 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-dhaka-red shadow-lg shadow-red-500/30 border-[3px] border-white z-10 animate-pulse-slow">
+                  <Flag className="text-white w-5 h-5 md:w-6 md:h-6 fill-current" />
+                </div>
+                <div className="flex flex-col pt-1">
+                  <h4 className="font-bold text-dhaka-dark text-xl">Arrive at {destination}</h4>
+                  <p className="text-sm text-gray-500 font-medium">Trip Completed</p>
+
+                  {/* Discovery Button */}
+                  {nearbySpots && (
+                    <button
+                      onClick={() => setShowTouristModal(true)}
+                      className="mt-4 flex items-center gap-2 bg-gradient-to-r from-teal-400 to-emerald-500 text-white px-4 py-2.5 rounded-xl shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-0.5 transition-all duration-300 w-fit group"
+                    >
+                      <Sparkles className="w-4 h-4 text-yellow-200 fill-current animate-pulse" />
+                      <span className="font-bold text-sm">Discover {nearbySpots.city}</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -858,10 +860,10 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
 
       {/* Tourist Modal */}
       {showTouristModal && nearbySpots && (
-        <TouristSpotsModal 
-          city={nearbySpots.city} 
-          spots={nearbySpots.spots} 
-          onClose={() => setShowTouristModal(false)} 
+        <TouristSpotsModal
+          city={nearbySpots.city}
+          spots={nearbySpots.spots}
+          onClose={() => setShowTouristModal(false)}
         />
       )}
     </>

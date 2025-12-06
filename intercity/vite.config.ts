@@ -10,6 +10,13 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3002,
       host: '0.0.0.0',
+      proxy: {
+        '/api/shohoz-proxy': {
+          target: 'https://webapi.shohoz.com',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/shohoz-proxy/, '/v1.0/web/booking/bus/search-trips')
+        }
+      }
     },
     plugins: [
       react(),

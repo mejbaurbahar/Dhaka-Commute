@@ -82,6 +82,10 @@
     ],
     "routes": [
         {
+            "src": "/api/shohoz-proxy",
+            "dest": "https://webapi.shohoz.com/v1.0/web/booking/bus/search-trips"
+        },
+        {
             "src": "/intercity",
             "dest": "/intercity/index.html"
         },

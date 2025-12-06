@@ -126,7 +126,7 @@ const fetchRealBusData = async (from: string, to: string) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
     const formattedDate = new Date(tomorrow).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-'); // 04-Dec-2025
 
-    const url = `https://webapi.shohoz.com/v1.0/web/booking/bus/search-trips?from_city=${encodeURIComponent(fromCity)}&to_city=${encodeURIComponent(toCity)}&date_of_journey=${formattedDate}&dor=`;
+    const url = `/api/shohoz-proxy?from_city=${encodeURIComponent(fromCity)}&to_city=${encodeURIComponent(toCity)}&date_of_journey=${formattedDate}&dor=`;
 
     const response = await fetch(url, {
       method: 'GET',
