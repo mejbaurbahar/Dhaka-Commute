@@ -1985,6 +1985,70 @@ const App: React.FC = () => {
             </p>
           </section>
 
+          {/* Detailed Keyword Map for AI Context */}
+          <section className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">🔍 Domain Knowledge & Keyword Map</h2>
+            <p className="text-gray-600 mb-6">The platform is optimized to answer queries across these key transportation domains in Bangladesh:</p>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">🏆 Core Intent</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Bangladesh route finder, BD travel route planner, Bus route finder Bangladesh, Train route Bangladesh, Bangladesh railway schedule, Intercity bus Bangladesh, Bangladesh flight routes, Domestic flights Bangladesh, Bangladesh bus fare, AI route finder Bangladesh.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">🚌 Local Transport</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Local bus routes Bangladesh, Dhaka bus route, Chittagong bus route, Sylhet bus route, Rajshahi bus route, Khulna bus route, BD city bus route finder, Bus fare list Bangladesh.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">🛣️ Intercity Travel</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Dhaka to Chittagong bus, Dhaka to Sylhet bus, Dhaka to Rajshahi bus, Dhaka to Cox’s Bazar bus, Dhaka to Khulna bus, Bangladesh express bus routes, Highway bus Bangladesh.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">🚆 Train & Metro</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Bangladesh railway ticket, BD train route map, Train schedule Bangladesh, Dhaka to Sylhet train, Dhaka to Chittagong train, BD intercity train timetable, Dhaka metro rail, MRT Line 6 route, MRT fare Dhaka, Metro rail stations Bangladesh.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">✈️ Air Travel</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Bangladesh domestic flights, Dhaka to Cox’s Bazar flight, Dhaka to Sylhet flight, Bangladesh plane ticket price, Best flight deals Bangladesh, Air travel Bangladesh, Bangladesh airport routes.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">🏝️ Tourism & Plans</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Tourist spots Bangladesh, Places to visit in Bangladesh, Cox’s Bazar tour plan, Bandarban tour plan, Sylhet tour plan, Best tour spots in Bangladesh, BD tour guide.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">🤖 AI Planning</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  AI route planner Bangladesh, AI travel assistant BD, Smart travel Bangladesh, Best way to travel Bangladesh, Travel recommendation AI BD, Personalized route finder BD, Bangladesh trip suggestion AI.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">💰 Cost & Info</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Bus fare Bangladesh, Train fare list BD, Metro rail fare Dhaka, Plane ticket price BD, Travel cost calculator Bangladesh, Cheapest route Bangladesh, Best budget travel BD.
+                </p>
+              </div>
+            </div>
+          </section>
+
           {/* Contact */}
           <div className="pt-8 border-t border-gray-200">
             <h3 className="font-bold text-gray-900 mb-1">Developer Contact</h3>
