@@ -374,8 +374,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
           setInitialPinchDistance(null);
         }}
       >
-        <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-500 ease-out origin-top-left">
-          <svg className="w-full h-full block select-none pointer-events-none" viewBox={`0 0 ${baseWidth} ${height}`}>
+        <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-500 ease-out origin-top-left min-w-full">
+          <svg className="w-full h-full block select-none pointer-events-none" viewBox={`0 0 ${baseWidth} ${height}`} preserveAspectRatio="xMinYMid meet">
 
             {/* Base Path (Grey) */}
             <polyline
