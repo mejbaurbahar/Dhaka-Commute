@@ -2607,7 +2607,8 @@ const App: React.FC = () => {
                 <p className="text-gray-500 mb-8">Get the app on your device for a better experience</p>
 
                 {/* Check if already installed */}
-                {(window.matchMedia('(display-mode: standalone)').matches || localStorage.getItem('pwa_installed') === 'true') ? (
+                {/* Check if already installed - Only check display-mode: standalone, ignore localStorage to allow reinstall */}
+                {(window.matchMedia('(display-mode: standalone)').matches) ? (
                   <div className="bg-green-50 border border-green-200 rounded-2xl p-8 mb-8">
                     <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
                     <h2 className="text-2xl font-bold text-gray-900 mb-3">App Already Installed!</h2>
@@ -2840,7 +2841,7 @@ const App: React.FC = () => {
               🚌
             </div>
             <h1 className="text-3xl font-bold text-white mb-2.5 font-bengali">কই যাবো</h1>
-            <p className="text-lg text-white/90 mb-7">Loading your bus routes...</p>
+            <p className="text-lg text-white/90 mb-7">Loading...</p>
             {/* Loading Spinner */}
             <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
           </div>
