@@ -2520,7 +2520,7 @@ const App: React.FC = () => {
                 <Train className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <h3 className="font-bold text-white text-sm">আন্তঃজেলা বাস খুঁজুন</h3>
+                <h3 className="font-bold text-white text-sm">আন্তঃজেলা রুট খুঁজুন</h3>
                 <p className="text-xs text-white/90">শহর থেকে শহরে বাস খুঁজুন</p>
               </div>
             </div>
@@ -2535,7 +2535,7 @@ const App: React.FC = () => {
             className="hidden md:flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform animate-pulse">
                 <Bot className="w-5 h-5" />
               </div>
               <div className="text-left">
