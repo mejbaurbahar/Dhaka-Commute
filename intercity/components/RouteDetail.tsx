@@ -474,7 +474,7 @@ const getSpotsForLocation = (location: string | undefined | null) => {
 // --- Tourist Modal Component ---
 const TouristSpotsModal: React.FC<{ city: string; spots: any[]; onClose: () => void }> = ({ city, spots, onClose }) => {
   return (
-    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
       <div className="bg-white/90 backdrop-blur-xl w-full max-w-2xl rounded-[2rem] shadow-2xl border border-white overflow-hidden flex flex-col max-h-[80vh] animate-fade-in-up">
 
         {/* Header */}
