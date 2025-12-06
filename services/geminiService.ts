@@ -34,7 +34,12 @@ Airlines: US-Bangla, Biman, Novoair, Air Astra.
 Routes: Dhaka to Chattogram (45m), Cox's Bazar (1h), Sylhet (50m), Jashore (40m), Saidpur (1h), Rajshahi (45m), Barishal (40m).
 `;
 
-export const askGeminiRoute = async (userQuery: string, userApiKey?: string): Promise<string> => {
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  text: string;
+}
+
+export const askGeminiRoute = async (userQuery: string, userApiKey?: string, chatHistory: ChatMessage[] = []): Promise<string> => {
   const apiKey = userApiKey;
 
   console.log('🔍 AI Chat Debug:');
@@ -53,7 +58,12 @@ export const askGeminiRoute = async (userQuery: string, userApiKey?: string): Pr
     // 2. Prepare Metro Data
     const metroContext = "Dhaka Metro (MRT Line 6): Uttara North <-> Motijheel. Stops: Uttara, Pallabi, Mirpur 11, 10, Kazipara, Shewrapara, Agargaon, Farmgate, Shahbag, DU, Motijheel. Hours: 7am-9pm.";
 
-    // 3. Construct the comprehensive system prompt
+    // 3. Prepare Chat History Context
+    const historyContext = chatHistory.length > 0
+      ? `\n[PREVIOUS CHAT CONTEXT]\n${chatHistory.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n')}\n`
+      : '';
+
+    // 4. Construct the comprehensive system prompt
     const prompt = `
     You are the "AI Assistant" for the 'কই যাবো' app.
     
@@ -93,13 +103,16 @@ export const askGeminiRoute = async (userQuery: string, userApiKey?: string): Pr
     ${SHIP_KNOWLEDGE_BASE}
     
     **INSTRUCTIONS**:
-    1. **Prioritize Real Data**: Always use the provided lists first. If a bus/train exists in the list, verify the route matches the user's request.
-    2. **Tour Plans**: If asked for a tour (e.g., "Plan a trip to Sylhet"), provide a day-by-day itinerary including transport options from the list, estimated costs, and best times to travel.
-    3. **Route Finding**: For local Dhaka queries, mention specific bus names (e.g., "Take Victor Classic from Sadarghat"). For long distance, simplify (e.g., "Take Parabat Express Train at 6:20 AM").
-    4. **Be Helpful & Concise**: Use bullet points. Keep it readable.
-    5. **Visuals**: Use emoji icons (🚌, 🚆, ✈️, 🚢) to distinguish modes.
+    1. **Context Awareness**: Use the [PREVIOUS CHAT CONTEXT] to understand follow-up questions (e.g., "How much is the fare?" refers to the previous route).
+    2. **Prioritize Real Data**: Always use the provided lists first.
+    3. **Tour Plans**: Provide day-by-day itineraries with costs.
+    4. **Route Finding**: Be specific with bus names/times.
+    5. **Be Helpful & Concise**: Use bullet points. Keep it readable.
 
-    User Query: "${userQuery}"
+    ${historyContext}
+
+    [CURRENT QUERY]
+    User: "${userQuery}"
     `;
 
     console.log('📡 Calling Gemini API with Enhanced Context...');

@@ -955,7 +955,10 @@ const App: React.FC = () => {
     const userMessage: ChatMessage = { role: 'user', text: aiQuery };
     const queryToSend = aiQuery;
 
-    setChatHistory(prev => [...prev, userMessage]);
+    // Create new history immediately including the latest user message
+    const updatedHistory = [...chatHistory, userMessage];
+
+    setChatHistory(updatedHistory);
     setAiQuery('');
     setAiLoading(true);
 
@@ -978,12 +981,11 @@ const App: React.FC = () => {
       console.log("Location not available for AI context");
     }
 
-    // Always read the latest API key from localStorage to ensure we use recently saved keys
+    // Always read the latest API key from localStorage
     const latestApiKey = localStorage.getItem('gemini_api_key') || '';
-    console.log('AI Chat - Reading API key from localStorage');
-    console.log('API key length:', latestApiKey.length);
-    console.log('API key present:', latestApiKey.length > 0 ? 'Yes' : 'No (will use managed keys)');
-    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`, latestApiKey);
+
+    // Pass the FULL updated history to the service
+    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`, latestApiKey, updatedHistory);
 
     const assistantMessage: ChatMessage = { role: 'assistant', text: result };
     setChatHistory(prev => [...prev, assistantMessage]);
