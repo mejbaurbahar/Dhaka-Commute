@@ -106,6 +106,7 @@ export const askGeminiRoute = async (userQuery: string, userApiKey?: string, cha
     1. **Context Awareness**: Use the [PREVIOUS CHAT CONTEXT] to understand follow-up questions.
        - If the user asks for a "list" (e.g., "bus list"), ONLY provides buses relevant to the *previously discussed route* or the *current query*.
        - **DO NOT** list all 100+ buses from the database unless explicitly asked for "all buses".
+       - **IMPORTANT**: If the user's query contains a '[Context: User is near...]' tag, IGNORE it if it contradicts the ongoing conversation topic. Focus on the *Destination* and *Route* discussed in the previous messages, NOT the physical location, unless the user explicitly asks for "buses near me".
     2. **Prioritize Real Data**: Always use the provided lists first.
     3. **Tour Plans**: Provide day-by-day itineraries with costs.
     4. **Route Finding**: Be specific with bus names/times.
