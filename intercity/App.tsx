@@ -515,9 +515,9 @@ const App: React.FC = () => {
 
             <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-3 md:p-4 transition-all duration-300 ${!isLanding ? 'scale-90 origin-top' : ''} md:scale-100`}>
               {/* items-end aligns the input boxes and button to the bottom, ignoring the top labels */}
-              <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 md:gap-3 w-full">
+              <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 md:gap-3 w-full md:items-end">
                 {/* Row 1: From - Swap - To */}
-                <div className="grid grid-cols-[1fr_auto_1fr] md:flex md:flex-1 items-center gap-2 md:gap-3 w-full">
+                <div className="grid grid-cols-[1fr_auto_1fr] md:flex md:flex-1 items-end gap-2 md:gap-3 w-full">
                   <LocationInput
                     label="From"
                     value={origin}
