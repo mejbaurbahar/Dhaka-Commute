@@ -205,8 +205,8 @@ const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
       <div className="text-center space-y-3">
         {isLanding ? (
           <div className="animate-fade-in-up">
-            <h3 className="text-2xl md:text-4xl font-bold text-gray-800 tracking-tight mb-2">Ready to explore Bangladesh?</h3>
-            <p className="text-base text-gray-500 max-w-md mx-auto leading-relaxed">Find the perfect route using local buses, trains, flights, and metro rail.</p>
+            <h3 className="text-2xl md:text-4xl font-bold text-gray-800 tracking-tight mb-2 font-bengali">বাংলাদেশ ঘুরে দেখতে প্রস্তুত?</h3>
+            <p className="text-base text-gray-500 max-w-md mx-auto leading-relaxed font-bengali">লোকাল বাস, ট্রেন, ফ্লাইট এবং মেট্রো রেল ব্যবহার করে খুঁজে নিন আপনার সঠিক রুট।</p>
           </div>
         ) : (
           <div className="animate-fade-in">
