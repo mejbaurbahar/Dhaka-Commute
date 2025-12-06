@@ -461,6 +461,41 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* Daily Activity Log */}
+                                <div className="bg-white p-6 rounded-xl md:col-span-2">
+                                    <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <TrendingUp className="w-5 h-5 text-gray-600" />
+                                        Daily Activity Log
+                                    </h3>
+                                    <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                                        {globalStats.dailyVisits && Object.keys(globalStats.dailyVisits).length > 0 ? (
+                                            Object.entries(globalStats.dailyVisits)
+                                                .sort((a, b) => b[0].localeCompare(a[0]))
+                                                .map(([date, count], idx) => (
+                                                    <div key={date} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${idx === 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'}`}>
+                                                                {idx === 0 ? 'Today' : new Date(date).getDate()}
+                                                            </div>
+                                                            <div>
+                                                                <div className="font-bold text-gray-900 text-sm">
+                                                                    {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                                </div>
+                                                                {idx === 0 && <div className="text-xs text-blue-600 font-medium">Current Session</div>}
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-bold text-gray-900">{count.toLocaleString()}</span>
+                                                            <span className="text-xs text-gray-500">visits</span>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                        ) : (
+                                            <div className="text-center py-4 text-gray-500 text-sm">No historical data available</div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

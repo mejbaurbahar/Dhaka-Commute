@@ -42,6 +42,7 @@ export interface GlobalStats {
     lastVisitDate: string; // YYYY-MM-DD
     firstVisitDate: string; // YYYY-MM-DD
     uniqueVisitors: Set<string>; // visitor IDs
+    dailyVisits: Record<string, number>; // YYYY-MM-DD -> count
 }
 
 const HISTORY_KEY = 'dhaka_commute_user_history';
@@ -238,7 +239,8 @@ export const getGlobalStats = (): GlobalStats => {
                 todayVisits: 1,
                 lastVisitDate: today,
                 firstVisitDate: today,
-                uniqueVisitors: new Set([getVisitorId()])
+                uniqueVisitors: new Set([getVisitorId()]),
+                dailyVisits: { [today]: 1 }
             };
             saveGlobalStats(newStats);
             return newStats;
@@ -250,8 +252,12 @@ export const getGlobalStats = (): GlobalStats => {
         const visitorsArray = Array.isArray(stats.uniqueVisitors) ? stats.uniqueVisitors : [];
         stats.uniqueVisitors = new Set(visitorsArray);
 
-        // Reset today's visits if it's a new day
+        // Ensure dailyVisits exists
+        if (!stats.dailyVisits) {
+            stats.dailyVisits = { [today]: stats.todayVisits || 1 };
+        }
 
+        // Reset today's visits if it's a new day
         if (stats.lastVisitDate !== today) {
             stats.todayVisits = 0;
             stats.lastVisitDate = today;
@@ -266,7 +272,8 @@ export const getGlobalStats = (): GlobalStats => {
             todayVisits: 1,
             lastVisitDate: today,
             firstVisitDate: today,
-            uniqueVisitors: new Set([getVisitorId()])
+            uniqueVisitors: new Set([getVisitorId()]),
+            dailyVisits: { [today]: 1 }
         };
     }
 };
@@ -301,10 +308,14 @@ export const incrementVisitCount = (): void => {
 
     const stats = getGlobalStats();
     const visitorId = getVisitorId();
+    const today = getTodayDate();
 
     stats.totalVisits += 1;
     stats.todayVisits += 1;
     stats.uniqueVisitors.add(visitorId);
+
+    // Update daily visits
+    stats.dailyVisits[today] = (stats.dailyVisits[today] || 0) + 1;
 
     saveGlobalStats(stats);
 
