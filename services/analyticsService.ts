@@ -235,10 +235,12 @@ export const getGlobalStats = (): GlobalStats => {
 
         const stats = JSON.parse(stored);
 
-        // Convert uniqueVisitors array back to Set
-        stats.uniqueVisitors = new Set(stats.uniqueVisitors || []);
+        // Convert uniqueVisitors array back to Set safely
+        const visitorsArray = Array.isArray(stats.uniqueVisitors) ? stats.uniqueVisitors : [];
+        stats.uniqueVisitors = new Set(visitorsArray);
 
         // Reset today's visits if it's a new day
+
         if (stats.lastVisitDate !== today) {
             stats.todayVisits = 0;
             stats.lastVisitDate = today;
