@@ -197,11 +197,29 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
       nearestStationPosForLine = nodePositions[userStationIndex];
     }
 
-    if (isUserFar) { // Only expand bounds if user is far
-      const contentMinX = Math.min(0, uX - padding);
-      const contentMaxX = Math.max(baseWidth, uX + padding);
-      const contentMinY = Math.min(0, uY - padding);
-      const contentMaxY = Math.max(height, uY + padding);
+    if (isUserFar) {
+      // CLAMPING LOGIC: Shorten the visual distance
+      if (nearestStationPosForLine) {
+        const dx = uX - nearestStationPosForLine.x;
+        const dy = uY - nearestStationPosForLine.y;
+        const distance = Math.hypot(dx, dy);
+        const maxVisualDistance = 250; // Max pixels for the connection line
+
+        if (distance > maxVisualDistance) {
+          const ratio = maxVisualDistance / distance;
+          // Update userPos to be closer
+          userPos = {
+            x: nearestStationPosForLine.x + dx * ratio,
+            y: nearestStationPosForLine.y + dy * ratio
+          };
+        }
+      }
+
+      // Re-calculate bounds based on the CLAMPED position
+      const contentMinX = Math.min(0, userPos.x - padding);
+      const contentMaxX = Math.max(baseWidth, userPos.x + padding);
+      const contentMinY = Math.min(0, userPos.y - padding);
+      const contentMaxY = Math.max(height, userPos.y + padding);
 
       layout = {
         width: contentMaxX - contentMinX,
@@ -886,15 +904,15 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
                         {/* Label */}
                         <foreignObject
-                          x={(userPos?.x || 0) - 60}
+                          x={(userPos?.x || 0) - 80}
                           y={(userPos?.y || 0) + 15}
-                          width="120"
-                          height="30"
+                          width="160"
+                          height="40"
                           className="pointer-events-none"
                         >
                           <div className="text-center flex flex-col items-center justify-center h-full">
-                            <span className="px-2 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold shadow-lg">
-                              You are here
+                            <span className="px-2 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold shadow-lg truncate max-w-full">
+                              {globalNearestName || "You are here"}
                             </span>
                           </div>
                         </foreignObject>
