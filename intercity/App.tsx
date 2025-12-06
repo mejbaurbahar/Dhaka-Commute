@@ -362,6 +362,7 @@ const App: React.FC = () => {
     POPULAR_LOCATIONS.includes(destination);
 
   const selectedOption = data?.options.find(o => o.id === selectedOptionId);
+  const isLanding = !data && !loading;
 
   return (
     <div className="min-h-screen text-dhaka-dark pb-12">
@@ -512,7 +513,7 @@ const App: React.FC = () => {
 
 
 
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-3 md:p-4 transition-all duration-300">
+            <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-3 md:p-4 transition-all duration-300 ${!isLanding ? 'scale-90 origin-top' : ''} md:scale-100`}>
               {/* items-end aligns the input boxes and button to the bottom, ignoring the top labels */}
               <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 md:gap-3 items-center md:items-end">
 
