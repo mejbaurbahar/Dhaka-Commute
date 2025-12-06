@@ -69,9 +69,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
       </div>
 
       <div className="relative">
-        <div className={`absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all duration-300 ${isFocused ? 'bg-white shadow-sm scale-110' : 'bg-transparent'}`}>
-          <MapPin className={`${iconColorClass} w-5 h-5`} />
-        </div>
+
         <input
           type="text"
           placeholder={placeholder}
@@ -90,7 +88,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           }}
           disabled={disabled}
           className={`
-            w-full pl-14 pr-4 py-3 md:py-4
+            w-full pl-4 pr-4 py-3 md:py-4
             bg-gray-50/50 backdrop-blur-sm
             border border-gray-100 rounded-2xl
             text-base font-bold text-dhaka-dark placeholder:text-gray-400 placeholder:font-normal
@@ -113,9 +111,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
                   }}
                   className="px-4 py-3 hover:bg-emerald-50/80 cursor-pointer rounded-xl text-sm font-semibold text-gray-700 flex items-center gap-3 transition-colors duration-200"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 text-gray-400">
-                    <MapPin size={14} />
-                  </div>
+
                   <span className="whitespace-normal leading-tight">{loc}</span>
                 </div>
               ))
