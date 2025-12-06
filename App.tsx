@@ -356,11 +356,20 @@ const SettingsView: React.FC<{
 };
 
 
+const getStoredChatHistory = (): ChatMessage[] => {
+  try {
+    const stored = localStorage.getItem('dhaka_commute_chat_history');
+    return stored ? JSON.parse(stored) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
 const App: React.FC = () => {
   // Polyfill for requestIdleCallback (Safari support)
   const requestIdleCallback = window.requestIdleCallback || ((cb: IdleRequestCallback) => {
     const start = Date.now();
-    return setTimeout(() => {
+    setTimeout(() => {
       cb({
         didTimeout: false,
         timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
@@ -403,8 +412,18 @@ const App: React.FC = () => {
   const watchIdRef = useRef<number | null>(null);
 
   const [aiQuery, setAiQuery] = useState('');
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>(getStoredChatHistory);
   const [aiLoading, setAiLoading] = useState(false);
+
+  // Persist Chat History
+  useEffect(() => {
+    try {
+      localStorage.setItem('dhaka_commute_chat_history', JSON.stringify(chatHistory));
+    } catch (e) {
+      console.warn("Failed to save chat history");
+    }
+  }, [chatHistory]);
+
   const [intercityLoading, setIntercityLoading] = useState(false);
 
   const [nearestStopIndex, setNearestStopIndex] = useState<number>(-1);
@@ -1034,11 +1053,29 @@ const App: React.FC = () => {
           <Bot className="w-6 h-6" />
         </div>
         <div className="flex-1">
-          <h2 className="text-lg font-bold text-gray-900">Dhaka AI Guide</h2>
+          <h2 className="text-lg font-bold text-gray-900">কই যাবো AI Assistant</h2>
           <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              if (confirm('Clear chat history?')) {
+                setChatHistory([]);
+                localStorage.removeItem('dhaka_commute_chat_history');
+              }
+            }}
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
+            title="Clear History"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+          <div className="p-2 bg-blue-50 rounded-full text-blue-600" title="History Saved Locally">
+            <Clock className="w-5 h-5" />
+          </div>
+        </div>
+
 
       </div>
       {/* Desktop Header */}
@@ -1047,11 +1084,30 @@ const App: React.FC = () => {
           <Bot className="w-6 h-6" />
         </div>
         <div className="flex-1">
-          <h2 className="text-lg font-bold text-gray-900">Dhaka AI Guide</h2>
+          <h2 className="text-lg font-bold text-gray-900">কই যাবো AI Assistant</h2>
           <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              if (confirm('Clear chat history?')) {
+                setChatHistory([]);
+                localStorage.removeItem('dhaka_commute_chat_history');
+              }
+            }}
+            className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
+            title="Clear History"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-full text-blue-600 text-xs font-bold" title="History Saved Locally">
+            <Clock className="w-4 h-4" />
+            <span>History On</span>
+          </div>
+        </div>
+
 
       </div>
 
