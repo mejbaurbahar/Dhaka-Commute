@@ -3231,7 +3231,7 @@ const App: React.FC = () => {
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #006a4e 0%, #00a86b 100%)' }}>
           <div className="text-center p-5">
             {/* Logo Animation */}
-            <img src="/logo.png" alt="Logo" className="h-32 w-auto mb-6 mx-auto animate-bounce" />
+            <img src="/logo.png" alt="Logo" className="block h-32 w-auto mb-6 mx-auto animate-bounce" />
             <p className="text-lg text-white/90 mb-7">Loading...</p>
             {/* Loading Spinner */}
             <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
