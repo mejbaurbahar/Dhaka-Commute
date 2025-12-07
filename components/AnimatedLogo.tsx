@@ -20,7 +20,7 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
     const textSizeClass = size === 'large' ? 'text-2xl' : (size === 'small' ? 'text-xl' : 'text-xl md:text-2xl');
 
     return (
-        <div className="flex items-center gap-2 outline-none cursor-pointer select-none group">
+        <div className="flex items-center gap-0 outline-none cursor-pointer select-none group">
             <div className={`bg-gradient-to-br from-[#006a4e] to-teal-600 text-white flex items-center justify-center shadow-md shadow-green-500/20 transition-all duration-300 group-hover:shadow-lg group-hover:scale-105 ${containerSizeClass}`}>
                 <CurrentIcon
                     size={iconSize}
@@ -29,10 +29,11 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
                     strokeWidth={2.5}
                 />
             </div>
-            <h1 className={`${textSizeClass} font-bold font-bengali tracking-tight text-gray-900 leading-none`}>
-                <span className="text-[#006a4e]">কই</span>
-                <span className="text-[#f42a41]">যাবো</span>
-            </h1>
+            <img
+                src="/logo.png"
+                alt="Logo"
+                className={`${size === 'large' ? 'h-24 scale-150 ml-4' : (size === 'small' ? 'h-12 scale-125 -ml-1' : 'h-16 md:h-20 scale-[2] origin-left ml-2 md:ml-2')} w-auto`}
+            />
         </div>
     );
 };

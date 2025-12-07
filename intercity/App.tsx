@@ -424,7 +424,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-4 shadow-sm z-[5000] items-center justify-between">
+      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-2 shadow-sm z-[5000] items-center justify-between">
         <a
           href="/"
           onClick={(e) => {

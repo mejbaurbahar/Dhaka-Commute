@@ -104,15 +104,20 @@ export const LocationInput: React.FC<LocationInputProps> = ({
               filteredLocations.map((loc, idx) => (
                 <div
                   key={idx}
-                  onClick={() => {
+                  onMouseDown={(e) => {
+                    // Prevent input blur first
+                    e.preventDefault();
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('Location selected:', loc);
                     onChange(loc);
                     setShowSuggestions(false);
                     setIsFocused(false);
                   }}
                   className="px-4 py-3 hover:bg-emerald-50/80 cursor-pointer rounded-xl text-sm font-semibold text-gray-700 flex items-center gap-3 transition-colors duration-200"
                 >
-
-                  <span className="whitespace-normal leading-tight">{loc}</span>
+                  <span className="whitespace-normal leading-tight pointer-events-none">{loc}</span>
                 </div>
               ))
             ) : (

@@ -2925,7 +2925,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:flex bg-white border-b border-gray-200 px-8 py-4 shadow-sm z-50 items-center justify-between shrink-0">
+      <header className="hidden md:flex bg-white border-b border-gray-200 px-8 py-2 shadow-sm z-50 items-center justify-between shrink-0">
         <button
           onClick={() => setView(AppView.HOME)}
           className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
@@ -3230,11 +3230,8 @@ const App: React.FC = () => {
       {intercityLoading && (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #006a4e 0%, #00a86b 100%)' }}>
           <div className="text-center p-5">
-            {/* Bus Icon Animation */}
-            <div className="text-6xl mb-5 animate-bounce">
-              🚌
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-2.5 font-bengali">কই যাবো</h1>
+            {/* Logo Animation */}
+            <img src="/logo.png" alt="Logo" className="h-32 w-auto mb-6 mx-auto animate-bounce" />
             <p className="text-lg text-white/90 mb-7">Loading...</p>
             {/* Loading Spinner */}
             <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
