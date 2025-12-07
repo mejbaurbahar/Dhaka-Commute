@@ -363,6 +363,135 @@ const SettingsView: React.FC<{
 
 
 
+
+const POPULAR_LOCATIONS = [
+  // --- Major Transport Hubs (Dhaka) ---
+  "Abdullahpur, Dhaka", "Airport, Dhaka", "Gabtoli, Dhaka", "Gulistan, Dhaka",
+  "Jatrabari, Dhaka", "Komlapur, Dhaka", "Mohakhali, Dhaka", "Sayedabad, Dhaka",
+
+  // --- Popular Tourist Destinations ---
+  "Bandarban", "Cox's Bazar", "Jaflong, Sylhet", "Khagrachari", "Kuakata",
+  "Rangamati", "Saint Martin", "Sajek Valley", "Sreemangal", "Sundarbans",
+
+  // --- Land Ports / Borders ---
+  "Akhaura", "Banglabandha", "Benapole", "Bhomra", "Burimari", "Darshana", "Hili", "Tamabil",
+
+  // --- All 64 Districts & Major Cities ---
+  "Bagerhat", "Barishal", "Barguna", "Bhairab", "Bhola", "Bogura", "Brahmanbaria",
+  "Chandpur", "Chapainawabganj", "Chattogram", "Chuadanga", "Cumilla",
+  "Dhaka", "Dinajpur", "Faridpur", "Feni", "Gaibandha", "Gazipur", "Gopalganj",
+  "Habiganj", "Ishwardi", "Jamalpur", "Jashore", "Jhalokathi", "Jhenaidah", "Joypurhat",
+  "Khulna", "Kishoreganj", "Kurigram", "Kushtia", "Lakshmipur", "Lalmonirhat",
+  "Madaripur", "Magura", "Manikganj", "Meherpur", "Mongla", "Moulvibazar",
+  "Munshiganj", "Mymensingh", "Naogaon", "Narail", "Narayanganj", "Narsingdi",
+  "Natore", "Netrokona", "Nilphamari", "Noakhali", "Pabna", "Panchagarh",
+  "Patuakhali", "Pirojpur", "Rajbari", "Rajshahi", "Rangpur", "Satkhira",
+  "Savar", "Shariatpur", "Sherpur", "Sirajganj", "Sunamganj", "Sylhet",
+  "Tangail", "Teknaf", "Thakurgaon", "Tongi"
+].sort();
+
+const checkIfInDhaka = (loc: UserLocation | null): boolean => {
+  if (!loc) return true;
+  // Approximate Dhaka Bounds: 23.60 to 24.10 N, 90.20 to 90.60 E
+  return (
+    loc.lat >= 23.60 && loc.lat <= 24.10 &&
+    loc.lng >= 90.20 && loc.lng <= 90.60
+  );
+};
+
+const IntercitySearchSection: React.FC<{
+  onSearch: (from: string, to: string) => void
+}> = ({ onSearch }) => {
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [showFromSuggestions, setShowFromSuggestions] = useState(false);
+  const [showToSuggestions, setShowToSuggestions] = useState(false);
+
+  // Filter logic
+  const getFiltered = (val: string) => POPULAR_LOCATIONS.filter(l => l.toLowerCase().includes(val.toLowerCase()));
+
+  return (
+    <div className="bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-[2rem] shadow-xl shadow-emerald-500/30 relative overflow-visible text-white transition-all duration-300 w-full mb-4">
+      {/* Decorative Elements */}
+      <div className="absolute top-0 right-0 -mr-12 -mt-12 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+
+      {/* Text Content */}
+      <div className="px-6 pt-6 pb-4 relative z-10 pointer-events-none">
+        <div>
+          <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-white">আন্তঃজেলা রুট খুঁজুন</h2>
+          <p className="text-white/90 text-sm font-medium">শহর থেকে শহরে বাস, ট্রেন ও ফ্লাইট খুঁজুন</p>
+        </div>
+      </div>
+
+      <div className="px-6 pb-6 relative z-20">
+        <div className="flex flex-col gap-3">
+          {/* From Input */}
+          <div className="relative group z-50">
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
+              <input
+                type="text"
+                placeholder="From (e.g. Dhaka)..."
+                value={from}
+                onChange={(e) => { setFrom(e.target.value); setShowFromSuggestions(true); }}
+                onFocus={() => setShowFromSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowFromSuggestions(false), 200)}
+                className="w-full pl-10 pr-4 py-3 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 font-medium placeholder:text-gray-400 text-sm"
+              />
+            </div>
+            {showFromSuggestions && from && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-xl max-h-48 overflow-y-auto z-[60] text-gray-800 p-1">
+                {getFiltered(from).map(loc => (
+                  <div key={loc} className="px-3 py-2 hover:bg-emerald-50 rounded-lg cursor-pointer text-sm" onClick={() => setFrom(loc)}>
+                    {loc}
+                  </div>
+                ))}
+                {getFiltered(from).length === 0 && <div className="p-2 text-xs text-gray-400 text-center">No matches</div>}
+              </div>
+            )}
+          </div>
+
+          {/* To Input */}
+          <div className="relative group z-40">
+            <div className="relative">
+              <Flag className="absolute left-4 top-1/2 -translate-y-1/2 text-dhaka-red w-4 h-4 z-10" />
+              <input
+                type="text"
+                placeholder="To (e.g. Cox's Bazar)..."
+                value={to}
+                onChange={(e) => { setTo(e.target.value); setShowToSuggestions(true); }}
+                onFocus={() => setShowToSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowToSuggestions(false), 200)}
+                className="w-full pl-10 pr-4 py-3 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-red-400/30 font-medium placeholder:text-gray-400 text-sm"
+              />
+            </div>
+            {showToSuggestions && to && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-xl max-h-48 overflow-y-auto z-[60] text-gray-800 p-1">
+                {getFiltered(to).map(loc => (
+                  <div key={loc} className="px-3 py-2 hover:bg-emerald-50 rounded-lg cursor-pointer text-sm" onClick={() => setTo(loc)}>
+                    {loc}
+                  </div>
+                ))}
+                {getFiltered(to).length === 0 && <div className="p-2 text-xs text-gray-400 text-center">No matches</div>}
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={() => onSearch(from, to)}
+            disabled={!from || !to}
+            className="w-full bg-white/20 backdrop-blur-md hover:bg-white/30 border border-white/40 text-white font-bold py-3 rounded-xl transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <Search className="w-5 h-5" />
+            Search Intercity
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   // Polyfill for requestIdleCallback (Safari support)
   const requestIdleCallback = window.requestIdleCallback || ((cb: IdleRequestCallback) => {
@@ -446,6 +575,15 @@ const App: React.FC = () => {
     const nearest = findNearestStation(userLocation, allStationIds);
     return nearest ? nearest.station.name : null;
   }, [userLocation]);
+
+  const isInDhaka = useMemo(() => checkIfInDhaka(userLocation), [userLocation]);
+  const [primarySearch, setPrimarySearch] = useState<'LOCAL' | 'INTERCITY'>('LOCAL');
+
+  // Sync primary search with location, but only on significant changes or init
+  useEffect(() => {
+    setPrimarySearch(isInDhaka ? 'LOCAL' : 'INTERCITY');
+  }, [isInDhaka]);
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -2411,319 +2549,365 @@ const App: React.FC = () => {
   };
 
 
-  const renderHomeContent = () => (
-    <div className="flex flex-col h-full w-full">
-      {/* Sticky Top Section */}
-      <div className="flex-none bg-white z-20">
-        <div className="p-4 space-y-4">
-          {/* Colorful Header with Tabs */}
-          <div className="bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-[2rem] shadow-xl shadow-emerald-500/30 relative overflow-hidden text-white transition-all duration-300">
-            {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 -mr-12 -mt-12 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
-            <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-white/5 blur-3xl"></div>
+  const renderHomeContent = () => {
+    const renderLocalBusSearch = () => (
+      <div className="bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-[2rem] shadow-xl shadow-emerald-500/30 relative overflow-hidden text-white transition-all duration-300 mb-4">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 -mr-12 -mt-12 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-white/5 blur-3xl"></div>
 
-            {/* Text Content */}
-            <div className="px-6 pt-6 pb-4 relative z-10">
-              <div>
-                <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg">কোথায় যেতে চান?</h2>
-                <p className="text-white/90 text-sm font-medium">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
-              </div>
-            </div>
-
-            {/* Mode Toggle Removed as per request */}
-            {/* <div className="flex px-6 pb-4 gap-4">...</div> */}
-
-            <div className="px-6 pb-6">
-              {searchMode === 'TEXT' ? (
-                <div className="relative group flex items-center">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
-                  <input
-                    type="text"
-                    placeholder="Search bus or place..."
-                    className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  {inputValue || searchQuery ? (
-                    <button
-                      onClick={() => {
-                        setInputValue('');
-                        setSearchQuery('');
-                        setSuggestedRoutes([]);
-                      }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
-                      title="Clear Search"
-                      aria-label="Clear search"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleSearchCommit}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
-                      title="Click to Search"
-                      aria-label="Search"
-                    >
-                      <Search className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <div className="flex-1 relative">
-                    <select
-                      value={fromStation}
-                      onChange={(e) => setFromStation(e.target.value)}
-                      className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer"
-                    >
-                      <option value="">From...</option>
-                      {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                    </select>
-                    <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <ArrowRightLeft className="w-5 h-5 text-white/80" />
-                  </div>
-                  <div className="flex-1 relative">
-                    <select
-                      value={toStation}
-                      onChange={(e) => setToStation(e.target.value)}
-                      className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
-                      disabled={!fromStation}
-                    >
-                      <option value="">{fromStation ? 'To...' : 'Select From first'}</option>
-                      {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                    </select>
-                    <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Intercity Bus Button */}
-          <a
-            href="/intercity"
-            onClick={(e) => {
-              e.preventDefault();
-              setIntercityLoading(true);
-              setTimeout(() => {
-                window.location.replace('/intercity');
-              }, 500);
-            }}
-            className="hidden md:flex w-full items-center justify-between bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 border border-teal-500/30 p-4 rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-emerald-500/30 group mb-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                <Train className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <h3 className="font-bold text-white text-sm">আন্তঃজেলা রুট খুঁজুন</h3>
-                <p className="text-xs text-white/90">শহর থেকে শহরে বাস খুঁজুন</p>
-              </div>
-            </div>
-            <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
-              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
-            </div>
-          </a>
-
-          {/* AI Button - Hidden on Mobile */}
-          <button
-            onClick={() => setView(AppView.AI_ASSISTANT)}
-            className="hidden md:flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform animate-pulse">
-                <Bot className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <h3 className="font-bold text-white text-sm">Ask AI Assistant</h3>
-                <p className="text-xs text-white/90">Not sure which bus to take?</p>
-              </div>
-            </div>
-            <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
-              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
-            </div>
-          </button>
-
-          {/* List Filter Tabs */}
-          <div className="flex p-1 bg-gray-100 rounded-xl">
-            <button
-              onClick={() => handleFilterChange('ALL')}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-700 hover:text-gray-900'}`}
-            >
-              All Buses
-            </button>
-            <button
-              onClick={() => handleFilterChange('FAVORITES')}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-700 hover:text-gray-900'}`}
-            >
-              <Heart className="w-3 h-3 fill-current" /> Favorites
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between px-2">
-            <h3 className="font-bold text-dhaka-dark text-lg">{listFilter === 'FAVORITES' ? 'Saved Routes' : 'All Buses'}</h3>
-            <span className="text-[10px] bg-gray-200 px-2 py-0.5 rounded-full text-gray-600 font-bold">{filteredBuses.length}</span>
+        {/* Text Content */}
+        <div className="px-6 pt-6 pb-4 relative z-10">
+          <div>
+            <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg">{isInDhaka ? 'কোথায় যেতে চান?' : 'কোথায় যেতে চান ঢাকায়?'}</h2>
+            <p className="text-white/90 text-sm font-medium">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
           </div>
         </div>
+
+        {/* Mode Toggle Removed as per request */}
+        {/* <div className="flex px-6 pb-4 gap-4">...</div> */}
+
+        <div className="px-6 pb-6">
+          {searchMode === 'TEXT' ? (
+            <div className="relative group flex items-center">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
+              <input
+                type="text"
+                placeholder="Search bus or place..."
+                className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+              {inputValue || searchQuery ? (
+                <button
+                  onClick={() => {
+                    setInputValue('');
+                    setSearchQuery('');
+                    setSuggestedRoutes([]);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
+                  title="Clear Search"
+                  aria-label="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={handleSearchCommit}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
+                  title="Click to Search"
+                  aria-label="Search"
+                >
+                  <Search className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <select
+                  value={fromStation}
+                  onChange={(e) => setFromStation(e.target.value)}
+                  className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer"
+                >
+                  <option value="">From...</option>
+                  {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+                <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+              <div className="flex items-center justify-center">
+                <ArrowRightLeft className="w-5 h-5 text-white/80" />
+              </div>
+              <div className="flex-1 relative">
+                <select
+                  value={toStation}
+                  onChange={(e) => setToStation(e.target.value)}
+                  className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
+                  disabled={!fromStation}
+                >
+                  <option value="">{fromStation ? 'To...' : 'Select From first'}</option>
+                  {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+                <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+    );
 
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-4 space-y-3">
-
-        {/* Intelligent Route Suggestions */}
-        {searchMode === 'TEXT' && suggestedRoutes.length > 0 && (
-          <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <Sparkles className="w-4 h-4 text-dhaka-green fill-current" />
-              <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">Smart Suggestions</h3>
-            </div>
-            <RouteSuggestions
-              routes={suggestedRoutes}
-              onSelectRoute={(route) => {
-                // If route has a bus segment, select that bus
-                const busStep = route.steps.find(step => step.type === 'bus' && step.busRoute);
-                if (busStep && busStep.busRoute) {
-                  handleBusSelect(busStep.busRoute);
-
-                  // Auto-populate fare calculator with route origin and destination
-                  const bus = busStep.busRoute;
-                  const originStation = busStep.from;
-                  const destinationStation = busStep.to;
-
-                  // Find the closest matching station IDs in the bus route
-                  const findClosestStationId = (stationName: string): string => {
-                    const nameLower = stationName.toLowerCase();
-                    // First try exact match
-                    for (const stopId of bus.stops) {
-                      const station = STATIONS[stopId];
-                      if (station && station.name.toLowerCase() === nameLower) {
-                        return stopId;
-                      }
-                    }
-                    // Then try partial match
-                    for (const stopId of bus.stops) {
-                      const station = STATIONS[stopId];
-                      if (station && (station.name.toLowerCase().includes(nameLower) || nameLower.includes(station.name.toLowerCase()))) {
-                        return stopId;
-                      }
-                    }
-                    // Return first stop if no match
-                    return bus.stops[0];
-                  };
-
-                  const fromStopId = findClosestStationId(originStation);
-                  const toStopId = findClosestStationId(destinationStation);
-
-                  // Set fare calculator values after a brief delay to ensure component is rendered
-                  setTimeout(() => {
-                    setFareStart(fromStopId);
-                    setFareEnd(toStopId);
-
-                    // Track this as a route search
-                    requestIdleCallback(() => {
-                      trackRouteSearch(fromStopId, toStopId);
-                    });
-                  }, 100);
-                }
-                // Override the null set by handleBusSelect
-                setSelectedTrip(route);
-              }}
-              currentLocation={globalNearestStationName || undefined}
-            />
-            <div className="my-6 border-t border-gray-100 relative">
-              <span className="absolute left-1/2 -top-2.5 -translate-x-1/2 bg-gray-50 px-2 text-xs font-bold text-gray-400">OR BROWSE ALL</span>
-            </div>
+    const renderIntercityButton = () => (
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          // If we are in "Local" mode (mostly inside Dhaka), switch to Intercity mode
+          // But if we want to navigate directly, we can.
+          // The user wants to use the inline search primarily.
+          setPrimarySearch('INTERCITY');
+        }}
+        className="flex w-full items-center justify-between bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 border border-teal-500/30 p-4 rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-emerald-500/30 group mb-4"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+            <Train className="w-5 h-5" />
           </div>
-        )}
-        {filteredBuses.map(bus => {
-          const isFav = favorites.includes(bus.id);
-          const estimatedFare = calculateFare(bus);
+          <div className="text-left">
+            <h3 className="font-bold text-white text-sm">আন্তঃজেলা রুট খুঁজুন</h3>
+            <p className="text-xs text-white/90">শহর থেকে শহরে বাস খুঁজুন</p>
+          </div>
+        </div>
+        <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
+          <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+        </div>
+      </button>
+    );
 
-          return (
-            <div
-              key={bus.id}
-              onClick={() => handleBusSelect(bus)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleBusSelect(bus);
-                }
-              }}
-              aria-label={`Select ${bus.name} bus route from ${bus.routeString}`}
-              className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden cursor-pointer ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
-            >
-              {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shadow-sm shrink-0
-                      ${bus.type === 'AC' ? 'bg-blue-100 text-blue-700' :
-                      bus.type === 'Sitting' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}
-                  `}>
-                    {bus.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-base text-gray-900 leading-tight group-hover:text-dhaka-green transition-colors">{bus.name}</h4>
-                    <span className="text-xs font-bengali text-gray-600">{bus.bnName}</span>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  <button
-                    onClick={(e) => toggleFavorite(e, bus.id)}
-                    aria-label={isFav ? `Remove ${bus.name} from favorites` : `Add ${bus.name} to favorites`}
-                    className="p-1.5 -mr-1.5 hover:bg-gray-100 rounded-full transition-colors z-20"
-                  >
-                    <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
-                  </button>
-                  <div className="flex flex-col items-end">
-                    <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
-                      ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
-                        bus.type === 'AC' ? 'bg-blue-50 text-blue-700' :
-                          'bg-orange-50 text-orange-700'
-                      }`}>
-                      {bus.type}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="relative pl-3 border-l-2 border-gray-100 ml-5 space-y-1 py-1" role="presentation">
-                <div className="text-xs text-gray-600 font-medium truncate pr-4">
-                  <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄')[0]}
-                </div>
-                <div className="text-xs text-gray-600 font-medium truncate pr-4">
-                  <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄').pop()}
-                </div>
-              </div>
-              <div className="mt-3 flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-md w-fit">
-                <Coins className="w-3 h-3" />
-                <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
-              </div>
-            </div>
-          );
-        })}
-        {filteredBuses.length === 0 && (
-          <div className="text-center py-16 text-gray-400">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Bus className="w-8 h-8 opacity-40" />
-            </div>
-            <p>No buses found {searchMode === 'ROUTE' ? `between selected stations` : listFilter === 'FAVORITES' ? 'in favorites' : `matching "${searchQuery}"`}</p>
-            {inputValue && inputValue !== searchQuery && searchMode === 'TEXT' && (
-              <button onClick={handleSearchCommit} className="mt-2 text-xs text-dhaka-green underline">
-                Click to search for "{inputValue}"
-              </button>
+    const renderLocalBusButton = () => (
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          setPrimarySearch('LOCAL');
+        }}
+        className="flex w-full items-center justify-between bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 border border-teal-500/30 p-4 rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-emerald-500/30 group mb-4"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+            <Bus className="w-5 h-5" />
+          </div>
+          <div className="text-left">
+            <h3 className="font-bold text-white text-sm">{isInDhaka ? 'কোথায় যেতে চান?' : 'কোথায় যেতে চান ঢাকায়?'}</h3>
+            <p className="text-xs text-white/90">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
+          </div>
+        </div>
+        <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
+          <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+        </div>
+      </button>
+    );
+
+    const handleIntercitySearch = (from: string, to: string) => {
+      setIntercityLoading(true);
+      setTimeout(() => {
+        window.location.href = `/intercity?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+      }, 500);
+    };
+
+    return (
+      <div className="flex flex-col h-full w-full">
+        {/* Sticky Top Section */}
+        <div className="flex-none bg-white z-20">
+          <div className="p-4 space-y-1">
+            {primarySearch === 'LOCAL' ? (
+              <>
+                {renderLocalBusSearch()}
+                <div className="mb-4"></div>
+                {renderIntercityButton()}
+              </>
+            ) : (
+              <>
+                <IntercitySearchSection onSearch={handleIntercitySearch} />
+                {renderLocalBusButton()}
+              </>
             )}
+
+            {/* AI Button - Hidden on Mobile */}
+            <button
+              onClick={() => setView(AppView.AI_ASSISTANT)}
+              className="hidden md:flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group mb-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform animate-pulse">
+                  <Bot className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <h3 className="font-bold text-white text-sm">Ask AI Assistant</h3>
+                  <p className="text-xs text-white/90">Not sure which bus to take?</p>
+                </div>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
+                <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+              </div>
+            </button>
+
+            {/* List Filter Tabs */}
+            <div className="flex p-1 bg-gray-100 rounded-xl">
+              <button
+                onClick={() => handleFilterChange('ALL')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-700 hover:text-gray-900'}`}
+              >
+                All Buses
+              </button>
+              <button
+                onClick={() => handleFilterChange('FAVORITES')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-700 hover:text-gray-900'}`}
+              >
+                <Heart className="w-3 h-3 fill-current" /> Favorites
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between px-2">
+              <h3 className="font-bold text-dhaka-dark text-lg">{listFilter === 'FAVORITES' ? 'Saved Routes' : 'All Buses'}</h3>
+              <span className="text-[10px] bg-gray-200 px-2 py-0.5 rounded-full text-gray-600 font-bold">{filteredBuses.length}</span>
+            </div>
           </div>
-        )}
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-4 space-y-3">
+
+          {/* Intelligent Route Suggestions */}
+          {searchMode === 'TEXT' && suggestedRoutes.length > 0 && (
+            <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="flex items-center gap-2 mb-3 px-1">
+                <Sparkles className="w-4 h-4 text-dhaka-green fill-current" />
+                <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">Smart Suggestions</h3>
+              </div>
+              <RouteSuggestions
+                routes={suggestedRoutes}
+                onSelectRoute={(route) => {
+                  // If route has a bus segment, select that bus
+                  const busStep = route.steps.find(step => step.type === 'bus' && step.busRoute);
+                  if (busStep && busStep.busRoute) {
+                    handleBusSelect(busStep.busRoute);
+
+                    // Auto-populate fare calculator with route origin and destination
+                    const bus = busStep.busRoute;
+                    const originStation = busStep.from;
+                    const destinationStation = busStep.to;
+
+                    // Find the closest matching station IDs in the bus route
+                    const findClosestStationId = (stationName: string): string => {
+                      const nameLower = stationName.toLowerCase();
+                      // First try exact match
+                      for (const stopId of bus.stops) {
+                        const station = STATIONS[stopId];
+                        if (station && station.name.toLowerCase() === nameLower) {
+                          return stopId;
+                        }
+                      }
+                      // Then try partial match
+                      for (const stopId of bus.stops) {
+                        const station = STATIONS[stopId];
+                        if (station && (station.name.toLowerCase().includes(nameLower) || nameLower.includes(station.name.toLowerCase()))) {
+                          return stopId;
+                        }
+                      }
+                      // Return first stop if no match
+                      return bus.stops[0];
+                    };
+
+                    const fromStopId = findClosestStationId(originStation);
+                    const toStopId = findClosestStationId(destinationStation);
+
+                    // Set fare calculator values after a brief delay to ensure component is rendered
+                    setTimeout(() => {
+                      setFareStart(fromStopId);
+                      setFareEnd(toStopId);
+
+                      // Track this as a route search
+                      requestIdleCallback(() => {
+                        trackRouteSearch(fromStopId, toStopId);
+                      });
+                    }, 100);
+                  }
+                  // Override the null set by handleBusSelect
+                  setSelectedTrip(route);
+                }}
+                currentLocation={globalNearestStationName || undefined}
+              />
+              <div className="my-6 border-t border-gray-100 relative">
+                <span className="absolute left-1/2 -top-2.5 -translate-x-1/2 bg-gray-50 px-2 text-xs font-bold text-gray-400">OR BROWSE ALL</span>
+              </div>
+            </div>
+          )}
+          {filteredBuses.map(bus => {
+            const isFav = favorites.includes(bus.id);
+            const estimatedFare = calculateFare(bus);
+
+            return (
+              <div
+                key={bus.id}
+                onClick={() => handleBusSelect(bus)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleBusSelect(bus);
+                  }
+                }}
+                aria-label={`Select ${bus.name} bus route from ${bus.routeString}`}
+                className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden cursor-pointer ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
+              >
+                {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-start gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shadow-sm shrink-0
+                      ${bus.type === 'AC' ? 'bg-blue-100 text-blue-700' :
+                        bus.type === 'Sitting' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}
+                  `}>
+                      {bus.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-base text-gray-900 leading-tight group-hover:text-dhaka-green transition-colors">{bus.name}</h4>
+                      <span className="text-xs font-bengali text-gray-600">{bus.bnName}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <button
+                      onClick={(e) => toggleFavorite(e, bus.id)}
+                      aria-label={isFav ? `Remove ${bus.name} from favorites` : `Add ${bus.name} to favorites`}
+                      className="p-1.5 -mr-1.5 hover:bg-gray-100 rounded-full transition-colors z-20"
+                    >
+                      <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
+                    </button>
+                    <div className="flex flex-col items-end">
+                      <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
+                      ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
+                          bus.type === 'AC' ? 'bg-blue-50 text-blue-700' :
+                            'bg-orange-50 text-orange-700'
+                        }`}>
+                        {bus.type}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative pl-3 border-l-2 border-gray-100 ml-5 space-y-1 py-1" role="presentation">
+                  <div className="text-xs text-gray-600 font-medium truncate pr-4">
+                    <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄')[0]}
+                  </div>
+                  <div className="text-xs text-gray-600 font-medium truncate pr-4">
+                    <span className="text-gray-400 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄').pop()}
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded-md w-fit">
+                  <Coins className="w-3 h-3" />
+                  <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
+                </div>
+              </div>
+            );
+          })}
+          {filteredBuses.length === 0 && (
+            <div className="text-center py-16 text-gray-400">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Bus className="w-8 h-8 opacity-40" />
+              </div>
+              <p>No buses found {searchMode === 'ROUTE' ? `between selected stations` : listFilter === 'FAVORITES' ? 'in favorites' : `matching "${searchQuery}"`}</p>
+              {inputValue && inputValue !== searchQuery && searchMode === 'TEXT' && (
+                <button onClick={handleSearchCommit} className="mt-2 text-xs text-dhaka-green underline">
+                  Click to search for "{inputValue}"
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+
       </div>
-
-
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="flex flex-col h-screen bg-slate-50 font-sans text-gray-800 overflow-hidden">

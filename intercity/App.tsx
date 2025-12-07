@@ -249,9 +249,43 @@ const App: React.FC = () => {
 
   // --- Offline Support & Data Persistence ---
   useEffect(() => {
-    // 1. Check for saved routes on mount
+    // 1. Check for URL Params first (Priority)
+    const params = new URLSearchParams(window.location.search);
+    const urlFrom = params.get('from');
+    const urlTo = params.get('to');
+
+    // 1b. Check for saved routes on mount (Secondary)
     const savedData = localStorage.getItem('lastRoute');
-    if (savedData) {
+
+    if (urlFrom && urlTo) {
+      setOrigin(decodeURIComponent(urlFrom));
+      setDestination(decodeURIComponent(urlTo));
+      // Auto-trigger search if params are present
+      // We use a timeout to let state update and ensure component is ready
+      setTimeout(() => {
+        // Trigger search logic directly
+        setLoading(true);
+        setError(null);
+        setSelectedOptionId(null);
+
+        getTravelRoutes(decodeURIComponent(urlFrom), decodeURIComponent(urlTo))
+          .then(result => {
+            if (result && result.options.length > 0) {
+              setData(result);
+              setSelectedOptionId(result.options[0].id);
+              const transportType = result.options[0]?.steps?.[0]?.mode || 'combined';
+              trackIntercitySearch(decodeURIComponent(urlFrom), decodeURIComponent(urlTo), transportType);
+            } else {
+              setError("No routes found. Please try different locations.");
+            }
+          })
+          .catch(err => {
+            setError(err.message || "An error occurred. Please try again.");
+          })
+          .finally(() => setLoading(false));
+
+      }, 500);
+    } else if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
         if (parsed.data) {
