@@ -3097,10 +3097,13 @@ const App: React.FC = () => {
         <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
           <div className="grid grid-cols-4 h-16">
             <button
-              onClick={() => setView(AppView.HOME)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+              onClick={() => {
+                setView(AppView.HOME);
+                setPrimarySearch('LOCAL');
+              }}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
-              <MapIcon className={`w-6 h-6 ${view === AppView.HOME ? 'fill-current' : ''}`} />
+              <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'fill-current' : ''}`} />
               <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
             </button>
             <button
@@ -3110,20 +3113,22 @@ const App: React.FC = () => {
               <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''}`} />
               <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">AI Help</span>
             </button>
-            <a
-              href="/intercity"
-              onClick={(e) => {
-                e.preventDefault();
-                setIntercityLoading(true);
-                setTimeout(() => {
-                  window.location.replace('/intercity');
-                }, 500);
+            <button
+              onClick={() => {
+                // If we are already on the Intercity search view, we might want to do nothing or reset
+                if (view === AppView.HOME && primarySearch === 'INTERCITY') {
+                  // Maybe scroll to top?
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                  setView(AppView.HOME);
+                  setPrimarySearch('INTERCITY');
+                }
               }}
-              className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
             >
               <Train className="w-6 h-6" />
               <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
-            </a>
+            </button>
             <button
               onClick={() => setView(AppView.ABOUT)}
               className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
