@@ -2549,7 +2549,7 @@ const App: React.FC = () => {
 
         {/* Offline Navigation Warning Modal */}
         {showOfflineNavModal && (
-          <div className="fixed inset-0 z-[6000] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowOfflineNavModal(false)}></div>
             <div className="relative bg-white rounded-3xl shadow-2xl p-6 max-w-sm w-full animate-in fade-in zoom-in border border-gray-100">
               <div className="flex flex-col items-center text-center">
@@ -2558,7 +2558,8 @@ const App: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-2">You are Offline</h3>
                 <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                  Bus search usually requires internet. However, if you have viewed this route before, it might be saved.
+                  Intercity search requires an internet connection. <br />
+                  If you have viewed this route before, you may proceed to see cached results.
                 </p>
 
                 <div className="flex flex-col w-full gap-3">
@@ -2730,8 +2731,8 @@ const App: React.FC = () => {
 
     // Intercity Search Handler with Offline Check
     const handleIntercitySearch = (from: string, to: string) => {
-      // Check offline status
-      if (!isOnline) {
+      // Check offline status (check state AND direct navigator status to be safe)
+      if (!isOnline || !navigator.onLine) {
         // If offline, ask confirmation/warning instead of navigating blindly
         setPendingIntercityNav({ from, to });
         setShowOfflineNavModal(true);
