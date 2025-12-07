@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Sitemap: https://dhaka-commute.sqatesting.com/sitemap.xml
+Sitemap: https://koyjabo.com/sitemap.xml
 
 # Block AI/ML Training Bots
 User-agent: GPTBot
@@ -23,10 +23,10 @@ User-agent: Omgilibot
 Disallow: /
 
 User-agent: FacebookBot
-Disallow: /
+Allow: /
 
 User-agent: facebookexternalhit
-Disallow: /
+Allow: /
 
 # Block Scrapers and Bad Bots
 User-agent: SemrushBot
