@@ -550,6 +550,8 @@ const App: React.FC = () => {
   }, [view]);
 
   const [intercityLoading, setIntercityLoading] = useState(false);
+  const [showOfflineNavModal, setShowOfflineNavModal] = useState(false);
+  const [pendingIntercityNav, setPendingIntercityNav] = useState<{ from: string, to: string } | null>(null);
 
   const [nearestStopIndex, setNearestStopIndex] = useState<number>(-1);
   const [nearestStopDistance, setNearestStopDistance] = useState<number>(Infinity);
@@ -2544,6 +2546,45 @@ const App: React.FC = () => {
           userLocation={userLocation}
           currentLocationName={globalNearestStationName || undefined}
         />
+
+        {/* Offline Navigation Warning Modal */}
+        {showOfflineNavModal && (
+          <div className="fixed inset-0 z-[6000] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowOfflineNavModal(false)}></div>
+            <div className="relative bg-white rounded-3xl shadow-2xl p-6 max-w-sm w-full animate-in fade-in zoom-in border border-gray-100">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-lg animate-pulse-slow">
+                  <WifiOff className="w-8 h-8 text-orange-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">You are Offline</h3>
+                <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+                  Bus search usually requires internet. However, if you have viewed this route before, it might be saved.
+                </p>
+
+                <div className="flex flex-col w-full gap-3">
+                  <button
+                    onClick={() => {
+                      setShowOfflineNavModal(false);
+                      if (pendingIntercityNav) {
+                        window.location.href = `/intercity?from=${encodeURIComponent(pendingIntercityNav.from)}&to=${encodeURIComponent(pendingIntercityNav.to)}`;
+                      }
+                    }}
+                    className="w-full bg-dhaka-green text-white font-bold py-3 rounded-xl hover:bg-green-700 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>Proceed Anyway</span>
+                    <ArrowLeft className="w-4 h-4 rotate-180" />
+                  </button>
+                  <button
+                    onClick={() => setShowOfflineNavModal(false)}
+                    className="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-200 transition-all"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -2687,7 +2728,16 @@ const App: React.FC = () => {
       </button>
     );
 
+    // Intercity Search Handler with Offline Check
     const handleIntercitySearch = (from: string, to: string) => {
+      // Check offline status
+      if (!isOnline) {
+        // If offline, ask confirmation/warning instead of navigating blindly
+        setPendingIntercityNav({ from, to });
+        setShowOfflineNavModal(true);
+        return;
+      }
+
       setIntercityLoading(true);
       setTimeout(() => {
         window.location.href = `/intercity?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
