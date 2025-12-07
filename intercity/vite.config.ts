@@ -52,7 +52,7 @@ export default defineConfig(({ mode }) => {
           clientsClaim: true,
           skipWaiting: true,
           // Cache versioning for proper updates
-          cacheId: 'dhaka-commute-intercity-v1',
+          cacheId: 'dhaka-commute-intercity-v2',
           // Runtime caching for intercity external resources
           runtimeCaching: [
             // Tailwind CSS CDN - Critical for offline styling

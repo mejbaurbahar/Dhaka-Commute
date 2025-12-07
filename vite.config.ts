@@ -62,7 +62,7 @@ export default defineConfig(({ mode }) => {
           mode: 'production',
           sourcemap: false,
           // Cache versioning for proper updates
-          cacheId: 'dhaka-commute-v1',
+          cacheId: 'dhaka-commute-v2',
           runtimeCaching: [
             // Static Assets - Cache First (Offline First Strategy)
             {
