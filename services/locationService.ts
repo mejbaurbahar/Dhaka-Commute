@@ -58,8 +58,8 @@ export const getCurrentLocation = (): Promise<UserLocation> => {
       errorHandler,
       {
         enableHighAccuracy: false, // Start with network/WiFi location for speed
-        timeout: 3000, // Fast 3-second timeout
-        maximumAge: 60000 // Accept positions up to 1 minute old for instant response
+        timeout: 5000, // Slightly longer timeout to avoid premature failure
+        maximumAge: Infinity // Accept ANY cached position for instant load
       }
     );
   });

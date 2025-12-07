@@ -2737,7 +2737,7 @@ const App: React.FC = () => {
                 onClick={() => handleFilterChange('ALL')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-700 hover:text-gray-900'}`}
               >
-                All Buses
+                All Dhaka Local Buses
               </button>
               <button
                 onClick={() => handleFilterChange('FAVORITES')}
