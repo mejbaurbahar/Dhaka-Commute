@@ -774,7 +774,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Prattay',
     bnName: 'প্রত্যয়',
     routeString: 'Gabtoli ⇄ Babubazar',
-    stops: ['gabtoli', 'beribadh', 'sikder_medical', 'hazaribag', 'kamrangirchar', 'showari_ghat', 'babubazar'],
+    stops: ['gabtoli', 'mazar_road', 'beribadh', 'sikder_medical', 'hazaribag', 'kamrangirchar', 'showari_ghat', 'babubazar'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -783,7 +783,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Purbachol Logistics',
     bnName: 'পূর্বাচল লজিস্টিকস',
     routeString: 'Mirpur 14 ⇄ Chandra',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'baipayl', 'zirabo', 'nandan_park', 'chandra'],
+    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'savar', 'baipayl', 'zirani_bazar', 'zirabo', 'nandan_park', 'chandra'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -792,7 +792,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Raja City',
     bnName: 'রাজা সিটি',
     routeString: 'Postagola ⇄ Ghatar Char',
-    stops: ['postagola', 'jurain', 'dayaganj', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'shahbag', 'bata_signal', 'science_lab', 'city_college', 'jigatola', 'dhanmondi15', 'star_kabab', 'shankar', 'mohammadpur', 'bosila', 'ghatar_char'],
+    stops: ['postagola', 'dholairpar', 'jurain', 'dayaganj', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'shahbag', 'bata_signal', 'science_lab', 'city_college', 'jigatola', 'dhanmondi15', 'star_kabab', 'shankar', 'mohammadpur', 'bosila', 'ghatar_char'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -801,7 +801,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Ramjan',
     bnName: 'রমজান',
     routeString: 'Gabtoli ⇄ Demra',
-    stops: ['gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'mohammadpur', 'shankar', 'star_kabab', 'dhanmondi15', 'jigatola', 'city_college', 'science_lab', 'bata_signal', 'shahbag', 'matsya_bhaban', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'hazipara', 'rampura_bazar', 'rampura', 'banasree', 'demra'],
+    stops: ['gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'mohammadpur', 'shankar', 'star_kabab', 'dhanmondi15', 'jigatola', 'city_college', 'science_lab', 'bata_signal', 'shahbag', 'matsya_bhaban', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'khidma_hospital', 'hazipara', 'rampura_bazar', 'rampura', 'banasree', 'demra'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -810,7 +810,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Rois',
     bnName: 'রাইস',
     routeString: 'Sony Cinema ⇄ Banasree',
-    stops: ['sony_cinema', 'mirpur2', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'mohakhali', 'abdullahpur', 'badda', 'rampura', 'banasree'],
+    stops: ['sony_cinema', 'mirpur2', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda_link_road', 'madhya_badda', 'merul', 'rampura', 'banasree'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -819,7 +819,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Rongdhonu Express',
     bnName: 'রংধনু এক্সপ্রেস',
     routeString: 'Adabor ⇄ Postagola',
-    stops: ['adabor', 'mohammadpur', 'shia_masjid', 'shyamoli', 'college_gate', 'asad_gate', 'kalabagan', 'science_lab', 'katabon', 'bata_signal', 'shahbag', 'kakrail', 'fokirapul', 'motijheel', 'dayaganj', 'postagola'],
+    stops: ['adabor', 'mohammadpur', 'shia_masjid', 'shyamoli', 'college_gate', 'asad_gate', 'kalabagan', 'science_lab', 'katabon', 'bata_signal', 'shahbag', 'kakrail', 'fokirapul', 'motijheel', 'dayaganj', 'jurain', 'dholairpar', 'postagola'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -828,7 +828,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Runway Express',
     bnName: 'রানওয়ে এক্সপ্রেস',
     routeString: 'Keraniganj ⇄ ECB Square',
-    stops: ['keraniganj', 'kadamtali', 'babubazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'agargaon', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'mirpur12', 'ecb'],
+    stops: ['keraniganj', 'kadamtali', 'babubazar', 'naya_bazar', 'ray_saheb_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'bot_tola', 'farmgate', 'agargaon', 'taltola', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'mirpur12', 'ecb'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -837,7 +837,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Rupa Paribahan',
     bnName: 'রুপা পরিবহন',
     routeString: 'Gabtoli ⇄ Mirpur 14',
-    stops: ['gabtoli', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur14'],
+    stops: ['gabtoli', 'mazar_road', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur14'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -846,7 +846,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Rupkotha',
     bnName: 'রুপকথা',
     routeString: 'Gabtoli ⇄ Abdullahpur',
-    stops: ['gabtoli', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
+    stops: ['gabtoli', 'mazar_road', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'kuril_chourasta', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
