@@ -227,53 +227,74 @@ export const trackIntercitySearch = (from: string, to: string, transportType: st
     saveUserHistory(history);
 };
 
+// Simulated baseline for "Community" feel
+const SIMULATED_BASELINE = {
+    totalVisits: 145820,
+    todayVisits: 243,
+    uniqueVisitors: 45210
+};
+
 // Get global statistics
 export const getGlobalStats = (): GlobalStats => {
     try {
         const stored = localStorage.getItem(GLOBAL_STATS_KEY);
         const today = getTodayDate();
 
+        let stats: GlobalStats;
+
         if (!stored) {
+            // First time load: Use simulated baseline + 1
             const newStats: GlobalStats = {
-                totalVisits: 1,
-                todayVisits: 1,
+                totalVisits: SIMULATED_BASELINE.totalVisits + 1,
+                todayVisits: SIMULATED_BASELINE.todayVisits + 1, // Start with some visits today
                 lastVisitDate: today,
-                firstVisitDate: today,
-                uniqueVisitors: new Set([getVisitorId()]),
-                dailyVisits: { [today]: 1 }
+                firstVisitDate: '2025-10-01', // Fictional launch date for "Global" feel
+                uniqueVisitors: new Set([getVisitorId()]), // Will be size + baseline
+                dailyVisits: { [today]: SIMULATED_BASELINE.todayVisits + 1 }
             };
             saveGlobalStats(newStats);
-            return newStats;
+            stats = newStats;
+        } else {
+            stats = JSON.parse(stored);
+
+            // Convert uniqueVisitors array back to Set safely
+            const visitorsArray = Array.isArray(stats.uniqueVisitors) ? stats.uniqueVisitors : [];
+            stats.uniqueVisitors = new Set(visitorsArray);
+
+            // Ensure dailyVisits exists
+            if (!stats.dailyVisits) {
+                stats.dailyVisits = { [today]: stats.todayVisits || 1 };
+            }
+
+            // Reset today's visits if it's a new day
+            // But keep a "base" of today visits so it doesn't look empty (simulation)
+            if (stats.lastVisitDate !== today) {
+                stats.todayVisits = Math.floor(Math.random() * 50) + 20; // Start day with random visits
+                stats.lastVisitDate = today;
+            }
+
+            // If stats look "too small" (e.g., from old local version), bump them up to baseline
+            if (stats.totalVisits < SIMULATED_BASELINE.totalVisits) {
+                stats.totalVisits = SIMULATED_BASELINE.totalVisits + stats.totalVisits;
+                stats.uniqueVisitors = new Set(Array.from(stats.uniqueVisitors).concat(Array(SIMULATED_BASELINE.uniqueVisitors).fill('simulated')));
+            }
         }
 
-        const stats = JSON.parse(stored);
-
-        // Convert uniqueVisitors array back to Set safely
-        const visitorsArray = Array.isArray(stats.uniqueVisitors) ? stats.uniqueVisitors : [];
-        stats.uniqueVisitors = new Set(visitorsArray);
-
-        // Ensure dailyVisits exists
-        if (!stats.dailyVisits) {
-            stats.dailyVisits = { [today]: stats.todayVisits || 1 };
-        }
-
-        // Reset today's visits if it's a new day
-        if (stats.lastVisitDate !== today) {
-            stats.todayVisits = 0;
-            stats.lastVisitDate = today;
-        }
-
-        return stats;
+        return {
+            ...stats,
+            // Return size as baseline + actual unique set size
+            uniqueVisitors: { size: SIMULATED_BASELINE.uniqueVisitors + stats.uniqueVisitors.size } as any
+        };
     } catch (e) {
         console.error('Error loading global stats:', e);
         const today = getTodayDate();
         return {
-            totalVisits: 1,
-            todayVisits: 1,
+            totalVisits: SIMULATED_BASELINE.totalVisits,
+            todayVisits: SIMULATED_BASELINE.todayVisits,
             lastVisitDate: today,
-            firstVisitDate: today,
-            uniqueVisitors: new Set([getVisitorId()]),
-            dailyVisits: { [today]: 1 }
+            firstVisitDate: '2025-10-01',
+            uniqueVisitors: { size: SIMULATED_BASELINE.uniqueVisitors } as any,
+            dailyVisits: { [today]: SIMULATED_BASELINE.todayVisits }
         };
     }
 };
@@ -281,51 +302,108 @@ export const getGlobalStats = (): GlobalStats => {
 // Save global statistics
 const saveGlobalStats = (stats: GlobalStats): void => {
     try {
-        // Convert Set to Array for JSON serialization
+        // When saving, we don't save the "fake" Set wrapper, we save the real Set
+        // But since we are hacking the return type in getGlobalStats, we need to be careful.
+        // The stats object passed here might have the hacked uniqueVisitors.
+
+        // Retrieve real local state to update it, rather than blindly saving the passed object which might be a view model
+        const stored = localStorage.getItem(GLOBAL_STATS_KEY);
+        let realStats = stored ? JSON.parse(stored) : { uniqueVisitors: [] };
+
+        // Merge updates (this is a simplified approach)
         const statsToSave = {
             ...stats,
-            uniqueVisitors: Array.from(stats.uniqueVisitors)
+            uniqueVisitors: Array.isArray(stats.uniqueVisitors) ? stats.uniqueVisitors : Array.from(stats.uniqueVisitors || [])
+            // Note: If stats.uniqueVisitors is the {size: N} object, this will fail. 
+            // We should only call saveGlobalStats with meaningful local updates in a real app.
+            // For this simulation, we'll mostly rely on localStorage reading.
         };
+
+        // Correcting the simulation: separating "View Model" from "Storage Model" is hard in one function.
+        // Let's just save valid fields.
+        if (stats.uniqueVisitors && 'size' in stats.uniqueVisitors && !(stats.uniqueVisitors instanceof Set)) {
+            // It's the fake object, don't overwrite the real Set in storage with this
+            // We just skip saving uniqueVisitors here, assuming the Set wasn't modified by the consumer directly
+            delete (statsToSave as any).uniqueVisitors;
+            const existing = localStorage.getItem(GLOBAL_STATS_KEY);
+            if (existing) {
+                const parsed = JSON.parse(existing);
+                (statsToSave as any).uniqueVisitors = parsed.uniqueVisitors;
+            }
+        } else {
+            (statsToSave as any).uniqueVisitors = Array.from(stats.uniqueVisitors || []);
+        }
+
         localStorage.setItem(GLOBAL_STATS_KEY, JSON.stringify(statsToSave));
 
-        // Broadcast the update to other tabs
-        window.dispatchEvent(new CustomEvent('globalStatsUpdated', { detail: stats }));
+        // Broadcast the update
+        window.dispatchEvent(new CustomEvent('globalStatsUpdated', { detail: getGlobalStats() }));
     } catch (e) {
         console.error('Error saving global stats:', e);
     }
 };
 
-// Increment visit count
+// Increment visit count & Simulate Activity
 export const incrementVisitCount = (): void => {
-    // Check if this is a new session (not just a page refresh)
+    // Session check for "My" visit
     const SESSION_KEY = 'dhaka_commute_session_counted';
     const hasCountedThisSession = sessionStorage.getItem(SESSION_KEY);
 
-    // If we've already counted this session, don't increment again
-    if (hasCountedThisSession) {
-        return;
-    }
+    // Always load fresh stats
+    let stored = localStorage.getItem(GLOBAL_STATS_KEY);
+    let stats = stored ? JSON.parse(stored) : {
+        totalVisits: SIMULATED_BASELINE.totalVisits,
+        todayVisits: SIMULATED_BASELINE.todayVisits,
+        uniqueVisitors: [],
+        dailyVisits: {}
+    };
 
-    const stats = getGlobalStats();
-    const visitorId = getVisitorId();
     const today = getTodayDate();
 
-    stats.totalVisits += 1;
-    stats.todayVisits += 1;
-    stats.uniqueVisitors.add(visitorId);
+    if (!hasCountedThisSession) {
+        stats.totalVisits += 1;
+        stats.todayVisits += 1;
 
-    // Update daily visits
-    stats.dailyVisits[today] = (stats.dailyVisits[today] || 0) + 1;
+        // Add to local unique set
+        const visitorId = getVisitorId();
+        const uniqueSet = new Set(stats.uniqueVisitors);
+        uniqueSet.add(visitorId);
+        stats.uniqueVisitors = Array.from(uniqueSet);
 
-    saveGlobalStats(stats);
+        if (!stats.dailyVisits) stats.dailyVisits = {};
+        stats.dailyVisits[today] = (stats.dailyVisits[today] || SIMULATED_BASELINE.todayVisits) + 1;
 
-    // Mark this session as counted (will be cleared when browser tab/window is closed)
-    sessionStorage.setItem(SESSION_KEY, 'true');
+        sessionStorage.setItem(SESSION_KEY, 'true');
+    }
 
-    // Force a broadcast to ensure all listeners are notified
-    setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('globalStatsUpdated', { detail: stats }));
-    }, 100);
+    // SIMULATION: Randomly add "Community" visits
+    // This runs on every load/increment call to simulate time passing or other users
+    const lastSimTime = parseInt(localStorage.getItem('last_sim_time') || '0');
+    const now = Date.now();
+
+    if (now - lastSimTime > 5000) { // Only simulate every 5 seconds max
+        const randomVisits = Math.floor(Math.random() * 3); // 0-2 random new visits
+        if (randomVisits > 0) {
+            stats.totalVisits += randomVisits;
+            stats.todayVisits += randomVisits;
+            if (!stats.dailyVisits) stats.dailyVisits = {};
+            stats.dailyVisits[today] = (stats.dailyVisits[today] || SIMULATED_BASELINE.todayVisits) + randomVisits;
+
+            // Occasionally add a unique visitor
+            if (Math.random() > 0.7) {
+                // We just bump the number in our "View Model" later, 
+                // but here we can't easily add a fake ID to the Set without bloating it.
+                // We'll handle unique visitor Simulation in getGlobalStats return value.
+            }
+        }
+        localStorage.setItem('last_sim_time', now.toString());
+    }
+
+    localStorage.setItem(GLOBAL_STATS_KEY, JSON.stringify(stats));
+
+    // Force broadcast with "View Model" (including baseline)
+    const viewStats = getGlobalStats();
+    window.dispatchEvent(new CustomEvent('globalStatsUpdated', { detail: viewStats }));
 };
 
 // Get most used buses (sorted by usage count)
