@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { BusRoute, UserLocation } from '../types';
 import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
-import { findNearestStation } from '../services/locationService';
+import { findNearestStation, getDistance } from '../services/locationService';
 import { getTrafficColor, TrafficLevel } from '../services/trafficSimulator';
 import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train, Plane, Layers, X } from 'lucide-react';
 
@@ -11,8 +11,8 @@ interface MapVisualizerProps {
   userDistance?: number;
   highlightStartIdx?: number;
   highlightEndIdx?: number;
-  isReversed?: boolean;
   userLocation?: UserLocation | null;
+  tripDestination?: string; // ID of the final destination station if different from route end
 }
 
 const MapVisualizer: React.FC<MapVisualizerProps> = ({
@@ -22,7 +22,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   highlightStartIdx = -1,
   highlightEndIdx = -1,
   isReversed = false,
-  userLocation
+  userLocation,
+  tripDestination
 }) => {
   const [simulationStep, setSimulationStep] = useState(0);
 
@@ -69,10 +70,20 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     return nearest ? nearest.station.name : null;
   }, [userLocation]);
 
+  /*
+    DATA PREPARATION
+    Resolve station IDs to actual station objects from all available sources
+  */
+  const stations = React.useMemo(() => {
+    if (!route) return [];
+    return route.stops
+      .map(id => STATIONS[id] || METRO_STATIONS[id] || RAILWAY_STATIONS[id] || AIRPORTS[id])
+      .filter(Boolean); // Filter out any undefined stations
+  }, [route]);
+
   // Auto-scroll to user location or start of highlight
   useEffect(() => {
     if (scrollContainerRef.current && route) {
-      const stations = route.stops.map(id => STATIONS[id]).filter(Boolean);
       const baseWidth = Math.max(stations.length * 100, 1000);
       const padding = 60;
 
@@ -111,7 +122,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     </div>
   );
 
-  const stations = route.stops.map(id => STATIONS[id]).filter(Boolean);
+
 
   // Simulation Logic (Visual effect only)
   useEffect(() => {
@@ -163,7 +174,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
   // Base Dimensions
   const height = 600;
-  const padding = 120; // Increased to prevent edge cutoff
+  const padding = 180; // Increased to prevent edge cutoff
   const baseWidth = Math.max(stations.length * 120, 1000);
 
 
@@ -203,7 +214,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         const dx = uX - nearestStationPosForLine.x;
         const dy = uY - nearestStationPosForLine.y;
         const distance = Math.hypot(dx, dy);
-        const maxVisualDistance = 250; // Max pixels for the connection line
+        const maxVisualDistance = 150; // Much tighter clamp (150px) to prevent long scroll
 
         if (distance > maxVisualDistance) {
           const ratio = maxVisualDistance / distance;
@@ -279,17 +290,28 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.2, 2.5));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.2, 0.5));
 
+  // Destination Logic
+
+  const destStation = tripDestination ? STATIONS[tripDestination] : null;
+  const isDestOnRoute = destStation && stations.some(s => s.id === tripDestination);
+  const alightIdx = hasHighlight ? highlightEndIdx : (stations.length - 1);
+  const alightPos = (alightIdx >= 0 && alightIdx < nodePositions.length) ? nodePositions[alightIdx] : null;
+
   return (
     <div className="w-full h-80 md:h-[500px] bg-slate-50 border-t border-b border-gray-100 relative group overflow-hidden">
 
       {/* Connection Line Info Badge */}
-      {isUserFar && userStationIndex !== -1 && (
+      {isUserFar && (userStationIndex !== -1 || hasHighlight) && (
         <div className="absolute top-4 left-4 z-20 bg-orange-50/90 backdrop-blur border border-orange-200 px-3 py-2 rounded-xl shadow-lg flex items-center gap-2 animate-pulse max-w-[200px]">
           <ArrowUpRight className="w-5 h-5 text-orange-600 shrink-0" />
           <div>
             <p className="text-[10px] font-bold text-orange-800 uppercase">Outside Route</p>
             <p className="text-xs font-medium text-orange-900 leading-tight">
-              Go {(userDistance / 1000).toFixed(1)}km to start at <b>{stations[userStationIndex].name}</b>
+              Go {
+                hasHighlight && highlightStartIdx !== -1 && userLocation && nodePositions[highlightStartIdx]
+                  ? (getDistance(userLocation, stations[highlightStartIdx]) / 1000).toFixed(1)
+                  : (userDistance / 1000).toFixed(1)
+              }km to start at <b>{hasHighlight && highlightStartIdx !== -1 ? stations[highlightStartIdx].name : stations[userStationIndex].name}</b>
             </p>
             {globalNearestName && (
               <p className="text-[10px] text-orange-800 mt-1 border-t border-orange-200 pt-1">
@@ -434,29 +456,18 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             <g transform={`translate(${layout.shiftX}, ${layout.shiftY})`}>
 
               {/* Connection Line layer - Render Highlight FIRST (Below Route) */}
-              {userPos && nearestStationPosForLine && isUserFar && (
+              {userPos && ((nearestStationPosForLine && isUserFar) || (hasHighlight && highlightStartIdx !== -1 && nodePositions[highlightStartIdx])) && (
                 <g className="animate-in fade-in duration-700">
-                  {/* White Halo for separation */}
+                  {/* Actual Dashed Line - Thinner and cleaner to avoid overlap */}
                   <line
                     x1={userPos.x}
                     y1={userPos.y}
-                    x2={nearestStationPosForLine.x}
-                    y2={nearestStationPosForLine.y}
-                    stroke="white"
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                    className="opacity-80"
-                  />
-                  {/* Actual Dashed Line */}
-                  <line
-                    x1={userPos.x}
-                    y1={userPos.y}
-                    x2={nearestStationPosForLine.x}
-                    y2={nearestStationPosForLine.y}
+                    x2={hasHighlight && highlightStartIdx !== -1 ? nodePositions[highlightStartIdx].x : nearestStationPosForLine!.x}
+                    y2={hasHighlight && highlightStartIdx !== -1 ? nodePositions[highlightStartIdx].y : nearestStationPosForLine!.y}
                     stroke="#3b82f6"
-                    strokeWidth="2"
-                    strokeDasharray="6,4"
-                    className="opacity-70"
+                    strokeWidth="1.5"
+                    strokeDasharray="4,4"
+                    className="opacity-60"
                   />
                 </g>
               )}
@@ -531,6 +542,13 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                 const isEnd = idx === stations.length - 1;
                 const isHighlighted = hasHighlight && idx >= highlightStartIdx && idx <= highlightEndIdx;
 
+                // Check if this is the "Start Here" target
+                // If trip selected, it's highlightStartIdx
+                // Else if user far, it's userStationIndex
+                const isStartHereTarget = hasHighlight
+                  ? (idx === highlightStartIdx)
+                  : (isUserFar && idx === userStationIndex);
+
                 let fill = "white";
                 let stroke = hasHighlight ? "#e5e7eb" : "#006a4e";
                 let r = 5;
@@ -576,7 +594,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     )}
 
                     {/* Connect target ripple */}
-                    {isNearestButFar && (
+                    {isStartHereTarget && (
                       <circle cx={x} cy={y} r={20} fill="#f97316" opacity="0.2">
                         <animate attributeName="r" from="8" to="25" dur="2s" repeatCount="indefinite" />
                         <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
@@ -595,28 +613,105 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     />
 
                     {/* Label */}
-                    <foreignObject
-                      x={x - 60}
-                      y={idx % 2 === 0 ? y + 15 : y - 45}
-                      width="120"
-                      height="40"
-                      className="pointer-events-none"
-                    >
-                      <div className={`text-center text-[10px] font-medium leading-tight flex flex-col items-center justify-center h-full ${isCurrent && !hasHighlight ? 'text-dhaka-red font-bold' : (isPassed && !hasHighlight) || (hasHighlight && !isHighlighted) ? 'text-gray-300' : 'text-gray-600'}`}>
-                        <span className={`px-2 py-0.5 rounded backdrop-blur-sm truncate max-w-full shadow-sm border 
-                         ${isCurrent && !hasHighlight ? 'bg-red-50 border-red-100 text-red-600 scale-110'
-                            : isNearestButFar ? 'bg-orange-50 border-orange-200 text-orange-700 font-bold'
-                              : isHighlighted ? 'bg-green-50 border-green-200 text-green-800 font-bold'
-                                : 'bg-white/80 border-gray-100/50'}`}>
-                          {s.name}
-                          {isCurrent && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">You are here</span>}
-                          {isNearestButFar && !hasHighlight && <span className="block text-[8px] uppercase font-bold mt-0.5">Start Here</span>}
-                        </span>
-                      </div>
-                    </foreignObject>
+                    {/* SVG Label */}
+                    <g className="transition-all duration-300 opacity-100">
+                      {/* Background Pill */}
+                      <rect
+                        x={x - (s.name.length * 3 + 10)}
+                        y={idx % 2 === 0 ? y + 14 : y - 34}
+                        width={s.name.length * 6 + 20}
+                        height="20"
+                        rx="4"
+                        fill="white"
+                        stroke={isCurrent ? "#ef4444" : isStartHereTarget ? "#f97316" : isHighlighted ? "#e5e7eb" : "#f1f5f9"}
+                        strokeWidth="1"
+                        className="drop-shadow-sm"
+                      />
+
+                      {/* Text Name */}
+                      <text
+                        x={x}
+                        y={idx % 2 === 0 ? y + 28 : y - 20}
+                        textAnchor="middle"
+                        className={`text-[10px] font-bold fill-gray-700 pointer-events-none select-none`}
+                        style={{ fontSize: '10px' }}
+                      >
+                        {s.name}
+                      </text>
+
+                      {/* Status Badge (You/Dest) */}
+                      {isCurrent && (
+                        <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
+                          <rect x="-14" y="-7" width="28" height="14" rx="3" fill="#ef4444" />
+                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">YOU</text>
+                        </g>
+                      )}
+                      {tripDestination === s.id && (
+                        <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
+                          <rect x="-26" y="-7" width="52" height="14" rx="3" fill="#ef4444" />
+                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">DESTINATION</text>
+                        </g>
+                      )}
+                      {isStartHereTarget && (
+                        <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
+                          <rect x="-24" y="-7" width="48" height="14" rx="3" fill="#f97316" />
+                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">START HERE</text>
+                        </g>
+                      )}
+                    </g>
+
+
                   </g>
                 );
               })}
+
+              {/* Off-Route Destination Visualization */}
+              {!isDestOnRoute && destStation && alightPos && (
+                <g className="animate-in fade-in zoom-in duration-700">
+                  {/* Dashed Line from Alight Stop to Destination */}
+                  <line
+                    x1={alightPos.x}
+                    y1={alightPos.y}
+                    x2={alightPos.x + 150} // 150px to the right
+                    y2={alightPos.y}
+                    stroke="#ef4444"
+                    strokeWidth="2"
+                    strokeDasharray="6,4"
+                    className="opacity-60"
+                  />
+                  {/* Arrow head */}
+                  <path d={`M${alightPos.x + 140},${alightPos.y - 4} L${alightPos.x + 150},${alightPos.y} L${alightPos.x + 140},${alightPos.y + 4}`} fill="#ef4444" opacity="0.6" />
+
+                  {/* Destination Node */}
+                  <g className="cursor-pointer group/dest">
+                    <circle
+                      cx={alightPos.x + 150}
+                      cy={alightPos.y}
+                      r={10}
+                      fill="#ef4444"
+                      stroke="white"
+                      strokeWidth="3"
+                      className="shadow-lg"
+                    />
+                    <foreignObject
+                      x={alightPos.x + 150 - 60}
+                      y={alightPos.y + 18}
+                      width="120"
+                      height="60"
+                      className="overflow-visible"
+                    >
+                      <div className="flex flex-col items-center">
+                        <div className="px-3 py-1.5 rounded-lg shadow-md bg-dhaka-red text-white border border-red-600 text-xs font-bold whitespace-nowrap mb-1">
+                          {destStation.name}
+                        </div>
+                        <div className="text-[9px] font-bold text-red-600 bg-white/90 px-1.5 rounded-full border border-red-100 shadow-sm">
+                          FINAL STOP
+                        </div>
+                      </div>
+                    </foreignObject>
+                  </g>
+                </g>
+              )}
 
               {/* Metro Stations */}
               {showMetro && metroConnections.map((connection, idx) => {
@@ -926,7 +1021,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
           </svg>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

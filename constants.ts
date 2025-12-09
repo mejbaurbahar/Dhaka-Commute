@@ -1916,6 +1916,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'উত্তরা উত্তর',
     lat: 23.8753,
     lng: 90.3956,
+    distanceFromStart: 0.0,
     description: 'Near Diabari, residential areas, and local markets'
   },
   'uttara_center': {
@@ -1924,6 +1925,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'উত্তরা কেন্দ্র',
     lat: 23.8690,
     lng: 90.3967,
+    distanceFromStart: 1.2,
     description: 'Central Uttara, close to Rajuk College, commercial areas, and shopping centers'
   },
   'uttara_south': {
@@ -1932,6 +1934,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'উত্তরা দক্ষিণ',
     lat: 23.8627,
     lng: 90.3978,
+    distanceFromStart: 2.2,
     description: 'Near Uttara Sector 10 & 12, residential areas, schools, and local markets'
   },
   'pallabi': {
@@ -1940,6 +1943,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'পল্লবী',
     lat: 23.8250,
     lng: 90.3600,
+    distanceFromStart: 3.8,
     description: 'Pallabi area, residential zones, local markets, and bus stands'
   },
   'mirpur_11': {
@@ -1948,6 +1952,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'মিরপুর ১১',
     lat: 23.8150,
     lng: 90.3650,
+    distanceFromStart: 4.8,
     description: 'Mirpur Section 11, residential areas, markets, and educational institutions'
   },
   'mirpur_10': {
@@ -1956,6 +1961,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'মিরপুর ১০',
     lat: 23.8071,
     lng: 90.3686,
+    distanceFromStart: 5.9,
     description: 'Mirpur Section 10 roundabout, major bus stop, shopping areas, banks, and restaurants'
   },
   'kazipara': {
@@ -1964,6 +1970,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'কাজীপাড়া',
     lat: 23.7970,
     lng: 90.3700,
+    distanceFromStart: 7.0,
     description: 'Kazipara area, residential zones, local markets, and mosques'
   },
   'shewrapara': {
@@ -1972,6 +1979,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'শেওড়াপাড়া',
     lat: 23.7900,
     lng: 90.3750,
+    distanceFromStart: 8.0,
     description: 'Shewrapara area, residential zones, markets, and bus stops'
   },
   'agargaon': {
@@ -1980,6 +1988,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'আগারগাঁও',
     lat: 23.7780,
     lng: 90.3800,
+    distanceFromStart: 9.2,
     description: 'Agargaon area, government offices (IDB Bhaban, Election Commission), hospitals (NICVD), and bus stops'
   },
   'bijoy_sarani': {
@@ -1988,6 +1997,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'বিজয় সরণি',
     lat: 23.7630,
     lng: 90.3880,
+    distanceFromStart: 10.8,
     description: 'Near Military Museum, banks, offices, and well-connected road junctions'
   },
   'farmgate': {
@@ -1996,6 +2006,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'ফার্মগেট',
     lat: 23.7561,
     lng: 90.3872,
+    distanceFromStart: 11.9,
     description: 'Major commercial and transit hub, Farmgate Bus Terminal, shopping malls, banks, hospitals, offices, and restaurants'
   },
   'karwan_bazar': {
@@ -2004,6 +2015,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'কারওয়ান বাজার',
     lat: 23.7500,
     lng: 90.3930,
+    distanceFromStart: 13.0,
     description: 'Largest wholesale market in Dhaka, corporate offices, banks, shopping complexes, and eateries'
   },
   'shahbagh': {
@@ -2012,6 +2024,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'শাহবাগ',
     lat: 23.7400,
     lng: 90.3950,
+    distanceFromStart: 14.1,
     description: 'Dhaka Medical College Hospital, University of Dhaka vicinity, National Museum, banks, bookstores, cafes, and government offices'
   },
   'dhaka_university': {
@@ -2020,6 +2033,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'ঢাকা বিশ্ববিদ্যালয়',
     lat: 23.7350,
     lng: 90.3950,
+    distanceFromStart: 15.1,
     description: 'Main campus of University of Dhaka, academic buildings, libraries, cultural centers, bookstores, cafes, and banks'
   },
   'bangladesh_secretariat': {
@@ -2028,6 +2042,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'বাংলাদেশ সচিবালয়',
     lat: 23.7320,
     lng: 90.4050,
+    distanceFromStart: 16.3,
     description: 'Government administrative offices, banks, business centers, and nearby shops and eateries'
   },
   'motijheel': {
@@ -2036,6 +2051,7 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     bnName: 'মতিঝিল',
     lat: 23.7330,
     lng: 90.4170,
+    distanceFromStart: 17.5,
     description: "Dhaka's central business district, headquarters of major banks, corporate offices, shopping malls, financial institutions, and restaurants"
   }
 };

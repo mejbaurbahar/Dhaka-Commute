@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
     base: '/intercity',  // Use /intercity base (without trailing slash)
     server: {
       port: 3002,
-      host: '0.0.0.0',
+      host: true, // Listen on all addresses
       proxy: {
         '/api/shohoz-proxy': {
           target: 'https://webapi.shohoz.com',

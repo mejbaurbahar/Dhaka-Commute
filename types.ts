@@ -16,6 +16,7 @@ export interface MetroStation {
   lat: number;
   lng: number;
   description: string;
+  distanceFromStart?: number;
 }
 
 export interface MetroLine {
@@ -32,7 +33,7 @@ export interface BusRoute {
   bnName: string;
   routeString: string;
   stops: string[]; // Array of station IDs
-  type: 'Sitting' | 'Semi-Sitting' | 'Local' | 'AC';
+  type: 'Sitting' | 'Semi-Sitting' | 'Local' | 'AC' | 'Metro Rail';
   hours: string;
 }
 

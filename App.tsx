@@ -1,12 +1,10 @@
-
-
 import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
 import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, Facebook, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane, Phone, Download, TramFront } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 import { BusRoute, AppView, UserLocation } from './types';
-import { BUS_DATA, STATIONS, METRO_STATIONS } from './constants';
+import { STATIONS, BUS_DATA, METRO_STATIONS, METRO_LINES, RAILWAY_STATIONS, AIRPORTS } from './constants';
 import MapVisualizer from './components/MapVisualizer';
+import { SearchableSelect } from './components/SearchableSelect';
 import LiveTracker from './components/LiveTracker';
 import DhakaAlive from './components/DhakaAlive';
 import HistoryView from './components/HistoryView';
@@ -15,7 +13,7 @@ import { AnimatedLogo } from './components/AnimatedLogo';
 import { askGeminiRoute } from './services/geminiService';
 import { getCurrentLocation, findNearestStation, getDistance } from './services/locationService';
 import { findNearestMetroStation } from './services/metroService';
-import { planRoutes, SuggestedRoute } from './services/routePlanner';
+import { planRoutes, findRoutesBetweenStations, SuggestedRoute } from './services/routePlanner';
 import RouteSuggestions from './components/RouteSuggestions';
 import { incrementVisitCount, trackBusSearch, trackRouteSearch } from './services/analyticsService';
 
@@ -135,6 +133,60 @@ const AiThinkingIndicator = () => {
 
 // --- Helper: Fare Calculator ---
 const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: number, max: number, distance: number } => {
+  // 1. Handle Metro Rail Logic
+  // Check if it's a Metro route (by ID convention or Type)
+  if (route.id.includes('mrt') || route.type === 'Metro Rail') {
+    if (fromId && toId && METRO_STATIONS[fromId] && METRO_STATIONS[toId]) {
+      const startDist = METRO_STATIONS[fromId].distanceFromStart ?? 0;
+      const endDist = METRO_STATIONS[toId].distanceFromStart ?? 0;
+      const distanceKm = Math.abs(endDist - startDist);
+
+      // Official MRT Line 6 Fare Rules:
+      // Minimum: 20 Tk
+      // Per km: 5 Tk
+      // Cap: 100 Tk (Motijheel - Uttara North is < 20km but capped/fixed)
+
+      let fare = 20 + (distanceKm * 5);
+
+      // Round to nearest integer (or logic as per MRT chart which is usually multiples of 10)
+      // MRT Chart isn't strictly linear but 20 + 5*km is a very close approximation used by apps
+      // Actually strictly it's: 0-2 stations: 20tk. Then steps.
+      // But user linked `route-map` and `fares`. The linear formula is the standard estimation.
+
+      // Minimum fare check
+      if (fare < 20) fare = 20;
+      // Cap at 100
+      if (fare > 100) fare = 100;
+
+      // Custom refinement for standard chart (approximate):
+      // Usually steps are 20, 30, 40, 50, 60, 70, 80, 90, 100
+      // We'll round to nearest 10 for better accuracy with visual chart
+      fare = Math.round(fare / 10) * 10;
+      if (fare < 20) fare = 20; // Re-enforce min
+
+      return {
+        min: fare,
+        max: fare, // Fixed fare for Metro
+        distance: distanceKm
+      };
+    } else {
+      // Generic Metro Range if no stations selected
+      // Calculate total distance from first to last stop
+      let totalDist = 20; // fallback
+      if (route.stops.length > 0) {
+        const startId = route.stops[0];
+        const endId = route.stops[route.stops.length - 1];
+        if (METRO_STATIONS[startId] && METRO_STATIONS[endId]) {
+          const s = METRO_STATIONS[startId].distanceFromStart ?? 0;
+          const e = METRO_STATIONS[endId].distanceFromStart ?? 0;
+          totalDist = Math.abs(e - s);
+        }
+      }
+      return { min: 20, max: 100, distance: totalDist };
+    }
+  }
+
+  // 2. Handle Regular Bus Logic (Existing)
   const validStations = route.stops
     .map(id => STATIONS[id])
     .filter((s): s is typeof STATIONS[string] => !!s);
@@ -198,7 +250,7 @@ const formatETA = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = Math.round(minutes % 60);
   if (mins === 0) {
-    return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} `;
   }
   return `${hours} ${hours === 1 ? 'hour' : 'hours'} ${mins} min`;
 };
@@ -290,7 +342,7 @@ const SettingsView: React.FC<{
               className={`flex-1 py-2 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 ${saveStatus === 'success' ? 'bg-green-600 text-white' :
                 saveStatus === 'error' ? 'bg-red-600 text-white' :
                   'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                } `}
             >
               <Save className="w-4 h-4" />
               {saveStatus === 'success' ? 'Saved!' : saveStatus === 'error' ? 'Invalid' : 'Save Key'}
@@ -366,11 +418,11 @@ const SettingsView: React.FC<{
 
 const POPULAR_LOCATIONS = [
   // --- Major Transport Hubs (Dhaka) ---
-  "Abdullahpur, Dhaka", "Airport, Dhaka", "Gabtoli, Dhaka", "Gulistan, Dhaka",
-  "Jatrabari, Dhaka", "Komlapur, Dhaka", "Mohakhali, Dhaka", "Sayedabad, Dhaka",
+  "Abdullahpur,Dhaka", "Airport,Dhaka", "Gabtoli,Dhaka", "Gulistan,Dhaka",
+  "Jatrabari,Dhaka", "Komlapur,Dhaka", "Mohakhali,Dhaka", "Sayedabad,Dhaka",
 
   // --- Popular Tourist Destinations ---
-  "Bandarban", "Cox's Bazar", "Jaflong, Sylhet", "Khagrachari", "Kuakata",
+  "Bandarban", "Cox's Bazar", "Jaflong,Sylhet", "Khagrachari", "Kuakata",
   "Rangamati", "Saint Martin", "Sajek Valley", "Sreemangal", "Sundarbans",
 
   // --- Land Ports / Borders ---
@@ -517,7 +569,7 @@ const App: React.FC = () => {
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(getStoredBus);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const [searchMode, setSearchMode] = useState<'TEXT' | 'ROUTE'>('TEXT');
+  const [searchMode, setSearchMode] = useState<'TEXT' | 'ROUTE'>('ROUTE');
   const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -604,7 +656,7 @@ const App: React.FC = () => {
     if (!selectedBus) return { fareInfo: null, fareStartIndex: -1, fareEndIndex: -1, isReversed: false, actualStartStation: null, actualEndStation: null };
 
     // Filter out invalid stations first to get the "Drawable" list
-    const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
+    const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id] || !!METRO_STATIONS[id] || !!RAILWAY_STATIONS[id] || !!AIRPORTS[id]);
 
     let startIdx = -1;
     let endIdx = -1;
@@ -618,8 +670,8 @@ const App: React.FC = () => {
       endIdx = validStopIds.indexOf(fareEnd);
 
       // Store the actual user-selected stations (Fix Issue #3)
-      actualStart = STATIONS[fareStart];
-      actualEnd = STATIONS[fareEnd];
+      actualStart = STATIONS[fareStart] || METRO_STATIONS[fareStart] || RAILWAY_STATIONS[fareStart] || AIRPORTS[fareStart];
+      actualEnd = STATIONS[fareEnd] || METRO_STATIONS[fareEnd] || RAILWAY_STATIONS[fareEnd] || AIRPORTS[fareEnd];
 
       if (startIdx !== -1 && endIdx !== -1) {
         // Calculate fare (the calculateFare function handles bidirectional)
@@ -695,7 +747,7 @@ const App: React.FC = () => {
     }
 
     if (view !== AppView.HOME && hash) {
-      window.history.pushState({ view }, '', `#${hash}`);
+      window.history.pushState({ view }, '', `#${hash} `);
     }
   }, [view]);
 
@@ -797,7 +849,7 @@ const App: React.FC = () => {
         pageTitle = "";
         break;
       case AppView.BUS_DETAILS:
-        pageTitle = selectedBus ? `${selectedBus.name}` : "Bus Details";
+        pageTitle = selectedBus ? `${selectedBus.name} ` : "Bus Details";
         break;
       case AppView.LIVE_NAV:
         pageTitle = "Live Navigation";
@@ -831,7 +883,7 @@ const App: React.FC = () => {
     }
 
     if (pageTitle) {
-      document.title = `${pageTitle} | ${baseTitle}`;
+      document.title = `${pageTitle} | ${baseTitle} `;
     } else {
       document.title = baseTitle;
     }
@@ -949,7 +1001,7 @@ const App: React.FC = () => {
             // Update nearest stop logic
             const result = findNearestStation(loc, selectedBus.stops);
             if (result) {
-              const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
+              const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id] || !!METRO_STATIONS[id] || !!RAILWAY_STATIONS[id] || !!AIRPORTS[id]);
               const stationId = selectedBus.stops[result.index];
               const filteredIndex = validStopIds.indexOf(stationId);
 
@@ -1026,6 +1078,16 @@ const App: React.FC = () => {
     return nameMatch || bnNameMatch || routeMatch || stopMatch;
   }).sort((a, b) => a.name.localeCompare(b.name)), [listFilter, favorites, searchMode, fromStation, toStation, searchQuery]);
 
+  // Calculate routes when From/To changes in ROUTE mode
+  useEffect(() => {
+    if (searchMode === 'ROUTE' && fromStation && toStation) {
+      const routes = findRoutesBetweenStations(fromStation, toStation);
+      setSuggestedRoutes(routes);
+    } else if (searchMode === 'ROUTE' && (!fromStation || !toStation)) {
+      setSuggestedRoutes([]);
+    }
+  }, [searchMode, fromStation, toStation]);
+
   const handleSearchCommit = () => {
     setSearchQuery(inputValue);
     (document.activeElement as HTMLElement)?.blur();
@@ -1050,7 +1112,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleBusSelect = useCallback((bus: BusRoute, fromHistory: boolean = false) => {
+  const handleBusSelect = useCallback((bus: BusRoute, fromHistory: boolean = false, trip?: SuggestedRoute) => {
     // Track bus search only if not from history
     if (!fromHistory) {
       trackBusSearch(bus.id, bus.name);
@@ -1058,10 +1120,17 @@ const App: React.FC = () => {
 
     // Immediately update UI state (non-blocking)
     setSelectedBus(bus);
+    if (trip) {
+      setSelectedTrip(trip);
+    } else {
+      setSelectedTrip(null);
+    }
+
     setView(AppView.BUS_DETAILS);
     setNearestStopIndex(-1);
     setNearestStopDistance(Infinity);
-    setSelectedTrip(null);
+    setNearestStopDistance(Infinity);
+    // setSelectedTrip(null); // Removed to fix bug where trip was cleared immediately
 
     // Defer location fetch to avoid blocking UI
     requestIdleCallback(() => {
@@ -1069,8 +1138,10 @@ const App: React.FC = () => {
         setUserLocation(loc);
         const result = findNearestStation(loc, bus.stops);
         if (result) {
-          const validStopIds = bus.stops.filter(id => !!STATIONS[id]);
-          const stationId = bus.stops[result.index];
+          const validStopIds = bus.stops.filter(id => !!(STATIONS[id] || METRO_STATIONS[id] || RAILWAY_STATIONS[id] || AIRPORTS[id]));
+          const stationId = bus.stops[result.index]; // this is the ID from the original bus.stops
+
+          // We need to find where this stationId sits in the FILTERED list used by MapVisualizer
           const filteredIndex = validStopIds.indexOf(stationId);
 
           if (filteredIndex !== -1) {
@@ -1218,25 +1289,25 @@ const App: React.FC = () => {
         <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
           <ArrowLeft className="w-5 h-5 text-gray-600" />
         </button>
-        <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'}`}>
+        <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'} `}>
           <Bot className="w-6 h-6" />
         </div>
         <div className="flex-1">
           <h2 className="text-lg font-bold text-gray-900">কই যাবো AI Assistant</h2>
-          <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
+          <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'} `}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'} `}></span> {isOnline ? 'Online' : 'Offline'}
           </p>
         </div>
       </div>
 
       <div className="hidden md:flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20">
-        <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'}`}>
+        <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'} `}>
           <Bot className="w-6 h-6" />
         </div>
         <div className="flex-1">
           <h2 className="text-lg font-bold text-gray-900">কই যাবো AI Assistant</h2>
-          <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span> {isOnline ? 'Online' : 'Offline'}
+          <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'} `}>
+            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'} `}></span> {isOnline ? 'Online' : 'Offline'}
           </p>
         </div>
       </div>
@@ -1271,8 +1342,8 @@ const App: React.FC = () => {
               </div>
             ) : (
               chatHistory.map((msg, idx) => (
-                <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-dhaka-dark text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none'}`}>
+                <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} `}>
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-dhaka-dark text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none'} `}>
                     <div className="whitespace-pre-wrap">{msg.text.replace(/\*\*/g, '')}</div>
                   </div>
                 </div>
@@ -2232,7 +2303,7 @@ const App: React.FC = () => {
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
             <div className="flex-1 ml-3">
-              <h2 className="text-lg font-bold text-dhaka-dark">{selectedBus.name}</h2>
+              <h2 className="text-lg font-bold text-dhaka-dark truncate max-w-[200px]">{selectedBus.name}</h2>
               <p className="text-xs text-gray-500">{selectedBus.bnName}</p>
             </div>
             <button
@@ -2240,7 +2311,7 @@ const App: React.FC = () => {
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label={favorites.includes(selectedBus.id) ? "Remove from favorites" : "Add to favorites"}
             >
-              <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
+              <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'} `} />
             </button>
             <button
               onClick={() => setView(AppView.LIVE_NAV)}
@@ -2258,7 +2329,7 @@ const App: React.FC = () => {
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div className="flex-1">
-            <h2 className="text-lg font-bold text-dhaka-dark">{selectedBus.name}</h2>
+            <h2 className="text-lg font-bold text-dhaka-dark truncate max-w-[220px]">{selectedBus.name}</h2>
             <p className="text-xs text-gray-500">{selectedBus.bnName}</p>
           </div>
           <button
@@ -2273,7 +2344,7 @@ const App: React.FC = () => {
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label={favorites.includes(selectedBus.id) ? "Remove from favorites" : "Add to favorites"}
           >
-            <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
+            <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'} `} />
           </button>
         </div>
 
@@ -2285,14 +2356,14 @@ const App: React.FC = () => {
               <h3 className="font-bold text-blue-900 text-sm uppercase tracking-wider mb-3">Your Trip Plan</h3>
               <div className="space-y-3">
                 {selectedTrip.steps.map((step, idx) => (
-                  <div key={idx} className={`flex gap-3 ${step.type === 'bus' && step.busRoute?.id === selectedBus.id ? 'opacity-100' : 'opacity-70'}`}>
+                  <div key={idx} className={`flex gap-3 ${step.type === 'bus' && step.busRoute?.id === selectedBus.id ? 'opacity-100' : 'opacity-70'} `}>
                     <div className="flex flex-col items-center">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold
                                       ${step.type === 'walk' ? 'bg-gray-200 text-gray-600' :
                           step.type === 'metro' ? 'bg-blue-200 text-blue-700' :
                             'bg-green-200 text-green-700'
                         }
-                                    `}>
+`}>
                         {idx + 1}
                       </div>
                       {idx < selectedTrip.steps.length - 1 && <div className="w-0.5 h-full bg-gray-200 my-1"></div>}
@@ -2338,9 +2409,9 @@ const App: React.FC = () => {
               <span className="text-[10px] text-gray-600 uppercase font-bold tracking-wider">{fareStart && fareEnd ? 'Fare' : 'Max Fare'}</span>
               <span className="font-bold text-gray-800 text-sm mt-0.5">
                 {fareStart && fareEnd && fareInfo ? (
-                  `৳${fareInfo.min}${fareInfo.max !== fareInfo.min ? ` - ${fareInfo.max}` : ''}`
+                  `৳${fareInfo.min}${fareInfo.max !== fareInfo.min ? ` - ${fareInfo.max}` : ''} `
                 ) : (
-                  `~৳${generalFareInfo.max}`
+                  `~৳${generalFareInfo.max} `
                 )}
               </span>
             </div>
@@ -2357,7 +2428,7 @@ const App: React.FC = () => {
                   <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{userLocation ? 'Speed' : 'Stops'}</span>
                   <span className="font-bold text-gray-800 text-sm mt-0.5">
                     {userLocation ? (
-                      `${(speed || 0).toFixed(0)} km/h`
+                      `${(speed || 0).toFixed(0)} km / h`
                     ) : (
                       Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
                     )}
@@ -2403,6 +2474,7 @@ const App: React.FC = () => {
                 highlightEndIdx={fareEndIndex}
                 isReversed={isReversed}
                 userLocation={userLocation}
+                tripDestination={toStation}
               />
             </div>
           </div>
@@ -2428,7 +2500,7 @@ const App: React.FC = () => {
                 >
                   <option value="">Select...</option>
                   {selectedBus.stops.map(id => {
-                    const s = STATIONS[id];
+                    const s = STATIONS[id] || METRO_STATIONS[id] || RAILWAY_STATIONS[id] || AIRPORTS[id];
                     return s ? <option key={id} value={id}>{s.name}</option> : null;
                   })}
                 </select>
@@ -2449,7 +2521,7 @@ const App: React.FC = () => {
                 >
                   <option value="">{fareStart ? 'Select...' : 'Select From first'}</option>
                   {selectedBus.stops.map(id => {
-                    const s = STATIONS[id];
+                    const s = STATIONS[id] || METRO_STATIONS[id] || RAILWAY_STATIONS[id] || AIRPORTS[id];
                     return s ? <option key={id} value={id}>{s.name}</option> : null;
                   })}
                 </select>
@@ -2477,7 +2549,7 @@ const App: React.FC = () => {
               <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-gray-100"></div>
               <div className="space-y-0">
                 {selectedBus.stops.map((stopId, idx) => {
-                  const station = STATIONS[stopId];
+                  const station = STATIONS[stopId] || METRO_STATIONS[stopId] || RAILWAY_STATIONS[stopId] || AIRPORTS[stopId];
                   if (!station) return null;
 
                   // Check if this stop is highlighted (part of the selected route)
@@ -2503,10 +2575,10 @@ const App: React.FC = () => {
                   const isWithinRange = nearestStopDistance < 2000;
 
                   return (
-                    <div key={stopId} className={`px-4 py-3.5 hover:bg-gray-50 flex items-center gap-4 relative z-10 group border-b border-gray-50 last:border-0 transition-colors 
+                    <div key={stopId} className={`px-4 py-3.5 hover: bg-gray - 50 flex items-center gap-4 relative z-10 group border-b border-gray - 50 last: border-0 transition-colors 
                       ${isNearest && isWithinRange ? 'bg-blue-50/50' : ''}
                       ${isHighlighted ? 'bg-green-50 border-l-4 border-l-green-500 -ml-[1px]' : ''}
-                    `}>
+`}>
                       <div className={`w-4 h-4 rounded-full border-2 border-white shadow-sm flex items-center justify-center shrink-0 transition-all
                         ${isNearest && isWithinRange
                           ? 'bg-dhaka-red w-6 h-6 ring-2 ring-red-100 animate-pulse'
@@ -2522,14 +2594,14 @@ const App: React.FC = () => {
                                     ? 'bg-orange-400 w-5 h-5'
                                     : 'bg-gray-300'
                         }
-                      `}>
+`}>
                         {(isFirst || isLast) && !isNearest && !isHighlighted && !isUserStart && !isUserEnd && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                         {isNearest && isWithinRange && <MapPin className="w-3 h-3 text-white" />}
                         {(isHighlighted || isUserStart || isUserEnd) && !isNearest && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between gap-2">
-                          <p className={`text-sm group-hover:text-dhaka-green transition-colors ${isFirst || isLast || isNearest || isHighlighted || isUserStart || isUserEnd ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''}`}>
+                          <p className={`text-sm group - hover: text-dhaka - green transition-colors ${isFirst || isLast || isNearest || isHighlighted || isUserStart || isUserEnd ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''} `}>
                             {station.name}
                             {isNearest && isWithinRange && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">You</span>}
                             {isNearest && !isWithinRange && <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{(nearestStopDistance / 1000).toFixed(1)}km away from {globalNearestStationName || 'location'}</span>}
@@ -2550,8 +2622,49 @@ const App: React.FC = () => {
                         </div>
                       </div>
                     </div>
+
                   );
                 })}
+
+                {/* Show connected route option if available */}
+                {selectedTrip && selectedTrip.steps.length > 1 && (
+                  <div className="bg-blue-50 border-t border-blue-100 p-4">
+                    <p className="text-xs font-bold text-blue-800 uppercase mb-2">Connected Routes</p>
+                    <div className="space-y-2">
+                      {selectedTrip.steps.map((step, sIdx) => {
+                        if (step.type === 'bus' && step.busRoute && step.busRoute.id !== selectedBus.id) {
+                          return (
+                            <button
+                              key={sIdx}
+                              onClick={() => {
+                                // Switch to this bus
+                                setSelectedBus(step.busRoute!);
+                                // Update fare start/end for this leg
+                                const startId = Object.keys(STATIONS).find(key => STATIONS[key].name === step.from);
+                                const endId = Object.keys(STATIONS).find(key => STATIONS[key].name === step.to);
+                                if (startId) setFareStart(startId);
+                                if (endId) setFareEnd(endId);
+                              }}
+                              className="w-full text-left bg-white p-3 rounded-xl border border-blue-200 shadow-sm hover:shadow-md transition-all flex items-center justify-between group"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                  <Bus className="w-4 h-4" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-bold text-gray-900 group-hover:text-blue-700">{step.busRoute.name}</p>
+                                  <p className="text-xs text-gray-500">From {step.from}</p>
+                                </div>
+                              </div>
+                              <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500" />
+                            </button>
+                          )
+                        }
+                        return null;
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -2585,7 +2698,7 @@ const App: React.FC = () => {
                     onClick={() => {
                       setShowOfflineNavModal(false);
                       if (pendingIntercityNav) {
-                        window.location.href = `/intercity?from=${encodeURIComponent(pendingIntercityNav.from)}&to=${encodeURIComponent(pendingIntercityNav.to)}`;
+                        window.location.href = `/ intercity ? from = ${encodeURIComponent(pendingIntercityNav.from)}& to=${encodeURIComponent(pendingIntercityNav.to)} `;
                       }
                     }}
                     className="w-full bg-dhaka-green text-white font-bold py-3 rounded-xl hover:bg-green-700 transition-all flex items-center justify-center gap-2"
@@ -2611,89 +2724,126 @@ const App: React.FC = () => {
 
   const renderHomeContent = () => {
     const renderLocalBusSearch = () => (
-      <div className="bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-[2rem] shadow-xl shadow-emerald-500/30 relative overflow-hidden text-white transition-all duration-300 mb-4">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 -mr-12 -mt-12 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
-        <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-white/5 blur-3xl"></div>
-
-        {/* Text Content */}
-        <div className="px-6 pt-6 pb-4 relative z-10">
-          <div>
-            <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg">{isInDhaka ? 'কোথায় যেতে চান?' : 'কোথায় যেতে চান ঢাকায়?'}</h2>
-            <p className="text-white/90 text-sm font-medium">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
-          </div>
+      <div className="relative mb-4 group isolate z-50">
+        {/* Background Layer - Clipped */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-[2rem] shadow-xl shadow-emerald-500/30 overflow-hidden transition-all duration-300">
+          {/* Decorative Elements */}
+          <div className="absolute top-0 right-0 -mr-12 -mt-12 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
+          <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-white/5 blur-3xl"></div>
         </div>
 
-        {/* Mode Toggle Removed as per request */}
-        {/* <div className="flex px-6 pb-4 gap-4">...</div> */}
+        {/* Content Layer - Visible Overflow for Dropdowns */}
+        <div className="relative z-10 text-white rounded-[2rem]">
 
-        <div className="px-6 pb-6">
-          {searchMode === 'TEXT' ? (
-            <div className="relative group flex items-center">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
-              <input
-                type="text"
-                placeholder="Search bus or place..."
-                className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-              />
-              {inputValue || searchQuery ? (
-                <button
-                  onClick={() => {
-                    setInputValue('');
-                    setSearchQuery('');
-                    setSuggestedRoutes([]);
-                  }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
-                  title="Clear Search"
-                  aria-label="Clear search"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              ) : (
-                <button
-                  onClick={handleSearchCommit}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
-                  title="Click to Search"
-                  aria-label="Search"
-                >
-                  <Search className="w-4 h-4" />
-                </button>
-              )}
+          {/* Text Content */}
+          <div className="px-6 pt-6 pb-4 relative z-10">
+            <div>
+              <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg">{isInDhaka ? 'কোথায় যেতে চান?' : 'কোথায় যেতে চান ঢাকায়?'}</h2>
+              <p className="text-white/90 text-sm font-medium">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
             </div>
-          ) : (
-            <div className="flex gap-2">
-              <div className="flex-1 relative">
-                <select
-                  value={fromStation}
-                  onChange={(e) => setFromStation(e.target.value)}
-                  className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer"
-                >
-                  <option value="">From...</option>
-                  {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                </select>
-                <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          </div>
+
+          {/* Mode Toggle */}
+          <div className="flex px-6 pb-4 gap-4">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setSearchMode('TEXT');
+                setSuggestedRoutes([]);
+              }}
+              className={`flex-1 max-w-[50%] py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer relative z-50 ${searchMode === 'TEXT' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
+            >
+              <Search className="w-4 h-4" /> Bus or Place
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setSearchMode('ROUTE');
+                setSuggestedRoutes([]);
+              }}
+              className={`flex-1 max-w-[50%] py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer relative z-50 ${searchMode === 'ROUTE' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
+            >
+              <MapPin className="w-4 h-4" /> Route
+            </button>
+          </div>
+
+          <div className="px-6 pb-6">
+            {searchMode === 'TEXT' ? (
+              <div className="relative group flex items-center">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
+                <input
+                  type="text"
+                  placeholder="Search bus or place..."
+                  className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                {inputValue || searchQuery ? (
+                  <button
+                    onClick={() => {
+                      setInputValue('');
+                      setSearchQuery('');
+                      setSuggestedRoutes([]);
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
+                    title="Clear Search"
+                    aria-label="Clear search"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSearchCommit}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
+                    title="Click to Search"
+                    aria-label="Search"
+                  >
+                    <Search className="w-4 h-4" />
+                  </button>
+                )}
               </div>
-              <div className="flex items-center justify-center">
-                <ArrowRightLeft className="w-5 h-5 text-white/80" />
+            ) : (
+              <div className="flex gap-2 items-start">
+                <div className="flex-1 relative">
+                  <SearchableSelect
+                    options={sortedStations}
+                    value={fromStation}
+                    onChange={setFromStation}
+                    placeholder="From..."
+                  />
+                </div>
+                <div className="flex items-center justify-center pt-2">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // Swap values
+                      const temp = fromStation;
+                      setFromStation(toStation);
+                      setToStation(temp);
+                    }}
+                    className="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors active:scale-95 active:rotate-180"
+                    title="Swap locations"
+                  >
+                    <ArrowRightLeft className="w-5 h-5 text-white/90" />
+                  </button>
+                </div>
+                <div className="flex-1 relative">
+                  <SearchableSelect
+                    options={sortedStations}
+                    value={toStation}
+                    onChange={setToStation}
+                    placeholder={fromStation ? "To..." : "Select From first"}
+                    disabled={!fromStation}
+                  />
+                </div>
               </div>
-              <div className="flex-1 relative">
-                <select
-                  value={toStation}
-                  onChange={(e) => setToStation(e.target.value)}
-                  className="w-full pl-3 pr-8 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium appearance-none focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
-                  disabled={!fromStation}
-                >
-                  <option value="">{fromStation ? 'To...' : 'Select From first'}</option>
-                  {sortedStations.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                </select>
-                <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     );
@@ -2759,7 +2909,7 @@ const App: React.FC = () => {
 
       setIntercityLoading(true);
       setTimeout(() => {
-        window.location.href = `/intercity?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+        window.location.href = `/ intercity ? from = ${encodeURIComponent(from)}& to=${encodeURIComponent(to)} `;
       }, 500);
     };
 
@@ -2804,13 +2954,13 @@ const App: React.FC = () => {
             <div className="flex p-1 bg-gray-100 rounded-xl">
               <button
                 onClick={() => handleFilterChange('ALL')}
-                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-700 hover:text-gray-900'}`}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-700 hover:text-gray-900'} `}
               >
                 All Dhaka Local Buses
               </button>
               <button
                 onClick={() => handleFilterChange('FAVORITES')}
-                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-700 hover:text-gray-900'}`}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white shadow-sm text-red-500' : 'text-gray-700 hover:text-gray-900'} `}
               >
                 <Heart className="w-3 h-3 fill-current" /> Favorites
               </button>
@@ -2827,7 +2977,7 @@ const App: React.FC = () => {
         <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-4 space-y-3">
 
           {/* Intelligent Route Suggestions */}
-          {searchMode === 'TEXT' && suggestedRoutes.length > 0 && (
+          {(suggestedRoutes.length > 0) && (
             <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
               <div className="flex items-center gap-2 mb-3 px-1">
                 <Sparkles className="w-4 h-4 text-dhaka-green fill-current" />
@@ -2836,6 +2986,29 @@ const App: React.FC = () => {
               <RouteSuggestions
                 routes={suggestedRoutes}
                 onSelectRoute={(route) => {
+                  // Handle Metro Routes
+                  const metroStep = route.steps.find(step => step.type === 'metro');
+                  if (metroStep && (route.id.includes('metro') || !route.steps.some(s => s.type === 'bus'))) {
+                    const metroRoute = METRO_LINES['mrt6'];
+                    const syntheticBus: BusRoute = {
+                      id: metroRoute.id,
+                      name: metroRoute.name,
+                      bnName: metroRoute.bnName,
+                      routeString: 'Uttara North ⇄ Motijheel',
+                      stops: metroRoute.stations,
+                      type: 'Metro Rail',
+                      hours: '7:00 AM - 10:00 PM'
+                    };
+
+                    handleBusSelect(syntheticBus, false, route);
+
+                    const startId = Object.values(METRO_STATIONS).find(s => s.name === metroStep.from)?.id;
+                    const endId = Object.values(METRO_STATIONS).find(s => s.name === metroStep.to)?.id;
+                    if (startId) setFareStart(startId);
+                    if (endId) setFareEnd(endId);
+                    return;
+                  }
+
                   // If route has a bus segment, select that bus
                   const busStep = route.steps.find(step => step.type === 'bus' && step.busRoute);
                   if (busStep && busStep.busRoute) {
@@ -2845,6 +3018,20 @@ const App: React.FC = () => {
                     const bus = busStep.busRoute;
                     const originStation = busStep.from;
                     const destinationStation = busStep.to;
+
+                    // Pass the full route object to handleBusSelect
+                    handleBusSelect(bus, false, route);
+
+                    // Set fare calculator
+                    if (bus) {
+                      const sIds = bus.stops;
+                      // Find station IDs matching the names
+                      const startId = Object.keys(STATIONS).find(key => STATIONS[key].name === originStation);
+                      const endId = Object.keys(STATIONS).find(key => STATIONS[key].name === destinationStation);
+
+                      if (startId) setFareStart(startId);
+                      if (endId) setFareEnd(endId);
+                    }
 
                     // Find the closest matching station IDs in the bus route
                     const findClosestStationId = (stationName: string): string => {
@@ -2907,16 +3094,17 @@ const App: React.FC = () => {
                     handleBusSelect(bus);
                   }
                 }}
-                aria-label={`Select ${bus.name} bus route from ${bus.routeString}`}
-                className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden cursor-pointer ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'}`}
+                aria-label={`Select ${bus.name} bus route from ${bus.routeString} `}
+                className={`w-full text-left bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden cursor-pointer ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100'} `}
               >
                 {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-start gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shadow-sm shrink-0
                       ${bus.type === 'AC' ? 'bg-blue-100 text-blue-700' :
-                        bus.type === 'Sitting' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}
-                  `}>
+                        bus.type === 'Sitting' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
+                      }
+`}>
                       {bus.name.charAt(0)}
                     </div>
                     <div>
@@ -2930,14 +3118,14 @@ const App: React.FC = () => {
                       aria-label={isFav ? `Remove ${bus.name} from favorites` : `Add ${bus.name} to favorites`}
                       className="p-1.5 -mr-1.5 hover:bg-gray-100 rounded-full transition-colors z-20"
                     >
-                      <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
+                      <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'} `} />
                     </button>
                     <div className="flex flex-col items-end">
                       <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
                       ${bus.type === 'Sitting' ? 'bg-purple-50 text-purple-600' :
                           bus.type === 'AC' ? 'bg-blue-50 text-blue-700' :
                             'bg-orange-50 text-orange-700'
-                        }`}>
+                        } `}>
                         {bus.type}
                       </span>
                     </div>
@@ -2981,7 +3169,7 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-slate-50 font-sans text-gray-800 overflow-hidden">
       {/* Mobile Header */}
-      <header className={`fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden transition-transform duration-300 ${(view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) ? '-translate-y-full' : 'translate-y-0'}`}>
+      <header className={`fixed top-0 left-0 right-0 bg-white / 90 backdrop-blur - md border-b border-gray - 200 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden transition-transform duration-300 ${(view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) ? '-translate-y-full' : 'translate-y-0'} `}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2 outline-none cursor-pointer" onClick={() => setView(AppView.HOME)}>
             <AnimatedLogo size="small" />
@@ -3018,7 +3206,7 @@ const App: React.FC = () => {
         <div className={`
             ${'w-full md:w-1/3 md:min-w-[320px] md:max-w-md md:flex md:flex-col border-r border-gray-200 bg-white z-0 h-full'}
             ${view !== AppView.HOME && 'hidden md:flex'}
-          `}>
+`}>
           <div className="h-full pt-16 md:pt-0">
             {renderHomeContent()}
           </div>
@@ -3028,7 +3216,7 @@ const App: React.FC = () => {
         <div className={`
             ${'w-full md:flex-1 bg-slate-50 md:bg-white relative h-full overflow-hidden'}
             ${view === AppView.HOME && 'hidden md:block'}
-          `}>
+`}>
           {view === AppView.HOME && <div className="hidden md:block h-full"><DhakaAlive /></div>}
           {view === AppView.BUS_DETAILS && renderBusDetails()}
           {view === AppView.LIVE_NAV && renderLiveNav()}
@@ -3140,7 +3328,7 @@ const App: React.FC = () => {
                         <button
                           onClick={handleInstallClick}
                           disabled={isInstalling}
-                          className={`w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-4 ${isInstalling ? 'opacity-75 cursor-not-allowed' : ''}`}
+                          className={`w-full md: w-auto px-12 py-4 bg-gradient - to-r from-emerald - 500 to-teal - 600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald - 500 / 40 hover: shadow-3xl hover: scale-105 transition-all active: scale-95 flex items-center justify-center gap-3 mx-auto mb-4 ${isInstalling ? 'opacity-75 cursor-not-allowed' : ''} `}
                         >
                           {isInstalling ? (
                             <>
@@ -3179,16 +3367,16 @@ const App: React.FC = () => {
                 setView(AppView.HOME);
                 setPrimarySearch('LOCAL');
               }}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+              className={`flex flex-col items-center justify-center gap-1 border-t - 2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'} `}
             >
-              <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'fill-current' : ''}`} />
+              <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'fill-current' : ''} `} />
               <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
             </button>
             <button
               onClick={() => setView(AppView.AI_ASSISTANT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+              className={`flex flex-col items-center justify-center gap-1 border-t - 2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'} `}
             >
-              <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''}`} />
+              <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''} `} />
               <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">AI Help</span>
             </button>
             <button
@@ -3202,16 +3390,16 @@ const App: React.FC = () => {
                   setPrimarySearch('INTERCITY');
                 }
               }}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+              className={`flex flex-col items-center justify-center gap-1 border-t - 2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'} `}
             >
               <Train className="w-6 h-6" />
               <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
             </button>
             <button
               onClick={() => setView(AppView.ABOUT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+              className={`flex flex-col items-center justify-center gap-1 border-t - 2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'} `}
             >
-              <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'fill-current' : ''}`} />
+              <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'fill-current' : ''} `} />
               <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">About</span>
             </button>
           </div>
@@ -3236,25 +3424,25 @@ const App: React.FC = () => {
             <div className="space-y-2 flex-1 overflow-y-auto hidden-scrollbar">
               <button
                 onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.AI_ASSISTANT ? 'bg-green-50 border border-green-200' : ''}`}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover: bg-gray - 50 text-gray - 700 font-medium transition-colors ${view === AppView.AI_ASSISTANT ? 'bg-green-50 border border-green-200' : ''} `}
               >
                 <Bot className="w-5 h-5 text-dhaka-green" /> AI Assistant
               </button>
               <button
                 onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.ABOUT ? 'bg-purple-50 border border-purple-200' : ''}`}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover: bg-gray - 50 text-gray - 700 font-medium transition-colors ${view === AppView.ABOUT ? 'bg-purple-50 border border-purple-200' : ''} `}
               >
                 <Info className="w-5 h-5 text-purple-500" /> About
               </button>
               <button
                 onClick={() => { setView(AppView.WHY_USE); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.WHY_USE ? 'bg-pink-50 border border-pink-200' : ''}`}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover: bg-gray - 50 text-gray - 700 font-medium transition-colors ${view === AppView.WHY_USE ? 'bg-pink-50 border border-pink-200' : ''} `}
               >
                 <Sparkles className="w-5 h-5 text-pink-500" /> Why Use কই যাবো
               </button>
               <button
                 onClick={() => { setView(AppView.FAQ); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.FAQ ? 'bg-cyan-50 border border-cyan-200' : ''}`}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover: bg-gray - 50 text-gray - 700 font-medium transition-colors ${view === AppView.FAQ ? 'bg-cyan-50 border border-cyan-200' : ''} `}
               >
                 <FileText className="w-5 h-5 text-cyan-500" /> Q&A
               </button>

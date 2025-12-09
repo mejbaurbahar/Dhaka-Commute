@@ -1,5 +1,5 @@
 import { UserLocation, Station } from '../types';
-import { STATIONS } from '../constants';
+import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
 
 export const getCurrentLocation = (): Promise<UserLocation> => {
   return new Promise((resolve, reject) => {
@@ -89,7 +89,7 @@ export const findNearestStation = (
   let minDistance = Infinity;
 
   routeStationIds.forEach((sid, index) => {
-    const station = STATIONS[sid];
+    const station = STATIONS[sid] || METRO_STATIONS[sid] || RAILWAY_STATIONS[sid] || AIRPORTS[sid];
     if (station) {
       const dist = getDistance(userLoc, { lat: station.lat, lng: station.lng });
       // Consider "at the station" if within reasonable range, but for tracking just find absolute nearest

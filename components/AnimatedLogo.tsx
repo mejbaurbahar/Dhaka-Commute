@@ -17,7 +17,6 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
 
     const containerSizeClass = size === 'large' ? 'w-10 h-10 rounded-xl' : (size === 'small' ? 'w-8 h-8 rounded-lg' : 'w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl');
     const iconSize = size === 'large' ? 24 : 20;
-    const textSizeClass = size === 'large' ? 'text-2xl' : (size === 'small' ? 'text-xl' : 'text-xl md:text-2xl');
 
     return (
         <div className="flex items-center gap-0 outline-none cursor-pointer select-none group">
