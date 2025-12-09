@@ -7,10 +7,22 @@
   
   <url>
     <loc>https://koyjabo.com/</loc>
-    <lastmod>2025-11-25</lastmod>
+    <lastmod>2025-12-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <mobile:mobile/>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/intercity</loc>
+    <lastmod>2025-12-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/privacy</loc>
+    <lastmod>2025-12-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
   </url>
 
 </urlset>
