@@ -30,13 +30,13 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
     const [showClearConfirm, setShowClearConfirm] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const [history, setHistory] = useState(getUserHistory());
-    const [mostUsedBuses, setMostUsedBuses] = useState(getMostUsedBuses(5));
-    const [mostUsedRoutes, setMostUsedRoutes] = useState(getMostUsedRoutes(5));
+    const [mostUsedBuses, setMostUsedBuses] = useState(getMostUsedBuses(50));
+    const [mostUsedRoutes, setMostUsedRoutes] = useState(getMostUsedRoutes(50));
     const [todayBuses, setTodayBuses] = useState(getTodayBusSearches());
     const [todayRoutes, setTodayRoutes] = useState(getTodayRouteSearches());
-    const [recentBusSearches, setRecentBusSearches] = useState(getRecentBusSearches(10));
-    const [recentRouteSearches, setRecentRouteSearches] = useState(getRecentRouteSearches(10));
-    const [recentIntercitySearches, setRecentIntercitySearches] = useState(getRecentIntercitySearches(10));
+    const [recentBusSearches, setRecentBusSearches] = useState(getRecentBusSearches(50));
+    const [recentRouteSearches, setRecentRouteSearches] = useState(getRecentRouteSearches(50));
+    const [recentIntercitySearches, setRecentIntercitySearches] = useState(getRecentIntercitySearches(50));
 
     // Subscribe to real-time updates
     useEffect(() => {
@@ -69,13 +69,13 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
 
     const refreshHistoryData = () => {
         setHistory(getUserHistory());
-        setMostUsedBuses(getMostUsedBuses(5));
-        setMostUsedRoutes(getMostUsedRoutes(5));
+        setMostUsedBuses(getMostUsedBuses(50));
+        setMostUsedRoutes(getMostUsedRoutes(50));
         setTodayBuses(getTodayBusSearches());
         setTodayRoutes(getTodayRouteSearches());
-        setRecentBusSearches(getRecentBusSearches(10));
-        setRecentRouteSearches(getRecentRouteSearches(10));
-        setRecentIntercitySearches(getRecentIntercitySearches(10));
+        setRecentBusSearches(getRecentBusSearches(50));
+        setRecentRouteSearches(getRecentRouteSearches(50));
+        setRecentIntercitySearches(getRecentIntercitySearches(50));
         setRefreshKey(prev => prev + 1);
     };
 
@@ -224,7 +224,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     <TrendingUp className="w-5 h-5 text-dhaka-green" />
                                     Most Used Buses
                                 </h2>
-                                <div className="space-y-3">
+                                <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {(mostUsedBuses || []).map((item, idx) => {
                                         if (!item) return null;
                                         const { busId, count } = item;
@@ -234,7 +234,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                             <div
                                                 key={`bus-${idx}-${busId}`}
                                                 onClick={() => onBusSelect(bus, true)}
-                                                className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-colors group"
+                                                className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-xl cursor-pointer transition-colors group flex-shrink-0"
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 bg-dhaka-green rounded-lg flex items-center justify-center">
@@ -267,14 +267,14 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     <TrendingUp className="w-5 h-5 text-dhaka-red" />
                                     Most Used Routes
                                 </h2>
-                                <div className="space-y-3">
+                                <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {(mostUsedRoutes || []).map((item, index) => {
                                         if (!item) return null;
                                         const { from, to, count } = item;
                                         return (
                                             <div
                                                 key={index}
-                                                className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
+                                                className="flex items-center justify-between p-4 bg-gray-50 rounded-xl flex-shrink-0"
                                             >
                                                 <div className="flex items-center gap-3 flex-1">
                                                     <div className="w-10 h-10 bg-dhaka-red rounded-lg flex items-center justify-center">
@@ -305,7 +305,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     <Clock className="w-5 h-5 text-gray-600" />
                                     Recent Bus Searches
                                 </h2>
-                                <div className="space-y-2">
+                                <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {recentBusSearches.map((record, index) => {
                                         const bus = getBusById(record.busId);
                                         if (!bus) return null;
@@ -313,7 +313,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                             <div
                                                 key={index}
                                                 onClick={() => onBusSelect(bus, true)}
-                                                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors group"
+                                                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors group flex-shrink-0"
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <Bus className="w-4 h-4 text-gray-400" />
@@ -338,11 +338,11 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     <Clock className="w-5 h-5 text-gray-600" />
                                     Recent Route Searches
                                 </h2>
-                                <div className="space-y-2">
+                                <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {recentRouteSearches.map((record, index) => (
                                         <div
                                             key={index}
-                                            className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                                            className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors flex-shrink-0"
                                         >
                                             <div className="flex items-center gap-2 flex-1 min-w-0">
                                                 <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -366,14 +366,14 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     <TrendingUp className="w-5 h-5 text-purple-600" />
                                     Recent Intercity Trips
                                 </h2>
-                                <div className="space-y-2">
+                                <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {recentIntercitySearches.map((record, index) => {
                                         // Safely handle potentially incomplete records
                                         if (!record || !record.from || !record.to) return null;
                                         return (
                                             <div
                                                 key={index}
-                                                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                                                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors flex-shrink-0"
                                             >
                                                 <div className="flex items-center gap-2 flex-1 min-w-0">
                                                     <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
