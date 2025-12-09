@@ -13,6 +13,7 @@ import {
     clearUserHistory,
     subscribeToGlobalStats,
     initStorageListener,
+    fetchGlobalStats,
     GlobalStats
 } from '../services/analyticsService';
 import { BUS_DATA, STATIONS } from '../constants';
@@ -39,6 +40,9 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
 
     // Subscribe to real-time updates
     useEffect(() => {
+        // Initial fetch from API
+        fetchGlobalStats();
+
         // Subscribe to custom events from same tab
         const unsubscribe = subscribeToGlobalStats((stats) => {
             setGlobalStats(stats);
@@ -50,11 +54,11 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
             refreshHistoryData();
         });
 
-        // Refresh stats every 2 seconds for better real-time updates
+        // Refresh stats every 5 seconds (polling for real-time updates)
         const interval = setInterval(() => {
-            setGlobalStats(getGlobalStats());
+            fetchGlobalStats(); // Poll API
             refreshHistoryData();
-        }, 2000);
+        }, 5000);
 
         return () => {
             unsubscribe();
