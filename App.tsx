@@ -2698,7 +2698,7 @@ const App: React.FC = () => {
                     onClick={() => {
                       setShowOfflineNavModal(false);
                       if (pendingIntercityNav) {
-                        window.location.href = `/ intercity ? from = ${encodeURIComponent(pendingIntercityNav.from)}& to=${encodeURIComponent(pendingIntercityNav.to)} `;
+                        window.location.href = `/intercity?from=${encodeURIComponent(pendingIntercityNav.from)}&to=${encodeURIComponent(pendingIntercityNav.to)}`;
                       }
                     }}
                     className="w-full bg-dhaka-green text-white font-bold py-3 rounded-xl hover:bg-green-700 transition-all flex items-center justify-center gap-2"
@@ -2909,7 +2909,7 @@ const App: React.FC = () => {
 
       setIntercityLoading(true);
       setTimeout(() => {
-        window.location.href = `/ intercity ? from = ${encodeURIComponent(from)}& to=${encodeURIComponent(to)} `;
+        window.location.href = `/intercity?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
       }, 500);
     };
 
