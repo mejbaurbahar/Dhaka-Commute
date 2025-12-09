@@ -58,6 +58,12 @@ export const STATIONS: Record<string, Station> = {
   'ring_road': { id: 'ring_road', name: 'Ring Road', bnName: 'রিং রোড', lat: 23.7700, lng: 90.3560 },
   'adabor': { id: 'adabor', name: 'Adabor', bnName: 'আদাবর', lat: 23.7700, lng: 90.3550 },
   'amin_bazar': { id: 'amin_bazar', name: 'Amin Bazar', bnName: 'আমিন বাজার', lat: 23.7900, lng: 90.3400 },
+  'boliarpur': { id: 'boliarpur', name: 'Boliarpur', bnName: 'বলিয়ারপুর', lat: 23.7953, lng: 90.2903 },
+  'modhumoti': { id: 'modhumoti', name: 'Modhumoti', bnName: 'মধুমত', lat: 23.7920, lng: 90.3100 },
+  'parbat': { id: 'parbat', name: 'Parbat', bnName: 'পর্বত', lat: 23.7850, lng: 90.3420 },
+  'mazar_road': { id: 'mazar_road', name: 'Mazar Road', bnName: 'মাজার রোড', lat: 23.7922, lng: 90.3430 },
+  'amtola': { id: 'amtola', name: 'Amtola', bnName: 'আমতলা', lat: 23.7850, lng: 90.4020 },
+  'post_office_gulshan': { id: 'post_office_gulshan', name: 'Post Office (Gulshan)', bnName: 'পোস্ট অফিস (গুলশান)', lat: 23.7998, lng: 90.3940 },
   'agargaon': { id: 'agargaon', name: 'Agargaon', bnName: 'আগারগাঁও', lat: 23.7780, lng: 90.3800 },
   'fulbaria': { id: 'fulbaria', name: 'Fulbaria', bnName: 'ফুলবাড়িয়া', lat: 23.7220, lng: 90.4080 },
   'paltan': { id: 'paltan', name: 'Paltan', bnName: 'পল্টন', lat: 23.7300, lng: 90.4120 },
@@ -249,7 +255,7 @@ export const STATIONS: Record<string, Station> = {
   'khamar_bari': { id: 'khamar_bari', name: 'Khamar Bari', lat: 23.7600, lng: 90.3900 },
   'khilgaon_flyover': { id: 'khilgaon_flyover', name: 'Khilgaon Flyover', lat: 23.7500, lng: 90.4200 },
   'sikder_medical': { id: 'sikder_medical', name: 'Sikder Medical', lat: 23.7400, lng: 90.3600 },
-  'hazaribag': { id: 'hazaribag', name: 'Hazaribag', lat: 23.7300, lng: 90.3700 },
+  'hazaribag': { id: 'hazaribag', name: 'Hazaribag', bnName: 'হাজারীবাগ', lat: 23.7300, lng: 90.3700 },
   'showari_ghat': { id: 'showari_ghat', name: 'Showari Ghat', lat: 23.7100, lng: 90.3900 },
 
 };
