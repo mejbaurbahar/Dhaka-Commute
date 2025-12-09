@@ -1017,7 +1017,7 @@ export const BUS_DATA: BusRoute[] = [
     name: '9 No.',
     bnName: '৯নং',
     routeString: 'College Gate ⇄ Mirpur 12',
-    stops: ['college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'bangla_college', 'tolarbag', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'proshika_moor', 'pallabi', 'mirpur12'],
+    stops: ['college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'bangla_college', 'tolarbag', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'proshika_moor', 'pallabi', 'buet_market', 'mirpur12'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1035,7 +1035,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Arnob',
     bnName: 'অরনব',
     routeString: 'Hemayetpur ⇄ Demra',
-    stops: ['hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda_link_road', 'madhya_badda', 'merul', 'rampura', 'banasree', 'demra'],
+    stops: ['hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda_link_road', 'madhya_badda', 'merul', 'rampura', 'banasree', 'demra'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1044,7 +1044,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Ashulia Classic',
     bnName: 'আশুলিয়া ক্লাসিক',
     routeString: 'Nobinagar ⇄ Satrasta',
-    stops: ['nobinagar', 'baipayl', 'jamgora', 'fantasy_kingdom', 'zirabo', 'ashulia', 'kamarpara', 'abdullahpur', 'uttara', 'azampur', 'rajlakshmi', 'jashimuddin', 'airport', 'khilkhet', 'kuril', 'shewra', 'mes', 'kakali', 'banani', 'chairman_bari', 'mohakhali', 'nabisco', 'satrasta'],
+    stops: ['nobinagar', 'baipayl', 'jamgora', 'fantasy_kingdom', 'zirabo', 'ashulia', 'kamarpara', 'abdullahpur', 'uttara', 'azampur', 'rajlakshmi', 'jashimuddin', 'airport', 'khilkhet', 'kuril', 'kuril_chourasta', 'shewra', 'mes', 'kakali', 'banani', 'chairman_bari', 'amtola', 'mohakhali', 'nabisco', 'satrasta'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1062,7 +1062,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Bashumoti',
     bnName: 'বসুমতি',
     routeString: 'Gazipur ⇄ Gabtoli',
-    stops: ['gazipur', 'tongi', 'airport', 'khilkhet', 'kalshi', 'pallabi', 'mirpur11', 'mirpur10', 'mirpur1', 'gabtoli'],
+    stops: ['gazipur', 'board_bazar', 'mill_gate', 'station_road', 'tongi', 'tongi_college_gate', 'abdullahpur', 'airport', 'khilkhet', 'kuril', 'kuril_chourasta', 'kalshi', 'pallabi', 'mirpur11', 'mirpur10', 'mirpur2', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'gabtoli'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1071,7 +1071,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Basumati Transport',
     bnName: 'বাসুমতি ট্রান্সপোর্ট',
     routeString: 'Gabtoli ⇄ Gazipur',
-    stops: ['gabtoli', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
+    stops: ['gabtoli', 'mazar_road', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'kuril_chourasta', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'tongi', 'tongi_college_gate', 'station_road', 'mill_gate', 'board_bazar', 'gazipur'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1080,7 +1080,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Best Satabdi AC',
     bnName: 'বেষ্ট শতাব্দী এসি',
     routeString: 'Azimpur ⇄ Diabari',
-    stops: ['azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'khamar_bari', 'farmgate', 'jahangir_gate', 'mohakhali', 'chairman_bari', 'sainik_club', 'banani', 'kakali', 'staff_road', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'diabari'],
+    stops: ['azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'khamar_bari', 'farmgate', 'jahangir_gate', 'mohakhali', 'amtola', 'chairman_bari', 'sainik_club', 'banani', 'kakali', 'staff_road', 'post_office_gulshan', 'mes', 'shewra', 'kuril', 'kuril_chourasta', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'diabari'],
     type: 'AC',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1089,7 +1089,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Best Transport',
     bnName: 'বেষ্ট ট্রান্সপোর্ট',
     routeString: 'Mirpur 10 ⇄ Jatrabari',
-    stops: ['mirpur10', 'kazipara', 'shewrapara', 'taltola', 'agargaon', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel', 'ittefaq_moor', 'sayedabad', 'jatrabari'],
+    stops: ['mirpur10', 'kazipara', 'shewrapara', 'taltola', 'agargaon', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel', 'dainik_bangla_moor', 'ittefaq_moor', 'sayedabad', 'janapath_moor', 'jatrabari'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
