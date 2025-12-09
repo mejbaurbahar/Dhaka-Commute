@@ -501,25 +501,28 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                     </div>
                                 </div>
                                 {/* Live Verified Counter */}
-                                <div className="bg-white p-6 rounded-xl md:col-span-2 border border-gray-100 flex flex-col items-center justify-center gap-3 mt-4">
-                                    <div className="flex items-center gap-2 text-gray-500 text-xs font-bold uppercase tracking-wider">
-                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                        Live Verified Counter
+                                {/* Live Verified Counter Removed as per user request to use integrated UI cards instead */}
+                                {false && (
+                                    <div className="bg-white p-6 rounded-xl md:col-span-2 border border-gray-100 flex flex-col items-center justify-center gap-3 mt-4">
+                                        <div className="flex items-center gap-2 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                            Live Verified Counter
+                                        </div>
+                                        <div className="bg-gray-50 px-6 py-4 rounded-lg border border-gray-200">
+                                            <iframe
+                                                src="/visitor-counter.html"
+                                                width="150"
+                                                height="40"
+                                                className="overflow-hidden border-0"
+                                                title="Visitor Counter"
+                                                scrolling="no"
+                                            />
+                                        </div>
+                                        <p className="text-[10px] text-gray-400 text-center max-w-xs">
+                                            Verified by FreeVisitorCounters
+                                        </p>
                                     </div>
-                                    <div className="bg-gray-50 px-6 py-4 rounded-lg border border-gray-200">
-                                        <iframe
-                                            src="/visitor-counter.html"
-                                            width="150"
-                                            height="40"
-                                            className="overflow-hidden border-0"
-                                            title="Visitor Counter"
-                                            scrolling="no"
-                                        />
-                                    </div>
-                                    <p className="text-[10px] text-gray-400 text-center max-w-xs">
-                                        Verified by FreeVisitorCounters
-                                    </p>
-                                </div>
+                                )}
                             </div>
                         </div>
 

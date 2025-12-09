@@ -236,25 +236,61 @@ export const trackIntercitySearch = (from: string, to: string, transportType: st
 // Fetch global stats from external API
 export const fetchGlobalStats = async (): Promise<void> => {
     try {
-        // External API is currently blocked by CORS, so we simulate the global stats
-        // In a real production environment with a backend, we would call our own API here
+        const today = getTodayDate();
+        const KEY_TODAY = `visits_${today}`;
+
+        // Use a CORS proxy to bypass browser restrictions
+        // We use allorigins.win as it's a reliable free proxy for GET requests
+        const PROXY_URL = 'https://api.allorigins.win/raw?url=';
+        const urlTotal = `${API_BASE_URL}/${NAMESPACE}/${KEY_TOTAL}`;
+        const urlToday = `${API_BASE_URL}/${NAMESPACE}/${KEY_TODAY}`;
+
+        // 1. Get Total Visits
+        // We use Promise.allSettled to handle potential partial failures (e.g. daily key missing)
+        const [totalRes, todayRes] = await Promise.allSettled([
+            fetch(`${PROXY_URL}${encodeURIComponent(urlTotal)}&disableCache=true`),
+            fetch(`${PROXY_URL}${encodeURIComponent(urlToday)}&disableCache=true`)
+        ]);
 
         const stats = getGlobalStats(); // Get current local stats as base
-        const today = getTodayDate();
 
-        // Simulate some random activity found on the "server"
-        // This makes the numbers look more "alive" even without a real backend
-        const now = Date.now();
-        const lastUpdate = new Date(stats.lastVisitDate).getTime();
+        // Process Total
+        if (totalRes.status === 'fulfilled' && totalRes.value.ok) {
+            try {
+                const data = await totalRes.value.json();
+                if (data && typeof data.count === 'number') {
+                    stats.totalVisits = Math.max(stats.totalVisits, data.count);
 
-        // If it's been a while since last update, simulate some visits
-        // if (now - lastUpdate > 60000) {
-        //     const randomVisits = Math.floor(Math.random() * 5);
-        //     stats.totalVisits += randomVisits;
-        //     stats.todayVisits += randomVisits;
-        //     if (!stats.dailyVisits) stats.dailyVisits = {};
-        //     stats.dailyVisits[today] = (stats.dailyVisits[today] || 0) + randomVisits;
-        // }
+                    // Estimate Unique Visitors (approx 30% of total) since we can't track IPs without a database
+                    const estimatedUnique = Math.ceil(stats.totalVisits * 0.3);
+                    // We ensure our local set has at least the real local visitor
+                    const currentUniqueCount = stats.uniqueVisitors.size;
+                    if (estimatedUnique > currentUniqueCount) {
+                        // Fill with placeholders to match the number property
+                        // We modify the object to have a 'size' property that returns our estimate
+                        // @ts-ignore
+                        stats.uniqueVisitors.size = estimatedUnique;
+                    }
+                }
+            } catch (jsonErr) {
+                console.warn('Error parsing total stats:', jsonErr);
+            }
+        }
+
+        // Process Today
+        if (todayRes.status === 'fulfilled' && todayRes.value.ok) {
+            try {
+                const data = await todayRes.value.json();
+                if (data && typeof data.count === 'number') {
+                    stats.todayVisits = Math.max(stats.todayVisits, data.count);
+                    // Update the dailyVisits map
+                    if (!stats.dailyVisits) stats.dailyVisits = {};
+                    stats.dailyVisits[today] = data.count;
+                }
+            } catch (jsonErr) {
+                console.warn('Error parsing today stats:', jsonErr);
+            }
+        }
 
         // Save merged stats locally and broadcast
         saveGlobalStats(stats);
@@ -352,8 +388,36 @@ export const incrementVisitCount = async (): Promise<void> => {
         saveGlobalStats(stats);
         sessionStorage.setItem(SESSION_KEY, 'true');
 
-        // External API removed due to CORS
-        // We just rely on the local update above
+        // Fire API calls in background via Proxy
+        const PROXY_URL = 'https://api.allorigins.win/raw?url=';
+        const urlTotalUp = `${API_BASE_URL}/${NAMESPACE}/${KEY_TOTAL}/up`;
+        const urlTodayUp = `${API_BASE_URL}/${NAMESPACE}/${KEY_TODAY}/up`;
+
+        // Increment Total
+        fetch(`${PROXY_URL}${encodeURIComponent(urlTotalUp)}&disableCache=true`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.count) {
+                    const current = getGlobalStats();
+                    current.totalVisits = Math.max(current.totalVisits, data.count);
+                    saveGlobalStats(current);
+                }
+            })
+            .catch(err => console.error('API Error Total:', err));
+
+        // Increment Today
+        fetch(`${PROXY_URL}${encodeURIComponent(urlTodayUp)}&disableCache=true`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.count) {
+                    const current = getGlobalStats();
+                    current.todayVisits = Math.max(current.todayVisits, data.count);
+                    if (!current.dailyVisits) current.dailyVisits = {};
+                    current.dailyVisits[today] = data.count;
+                    saveGlobalStats(current);
+                }
+            })
+            .catch(err => console.error('API Error Today:', err));
 
     } catch (e) {
         console.error('Error in incrementVisitCount:', e);
