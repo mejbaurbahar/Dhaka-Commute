@@ -21,33 +21,55 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'logo.png', 'offline-styles.css', 'manifest.json'],
         // Inline workbox runtime to avoid network dependency
         injectRegister: 'auto',
         manifest: {
+          id: '/',
           name: 'কই যাবো',
           short_name: 'কই যাবো',
-          description: 'Find Dhaka bus routes instantly! Real-time tracking & Metro Rail guide.',
+          description: 'Find Dhaka bus routes instantly! 200+ buses, metro rail guide, AI assistant, and fare calculator.',
           theme_color: '#006a4e',
-          background_color: '#ffffff',
+          background_color: '#006a4e',
           display: 'standalone',
-          orientation: 'portrait',
+          orientation: 'portrait-primary',
+          start_url: '/',
+          scope: '/',
+          lang: 'bn',
+          dir: 'ltr',
           icons: [
             {
-              src: 'icon-192x192.png',
+              src: '/icon-192x192.png',
               sizes: '192x192',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any maskable'
             },
             {
-              src: 'icon-512x512.png',
-              sizes: '512x512',
-              type: 'image/png'
-            },
-            {
-              src: 'icon-512x512.png',
+              src: '/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'
+            },
+            {
+              src: '/apple-touch-icon.png',
+              sizes: '180x180',
+              type: 'image/png'
+            }
+          ],
+          screenshots: [
+            {
+              src: '/mobile-screenshot.png',
+              sizes: '1170x2532',
+              type: 'image/png',
+              form_factor: 'narrow',
+              label: 'Home Screen Mobile'
+            },
+            {
+              src: '/og-image.png',
+              sizes: '1200x630',
+              type: 'image/png',
+              form_factor: 'wide',
+              label: 'Home Screen Desktop'
             }
           ]
         },
@@ -161,6 +183,7 @@ export default defineConfig(({ mode }) => {
           enabled: true,
           type: 'module',
           navigateFallback: 'index.html',
+          suppressWarnings: true,
         }
       })
     ],

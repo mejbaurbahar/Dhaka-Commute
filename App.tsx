@@ -400,8 +400,9 @@ const checkIfInDhaka = (loc: UserLocation | null): boolean => {
 };
 
 const IntercitySearchSection: React.FC<{
-  onSearch: (from: string, to: string) => void
-}> = ({ onSearch }) => {
+  onSearch: (from: string, to: string) => void;
+  isOnline: boolean;
+}> = ({ onSearch, isOnline }) => {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [showFromSuggestions, setShowFromSuggestions] = useState(false);
@@ -478,9 +479,17 @@ const IntercitySearchSection: React.FC<{
             )}
           </div>
 
+          {/* Offline Warning */}
+          {!isOnline && (
+            <div className="mb-2 bg-red-500/80 backdrop-blur-sm border border-red-400/50 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 animate-pulse">
+              <WifiOff className="w-3.5 h-3.5" />
+              You are offline. Cannot use Intercity Search now.
+            </div>
+          )}
+
           <button
             onClick={() => onSearch(from, to)}
-            disabled={!from || !to}
+            disabled={!from || !to || !isOnline}
             className="w-full bg-white/20 backdrop-blur-md hover:bg-white/30 border border-white/40 text-white font-bold py-3 rounded-xl transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Search className="w-5 h-5" />
@@ -723,14 +732,15 @@ const App: React.FC = () => {
       e.preventDefault();
       setDeferredPrompt(e);
 
-      // Show install prompt after 3 seconds (desktop only)
+      // Show install prompt after 3 seconds (mobile only)
       setTimeout(() => {
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isAlreadyInstalled = localStorage.getItem('pwa_installed') === 'true';
 
-        // Show prompt ONLY on desktop (not mobile, not if already installed, not on iOS)
-        if (!isStandalone && !isIOS && !isMobile) {
+        // Show prompt ONLY on mobile/phone (not desktop, not if already installed)
+        if (!isStandalone && !isAlreadyInstalled && (isMobile || isIOS)) {
           setShowInstallPrompt(true);
         }
       }, 3000);
@@ -1377,6 +1387,14 @@ const App: React.FC = () => {
               Daily commuters, students, office goers, travelers, and anyone who wants a smooth, stress-free travel plan across Bangladesh.
             </p>
           </div>
+
+          <button
+            onClick={handleInstallClick}
+            className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-4"
+          >
+            <Download className="w-6 h-6" />
+            {isInstalling ? 'Installing...' : 'Install Now'}
+          </button>
 
           <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-200">
             <h3 className="font-bold text-gray-900 mb-3 text-lg">🎯 Our Goal:</h3>
@@ -2526,7 +2544,7 @@ const App: React.FC = () => {
                               aria-label="Emergency Helplines"
                             >
                               <Phone className="w-3 h-3" />
-                              Help Line
+                              Help
                             </button>
                           )}
                         </div>
@@ -2758,7 +2776,7 @@ const App: React.FC = () => {
               </>
             ) : (
               <>
-                <IntercitySearchSection onSearch={handleIntercitySearch} />
+                <IntercitySearchSection onSearch={handleIntercitySearch} isOnline={isOnline} />
                 {renderLocalBusButton()}
               </>
             )}
@@ -3083,6 +3101,15 @@ const App: React.FC = () => {
                   </div>
                 ) : (
                   <div>
+                    {/* Top Install Button */}
+                    <button
+                      onClick={handleInstallClick}
+                      className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-8"
+                    >
+                      <Download className="w-6 h-6" />
+                      {isInstalling ? 'Installing...' : 'Install Now'}
+                    </button>
+
                     {/* Benefits */}
                     <div className="grid md:grid-cols-2 gap-4 mb-8 text-left">
                       <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-100">

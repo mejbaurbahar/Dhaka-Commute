@@ -164,17 +164,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
       {/* Status Card - Now part of flex layout, not absolute */}
       <div className="bg-white rounded-b-3xl shadow-sm border-b border-gray-100 p-5 z-20 shrink-0">
         {/* Back Button - Mobile Only */}
-        {onBack && (
-          <button
-            onClick={onBack}
-            className="md:hidden mb-3 flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-dhaka-dark transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back
-          </button>
-        )}
+
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
             <MapPin className="w-3 h-3" /> {isAtStation ? "CURRENT STOP" : "NEAREST STOP"}
@@ -302,7 +292,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
                         aria-label="Emergency Helplines"
                       >
                         <Phone className="w-3.5 h-3.5" />
-                        Help Line
+                        Help
                       </button>
                     )}
                   </div>

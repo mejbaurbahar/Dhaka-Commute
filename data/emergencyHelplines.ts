@@ -22,52 +22,172 @@ export interface NationalHelpline {
 // National Emergency Helplines - VERIFIED
 export const NATIONAL_HELPLINES: NationalHelpline[] = [
     {
-        id: 'emergency',
+        id: 'emergency_999',
         name: 'National Emergency',
         bnName: 'জাতীয় জরুরি সেবা',
         number: '999',
-        description: 'Police, Fire, Ambulance',
+        description: 'Police, Fire, Ambulance services',
         icon: 'phone'
     },
     {
-        id: 'police',
-        name: 'Police Control Room',
-        bnName: 'পুলিশ কন্ট্রোল রুম',
-        number: '100',
-        description: 'Dhaka Metro Police',
-        icon: 'shield'
+        id: 'national_service_333',
+        name: 'National Service',
+        bnName: 'জাতীয় তথ্য ও সেবা',
+        number: '333',
+        description: 'Govt. information, services & complaints',
+        icon: 'info'
     },
     {
-        id: 'fire',
+        id: 'fire_102',
         name: 'Fire Service',
         bnName: 'ফায়ার সার্ভিস',
         number: '102',
-        description: 'Fire & Civil Defense',
+        description: 'Fire service central control room',
         icon: 'flame'
     },
     {
-        id: 'ambulance',
-        name: 'Ambulance Service',
-        bnName: 'অ্যাম্বুলেন্স সেবা',
-        number: '199',
-        description: 'Medical Emergency',
-        icon: 'activity'
-    },
-    {
-        id: 'women_helpline',
-        name: 'Women & Children',
-        bnName: 'নারী ও শিশু হেল্পলাইন',
+        id: 'women_children_109',
+        name: 'Women & Children Helpline',
+        bnName: 'নারী ও শিশু নির্যাতন প্রতিরোধ',
         number: '109',
-        description: 'Women & Children Helpline',
+        description: 'Help for women and children facing violence',
         icon: 'users'
     },
     {
-        id: 'rab',
-        name: 'RAB Control Room',
-        bnName: 'র‍্যাব কন্ট্রোল রুম',
-        number: '01777710400',
-        description: 'Rapid Action Battalion',
+        id: 'child_1098',
+        name: 'Child Helpline',
+        bnName: 'চাইল্ড হেল্পলাইন',
+        number: '1098',
+        description: 'Child protection and social services',
+        icon: 'users'
+    },
+    {
+        id: 'disaster_1090',
+        name: 'Disaster Warning',
+        bnName: 'দুর্যোগের আগাম বার্তা',
+        number: '1090',
+        description: 'Weather and disaster early warnings',
+        icon: 'cloud-rain'
+    },
+    {
+        id: 'anticorruption_106',
+        name: 'Anti-Corruption (ACC)',
+        bnName: 'দুদক অভিযোগ কেন্দ্র',
+        number: '106',
+        description: 'Report corruption and irregularities',
         icon: 'shield'
+    },
+    {
+        id: 'land_16122',
+        name: 'Land Service',
+        bnName: 'ভূমি সেবা',
+        number: '16122',
+        description: 'Land related services and complaints',
+        icon: 'map-pin'
+    },
+    {
+        id: 'passport_16445',
+        name: 'Passport Service',
+        bnName: 'পাসপোর্ট সেবা',
+        number: '16445',
+        description: 'Passport and visa information',
+        icon: 'file-text'
+    },
+    {
+        id: 'narcotics_01908888888',
+        name: 'Narcotics Control',
+        bnName: 'মাদকদ্রব্য নিয়ন্ত্রণ',
+        number: '01908888888',
+        description: 'Report drug related activities',
+        icon: 'alert-triangle'
+    },
+    {
+        id: 'biwta_16113',
+        name: 'BIWTA (Water Transport)',
+        bnName: 'বিআইডব্লিউটিএ (নৌ-পরিবহন)',
+        number: '16113',
+        description: 'Water transport services and info',
+        icon: 'anchor'
+    },
+    {
+        id: 'coastguard_16111',
+        name: 'Bangladesh Coast Guard',
+        bnName: 'বাংলাদেশ কোস্ট গার্ড',
+        number: '16111',
+        description: 'Coastal emergency and security',
+        icon: 'life-buoy'
+    },
+    {
+        id: 'legal_aid_16699',
+        name: 'Govt. Legal Aid',
+        bnName: 'সরকারি আইনি সেবা',
+        number: '16699',
+        description: 'Free legal aid services',
+        icon: 'scale'
+    },
+    {
+        id: 'pension_16131',
+        name: 'Universal Pension',
+        bnName: 'সর্বজনীন পেনশন',
+        number: '16131',
+        description: 'Universal pension scheme info',
+        icon: 'coins'
+    },
+    {
+        id: 'power_16999',
+        name: 'Power Division',
+        bnName: 'বিদ্যুৎ বিভাগ',
+        number: '16999',
+        description: 'Electricity complaints and services',
+        icon: 'zap'
+    },
+    {
+        id: 'btrc_100',
+        name: 'BTRC Complaints',
+        bnName: 'বিটিআরসি অভিযোগ',
+        number: '100',
+        description: 'Telecommunication complaints',
+        icon: 'phone-off'
+    },
+    {
+        id: 'expatriate_16135',
+        name: 'Probashi Bondhu',
+        bnName: 'প্রবাস বন্ধু কল সেন্টার',
+        number: '16135',
+        description: 'Services for expatriate workers',
+        icon: 'globe'
+    },
+    {
+        id: 'muktijoddha_16171',
+        name: 'Freedom Fighters',
+        bnName: 'মুক্তিযোদ্ধা কল্যাণ',
+        number: '16171',
+        description: 'Services for Freedom Fighters',
+        icon: 'award'
+    },
+    {
+        id: 'employee_welfare_16109',
+        name: 'Govt. Employee Welfare',
+        bnName: 'কর্মচারী কল্যাণ বোর্ড',
+        number: '16109',
+        description: 'Govt. employee welfare services',
+        icon: 'briefcase'
+    },
+    {
+        id: 'egp_16575',
+        name: 'e-GP Help Desk',
+        bnName: 'ই-জিপি হেল্পলাইন',
+        number: '16575',
+        description: 'Electronic Government Procurement',
+        icon: 'server'
+    },
+    {
+        id: 'infocom_16357',
+        name: 'Information Commission',
+        bnName: 'তথ্য কমিশন',
+        number: '16357',
+        description: 'Right to Information services',
+        icon: 'info'
     }
 ];
 

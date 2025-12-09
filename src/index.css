@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,7 +10,7 @@
   font-weight: 400;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap');
+
 
 body {
   margin: 0;
@@ -108,11 +110,11 @@ body {
 /* Metro Animation */
 @keyframes metro-move {
   0% {
-    transform: translateX(0);
+    transform: translateX(110vw);
   }
 
   100% {
-    transform: translateX(-200%);
+    transform: translateX(-250%);
   }
 }
 

@@ -82,7 +82,7 @@ if (rootElement) {
 import { registerSW } from 'virtual:pwa-register';
 
 const updateSW = registerSW({
-  immediate: false,
+  immediate: true,
   onNeedRefresh() {
     // Don't auto-reload, just log
     console.log('New content available. Will update on next visit.');
