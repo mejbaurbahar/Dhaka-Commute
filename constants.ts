@@ -256,6 +256,17 @@ export const STATIONS: Record<string, Station> = {
   'khilgaon_flyover': { id: 'khilgaon_flyover', name: 'Khilgaon Flyover', lat: 23.7500, lng: 90.4200 },
   'sikder_medical': { id: 'sikder_medical', name: 'Sikder Medical', lat: 23.7400, lng: 90.3600 },
   'hazaribag': { id: 'hazaribag', name: 'Hazaribag', bnName: 'হাজারীবাগ', lat: 23.7300, lng: 90.3700 },
+  'dholairpar': { id: 'dholairpar', name: 'Dholairpar', bnName: 'ঢোলাইরপাড়', lat: 23.7026, lng: 90.4353 },
+  'star_kabab': { id: 'star_kabab', name: 'Star Kabab', bnName: 'স্টার কাবাব', lat: 23.7550, lng: 90.3650 },
+  'bot_tola': { id: 'bot_tola', name: 'Bot Tola', bnName: 'বট তলা', lat: 23.7520, lng: 90.3920 },
+  'cantonment': { id: 'cantonment', name: 'Cantonment', bnName: 'ক্যান্টনমেন্ট', lat: 23.8200, lng: 90.4000 },
+  'adamjee_college': { id: 'adamjee_college', name: 'Adamjee College', bnName: 'আদমজী কলেজ', lat: 23.7947, lng: 90.3933 },
+  'workshop': { id: 'workshop', name: 'Workshop', bnName: 'ওয়ার্কশপ', lat: 23.7750, lng: 90.3920 },
+  'saudi_colony': { id: 'saudi_colony', name: 'Saudi Colony', bnName: 'সৌদি কলোনি', lat: 23.7720, lng: 90.3930 },
+  'kuril_chourasta': { id: 'kuril_chourasta', name: 'Kuril Chourasta', bnName: 'কুড়িল চৌরাস্তা', lat: 23.8220, lng: 90.4200 },
+  'ittefaq_moor': { id: 'ittefaq_moor', name: 'Ittefaq Moor', bnName: 'ইত্তেফাক মোড়', lat: 23.7280, lng: 90.4200 },
+  'dainik_bangla_moor': { id: 'dainik_bangla_moor', name: 'Dainik Bangla Moor', bnName: 'দৈনিক বাংলা মোড়', lat: 23.7300, lng: 90.4180 },
+  'ray_saheb_bazar': { id: 'ray_saheb_bazar', name: 'Ray Saheb Bazar', bnName: 'রায় সাহেব বাজার', lat: 23.7120, lng: 90.4080 },
   'showari_ghat': { id: 'showari_ghat', name: 'Showari Ghat', lat: 23.7100, lng: 90.3900 },
 
 };
@@ -1896,13 +1907,13 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 11:00 PM'
   },
   {
-    id: 'projapoti_2',
-    name: 'Projapoti Paribahan',
-    bnName: 'প্রজাপতি পরিবহন',
-    routeString: 'Mohammadpur ⇄ Abdullahpur',
-    stops: ['mohammadpur', 'asad_gate', 'farmgate', 'mohakhali', 'banani', 'kuril', 'airport', 'uttara', 'abdullahpur'],
-    type: 'Sitting',
-    hours: '6:30 AM - 10:30 PM'
+    id: 'projapoti',
+    name: 'Projapoti',
+    bnName: 'প্রজাপতি',
+    routeString: 'Bosila ⇄ Kamarpara',
+    stops: ['bosila', 'mohammadpur', 'asad_gate', 'college_gate', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'bangla_college', 'ansar_camp', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'uttara', 'abdullahpur', 'kamarpara'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 11:00 PM'
   }
 ];
 
