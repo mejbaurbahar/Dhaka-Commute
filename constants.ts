@@ -1708,15 +1708,7 @@ export const BUS_DATA: BusRoute[] = [
     type: 'Semi-Sitting',
     hours: '6:00 AM - 11:00 PM'
   },
-  {
-    id: 'projapoti',
-    name: 'Projapoti',
-    bnName: 'প্রজাপতি',
-    routeString: 'Bosila ⇄ Kamarpara',
-    stops: ['bosila', 'mohammadpur', 'asad_gate', 'college_gate', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'bangla_college', 'ansar_camp', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'uttara', 'abdullahpur', 'kamarpara'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
+
   {
     id: 'rob_rob',
     name: 'Rob Rob',
