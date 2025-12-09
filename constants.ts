@@ -267,6 +267,14 @@ export const STATIONS: Record<string, Station> = {
   'ittefaq_moor': { id: 'ittefaq_moor', name: 'Ittefaq Moor', bnName: 'ইত্তেফাক মোড়', lat: 23.7280, lng: 90.4200 },
   'dainik_bangla_moor': { id: 'dainik_bangla_moor', name: 'Dainik Bangla Moor', bnName: 'দৈনিক বাংলা মোড়', lat: 23.7300, lng: 90.4180 },
   'ray_saheb_bazar': { id: 'ray_saheb_bazar', name: 'Ray Saheb Bazar', bnName: 'রায় সাহেব বাজার', lat: 23.7120, lng: 90.4080 },
+  'zirani_bazar': { id: 'zirani_bazar', name: 'Zirani Bazar', bnName: 'জিরানী বাজার', lat: 23.9130, lng: 90.3192 },
+  'tarabo': { id: 'tarabo', name: 'Tarabo', bnName: 'তারাবো', lat: 23.7285, lng: 90.5173 },
+  'khidma_hospital': { id: 'khidma_hospital', name: 'Khidma Hospital', bnName: 'খিদমা হাসপাতাল', lat: 23.7483, lng: 90.4287 },
+  'baunia': { id: 'baunia', name: 'Baunia', bnName: 'বাউনিয়া', lat: 23.7988, lng: 90.3847 },
+  'tongi_college_gate': { id: 'tongi_college_gate', name: 'Tongi College Gate', bnName: 'টঙ্গী কলেজ গেট', lat: 23.8950, lng: 90.4050 },
+  'bhogra': { id: 'bhogra', name: 'Bhogra', bnName: 'ভোগড়া', lat: 23.9850, lng: 90.4100 },
+  'kazla': { id: 'kazla', name: 'Kazla', bnName: 'কাজলা', lat: 23.7050, lng: 90.4400 },
+  'bashundhara_300_feet': { id: 'bashundhara_300_feet', name: 'Bashundhara 300 Feet', bnName: 'বসুন্ধরা ৩০০ ফিট', lat: 23.8180, lng: 90.4480 },
   'showari_ghat': { id: 'showari_ghat', name: 'Showari Ghat', lat: 23.7100, lng: 90.3900 },
 
 };
