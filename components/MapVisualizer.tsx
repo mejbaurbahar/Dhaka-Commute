@@ -13,6 +13,7 @@ interface MapVisualizerProps {
   highlightEndIdx?: number;
   userLocation?: UserLocation | null;
   tripDestination?: string; // ID of the final destination station if different from route end
+  tripTransferPoint?: string; // ID of the transfer point station
 }
 
 const MapVisualizer: React.FC<MapVisualizerProps> = ({
@@ -23,7 +24,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   highlightEndIdx = -1,
   isReversed = false,
   userLocation,
-  tripDestination
+  tripDestination,
+  tripTransferPoint
 }) => {
   const [simulationStep, setSimulationStep] = useState(0);
 
@@ -647,18 +649,39 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">YOU</text>
                         </g>
                       )}
-                      {(tripDestination === s.id || isHighlightEnd) && (
+
+                      {/* TRANSIT Badge logic (Prioritized over Dest/Start for intermediate stops) */}
+                      {tripTransferPoint === s.id && (
+                        <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
+                          <rect x="-20" y="-7" width="40" height="14" rx="3" fill="#6366f1" />
+                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">TRANSIT</text>
+                        </g>
+                      )}
+
+                      {/* Destination Badge Logic: 
+                          If NOT reversed: Destination is at highlightEndIdx
+                          If reversed: Destination is at highlightStartIdx
+                          Only show if NOT a transit point (unless it's the final trip destination)
+                      */}
+                      {(tripDestination === s.id || ((isReversed ? isHighlightStart : isHighlightEnd) && s.id !== tripTransferPoint)) && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
                           <rect x="-26" y="-7" width="52" height="14" rx="3" fill="#ef4444" />
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">DESTINATION</text>
                         </g>
                       )}
-                      {isHighlightStart && (
+
+                      {/* Start Badge Logic:
+                          If NOT reversed: Start is at highlightStartIdx
+                          If reversed: Start is at highlightEndIdx
+                          Only show if NOT a transit point.
+                      */}
+                      {((isReversed ? isHighlightEnd : isHighlightStart) && s.id !== tripTransferPoint) && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
                           <rect x="-18" y="-7" width="36" height="14" rx="3" fill="#16a34a" />
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">START</text>
                         </g>
                       )}
+
                       {isUserConnectionStart && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
                           <rect x="-24" y="-7" width="48" height="14" rx="3" fill="#f97316" />

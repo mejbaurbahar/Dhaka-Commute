@@ -1136,6 +1136,13 @@ const App: React.FC = () => {
     if (!trip) {
       setFareStart('');
       setFareEnd('');
+    } else {
+      // If part of a trip, try to pre-fill the From/To based on the trip step
+      const step = trip.steps.find(s => s.type === 'bus' && s.busRoute?.id === bus.id);
+      if (step && step.fromId && step.toId) {
+        setFareStart(step.fromId);
+        setFareEnd(step.toId);
+      }
     }
     // setSelectedTrip(null); // Removed to fix bug where trip was cleared immediately
 
@@ -2504,6 +2511,7 @@ const App: React.FC = () => {
                 isReversed={isReversed}
                 userLocation={userLocation}
                 tripDestination={toStation}
+                tripTransferPoint={selectedTrip?.steps.find(s => s.type === 'walk' && s.instruction.includes('Transfer'))?.fromId || selectedTrip?.steps.find((s, i) => i > 0 && s.type === 'bus')?.fromId}
               />
             </div>
           </div>
@@ -2577,83 +2585,96 @@ const App: React.FC = () => {
             <div className="relative">
               <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-gray-100"></div>
               <div className="space-y-0">
-                {selectedBus.stops.map((stopId, idx) => {
-                  const station = STATIONS[stopId] || METRO_STATIONS[stopId] || RAILWAY_STATIONS[stopId] || AIRPORTS[stopId];
-                  if (!station) return null;
+                {(() => {
+                  // Determine transfer point for the Trip
+                  const tripTransferPoint = selectedTrip?.steps.find(s => s.type === 'walk' && s.instruction.includes('Transfer'))?.fromId || selectedTrip?.steps.find((s, i) => i > 0 && s.type === 'bus')?.fromId;
 
-                  // Check if this stop is highlighted (part of the selected route)
-                  // Handle both forward and reverse directions
-                  const fareStartIdx = fareStart ? selectedBus.stops.indexOf(fareStart) : -1;
-                  const fareEndIdx = fareEnd ? selectedBus.stops.indexOf(fareEnd) : -1;
+                  return selectedBus.stops.map((stopId, idx) => {
+                    const station = STATIONS[stopId] || METRO_STATIONS[stopId] || RAILWAY_STATIONS[stopId] || AIRPORTS[stopId];
+                    if (!station) return null;
 
-                  const isHighlighted = fareStartIdx !== -1 && fareEndIdx !== -1 &&
-                    ((fareStartIdx <= idx && idx <= fareEndIdx) ||
-                      (fareEndIdx <= idx && idx <= fareStartIdx));
+                    // Check if this stop is highlighted (part of the selected route)
+                    const fareStartIdx = fareStart ? selectedBus.stops.indexOf(fareStart) : -1;
+                    const fareEndIdx = fareEnd ? selectedBus.stops.indexOf(fareEnd) : -1;
 
-                  // Check if this is the user's selected start or end station
-                  const isUserStart = fareStart === stopId;
-                  const isUserEnd = fareEnd === stopId;
+                    const isHighlighted = fareStartIdx !== -1 && fareEndIdx !== -1 &&
+                      ((fareStartIdx <= idx && idx <= fareEndIdx) ||
+                        (fareEndIdx <= idx && idx <= fareStartIdx));
 
-                  const isLast = idx === selectedBus.stops.length - 1;
-                  const isFirst = idx === 0;
+                    // Check if this is the user's selected start or end station
+                    const isUserStart = fareStart === stopId;
+                    const isUserEnd = fareEnd === stopId;
 
-                  const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
-                  const filteredIdx = validStopIds.indexOf(stopId);
-                  const isNearest = nearestStopIndex !== -1 && nearestStopIndex === filteredIdx;
+                    // Check if this is a transfer point (Transit)
+                    const isTransfer = stopId === tripTransferPoint;
 
-                  const isWithinRange = nearestStopDistance < 2000;
+                    const isLast = idx === selectedBus.stops.length - 1;
+                    const isFirst = idx === 0;
 
-                  return (
-                    <div key={stopId} className={`px-4 py-3.5 hover: bg-gray - 50 flex items-center gap-4 relative z-10 group border-b border-gray - 50 last: border-0 transition-colors 
+                    const validStopIds = selectedBus.stops.filter(id => !!STATIONS[id]);
+                    const filteredIdx = validStopIds.indexOf(stopId);
+                    const isNearest = nearestStopIndex !== -1 && nearestStopIndex === filteredIdx;
+
+                    const isWithinRange = nearestStopDistance < 2000;
+
+                    return (
+                      <div key={stopId} className={`px-4 py-3.5 hover:bg-gray-50 flex items-center gap-4 relative z-10 group border-b border-gray-50 last:border-0 transition-colors 
                       ${isNearest && isWithinRange ? 'bg-blue-50/50' : ''}
                       ${isHighlighted ? 'bg-green-50 border-l-4 border-l-green-500 -ml-[1px]' : ''}
 `}>
-                      <div className={`w-4 h-4 rounded-full border-2 border-white shadow-sm flex items-center justify-center shrink-0 transition-all
+                        <div className={`w-4 h-4 rounded-full border-2 border-white shadow-sm flex items-center justify-center shrink-0 transition-all
                         ${isNearest && isWithinRange
-                          ? 'bg-dhaka-red w-6 h-6 ring-2 ring-red-100 animate-pulse'
-                          : isUserStart || isUserEnd
-                            ? 'bg-dhaka-green w-5 h-5 ring-2 ring-green-100 scale-110'
-                            : isHighlighted
+                            ? 'bg-dhaka-red w-6 h-6 ring-2 ring-red-100 animate-pulse'
+                            : isUserStart || isUserEnd
                               ? 'bg-dhaka-green w-5 h-5 ring-2 ring-green-100 scale-110'
-                              : isFirst
-                                ? 'bg-green-600 w-5 h-5 ring-2 ring-green-100'
-                                : isLast
-                                  ? 'bg-red-500 w-5 h-5 ring-2 ring-red-100'
-                                  : isNearest
-                                    ? 'bg-orange-400 w-5 h-5'
-                                    : 'bg-gray-300'
-                        }
+                              : isHighlighted
+                                ? 'bg-dhaka-green w-5 h-5 ring-2 ring-green-100 scale-110'
+                                : isFirst
+                                  ? 'bg-green-600 w-5 h-5 ring-2 ring-green-100'
+                                  : isLast
+                                    ? 'bg-red-500 w-5 h-5 ring-2 ring-red-100'
+                                    : isNearest
+                                      ? 'bg-orange-400 w-5 h-5'
+                                      : 'bg-gray-300'
+                          }
 `}>
-                        {(isFirst || isLast) && !isNearest && !isHighlighted && !isUserStart && !isUserEnd && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
-                        {isNearest && isWithinRange && <MapPin className="w-3 h-3 text-white" />}
-                        {(isHighlighted || isUserStart || isUserEnd) && !isNearest && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className={`text-sm group - hover: text-dhaka - green transition-colors ${isFirst || isLast || isNearest || isHighlighted || isUserStart || isUserEnd ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''} `}>
-                            {station.name}
-                            {isNearest && isWithinRange && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">You</span>}
-                            {isNearest && !isWithinRange && <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{(nearestStopDistance / 1000).toFixed(1)}km away from {globalNearestStationName || 'location'}</span>}
-                            {isUserStart && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Start</span>}
-                            {isUserEnd && <span className="ml-2 text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Destination</span>}
-                          </p>
-                          {/* Helpline Button - Show beside current location */}
-                          {isNearest && isWithinRange && userLocation && (
-                            <button
-                              onClick={() => setShowEmergencyModal(true)}
-                              className="shrink-0 bg-dhaka-red hover:bg-red-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-1"
-                              aria-label="Emergency Helplines"
-                            >
-                              <Phone className="w-3 h-3" />
-                              Help
-                            </button>
-                          )}
+                          {(isFirst || isLast) && !isNearest && !isHighlighted && !isUserStart && !isUserEnd && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                          {isNearest && isWithinRange && <MapPin className="w-3 h-3 text-white" />}
+                          {(isHighlighted || isUserStart || isUserEnd) && !isNearest && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className={`text-sm group-hover:text-dhaka-green transition-colors ${isFirst || isLast || isNearest || isHighlighted || isUserStart || isUserEnd ? 'font-bold text-gray-900' : 'font-medium text-gray-700'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''} `}>
+                              {station.name}
+                              {isNearest && isWithinRange && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">You</span>}
+                              {isNearest && !isWithinRange && <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{(nearestStopDistance / 1000).toFixed(1)}km away from {globalNearestStationName || 'location'}</span>}
+
+                              {/* Start Badge */}
+                              {isUserStart && !isTransfer && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Start</span>}
+
+                              {/* Destination Badge */}
+                              {isUserEnd && !isTransfer && <span className="ml-2 text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Destination</span>}
+
+                              {/* Transit Badge */}
+                              {isTransfer && (isUserStart || isUserEnd) && <span className="ml-2 text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Transit</span>}
+                            </p>
+                            {/* Helpline Button - Show beside current location */}
+                            {isNearest && isWithinRange && userLocation && (
+                              <button
+                                onClick={() => setShowEmergencyModal(true)}
+                                className="shrink-0 bg-dhaka-red hover:bg-red-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-1"
+                                aria-label="Emergency Helplines"
+                              >
+                                <Phone className="w-3 h-3" />
+                                Help
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                  );
-                })}
+                    );
+                  });
+                })()}
 
                 {/* Show connected route option if available */}
                 {selectedTrip && selectedTrip.steps.length > 1 && (
@@ -2708,45 +2729,47 @@ const App: React.FC = () => {
         />
 
         {/* Offline Navigation Warning Modal */}
-        {showOfflineNavModal && (
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowOfflineNavModal(false)}></div>
-            <div className="relative bg-white rounded-3xl shadow-2xl p-6 max-w-sm w-full animate-in fade-in zoom-in border border-gray-100">
-              <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-lg animate-pulse-slow">
-                  <WifiOff className="w-8 h-8 text-orange-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">You are Offline</h3>
-                <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                  Intercity search requires an internet connection. <br />
-                  If you have viewed this route before, you may proceed to see cached results.
-                </p>
+        {
+          showOfflineNavModal && (
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowOfflineNavModal(false)}></div>
+              <div className="relative bg-white rounded-3xl shadow-2xl p-6 max-w-sm w-full animate-in fade-in zoom-in border border-gray-100">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-lg animate-pulse-slow">
+                    <WifiOff className="w-8 h-8 text-orange-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">You are Offline</h3>
+                  <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+                    Intercity search requires an internet connection. <br />
+                    If you have viewed this route before, you may proceed to see cached results.
+                  </p>
 
-                <div className="flex flex-col w-full gap-3">
-                  <button
-                    onClick={() => {
-                      setShowOfflineNavModal(false);
-                      if (pendingIntercityNav) {
-                        window.location.href = `/intercity?from=${encodeURIComponent(pendingIntercityNav.from)}&to=${encodeURIComponent(pendingIntercityNav.to)}`;
-                      }
-                    }}
-                    className="w-full bg-dhaka-green text-white font-bold py-3 rounded-xl hover:bg-green-700 transition-all flex items-center justify-center gap-2"
-                  >
-                    <span>Proceed Anyway</span>
-                    <ArrowLeft className="w-4 h-4 rotate-180" />
-                  </button>
-                  <button
-                    onClick={() => setShowOfflineNavModal(false)}
-                    className="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-200 transition-all"
-                  >
-                    Cancel
-                  </button>
+                  <div className="flex flex-col w-full gap-3">
+                    <button
+                      onClick={() => {
+                        setShowOfflineNavModal(false);
+                        if (pendingIntercityNav) {
+                          window.location.href = `/intercity?from=${encodeURIComponent(pendingIntercityNav.from)}&to=${encodeURIComponent(pendingIntercityNav.to)}`;
+                        }
+                      }}
+                      className="w-full bg-dhaka-green text-white font-bold py-3 rounded-xl hover:bg-green-700 transition-all flex items-center justify-center gap-2"
+                    >
+                      <span>Proceed Anyway</span>
+                      <ArrowLeft className="w-4 h-4 rotate-180" />
+                    </button>
+                    <button
+                      onClick={() => setShowOfflineNavModal(false)}
+                      className="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-200 transition-all"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )
+        }
+      </div >
     );
   };
 

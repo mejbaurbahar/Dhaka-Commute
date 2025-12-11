@@ -8,6 +8,8 @@ export interface RouteStep {
     instruction: string;
     from: string;
     to: string;
+    fromId?: string; // Station ID
+    toId?: string;   // Station ID
     distance?: number;
     duration?: number; // in minutes
     busRoute?: BusRoute;
@@ -126,6 +128,8 @@ export const findRoutesBetweenStations = (
                     instruction: `Take ${bus.name} (${bus.bnName}) from ${startStation.name} to ${destStation.name}`,
                     from: startStation.name,
                     to: destStation.name,
+                    fromId: startStation.id,
+                    toId: destStation.id,
                     distance: distance,
                     duration: duration,
                     busRoute: bus,
@@ -203,6 +207,8 @@ export const findRoutesBetweenStations = (
                                 instruction: `Walk to ${metroStation.name}`,
                                 from: startStation.name,
                                 to: metroStation.name,
+                                fromId: startStation.id,
+                                toId: metroStation.id,
                                 distance: walkToMetro / 1000,
                                 duration: walkTime
                             },
@@ -211,6 +217,8 @@ export const findRoutesBetweenStations = (
                                 instruction: `Take MRT Line 6 from ${metroStation.name} to ${metroDest.name}`,
                                 from: metroStation.name,
                                 to: metroDest.name,
+                                fromId: metroStation.id,
+                                toId: metroDest.id,
                                 distance: metroDistance,
                                 duration: metroTime,
                                 metroLine: 'MRT Line 6',
@@ -221,6 +229,8 @@ export const findRoutesBetweenStations = (
                                 instruction: `Walk to ${busStartStation.name}`,
                                 from: metroDest.name,
                                 to: busStartStation.name,
+                                fromId: metroDest.id,
+                                toId: busStartStation.id,
                                 distance: 0.2,
                                 duration: 3
                             },
@@ -229,6 +239,8 @@ export const findRoutesBetweenStations = (
                                 instruction: `Take ${bus.name} (${bus.bnName}) to ${destStation.name}`,
                                 from: busStartStation.name,
                                 to: destStation.name,
+                                fromId: busStartStation.id,
+                                toId: destStation.id,
                                 distance: busDistance,
                                 duration: busTime,
                                 busRoute: bus,
@@ -303,6 +315,8 @@ export const findRoutesBetweenStations = (
                         instruction: `Walk to ${mStart.name}`,
                         from: startStation.name,
                         to: mStart.name,
+                        fromId: startStation.id,
+                        toId: mStart.id,
                         distance: walkStartKm,
                         duration: timeWalkStart
                     },
@@ -311,6 +325,8 @@ export const findRoutesBetweenStations = (
                         instruction: `Take MRT Line 6 from ${mStart.name} to ${mEnd.name}`,
                         from: mStart.name,
                         to: mEnd.name,
+                        fromId: mStart.id,
+                        toId: mEnd.id,
                         distance: metroDistKm,
                         duration: timeMetro,
                         metroLine: 'MRT Line 6',
@@ -321,6 +337,8 @@ export const findRoutesBetweenStations = (
                         instruction: `Walk to ${destStation.name}`,
                         from: mEnd.name,
                         to: destStation.name,
+                        fromId: mEnd.id,
+                        toId: destStation.id,
                         distance: walkEndKm,
                         duration: timeWalkEnd
                     }
@@ -375,6 +393,8 @@ export const findRoutesBetweenStations = (
                         instruction: `Take ${bus1.name} (${bus1.bnName}) from ${startStation.name} to ${hub.name}`,
                         from: startStation.name,
                         to: hub.name,
+                        fromId: startStation.id,
+                        toId: hub.id,
                         distance: dist1,
                         duration: time1,
                         busRoute: bus1,
@@ -385,6 +405,8 @@ export const findRoutesBetweenStations = (
                         instruction: `Transfer at ${hub.name}`,
                         from: hub.name,
                         to: hub.name,
+                        fromId: hub.id,
+                        toId: hub.id,
                         distance: 0.1,
                         duration: 5
                     },
@@ -393,6 +415,8 @@ export const findRoutesBetweenStations = (
                         instruction: `Take ${bus2.name} (${bus2.bnName}) from ${hub.name} to ${destStation.name}`,
                         from: hub.name,
                         to: destStation.name,
+                        fromId: hub.id,
+                        toId: destStation.id,
                         distance: dist2,
                         duration: time2,
                         busRoute: bus2,
