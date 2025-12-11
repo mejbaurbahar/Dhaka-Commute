@@ -259,11 +259,13 @@ const App: React.FC = () => {
     const savedData = localStorage.getItem('lastRoute');
 
     if (urlFrom && urlTo) {
+      console.log('🔍 URL params detected:', { from: urlFrom, to: urlTo });
       setOrigin(decodeURIComponent(urlFrom));
       setDestination(decodeURIComponent(urlTo));
       // Auto-trigger search if params are present
       // We use a timeout to let state update and ensure component is ready
       setTimeout(() => {
+        console.log('🚀 Auto-triggering search from URL params...');
         // Trigger search logic directly
         setLoading(true);
         setError(null);
@@ -271,19 +273,25 @@ const App: React.FC = () => {
 
         getTravelRoutes(decodeURIComponent(urlFrom), decodeURIComponent(urlTo))
           .then(result => {
+            console.log('✅ Search result:', result);
             if (result && result.options.length > 0) {
               setData(result);
               setSelectedOptionId(result.options[0].id);
               const transportType = result.options[0]?.steps?.[0]?.mode || 'combined';
               trackIntercitySearch(decodeURIComponent(urlFrom), decodeURIComponent(urlTo), transportType);
             } else {
+              console.warn('⚠️ No routes found in result');
               setError("No routes found. Please try different locations.");
             }
           })
           .catch(err => {
+            console.error('❌ Search error:', err);
             setError(err.message || "An error occurred. Please try again.");
           })
-          .finally(() => setLoading(false));
+          .finally(() => {
+            console.log('✅ Search completed');
+            setLoading(false);
+          });
 
       }, 500);
     } else if (savedData) {
