@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { X, Layers, Navigation, Map as MapIcon, Globe, Wifi, WifiOff } from 'lucide-react';
+import { X, Layers, Navigation, Map as MapIcon, Globe, Wifi, WifiOff, Lock } from 'lucide-react';
 import { UserLocation, BusRoute } from '../types';
 
 // Fix for default marker icons using local assets for offline support
@@ -37,14 +37,18 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
     const accuracyCircleRef = useRef<L.Circle | null>(null);
     const routeLayerRef = useRef<L.LayerGroup | null>(null);
 
-    const [activeLayer, setActiveLayer] = useState<MapLayer>('standard');
+    const [activeLayer, setActiveLayer] = useState<string>('standard');
     const [showLayerMenu, setShowLayerMenu] = useState(false);
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
     // Monitor online status
     useEffect(() => {
         const handleOnline = () => setIsOffline(false);
-        const handleOffline = () => setIsOffline(true);
+        const handleOffline = () => {
+            setIsOffline(true);
+            // Revert to standard layer immediately when going offline to prevent blank map
+            setActiveLayer('standard');
+        };
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
         return () => {
@@ -66,7 +70,9 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
 
             const map = L.map(mapContainerRef.current, {
                 zoomControl: false,
-                attributionControl: false
+                attributionControl: false,
+                minZoom: 10, // Prevent zooming out too far where tiles might be missing
+                maxZoom: 18
             }).setView(initialCenter, 13);
 
             mapInstanceRef.current = map;
@@ -111,7 +117,10 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
         let attribution = '';
         let maxZoom = 19;
 
-        switch (activeLayer) {
+        // If offline, FORCE Standard layer as others are likely not cached
+        const layerToUse = isOffline ? 'standard' : activeLayer;
+
+        switch (layerToUse) {
             case 'satellite':
                 // Google Hybrid
                 tileUrl = 'http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}';
@@ -151,7 +160,7 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
             subdomains: (L.TileLayer.prototype as any).options.subdomains || ['a', 'b', 'c']
         }).addTo(map);
 
-    }, [activeLayer, isOpen]);
+    }, [activeLayer, isOffline, isOpen]);
 
     const [hasCentered, setHasCentered] = useState(false);
 
@@ -244,7 +253,7 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
             <div className="bg-white w-full max-w-5xl h-[85vh] rounded-3xl shadow-2xl overflow-hidden relative flex flex-col md:flex-row">
 
                 {/* Map Container */}
-                <div ref={mapContainerRef} className="flex-1 w-full h-full relative z-0 bg-gray-100" />
+                <div ref={mapContainerRef} className="flex-1 w-full h-full relative z-0 bg-gray-200" />
 
                 {/* Floating Controls */}
                 <div className="absolute top-4 left-4 z-[400] flex flex-col gap-2">
@@ -268,27 +277,62 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
                 <div className="absolute top-4 right-16 z-[400]">
                     <button
                         onClick={() => setShowLayerMenu(!showLayerMenu)}
-                        className="bg-white/90 backdrop-blur-md p-2.5 rounded-xl shadow-lg border border-gray-200/50 hover:bg-gray-50 text-gray-700 transition-all active:scale-95"
+                        className="bg-white/90 backdrop-blur-md p-2.5 rounded-xl shadow-lg border border-gray-200/50 hover:bg-gray-50 text-gray-700 transition-all active:scale-95 relative"
                     >
                         <Layers className="w-6 h-6" />
+                        {isOffline && (
+                            <div className="absolute -top-1 -right-1 bg-gray-500 text-white rounded-full p-0.5 border-2 border-white">
+                                <Lock className="w-2.5 h-2.5" />
+                            </div>
+                        )}
                     </button>
 
                     {showLayerMenu && (
-                        <div className="absolute top-14 right-0 bg-white/90 backdrop-blur-md p-2 rounded-2xl shadow-xl border border-gray-200/50 w-40 flex flex-col gap-1 animate-in slide-in-from-top-2">
+                        <div className="absolute top-14 right-0 bg-white/90 backdrop-blur-md p-2 rounded-2xl shadow-xl border border-gray-200/50 w-44 flex flex-col gap-1 animate-in slide-in-from-top-2">
+                            {isOffline && (
+                                <div className="px-3 py-2 text-[10px] text-red-500 font-bold bg-red-50 rounded-lg mb-1 flex items-center gap-2">
+                                    <WifiOff className="w-3 h-3" /> Offline Mode
+                                </div>
+                            )}
+
                             <button onClick={() => setActiveLayer('standard')} className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 ${activeLayer === 'standard' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}>
                                 <MapIcon className="w-4 h-4" /> Standard
                             </button>
-                            <button onClick={() => setActiveLayer('satellite')} className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 ${activeLayer === 'satellite' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}>
-                                <Globe className="w-4 h-4" /> Satellite
+
+                            <button
+                                onClick={() => !isOffline && setActiveLayer('satellite')}
+                                disabled={isOffline}
+                                className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 justify-between ${activeLayer === 'satellite' ? 'bg-blue-50 text-blue-600' : isOffline ? 'text-gray-400 cursor-not-allowed opacity-60' : 'text-gray-600 hover:bg-gray-100'}`}
+                            >
+                                <div className="flex items-center gap-2"><Globe className="w-4 h-4" /> Satellite</div>
+                                {isOffline && <Lock className="w-3 h-3" />}
                             </button>
-                            <button onClick={() => setActiveLayer('terrain')} className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 ${activeLayer === 'terrain' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}>
-                                <MapIcon className="w-4 h-4" /> Terrain
+
+                            <button
+                                onClick={() => !isOffline && setActiveLayer('terrain')}
+                                disabled={isOffline}
+                                className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 justify-between ${activeLayer === 'terrain' ? 'bg-blue-50 text-blue-600' : isOffline ? 'text-gray-400 cursor-not-allowed opacity-60' : 'text-gray-600 hover:bg-gray-100'}`}
+                            >
+                                <div className="flex items-center gap-2"><MapIcon className="w-4 h-4" /> Terrain</div>
+                                {isOffline && <Lock className="w-3 h-3" />}
                             </button>
-                            <button onClick={() => setActiveLayer('traffic')} className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 ${activeLayer === 'traffic' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}>
-                                <Navigation className="w-4 h-4" /> Traffic
+
+                            <button
+                                onClick={() => !isOffline && setActiveLayer('traffic')}
+                                disabled={isOffline}
+                                className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 justify-between ${activeLayer === 'traffic' ? 'bg-blue-50 text-blue-600' : isOffline ? 'text-gray-400 cursor-not-allowed opacity-60' : 'text-gray-600 hover:bg-gray-100'}`}
+                            >
+                                <div className="flex items-center gap-2"><Navigation className="w-4 h-4" /> Traffic</div>
+                                {isOffline && <Lock className="w-3 h-3" />}
                             </button>
-                            <button onClick={() => setActiveLayer('dark')} className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 ${activeLayer === 'dark' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}>
-                                <MapIcon className="w-4 h-4" /> Dark Mode
+
+                            <button
+                                onClick={() => !isOffline && setActiveLayer('dark')}
+                                disabled={isOffline}
+                                className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 justify-between ${activeLayer === 'dark' ? 'bg-blue-50 text-blue-600' : isOffline ? 'text-gray-400 cursor-not-allowed opacity-60' : 'text-gray-600 hover:bg-gray-100'}`}
+                            >
+                                <div className="flex items-center gap-2"><MapIcon className="w-4 h-4" /> Dark Mode</div>
+                                {isOffline && <Lock className="w-3 h-3" />}
                             </button>
                         </div>
                     )}
