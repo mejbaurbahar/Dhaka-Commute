@@ -565,6 +565,8 @@ const App: React.FC = () => {
     }, 1);
   });
 
+  const formatBusName = (name: string) => name.replace(/Paribahan/i, '').trim();
+
   const [view, setView] = useState<AppView>(getStoredView);
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(getStoredBus);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -1129,7 +1131,12 @@ const App: React.FC = () => {
     setView(AppView.BUS_DETAILS);
     setNearestStopIndex(-1);
     setNearestStopDistance(Infinity);
-    setNearestStopDistance(Infinity);
+
+    // Reset fares if not from a trip plan
+    if (!trip) {
+      setFareStart('');
+      setFareEnd('');
+    }
     // setSelectedTrip(null); // Removed to fix bug where trip was cleared immediately
 
     // Defer location fetch to avoid blocking UI
@@ -1147,6 +1154,11 @@ const App: React.FC = () => {
           if (filteredIndex !== -1) {
             setNearestStopIndex(filteredIndex);
             setNearestStopDistance(result.distance);
+
+            // Auto-select nearest station as "From" if not already set (and no trip plan)
+            if (!trip) {
+              setFareStart(stationId);
+            }
           }
         }
       }).catch(console.error);
@@ -1244,7 +1256,7 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full bg-white md:rounded-l-3xl md:border-l md:border-gray-200 overflow-hidden relative w-full">
         {/* Mobile Header */}
-        <div className="hidden md:hidden flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0 fixed top-0 left-0 right-0">
+        <div className="block md:hidden flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-20 shrink-0 fixed top-0 left-0 right-0">
           <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -1253,11 +1265,11 @@ const App: React.FC = () => {
               Live Navigation
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
             </h2>
-            <p className="text-xs text-gray-500">{selectedBus.name}</p>
+            <p className="text-xs text-gray-500">{formatBusName(selectedBus.name)}</p>
           </div>
         </div>
         {/* Desktop Header */}
-        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-50 shrink-0 md:relative fixed top-0 left-0 right-0 md:top-0 pt-safe-top md:pt-4">
+        <div className="hidden md:flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-50 shrink-0 md:relative fixed top-0 left-0 right-0 md:top-0 pt-safe-top md:pt-4">
           <button onClick={() => setView(AppView.BUS_DETAILS)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -1266,7 +1278,7 @@ const App: React.FC = () => {
               Live Navigation
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
             </h2>
-            <p className="text-xs text-gray-500">{selectedBus.name}</p>
+            <p className="text-xs text-gray-500">{formatBusName(selectedBus.name)}</p>
           </div>
         </div>
         <div className="flex-1 relative min-h-0 pt-[80px] md:pt-0">
@@ -2297,13 +2309,13 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full bg-slate-50 overflow-hidden w-full">
         {/* Mobile Header */}
-        <div className="hidden md:hidden fixed top-0 w-full z-40">
+        <div className="block md:hidden fixed top-0 w-full z-40">
           <div className="bg-white px-5 py-4 shadow-sm border-b border-gray-100 flex items-center justify-between">
             <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Go back to home">
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
             <div className="flex-1 ml-3">
-              <h2 className="text-lg font-bold text-dhaka-dark truncate max-w-[200px]">{selectedBus.name}</h2>
+              <h2 className="text-lg font-bold text-dhaka-dark truncate max-w-[200px]">{formatBusName(selectedBus.name)}</h2>
               <p className="text-xs text-gray-500">{selectedBus.bnName}</p>
             </div>
             <button
@@ -2324,12 +2336,12 @@ const App: React.FC = () => {
         </div>
 
         {/* Desktop Header */}
-        <div className="flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-50 shrink-0 md:relative fixed top-0 left-0 right-0 md:top-0 pt-safe-top md:pt-4">
+        <div className="hidden md:flex items-center gap-3 p-4 border-b border-gray-100 bg-white z-50 shrink-0 md:relative fixed top-0 left-0 right-0 md:top-0 pt-safe-top md:pt-4">
           <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Go back to home">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div className="flex-1">
-            <h2 className="text-lg font-bold text-dhaka-dark truncate max-w-[220px]">{selectedBus.name}</h2>
+            <h2 className="text-lg font-bold text-dhaka-dark truncate max-w-[220px]">{formatBusName(selectedBus.name)}</h2>
             <p className="text-xs text-gray-500">{selectedBus.bnName}</p>
           </div>
           <button
@@ -2348,37 +2360,54 @@ const App: React.FC = () => {
           </button>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 pt-[90px] md:pt-4 pb-24 md:pb-4">
-          {/* Trip Plan (if selected from suggestions) */}
-          {selectedTrip && (
-            <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-              <h3 className="font-bold text-blue-900 text-sm uppercase tracking-wider mb-3">Your Trip Plan</h3>
-              <div className="space-y-3">
+        {/* Pinned Trip Info */}
+        {selectedTrip && (
+          <div className="bg-slate-50 px-4 pb-0 pt-[80px] md:pt-4 shrink-0 z-30">
+            <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 shadow-sm relative overflow-hidden">
+              <h3 className="font-bold text-blue-900 text-sm uppercase tracking-wider mb-3 relative z-10 flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+                Your Trip Plan
+              </h3>
+              <div className="space-y-3 relative z-10">
                 {selectedTrip.steps.map((step, idx) => (
-                  <div key={idx} className={`flex gap-3 ${step.type === 'bus' && step.busRoute?.id === selectedBus.id ? 'opacity-100' : 'opacity-70'} `}>
+                  <div
+                    key={idx}
+                    onClick={() => {
+                      if (step.type === 'bus' && step.busRoute) {
+                        handleBusSelect(step.busRoute, false, selectedTrip);
+                      }
+                    }}
+                    className={`flex gap-3 transitions-all duration-300 ${step.type === 'bus' ? 'cursor-pointer hover:bg-white/50 p-2 rounded-lg -mx-2' : ''} ${step.type === 'bus' && step.busRoute?.id === selectedBus.id ? 'opacity-100 bg-white/80 shadow-sm' : 'opacity-70'} `}
+                  >
                     <div className="flex flex-col items-center">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold
-                                      ${step.type === 'walk' ? 'bg-gray-200 text-gray-600' :
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm
+                                         ${step.type === 'walk' ? 'bg-gray-200 text-gray-600' :
                           step.type === 'metro' ? 'bg-blue-200 text-blue-700' :
                             'bg-green-200 text-green-700'
                         }
-`}>
+   `}>
                         {idx + 1}
                       </div>
                       {idx < selectedTrip.steps.length - 1 && <div className="w-0.5 h-full bg-gray-200 my-1"></div>}
                     </div>
-                    <div className="pb-2">
-                      <p className="text-sm font-semibold text-gray-800">{step.instruction}</p>
+                    <div className="pb-2 flex-1">
+                      <p className="text-sm font-semibold text-gray-800 leading-tight">{step.instruction}</p>
                       {step.type === 'bus' && step.busRoute?.id === selectedBus.id && (
-                        <span className="inline-block mt-1 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Current Step</span>
+                        <span className="inline-block mt-1 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Current Viewing</span>
+                      )}
+                      {step.type === 'bus' && step.busRoute?.id !== selectedBus.id && (
+                        <span className="inline-block mt-1 text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">Click to View</span>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-          )}
+          </div>
+        )}
+
+        {/* Scrollable Content */}
+        <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${selectedTrip ? 'pt-4' : 'pt-[90px] md:pt-4'} pb-24 md:pb-4`}>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-3">
@@ -2813,7 +2842,7 @@ const App: React.FC = () => {
                     options={sortedStations}
                     value={fromStation}
                     onChange={setFromStation}
-                    placeholder="From..."
+                    placeholder="Start Location"
                   />
                 </div>
                 <div className="flex items-center justify-center pt-2">
@@ -2837,7 +2866,7 @@ const App: React.FC = () => {
                     options={sortedStations}
                     value={toStation}
                     onChange={setToStation}
-                    placeholder={fromStation ? "To..." : "Select From first"}
+                    placeholder={fromStation ? "Destination" : "Select Start Location first"}
                     disabled={!fromStation}
                   />
                 </div>
@@ -3108,7 +3137,7 @@ const App: React.FC = () => {
                       {bus.name.charAt(0)}
                     </div>
                     <div>
-                      <h4 className="font-bold text-base text-gray-900 leading-tight group-hover:text-dhaka-green transition-colors">{bus.name}</h4>
+                      <h4 className="font-bold text-base text-gray-900 leading-tight group-hover:text-dhaka-green transition-colors">{formatBusName(bus.name)}</h4>
                       <span className="text-xs font-bengali text-gray-600">{bus.bnName}</span>
                     </div>
                   </div>

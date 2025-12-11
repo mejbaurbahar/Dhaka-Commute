@@ -542,12 +542,13 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                 const isEnd = idx === stations.length - 1;
                 const isHighlighted = hasHighlight && idx >= highlightStartIdx && idx <= highlightEndIdx;
 
-                // Check if this is the "Start Here" target
-                // If trip selected, it's highlightStartIdx
-                // Else if user far, it's userStationIndex
-                const isStartHereTarget = hasHighlight
-                  ? (idx === highlightStartIdx)
-                  : (isUserFar && idx === userStationIndex);
+                const isHighlightStart = hasHighlight && idx === highlightStartIdx;
+                const isHighlightEnd = hasHighlight && idx === highlightEndIdx;
+                // "Start Here" suggestion when user is far
+                const isUserConnectionStart = !hasHighlight && isUserFar && idx === userStationIndex;
+
+                // Old Variable for compatibility with ripple logic if needed, but we'll update that too
+                const isStartHereTarget = isHighlightStart || isUserConnectionStart;
 
                 let fill = "white";
                 let stroke = hasHighlight ? "#e5e7eb" : "#006a4e";
@@ -594,8 +595,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                     )}
 
                     {/* Connect target ripple */}
-                    {isStartHereTarget && (
-                      <circle cx={x} cy={y} r={20} fill="#f97316" opacity="0.2">
+                    {(isHighlightStart || isUserConnectionStart) && (
+                      <circle cx={x} cy={y} r={20} fill={isHighlightStart ? "#16a34a" : "#f97316"} opacity="0.2">
                         <animate attributeName="r" from="8" to="25" dur="2s" repeatCount="indefinite" />
                         <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
                       </circle>
@@ -623,7 +624,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                         height="20"
                         rx="4"
                         fill="white"
-                        stroke={isCurrent ? "#ef4444" : isStartHereTarget ? "#f97316" : isHighlighted ? "#e5e7eb" : "#f1f5f9"}
+                        stroke={isCurrent ? "#ef4444" : (isHighlightStart || isUserConnectionStart) ? (isHighlightStart ? "#16a34a" : "#f97316") : isHighlightEnd ? "#ef4444" : isHighlighted ? "#e5e7eb" : "#f1f5f9"}
                         strokeWidth="1"
                         className="drop-shadow-sm"
                       />
@@ -646,13 +647,19 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">YOU</text>
                         </g>
                       )}
-                      {tripDestination === s.id && (
+                      {(tripDestination === s.id || isHighlightEnd) && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
                           <rect x="-26" y="-7" width="52" height="14" rx="3" fill="#ef4444" />
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">DESTINATION</text>
                         </g>
                       )}
-                      {isStartHereTarget && (
+                      {isHighlightStart && (
+                        <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
+                          <rect x="-18" y="-7" width="36" height="14" rx="3" fill="#16a34a" />
+                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">START</text>
+                        </g>
+                      )}
+                      {isUserConnectionStart && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
                           <rect x="-24" y="-7" width="48" height="14" rx="3" fill="#f97316" />
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">START HERE</text>
