@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, TrendingUp, Calendar, Users, Eye, Trash2, Bus, MapPin, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Clock, TrendingUp, Calendar, Users, Eye, Trash2, Bus, MapPin, ArrowRight, Activity } from 'lucide-react';
 import {
     getUserHistory,
     getGlobalStats,
@@ -413,7 +413,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                 Community Statistics
                                 <span className="ml-auto text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center gap-1">
                                     <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                    Live
+                                    {globalStats.activeUsers > 0 ? `${globalStats.activeUsers} Online` : 'Live'}
                                 </span>
                             </h2>
 
@@ -429,9 +429,6 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                             </div>
                                             <div className="text-sm text-gray-600">Total Visits</div>
                                         </div>
-                                    </div>
-                                    <div className="text-xs text-gray-500 mt-2">
-                                        Since {new Date(globalStats.firstVisitDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                     </div>
                                 </div>
 
@@ -454,75 +451,21 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
 
                                 <div className="bg-white p-6 rounded-xl md:col-span-2">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                            <Users className="w-5 h-5 text-purple-600" />
+                                        <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                            <Activity className="w-5 h-5 text-emerald-600" />
                                         </div>
                                         <div>
-                                            <div className="text-3xl font-bold text-purple-600">
-                                                {globalStats.uniqueVisitors.size.toLocaleString()}
+                                            <div className="text-3xl font-bold text-emerald-600 flex items-center gap-2">
+                                                {globalStats.activeUsers.toLocaleString()}
+                                                <span className="flex h-3 w-3 relative">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                                                </span>
                                             </div>
-                                            <div className="text-sm text-gray-600">Unique Visitors</div>
+                                            <div className="text-sm text-gray-600">Live Active Users</div>
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Daily Activity Log */}
-                                <div className="bg-white p-6 rounded-xl md:col-span-2">
-                                    <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                        <TrendingUp className="w-5 h-5 text-gray-600" />
-                                        Daily Activity Log
-                                    </h3>
-                                    <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                                        {globalStats.dailyVisits && Object.keys(globalStats.dailyVisits).length > 0 ? (
-                                            Object.entries(globalStats.dailyVisits)
-                                                .sort((a, b) => b[0].localeCompare(a[0]))
-                                                .map(([date, count], idx) => (
-                                                    <div key={date} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${idx === 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'}`}>
-                                                                {idx === 0 ? 'Today' : new Date(date).getDate()}
-                                                            </div>
-                                                            <div>
-                                                                <div className="font-bold text-gray-900 text-sm">
-                                                                    {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                                                </div>
-                                                                {idx === 0 && <div className="text-xs text-blue-600 font-medium">Current Session</div>}
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-bold text-gray-900">{count.toLocaleString()}</span>
-                                                            <span className="text-xs text-gray-500">visits</span>
-                                                        </div>
-                                                    </div>
-                                                ))
-                                        ) : (
-                                            <div className="text-center py-4 text-gray-500 text-sm">No historical data available</div>
-                                        )}
-                                    </div>
-                                </div>
-                                {/* Live Verified Counter */}
-                                {/* Live Verified Counter Removed as per user request to use integrated UI cards instead */}
-                                {false && (
-                                    <div className="bg-white p-6 rounded-xl md:col-span-2 border border-gray-100 flex flex-col items-center justify-center gap-3 mt-4">
-                                        <div className="flex items-center gap-2 text-gray-500 text-xs font-bold uppercase tracking-wider">
-                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                            Live Verified Counter
-                                        </div>
-                                        <div className="bg-gray-50 px-6 py-4 rounded-lg border border-gray-200">
-                                            <iframe
-                                                src="/visitor-counter.html"
-                                                width="150"
-                                                height="40"
-                                                className="overflow-hidden border-0"
-                                                title="Visitor Counter"
-                                                scrolling="no"
-                                            />
-                                        </div>
-                                        <p className="text-[10px] text-gray-400 text-center max-w-xs">
-                                            Verified by FreeVisitorCounters
-                                        </p>
-                                    </div>
-                                )}
                             </div>
                         </div>
 

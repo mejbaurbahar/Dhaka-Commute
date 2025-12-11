@@ -1,6 +1,6 @@
 // Analytics Service - Tracks user activity and global statistics
 // All data is stored in localStorage and persists across sessions
-// "Real" Global stats are fetched from a public CounterAPI service
+// "Real" Global stats are fetched from the KoyJabo backend
 
 export interface UserHistory {
     busSearches: BusSearchRecord[];
@@ -40,10 +40,10 @@ export interface IntercitySearchRecord {
 export interface GlobalStats {
     totalVisits: number;
     todayVisits: number;
-    lastVisitDate: string; // YYYY-MM-DD
-    firstVisitDate: string; // YYYY-MM-DD
-    uniqueVisitors: Set<string>; // visitor IDs
-    dailyVisits: Record<string, number>; // YYYY-MM-DD -> count
+    activeUsers: number;
+    uniqueVisitors: number; // Count of unique visitors
+    locations?: Record<string, { count: number }>;
+    lastUpdated?: number;
 }
 
 const HISTORY_KEY = 'dhaka_commute_user_history';
@@ -51,9 +51,8 @@ const GLOBAL_STATS_KEY = 'dhaka_commute_global_stats';
 const VISITOR_ID_KEY = 'dhaka_commute_visitor_id';
 
 // API Configuration for Real Global Stats
-const API_BASE_URL = 'https://api.counterapi.dev/v1';
-const NAMESPACE = 'dhaka-commute-koyjabo';
-const KEY_TOTAL = 'total_visits';
+const API_BASE_URL = 'https://koyjabo-backend.onrender.com';
+const WS_URL = 'wss://koyjabo-backend.onrender.com';
 
 // Get today's date in YYYY-MM-DD format
 const getTodayDate = (): string => {
@@ -233,56 +232,102 @@ export const trackIntercitySearch = (from: string, to: string, transportType: st
     saveUserHistory(history);
 };
 
+let wsConnection: WebSocket | null = null;
+let wsReconnectTimer: NodeJS.Timeout | null = null;
+let isConnecting = false;
+
+// Initialize Real-time connection
+const initRealTimeConnection = () => {
+    if (wsConnection || isConnecting) return;
+
+    isConnecting = true;
+
+    try {
+        const ws = new WebSocket(WS_URL);
+
+        ws.onopen = () => {
+            console.log('Connected to KoyJabo Analytics Stream');
+            isConnecting = false;
+        };
+
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === 'visitor_update' && data.stats) {
+                    updateGlobalStatsFromApi(data.stats);
+                }
+            } catch (e) {
+                console.error('Error parsing WS message:', e);
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('WS Connection closed');
+            wsConnection = null;
+            isConnecting = false;
+            // Reconnect after delay
+            if (!wsReconnectTimer) {
+                wsReconnectTimer = setTimeout(() => {
+                    wsReconnectTimer = null;
+                    initRealTimeConnection();
+                }, 5000);
+            }
+        };
+
+        ws.onerror = (err) => {
+            console.error('WS Error:', err);
+            // Close will trigger reconnect
+        };
+
+        wsConnection = ws;
+    } catch (e) {
+        console.error('Failed to init WS:', e);
+        isConnecting = false;
+    }
+};
+
+const updateGlobalStatsFromApi = (apiStats: any) => {
+    try {
+        const currentStats = getGlobalStats();
+
+        // Merge API stats with current structure
+        // Map API response to our internal structure
+        // Use ?? to treat 0 as valid value and avoid fallback to stale data
+        let total = apiStats.totalVisitors ?? apiStats.totalVisits ?? currentStats.totalVisits;
+        let today = apiStats.todayVisits ?? apiStats.todayVisitors ?? 0; // If API doesn't send it, assume 0 or it's not tracked
+        let active = apiStats.activeUsers ?? 1;
+        let unique = apiStats.uniqueVisitors ?? apiStats.totalVisitors ?? currentStats.uniqueVisitors;
+
+        // Sanity check: Today cannot be more than Total (cleans up old simulated data mismatch)
+        if (today > total) today = total;
+
+        const newStats: GlobalStats = {
+            totalVisits: total,
+            todayVisits: today,
+            activeUsers: active,
+            uniqueVisitors: unique,
+            locations: apiStats.locations || currentStats.locations,
+            lastUpdated: Date.now()
+        };
+
+        saveGlobalStats(newStats);
+    } catch (e) {
+        console.error('Error updating stats from API:', e);
+    }
+}
+
 // Fetch global stats from external API
-// Fetch global stats (Simulated for reliability)
-// Fetch global stats
 export const fetchGlobalStats = async (): Promise<void> => {
     try {
-        // To ensure consistent "Community Stats" across all devices without a backend database,
-        // we use a deterministic calculation based on time. 
-        // This guarantees User A and User B see the same numbers at the same time.
-
-        const stats = getGlobalStats();
-        const now = Date.now();
-        const today = getTodayDate();
-
-        // 1. Configuration for our "Virtual Server"
-        // We simulate a launch date of Nov 1, 2025
-        const LAUNCH_DATE = new Date('2025-11-01T00:00:00Z').getTime();
-        const BASE_VISITS = 15420; // Starting count
-        const AVG_VISITS_PER_HOUR = 42; // Traffic rate
-
-        // 2. Calculate Total Visits based on time elapsed
-        const hoursSinceLaunch = (now - LAUNCH_DATE) / (1000 * 60 * 60);
-        // Add a pseudo-random component based on the date to make it look organic yet consistent
-        const daySeed = Math.floor(now / (1000 * 60 * 60 * 24));
-        const noise = (daySeed * 17) % 50;
-
-        const calculatedTotal = Math.floor(BASE_VISITS + (hoursSinceLaunch * AVG_VISITS_PER_HOUR) + noise);
-
-        // 3. Calculate Today's Visits
-        // Get hours passed today (BD time offset approx included by using local hours)
-        const startOfToday = new Date();
-        startOfToday.setHours(0, 0, 0, 0);
-        const hoursToday = Math.max(0, (now - startOfToday.getTime()) / (1000 * 60 * 60));
-
-        // Assume slightly higher traffic (1.5x) during active hours
-        const calculatedToday = Math.floor(hoursToday * AVG_VISITS_PER_HOUR * 1.2) + 12; // +12 early birds
-
-        // 4. Update Stats
-        // We only update if our calculated number is higher (prevents weird jumps if system time is off)
-        stats.totalVisits = Math.max(stats.totalVisits, calculatedTotal);
-        stats.todayVisits = calculatedToday;
-
-        // 5. Update Daily Log
-        if (!stats.dailyVisits) stats.dailyVisits = {};
-        stats.dailyVisits[today] = calculatedToday;
-        stats.lastVisitDate = today;
-
-        saveGlobalStats(stats);
-
+        const response = await fetch(`${API_BASE_URL}/api/stats`);
+        if (response.ok) {
+            const data = await response.json();
+            // Data format might be { ...stats } or { result: ... } depending on API impl
+            // Assuming direct object based on "Success Response Schema" style usually
+            updateGlobalStatsFromApi(data);
+        }
     } catch (e) {
-        console.warn('Failed to calculate global stats:', e);
+        console.warn('Failed to fetch global stats:', e);
     }
 };
 
@@ -290,43 +335,29 @@ export const fetchGlobalStats = async (): Promise<void> => {
 export const getGlobalStats = (): GlobalStats => {
     try {
         const stored = localStorage.getItem(GLOBAL_STATS_KEY);
-        const today = getTodayDate();
 
         let stats: GlobalStats;
 
         if (!stored) {
             stats = {
-                totalVisits: 1,
-                todayVisits: 1,
-                lastVisitDate: today,
-                firstVisitDate: today,
-                uniqueVisitors: new Set([getVisitorId()]),
-                dailyVisits: { [today]: 1 }
+                totalVisits: 0,
+                todayVisits: 0,
+                activeUsers: 1,
+                uniqueVisitors: 0,
+                lastUpdated: Date.now()
             };
         } else {
             stats = JSON.parse(stored);
-
-            // Rehydrate Set and Maps
-            const visitorsArray = Array.isArray(stats.uniqueVisitors) ? stats.uniqueVisitors : [];
-            stats.uniqueVisitors = new Set(visitorsArray);
-            if (!stats.dailyVisits) stats.dailyVisits = { [today]: stats.todayVisits || 1 };
-
-            // Reset local daily counter if day changed (fallback)
-            if (stats.lastVisitDate !== today) {
-                stats.todayVisits = 0;
-                stats.lastVisitDate = today;
-            }
         }
 
         return stats;
     } catch (e) {
         return {
-            totalVisits: 1,
-            todayVisits: 1,
-            lastVisitDate: getTodayDate(),
-            firstVisitDate: getTodayDate(),
-            uniqueVisitors: new Set([getVisitorId()]),
-            dailyVisits: {}
+            totalVisits: 0,
+            todayVisits: 0,
+            activeUsers: 1,
+            uniqueVisitors: 0,
+            lastUpdated: Date.now()
         };
     }
 };
@@ -334,11 +365,7 @@ export const getGlobalStats = (): GlobalStats => {
 // Save global statistics
 const saveGlobalStats = (stats: GlobalStats): void => {
     try {
-        const statsToSave = {
-            ...stats,
-            uniqueVisitors: Array.from(stats.uniqueVisitors)
-        };
-        localStorage.setItem(GLOBAL_STATS_KEY, JSON.stringify(statsToSave));
+        localStorage.setItem(GLOBAL_STATS_KEY, JSON.stringify(stats));
 
         // Broadcast the update
         window.dispatchEvent(new CustomEvent('globalStatsUpdated', { detail: stats }));
@@ -347,43 +374,22 @@ const saveGlobalStats = (stats: GlobalStats): void => {
     }
 };
 
-// Increment visit count (Async - Syncs with API)
-// Increment visit count (Simulated)
+// Increment visit count (Triggers WS connection)
 export const incrementVisitCount = async (): Promise<void> => {
-    // Session check to prevent double counting on refresh
-    const SESSION_KEY = 'dhaka_commute_session_counted';
-    const hasCountedThisSession = sessionStorage.getItem(SESSION_KEY);
+    // We don't manually increment anymore, we just ensure we are connected/fetched 
+    // The backend handles the actual "counting" based on connections/requests
 
-    const today = getTodayDate();
+    const SESSION_KEY = 'dhaka_commute_session_init';
+    const hasInitialized = sessionStorage.getItem(SESSION_KEY);
 
-    // Always ensure stats are initialized
-    if (hasCountedThisSession) {
-        fetchGlobalStats();
-        return;
-    }
-
-    try {
-        // Optimistically update local state first
-        const stats = getGlobalStats();
-        stats.totalVisits += 1;
-        stats.todayVisits += 1;
-        stats.uniqueVisitors.add(getVisitorId());
-
-        if (!stats.dailyVisits) stats.dailyVisits = {};
-        stats.dailyVisits[today] = (stats.dailyVisits[today] || 0) + 1;
-
-        // Update timestamp
-        stats.lastVisitDate = today;
-
-        saveGlobalStats(stats);
+    if (!hasInitialized) {
         sessionStorage.setItem(SESSION_KEY, 'true');
-
-        // Trigger a "live update" simulation shortly after
-        setTimeout(() => fetchGlobalStats(), 2000);
-
-    } catch (e) {
-        console.error('Error in incrementVisitCount:', e);
+        // Initial fetch
+        fetchGlobalStats();
     }
+
+    // Ensure WS is running
+    initRealTimeConnection();
 };
 
 // Get most used buses (sorted by usage count)
@@ -425,9 +431,7 @@ export const getTodayRouteSearches = (): Array<{ from: string; to: string }> => 
 // Clear all user history (does NOT clear global stats)
 export const clearUserHistory = (): void => {
     localStorage.removeItem(HISTORY_KEY);
-    // IMPORTANT: This intentionally does NOT remove global stats (totalVisits, todayVisits, uniqueVisitors)
-    // Global stats are community-wide metrics stored separately in GLOBAL_STATS_KEY
-    // They persist across all changes and user history clearings
+    // IMPORTANT: This intentionally does NOT remove global stats
 };
 
 // Get recent searches (last N searches)
