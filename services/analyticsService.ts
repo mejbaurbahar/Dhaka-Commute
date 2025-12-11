@@ -290,27 +290,73 @@ const updateGlobalStatsFromApi = (apiStats: any) => {
     try {
         const currentStats = getGlobalStats();
 
-        // Merge API stats with current structure
-        // Map API response to our internal structure
-        // Use ?? to treat 0 as valid value and avoid fallback to stale data
-        let total = apiStats.totalVisitors ?? apiStats.totalVisits ?? currentStats.totalVisits;
-        let today = apiStats.todayVisits ?? apiStats.todayVisitors ?? 0; // If API doesn't send it, assume 0 or it's not tracked
-        let active = apiStats.activeUsers ?? 1;
-        let unique = apiStats.uniqueVisitors ?? apiStats.totalVisitors ?? currentStats.uniqueVisitors;
+        // Get or initialize baseline (stats at first API fetch after backend reset)
+        const BASELINE_KEY = 'dhaka_commute_stats_baseline';
+        const LAST_API_TOTAL_KEY = 'dhaka_commute_last_api_total';
 
-        // Sanity check: Today cannot be more than Total (cleans up old simulated data mismatch)
-        if (today > total) today = total;
+        let baseline = currentStats;
+        let lastApiTotal = 0;
 
+        try {
+            const storedBaseline = localStorage.getItem(BASELINE_KEY);
+            const storedLastTotal = localStorage.getItem(LAST_API_TOTAL_KEY);
+            if (storedBaseline) baseline = JSON.parse(storedBaseline);
+            if (storedLastTotal) lastApiTotal = parseInt(storedLastTotal);
+        } catch (e) {
+            console.warn('Error loading baseline:', e);
+        }
+
+        // Get current API stats
+        const apiTotal = apiStats.totalVisitors ?? apiStats.totalVisits ?? 0;
+        const apiToday = apiStats.todayVisits ?? apiStats.todayVisitors ?? 0;
+        const apiActive = apiStats.activeUsers ?? 1;
+        const apiUnique = apiStats.uniqueVisitors ?? apiStats.totalVisitors ?? 0;
+
+        // Detect backend reset: if API total is less than last known API total
+        // This means backend was redeployed and reset
+        if (apiTotal < lastApiTotal && lastApiTotal > 0) {
+            console.log('🔄 Backend reset detected! Preserving historical stats...');
+            // Update baseline to current stats before reset
+            baseline = {
+                totalVisits: currentStats.totalVisits,
+                todayVisits: 0, // Reset today's count
+                activeUsers: apiActive,
+                uniqueVisitors: currentStats.uniqueVisitors,
+                locations: currentStats.locations,
+                lastUpdated: Date.now()
+            };
+            localStorage.setItem(BASELINE_KEY, JSON.stringify(baseline));
+        }
+
+        // If this is the first fetch (no baseline set), initialize it
+        if (!localStorage.getItem(BASELINE_KEY)) {
+            baseline = {
+                totalVisits: 0,
+                todayVisits: 0,
+                activeUsers: 0,
+                uniqueVisitors: 0,
+                locations: {},
+                lastUpdated: Date.now()
+            };
+            localStorage.setItem(BASELINE_KEY, JSON.stringify(baseline));
+        }
+
+        // Calculate cumulative stats: baseline + current API stats
         const newStats: GlobalStats = {
-            totalVisits: total,
-            todayVisits: today,
-            activeUsers: active,
-            uniqueVisitors: unique,
+            totalVisits: baseline.totalVisits + apiTotal,
+            todayVisits: apiToday, // Today is always from API (resets daily anyway)
+            activeUsers: apiActive, // Always current from API
+            uniqueVisitors: baseline.uniqueVisitors + apiUnique,
             locations: apiStats.locations || currentStats.locations,
             lastUpdated: Date.now()
         };
 
+        // Save last API total to detect future resets
+        localStorage.setItem(LAST_API_TOTAL_KEY, apiTotal.toString());
+
         saveGlobalStats(newStats);
+
+        console.log(`📊 Stats updated - Total: ${newStats.totalVisits}, Today: ${newStats.todayVisits}, Active: ${newStats.activeUsers}`);
     } catch (e) {
         console.error('Error updating stats from API:', e);
     }
