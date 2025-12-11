@@ -17,6 +17,7 @@ import { planRoutes, findRoutesBetweenStations, SuggestedRoute } from './service
 import RouteSuggestions from './components/RouteSuggestions';
 import { incrementVisitCount, trackBusSearch, trackRouteSearch } from './services/analyticsService';
 import LiveLocationMap from './components/LiveLocationMap';
+import { AIUsageIndicator } from './components/UsageIndicators';
 
 
 
@@ -66,7 +67,7 @@ const getStoredView = (): AppView => {
         case 'about': return AppView.ABOUT;
         case 'why-use': return AppView.WHY_USE;
         case 'faq': return AppView.FAQ;
-        case 'settings': return AppView.SETTINGS;
+
         case 'history': return AppView.HISTORY;
         case 'install': return AppView.INSTALL_APP;
         case 'privacy': return AppView.PRIVACY;
@@ -719,7 +720,7 @@ const App: React.FC = () => {
     [AppView.ABOUT]: 'about',
     [AppView.WHY_USE]: 'why-use',
     [AppView.FAQ]: 'faq',
-    [AppView.SETTINGS]: 'settings',
+
     [AppView.HISTORY]: 'history',
     [AppView.INSTALL_APP]: 'install',
     [AppView.PRIVACY]: 'privacy',
@@ -1317,6 +1318,11 @@ const App: React.FC = () => {
         </div>
       </div>
 
+      {/* Usage Indicator for Mobile */}
+      <div className="md:hidden flex justify-center py-2 bg-white border-b border-gray-100">
+        <AIUsageIndicator />
+      </div>
+
       <div className="hidden md:flex items-center gap-3 p-4 bg-white border-b border-gray-200 shadow-sm z-20">
         <div className={`w-10 h-10 rounded-full ${isOnline ? 'bg-blue-600' : 'bg-gray-400'} flex items-center justify-center text-white shadow-lg ${isOnline ? 'shadow-blue-200' : 'shadow-gray-200'} `}>
           <Bot className="w-6 h-6" />
@@ -1329,6 +1335,11 @@ const App: React.FC = () => {
         </div>
       </div>
 
+      {/* Usage Indicator for Desktop */}
+      <div className="hidden md:flex justify-center py-2 bg-white border-b border-gray-100">
+        <AIUsageIndicator />
+      </div>
+
       {!isOnline ? (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
           <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
@@ -1338,12 +1349,7 @@ const App: React.FC = () => {
           <p className="text-sm text-gray-500 mb-6 max-w-xs">
             AI Assistant requires an internet connection. You can still add or update your API key while offline.
           </p>
-          <button
-            onClick={() => setView(AppView.SETTINGS)}
-            className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-200"
-          >
-            Manage API Key
-          </button>
+
         </div>
       ) : (
         <>
@@ -3283,14 +3289,7 @@ const App: React.FC = () => {
           {view === AppView.BUS_DETAILS && renderBusDetails()}
           {view === AppView.LIVE_NAV && renderLiveNav()}
           {view === AppView.AI_ASSISTANT && renderAiAssistant()}
-          {view === AppView.SETTINGS && (
-            <SettingsView
-              onBack={() => setView(AppView.HOME)}
-              onClearFavorites={handleClearFavorites}
-              apiKey={apiKey}
-              setApiKey={setApiKey}
-            />
-          )}
+
           {view === AppView.ABOUT && renderAbout()}
           {view === AppView.WHY_USE && renderWhyUse()}
           {view === AppView.FAQ && renderFAQ()}
@@ -3515,13 +3514,7 @@ const App: React.FC = () => {
                 <Clock className="w-5 h-5 text-amber-500" /> History
               </button>
 
-              {/* Settings */}
-              <button
-                onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors ${view === AppView.SETTINGS ? 'bg-blue-50 border border-blue-200' : ''}`}
-              >
-                <Settings className="w-5 h-5 text-blue-600" /> Settings
-              </button>
+
 
               {/* Install/Uninstall App - Always show */}
               <button
