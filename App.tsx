@@ -755,7 +755,7 @@ const App: React.FC = () => {
     }
   }, [view]);
 
-  // Check for hash on mount (e.g., #settings from intercity page)
+  // Check for hash on mount (e.g., #ai-assistant from intercity page)
   useEffect(() => {
     const hash = window.location.hash.slice(1); // Remove the #
     const hashToView: Record<string, AppView> = {
@@ -763,7 +763,6 @@ const App: React.FC = () => {
       'about': AppView.ABOUT,
       'why-use': AppView.WHY_USE,
       'faq': AppView.FAQ,
-      'settings': AppView.SETTINGS,
       'history': AppView.HISTORY,
       'install': AppView.INSTALL_APP,
       'privacy': AppView.PRIVACY,
@@ -863,9 +862,6 @@ const App: React.FC = () => {
         break;
       case AppView.ABOUT:
         pageTitle = "About";
-        break;
-      case AppView.SETTINGS:
-        pageTitle = "App Settings";
         break;
       case AppView.HISTORY:
         pageTitle = "History & Analytics";

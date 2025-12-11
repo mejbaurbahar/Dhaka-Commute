@@ -7,6 +7,7 @@ import { RouteDetail } from './components/RouteDetail';
 import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
 import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield, Ship, TramFront } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
+import { IntercityUsageIndicator } from './components/UsageIndicator';
 
 // Import analytics tracking from main app
 const trackIntercitySearch = (from: string, to: string, transportType: string) => {
@@ -465,7 +466,6 @@ const App: React.FC = () => {
                 { icon: Sparkles, label: 'Why Use কই যাবো', color: 'text-pink-500', hash: 'why-use' },
                 { icon: FileText, label: 'Q&A', color: 'text-cyan-500', hash: 'faq' },
                 { icon: Clock, label: 'History', color: 'text-amber-500', hash: 'history' },
-                { icon: Settings, label: 'Settings', color: 'text-blue-600', hash: 'settings' },
                 { icon: Download, label: 'Install App', color: 'text-emerald-600', hash: 'install' },
                 { icon: Shield, label: 'Privacy Policy', color: 'text-purple-500', hash: 'privacy' },
                 { icon: FileText, label: 'Terms of Service', color: 'text-orange-500', hash: 'terms' },
@@ -538,10 +538,14 @@ const App: React.FC = () => {
         <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
           <div className="max-w-4xl mx-auto relative">
             {/* Page Title */}
-            <h1 className="hidden md:block text-3xl font-bold mb-3 font-bengali drop-shadow-lg text-center text-gray-800">
+            <h1 className="hidden md:block text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-center text-gray-800">
               কোথায় যেতে চান?
             </h1>
 
+            {/* Usage Indicator - Visible on ALL screen sizes */}
+            <div className="flex justify-center mb-3 mt-2 md:mt-0">
+              <IntercityUsageIndicator />
+            </div>
 
 
             <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-3 md:p-4 transition-all duration-300 ${!isLanding ? 'scale-90 origin-top' : ''} md:scale-100`}>

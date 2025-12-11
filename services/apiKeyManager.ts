@@ -1,5 +1,6 @@
-// API Key Manager with Usage Limits and Device Fingerprinting
-// This manages multiple API keys, tracks usage, and rotates keys automatically
+// API Key Manager - Usage Tracking Only
+// API keys are now managed on the backend
+// This only tracks client-side usage limits
 
 interface UsageRecord {
     aiChatCount: number;
@@ -8,22 +9,6 @@ interface UsageRecord {
     deviceId: string;
 }
 
-interface KeyUsageStats {
-    keyIndex: number;
-    usageCount: number;
-    lastUsed: string;
-}
-
-// API Keys pool - These keys are used automatically for all users
-const API_KEYS = [
-    'AIzaSyAUATfDS1vbTWWcHjpSQ3_7GR-zB1GNnQU',
-    'AIzaSyD_8TTAF5DZtZhwb9qoAsyu0mObWR6arRM',
-    'AIzaSyAfmELE0-ExlyIGYAORmvYVlnwDlk0JUQ4',
-    'AIzaSyByWBx5dRtb6s-yRx_iUdIkXS5Ii-QiSc0',
-    'AIzaSyDM8F8Yi55Ci4LAThxW99TNFQWacWZOJc0'
-];
-
-
 export const USAGE_LIMITS = {
     AI_CHAT_PER_DAY: 2,
     INTERCITY_SEARCH_PER_DAY: 2
@@ -31,13 +16,7 @@ export const USAGE_LIMITS = {
 
 const STORAGE_KEYS = {
     USAGE_RECORD: 'dhaka_commute_api_usage',
-    DEVICE_ID: 'dhaka_commute_device_id',
-    KEY_STATS: 'dhaka_commute_key_stats'
-};
-
-// Get all API keys
-const getApiKeys = (): string[] => {
-    return API_KEYS;
+    DEVICE_ID: 'dhaka_commute_device_id'
 };
 
 // Generate a unique device fingerprint
@@ -130,64 +109,6 @@ const saveUsageRecord = (record: UsageRecord): void => {
     }
 };
 
-// Get key statistics
-const getKeyStats = (): KeyUsageStats[] => {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEYS.KEY_STATS);
-        if (!stored) {
-            return API_KEYS.map((_, index) => ({
-                keyIndex: index,
-                usageCount: 0,
-                lastUsed: ''
-            }));
-        }
-        return JSON.parse(stored);
-    } catch (e) {
-        return API_KEYS.map((_, index) => ({
-            keyIndex: index,
-            usageCount: 0,
-            lastUsed: ''
-        }));
-    }
-};
-
-// Save key statistics
-const saveKeyStats = (stats: KeyUsageStats[]): void => {
-    try {
-        localStorage.setItem(STORAGE_KEYS.KEY_STATS, JSON.stringify(stats));
-    } catch (e) {
-        console.error('Error saving key stats:', e);
-    }
-};
-
-// Get the next available API key (with rotation)
-const getNextAvailableKey = (): { key: string; index: number } | null => {
-    const keys = getApiKeys();
-    const stats = getKeyStats();
-
-    // Sort by usage count (ascending) to use least-used keys first
-    const sortedStats = [...stats].sort((a, b) => a.usageCount - b.usageCount);
-
-    // Return the least used key
-    const selectedStat = sortedStats[0];
-    return {
-        key: keys[selectedStat.keyIndex],
-        index: selectedStat.keyIndex
-    };
-};
-
-// Update key usage statistics
-const updateKeyUsage = (keyIndex: number): void => {
-    const stats = getKeyStats();
-    const stat = stats.find(s => s.keyIndex === keyIndex);
-
-    if (stat) {
-        stat.usageCount += 1;
-        stat.lastUsed = new Date().toISOString();
-        saveKeyStats(stats);
-    }
-};
-
 // Check if user can use AI Chat
 export const canUseAiChat = (): boolean => {
     const record = getUsageRecord();
@@ -200,48 +121,18 @@ export const canUseIntercitySearch = (): boolean => {
     return record.intercitySearchCount < USAGE_LIMITS.INTERCITY_SEARCH_PER_DAY;
 };
 
-// Get API key for AI Chat (automatically manages limits and rotation)
-export const getApiKeyForAiChat = (): string | null => {
-    if (!canUseAiChat()) {
-        return null;
-    }
-
-    const keyData = getNextAvailableKey();
-    if (!keyData) {
-        return null;
-    }
-
-    // Increment usage count
+// Track AI Chat usage (call this after successful API call)
+export const trackAiChatUsage = (): void => {
     const record = getUsageRecord();
     record.aiChatCount += 1;
     saveUsageRecord(record);
-
-    // Update key statistics
-    updateKeyUsage(keyData.index);
-
-    return keyData.key;
 };
 
-// Get API key for Intercity Search (automatically manages limits and rotation)
-export const getApiKeyForIntercitySearch = (): string | null => {
-    if (!canUseIntercitySearch()) {
-        return null;
-    }
-
-    const keyData = getNextAvailableKey();
-    if (!keyData) {
-        return null;
-    }
-
-    // Increment usage count
+// Track Intercity Search usage (call this after successful API call)
+export const trackIntercitySearchUsage = (): void => {
     const record = getUsageRecord();
     record.intercitySearchCount += 1;
     saveUsageRecord(record);
-
-    // Update key statistics
-    updateKeyUsage(keyData.index);
-
-    return keyData.key;
 };
 
 // Get remaining uses for today
