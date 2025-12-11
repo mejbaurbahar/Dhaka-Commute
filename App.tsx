@@ -3229,7 +3229,7 @@ const App: React.FC = () => {
             <AnimatedLogo size="small" />
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => setShowLiveMap(true)} className="p-2.5 hover:bg-blue-50 bg-white border border-gray-100 rounded-full text-blue-600 transition-colors shadow-sm active:scale-95" aria-label="Live Location">
+            <button onClick={() => setShowLiveMap(true)} className="p-2.5 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse" aria-label="Live Location">
               <Navigation className="w-5 h-5" />
             </button>
             <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
@@ -3252,7 +3252,7 @@ const App: React.FC = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setShowLiveMap(true)}
-            className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-xs font-bold hover:bg-blue-100 transition-colors border border-blue-100 active:scale-95"
+            className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-xs font-bold hover:bg-blue-100 transition-colors border-2 border-blue-200 active:scale-95 animate-pulse shadow-lg shadow-blue-100"
           >
             <Navigation className="w-3 h-3" />
             {globalNearestStationName || 'Live Location'}
