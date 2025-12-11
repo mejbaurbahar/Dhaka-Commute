@@ -9,6 +9,33 @@ export interface ChatMessage {
   text: string;
 }
 
+// Helper to construct knowledge base from local constants
+const constructKnowledgeBase = (): string => {
+  let context = "IMPORTANT SYSTEM CONTEXT: You are KoyJabo AI. Use the following REAL-TIME DHAKA TRANSPORT DATA to answer the user's question. Do not hallucinate routes. Only use the buses/metro listed below.\n\n";
+
+  // Add Metro Rail Data
+  context += "--- METRO RAIL (MRT LINE 6) ---\n";
+  context += "Route: Uttara North to Motijheel.\n";
+  context += "Stations: Uttara North, Uttara Center, Uttara South, Pallabi, Mirpur 11, Mirpur 10, Kazipara, Shewrapara, Agargaon, Bijoy Sarani, Farmgate, Karwan Bazar, Shahbag, Dhaka University, Secretariat, Motijheel.\n";
+  context += "Timing: 7:10 AM - 8:40 PM (Friday closed currently or check updates).\n\n";
+
+  // Add Bus Data (Summarized to save tokens)
+  context += "--- DHAKA LOCAL BUSES ---\n";
+  const busSummaries = BUS_DATA.map(bus => {
+    // Resolve stop IDs to full English names
+    const resolvedStops = bus.stops.map(stopId => {
+      const station = STATIONS[stopId];
+      return station ? station.name : stopId;
+    }).join(', ');
+
+    return `- ${bus.name} (${bus.type}): ${bus.routeString}. Stops: ${resolvedStops}`;
+  }).join('\n');
+  context += busSummaries;
+
+  context += "\n\nEnd of Transport Data. Now answer the USER QUESTION based on this data.\n";
+  return context;
+};
+
 export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, chatHistory: ChatMessage[] = []): Promise<string> => {
   // Note: userApiKey parameter is now ignored since we use backend API
 
@@ -23,10 +50,11 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
       ? chatHistory.slice(-3).map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n')
       : '';
 
-    // Build a minimal prompt - backend will add all knowledge bases
-    const userPrompt = historyContext
-      ? `Previous conversation:\n${historyContext}\n\nCurrent question: ${userQuery}`
-      : userQuery;
+    // Construct Knowledge Base
+    const knowledgeBase = constructKnowledgeBase();
+
+    // Build the prompt with knowledge base + history + current question
+    const userPrompt = `${knowledgeBase}\n\nPrevious conversation:\n${historyContext}\n\nCurrent question: ${userQuery}`;
 
     console.log('📡 Calling Backend AI Chat API...');
 
