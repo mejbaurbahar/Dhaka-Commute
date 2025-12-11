@@ -72,8 +72,53 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
 
     const resultJson = await response.json();
 
-    if (!resultJson || !resultJson.options) {
-      throw new Error("Invalid response format from server.");
+    // Transform backend response to match frontend format if needed
+    let routingResponse: RoutingResponse;
+
+    // Check if response is in old format {routes: [...]} or new format {options: [...]}
+    if (resultJson.routes && !resultJson.options) {
+      console.log('🔄 Transforming backend routes format to frontend format...');
+
+      // Transform {routes: [...]} to {options: [...]}
+      const transformedOptions: any[] = resultJson.routes.map((route: any, index: number) => {
+        return {
+          id: `route_${index}`,
+          type: route.type?.toUpperCase() || 'BUS',
+          title: `${route.type || 'Route'} - ${route.operator || 'Unknown'}`,
+          summary: `${route.duration || 'N/A'} • ${route.cost || 'N/A'}`,
+          totalDuration: route.duration || 'N/A',
+          totalCostRange: route.cost || 'N/A',
+          recommended: index === 0,
+          steps: [{
+            mode: route.type?.toUpperCase() || 'BUS',
+            from: origin,
+            to: destination,
+            instruction: `Travel by ${route.type || 'transport'} with ${route.operator || 'operator'}`,
+            duration: route.duration || 'N/A',
+            cost: route.cost || 'N/A',
+            details: {
+              operator: route.operator,
+              departureTime: route.departureTime,
+              arrivalTime: route.arrivalTime
+            }
+          }]
+        };
+      });
+
+      routingResponse = {
+        origin,
+        destination,
+        options: transformedOptions
+      };
+    } else if (resultJson.options) {
+      // Already in correct format
+      routingResponse = resultJson;
+    } else {
+      throw new Error("Invalid response format from server - missing routes or options.");
+    }
+
+    if (!routingResponse || !routingResponse.options || routingResponse.options.length === 0) {
+      throw new Error("No routes found. Please try different locations.");
     }
 
     // 5. Track usage after successful response
@@ -82,15 +127,15 @@ export const getTravelRoutes = async (origin: string, destination: string): Prom
     // 6. Save to Persistent Cache
     try {
       localStorage.setItem(cacheKey, JSON.stringify({
-        data: resultJson,
+        data: routingResponse,
         timestamp: Date.now()
       }));
     } catch (e) {
       console.warn("Could not save route to local storage cache", e);
     }
 
-    console.log('✅ Routes received from backend');
-    return resultJson;
+    console.log('✅ Routes received and transformed:', routingResponse);
+    return routingResponse;
 
   } catch (error: any) {
     console.error("Error generating routes:", error);
