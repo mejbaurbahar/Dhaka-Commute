@@ -16,6 +16,7 @@ import { findNearestMetroStation } from './services/metroService';
 import { planRoutes, findRoutesBetweenStations, SuggestedRoute } from './services/routePlanner';
 import RouteSuggestions from './components/RouteSuggestions';
 import { incrementVisitCount, trackBusSearch, trackRouteSearch } from './services/analyticsService';
+import LiveLocationMap from './components/LiveLocationMap';
 
 
 
@@ -629,6 +630,7 @@ const App: React.FC = () => {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [showClearChatConfirm, setShowClearChatConfirm] = useState(false);
   const [showHistoryManager, setShowHistoryManager] = useState(false);
+  const [showLiveMap, setShowLiveMap] = useState(false);
 
   const handleDeleteMessage = (index: number) => {
     setChatHistory(prev => prev.filter((_, i) => i !== index));
@@ -3226,9 +3228,14 @@ const App: React.FC = () => {
           <div className="flex items-center gap-2 outline-none cursor-pointer" onClick={() => setView(AppView.HOME)}>
             <AnimatedLogo size="small" />
           </div>
-          <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
-            <Menu className="w-6 h-6" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button onClick={() => setShowLiveMap(true)} className="p-2.5 hover:bg-blue-50 bg-white border border-gray-100 rounded-full text-blue-600 transition-colors shadow-sm active:scale-95" aria-label="Live Location">
+              <Navigation className="w-5 h-5" />
+            </button>
+            <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
       </header>
@@ -3243,6 +3250,13 @@ const App: React.FC = () => {
           <AnimatedLogo size="large" />
         </button>
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowLiveMap(true)}
+            className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-xs font-bold hover:bg-blue-100 transition-colors border border-blue-100 active:scale-95"
+          >
+            <Navigation className="w-3 h-3" />
+            {globalNearestStationName || 'Live Location'}
+          </button>
           <button
             onClick={() => setIsMenuOpen(true)}
             className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
@@ -3622,6 +3636,12 @@ const App: React.FC = () => {
       )}
 
 
+      <LiveLocationMap
+        isOpen={showLiveMap}
+        onClose={() => setShowLiveMap(false)}
+        userLocation={userLocation}
+        selectedRoute={selectedBus}
+      />
     </div>
   );
 };

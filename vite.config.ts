@@ -176,6 +176,21 @@ export default defineConfig(({ mode }) => {
                   statuses: [0, 200],
                 },
               }
+            },
+            // Map Tiles - Cache Heavy (Offline Maps)
+            {
+              urlPattern: /^https:\/\/(?:.*\.tile\.openstreetmap\.org|.*\.google\.com\/vt|.*\.basemaps\.cartocdn\.com)\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'map-tiles-cache',
+                expiration: {
+                  maxEntries: 10000, // Massive capacity for offline maps
+                  maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
             }
           ]
         },

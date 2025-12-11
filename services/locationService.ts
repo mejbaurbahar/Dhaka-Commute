@@ -52,14 +52,15 @@ export const getCurrentLocation = (): Promise<UserLocation> => {
       }
     };
 
-    // OPTIMIZED: Try low-accuracy first for speed (network/WiFi location)
+    // Force High Accuracy for Real-Time Location
+    // Users reported issues with low-accuracy IP based location
     navigator.geolocation.getCurrentPosition(
       successHandler,
       errorHandler,
       {
-        enableHighAccuracy: false, // Start with network/WiFi location for speed
-        timeout: 5000, // Slightly longer timeout to avoid premature failure
-        maximumAge: Infinity // Accept ANY cached position for instant load
+        enableHighAccuracy: true, // Force GPS
+        timeout: 10000,
+        maximumAge: 0 // Do not use cached positions
       }
     );
   });
