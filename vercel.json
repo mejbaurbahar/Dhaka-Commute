@@ -86,6 +86,14 @@
             "dest": "https://webapi.shohoz.com/v1.0/web/booking/bus/search-trips"
         },
         {
+            "src": "/api/ai/(.*)",
+            "dest": "https://koyjabo-backend.onrender.com/api/ai/$1"
+        },
+        {
+            "src": "/api/routes/(.*)",
+            "dest": "https://koyjabo-backend.onrender.com/api/routes/$1"
+        },
+        {
             "src": "/intercity",
             "dest": "/intercity/index.html"
         },

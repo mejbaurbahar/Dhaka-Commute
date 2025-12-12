@@ -14,6 +14,11 @@ export default defineConfig(({ mode }) => {
         '/intercity': {
           target: 'http://localhost:3002',
           changeOrigin: true
+        },
+        '/api/ai': {
+          target: 'https://koyjabo-backend.onrender.com',
+          changeOrigin: true,
+          secure: false
         }
       }
     },

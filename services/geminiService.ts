@@ -2,7 +2,7 @@ import { BUS_DATA, METRO_STATIONS, STATIONS } from '../constants';
 import { canUseAiChat, trackAiChatUsage } from './apiKeyManager';
 
 // Backend API Configuration
-const BACKEND_API_URL = 'https://koyjabo-backend.onrender.com';
+const BACKEND_API_URL = '';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';

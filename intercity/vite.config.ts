@@ -15,6 +15,11 @@ export default defineConfig(({ mode }) => {
           target: 'https://webapi.shohoz.com',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api\/shohoz-proxy/, '/v1.0/web/booking/bus/search-trips')
+        },
+        '/api/routes': {
+          target: 'https://koyjabo-backend.onrender.com',
+          changeOrigin: true,
+          secure: false
         }
       }
     },
