@@ -169,7 +169,7 @@ export const STATIONS: Record<string, Station> = {
   'chashara': { id: 'chashara', name: 'Chashara', bnName: 'চাষাড়া', lat: 23.6200, lng: 90.5000 },
   'dhamrai': { id: 'dhamrai', name: 'Dhamrai', bnName: 'ধামরাই', lat: 23.9200, lng: 90.2100 },
   'manikganj': { id: 'manikganj', name: 'Manikganj', bnName: 'মানিকগঞ্জ', lat: 23.8600, lng: 90.0000 },
-  'chiriyakhana': { id: 'chiriyakhana', name: 'Chiriyakhana', bnName: 'চিড়িয়াখানা', lat: 23.8150, lng: 90.3500 },
+  'chiriyakhana': { id: 'chiriyakhana', name: 'National Zoo (Chiriyakhana)', bnName: 'জাতীয় চিড়িয়াখানা', lat: 23.8150, lng: 90.3500 },
   'shib_bari': { id: 'shib_bari', name: 'Shib Bari', bnName: 'শিব বাড়ি', lat: 24.0050, lng: 90.4000 },
   'ghatar_char': { id: 'ghatar_char', name: 'Ghatar Char', bnName: 'ঘাটার চর', lat: 23.7450, lng: 90.3400 },
   'paturia': { id: 'paturia', name: 'Paturia', bnName: 'পাটুরিয়া', lat: 23.7800, lng: 89.6300 },
@@ -361,6 +361,26 @@ export const STATIONS: Record<string, Station> = {
   'kawla': { id: 'kawla', name: 'Kawla', bnName: 'কাওলা', lat: 23.8450, lng: 90.4050 },
   'city_center': { id: 'city_center', name: 'City Center', bnName: 'সিটি সেন্টার', lat: 23.7300, lng: 90.4150 },
   'banani_bazar': { id: 'banani_bazar', name: 'Banani Bazar', bnName: 'বনানী বাজার', lat: 23.7940, lng: 90.4060 },
+
+  // Dhaka University & Medical
+  'tsc': { id: 'tsc', name: 'TSC (Dhaka University)', bnName: 'টিএসসি', lat: 23.7330, lng: 90.3950 },
+  'doyel_chattar': { id: 'doyel_chattar', name: 'Doyel Chattar', bnName: 'দোয়েল চত্বর', lat: 23.7280, lng: 90.4000 },
+  'curzon_hall': { id: 'curzon_hall', name: 'Curzon Hall', bnName: 'কার্জন হল', lat: 23.7250, lng: 90.4020 },
+  'dhaka_medical': { id: 'dhaka_medical', name: 'Dhaka Medical College', bnName: 'ঢাকা মেডিকেল', lat: 23.7230, lng: 90.3970 },
+  'engineering_institute': { id: 'engineering_institute', name: 'Engineering Institute', bnName: 'ইঞ্জিনিয়ারিং ইনস্টিটিউট', lat: 23.7300, lng: 90.3980 },
+
+  // Keraniganj & Old Dhaka
+  'ati_bazar': { id: 'ati_bazar', name: 'Ati Bazar', bnName: 'আটি বাজার', lat: 23.7200, lng: 90.3500 },
+  'ruhitpur': { id: 'ruhitpur', name: 'Ruhitpur', bnName: 'রুহিতপুর', lat: 23.6800, lng: 90.3000 },
+  'jinira': { id: 'jinira', name: 'Jinira', bnName: 'জিঞ্জিরা', lat: 23.7000, lng: 90.3900 },
+  'mitford': { id: 'mitford', name: 'Mitford Hospital', bnName: 'মিটফোর্ড', lat: 23.7100, lng: 90.3950 },
+
+  // Regional
+  'aricha_ghat': { id: 'aricha_ghat', name: 'Aricha Ghat', bnName: 'আরিচা ঘাট', lat: 23.8500, lng: 89.7800 },
+  'padma_bridge_north': { id: 'padma_bridge_north', name: 'Padma Bridge North', bnName: 'পদ্মা সেতু উত্তর', lat: 23.4700, lng: 90.2600 },
+  'mondolpara': { id: 'mondolpara', name: 'Mondolpara', bnName: 'মন্ডলপাড়া', lat: 23.6100, lng: 90.5000 },
+  'salna': { id: 'salna', name: 'Salna', bnName: 'সালনা', lat: 24.0300, lng: 90.4000 },
+  'rajendrapur_chowrasta': { id: 'rajendrapur_chowrasta', name: 'Rajendrapur Chowrasta', bnName: 'রাজেন্দ্রপুর চৌরাস্তা', lat: 24.0800, lng: 90.4000 },
 };
 
 export const BUS_DATA: BusRoute[] = [
