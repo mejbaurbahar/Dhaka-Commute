@@ -710,6 +710,56 @@ const App: React.FC = () => {
                 {selectedOption ? (
                   <div className="animate-slide-in">
                     <RouteDetail option={selectedOption} />
+
+                    {/* Global Tips Section - Show if we have response-level tips and no option-level tips */}
+                    {(data as any).enhancedData?.tips && !(selectedOption as any).enhancedData?.tips && (
+                      <div className="mt-6 p-5 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
+                        <div className="flex items-center gap-2 mb-4">
+                          <Sparkles className="w-5 h-5 text-purple-200" />
+                          <h3 className="text-lg font-bold text-white">💡 Travel Tips</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                          {(data as any).enhancedData.tips.best_option && (
+                            <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                              <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Best Option</label>
+                              <span className="text-white font-semibold">{(data as any).enhancedData.tips.best_option}</span>
+                            </div>
+                          )}
+                          {(data as any).enhancedData.tips.cheapest && (
+                            <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                              <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Cheapest</label>
+                              <span className="text-white font-semibold">{(data as any).enhancedData.tips.cheapest}</span>
+                            </div>
+                          )}
+                          {(data as any).enhancedData.tips.peak_times && (
+                            <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 md:col-span-2">
+                              <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Peak Times</label>
+                              <span className="text-white font-semibold">{(data as any).enhancedData.tips.peak_times}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {(data as any).enhancedData.tips.booking_sites && (data as any).enhancedData.tips.booking_sites.length > 0 && (
+                          <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                            <label className="block text-xs text-purple-200 mb-2 uppercase tracking-wide">Book Online</label>
+                            <div className="flex flex-wrap gap-2">
+                              {(data as any).enhancedData.tips.booking_sites.map((site: string, index: number) => (
+                                <a
+                                  key={index}
+                                  href={`https://${site}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-medium rounded-lg transition-colors border border-white/30"
+                                >
+                                  {site}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-[2rem] text-gray-400 bg-white/50 backdrop-blur-sm gap-3">

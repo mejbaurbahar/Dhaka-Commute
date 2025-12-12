@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { RouteStep, TransportMode, TravelOption, Schedule } from '../types';
 import { Bus, Plane, Train, MapPin, Navigation, Phone, ChevronDown, ChevronUp, Ticket, Clock, Car, Bike, Flag, ArrowRight, Camera, Mountain, Waves, TreePalm, History, X, Sparkles, Ship, Sun, Cloud, CloudRain, Wind } from 'lucide-react';
 import { RouteMap } from './RouteMap';
+import { EnhancedTransportDetails } from './EnhancedTransportDetails';
 
 interface RouteDetailProps {
   option: TravelOption;
@@ -738,6 +739,16 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
           <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-white to-transparent pointer-events-none z-[400]"></div>
           <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-white to-transparent pointer-events-none z-[400]"></div>
         </div>
+
+        {/* Enhanced Transport Details Section */}
+        {(option as any).enhancedData && (
+          <div className="p-6 md:p-8 bg-gray-50">
+            <EnhancedTransportDetails
+              enhancedData={(option as any).enhancedData}
+              tips={(option as any).enhancedData?.tips}
+            />
+          </div>
+        )}
 
         {/* Timeline Section */}
         <div className="p-6 md:p-8 bg-white">

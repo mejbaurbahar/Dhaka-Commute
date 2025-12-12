@@ -73,3 +73,90 @@ export interface RoutingResponse {
   destination: string;
   options: TravelOption[];
 }
+
+// ==================== NEW ENHANCED TYPES ====================
+
+// Bus Details
+export interface BusOption {
+  operator: string;
+  type: string; // "AC", "Non-AC"
+  departure: string;
+  arrival: string;
+  duration: string;
+  price: number;
+  boarding: string;
+  dropping: string;
+  contact: string;
+  booking_url: string;
+}
+
+// Train Details
+export interface TrainClasses {
+  Shovon?: number;
+  Shovon_Chair?: number;
+  AC_Chair?: number;
+  AC_Berth?: number;
+  Snigdha?: number;
+  [key: string]: number | undefined;
+}
+
+export interface TrainOption {
+  name: string;
+  number: string;
+  departure: string;
+  arrival: string;
+  duration: string;
+  route_via: string;
+  classes: TrainClasses;
+  off_day: string;
+  booking: string;
+}
+
+// Flight Details
+export interface FlightOption {
+  airline: string;
+  flight_no: string;
+  departure: string;
+  arrival: string;
+  from_airport: string;
+  to_airport: string;
+  price: number;
+  ground_transfer: string;
+  total_time: string;
+}
+
+// Driving Info
+export interface DrivingInfo {
+  distance_km: number;
+  duration: string;
+  route: string;
+  fuel_cost: number;
+  toll: number;
+  alternative_route?: string;
+}
+
+// Travel Tips
+export interface TravelTips {
+  best_option?: string;
+  cheapest?: string;
+  booking_sites?: string[];
+  peak_times?: string;
+}
+
+// Enhanced Search Results
+export interface EnhancedSearchResults {
+  bus?: BusOption[];
+  train?: TrainOption[];
+  flight?: FlightOption[];
+  driving?: DrivingInfo;
+  tips?: TravelTips;
+}
+
+// Enhanced API Response
+export interface EnhancedIntercityResponse {
+  from: string;
+  to: string;
+  date: string;
+  distance_km?: number;
+  results: EnhancedSearchResults;
+}
