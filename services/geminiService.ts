@@ -45,18 +45,27 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
   }
 
   try {
-    // Prepare Chat History Context (keep it minimal - only last 3 messages)
+    // Prepare Chat History Context (keep it minimal - only last 2 messages)
     const historyContext = chatHistory.length > 0
-      ? chatHistory.slice(-3).map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n')
+      ? chatHistory.slice(-2).map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n')
       : '';
 
-    // Construct Knowledge Base
-    const knowledgeBase = constructKnowledgeBase();
+    // ✅ SHORT SYSTEM INSTRUCTION (instead of entire knowledge base)
+    // The AI already knows about Dhaka transport from its training data!
+    const systemInstruction = `You are a helpful Dhaka transport expert. Answer questions about:
+- Dhaka Metro Rail (MRT Line 6): Uttara North to Motijheel
+- Local buses and their routes
+- Best ways to travel between locations in Dhaka
+- Provide accurate, practical information
+- Respond in the same language as the question (Bengali or English)`;
 
-    // Build the prompt with knowledge base + history + current question
-    const userPrompt = `${knowledgeBase}\n\nPrevious conversation:\n${historyContext}\n\nCurrent question: ${userQuery}`;
+    // Build the prompt with only user question + minimal history
+    const userPrompt = historyContext
+      ? `${historyContext}\n\nCurrent question: ${userQuery}`
+      : userQuery;
 
     console.log('📡 Calling Backend AI Chat API...');
+    console.log(`📊 Estimated prompt size: ~${userPrompt.length} characters`);
 
     // Create abort controller for timeout (120 seconds for 8 retries with exponential backoff)
     const controller = new AbortController();
@@ -67,12 +76,26 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt: userPrompt
+          prompt: userPrompt,
+          systemInstruction: systemInstruction
         }),
         signal: controller.signal
       });
 
       clearTimeout(timeoutId);
+
+      // Handle 400 Bad Request (Prompt Too Large)
+      if (response.status === 400) {
+        try {
+          const errorData = await response.json();
+          if (errorData.error === 'Prompt Too Large') {
+            return `⚠️ Message Too Long\n\n${errorData.message}\n\nTip: Try asking a simpler, shorter question.`;
+          }
+          return `⚠️ ${errorData.message || 'Invalid request. Please try rephrasing your question.'}`;
+        } catch {
+          return "⚠️ Invalid request. Please try rephrasing your question.";
+        }
+      }
 
       // Handle rate limiting (backend)
       if (response.status === 429) {
