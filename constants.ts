@@ -376,12 +376,60 @@ export const STATIONS: Record<string, Station> = {
   'mitford': { id: 'mitford', name: 'Mitford Hospital', bnName: 'মিটফোর্ড', lat: 23.7100, lng: 90.3950 },
 
   // Regional
-  'aricha_ghat': { id: 'aricha_ghat', name: 'Aricha Ghat', bnName: 'আরিচা ঘাট', lat: 23.8500, lng: 89.7800 },
-  'padma_bridge_north': { id: 'padma_bridge_north', name: 'Padma Bridge North', bnName: 'পদ্মা সেতু উত্তর', lat: 23.4700, lng: 90.2600 },
-  'mondolpara': { id: 'mondolpara', name: 'Mondolpara', bnName: 'মন্ডলপাড়া', lat: 23.6100, lng: 90.5000 },
-  'salna': { id: 'salna', name: 'Salna', bnName: 'সালনা', lat: 24.0300, lng: 90.4000 },
-  'rajendrapur_chowrasta': { id: 'rajendrapur_chowrasta', name: 'Rajendrapur Chowrasta', bnName: 'রাজেন্দ্রপুর চৌরাস্তা', lat: 24.0800, lng: 90.4000 },
+  aricha_ghat: { id: 'aricha_ghat', name: 'Aricha Ghat', bnName: 'আরিচা ঘাট', lat: 23.8500, lng: 89.7800 },
+  padma_bridge_north: { id: 'padma_bridge_north', name: 'Padma Bridge North', bnName: 'পদ্মা সেতু উত্তর', lat: 23.4700, lng: 90.2600 },
+  mondolpara: { id: 'mondolpara', name: 'Mondolpara', bnName: 'মন্ডলপাড়া', lat: 23.6100, lng: 90.5000 },
+  salna: { id: 'salna', name: 'Salna', bnName: 'সালনা', lat: 24.0300, lng: 90.4000 },
+  rajendrapur_chowrasta: { id: 'rajendrapur_chowrasta', name: 'Rajendrapur Chowrasta', bnName: 'রাজেন্দ্রপুর চৌরাস্তা', lat: 24.0800, lng: 90.4000 },
+
+  // ===== MAJOR EDUCATIONAL INSTITUTIONS =====
+  dhaka_university: { id: 'dhaka_university', name: 'Dhaka University', bnName: 'ঢাকা বিশ্ববিদ্যালয়', lat: 23.7340, lng: 90.3930 },
+  buet: { id: 'buet', name: 'BUET', bnName: 'বুয়েট', lat: 23.7266, lng: 90.3925 },
+  jahangirnagar_university: { id: 'jahangirnagar_university', name: '  Jahangirnagar University', bnName: 'জাহাঙ্গীরনগর বিশ্ববিদ্যালয়', lat: 23.8813, lng: 90.2660 },
+  nsu: { id: 'nsu', name: 'North South University', bnName: 'নর্থ সাউথ বিশ্ববিদ্যালয়', lat: 23.8120, lng: 90.4250 },
+  brac_university: { id: 'brac_university', name: 'BRAC University', bnName: 'ব্র্যাক বিশ্ববিদ্যালয়', lat: 23.7808, lng: 90.4067 },
+  iub: { id: 'iub', name: 'Independent University Bangladesh', bnName: 'ইন্ডিপেন্ডেন্ট ইউনিভার্সিটি', lat: 23.8119, lng: 90.4252 },
+  aiub: { id: 'aiub', name: 'AIUB', bnName: 'এআইইউবি', lat: 23.7504, lng: 90.3919 },
+  uttara_university: { id: 'uttara_university', name: 'Uttara University', bnName: 'উত্তরা বিশ্ববিদ্যালয়', lat: 23.8697, lng: 90.3870 },
+
+  // ===== MEDICAL & HEALTHCARE =====
+  bsmmu: { id: 'bsmmu', name: 'BSMMU', bnName: 'বিএসএমএমইউ', lat: 23.7379, lng: 90.3980 },
+  bir_dem: { id: 'bir_dem', name: 'BIRDEM', bnName: 'বারডেম', lat: 23.7381, lng: 90.3961 },
+  square_hospital: { id: 'square_hospital', name: 'Square Hospital', bnName: 'স্কয়ার হাসপাতাল', lat: 23.7500, lng: 90.3850 },
+  labaid_hospital: { id: 'labaid_hospital', name: 'Labaid Hospital', bnName: 'লাবএইড', lat: 23.7500, lng: 90.3750 },
+  united_hospital: { id: 'united_hospital', name: 'United Hospital', bnName: 'ইউনাইটেড হাসপাতাল', lat: 23.8147, lng: 90.4240 },
+  holy_family: { id: 'holy_family', name: 'Holy Family Hospital', bnName: 'হলি ফ্যামিলি', lat: 23.7640, lng: 90.3590 },
+  ssmc: { id: 'ssmc', name: 'Sir Salimullah Medical', bnName: 'স্যার সলিমুল্লাহ মেডিকেল', lat: 23.7100, lng: 90.4000 },
+
+  // ===== SHOPPING & COMMERCIAL =====
+  bashundhara_city: { id: 'bashundhara_city', name: 'Bashundhara City', bnName: 'বসুন্ধরা সিটি', lat: 23.7500, lng: 90.3880 },
+  jamuna_center: { id: 'jamuna_center', name: 'Jamuna Future Park', bnName: 'যমুনা ফিউচার পার্ক', lat: 23.8130, lng: 90.4220 }, // Alternative ID for searching
+  rifles_square: { id: 'rifles_square', name: 'Rifles Square', bnName: 'রাইফেলস স্কয়ার', lat: 23.7550, lng: 90.3900 },
+  eastern_plaza: { id: 'eastern_plaza', name: 'Eastern Plaza', bnName: 'ইস্টার্ন প্লাজা', lat: 23.7300, lng: 90.4130 },
+
+  // ===== BUSINESS & OFFICE AREAS =====
+  banani_dohs: { id: 'banani_dohs', name: 'Banani DOHS', bnName: 'বনানী ডোহস', lat: 23.7940, lng: 90.4070 },
+  baridhara: { id: 'baridhara', name: 'Baridhara', bnName: 'বারিধারা', lat: 23.8070, lng: 90.4250 },
+  baridhara_dohs: { id: 'baridhara_dohs', name: 'Baridhara DOHS', bnName: 'বারিধারা ডোহস', lat: 23.8120, lng: 90.4280 },
+  dilkusha: { id: 'dilkusha', name: 'Dilkusha', bnName: 'দিলকুশা', lat: 23.7310, lng: 90.4170 },
+
+  // ===== LANDMARKS & TOURIST SPOTS =====
+  lalbagh_fort: { id: 'lalbagh_fort', name: 'Lalbagh Fort', bnName: 'লালবাগ কেল্লা', lat: 23.7180, lng: 90.3920 },
+  national_museum: { id: 'national_museum', name: 'National Museum', bnName: 'জাতীয় জাদুঘর', lat: 23.7380, lng: 90.3980 },
+  shaheed_minar: { id: 'shaheed_minar', name: 'Shaheed Minar', bnName: 'শহীদ মিনার', lat: 23.7280, lng: 90.3980 },
+  national_parliament: { id: 'national_parliament', name: 'National Parliament', bnName: 'জাতীয় সংসদ ভবন', lat: 23.7626, lng: 90.3795 },
+
+  // ===== RESIDENTIAL AREAS =====
+  uttara_sec11: { id: 'uttara_sec11', name: 'Uttara Sector 11', bnName: 'উত্তরা সেক্টর ১১', lat: 23.8630, lng: 90.4010 },
+  uttara_sec13: { id: 'uttara_sec13', name: 'Uttara Sector 13', bnName: 'উত্তরা সেক্টর ১৩', lat: 23.8590, lng: 90.4020 },
+  uttara_sec14: { id: 'uttara_sec14', name: 'Uttara Sector 14', bnName: 'উত্তরা সেক্টর ১৪', lat: 23.8580, lng: 90.4040 },
+  nikunja: { id: 'nikunja', name: 'Nikunja', bnName: 'নিকুঞ্জ', lat: 23.8300, lng: 90.4150 },
+
+  // ===== GOVERNMENT OFFICES =====
+  secretariat: { id: 'secretariat', name: 'Secretariat', bnName: 'সচিবালয়', lat: 23.7280, lng: 90.4020 },
+  supreme_court: { id: 'supreme_court', name: 'Supreme Court', bnName: 'সুপ্রিম কোর্ট', lat: 23.7280, lng: 90.4030 },
 };
+
 
 export const BUS_DATA: BusRoute[] = [
   {
