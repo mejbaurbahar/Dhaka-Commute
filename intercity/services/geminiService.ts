@@ -2,7 +2,7 @@ import { RoutingResponse, TravelOption, TransportMode } from "../types";
 import { canUseIntercitySearch, trackIntercitySearchUsage } from "./apiKeyManager";
 
 // Backend API Configuration
-const BACKEND_API_URL = '';
+const BACKEND_API_URL = 'https://koyjabo-backend.onrender.com';
 
 // --- Cache Configuration ---
 const CACHE_TTL = 1000 * 60 * 30; // 30 Minutes for "Fresh" data
