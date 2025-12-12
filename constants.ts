@@ -485,7 +485,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Baishakhi Paribahan',
     bnName: 'বৈশাখী পরিবহন',
     routeString: 'Savar ⇄ Notun Bazar',
-    stops: ['savar', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda_link_road', 'bashtola', 'shahjadpur', 'uttar_badda', 'notun_bazar'],
+    stops: ['savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'yearpur', 'dhamsona', 'tetuljhora', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'taltola', 'zia_uddyan', 'bijoy_sarani', 'tejgaon', 'jahangir_gate', 'mohakhali', 'mohakhali_flyover', 'wireless', 'gulshan1', 'badda_link_road', 'bashtola', 'shahjadpur', 'uttar_badda', 'notun_bazar'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -494,7 +494,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Bondhu Paribahan',
     bnName: 'বন্ধু পরিবহন',
     routeString: 'Gulistan ⇄ Notun Bazar',
-    stops: ['gulistan', 'gpo', 'paltan', 'dhamrai', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'khidma_hospital', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar'],
+    stops: ['gulistan', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'moghbazar_crossing', 'malibagh_railgate', 'khidma_hospital', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'madhya_badda', 'badda', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -512,7 +512,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Brihottor Mirpur',
     bnName: 'বৃহত্তর মিরপুর',
     routeString: 'Chiriyakhana ⇄ Chandra',
-    stops: ['chiriyakhana', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'savar', 'nobinagar', 'chandra'],
+    stops: ['chiriyakhana', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'tetuljhora', 'dhamsona', 'yearpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'nobinagar', 'baipayl', 'chandra'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -530,7 +530,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Cantonment',
     bnName: 'ক্যান্টনমেন্ট',
     routeString: 'Mirpur 14 ⇄ Savar',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'savar'],
+    stops: ['mirpur14', 'mirpur13', 'mirpur11', 'mirpur10', 'mirpur9', 'mirpur8', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'tetuljhora', 'dhamsona', 'yearpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -548,7 +548,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'D Link',
     bnName: 'ডি লিংক',
     routeString: 'Fulbaria ⇄ Dhamrai',
-    stops: ['fulbaria', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'savar', 'dhamrai'],
+    stops: ['fulbaria', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'tetuljhora', 'dhamsona', 'yearpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'dhamrai'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -557,7 +557,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'D One Transport',
     bnName: 'ডি ওয়ান',
     routeString: 'Motijheel ⇄ Dhamrai',
-    stops: ['motijheel', 'dainik_bangla_moor', 'paltan', 'press_club', 'matsya_bhaban', 'high_court', 'shahbag', 'bangla_motor', 'kawran_bazar', 'bot_tola', 'farmgate', 'khamar_bari', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'nobinagar', 'dhamrai'],
+    stops: ['motijheel', 'dainik_bangla_moor', 'paltan', 'press_club', 'matsya_bhaban', 'high_court', 'shahbag', 'bangla_motor', 'kawran_bazar', 'bot_tola', 'farmgate', 'khamar_bari', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'tetuljhora', 'dhamsona', 'yearpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'nobinagar', 'dhamrai'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -629,7 +629,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Grameen Suveccha',
     bnName: 'গ্রামীণ শুভেচ্ছা',
     routeString: 'Fulbaria ⇄ Chandra',
-    stops: ['fulbaria', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'baipayl', 'zirabo', 'nandan_park', 'chandra'],
+    stops: ['fulbaria', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'tetuljhora', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'baipayl', 'zirabo', 'nandan_park', 'chandra'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -683,7 +683,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Itihash',
     bnName: 'ইতিহাস',
     routeString: 'Mirpur 14 ⇄ Chandra',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'nobinagar', 'baipayl', 'zirabo', 'nandan_park', 'chandra'],
+    stops: ['mirpur14', 'mirpur13', 'mirpur11', 'mirpur10', 'mirpur9', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'tetuljhora', 'dhamsona', 'yearpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'nobinagar', 'baipayl', 'zirabo', 'nandan_park', 'chandra'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -710,7 +710,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Lal Sabuj',
     bnName: 'লাল সবুজ',
     routeString: 'Nandan Park ⇄ Motijheel',
-    stops: ['nandan_park', 'zirabo', 'baipayl', 'nobinagar', 'savar', 'hemayetpur', 'amin_bazar', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
+    stops: ['nandan_park', 'zirabo', 'baipayl', 'nobinagar', 'savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'yearpur', 'dhamsona', 'tetuljhora', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'parbat', 'gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
     type: 'Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -818,7 +818,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'One Transport',
     bnName: 'ওয়ান ট্রান্সপোর্ট',
     routeString: 'Nandan Park ⇄ Motijheel',
-    stops: ['nandan_park', 'zirani_bazar', 'zirabo', 'baipayl', 'nobinagar', 'savar', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
+    stops: ['nandan_park', 'zirani_bazar', 'zirabo', 'baipayl', 'nobinagar', 'savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'yearpur', 'dhamsona', 'tetuljhora', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -854,7 +854,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Purbachol Logistics',
     bnName: 'পূর্বাচল লজিস্টিকস',
     routeString: 'Mirpur 14 ⇄ Chandra',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'savar', 'baipayl', 'zirani_bazar', 'zirabo', 'nandan_park', 'chandra'],
+    stops: ['mirpur14', 'mirpur13', 'mirpur11', 'mirpur10', 'mirpur9', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'tetuljhora', 'dhamsona', 'yearpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'baipayl', 'zirani_bazar', 'zirabo', 'nandan_park', 'chandra'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -998,7 +998,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Super',
     bnName: 'সুপার',
     routeString: 'Gulistan ⇄ Nobinagar',
-    stops: ['gulistan', 'shahbag', 'farmgate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'savar', 'nobinagar'],
+    stops: ['gulistan', 'shahbag', 'farmgate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'tetuljhora', 'dhamsona', 'yearpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'nobinagar'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1574,7 +1574,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Swajan Paribahan',
     bnName: 'স্বজন পরিবহন',
     routeString: 'Savar ⇄ Sadarghat',
-    stops: ['savar', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'golap_shah_mazar', 'naya_bazar', 'ray_saheb_bazar', 'sadarghat'],
+    stops: ['savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'yearpur', 'dhamsona', 'tetuljhora', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'golap_shah_mazar', 'naya_bazar', 'ray_saheb_bazar', 'sadarghat'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1583,7 +1583,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Suveccha',
     bnName: 'শুভেচ্ছা',
     routeString: 'Chittagong Road ⇄ Chandra',
-    stops: ['chittagong_road', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'kazla', 'jatrabari', 'sayedabad', 'gulistan', 'chankhar_pul', 'bakshi_bazar', 'dhakeshwari', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'savar', 'nobinagar', 'baipayl', 'zirani_bazar', 'nandan_park', 'chandra'],
+    stops: ['chittagong_road', 'signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'shanir_akhra', 'kazla', 'jatrabari', 'sayedabad', 'gulistan', 'chankhar_pul', 'bakshi_bazar', 'dhakeshwari', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'tetuljhora', 'dhamsona', 'yearpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'nobinagar', 'baipayl', 'zirani_bazar', 'nandan_park', 'chandra'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1627,9 +1627,9 @@ export const BUS_DATA: BusRoute[] = [
   {
     id: 'welcome',
     name: 'Welcome',
-    bnName: 'ওয়েলকাম',
+    bnName: 'ওয়েলকম',
     routeString: 'Nandan Park ⇄ Motijheel',
-    stops: ['nandan_park', 'zirani_bazar', 'zirabo', 'baipayl', 'nobinagar', 'savar', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
+    stops: ['nandan_park', 'zirani_bazar', 'zirabo', 'baipayl', 'nobinagar', 'savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'yearpur', 'dhamsona', 'tetuljhora', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 11:00 PM'
   },
