@@ -1,4 +1,14 @@
 {
+    "rewrites": [
+        {
+            "source": "/api/ai/:path*",
+            "destination": "https://koyjabo-backend.onrender.com/api/ai/:path*"
+        },
+        {
+            "source": "/api/routes/:path*",
+            "destination": "https://koyjabo-backend.onrender.com/api/routes/:path*"
+        }
+    ],
     "buildCommand": "npm run build",
     "outputDirectory": "dist",
     "devCommand": "npm run dev",

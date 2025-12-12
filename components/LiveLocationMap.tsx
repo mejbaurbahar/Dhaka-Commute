@@ -252,7 +252,7 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
             <div className="bg-white w-full max-w-5xl h-[85vh] rounded-3xl shadow-2xl overflow-hidden relative flex flex-col md:flex-row">
 
-                {/* Map Container */}
+                {/* Map Container - Works offline with cached tiles! */}
                 <div ref={mapContainerRef} className="flex-1 w-full h-full relative z-0 bg-gray-200" />
 
                 {/* Floating Controls */}

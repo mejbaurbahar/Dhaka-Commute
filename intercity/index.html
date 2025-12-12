@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
 
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -224,6 +225,87 @@
 
     .driving-card {
       border-left: 4px solid #6b7280;
+    }
+
+    /* ===== MOBILE OPTIMIZATIONS ===== */
+
+    /* Smooth scrolling with momentum on mobile */
+    * {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Improve touch responsiveness */
+    button,
+    a,
+    [role="button"] {
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Ensure minimum touch target size */
+    button,
+    a,
+    input[type="button"],
+    input[type="submit"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Prevent text size adjustment on orientation change */
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    /* Prevent iOS zoom on input focus */
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+
+    /* Hardware acceleration for smooth animations */
+    .animate-fade-in,
+    .animate-fade-in-up,
+    .animate-slide-in,
+    [class*="animate-"] {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      will-change: transform;
+      backface-visibility: hidden;
+    }
+
+    /* Optimize scrolling performance */
+    .overflow-y-auto,
+    .overflow-x-auto {
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+
+    /* Reduce motion for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Mobile-specific optimizations */
+    @media (max-width: 768px) {
+      body {
+        overscroll-behavior-x: none;
+      }
+
+      html,
+      body {
+        overflow-x: hidden;
+      }
     }
   </style>
 

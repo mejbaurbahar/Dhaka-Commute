@@ -18,7 +18,7 @@ import RouteSuggestions from './components/RouteSuggestions';
 import { incrementVisitCount, trackBusSearch, trackRouteSearch } from './services/analyticsService';
 import LiveLocationMap from './components/LiveLocationMap';
 import { AIUsageIndicator } from './components/UsageIndicators';
-
+import { autoPreloadMapTiles } from './services/offlineMapService';
 
 
 interface ChatMessage {
@@ -912,6 +912,11 @@ const App: React.FC = () => {
         console.log("Initial location fetched:", loc);
       })
       .catch(err => console.log("Initial location fetch failed:", err));
+  }, []);
+
+  // Auto-preload offline map tiles in background
+  useEffect(() => {
+    autoPreloadMapTiles();
   }, []);
 
   // Persist View and Selected Bus
