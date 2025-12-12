@@ -19,6 +19,11 @@ import { incrementVisitCount, trackBusSearch, trackRouteSearch } from './service
 import LiveLocationMap from './components/LiveLocationMap';
 import { AIUsageIndicator } from './components/UsageIndicators';
 import { autoPreloadMapTiles } from './services/offlineMapService';
+import {
+  enhancedBusSearch,
+  generateSearchSuggestions,
+  type SearchSuggestion
+} from './services/searchService';
 
 
 interface ChatMessage {
@@ -623,6 +628,9 @@ const App: React.FC = () => {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [nearestMetro, setNearestMetro] = useState<{ stationId: string; distance: number } | null>(null);
   const [suggestedRoutes, setSuggestedRoutes] = useState<SuggestedRoute[]>([]);
+  const [searchSuggestions, setSearchSuggestions] = useState<SearchSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchContext, setSearchContext] = useState<string | undefined>();
   const [selectedTrip, setSelectedTrip] = useState<SuggestedRoute | null>(null);
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -2833,38 +2841,129 @@ const App: React.FC = () => {
 
           <div className="px-6 pb-6">
             {searchMode === 'TEXT' ? (
-              <div className="relative group flex items-center">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors z-10" />
-                <input
-                  type="text"
-                  placeholder="Search bus or place..."
-                  className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                />
-                {inputValue || searchQuery ? (
-                  <button
-                    onClick={() => {
-                      setInputValue('');
-                      setSearchQuery('');
-                      setSuggestedRoutes([]);
+              <div className="relative group">
+                <div className="relative flex items-center">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10 flex items-center justify-center">
+                    <Search className="text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search bus or place..."
+                    className="w-full pl-12 pr-12 py-3.5 bg-white text-gray-800 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400"
+                    value={inputValue}
+                    onChange={(e) => {
+                      setInputValue(e.target.value);
+                      if (e.target.value.trim().length > 0) {
+                        const suggestions = generateSearchSuggestions(e.target.value);
+                        setSearchSuggestions(suggestions);
+                        setShowSuggestions(true);
+                      } else {
+                        setSearchSuggestions([]);
+                        setShowSuggestions(false);
+                      }
                     }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
-                    title="Clear Search"
-                    aria-label="Clear search"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleSearchCommit}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
-                    title="Click to Search"
-                    aria-label="Search"
-                  >
-                    <Search className="w-4 h-4" />
-                  </button>
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => {
+                      if (searchSuggestions.length > 0) setShowSuggestions(true);
+                    }}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                  />
+                  {inputValue || searchQuery ? (
+                    <button
+                      onClick={() => {
+                        setInputValue('');
+                        setSearchQuery('');
+                        setSuggestedRoutes([]);
+                        setSearchContext(undefined);
+                        setShowSuggestions(false);
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center p-2 bg-red-100 rounded-lg text-red-600 hover:bg-red-200 transition-colors"
+                      title="Clear Search"
+                      aria-label="Clear search"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        if (inputValue.trim()) {
+                          const result = enhancedBusSearch(inputValue);
+                          setSearchContext(result.searchContext);
+                          setSearchQuery(inputValue);
+                          setShowSuggestions(false);
+                        }
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center p-2 bg-gray-100 rounded-lg text-dhaka-green hover:bg-green-50 transition-colors"
+                      title="Click to Search"
+                      aria-label="Search"
+                    >
+                      <Search className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Autocomplete Dropdown */}
+                {showSuggestions && searchSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl max-h-80 overflow-y-auto z-[100] border border-gray-200">
+                    {searchSuggestions.map((suggestion, idx) => (
+                      <div
+                        key={`${suggestion.type}-${suggestion.id}-${idx}`}
+                        className="px-4 py-3.5 hover:bg-emerald-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                        onClick={() => {
+                          const displayName = suggestion.bnName || suggestion.name;
+                          setInputValue(displayName);
+                          setShowSuggestions(false);
+                          setTimeout(() => {
+                            const result = enhancedBusSearch(displayName);
+                            setSearchContext(result.searchContext);
+                            setSearchQuery(displayName);
+                          }, 100);
+                        }}
+                      >
+                        <div className="flex items-center gap-3">
+                          {suggestion.type === 'station' ? (
+                            <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                          ) : (
+                            <Bus className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-gray-900 truncate">
+                              {suggestion.bnName || suggestion.name}
+                            </div>
+                            {suggestion.subtitle && (
+                              <div className="text-xs text-gray-500 truncate mt-0.5">
+                                {suggestion.subtitle}
+                              </div>
+                            )}
+                          </div>
+                          {suggestion.type === 'station' && (
+                            <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                              Station
+                            </span>
+                          )}
+                          {suggestion.type === 'bus' && (
+                            <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                              Bus
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Search Context Banner */}
+                {searchContext && (
+                  <div className="mt-3">
+                    <div className="bg-emerald-50 border-l-4 border-emerald-500 px-4 py-3 rounded-r-lg">
+                      <div className="flex items-center gap-2">
+                        <Search className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+                        <p className="text-sm font-medium text-emerald-900">
+                          {searchContext}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             ) : (
