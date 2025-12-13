@@ -166,6 +166,47 @@ export default defineConfig(({ mode }) => {
                 }
               }
             },
+            // Critical Offline Assets (Manifest, Offline CSS) - StaleWhileRevalidate for reliability
+            {
+              urlPattern: /^(?:.*\/)?(?:manifest\.json|offline-styles\.css)(?:\?.*)?$/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'critical-offline-assets',
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 24 * 60 * 60 // 1 day
+                }
+              }
+            },
+            // Local Assets (Styles, Scripts, Manifest) - Support Offline usage
+            {
+              // Match commonly used development file extensions, allowing for query parameters (e.g., ?t=123)
+              urlPattern: /\.(?:js|jsx|ts|tsx|css|json)(?:\?.*)?$/i,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'local-assets-cache',
+                networkTimeoutSeconds: 2, // Fast timeout for dev
+                expiration: {
+                  maxEntries: 200,
+                  maxAgeSeconds: 24 * 60 * 60 // 1 day
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            // Vite Client & HMR - Attempt to cache to prevent console errors offline
+            {
+              urlPattern: /(?:@vite\/client|@react-refresh)/,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'vite-client-cache',
+                expiration: {
+                  maxEntries: 5,
+                  maxAgeSeconds: 24 * 60 * 60
+                }
+              }
+            },
             // API Calls - Network First with Cache Fallback
             {
               urlPattern: /^https:\/\/api\.open-meteo\.com\/.*/i,

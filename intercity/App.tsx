@@ -5,7 +5,9 @@ import { RoutingResponse } from './types';
 import { RouteCard } from './components/RouteCard';
 import { RouteDetail } from './components/RouteDetail';
 import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
-import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield, Ship, TramFront } from 'lucide-react';
+import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield, Ship, TramFront, Home } from 'lucide-react';
+
+
 import { AnimatedLogo } from './components/AnimatedLogo';
 import { IntercityUsageIndicator } from './components/UsageIndicator';
 import ThemeToggle from './components/ThemeToggle';
@@ -458,27 +460,70 @@ const App: React.FC = () => {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 px-8 py-2 shadow-sm z-[5000] items-center justify-between">
+      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-8 h-20 shadow-sm z-[5000] items-center justify-between transition-all duration-300">
         <a
           href="/"
           onClick={(e) => {
             e.preventDefault();
-            window.location.href = window.location.origin + '/#home';
+            window.location.href = window.location.origin + '/';
           }}
-          className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
+          className="flex items-center gap-3 cursor-pointer group outline-none"
         >
-          <AnimatedLogo size="large" />
-        </a>
-        <div className="flex items-center gap-4">
-          <div className="scale-90">
-            <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+          <div className="w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <AnimatedLogo size="small" />
           </div>
+        </a>
+
+        {/* Desktop Navigation Links */}
+        <div className="flex items-center gap-2 bg-gray-100/50 dark:bg-slate-800/50 p-1.5 rounded-2xl border border-gray-200 dark:border-gray-700">
+          <a
+            href="/"
+            onClick={(e) => { e.preventDefault(); window.location.href = window.location.origin + '/'; }}
+            className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
+          >
+            <Home className="w-4 h-4" />
+            Home
+          </a>
+          <button
+            className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm transform scale-100"
+          >
+            <Train className="w-4 h-4 animate-pulse" />
+            Intercity
+          </button>
+          <a
+            href="/#ai-assistant"
+            onClick={(e) => { e.preventDefault(); window.location.href = window.location.origin + '/#ai-assistant'; }}
+            className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
+          >
+            <Sparkles className="w-4 h-4" />
+            AI Chat
+          </a>
+          <a
+            href="/#history"
+            onClick={(e) => { e.preventDefault(); window.location.href = window.location.origin + '/#history'; }}
+            className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
+          >
+            <Clock className="w-4 h-4" />
+            History
+          </a>
+          <a
+            href="/#about"
+            onClick={(e) => { e.preventDefault(); window.location.href = window.location.origin + '/#about'; }}
+            className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
+          >
+            <Info className="w-4 h-4" />
+            About
+          </a>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300"
             aria-label="Open menu"
           >
-            <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+            <Menu className="w-6 h-6" />
           </button>
         </div>
       </header>

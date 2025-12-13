@@ -26,6 +26,7 @@ import {
   type SearchSuggestion
 } from './services/searchService';
 import { sortBusesByLocation } from './services/locationBasedSortService';
+import { DesktopNavbar } from './components/DesktopNavbar';
 
 
 interface ChatMessage {
@@ -1346,7 +1347,7 @@ const App: React.FC = () => {
   };
 
   const renderAiAssistant = () => (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 md:rounded-l-3xl md:border-l md:border-gray-200 dark:md:border-gray-800 overflow-hidden w-full pt-[65px] md:pt-0 relative">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 md:rounded-l-3xl md:border-l md:border-gray-200 dark:md:border-gray-800 overflow-hidden w-full pt-[65px] md:pt-24 relative">
       <div className="md:hidden flex items-center gap-3 p-4 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-20 absolute top-0 left-0 right-0 h-[65px]">
         <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors">
           <ArrowLeft className="w-5 h-5 text-gray-600" />
@@ -1452,7 +1453,7 @@ const App: React.FC = () => {
   );
 
   const renderAbout = () => (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-24 overflow-y-auto w-full">
       <div className="max-w-2xl mx-auto text-center">
         <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
           <Bus className="w-10 h-10" />
@@ -1592,7 +1593,7 @@ const App: React.FC = () => {
 
   const renderPrivacyPolicy = () => (
     <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-y-auto w-full relative">
-      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-20 md:pt-20">
+      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-20 md:pt-24">
 
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100">Privacy Policy</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Last updated: November 26, 2025</p>
@@ -1676,7 +1677,7 @@ const App: React.FC = () => {
 
   const renderTerms = () => (
     <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-y-auto w-full relative">
-      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-20 md:pt-20">
+      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-20 md:pt-24">
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100">Terms of Service</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Last updated: November 26, 2025</p>
 
@@ -1835,7 +1836,7 @@ const App: React.FC = () => {
   );
 
   const renderWhyUse = () => (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-24 overflow-y-auto w-full">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100 leading-tight">Why Use <span className="text-dhaka-green">কই যাবো</span>?</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-8">Your smart companion for navigating Bangladesh's bus network</p>
@@ -2011,7 +2012,7 @@ const App: React.FC = () => {
   );
 
   const renderFAQ = () => (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-24 overflow-y-auto w-full">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100 leading-tight">Frequently Asked Questions</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-8">Everything you need to know about কই যাবো</p>
@@ -2170,7 +2171,7 @@ const App: React.FC = () => {
   );
 
   const renderForAi = () => (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-24 overflow-y-auto w-full">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900 leading-tight">AI Dataset & Integration</h1>
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
@@ -3103,7 +3104,8 @@ const App: React.FC = () => {
     return (
       <div className="flex flex-col h-full w-full">
         {/* Sticky Top Section */}
-        <div className="flex-none bg-white dark:bg-slate-900 z-20">
+        {/* Sticky Top Section */}
+        <div className="flex-none bg-white dark:bg-slate-900 z-20 md:pt-24">
           <div className="p-4 space-y-1">
             {primarySearch === 'LOCAL' ? (
               <>
@@ -3377,39 +3379,24 @@ const App: React.FC = () => {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:flex bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 px-8 py-2 shadow-sm z-50 items-center justify-between shrink-0">
-        <button
-          onClick={() => setView(AppView.HOME)}
-          className="flex items-center gap-3 cursor-pointer outline-none hover:opacity-80 transition-opacity"
-          aria-label="Go to home"
-        >
-          <AnimatedLogo size="large" />
-        </button>
-        <div className="flex items-center gap-4">
-          <div className="scale-90">
-            <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
-          </div>
-          <button
-            onClick={() => setShowLiveMap(true)}
-            className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-xs font-bold hover:bg-blue-100 transition-colors border-2 border-blue-200 active:scale-95 animate-pulse shadow-lg shadow-blue-100"
-          >
-            <Navigation className="w-3 h-3" />
-            {globalNearestStationName || 'Live Location'}
-          </button>
-          <button
-            onClick={() => setIsMenuOpen(true)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors"
-            aria-label="Open menu"
-          >
-            <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-          </button>
-        </div>
-      </header>
+      {/* Desktop Header - Replaced by DesktopNavbar */}
+      <DesktopNavbar
+        view={view}
+        setView={setView}
+        primarySearch={primarySearch}
+        setPrimarySearch={setPrimarySearch}
+        listFilter={listFilter}
+        setListFilter={setListFilter}
+        onOpenMenu={() => setIsMenuOpen(true)}
+        onOpenLiveMap={() => setShowLiveMap(true)}
+        isDarkMode={isDarkMode}
+        toggleTheme={() => setIsDarkMode(!isDarkMode)}
+      />
 
       <main className="flex flex-1 overflow-hidden relative w-full mx-auto bg-slate-50 dark:bg-slate-900 h-full">
         {/* Left Sidebar (Desktop) / Main View (Mobile Home) */}
         <div className={`
-            ${'w-full md:w-1/3 md:min-w-[320px] md:max-w-md md:flex md:flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 z-0 h-full'}
+            ${'w-full md:w-1/3 md:min-w-[320px] md:max-w-md md:flex md:flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 z-0 h-full overflow-y-auto'}
             ${view !== AppView.HOME && 'hidden md:flex'}
 `}>
           <div className="h-full pt-16 md:pt-0">
