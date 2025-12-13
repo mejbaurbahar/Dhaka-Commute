@@ -503,13 +503,13 @@ const IntercitySearchSection: React.FC<{
               />
             </div>
             {showFromSuggestions && from && (
-              <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-xl max-h-48 overflow-y-auto z-[60] text-gray-800 p-1">
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-xl max-h-48 overflow-y-auto z-[60] text-gray-800 dark:text-gray-100 p-1 border border-gray-100 dark:border-gray-700">
                 {getFiltered(from).map(loc => (
-                  <div key={loc} className="px-3 py-2 hover:bg-emerald-50 rounded-lg cursor-pointer text-sm" onClick={() => setFrom(loc)}>
+                  <div key={loc} className="px-3 py-2 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg cursor-pointer text-sm" onClick={() => setFrom(loc)}>
                     {loc}
                   </div>
                 ))}
-                {getFiltered(from).length === 0 && <div className="p-2 text-xs text-gray-400 text-center">No matches</div>}
+                {getFiltered(from).length === 0 && <div className="p-2 text-xs text-gray-400 dark:text-gray-500 text-center">No matches</div>}
               </div>
             )}
           </div>
@@ -529,13 +529,13 @@ const IntercitySearchSection: React.FC<{
               />
             </div>
             {showToSuggestions && to && (
-              <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-xl max-h-48 overflow-y-auto z-[60] text-gray-800 p-1">
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-xl max-h-48 overflow-y-auto z-[60] text-gray-800 dark:text-gray-100 p-1 border border-gray-100 dark:border-gray-700">
                 {getFiltered(to).map(loc => (
-                  <div key={loc} className="px-3 py-2 hover:bg-emerald-50 rounded-lg cursor-pointer text-sm" onClick={() => setTo(loc)}>
+                  <div key={loc} className="px-3 py-2 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg cursor-pointer text-sm" onClick={() => setTo(loc)}>
                     {loc}
                   </div>
                 ))}
-                {getFiltered(to).length === 0 && <div className="p-2 text-xs text-gray-400 text-center">No matches</div>}
+                {getFiltered(to).length === 0 && <div className="p-2 text-xs text-gray-400 dark:text-gray-500 text-center">No matches</div>}
               </div>
             )}
           </div>
