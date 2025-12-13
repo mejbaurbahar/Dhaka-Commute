@@ -31,11 +31,11 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
 
   const getIconBg = () => {
     switch (option.type) {
-      case 'AIR': return 'bg-blue-50 text-blue-600';
-      case 'TRAIN': return 'bg-orange-50 text-orange-600';
-      case 'BUS': return 'bg-emerald-50 text-emerald-600';
-      case 'FERRY': return 'bg-cyan-50 text-cyan-600';
-      default: return 'bg-gray-50 text-gray-600';
+      case 'AIR': return 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400';
+      case 'TRAIN': return 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400';
+      case 'BUS': return 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400';
+      case 'FERRY': return 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400';
+      default: return 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400';
     }
   };
 
@@ -69,7 +69,7 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
           </div>
           <div>
             <h3 className="font-bold text-gray-800 dark:text-gray-100 text-sm leading-tight">{option.title}</h3>
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md mt-1 inline-block bg-gray-100 text-gray-500`}>
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md mt-1 inline-block bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300`}>
               {option.type}
             </span>
           </div>
@@ -78,32 +78,32 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
 
       {/* Visual Route Flow */}
       <div className="relative py-2 mb-2">
-        <div className="flex items-center justify-between text-xs font-medium text-gray-500">
+        <div className="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-gray-400">
           <span className="truncate max-w-[40%]">{origin}</span>
           <span className="truncate max-w-[40%] text-right">{dest}</span>
         </div>
         <div className="flex items-center justify-between mt-1 relative">
-          <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-          <div className="flex-1 h-[2px] bg-gray-100 mx-2 relative">
+          <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+          <div className="flex-1 h-[2px] bg-gray-100 dark:bg-gray-700 mx-2 relative">
             {/* Dashed line */}
-            <div className="absolute inset-0 border-b border-dashed border-gray-300 w-full top-[1px]"></div>
+            <div className="absolute inset-0 border-b border-dashed border-gray-300 dark:border-gray-600 w-full top-[1px]"></div>
             {/* Plane/Icon moving on hover */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-1 rounded-full border border-gray-100 shadow-sm transform transition-transform duration-500 group-hover:scale-110">
-              <ArrowRight size={10} className="text-gray-400" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-700 p-1 rounded-full border border-gray-100 dark:border-gray-600 shadow-sm transform transition-transform duration-500 group-hover:scale-110">
+              <ArrowRight size={10} className="text-gray-400 dark:text-gray-300" />
             </div>
           </div>
-          <div className="w-2 h-2 rounded-full bg-gray-800"></div>
+          <div className="w-2 h-2 rounded-full bg-gray-800 dark:bg-gray-200"></div>
         </div>
       </div>
 
       {/* Footer: Time and Cost */}
-      <div className="flex items-center justify-between pt-3 border-t border-dashed border-gray-200">
-        <div className="flex items-center gap-1.5 text-gray-600 bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-100">
-          <Clock className="w-3.5 h-3.5 text-gray-400" />
+      <div className="flex items-center justify-between pt-3 border-t border-dashed border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 px-2.5 py-1.5 rounded-lg border border-gray-100 dark:border-gray-600">
+          <Clock className="w-3.5 h-3.5 text-gray-400 dark:text-gray-400" />
           <span className="text-xs font-bold">{option.totalDuration}</span>
         </div>
-        <div className="flex items-center gap-1.5 font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100">
-          <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
+        <div className="flex items-center gap-1.5 font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-1.5 rounded-lg border border-emerald-100 dark:border-emerald-800">
+          <DollarSign className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
           <span className="text-sm">{option.totalCostRange}</span>
         </div>
       </div>
