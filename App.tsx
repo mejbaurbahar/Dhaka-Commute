@@ -1550,7 +1550,9 @@ const App: React.FC = () => {
               </a>
             </div>
             <div className="flex items-center gap-3 text-xs text-gray-400 mt-4">
-              <span>Developed by Mejbaur Bahar Fagun</span>
+              <span>
+                <span className="text-red-500 font-medium">Developed by</span> <span className="text-emerald-600 font-bold">Mejbaur Bahar Fagun</span>
+              </span>
               <span>•</span>
               <button onClick={() => setView(AppView.FOR_AI)} className="hover:text-blue-500 hover:underline">
                 For AI
