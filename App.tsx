@@ -2356,7 +2356,7 @@ const App: React.FC = () => {
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
               aria-label={favorites.includes(selectedBus.id) ? "Remove from favorites" : "Add to favorites"}
             >
-              <Heart className={`w-5 h-5 ${favorites.includes(selectedBus.id) ? 'fill-red-500 text-red-500' : 'text-gray-300'} `} />
+              <Heart className={`w-5 h-5 transition-all ${favorites.includes(selectedBus.id) ? 'fill-pink-500 text-pink-500 scale-110 drop-shadow-lg' : 'text-gray-300 dark:text-gray-600'} `} />
             </button>
             <button
               onClick={() => setView(AppView.LIVE_NAV)}
@@ -2445,15 +2445,15 @@ const App: React.FC = () => {
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
-                <Info className="w-4 h-4" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white mb-2 shadow-lg shadow-blue-500/30">
+                <Info className="w-5 h-5" />
               </div>
               <span className="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold tracking-wider">Type</span>
               <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">{selectedBus.type}</span>
             </div>
             <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-              <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-2">
-                <Bus className="w-4 h-4" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white mb-2 shadow-lg shadow-orange-500/30">
+                <Bus className="w-5 h-5" />
               </div>
               <span className="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold tracking-wider">Stops</span>
               <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
@@ -2465,8 +2465,8 @@ const App: React.FC = () => {
               </span>
             </div>
             <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-              <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
-                <Coins className="w-4 h-4" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center text-white mb-2 shadow-lg shadow-amber-500/30">
+                <Coins className="w-5 h-5" />
               </div>
               <span className="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold tracking-wider">{fareStart && fareEnd ? 'Fare' : 'Max Fare'}</span>
               <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
@@ -2484,8 +2484,8 @@ const App: React.FC = () => {
             fareStart && fareEnd && (
               <div className="grid grid-cols-3 gap-3 animate-in fade-in slide-in-from-top-4">
                 <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
-                    <Gauge className="w-4 h-4" />
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white mb-2 shadow-lg shadow-indigo-500/30">
+                    <Gauge className="w-5 h-5" />
                   </div>
                   <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{userLocation ? 'Speed' : 'Stops'}</span>
                   <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
@@ -2497,8 +2497,8 @@ const App: React.FC = () => {
                   </span>
                 </div>
                 <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2">
-                    <Flag className="w-4 h-4" />
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white mb-2 shadow-lg shadow-pink-500/30">
+                    <Flag className="w-5 h-5" />
                   </div>
                   <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Distance</span>
                   <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
@@ -2506,8 +2506,8 @@ const App: React.FC = () => {
                   </span>
                 </div>
                 <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 mb-2">
-                    <Clock className="w-4 h-4" />
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white mb-2 shadow-lg shadow-emerald-500/30">
+                    <Clock className="w-5 h-5" />
                   </div>
                   <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ETA</span>
                   <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
