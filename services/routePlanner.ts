@@ -402,7 +402,7 @@ export const findRoutesBetweenStations = (
                     },
                     {
                         type: 'walk',
-                        instruction: `Transfer at ${hub.name}`,
+                        instruction: `Transit at ${hub.name}`,
                         from: hub.name,
                         to: hub.name,
                         fromId: hub.id,

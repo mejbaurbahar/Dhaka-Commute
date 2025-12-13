@@ -1390,7 +1390,7 @@ const App: React.FC = () => {
             <div ref={chatEndRef}></div>
           </div>
 
-          <div className="p-4 bg-white border-t border-gray-200 z-30 fixed md:relative bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0 left-0 right-0">
+          <div className="p-4 bg-white border-t border-gray-200 z-30 fixed md:relative bottom-0 left-0 right-0 pb-safe-bottom">
             {!isOnline && (
               <div className="mb-3 bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" />
@@ -2904,13 +2904,13 @@ const App: React.FC = () => {
 
                 {/* Autocomplete Dropdown */}
                 {showSuggestions && searchSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl max-h-80 overflow-y-auto z-[100] border border-gray-200">
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl max-h-80 overflow-y-auto z-[200] border border-gray-200">
                     {searchSuggestions.map((suggestion, idx) => (
                       <div
                         key={`${suggestion.type}-${suggestion.id}-${idx}`}
                         className="px-4 py-3.5 hover:bg-emerald-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
                         onClick={() => {
-                          const displayName = suggestion.bnName || suggestion.name;
+                          const displayName = suggestion.name;
                           setInputValue(displayName);
                           setShowSuggestions(false);
                           setTimeout(() => {
@@ -2920,29 +2920,34 @@ const App: React.FC = () => {
                           }, 100);
                         }}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-start gap-3">
                           {suggestion.type === 'station' ? (
-                            <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                            <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-1" />
                           ) : (
-                            <Bus className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                            <Bus className="w-4 h-4 text-blue-600 flex-shrink-0 mt-1" />
                           )}
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-gray-900 truncate">
-                              {suggestion.bnName || suggestion.name}
+                            <div className="font-semibold text-gray-900 truncate text-sm">
+                              {suggestion.name}
                             </div>
+                            {suggestion.bnName && (
+                              <div className="text-xs text-gray-600 truncate mt-0.5">
+                                {suggestion.bnName}
+                              </div>
+                            )}
                             {suggestion.subtitle && (
-                              <div className="text-xs text-gray-500 truncate mt-0.5">
+                              <div className="text-xs text-gray-500 truncate mt-1">
                                 {suggestion.subtitle}
                               </div>
                             )}
                           </div>
                           {suggestion.type === 'station' && (
-                            <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                            <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full flex-shrink-0">
                               Station
                             </span>
                           )}
                           {suggestion.type === 'bus' && (
-                            <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                            <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full flex-shrink-0">
                               Bus
                             </span>
                           )}

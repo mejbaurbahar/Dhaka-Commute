@@ -4,6 +4,7 @@ import { MapPin, Search } from 'lucide-react';
 interface Station {
     id: string;
     name: string;
+    bnName?: string; // Bengali Name
 }
 
 interface SearchableSelectProps {
@@ -72,7 +73,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({ options, val
             </div>
 
             {isOpen && !disabled && (
-                <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-xl shadow-xl border border-gray-100 max-h-60 overflow-y-auto z-[100] animate-in fade-in slide-in-from-top-2">
+                <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-xl shadow-xl border border-gray-100 max-h-60 overflow-y-auto z-[200] animate-in fade-in slide-in-from-top-2">
                     {filteredOptions.length > 0 ? (
                         filteredOptions.map((option) => (
                             <div
@@ -82,9 +83,18 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({ options, val
                                     setSearchTerm(option.name);
                                     setIsOpen(false);
                                 }}
-                                className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-700 border-b border-gray-50 last:border-0 flex items-center justify-between group"
+                                className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0 flex items-center justify-between group"
                             >
-                                <span>{option.name}</span>
+                                <div className="flex-1">
+                                    <div className="text-sm font-semibold text-gray-900">
+                                        {option.name}
+                                    </div>
+                                    {option.bnName && (
+                                        <div className="text-xs text-gray-500 mt-0.5">
+                                            {option.bnName}
+                                        </div>
+                                    )}
+                                </div>
                                 {value === option.id && <div className="w-2 h-2 rounded-full bg-dhaka-green"></div>}
                             </div>
                         ))

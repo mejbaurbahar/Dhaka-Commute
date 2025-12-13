@@ -1,5 +1,6 @@
 import { BusRoute, Station } from '../types';
 import { BUS_DATA, STATIONS } from '../constants';
+import { findNearbyStations, getNearbyStationNames } from './nearbyStationsService';
 
 /**
  * Enhanced Search Service for Bus & Station Search
@@ -131,6 +132,33 @@ export const enhancedBusSearch = (query: string): SearchResult => {
                 matchType: 'destination',
                 searchContext: `Buses going to ${stationName}`
             };
+        }
+
+        // STEP 2.5: If no direct buses found, search nearby stations
+        // This helps when a place doesn't have direct bus service
+        const firstStation = matchingStations[0];
+        const nearbyStationIds = findNearbyStations(firstStation.id, 2000); // Within 2km
+
+        if (nearbyStationIds.length > 0) {
+            const busesGoingNearby: BusRoute[] = [];
+
+            BUS_DATA.forEach(bus => {
+                const goesToNearby = bus.stops.some(stopId => nearbyStationIds.includes(stopId));
+                if (goesToNearby) {
+                    busesGoingNearby.push(bus);
+                }
+            });
+
+            if (busesGoingNearby.length > 0) {
+                const stationName = firstStation.bnName || firstStation.name;
+                const nearbyNames = getNearbyStationNames(nearbyStationIds, 3);
+
+                return {
+                    buses: busesGoingNearby,
+                    matchType: 'destination',
+                    searchContext: `Buses going near ${stationName} (via ${nearbyNames})`
+                };
+            }
         }
     }
 
