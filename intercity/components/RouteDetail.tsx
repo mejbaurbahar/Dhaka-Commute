@@ -751,11 +751,11 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
         )}
 
         {/* Timeline Section */}
-        <div className="p-6 md:p-8 bg-white">
+        <div className="p-6 md:p-8 bg-white dark:bg-slate-900">
           <div className="relative pl-4 md:pl-6 pb-4">
 
             {/* Continuous Vertical Line */}
-            <div className="absolute left-[19px] md:left-[23px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-gray-200 via-gray-300 to-gray-200"></div>
+            <div className="absolute left-[19px] md:left-[23px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-gray-200 dark:from-gray-700 via-gray-300 dark:via-gray-600 to-gray-200 dark:to-gray-700"></div>
 
             <div className="space-y-10 md:space-y-12">
               {option.steps.map((step, index) => (
