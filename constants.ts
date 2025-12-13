@@ -1285,7 +1285,7 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
   {
-    id: 'himachal',
+    id: 'himachal_narayanganj',
     name: 'Himachal',
     bnName: 'হিমাচল',
     routeString: 'Gabtoli ⇄ Narayanganj',
@@ -1924,7 +1924,7 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 11:00 PM'
   },
   {
-    id: 'shatabdi',
+    id: 'shatabdi_narayanganj',
     name: 'Shatabdi',
     bnName: 'শতাব্দী',
     routeString: 'Motijheel ⇄ Narayanganj',
