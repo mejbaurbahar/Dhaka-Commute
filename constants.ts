@@ -853,7 +853,7 @@ export const BUS_DATA: BusRoute[] = [
     hours: '5:30 AM - 11:00 PM'
   },
   {
-    id: 'bondhu',
+    id: 'bondhu_paribahan',
     name: 'Bondhu Paribahan',
     bnName: 'বন্ধু পরিবহন',
     routeString: 'Gulistan ⇄ Notun Bazar',
