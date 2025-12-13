@@ -83,9 +83,13 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
       .filter(Boolean); // Filter out any undefined stations
   }, [route]);
 
-  // Auto-scroll to user location or start of highlight
+  // Track if we've already auto-scrolled (only do it once on mount)
+  const hasAutoScrolled = useRef(false);
+
+  // Auto-scroll to user location or start of highlight - ONLY ONCE on initial load
   useEffect(() => {
-    if (scrollContainerRef.current && route) {
+    // Only auto-scroll if we haven't done it yet
+    if (scrollContainerRef.current && route && !hasAutoScrolled.current) {
       const baseWidth = Math.max(stations.length * 100, 1000);
       const padding = 60;
 
@@ -114,9 +118,14 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
           top: scrollY,
           behavior: 'smooth'
         });
+
+        // Mark that we've done the initial auto-scroll
+        hasAutoScrolled.current = true;
       }
     }
-  }, [userStationIndex, hasHighlight, highlightStartIdx, zoom, route, userLocation]);
+  }, [userStationIndex, hasHighlight, highlightStartIdx, route]);
+  // Removed zoom and userLocation from dependencies so map doesn't reset on GPS updates
+
 
   if (!route) return (
     <div className="w-full h-40 bg-gray-50 flex items-center justify-center text-gray-400 text-sm">
