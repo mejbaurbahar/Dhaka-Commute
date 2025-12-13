@@ -1049,48 +1049,40 @@ const App: React.FC = () => {
     };
   }, [selectedBus]);
 
-  const filteredBuses = useMemo(() => BUS_DATA.filter(bus => {
+  const filteredBuses = useMemo(() => {
     // Favorites tab: show ONLY favorites, ignore search
     if (listFilter === 'FAVORITES') {
-      return favorites.includes(bus.id);
+      return BUS_DATA.filter(bus => favorites.includes(bus.id));
     }
 
     // Route search mode
     if (searchMode === 'ROUTE') {
-      if (!fromStation || !toStation) return true;
-      const stopsAtFrom = bus.stops.includes(fromStation);
-      const stopsAtTo = bus.stops.includes(toStation);
+      if (!fromStation || !toStation) return BUS_DATA;
 
-      // Track route search if both stations are selected
-      if (fromStation && toStation && stopsAtFrom && stopsAtTo) {
-        // Use requestIdleCallback to avoid blocking
-        requestIdleCallback(() => {
-          trackRouteSearch(fromStation, toStation);
-        });
-      }
+      return BUS_DATA.filter(bus => {
+        const stopsAtFrom = bus.stops.includes(fromStation);
+        const stopsAtTo = bus.stops.includes(toStation);
 
-      return stopsAtFrom && stopsAtTo;
+        // Track route search if both stations are selected
+        if (fromStation && toStation && stopsAtFrom && stopsAtTo) {
+          // Use requestIdleCallback to avoid blocking
+          requestIdleCallback(() => {
+            trackRouteSearch(fromStation, toStation);
+          });
+        }
+
+        return stopsAtFrom && stopsAtTo;
+      });
     }
 
-    // Text search mode
+    // Text search mode - use enhancedBusSearch for smart nearby stations fallback
     const query = searchQuery.trim();
-    if (!query) return true;
+    if (!query) return BUS_DATA;
 
-    // Case-insensitive search that works with both English and Bengali
-    const matchText = (text: string, searchTerm: string) => {
-      return text.toLowerCase().includes(searchTerm.toLowerCase());
-    };
-
-    const nameMatch = matchText(bus.name, query);
-    const bnNameMatch = matchText(bus.bnName, query);
-    const routeMatch = matchText(bus.routeString, query);
-    const stopMatch = bus.stops.some(stopId => {
-      const station = STATIONS[stopId];
-      if (!station) return false;
-      return matchText(station.name, query) || (station.bnName && matchText(station.bnName, query));
-    });
-    return nameMatch || bnNameMatch || routeMatch || stopMatch;
-  }).sort((a, b) => a.name.localeCompare(b.name)), [listFilter, favorites, searchMode, fromStation, toStation, searchQuery]);
+    // Use enhancedBusSearch which includes nearby stations logic
+    const searchResult = enhancedBusSearch(query);
+    return searchResult.buses;
+  }, [listFilter, favorites, searchMode, fromStation, toStation, searchQuery]).sort((a, b) => a.name.localeCompare(b.name));
 
   // Calculate routes when From/To changes in ROUTE mode
   useEffect(() => {
@@ -1111,12 +1103,16 @@ const App: React.FC = () => {
       scrollContainerRef.current.scrollTop = 0;
     }
 
-    // Generate intelligent route suggestions
+    // Generate intelligent route suggestions and search context
     if (inputValue.trim()) {
+      const searchResult = enhancedBusSearch(inputValue.trim());
       const routes = planRoutes(userLocation, inputValue);
+
       setSuggestedRoutes(routes);
+      setSearchContext(searchResult.searchContext);
     } else {
       setSuggestedRoutes([]);
+      setSearchContext(undefined);
     }
   };
 
