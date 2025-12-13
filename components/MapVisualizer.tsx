@@ -349,9 +349,9 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             </div>
 
             <div className="space-y-2">
-              <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors group">
-                <div className={`w-4 h-4 rounded flex items-center justify-center border ${showMetro ? 'bg-blue-500 border-blue-500' : 'border-gray-300 bg-white'}`}>
-                  {showMetro && <Train className="w-2.5 h-2.5 text-white" />}
+              <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-1.5 rounded-lg transition-colors group">
+                <div className={`w-5 h-5 rounded-md flex items-center justify-center border-2 transition-all ${showMetro ? 'bg-gradient-to-br from-blue-500 to-indigo-600 border-blue-500 shadow-lg shadow-blue-500/30' : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700'}`}>
+                  {showMetro && <Train className="w-3 h-3 text-white" />}
                 </div>
                 <input
                   type="checkbox"
@@ -359,12 +359,12 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   onChange={(e) => setShowMetro(e.target.checked)}
                   className="hidden"
                 />
-                <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Metro Rail</span>
+                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">Metro Rail</span>
               </label>
 
-              <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors group">
-                <div className={`w-4 h-4 rounded flex items-center justify-center border ${showRailway ? 'bg-green-500 border-green-500' : 'border-gray-300 bg-white'}`}>
-                  {showRailway && <Train className="w-2.5 h-2.5 text-white" />}
+              <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-1.5 rounded-lg transition-colors group">
+                <div className={`w-5 h-5 rounded-md flex items-center justify-center border-2 transition-all ${showRailway ? 'bg-gradient-to-br from-green-500 to-emerald-600 border-green-500 shadow-lg shadow-green-500/30' : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700'}`}>
+                  {showRailway && <Train className="w-3 h-3 text-white" />}
                 </div>
                 <input
                   type="checkbox"
@@ -372,12 +372,12 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   onChange={(e) => setShowRailway(e.target.checked)}
                   className="hidden"
                 />
-                <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Railway</span>
+                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">Railway</span>
               </label>
 
-              <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors group">
-                <div className={`w-4 h-4 rounded flex items-center justify-center border ${showAirport ? 'bg-orange-500 border-orange-500' : 'border-gray-300 bg-white'}`}>
-                  {showAirport && <Plane className="w-2.5 h-2.5 text-white" />}
+              <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-1.5 rounded-lg transition-colors group">
+                <div className={`w-5 h-5 rounded-md flex items-center justify-center border-2 transition-all ${showAirport ? 'bg-gradient-to-br from-orange-500 to-red-600 border-orange-500 shadow-lg shadow-orange-500/30' : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700'}`}>
+                  {showAirport && <Plane className="w-3 h-3 text-white" />}
                 </div>
                 <input
                   type="checkbox"
@@ -385,7 +385,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   onChange={(e) => setShowAirport(e.target.checked)}
                   className="hidden"
                 />
-                <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Airports</span>
+                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">Airports</span>
               </label>
             </div>
           </div>
