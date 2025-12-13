@@ -3558,24 +3558,24 @@ const App: React.FC = () => {
 
       {/* Mobile Bottom Navigation - Always show except on BUS_DETAILS and LIVE_NAV */}
       {view !== AppView.BUS_DETAILS && view !== AppView.LIVE_NAV && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
           <div className="grid grid-cols-4 h-16">
             <button
               onClick={() => {
                 setView(AppView.HOME);
                 setPrimarySearch('LOCAL');
               }}
-              className={`flex flex-col items-center justify-center gap-1 border-t - 2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'} `}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-dhaka-green text-dhaka-green bg-green-50/50 dark:bg-green-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
             >
               <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'fill-current' : ''} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">Routes</span>
             </button>
             <button
               onClick={() => setView(AppView.AI_ASSISTANT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t - 2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'} `}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green bg-green-50/50 dark:bg-green-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
             >
               <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">AI Help</span>
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">AI Help</span>
             </button>
             <button
               onClick={() => {
@@ -3588,17 +3588,17 @@ const App: React.FC = () => {
                   setPrimarySearch('INTERCITY');
                 }
               }}
-              className={`flex flex-col items-center justify-center gap-1 border-t - 2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'} `}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-dhaka-green text-dhaka-green bg-green-50/50 dark:bg-green-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
             >
               <Train className="w-6 h-6" />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">Intercity</span>
             </button>
             <button
               onClick={() => setView(AppView.ABOUT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t - 2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'} `}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50 dark:bg-green-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
             >
               <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'fill-current' : ''} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">About</span>
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">About</span>
             </button>
           </div>
         </nav>
