@@ -1530,6 +1530,15 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
   {
+    id: 'nilachal',
+    name: 'Nilachal',
+    bnName: 'নীলাচল',
+    routeString: 'Gabtoli ⇄ Aricha',
+    stops: ['gabtoli', 'technical', 'hemayetpur', 'savar', 'nabinagar_bazar', 'manikganj_bazar', 'aricha_ghat'],
+    type: 'Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
     id: 'nilachol',
     name: 'Nilachol',
     bnName: 'নিলাচল',
@@ -1582,6 +1591,15 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['nandan_park', 'zirani_bazar', 'zirabo', 'baipayl', 'nobinagar', 'savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'yearpur', 'dhamsona', 'tetuljhora', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'motijheel'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'padma_line',
+    name: 'Padma Line',
+    bnName: 'পদ্মা লাইন',
+    routeString: 'Gabtoli ⇄ Paturia',
+    stops: ['gabtoli', 'amin_bazar', 'hemayetpur', 'savar_bus_stand', 'nabinagar_bazar', 'dhamrai', 'manikganj_bazar', 'paturia'],
+    type: 'Semi-Sitting',
+    hours: '5:30 AM - 10:30 PM'
   },
   {
     id: 'pallabi_local',
@@ -2080,6 +2098,16 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['azimpur', 'eden_college', 'nilkhet', 'newmarket', 'science_lab', 'city_college', 'kalabagan', 'panthapath', 'kawran_bazar', 'bot_tola', 'satrasta', 'nabisco', 'mohakhali', 'amtola', 'wireless', 'gulshan1', 'badda', 'badda_link_road', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'kuril_chourasta'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 11:00 PM'
+  },
+  // ===== NEW PATURIA/ARICHA ROUTE BUSES =====
+  {
+    id: 'sb_link',
+    name: 'SB Link',
+    bnName: 'এসবি লিংক',
+    routeString: 'Hemayetpur ⇄ Paturia',
+    stops: ['hemayetpur', 'aminbazar_bridge', 'rajfulbaria', 'bank_town', 'savar_bus_stand', 'nabinagar_savar', 'baipail_more', 'nabinagar_bazar', 'mirzapur_savar', 'dhamsona', 'singair', 'shimulia', 'manikganj_bazar', 'aricha_ghat', 'paturia'],
+    type: 'Local',
+    hours: '5:00 AM - 11:00 PM'
   },
 ];
 
