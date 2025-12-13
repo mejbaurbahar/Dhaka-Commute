@@ -520,6 +520,15 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 12:00 PM'
   },
   {
+    id: 'achim',
+    name: 'Achim Paribahan',
+    bnName: 'আছিম পরিবহন',
+    routeString: 'Gabtoli ⇄ Demra',
+    stops: ['hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'kuril_chourasta', 'jamuna_future_park', 'bashundhara', 'nadda', 'notun_bazar', 'bashtola', 'shahjadpur', 'uttar_badda', 'badda', 'madhya_badda', 'merul', 'rampura', 'banasree', 'demra'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
     id: 'active_paribahan',
     name: 'Active Paribahan',
     bnName: 'এক্টিভ পরিবহন',
@@ -833,6 +842,15 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['signboard', 'matuail', 'rayerbag', 'shonir_akhra', 'kazla', 'jatrabari', 'janapath_moor', 'sayedabad', 'gulistan', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'khamar_bari', 'farmgate', 'jahangir_gate', 'mohakhali', 'amtola', 'chairman_bari', 'sainik_club', 'banani', 'kakali', 'staff_road', 'mes', 'shewra', 'kuril', 'kuril_chourasta', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur', 'kamarpara', 'dhour'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'bondhu',
+    name: 'Bondhu',
+    bnName: 'বন্ধু',
+    routeString: 'Gulistan ⇄ Narayanganj',
+    stops: ['gulistan', 'tikatuli', 'sayedabad', 'jatrabari', 'shanir_akhra', 'signboard', 'chashara', 'shibu_market', 'mondolpara'],
+    type: 'Local',
+    hours: '5:30 AM - 11:00 PM'
   },
   {
     id: 'bondhu',
@@ -1177,6 +1195,15 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
   {
+    id: 'gangchil_mawa',
+    name: 'Gangchil (Mawa)',
+    bnName: 'গাংচিল',
+    routeString: 'Mohammadpur ⇄ Mawa',
+    stops: ['mohammadpur', 'shankar', 'dhanmondi15', 'jigatola', 'city_college', 'newmarket', 'nilkhet', 'azimpur', 'bakshi_bazar', 'gulistan', 'jatrabari', 'jurain', 'postagola', 'keraniganj', 'kuchimura', 'sreenagar', 'mawa'],
+    type: 'Sitting',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
     id: 'gazipur_paribahan',
     name: 'Gazipur Paribahan',
     bnName: 'গাজীপুর পরিবহন',
@@ -1201,6 +1228,15 @@ export const BUS_DATA: BusRoute[] = [
     routeString: 'Fulbaria ⇄ Chandra',
     stops: ['fulbaria', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'gabtoli', 'parbat', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'modhumoti', 'boliarpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'baipayl', 'zirabo', 'nandan_park', 'chandra'],
     type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'great_bikrampur',
+    name: 'Great Bikrampur',
+    bnName: 'গ্রেট বিক্রমপুর',
+    routeString: 'Gulistan ⇄ Mawa',
+    stops: ['gulistan', 'tikatuli', 'sayedabad', 'jatrabari', 'jurain', 'postagola', 'keraniganj', 'kuchimura', 'nimtola', 'sreenagar', 'mawa'],
+    type: 'Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
   {
@@ -1249,6 +1285,15 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
   {
+    id: 'himachal',
+    name: 'Himachal',
+    bnName: 'হিমাচল',
+    routeString: 'Gabtoli ⇄ Narayanganj',
+    stops: ['gabtoli', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'dhanmondi27', 'kalabagan', 'city_college', 'newmarket', 'nilkhet', 'azimpur', 'gulistan', 'sayedabad', 'jatrabari', 'shanir_akhra', 'signboard', 'chashara', 'mondolpara'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
     id: 'himachal_suveccha',
     name: 'Himachal Suveccha',
     bnName: 'হিমাচল শুভেচ্ছা',
@@ -1265,6 +1310,15 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['madanpur', 'jatrabari', 'bangladesh_bank', 'mogbazar', 'mohakhali', 'tongi'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'ilish',
+    name: 'Ilish Paribahan',
+    bnName: 'ইলিশ পরিবহন',
+    routeString: 'Gulistan ⇄ Mawa',
+    stops: ['gulistan', 'tikatuli', 'sayedabad', 'jatrabari', 'jurain', 'postagola', 'keraniganj', 'kuchimura', 'nimtola', 'sreenagar', 'mawa'],
+    type: 'Local',
+    hours: '5:30 AM - 10:00 PM'
   },
   {
     id: 'itihash',
@@ -1816,6 +1870,15 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
   {
+    id: 'sb_link',
+    name: 'SB Link',
+    bnName: 'এসবি লিংক',
+    routeString: 'Hemayetpur ⇄ Paturia',
+    stops: ['hemayetpur', 'aminbazar_bridge', 'rajfulbaria', 'bank_town', 'savar_bus_stand', 'nabinagar_savar', 'baipail_more', 'nabinagar_bazar', 'mirzapur_savar', 'dhamsona', 'singair', 'shimulia', 'manikganj_bazar', 'aricha_ghat', 'paturia'],
+    type: 'Local',
+    hours: '5:00 AM - 11:00 PM'
+  },
+  {
     id: 'selfie',
     name: 'Selfie',
     bnName: 'সেলফি',
@@ -1858,6 +1921,15 @@ export const BUS_DATA: BusRoute[] = [
     routeString: 'Motijheel ⇄ Kamarpara',
     stops: ['motijheel', 'dainik_bangla_moor', 'paltan', 'kakrail', 'malibagh', 'mouchak', 'moghbazar_crossing', 'mogbazar', 'satrasta', 'nabisco', 'mohakhali', 'mohakhali_flyover', 'mohakhali_bus_stand', 'amtola', 'chairman_bari', 'banani', 'kakali', 'staff_road', 'post_office_gulshan', 'mes', 'shewra', 'kuril', 'kuril_chourasta', 'khilkhet', 'airport', 'jasimuddin_square', 'jashimuddin', 'rajlakshmi_crossing', 'rajlakshmi', 'azampur', 'uttara_sector7', 'uttara_sector5', 'uttara', 'abdullahpur', 'kamarpara'],
     type: 'Semi-Sitting',
+    hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'shatabdi',
+    name: 'Shatabdi',
+    bnName: 'শতাব্দী',
+    routeString: 'Motijheel ⇄ Narayanganj',
+    stops: ['motijheel', 'gulistan', 'tikatuli', 'sayedabad', 'jatrabari', 'shanir_akhra', 'signboard', 'chashara', 'mondolpara', 'nitolganj'],
+    type: 'Sitting',
     hours: '6:00 AM - 11:00 PM'
   },
   {
@@ -2067,18 +2139,6 @@ export const BUS_DATA: BusRoute[] = [
     type: 'Local',
     hours: '6:00 AM - 11:00 PM'
   },
-  // ... (Other existing buses: akash, turag, onabil, prochesta, salsabil, prabhati_banasree, gazipur_paribahan, ajmeri, skylark, vip27, balaka, shatabdi, bhuiyan, paristhan, projapoti, jabale_noor, rob_rob, akik, meshkat, boishakhi, achia, midline, omama, tetulia, shikhor, swajan, basumati, bihanga, transilva, tanjil, 7_no, 8_no, modhumita, welcome, labbaik, thikana, siam, rajdhani, meghla, trust_ac, himachal, bikalpa, dhaka_paribahan, winner, falgun, agradut, al_makka, ayath, bahon, brtc_ac_motijheel, champion, dewan, dishari, ftcl, grameen, kanak, manjil, moitri, nur_e_makka, pallabi_super, rajanigandha, safety, somoy, suprobhat, trust)
-
-  // NEW BUSES FROM LIST
-  {
-    id: 'achim',
-    name: 'Achim Paribahan',
-    bnName: 'আছিম পরিবহন',
-    routeString: 'Gabtoli ⇄ Demra',
-    stops: ['hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'dairy_farm', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'kuril_chourasta', 'jamuna_future_park', 'bashundhara', 'nadda', 'notun_bazar', 'bashtola', 'shahjadpur', 'uttar_badda', 'badda', 'madhya_badda', 'merul', 'rampura', 'banasree', 'demra'],
-    type: 'Semi-Sitting',
-    hours: '6:00 AM - 11:00 PM'
-  },
   {
     id: 'vip_27',
     name: 'VIP 27',
@@ -2105,20 +2165,9 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['azimpur', 'eden_college', 'nilkhet', 'newmarket', 'science_lab', 'city_college', 'kalabagan', 'panthapath', 'kawran_bazar', 'bot_tola', 'satrasta', 'nabisco', 'mohakhali', 'amtola', 'wireless', 'gulshan1', 'badda', 'badda_link_road', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'kuril_chourasta'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 11:00 PM'
-  },
-  // ===== NEW PATURIA/ARICHA ROUTE BUSES =====
-  {
-    id: 'sb_link',
-    name: 'SB Link',
-    bnName: 'এসবি লিংক',
-    routeString: 'Hemayetpur ⇄ Paturia',
-    stops: ['hemayetpur', 'aminbazar_bridge', 'rajfulbaria', 'bank_town', 'savar_bus_stand', 'nabinagar_savar', 'baipail_more', 'nabinagar_bazar', 'mirzapur_savar', 'dhamsona', 'singair', 'shimulia', 'manikganj_bazar', 'aricha_ghat', 'paturia'],
-    type: 'Local',
-    hours: '5:00 AM - 11:00 PM'
-  },
+  }
 ];
 
-// Metro Rail Stations (MRT Line 6)
 export const METRO_STATIONS: Record<string, MetroStation> = {
   'uttara_north': {
     id: 'uttara_north',
