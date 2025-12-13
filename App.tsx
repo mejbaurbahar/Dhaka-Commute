@@ -24,6 +24,7 @@ import {
   generateSearchSuggestions,
   type SearchSuggestion
 } from './services/searchService';
+import { sortBusesByLocation } from './services/locationBasedSortService';
 
 
 interface ChatMessage {
@@ -631,6 +632,7 @@ const App: React.FC = () => {
   const [searchSuggestions, setSearchSuggestions] = useState<SearchSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchContext, setSearchContext] = useState<string | undefined>();
+  const [destinationStationIds, setDestinationStationIds] = useState<string[]>([]);
   const [selectedTrip, setSelectedTrip] = useState<SuggestedRoute | null>(null);
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -1075,14 +1077,22 @@ const App: React.FC = () => {
       });
     }
 
-    // Text search mode - use enhancedBusSearch for smart nearby stations fallback
+    // Text search mode - use enhancedBusSearch with location-based sorting
     const query = searchQuery.trim();
     if (!query) return BUS_DATA;
 
     // Use enhancedBusSearch which includes nearby stations logic
     const searchResult = enhancedBusSearch(query);
-    return searchResult.buses;
-  }, [listFilter, favorites, searchMode, fromStation, toStation, searchQuery]).sort((a, b) => a.name.localeCompare(b.name));
+
+    // Apply location-based sorting to prioritize catchable buses
+    const sortedBuses = sortBusesByLocation(
+      searchResult.buses,
+      userLocation,
+      searchResult.destinationStationIds || []
+    );
+
+    return sortedBuses;
+  }, [listFilter, favorites, searchMode, fromStation, toStation, searchQuery, userLocation, destinationStationIds]);
 
   // Calculate routes when From/To changes in ROUTE mode
   useEffect(() => {
@@ -1110,9 +1120,11 @@ const App: React.FC = () => {
 
       setSuggestedRoutes(routes);
       setSearchContext(searchResult.searchContext);
+      setDestinationStationIds(searchResult.destinationStationIds || []);
     } else {
       setSuggestedRoutes([]);
       setSearchContext(undefined);
+      setDestinationStationIds([]);
     }
   };
 

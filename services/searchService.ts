@@ -19,6 +19,7 @@ export interface SearchResult {
     buses: BusRoute[];
     matchType: 'bus_name' | 'destination' | 'fuzzy';
     searchContext?: string;
+    destinationStationIds?: string[]; // Station IDs for the searched destination
 }
 
 /**
@@ -130,7 +131,8 @@ export const enhancedBusSearch = (query: string): SearchResult => {
             return {
                 buses: busesGoingThere,
                 matchType: 'destination',
-                searchContext: `Buses going to ${stationName}`
+                searchContext: `Buses going to ${stationName}`,
+                destinationStationIds: stationIds
             };
         }
 
@@ -156,7 +158,8 @@ export const enhancedBusSearch = (query: string): SearchResult => {
                 return {
                     buses: busesGoingNearby,
                     matchType: 'destination',
-                    searchContext: `Buses going near ${stationName} (via ${nearbyNames})`
+                    searchContext: `Buses going near ${stationName} (via ${nearbyNames})`,
+                    destinationStationIds: [...stationIds, ...nearbyStationIds]
                 };
             }
         }
