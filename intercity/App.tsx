@@ -178,19 +178,19 @@ const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
             <div className="absolute w-48 h-48 md:w-64 md:h-64 animate-[spin_6s_linear_infinite]">
               {/* Plane Top */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin-reverse_6s_linear_infinite]">
-                <div className="p-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white">
+                <div className="p-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white dark:border-gray-700">
                   <Plane className="text-blue-600 w-6 h-6" />
                 </div>
               </div>
               {/* Bus Right */}
               <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 animate-[spin-reverse_6s_linear_infinite]">
-                <div className="p-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white">
+                <div className="p-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white dark:border-gray-700">
                   <Bus className="text-emerald-600 w-6 h-6" />
                 </div>
               </div>
               {/* Train Bottom */}
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 animate-[spin-reverse_6s_linear_infinite]">
-                <div className="p-3 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white">
+                <div className="p-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white dark:border-gray-700">
                   <Train className="text-orange-600 w-6 h-6" />
                 </div>
               </div>
@@ -199,7 +199,7 @@ const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
             {/* Central User */}
             <div className="relative z-10 flex flex-col items-center">
               <div className="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-10"></div>
-              <div className="relative bg-white/90 backdrop-blur-md p-4 rounded-full shadow-2xl border-4 border-white/50">
+              <div className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-full shadow-2xl border-4 border-white/50 dark:border-gray-700/50">
                 <User className="w-10 h-10 text-blue-600" />
               </div>
             </div>
@@ -210,8 +210,8 @@ const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
       <div className="text-center space-y-3">
         {isLanding ? (
           <div className="animate-fade-in-up">
-            <h3 className="text-2xl md:text-4xl font-bold text-gray-800 tracking-tight mb-2 font-bengali">বাংলাদেশ ঘুরে দেখতে প্রস্তুত?</h3>
-            <p className="text-base text-gray-500 max-w-md mx-auto leading-relaxed font-bengali">লোকাল বাস, ট্রেন, ফ্লাইট এবং মেট্রো রেল ব্যবহার করে খুঁজে নিন আপনার সঠিক রুট।</p>
+            <h3 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 tracking-tight mb-2 font-bengali">বাংলাদেশ ঘুরে দেখতে প্রস্তুত?</h3>
+            <p className="text-base text-gray-500 dark:text-gray-400 max-w-md mx-auto leading-relaxed font-bengali">লোকাল বাস, ট্রেন, ফ্লাইট এবং মেট্রো রেল ব্যবহার করে খুঁজে নিন আপনার সঠিক রুট।</p>
           </div>
         ) : (
           <div className="animate-fade-in">
@@ -221,10 +221,10 @@ const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
             </div>
 
             <div className="min-h-[60px] transition-all duration-500">
-              <h3 key={msgIndex} className="text-xl md:text-2xl font-bold text-gray-800 animate-fade-in-up">
+              <h3 key={msgIndex} className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100 animate-fade-in-up">
                 {SEARCH_MESSAGES[msgIndex].title}
               </h3>
-              <p key={`sub-${msgIndex}`} className="text-sm text-gray-500 mt-1 font-medium animate-fade-in">
+              <p key={`sub-${msgIndex}`} className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium animate-fade-in">
                 {SEARCH_MESSAGES[msgIndex].sub}
               </p>
             </div>
@@ -688,7 +688,7 @@ const App: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleClearAll}
-                      className="h-[48px] md:h-[56px] px-4 bg-white text-red-600 border border-red-100 font-bold rounded-xl md:rounded-2xl hover:bg-red-50 transition-all active:scale-95 flex items-center justify-center"
+                      className="h-[48px] md:h-[56px] px-4 bg-white dark:bg-slate-800 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800 font-bold rounded-xl md:rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/30 transition-all active:scale-95 flex items-center justify-center"
                       title="Clear All"
                     >
                       <X className="w-5 h-5" />
