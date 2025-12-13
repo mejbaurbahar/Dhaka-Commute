@@ -285,6 +285,17 @@ export const STATIONS: Record<string, Station> = {
   'nabinagar_savar': { id: 'nabinagar_savar', name: 'Nabinagar (Savar)', bnName: 'নবীনগর (সাভার)', lat: 23.8350, lng: 90.2650 },
   'bank_town': { id: 'bank_town', name: 'Bank Town', bnName: 'ব্যাংক টাউন', lat: 23.8420, lng: 90.2580 },
 
+  // Hemayetpur to Paturia - Dhaka-Aricha Highway (N5) stops
+  'aminbazar_bridge': { id: 'aminbazar_bridge', name: 'Aminbazar Bridge', bnName: 'আমিনবাজার ব্রিজ', lat: 23.7950, lng: 90.3200 },
+  'baipail_more': { id: 'baipail_more', name: 'Baipail More', bnName: 'বাইপাইল মোড়', lat: 23.9450, lng: 90.2650 },
+  'savar_bus_stand': { id: 'savar_bus_stand', name: 'Savar Bus Stand', bnName: 'সাভার বাস স্ট্যান্ড', lat: 23.8480, lng: 90.2620 },
+  'nabinagar_bazar': { id: 'nabinagar_bazar', name: 'Nabinagar Bazar', bnName: 'নবীনগর বাজার', lat: 23.9080, lng: 90.2520 },
+  'mirzapur_savar': { id: 'mirzapur_savar', name: 'Mirzapur (Savar)', bnName: 'মির্জাপুর', lat: 23.9350, lng: 90.2400 },
+  'shimulia': { id: 'shimulia', name: 'Shimulia', bnName: 'শিমুলিয়া', lat: 23.9200, lng: 90.1800 },
+  'singair': { id: 'singair', name: 'Singair', bnName: 'সিঙ্গাইর', lat: 23.7950, lng: 90.1200 },
+  'manikganj_bazar': { id: 'manikganj_bazar', name: 'Manikganj Bazar', bnName: 'মানিকগঞ্জ বাজার', lat: 23.8650, lng: 90.0050 },
+  // Note: aricha_ghat already exists in Regional section below
+
   // Additional Mirpur area stops
   'mirpur3': { id: 'mirpur3', name: 'Mirpur 3', bnName: 'মিরপুর ৩', lat: 23.8000, lng: 90.3580 },
   'mirpur4': { id: 'mirpur4', name: 'Mirpur 4', bnName: 'মিরপুর ৪', lat: 23.7980, lng: 90.3600 },
