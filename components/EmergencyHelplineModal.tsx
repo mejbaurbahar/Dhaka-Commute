@@ -41,13 +41,13 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
     const getServiceColor = (type: string) => {
         switch (type) {
             case 'police':
-                return 'bg-blue-50 text-blue-600 border-blue-200';
+                return 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800';
             case 'hospital':
-                return 'bg-green-50 text-green-600 border-green-200';
+                return 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800';
             case 'fire':
-                return 'bg-red-50 text-red-600 border-red-200';
+                return 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800';
             default:
-                return 'bg-gray-50 text-gray-600 border-gray-200';
+                return 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700';
         }
     };
 
@@ -61,7 +61,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
         return (
             <div
                 key={service.id}
-                className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-md transition-shadow"
             >
                 <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
@@ -69,10 +69,10 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                             <div className={`p-1.5 rounded-lg border ${colorClass}`}>
                                 {getServiceIcon(service.type)}
                             </div>
-                            <h4 className="font-bold text-gray-900 text-sm">{service.name}</h4>
+                            <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm">{service.name}</h4>
                         </div>
-                        <p className="text-xs text-gray-500 mb-2">{service.bnName}</p>
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{service.bnName}</p>
+                        <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                             <MapPin className="w-3 h-3" />
                             <span>{service.area} • {formatDistance(service.distance)} away</span>
                         </div>
@@ -92,18 +92,18 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
     return (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }} className="flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in">
             <div
-                className="bg-white w-full md:max-w-2xl md:rounded-2xl rounded-t-3xl max-h-[90vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0"
+                className="bg-white dark:bg-slate-900 w-full md:max-w-2xl md:rounded-2xl rounded-t-3xl max-h-[90vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-5 border-b border-gray-200 shrink-0">
+                <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800 shrink-0">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                             <Phone className="w-5 h-5 text-dhaka-red" />
                             Emergency Helplines
                         </h2>
                         {currentLocationName && (
-                            <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
                                 <Navigation2 className="w-3 h-3" />
                                 Near {currentLocationName}
                             </p>
@@ -111,10 +111,10 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
                         aria-label="Close"
                     >
-                        <X className="w-5 h-5 text-gray-600" />
+                        <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                     </button>
                 </div>
 
@@ -122,7 +122,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                 <div className="flex-1 overflow-y-auto p-5 space-y-6">
                     {/* National Helplines */}
                     <div>
-                        <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide flex items-center gap-2">
+                        <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide flex items-center gap-2">
                             <Shield className="w-4 h-4 text-dhaka-red" />
                             National Emergency Numbers
                         </h3>
@@ -130,12 +130,12 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                             {NATIONAL_HELPLINES.map((helpline) => (
                                 <div
                                     key={helpline.id}
-                                    className="bg-gradient-to-r from-dhaka-red/5 to-transparent border border-red-100 rounded-xl p-3 flex items-center justify-between"
+                                    className="bg-gradient-to-r from-dhaka-red/5 to-transparent border border-red-100 dark:border-red-900/30 rounded-xl p-3 flex items-center justify-between"
                                 >
                                     <div className="flex-1">
-                                        <h4 className="font-bold text-gray-900 text-sm">{helpline.name}</h4>
-                                        <p className="text-xs text-gray-500">{helpline.bnName}</p>
-                                        <p className="text-xs text-gray-400 mt-0.5">{helpline.description}</p>
+                                        <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm">{helpline.name}</h4>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">{helpline.bnName}</p>
+                                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{helpline.description}</p>
                                     </div>
                                     <button
                                         onClick={() => handleCall(helpline.number)}
@@ -155,7 +155,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                             {/* Police Stations */}
                             {nearestServices.police.length > 0 && (
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide flex items-center gap-2">
                                         <Shield className="w-4 h-4 text-blue-600" />
                                         Nearest Police Stations
                                     </h3>
@@ -168,7 +168,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                             {/* Hospitals */}
                             {nearestServices.hospital.length > 0 && (
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide flex items-center gap-2">
                                         <Activity className="w-4 h-4 text-green-600" />
                                         Nearest Hospitals
                                     </h3>
@@ -181,7 +181,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                             {/* Fire Stations */}
                             {nearestServices.fire.length > 0 && (
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide flex items-center gap-2">
                                         <Flame className="w-4 h-4 text-red-600" />
                                         Nearest Fire Stations
                                     </h3>
@@ -203,8 +203,8 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-gray-100 bg-gray-50 shrink-0 rounded-b-3xl md:rounded-b-2xl">
-                    <p className="text-xs text-center text-gray-500">
+                <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-slate-800 shrink-0 rounded-b-3xl md:rounded-b-2xl">
+                    <p className="text-xs text-center text-gray-500 dark:text-gray-400">
                         In case of emergency, call <span className="font-bold text-dhaka-red">999</span> immediately
                     </p>
                 </div>

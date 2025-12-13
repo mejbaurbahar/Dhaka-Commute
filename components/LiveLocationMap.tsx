@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { X, Layers, Navigation, Map as MapIcon, Globe, Wifi, WifiOff, Lock } from 'lucide-react';
-import { UserLocation, BusRoute } from '../types';
+import { UserLocation, BusRoute, Station } from '../types';
 
 // Fix for default marker icons using local assets for offline support
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -250,22 +250,22 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-white w-full max-w-5xl h-[85vh] rounded-3xl shadow-2xl overflow-hidden relative flex flex-col md:flex-row">
+            <div className="bg-white dark:bg-slate-900 w-full max-w-5xl h-[85vh] rounded-3xl shadow-2xl overflow-hidden relative flex flex-col md:flex-row">
 
                 {/* Map Container - Works offline with cached tiles! */}
                 <div ref={mapContainerRef} className="flex-1 w-full h-full relative z-0 bg-gray-200" />
 
                 {/* Floating Controls */}
                 <div className="absolute top-4 left-4 z-[400] flex flex-col gap-2">
-                    <div className="bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-lg border border-gray-200/50">
+                    <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 relative">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 relative">
                                 {isOffline ? <WifiOff className="w-5 h-5 text-gray-400" /> : <Wifi className="w-5 h-5" />}
-                                {userLocation && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full animate-bounce"></div>}
+                                {userLocation && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full animate-bounce"></div>}
                             </div>
                             <div>
-                                <h3 className="font-bold text-gray-800 text-sm">Live Location</h3>
-                                <p className="text-[10px] text-gray-500 font-medium">
+                                <h3 className="font-bold text-gray-800 dark:text-gray-200 text-sm">Live Location</h3>
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
                                     {userLocation ? 'GPS Signal Active' : 'Acquiring Signal...'}
                                 </p>
                             </div>
@@ -277,25 +277,25 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
                 <div className="absolute top-4 right-16 z-[400]">
                     <button
                         onClick={() => setShowLayerMenu(!showLayerMenu)}
-                        className="bg-white/90 backdrop-blur-md p-2.5 rounded-xl shadow-lg border border-gray-200/50 hover:bg-gray-50 text-gray-700 transition-all active:scale-95 relative"
+                        className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2.5 rounded-xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 transition-all active:scale-95 relative"
                     >
                         <Layers className="w-6 h-6" />
                         {isOffline && (
-                            <div className="absolute -top-1 -right-1 bg-gray-500 text-white rounded-full p-0.5 border-2 border-white">
+                            <div className="absolute -top-1 -right-1 bg-gray-500 text-white rounded-full p-0.5 border-2 border-white dark:border-slate-900">
                                 <Lock className="w-2.5 h-2.5" />
                             </div>
                         )}
                     </button>
 
                     {showLayerMenu && (
-                        <div className="absolute top-14 right-0 bg-white/90 backdrop-blur-md p-2 rounded-2xl shadow-xl border border-gray-200/50 w-44 flex flex-col gap-1 animate-in slide-in-from-top-2">
+                        <div className="absolute top-14 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 w-44 flex flex-col gap-1 animate-in slide-in-from-top-2">
                             {isOffline && (
-                                <div className="px-3 py-2 text-[10px] text-red-500 font-bold bg-red-50 rounded-lg mb-1 flex items-center gap-2">
+                                <div className="px-3 py-2 text-[10px] text-red-500 font-bold bg-red-50 dark:bg-red-900/30 rounded-lg mb-1 flex items-center gap-2">
                                     <WifiOff className="w-3 h-3" /> Offline Mode
                                 </div>
                             )}
 
-                            <button onClick={() => setActiveLayer('standard')} className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 ${activeLayer === 'standard' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}>
+                            <button onClick={() => setActiveLayer('standard')} className={`text-xs font-bold px-3 py-2 rounded-lg text-left flex items-center gap-2 ${activeLayer === 'standard' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'}`}>
                                 <MapIcon className="w-4 h-4" /> Standard
                             </button>
 
@@ -341,7 +341,7 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 z-[400] bg-white/90 backdrop-blur-md p-2.5 rounded-full shadow-lg border border-gray-200/50 hover:bg-red-50 text-gray-700 hover:text-red-500 transition-all active:scale-95"
+                    className="absolute top-4 right-4 z-[400] bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2.5 rounded-full shadow-lg border border-gray-200/50 dark:border-gray-700/50 hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-700 dark:text-gray-200 hover:text-red-500 transition-all active:scale-95"
                 >
                     <X className="w-6 h-6" />
                 </button>

@@ -67,13 +67,13 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({ options, val
                     }}
                     placeholder={placeholder}
                     disabled={disabled}
-                    className="w-full pl-3 pr-10 py-3.5 bg-white text-gray-800 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-400/30 disabled:bg-gray-100 disabled:text-gray-400 border border-transparent focus:border-green-400/30 transition-all shadow-sm"
+                    className="w-full pl-3 pr-10 py-3.5 bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-400/30 disabled:bg-gray-100 dark:disabled:bg-slate-900 disabled:text-gray-400 dark:disabled:text-gray-600 border border-transparent focus:border-green-400/30 transition-all shadow-sm"
                 />
                 <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
 
             {isOpen && !disabled && (
-                <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-xl shadow-xl border border-gray-100 max-h-60 overflow-y-auto z-[9999] animate-in fade-in slide-in-from-top-2">
+                <div className="absolute top-full left-0 w-full mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 max-h-60 overflow-y-auto z-[9999] animate-in fade-in slide-in-from-top-2">
                     {filteredOptions.length > 0 ? (
                         filteredOptions.map((option) => (
                             <div
@@ -83,14 +83,14 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({ options, val
                                     setSearchTerm(option.name);
                                     setIsOpen(false);
                                 }}
-                                className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0 flex items-center justify-between group"
+                                className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-50 dark:border-gray-700 last:border-0 flex items-center justify-between group"
                             >
                                 <div className="flex-1">
-                                    <div className="text-sm font-semibold text-gray-900">
+                                    <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                                         {option.name}
                                     </div>
                                     {option.bnName && (
-                                        <div className="text-xs text-gray-500 mt-0.5">
+                                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                             {option.bnName}
                                         </div>
                                     )}

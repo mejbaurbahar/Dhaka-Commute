@@ -95,15 +95,15 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-6 text-center text-gray-500">
-        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4 animate-pulse">
-          <AlertCircle className="w-8 h-8 text-red-500" />
+      <div className="flex flex-col items-center justify-center h-full p-6 text-center text-gray-500 dark:text-gray-400">
+        <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4 animate-pulse">
+          <AlertCircle className="w-8 h-8 text-red-500 dark:text-red-400" />
         </div>
-        <h3 className="text-lg font-bold text-gray-800 mb-6">Location Needed</h3>
+        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-6">Location Needed</h3>
 
         <button
           onClick={() => { setLoading(true); window.location.reload(); }}
-          className="px-6 py-3 bg-dhaka-green text-white rounded-xl font-bold shadow-lg shadow-green-200 active:scale-95 transition-transform"
+          className="px-6 py-3 bg-dhaka-green text-white rounded-xl font-bold shadow-lg shadow-green-200 dark:shadow-green-900/40 active:scale-95 transition-transform"
         >
           Enable Location
         </button>
@@ -113,16 +113,16 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
 
   if (loading && !location) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-white">
+      <div className="flex flex-col items-center justify-center h-full w-full p-8 text-center bg-white dark:bg-slate-900">
         <div className="relative w-24 h-24 mb-8">
-          <div className="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
+          <div className="absolute inset-0 border-4 border-gray-100 dark:border-gray-800 rounded-full"></div>
           <div className="absolute inset-0 border-4 border-dhaka-green border-t-transparent rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
             <Compass className="w-8 h-8 text-dhaka-green animate-pulse" />
           </div>
         </div>
-        <h3 className="text-xl font-bold text-gray-800">Finding Satellite...</h3>
-        <p className="text-sm text-gray-400 mt-2">Detecting your position on the bus</p>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Finding Satellite...</h3>
+        <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">Detecting your position on the bus</p>
       </div>
     );
   }
@@ -160,9 +160,9 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
   }
 
   return (
-    <div className="h-full flex flex-col bg-slate-50 relative">
+    <div className="h-full flex flex-col bg-slate-50 dark:bg-slate-900 relative">
       {/* Status Card - Now part of flex layout, not absolute */}
-      <div className="bg-white rounded-b-3xl shadow-sm border-b border-gray-100 p-5 z-20 shrink-0">
+      <div className="bg-white dark:bg-slate-800 rounded-b-3xl shadow-sm border-b border-gray-100 dark:border-gray-700 p-5 z-20 shrink-0">
         {/* Back Button - Mobile Only */}
 
         <div className="flex items-center justify-between mb-2">
@@ -173,39 +173,39 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
             <RefreshCw className="w-3 h-3 animate-spin" /> Live
           </span>
         </div>
-        <h2 className="text-2xl font-bold text-dhaka-dark flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-dhaka-dark dark:text-gray-100 flex items-center gap-2">
           {currentStation?.name || "Unknown Location"}
         </h2>
         {!isAtStation && (
-          <p className="text-xs font-bold text-orange-600 bg-orange-50 inline-block px-2 py-0.5 rounded mt-1">
+          <p className="text-xs font-bold text-orange-600 bg-orange-50 dark:bg-orange-900/30 dark:text-orange-400 inline-block px-2 py-0.5 rounded mt-1">
             You are {(distanceToStation / 1000).toFixed(1)} km away
           </p>
         )}
-        <p className="text-xs text-gray-500 font-bengali mt-1 mb-3 ml-0.5">{currentStation?.bnName}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 font-bengali mt-1 mb-3 ml-0.5">{currentStation?.bnName}</p>
 
         {/* Trip Stats Grid */}
         {hasDestination ? (
-          <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-100">
-            <div className="bg-blue-50 p-2 rounded-xl text-center">
-              <div className="flex items-center justify-center gap-1 text-blue-600 mb-1">
+          <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-xl text-center">
+              <div className="flex items-center justify-center gap-1 text-blue-600 dark:text-blue-400 mb-1">
                 <Gauge className="w-3 h-3" />
                 <span className="text-[10px] font-bold uppercase">Speed</span>
               </div>
-              <p className="text-lg font-bold text-blue-900">{(speed || 0).toFixed(0)} <span className="text-[10px] font-normal text-blue-600">km/h</span></p>
+              <p className="text-lg font-bold text-blue-900 dark:text-blue-100">{(speed || 0).toFixed(0)} <span className="text-[10px] font-normal text-blue-600 dark:text-blue-400">km/h</span></p>
             </div>
-            <div className="bg-purple-50 p-2 rounded-xl text-center">
-              <div className="flex items-center justify-center gap-1 text-purple-600 mb-1">
+            <div className="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-xl text-center">
+              <div className="flex items-center justify-center gap-1 text-purple-600 dark:text-purple-400 mb-1">
                 <Flag className="w-3 h-3" />
                 <span className="text-[10px] font-bold uppercase">Dist</span>
               </div>
-              <p className="text-lg font-bold text-purple-900">{(distToDest / 1000).toFixed(1)} <span className="text-[10px] font-normal text-purple-600">km</span></p>
+              <p className="text-lg font-bold text-purple-900 dark:text-purple-100">{(distToDest / 1000).toFixed(1)} <span className="text-[10px] font-normal text-purple-600 dark:text-purple-400">km</span></p>
             </div>
-            <div className="bg-green-50 p-2 rounded-xl text-center">
-              <div className="flex items-center justify-center gap-1 text-green-600 mb-1">
+            <div className="bg-green-50 dark:bg-green-900/20 p-2 rounded-xl text-center">
+              <div className="flex items-center justify-center gap-1 text-green-600 dark:text-green-400 mb-1">
                 <Clock className="w-3 h-3" />
                 <span className="text-[10px] font-bold uppercase">ETA</span>
               </div>
-              <p className="text-lg font-bold text-green-900">
+              <p className="text-lg font-bold text-green-900 dark:text-green-100">
                 {etaMinutes < 60
                   ? `${etaMinutes.toFixed(0)} min`
                   : `${Math.floor(etaMinutes / 60)}h ${Math.round(etaMinutes % 60)}m`
@@ -215,20 +215,20 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
           </div>
         ) : (
           nextStopId ? (
-            <div className="pt-3 border-t border-gray-100 flex items-center gap-4">
-              <div className="w-10 h-10 bg-dhaka-green rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-200">
+            <div className="pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center gap-4">
+              <div className="w-10 h-10 bg-dhaka-green rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-200 dark:shadow-green-900/20">
                 <Clock className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Next Stop In</p>
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wide">Next Stop In</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-gray-800">{(distToNext / 1000 * 3 + 2).toFixed(0)} min</span>
+                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{(distToNext / 1000 * 3 + 2).toFixed(0)} min</span>
                   <span className="text-xs text-gray-400">({(distToNext / 1000).toFixed(1)} km)</span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="pt-3 border-t border-gray-100 text-sm text-green-600 font-bold">
+            <div className="pt-3 border-t border-gray-100 dark:border-gray-700 text-sm text-green-600 dark:text-green-400 font-bold">
               You have reached the destination!
             </div>
           )
@@ -237,8 +237,8 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
 
       {/* Timeline */}
       <div className="flex-1 overflow-y-auto px-6 py-6 scroll-smooth">
-        <h4 className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-wider ml-11">Route Timeline</h4>
-        <div className="relative border-l-2 border-dashed border-gray-300 ml-3 space-y-0 pb-20">
+        <h4 className="text-xs font-bold text-gray-400 dark:text-gray-500 mb-6 uppercase tracking-wider ml-11">Route Timeline</h4>
+        <div className="relative border-l-2 border-dashed border-gray-300 dark:border-gray-600 ml-3 space-y-0 pb-20">
           {bus.stops.map((stopId, idx) => {
             const station = STATIONS[stopId];
             if (!station) return null;
@@ -281,7 +281,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
                 {/* Content */}
                 <div className={`${isCurrent ? '-mt-1.5' : '-mt-1'} pl-12`}>
                   <div className="flex items-center justify-between gap-2">
-                    <p className={`font-medium ${isCurrent ? 'text-dhaka-dark text-xl font-bold' : isInRange ? 'text-green-800 font-bold' : 'text-gray-700'}`}>
+                    <p className={`font-medium ${isCurrent ? 'text-dhaka-dark dark:text-white text-xl font-bold' : isInRange ? 'text-green-800 dark:text-green-400 font-bold' : 'text-gray-700 dark:text-gray-400'}`}>
                       {station.name}
                     </p>
                     {/* Helpline Button - Show beside current location */}

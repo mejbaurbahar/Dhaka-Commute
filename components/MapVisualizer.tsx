@@ -309,7 +309,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   const alightPos = (alightIdx >= 0 && alightIdx < nodePositions.length) ? nodePositions[alightIdx] : null;
 
   return (
-    <div className="w-full h-80 md:h-[500px] bg-slate-50 border-t border-b border-gray-100 relative group overflow-hidden">
+    <div className="w-full h-80 md:h-[500px] bg-slate-50 dark:bg-slate-900 border-t border-b border-gray-100 dark:border-slate-800 relative group overflow-hidden">
 
       {/* Connection Line Info Badge */}
       {isUserFar && (userStationIndex !== -1 || hasHighlight) && (
@@ -340,10 +340,10 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
         {/* Collapsible Panel */}
         {showLayers && (
-          <div className="bg-white/95 backdrop-blur rounded-xl border border-gray-200 shadow-xl p-3 w-[180px] mb-2 animate-in slide-in-from-bottom-2 fade-in duration-200">
-            <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-100">
-              <p className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Map Layers</p>
-              <button onClick={() => setShowLayers(false)} className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-full transition-colors">
+          <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur rounded-xl border border-gray-200 dark:border-slate-700 shadow-xl p-3 w-[180px] mb-2 animate-in slide-in-from-bottom-2 fade-in duration-200">
+            <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-100 dark:border-slate-700">
+              <p className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Map Layers</p>
+              <button onClick={() => setShowLayers(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors">
                 <X className="w-3 h-3" />
               </button>
             </div>
@@ -359,7 +359,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   onChange={(e) => setShowMetro(e.target.checked)}
                   className="hidden"
                 />
-                <span className="text-[11px] font-medium text-gray-700 group-hover:text-gray-900">Metro Rail</span>
+                <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Metro Rail</span>
               </label>
 
               <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors group">
@@ -372,7 +372,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   onChange={(e) => setShowRailway(e.target.checked)}
                   className="hidden"
                 />
-                <span className="text-[11px] font-medium text-gray-700 group-hover:text-gray-900">Railway</span>
+                <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Railway</span>
               </label>
 
               <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors group">
@@ -385,7 +385,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   onChange={(e) => setShowAirport(e.target.checked)}
                   className="hidden"
                 />
-                <span className="text-[11px] font-medium text-gray-700 group-hover:text-gray-900">Airports</span>
+                <span className="text-[11px] font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100">Airports</span>
               </label>
             </div>
           </div>
@@ -395,8 +395,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         <button
           onClick={() => setShowLayers(!showLayers)}
           className={`flex items-center gap-2 px-3 py-2 rounded-full border shadow-lg transition-all duration-300 group ${showLayers
-            ? 'bg-gray-900 border-gray-900 text-white'
-            : 'bg-white/95 backdrop-blur border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+            ? 'bg-gray-900 dark:bg-gray-100 border-gray-900 dark:border-white text-white dark:text-gray-900'
+            : 'bg-white/95 dark:bg-slate-800/95 backdrop-blur border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300 dark:hover:border-slate-600'
             }`}
         >
           <Layers className={`w-4 h-4 ${!showLayers && 'group-hover:scale-110 transition-transform'}`} />
@@ -461,7 +461,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
           setInitialPinchDistance(null);
         }}
       >
-        <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-500 ease-out origin-top-left min-w-full">
+        <div style={{ width: `${zoomedWidth}px`, height: `${zoomedHeight}px` }} className="relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:16px_16px] transition-all duration-500 ease-out origin-top-left min-w-full">
           <svg className="w-full h-full block select-none pointer-events-none" viewBox={`0 0 ${layout.width} ${layout.height}`} preserveAspectRatio="xMinYMid meet">
 
             <g transform={`translate(${layout.shiftX}, ${layout.shiftY})`}>
@@ -487,11 +487,10 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
               <polyline
                 points={nodePositions.map(p => `${p.x},${p.y}`).join(' ')}
                 fill="none"
-                stroke="#e5e7eb"
                 strokeWidth="4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="opacity-100"
+                className="opacity-100 stroke-gray-200 dark:stroke-slate-700"
               />
 
               {/* Traffic-Aware Route Segments */}
@@ -634,10 +633,10 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                         width={s.name.length * 6 + 20}
                         height="20"
                         rx="4"
-                        fill="white"
+                        fill={undefined}
                         stroke={isCurrent ? "#ef4444" : (isHighlightStart || isUserConnectionStart) ? (isHighlightStart ? "#16a34a" : "#f97316") : isHighlightEnd ? "#ef4444" : isHighlighted ? "#e5e7eb" : "#f1f5f9"}
                         strokeWidth="1"
-                        className="drop-shadow-sm"
+                        className={`drop-shadow-sm fill-white dark:fill-slate-800`}
                       />
 
                       {/* Text Name */}
@@ -645,7 +644,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                         x={x}
                         y={idx % 2 === 0 ? y + 28 : y - 20}
                         textAnchor="middle"
-                        className={`text-[10px] font-bold fill-gray-700 pointer-events-none select-none`}
+                        className={`text-[10px] font-bold fill-gray-700 dark:fill-gray-200 pointer-events-none select-none`}
                         style={{ fontSize: '10px' }}
                       >
                         {s.name}
