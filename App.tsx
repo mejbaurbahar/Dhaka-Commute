@@ -3565,40 +3565,38 @@ const App: React.FC = () => {
                 setView(AppView.HOME);
                 setPrimarySearch('LOCAL');
               }}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-dhaka-green text-dhaka-green bg-green-50/50 dark:bg-green-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
             >
-              <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'fill-current' : ''} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">Routes</span>
+              <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-900' : 'text-gray-400 dark:text-gray-500'} `} />
+              <span className="text-[10px] font-bold uppercase tracking-wide">Routes</span>
             </button>
             <button
               onClick={() => setView(AppView.AI_ASSISTANT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-dhaka-green text-dhaka-green bg-green-50/50 dark:bg-green-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-purple-500 text-purple-600 dark:text-purple-400 bg-purple-50/50 dark:bg-purple-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
             >
-              <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'fill-current' : ''} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">AI Help</span>
+              <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'text-purple-600 dark:text-purple-400 fill-purple-100 dark:fill-purple-900' : 'text-gray-400 dark:text-gray-500'} `} />
+              <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
             </button>
             <button
               onClick={() => {
-                // If we are already on the Intercity search view, we might want to do nothing or reset
                 if (view === AppView.HOME && primarySearch === 'INTERCITY') {
-                  // Maybe scroll to top?
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                   setView(AppView.HOME);
                   setPrimarySearch('INTERCITY');
                 }
               }}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-dhaka-green text-dhaka-green bg-green-50/50 dark:bg-green-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
             >
-              <Train className="w-6 h-6" />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">Intercity</span>
+              <Train className={`w-6 h-6 ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'text-blue-600 dark:text-blue-400 fill-blue-100 dark:fill-blue-900' : 'text-gray-400 dark:text-gray-500'} `} />
+              <span className="text-[10px] font-bold uppercase tracking-wide">Intercity</span>
             </button>
             <button
               onClick={() => setView(AppView.ABOUT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-dhaka-green text-dhaka-green bg-green-50/50 dark:bg-green-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
             >
-              <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'fill-current' : ''} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700 dark:text-gray-300">About</span>
+              <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'text-orange-600 dark:text-orange-400 fill-orange-100 dark:fill-orange-900' : 'text-gray-400 dark:text-gray-500'} `} />
+              <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
             </button>
           </div>
         </nav>
