@@ -1458,7 +1458,7 @@ const App: React.FC = () => {
         <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
           <Bus className="w-10 h-10" />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">🚍 Find Bus Routes Across Bangladesh</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">🚍 Find Routes Across Bangladesh</h1>
         <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-200">কই<span className="text-dhaka-red ml-2">যাবো</span> <span className="text-gray-600 dark:text-gray-400 text-lg">(KoyJabo)</span></h2>
         <p className="text-gray-500 dark:text-gray-400 mb-8">Version 1.0.0</p>
 
