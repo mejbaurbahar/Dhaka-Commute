@@ -16,6 +16,7 @@ import { findNearestMetroStation } from './services/metroService';
 import { planRoutes, findRoutesBetweenStations, SuggestedRoute } from './services/routePlanner';
 import RouteSuggestions from './components/RouteSuggestions';
 import { incrementVisitCount, trackBusSearch, trackRouteSearch } from './services/analyticsService';
+import ThemeToggle from './components/ThemeToggle';
 import LiveLocationMap from './components/LiveLocationMap';
 import { AIUsageIndicator } from './components/UsageIndicators';
 import { autoPreloadMapTiles } from './services/offlineMapService';
@@ -3361,17 +3362,9 @@ const App: React.FC = () => {
             <AnimatedLogo size="small" />
           </div>
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors relative overflow-hidden group"
-              aria-label="Toggle Dark Mode"
-            >
-              {isDarkMode ? (
-                <Sun className="w-5 h-5 text-yellow-500 fill-yellow-500 animate-[spin_4s_linear_infinite]" />
-              ) : (
-                <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300 fill-gray-600 dark:fill-gray-300 transition-transform group-hover:-rotate-12" />
-              )}
-            </button>
+            <div className="scale-75 origin-right">
+              <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+            </div>
             <button onClick={() => setShowLiveMap(true)} className="p-2.5 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse" aria-label="Live Location">
               <Navigation className="w-5 h-5" />
             </button>
@@ -3393,17 +3386,9 @@ const App: React.FC = () => {
           <AnimatedLogo size="large" />
         </button>
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors relative overflow-hidden group"
-            aria-label="Toggle Dark Mode"
-          >
-            {isDarkMode ? (
-              <Sun className="w-5 h-5 text-yellow-500 fill-yellow-500 animate-[spin_4s_linear_infinite]" />
-            ) : (
-              <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300 fill-gray-600 dark:fill-gray-300 transition-transform group-hover:-rotate-12" />
-            )}
-          </button>
+          <div className="scale-90">
+            <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+          </div>
           <button
             onClick={() => setShowLiveMap(true)}
             className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-xs font-bold hover:bg-blue-100 transition-colors border-2 border-blue-200 active:scale-95 animate-pulse shadow-lg shadow-blue-100"
