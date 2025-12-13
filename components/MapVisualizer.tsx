@@ -982,70 +982,55 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                 </g>
               )}
 
-              {/* User Location Marker (Fix Issue #7) */}
-              {userLocation && userDistance > 500 && (
-                <>
-                  {/* Calculate user position on map */}
-                  {(() => {
-                    const lngs = stations.map(s => s.lng);
-                    const minLng = Math.min(...lngs);
-                    const maxLng = Math.max(...lngs);
+              {/* User GPS Marker: Only show if user is FAR from any station on the route (>1km) */}
+              {userLocation && isUserFar && userPos && (() => {
+                // Only render this separate GPS marker if user is far from route
+                // If they're at a station, the red marker on the station is enough
 
-                    const userX = ((userLocation.lng - minLng) / (maxLng - minLng || 1)) * (baseWidth - (padding * 2)) + padding;
-                    const userY = (height - 200) / 2 + (200 - (normalizeLat(userLocation.lat) * 200));
+                return (
+                  <g>
+                    {/* Pulsing Circle Animation */}
+                    <circle cx={userPos?.x || 0} cy={userPos?.y || 0} r="15" fill="#3b82f6" className="opacity-30">
+                      <animate attributeName="r" from="15" to="25" dur="1.5s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" from="0.3" to="0" dur="1.5s" repeatCount="indefinite" />
+                    </circle>
 
-                    // Find nearest station for connection line
-                    let nearestStationPos = null;
-                    if (userStationIndex >= 0 && userStationIndex < nodePositions.length) {
-                      nearestStationPos = nodePositions[userStationIndex];
-                    }
+                    {/* User Location Marker */}
+                    <circle
+                      cx={userPos?.x || 0}
+                      cy={userPos?.y || 0}
+                      r="8"
+                      fill="#3b82f6"
+                      stroke="white"
+                      strokeWidth="3"
+                      className="cursor-pointer"
+                    />
 
-                    return (
-                      <g>
-                        {/* Pulsing Circle Animation */}
-                        <circle cx={userPos?.x || 0} cy={userPos?.y || 0} r="15" fill="#3b82f6" className="opacity-30">
-                          <animate attributeName="r" from="15" to="25" dur="1.5s" repeatCount="indefinite" />
-                          <animate attributeName="opacity" from="0.3" to="0" dur="1.5s" repeatCount="indefinite" />
-                        </circle>
+                    {/* Inner dot */}
+                    <circle
+                      cx={userPos?.x || 0}
+                      cy={userPos?.y || 0}
+                      r="3"
+                      fill="white"
+                    />
 
-                        {/* User Location Marker */}
-                        <circle
-                          cx={userPos?.x || 0}
-                          cy={userPos?.y || 0}
-                          r="8"
-                          fill="#3b82f6"
-                          stroke="white"
-                          strokeWidth="3"
-                          className="cursor-pointer"
-                        />
-
-                        {/* Inner dot */}
-                        <circle
-                          cx={userPos?.x || 0}
-                          cy={userPos?.y || 0}
-                          r="3"
-                          fill="white"
-                        />
-
-                        {/* Label */}
-                        <foreignObject
-                          x={(userPos?.x || 0) - 80}
-                          y={(userPos?.y || 0) + 15}
-                          width="160"
-                          height="40"
-                          className="pointer-events-none"
-                        >
-                          <div className="text-center flex flex-col items-center justify-center h-full">
-                            <span className="px-2 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold shadow-lg truncate max-w-full">
-                              {globalNearestName || "You are here"}
-                            </span>
-                          </div>
-                        </foreignObject>
-                      </g>
-                    );
-                  })()}
-                </>
-              )}
+                    {/* Label */}
+                    <foreignObject
+                      x={(userPos?.x || 0) - 80}
+                      y={(userPos?.y || 0) + 15}
+                      width="160"
+                      height="40"
+                      className="pointer-events-none"
+                    >
+                      <div className="text-center flex flex-col items-center justify-center h-full">
+                        <span className="px-2 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold shadow-lg truncate max-w-full">
+                          {globalNearestName || "You are here"}
+                        </span>
+                      </div>
+                    </foreignObject>
+                  </g>
+                );
+              })()}
 
             </g>
           </svg>
