@@ -197,7 +197,14 @@ export const STATIONS: Record<string, Station> = {
   'baitul_mukarram': { id: 'baitul_mukarram', name: 'Baitul Mukarram', bnName: 'বাইতুল মুকার্রম', lat: 23.7280, lng: 90.4130 },
   'jagannath_university': { id: 'jagannath_university', name: 'Jagannath University', bnName: 'জগন্নাথ বিশ্ববিদ্যালয়', lat: 23.7090, lng: 90.4110 },
   'washpur': { id: 'washpur', name: 'Washpur', bnName: 'ওয়াশপুর', lat: 23.7580, lng: 90.3420 },
+
+
   'town_hall': { id: 'town_hall', name: 'Town Hall', bnName: 'টাউন হল', lat: 23.7650, lng: 90.3620 },
+
+  // Chittagong Road Corridor (South-East)
+
+  'kanchpur': { id: 'kanchpur', name: 'Kanchpur', bnName: 'কাঁচপুর', lat: 23.6950, lng: 90.5100 },
+  'dholairpar': { id: 'dholairpar', name: 'Dholairpar', bnName: 'ধোলাইরপাড়', lat: 23.6980, lng: 90.4320 },
   'konapara': { id: 'konapara', name: 'Konapara', bnName: 'কোনাপাড়া', lat: 23.7100, lng: 90.4550 },
   'kajla': { id: 'kajla', name: 'Kajla', bnName: 'কাজলা', lat: 23.7080, lng: 90.4400 },
   'manikdi': { id: 'manikdi', name: 'Manikdi', bnName: 'মানিকদি', lat: 23.8250, lng: 90.3900 },
@@ -553,7 +560,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Ajmi',
     bnName: 'আজমী',
     routeString: 'Dhamrai ⇄ Chittagong Road',
-    stops: ['dhamrai', 'savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'dhanmondi27', 'dhanmondi32', 'kalabagan', 'city_college', 'newmarket', 'nilkhet', 'azimpur', 'bakshi_bazar', 'gulistan', 'chittagong_road'],
+    stops: ['dhamrai', 'savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'amin_bazar_bus_stand', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'dhanmondi27', 'dhanmondi32', 'kalabagan', 'city_college', 'newmarket', 'nilkhet', 'azimpur', 'bakshi_bazar', 'gulistan', 'tikatuli', 'sayedabad', 'jatrabari', 'shanir_akhra', 'raayerbag', 'matuail', 'signboard', 'chittagong_road'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
