@@ -8,6 +8,7 @@ import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
 import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield, Ship, TramFront } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
 import { IntercityUsageIndicator } from './components/UsageIndicator';
+import ThemeToggle from './components/ThemeToggle';
 
 // Import analytics tracking from main app
 const trackIntercitySearch = (from: string, to: string, transportType: string) => {
@@ -245,6 +246,14 @@ const App: React.FC = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored === 'dark';
+      return true;
+    }
+    return true;
+  });
 
   const detailsRef = useRef<HTMLDivElement>(null);
 
@@ -322,6 +331,17 @@ const App: React.FC = () => {
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  // Dark Mode Effect
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -426,9 +446,14 @@ const App: React.FC = () => {
           >
             <AnimatedLogo size="small" />
           </a>
-          <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
-            <Menu className="w-6 h-6" />
-          </button>
+          <div className="flex items-center gap-1">
+            <div className="scale-75 origin-right">
+              <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+            </div>
+            <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors" aria-label="Open menu">
+              <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -445,12 +470,15 @@ const App: React.FC = () => {
           <AnimatedLogo size="large" />
         </a>
         <div className="flex items-center gap-4">
+          <div className="scale-90">
+            <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+          </div>
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors"
             aria-label="Open menu"
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
           </button>
         </div>
       </header>
@@ -468,29 +496,78 @@ const App: React.FC = () => {
             </div>
 
             <div className="space-y-2 flex-1 overflow-y-auto hidden-scrollbar">
-              {[
-                { icon: Bot, label: 'AI Assistant', color: 'text-dhaka-green', hash: 'ai-assistant' },
-                { icon: Info, label: 'About', color: 'text-purple-500', hash: 'about' },
-                { icon: Sparkles, label: 'Why Use কই যাবো', color: 'text-pink-500', hash: 'why-use' },
-                { icon: FileText, label: 'Q&A', color: 'text-cyan-500', hash: 'faq' },
-                { icon: Clock, label: 'History', color: 'text-amber-500', hash: 'history' },
-                { icon: Download, label: 'Install App', color: 'text-emerald-600', hash: 'install' },
-                { icon: Shield, label: 'Privacy Policy', color: 'text-purple-500', hash: 'privacy' },
-                { icon: FileText, label: 'Terms of Service', color: 'text-orange-500', hash: 'terms' },
-              ].map((item, idx) => (
-                <a
-                  key={idx}
-                  href={`${window.location.origin}/#${item.hash}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsMenuOpen(false);
-                    window.location.href = `${window.location.origin}/#${item.hash}`;
-                  }}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
-                >
-                  <item.icon className={`w-5 h-5 ${item.color}`} /> {item.label}
-                </a>
-              ))}
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.href = `${window.location.origin}/#ai-assistant`;
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" /> AI Assistant
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.href = `${window.location.origin}/#about`;
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <Info className="w-5 h-5 text-purple-500" /> About
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.href = `${window.location.origin}/#why-use`;
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <Sparkles className="w-5 h-5 text-pink-600 dark:text-pink-400" /> Why Use কই যাবো
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.href = `${window.location.origin}/#faq`;
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <FileText className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> Q&A
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.href = `${window.location.origin}/#history`;
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> History
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.href = `${window.location.origin}/#install`;
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Install App
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.href = `${window.location.origin}/#privacy`;
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Privacy Policy
+              </button>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.location.href = `${window.location.origin}/#terms`;
+                }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" /> Terms of Service
+              </button>
             </div>
 
             <div className="pt-6 border-t border-gray-100">
