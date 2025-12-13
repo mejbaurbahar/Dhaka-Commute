@@ -2965,42 +2965,30 @@ const App: React.FC = () => {
                   </div>
                 )}
 
-                {/* Search Context Banner */}
-                {searchContext && (
-                  <div className="mt-3 space-y-2">
-                    <div className="bg-emerald-50 border-l-4 border-emerald-500 px-4 py-3 rounded-r-lg">
-                      <div className="flex items-center gap-2">
-                        <Search className="w-4 h-4 text-emerald-700 flex-shrink-0" />
-                        <p className="text-sm font-medium text-emerald-900">
-                          {searchContext}
-                        </p>
-                      </div>
-                    </div>
+                {/* Quick Route Finder Button - No banner, just button */}
+                {searchContext && userLocation && destinationStationIds.length > 0 && (
+                  <div className="mt-3">
+                    <button
+                      onClick={() => {
+                        // Find user's nearest station
+                        const nearestResult = findNearestStation(userLocation, Object.keys(STATIONS));
+                        if (nearestResult && destinationStationIds[0]) {
+                          setFromStation(nearestResult.station.id);
+                          setToStation(destinationStationIds[0]);
+                          setSearchMode('ROUTE');
 
-                    {/* Quick Route Finder Button */}
-                    {userLocation && destinationStationIds.length > 0 && (
-                      <button
-                        onClick={() => {
-                          // Find user's nearest station
-                          const nearestResult = findNearestStation(userLocation, Object.keys(STATIONS));
-                          if (nearestResult && destinationStationIds[0]) {
-                            setFromStation(nearestResult.station.id);
-                            setToStation(destinationStationIds[0]);
-                            setSearchMode('ROUTE');
-
-                            // Scroll to top to show route search
-                            if (scrollContainerRef.current) {
-                              scrollContainerRef.current.scrollTop = 0;
-                            }
+                          // Scroll to top to show route search
+                          if (scrollContainerRef.current) {
+                            scrollContainerRef.current.scrollTop = 0;
                           }
-                        }}
-                        className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group"
-                      >
-                        <MapPin className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        <span>View Route Options from Your Location</span>
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                      </button>
-                    )}
+                        }
+                      }}
+                      className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group"
+                    >
+                      <MapPin className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span>View Route Options from Your Location</span>
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
                   </div>
                 )}
               </div>
