@@ -414,7 +414,7 @@ const App: React.FC = () => {
     <div className="min-h-screen text-dhaka-dark pb-12">
       {/* Fixed Header */}
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md border-b border-gray-200 px-5 py-3 shadow-sm z-[5000] pt-safe-top md:hidden">
+      <header className="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-5 py-3 shadow-sm z-[5000] pt-safe-top md:hidden">
         <div className="flex justify-between items-center">
           <a
             href="/"
@@ -433,7 +433,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-2 shadow-sm z-[5000] items-center justify-between">
+      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 px-8 py-2 shadow-sm z-[5000] items-center justify-between">
         <a
           href="/"
           onClick={(e) => {
@@ -459,11 +459,11 @@ const App: React.FC = () => {
       {isMenuOpen && (
         <div className="fixed inset-0 z-[6000]">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
-          <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
+          <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-bold text-dhaka-dark">Menu</h2>
-              <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-full" aria-label="Close menu">
-                <X className="w-6 h-6 text-gray-500" />
+              <h2 className="text-xl font-bold text-dhaka-dark dark:text-gray-100">Menu</h2>
+              <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full" aria-label="Close menu">
+                <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
               </button>
             </div>
 
@@ -486,7 +486,7 @@ const App: React.FC = () => {
                     setIsMenuOpen(false);
                     window.location.href = `${window.location.origin}/#${item.hash}`;
                   }}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
                 >
                   <item.icon className={`w-5 h-5 ${item.color}`} /> {item.label}
                 </a>
@@ -541,7 +541,7 @@ const App: React.FC = () => {
 
       {/* Main Content - Add top padding for fixed header */}
       {/* Main Content - Add top padding for fixed header */}
-      <div className="pt-16 md:pt-20 min-h-screen bg-blue-50">
+      <div className="pt-16 md:pt-20 min-h-screen bg-blue-50 dark:bg-slate-900">
         {/* Sticky Search Header with Title - Stays visible while scrolling */}
         <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
           <div className="max-w-4xl mx-auto relative">
@@ -556,7 +556,7 @@ const App: React.FC = () => {
             </div>
 
 
-            <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 p-3 md:p-4 transition-all duration-300 ${!isLanding ? 'scale-90 origin-top' : ''} md:scale-100`}>
+            <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-3 md:p-4 transition-all duration-300 ${!isLanding ? 'scale-90 origin-top' : ''} md:scale-100`}>
               {/* items-end aligns the input boxes and button to the bottom, ignoring the top labels */}
               <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 md:gap-3 w-full md:items-end">
                 {/* Row 1: From - Swap - To */}
@@ -687,8 +687,8 @@ const App: React.FC = () => {
               <div className="lg:col-span-1 animate-fade-in-up">
                 <div className="lg:sticky lg:top-36 space-y-3 lg:space-y-4 max-h-[calc(100vh-8rem)] lg:overflow-y-auto custom-scrollbar p-1">
                   <div className="flex items-center justify-between px-2">
-                    <h2 className="text-base font-bold text-gray-800">Available Routes</h2>
-                    <span className="text-[10px] font-bold bg-white text-emerald-700 px-3 py-1 rounded-full border border-emerald-100 shadow-sm">{data.options.length} found</span>
+                    <h2 className="text-base font-bold text-gray-800 dark:text-gray-100">Available Routes</h2>
+                    <span className="text-[10px] font-bold bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-800 shadow-sm">{data.options.length} found</span>
                   </div>
 
                   <div className="space-y-3">
@@ -776,7 +776,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
         <div className="grid grid-cols-4 h-16">
           <a
             href="/"
