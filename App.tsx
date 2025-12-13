@@ -1454,7 +1454,7 @@ const App: React.FC = () => {
 
   const renderAbout = () => (
     <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-24 overflow-y-auto w-full">
-      <div className="max-w-2xl mx-auto text-center">
+      <div className="max-w-5xl mx-auto text-center">
         <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
           <Bus className="w-10 h-10" />
         </div>
