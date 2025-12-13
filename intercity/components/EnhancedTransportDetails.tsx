@@ -15,15 +15,15 @@ interface EnhancedDetailsProps {
 // Bus Renderer
 export const BusDetailsCard: React.FC<{ bus: BusOption }> = ({ bus }) => {
     return (
-        <div className="transport-card bus-card space-y-4">
+        <div className="transport-card bus-card space-y-4 bg-white dark:bg-slate-800 dark:border-emerald-600">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-emerald-100 pb-3">
+            <div className="flex items-center justify-between border-b border-emerald-100 dark:border-emerald-800 pb-3">
                 <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
                         <Bus className="w-6 h-6 text-emerald-600" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-800 text-lg">{bus.operator}</h3>
+                        <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg">{bus.operator}</h3>
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-xs font-medium border border-emerald-200">
                             {bus.type}
                         </span>
@@ -35,7 +35,7 @@ export const BusDetailsCard: React.FC<{ bus: BusOption }> = ({ bus }) => {
             <div className="flex items-center justify-between">
                 <div className="flex-1 text-center">
                     <label className="block text-xs text-gray-500 mb-1 uppercase tracking-wide">Departure</label>
-                    <div className="font-bold text-gray-800 text-xl">{bus.departure}</div>
+                    <div className="font-bold text-gray-800 dark:text-gray-100 text-xl">{bus.departure}</div>
                     <small className="text-xs text-gray-600 mt-1 block">{bus.boarding}</small>
                 </div>
                 <div className="flex items-center px-4 text-gray-400">
@@ -46,13 +46,13 @@ export const BusDetailsCard: React.FC<{ bus: BusOption }> = ({ bus }) => {
                 </div>
                 <div className="flex-1 text-center">
                     <label className="block text-xs text-gray-500 mb-1 uppercase tracking-wide">Arrival</label>
-                    <div className="font-bold text-gray-800 text-xl">{bus.arrival}</div>
+                    <div className="font-bold text-gray-800 dark:text-gray-100 text-xl">{bus.arrival}</div>
                     <small className="text-xs text-gray-600 mt-1 block">{bus.dropping}</small>
                 </div>
             </div>
 
             {/* Price & Booking */}
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
                 <div className="flex items-center gap-2">
                     <DollarSign className="w-5 h-5 text-emerald-600" />
                     <span className="text-2xl font-bold text-emerald-600">৳{bus.price}</span>
@@ -72,9 +72,9 @@ export const BusDetailsCard: React.FC<{ bus: BusOption }> = ({ bus }) => {
 
             {/* Contact */}
             {bus.contact && (
-                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-100 dark:border-gray-600">
                     <Phone className="w-4 h-4 text-gray-600" />
-                    <a href={`tel:${bus.contact}`} className="text-sm font-medium text-blue-600 hover:underline">
+                    <a href={`tel:${bus.contact}`} className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
                         {bus.contact}
                     </a>
                 </div>
@@ -86,7 +86,7 @@ export const BusDetailsCard: React.FC<{ bus: BusOption }> = ({ bus }) => {
 // Train Renderer
 export const TrainDetailsCard: React.FC<{ train: TrainOption }> = ({ train }) => {
     return (
-        <div className="transport-card train-card space-y-4">
+        <div className="transport-card train-card space-y-4 bg-white dark:bg-slate-800 dark:border-orange-600">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-orange-100 pb-3">
                 <div className="flex items-center gap-3">
@@ -94,7 +94,7 @@ export const TrainDetailsCard: React.FC<{ train: TrainOption }> = ({ train }) =>
                         <Train className="w-6 h-6 text-orange-600" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-800 text-lg">{train.name}</h3>
+                        <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg">{train.name}</h3>
                         <span className="text-sm text-gray-600">Train No. {train.number}</span>
                     </div>
                 </div>
@@ -109,7 +109,7 @@ export const TrainDetailsCard: React.FC<{ train: TrainOption }> = ({ train }) =>
             <div className="flex items-center justify-between">
                 <div className="flex-1 text-center">
                     <label className="block text-xs text-gray-500 mb-1 uppercase tracking-wide">Departure</label>
-                    <div className="font-bold text-gray-800 text-xl">{train.departure}</div>
+                    <div className="font-bold text-gray-800 dark:text-gray-100 text-xl">{train.departure}</div>
                 </div>
                 <div className="flex items-center px-4 text-gray-400">
                     <div className="flex flex-col items-center">
@@ -119,7 +119,7 @@ export const TrainDetailsCard: React.FC<{ train: TrainOption }> = ({ train }) =>
                 </div>
                 <div className="flex-1 text-center">
                     <label className="block text-xs text-gray-500 mb-1 uppercase tracking-wide">Arrival</label>
-                    <div className="font-bold text-gray-800 text-xl">{train.arrival}</div>
+                    <div className="font-bold text-gray-800 dark:text-gray-100 text-xl">{train.arrival}</div>
                 </div>
             </div>
 
@@ -157,7 +157,7 @@ export const TrainDetailsCard: React.FC<{ train: TrainOption }> = ({ train }) =>
 // Flight Renderer
 export const FlightDetailsCard: React.FC<{ flight: FlightOption }> = ({ flight }) => {
     return (
-        <div className="transport-card flight-card space-y-4">
+        <div className="transport-card flight-card space-y-4 bg-white dark:bg-slate-800 dark:border-blue-600">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-blue-100 pb-3">
                 <div className="flex items-center gap-3">
@@ -165,7 +165,7 @@ export const FlightDetailsCard: React.FC<{ flight: FlightOption }> = ({ flight }
                         <Plane className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-800 text-lg">{flight.airline}</h3>
+                        <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg">{flight.airline}</h3>
                         <span className="text-sm text-gray-600">{flight.flight_no}</span>
                     </div>
                 </div>
@@ -218,14 +218,14 @@ export const DrivingDetailsCard: React.FC<{ driving: DrivingInfo }> = ({ driving
     const totalCost = (driving.fuel_cost || 0) + (driving.toll || 0);
 
     return (
-        <div className="transport-card driving-card space-y-4">
+        <div className="transport-card driving-card space-y-4 bg-white dark:bg-slate-800 dark:border-gray-600">
             {/* Header */}
             <div className="flex items-center gap-3 border-b border-gray-200 pb-3">
                 <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
                     <Car className="w-6 h-6 text-gray-600" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-gray-800 text-lg">🚗 Drive Yourself</h3>
+                    <h3 className="font-bold text-gray-800 dark:text-gray-100 text-lg">🚗 Drive Yourself</h3>
                     <span className="text-sm text-gray-600">Personal Vehicle</span>
                 </div>
             </div>
@@ -360,6 +360,11 @@ export const enhancedTransportStyles = `
   padding: 1.25rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dark .transport-card {
+  background: rgb(30 41 59);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .transport-card:hover {
