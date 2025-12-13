@@ -620,10 +620,10 @@ const App: React.FC = () => {
       {/* Main Content - Add top padding for fixed header */}
       <div className="pt-16 md:pt-20 min-h-screen bg-blue-50 dark:bg-slate-900">
         {/* Sticky Search Header with Title - Stays visible while scrolling */}
-        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
+        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white dark:bg-slate-900 pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
           <div className="max-w-4xl mx-auto relative">
             {/* Page Title */}
-            <h1 className="hidden md:block text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-center text-gray-800">
+            <h1 className="hidden md:block text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-center text-gray-800 dark:text-gray-100">
               কোথায় যেতে চান?
             </h1>
 

@@ -476,7 +476,7 @@ const getSpotsForLocation = (location: string | undefined | null) => {
 const TouristSpotsModal: React.FC<{ city: string; spots: any[]; onClose: () => void }> = ({ city, spots, onClose }) => {
   return (
     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white/90 backdrop-blur-xl w-full max-w-2xl rounded-[2rem] shadow-2xl border border-white overflow-hidden flex flex-col max-h-[80vh] animate-fade-in-up">
+      <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl w-full max-w-2xl rounded-[2rem] shadow-2xl border border-white dark:border-slate-700 overflow-hidden flex flex-col max-h-[80vh] animate-fade-in-up">
 
         {/* Header */}
         <div className="p-6 bg-gradient-to-r from-teal-500 to-emerald-600 text-white flex justify-between items-center shrink-0">
@@ -508,17 +508,17 @@ const TouristSpotsModal: React.FC<{ city: string; spots: any[]; onClose: () => v
               else if (spot.type === "Architecture") { Icon = Navigation; color = "text-indigo-600"; bg = "bg-indigo-50"; }
 
               return (
-                <div key={idx} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
+                <div key={idx} className="bg-white dark:bg-slate-700 p-4 rounded-2xl border border-gray-100 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow group">
                   <div className="flex items-start gap-3">
                     <div className={`w-10 h-10 ${bg} rounded-full flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
                       <Icon className={`w-5 h-5 ${color}`} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-800">{spot.name}</h4>
+                      <h4 className="font-bold text-gray-800 dark:text-gray-100">{spot.name}</h4>
                       <span className={`text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded ${bg} ${color} mb-1 inline-block`}>
                         {spot.type}
                       </span>
-                      <p className="text-xs text-gray-500 leading-relaxed mt-1">{spot.desc}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-1">{spot.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -528,7 +528,7 @@ const TouristSpotsModal: React.FC<{ city: string; spots: any[]; onClose: () => v
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-gray-50 border-t border-gray-200 text-center text-xs text-gray-400 shrink-0">
+        <div className="p-4 bg-gray-50 dark:bg-slate-700 border-t border-gray-200 dark:border-gray-600 text-center text-xs text-gray-400 dark:text-gray-300 shrink-0">
           Explore these spots during your visit to {city}!
         </div>
       </div>
