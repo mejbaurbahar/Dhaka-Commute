@@ -50,8 +50,8 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
       className={`
         relative group rounded-2xl p-4 cursor-pointer transition-all duration-300 border
         ${isSelected
-          ? 'bg-white ring-2 ring-emerald-500 shadow-xl border-transparent transform scale-[1.02] z-10'
-          : `bg-white/80 backdrop-blur-sm border-white shadow-sm hover:shadow-lg hover:-translate-y-0.5 ${getThemeClass()}`
+          ? 'bg-white dark:bg-slate-800 ring-2 ring-emerald-500 shadow-xl border-transparent transform scale-[1.02] z-10'
+          : `bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-white dark:border-slate-700 shadow-sm hover:shadow-lg hover:-translate-y-0.5 ${getThemeClass()}`
         }
       `}
     >
@@ -68,7 +68,7 @@ export const RouteCard: React.FC<RouteCardProps> = ({ option, isSelected, onClic
             {getIcon()}
           </div>
           <div>
-            <h3 className="font-bold text-gray-800 text-sm leading-tight">{option.title}</h3>
+            <h3 className="font-bold text-gray-800 dark:text-gray-100 text-sm leading-tight">{option.title}</h3>
             <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md mt-1 inline-block bg-gray-100 text-gray-500`}>
               {option.type}
             </span>

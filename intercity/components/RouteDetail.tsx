@@ -617,7 +617,7 @@ const ScheduleList: React.FC<{ schedules: Schedule[], mode: TransportMode }> = (
     <div className="mt-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group w-full flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+        className="group w-full flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
       >
         <span className="flex items-center gap-2.5">
           <div className={`w-8 h-8 rounded-full bg-${color}-50 flex items-center justify-center text-${color}-600`}>
@@ -636,14 +636,14 @@ const ScheduleList: React.FC<{ schedules: Schedule[], mode: TransportMode }> = (
       {isOpen && (
         <div className="mt-3 grid gap-3">
           {schedules.map((schedule, idx) => (
-            <div key={idx} className="relative bg-white border border-gray-100 rounded-xl p-0 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group/item">
+            <div key={idx} className="relative bg-white dark:bg-slate-800 border border-gray-100 dark:border-gray-700 rounded-xl p-0 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group/item">
               {/* Ticket Left Color Bar */}
               <div className={`absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-${color}-400 to-${color}-500`}></div>
 
               <div className="pl-5 pr-4 py-3 flex flex-col gap-2">
                 {/* Top Row: Operator & Price */}
                 <div className="flex justify-between items-center border-b border-dashed border-gray-100 pb-2">
-                  <span className="font-bold text-gray-800 text-sm">{schedule.operator}</span>
+                  <span className="font-bold text-gray-800 dark:text-gray-100 text-sm">{schedule.operator}</span>
                   <span className={`font-bold text-${color}-600 bg-${color}-50 px-2 py-0.5 rounded text-xs`}>
                     {schedule.price}
                   </span>
@@ -658,8 +658,8 @@ const ScheduleList: React.FC<{ schedules: Schedule[], mode: TransportMode }> = (
                     </span>
                   </div>
                   {schedule.contactNumber && (
-                    <a href={`tel:${schedule.contactNumber}`} className="text-[10px] font-bold text-blue-600 hover:underline flex items-center gap-1">
-                      <Phone size={10} /> Call
+                    <a href={`tel:${schedule.contactNumber}`} className="text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+                      <Phone size={10} className="shrink-0" /> {schedule.contactNumber}
                     </a>
                   )}
                 </div>
@@ -691,16 +691,16 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
 
   return (
     <>
-      <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-glass border border-white overflow-hidden flex flex-col">
+      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-[2.5rem] shadow-glass border border-white dark:border-slate-700 overflow-hidden flex flex-col">
 
         {/* Header Info */}
-        <div className="p-6 md:p-8 bg-gradient-to-b from-white to-gray-50/50">
+        <div className="p-6 md:p-8 bg-gradient-to-b from-white dark:from-slate-800 to-gray-50/50 dark:to-slate-900/50">
           <div className="flex flex-col md:flex-row justify-between items-start gap-4">
             <div className="space-y-1">
-              <h3 className="font-bold text-2xl text-gray-800 leading-tight">{option.title}</h3>
+              <h3 className="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">{option.title}</h3>
               <p className="text-sm text-gray-500 font-medium max-w-md leading-relaxed">{option.summary}</p>
             </div>
-            <div className="flex md:flex-col items-center md:items-end gap-3 md:gap-1 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex md:flex-col items-center md:items-end gap-3 md:gap-1 bg-white dark:bg-slate-700 p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-600">
               <div className="text-xl font-bold text-emerald-600">{option.totalCostRange}</div>
               <div className="text-xs font-bold text-gray-500 uppercase tracking-wide bg-gray-100 px-2 py-0.5 rounded-md">{option.totalDuration}</div>
             </div>
@@ -769,7 +769,7 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
                   {/* Content */}
                   <div className="flex flex-col gap-3 group">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
-                      <h4 className="font-bold text-gray-900 text-lg leading-tight group-hover:text-emerald-600 transition-colors">{step.instruction}</h4>
+                      <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg leading-tight group-hover:text-emerald-600 transition-colors">{step.instruction}</h4>
                       {step.duration && (
                         <span className="text-[11px] font-bold bg-gray-50 px-2.5 py-1 rounded-lg text-gray-500 border border-gray-100 whitespace-nowrap self-start">
                           {step.duration}
