@@ -2853,7 +2853,7 @@ const App: React.FC = () => {
               <div className="relative group">
                 <div className="relative flex items-center">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10 flex items-center justify-center">
-                    <Search className="text-gray-400 w-5 h-5 group-focus-within:text-dhaka-green transition-colors" />
+                    <Search className="text-emerald-500 w-5 h-5 group-focus-within:text-emerald-600 transition-colors" />
                   </div>
                   <input
                     type="text"
@@ -2902,7 +2902,7 @@ const App: React.FC = () => {
                           setShowSuggestions(false);
                         }
                       }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center p-2 bg-gray-100 dark:bg-slate-700 rounded-lg text-dhaka-green hover:bg-green-50 dark:hover:bg-slate-600 transition-colors"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-700 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors"
                       title="Click to Search"
                       aria-label="Search"
                     >
@@ -3305,7 +3305,7 @@ const App: React.FC = () => {
                       aria-label={isFav ? `Remove ${bus.name} from favorites` : `Add ${bus.name} to favorites`}
                       className="p-1.5 -mr-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors z-20"
                     >
-                      <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-300'} `} />
+                      <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-pink-500 text-pink-500 scale-110' : 'text-gray-300 dark:text-gray-600 hover:text-pink-400'} `} />
                     </button>
                     <div className="flex flex-col items-end">
                       <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
@@ -3327,7 +3327,7 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <div className="mt-3 flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-700/50 px-2 py-1 rounded-md w-fit">
-                  <Coins className="w-3 h-3" />
+                  <Coins className="w-3 h-3 text-amber-600 dark:text-amber-400" />
                   <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
                 </div>
               </div>
@@ -3368,8 +3368,8 @@ const App: React.FC = () => {
             <button onClick={() => setShowLiveMap(true)} className="p-2.5 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse" aria-label="Live Location">
               <Navigation className="w-5 h-5" />
             </button>
-            <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" aria-label="Open menu">
-              <Menu className="w-6 h-6" />
+            <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors" aria-label="Open menu">
+              <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
             </button>
           </div>
         </div>
@@ -3398,10 +3398,10 @@ const App: React.FC = () => {
           </button>
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors"
             aria-label="Open menu"
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
           </button>
         </div>
       </header>
@@ -3620,9 +3620,9 @@ const App: React.FC = () => {
             <div className="space-y-2 flex-1 overflow-y-auto hidden-scrollbar">
               <button
                 onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.AI_ASSISTANT ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800' : ''} `}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.AI_ASSISTANT ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800' : ''} `}
               >
-                <Bot className="w-5 h-5 text-dhaka-green" /> AI Assistant
+                <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" /> AI Assistant
               </button>
               <button
                 onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
@@ -3634,19 +3634,19 @@ const App: React.FC = () => {
                 onClick={() => { setView(AppView.WHY_USE); setIsMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.WHY_USE ? 'bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800' : ''} `}
               >
-                <Sparkles className="w-5 h-5 text-pink-500" /> Why Use কই যাবো
+                <Sparkles className="w-5 h-5 text-pink-600 dark:text-pink-400" /> Why Use কই যাবো
               </button>
               <button
                 onClick={() => { setView(AppView.FAQ); setIsMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.FAQ ? 'bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800' : ''} `}
               >
-                <FileText className="w-5 h-5 text-cyan-500" /> Q&A
+                <FileText className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> Q&A
               </button>
               <button
                 onClick={() => { setView(AppView.HISTORY); setIsMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.HISTORY ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800' : ''}`}
               >
-                <Clock className="w-5 h-5 text-amber-500" /> History
+                <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> History
               </button>
 
 
@@ -3656,20 +3656,20 @@ const App: React.FC = () => {
                 onClick={() => { setView(AppView.INSTALL_APP); setIsMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.INSTALL_APP ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800' : ''}`}
               >
-                <Download className="w-5 h-5 text-emerald-600" /> Install App
+                <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Install App
               </button>
 
               <button
                 onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <Shield className="w-5 h-5 text-purple-500" /> Privacy Policy
+                <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Privacy Policy
               </button>
               <button
                 onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <FileText className="w-5 h-5 text-orange-500" /> Terms of Service
+                <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" /> Terms of Service
               </button>
             </div>
 
