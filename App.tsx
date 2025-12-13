@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
-import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, Facebook, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane, Phone, Download, TramFront } from 'lucide-react';
+import { Search, Map as MapIcon, Navigation, Info, Bus, ArrowLeft, ArrowRight, Bot, ExternalLink, MapPin, Heart, Shield, Zap, Users, FileText, AlertTriangle, Home, ChevronRight, CheckCircle2, User, Linkedin, Facebook, ArrowRightLeft, Settings, Save, Eye, EyeOff, Trash2, Key, Calculator, Coins, Train, Sparkles, X, Gauge, Flag, Clock, Menu, WifiOff, Plane, Phone, Download, TramFront } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react";
 import { BusRoute, AppView, UserLocation } from './types';
 import { STATIONS, BUS_DATA, METRO_STATIONS, METRO_LINES, RAILWAY_STATIONS, AIRPORTS } from './constants';
@@ -2912,7 +2912,7 @@ const App: React.FC = () => {
 
                 {/* Autocomplete Dropdown */}
                 {showSuggestions && searchSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl max-h-80 overflow-y-auto z-[200] border border-gray-200">
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl max-h-80 overflow-y-auto z-[9999] border border-gray-200">
                     {searchSuggestions.map((suggestion, idx) => (
                       <div
                         key={`${suggestion.type}-${suggestion.id}-${idx}`}
@@ -2967,7 +2967,7 @@ const App: React.FC = () => {
 
                 {/* Search Context Banner */}
                 {searchContext && (
-                  <div className="mt-3">
+                  <div className="mt-3 space-y-2">
                     <div className="bg-emerald-50 border-l-4 border-emerald-500 px-4 py-3 rounded-r-lg">
                       <div className="flex items-center gap-2">
                         <Search className="w-4 h-4 text-emerald-700 flex-shrink-0" />
@@ -2976,6 +2976,31 @@ const App: React.FC = () => {
                         </p>
                       </div>
                     </div>
+
+                    {/* Quick Route Finder Button */}
+                    {userLocation && destinationStationIds.length > 0 && (
+                      <button
+                        onClick={() => {
+                          // Find user's nearest station
+                          const nearestResult = findNearestStation(userLocation, Object.keys(STATIONS));
+                          if (nearestResult && destinationStationIds[0]) {
+                            setFromStation(nearestResult.station.id);
+                            setToStation(destinationStationIds[0]);
+                            setSearchMode('ROUTE');
+
+                            // Scroll to top to show route search
+                            if (scrollContainerRef.current) {
+                              scrollContainerRef.current.scrollTop = 0;
+                            }
+                          }
+                        }}
+                        className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 group"
+                      >
+                        <MapPin className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span>View Route Options from Your Location</span>
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

@@ -73,7 +73,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({ options, val
             </div>
 
             {isOpen && !disabled && (
-                <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-xl shadow-xl border border-gray-100 max-h-60 overflow-y-auto z-[200] animate-in fade-in slide-in-from-top-2">
+                <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-xl shadow-xl border border-gray-100 max-h-60 overflow-y-auto z-[9999] animate-in fade-in slide-in-from-top-2">
                     {filteredOptions.length > 0 ? (
                         filteredOptions.map((option) => (
                             <div
