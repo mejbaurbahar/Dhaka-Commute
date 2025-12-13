@@ -469,7 +469,7 @@ const App: React.FC = () => {
           }}
           className="flex items-center gap-3 cursor-pointer group outline-none"
         >
-          <div className="w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+          <div className="flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
             <AnimatedLogo size="small" />
           </div>
         </a>
