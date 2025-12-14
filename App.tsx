@@ -27,6 +27,10 @@ import {
 } from './services/searchService';
 import { sortBusesByLocation } from './services/locationBasedSortService';
 import { DesktopNavbar } from './components/DesktopNavbar';
+import { NotificationProvider } from './contexts/NotificationContext';
+import NotificationBanner from './components/NotificationBanner';
+import NotificationBell from './components/NotificationBell';
+
 
 
 interface ChatMessage {
@@ -3358,404 +3362,410 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-900 font-sans text-gray-800 dark:text-gray-100 overflow-hidden">
-      {/* Mobile Header */}
-      <header className={`fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden transition-transform duration-300 ${(view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) ? '-translate-y-full' : 'translate-y-0'} `}>
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 outline-none cursor-pointer" onClick={() => setView(AppView.HOME)}>
-            <AnimatedLogo size="small" />
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="scale-75 origin-right">
-              <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+    <NotificationProvider>
+      <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-900 font-sans text-gray-800 dark:text-gray-100 overflow-hidden">
+        {/* Mobile Header */}
+        <header className={`fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden transition-transform duration-300 ${(view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) ? '-translate-y-full' : 'translate-y-0'} `}>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2 outline-none cursor-pointer" onClick={() => setView(AppView.HOME)}>
+              <AnimatedLogo size="small" />
             </div>
-            <button onClick={() => setShowLiveMap(true)} className="p-2.5 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse" aria-label="Live Location">
-              <Navigation className="w-5 h-5" />
-            </button>
-            <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors" aria-label="Open menu">
-              <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-            </button>
+            <div className="flex items-center gap-1">
+              <div className="scale-75 origin-right">
+                <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+              </div>
+              <NotificationBell />
+              <button onClick={() => setShowLiveMap(true)} className="p-2.5 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse" aria-label="Live Location">
+                <Navigation className="w-5 h-5" />
+              </button>
+              <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors" aria-label="Open menu">
+                <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+              </button>
+            </div>
           </div>
-        </div>
 
-      </header>
+        </header>
 
-      {/* Desktop Header */}
-      {/* Desktop Header - Replaced by DesktopNavbar */}
-      <DesktopNavbar
-        view={view}
-        setView={setView}
-        primarySearch={primarySearch}
-        setPrimarySearch={setPrimarySearch}
-        listFilter={listFilter}
-        setListFilter={setListFilter}
-        onOpenMenu={() => setIsMenuOpen(true)}
-        onOpenLiveMap={() => setShowLiveMap(true)}
-        isDarkMode={isDarkMode}
-        toggleTheme={() => setIsDarkMode(!isDarkMode)}
-      />
+        {/* Desktop Header */}
+        {/* Desktop Header - Replaced by DesktopNavbar */}
+        <DesktopNavbar
+          view={view}
+          setView={setView}
+          primarySearch={primarySearch}
+          setPrimarySearch={setPrimarySearch}
+          listFilter={listFilter}
+          setListFilter={setListFilter}
+          onOpenMenu={() => setIsMenuOpen(true)}
+          onOpenLiveMap={() => setShowLiveMap(true)}
+          isDarkMode={isDarkMode}
+          toggleTheme={() => setIsDarkMode(!isDarkMode)}
+        />
 
-      <main className="flex flex-1 overflow-hidden relative w-full mx-auto bg-slate-50 dark:bg-slate-900 h-full">
-        {/* Left Sidebar (Desktop) / Main View (Mobile Home) */}
-        <div className={`
+        {/* Notification Banner - High Priority Notifications */}
+        <NotificationBanner />
+
+        <main className="flex flex-1 overflow-hidden relative w-full mx-auto bg-slate-50 dark:bg-slate-900 h-full">
+          {/* Left Sidebar (Desktop) / Main View (Mobile Home) */}
+          <div className={`
             ${'w-full md:w-1/3 md:min-w-[320px] md:max-w-md md:flex md:flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-slate-900 z-0 h-full overflow-y-auto'}
             ${view !== AppView.HOME && 'hidden md:flex'}
 `}>
-          <div className="h-full pt-16 md:pt-0">
-            {renderHomeContent()}
+            <div className="h-full pt-16 md:pt-0">
+              {renderHomeContent()}
+            </div>
           </div>
-        </div>
 
-        {/* Right Content Area (Desktop) / Views (Mobile) */}
-        <div className={`
+          {/* Right Content Area (Desktop) / Views (Mobile) */}
+          <div className={`
             ${'w-full md:flex-1 bg-slate-50 dark:bg-slate-950 md:bg-white dark:md:bg-slate-900 relative h-full overflow-hidden'}
             ${view === AppView.HOME && 'hidden md:block'}
 `}>
-          {view === AppView.HOME && <div className="hidden md:block h-full"><DhakaAlive /></div>}
-          {view === AppView.BUS_DETAILS && renderBusDetails()}
-          {view === AppView.LIVE_NAV && renderLiveNav()}
-          {view === AppView.AI_ASSISTANT && renderAiAssistant()}
+            {view === AppView.HOME && <div className="hidden md:block h-full"><DhakaAlive /></div>}
+            {view === AppView.BUS_DETAILS && renderBusDetails()}
+            {view === AppView.LIVE_NAV && renderLiveNav()}
+            {view === AppView.AI_ASSISTANT && renderAiAssistant()}
 
-          {view === AppView.ABOUT && renderAbout()}
-          {view === AppView.WHY_USE && renderWhyUse()}
-          {view === AppView.FAQ && renderFAQ()}
-          {view === AppView.HISTORY && (
-            <HistoryView
-              onBack={() => setView(AppView.HOME)}
-              onBusSelect={handleBusSelect}
-            />
-          )}
-          {view === AppView.PRIVACY && renderPrivacyPolicy()}
-          {view === AppView.TERMS && renderTerms()}
-          {view === AppView.FOR_AI && renderForAi()}
-          {view === AppView.INSTALL_APP && (
-            <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
-              <div className="max-w-2xl mx-auto text-center">
-                {/* App Icon */}
-                <div className="w-24 h-24 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200">
-                  <Bus className="w-12 h-12" />
+            {view === AppView.ABOUT && renderAbout()}
+            {view === AppView.WHY_USE && renderWhyUse()}
+            {view === AppView.FAQ && renderFAQ()}
+            {view === AppView.HISTORY && (
+              <HistoryView
+                onBack={() => setView(AppView.HOME)}
+                onBusSelect={handleBusSelect}
+              />
+            )}
+            {view === AppView.PRIVACY && renderPrivacyPolicy()}
+            {view === AppView.TERMS && renderTerms()}
+            {view === AppView.FOR_AI && renderForAi()}
+            {view === AppView.INSTALL_APP && (
+              <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-12 overflow-y-auto w-full">
+                <div className="max-w-2xl mx-auto text-center">
+                  {/* App Icon */}
+                  <div className="w-24 h-24 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200">
+                    <Bus className="w-12 h-12" />
+                  </div>
+
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Install কই যাবো</h1>
+                  <p className="text-gray-500 dark:text-gray-400 mb-8">Get the app on your device for a better experience</p>
+
+                  {/* Check if already installed */}
+                  {/* Check if already installed - Only check display-mode: standalone, ignore localStorage to allow reinstall */}
+                  {(window.matchMedia('(display-mode: standalone)').matches) ? (
+                    <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-2xl p-8 mb-8">
+                      <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">App Already Installed!</h2>
+                      <p className="text-gray-700 dark:text-gray-300 mb-6">
+                        You're using the installed version of কই যাবো. Enjoy the full app experience!
+                      </p>
+
+                      {/* Uninstall Instructions */}
+                      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 text-left">
+                        <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                          <Info className="w-5 h-5 text-blue-500" /> How to Uninstall
+                        </h3>
+                        <div className="space-y-4 text-sm text-gray-700 dark:text-gray-300">
+                          <div>
+                            <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">On Android (Chrome):</p>
+                            <ol className="list-decimal list-inside space-y-1 ml-2">
+                              <li>Long press the app icon on home screen</li>
+                              <li>Tap "Uninstall" or "App info" → "Uninstall"</li>
+                              <li>Confirm "OK"</li>
+                            </ol>
+                          </div>
+                          <div>
+                            <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">On iOS (Safari):</p>
+                            <ol className="list-decimal list-inside space-y-1 ml-2">
+                              <li>Long press the app icon on home screen</li>
+                              <li>Tap "Remove App"</li>
+                              <li>Confirm "Delete App"</li>
+                            </ol>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      {/* Top Install Button */}
+                      <button
+                        onClick={handleInstallClick}
+                        className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-8"
+                      >
+                        <Download className="w-6 h-6" />
+                        {isInstalling ? 'Installing...' : 'Install Now'}
+                      </button>
+
+                      {/* Benefits */}
+                      <div className="grid md:grid-cols-2 gap-4 mb-8 text-left">
+                        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-100">
+                          <CheckCircle2 className="w-8 h-8 text-emerald-600 mb-3" />
+                          <h3 className="font-bold text-gray-900 mb-2">Works Offline</h3>
+                          <p className="text-sm text-gray-700">Access bus routes without internet connection</p>
+                        </div>
+                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-2xl border border-blue-100">
+                          <CheckCircle2 className="w-8 h-8 text-blue-600 mb-3" />
+                          <h3 className="font-bold text-gray-900 mb-2">Faster Loading</h3>
+                          <p className="text-sm text-gray-700">Instant access from your home screen</p>
+                        </div>
+                        <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
+                          <CheckCircle2 className="w-8 h-8 text-purple-600 mb-3" />
+                          <h3 className="font-bold text-gray-900 mb-2">Native Experience</h3>
+                          <p className="text-sm text-gray-700">Feels like a real app on your device</p>
+                        </div>
+                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl border border-orange-100">
+                          <CheckCircle2 className="w-8 h-8 text-orange-600 mb-3" />
+                          <h3 className="font-bold text-gray-900 mb-2">No App Store</h3>
+                          <p className="text-sm text-gray-700">Install directly without Play Store</p>
+                        </div>
+                      </div>
+
+                      {/* Install Button */}
+                      {deferredPrompt && (
+                        <div>
+                          <button
+                            onClick={handleInstallClick}
+                            disabled={isInstalling}
+                            className={`w-full md: w-auto px-12 py-4 bg-gradient - to-r from-emerald - 500 to-teal - 600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald - 500 / 40 hover: shadow-3xl hover: scale-105 transition-all active: scale-95 flex items-center justify-center gap-3 mx-auto mb-4 ${isInstalling ? 'opacity-75 cursor-not-allowed' : ''} `}
+                          >
+                            {isInstalling ? (
+                              <>
+                                <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                                Installing...
+                              </>
+                            ) : (
+                              <>
+                                <Download className="w-6 h-6" />
+                                Install Now
+                              </>
+                            )}
+                          </button>
+                          <p className="text-xs text-gray-400 text-center">Free • No registration • Works on all devices</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Bottom padding */}
+                  <div className="h-20"></div>
                 </div>
+              </div>
+            )}
+            {view === AppView.NOT_FOUND && renderNotFound()}
+            {view === AppView.SERVER_ERROR && renderServerError()}
+          </div>
+        </main>
 
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Install কই যাবো</h1>
-                <p className="text-gray-500 dark:text-gray-400 mb-8">Get the app on your device for a better experience</p>
+        {/* Mobile Bottom Navigation - Always show except on BUS_DETAILS and LIVE_NAV */}
+        {view !== AppView.BUS_DETAILS && view !== AppView.LIVE_NAV && (
+          <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
+            <div className="grid grid-cols-4 h-16">
+              <button
+                onClick={() => {
+                  setView(AppView.HOME);
+                  setPrimarySearch('LOCAL');
+                }}
+                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+              >
+                <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-900' : 'text-gray-400 dark:text-gray-500'} `} />
+                <span className="text-[10px] font-bold uppercase tracking-wide">Routes</span>
+              </button>
+              <button
+                onClick={() => setView(AppView.AI_ASSISTANT)}
+                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-purple-500 text-purple-600 dark:text-purple-400 bg-purple-50/50 dark:bg-purple-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+              >
+                <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'text-purple-600 dark:text-purple-400 fill-purple-100 dark:fill-purple-900' : 'text-gray-400 dark:text-gray-500'} `} />
+                <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
+              </button>
+              <button
+                onClick={() => {
+                  if (view === AppView.HOME && primarySearch === 'INTERCITY') {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  } else {
+                    setView(AppView.HOME);
+                    setPrimarySearch('INTERCITY');
+                  }
+                }}
+                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+              >
+                <Train className={`w-6 h-6 ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'text-blue-600 dark:text-blue-400 fill-blue-100 dark:fill-blue-900' : 'text-gray-400 dark:text-gray-500'} `} />
+                <span className="text-[10px] font-bold uppercase tracking-wide">Intercity</span>
+              </button>
+              <button
+                onClick={() => setView(AppView.ABOUT)}
+                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+              >
+                <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'text-orange-600 dark:text-orange-400 fill-orange-100 dark:fill-orange-900' : 'text-gray-400 dark:text-gray-500'} `} />
+                <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
+              </button>
+            </div>
+          </nav>
+        )}
+        {/* Vercel Analytics */}
+        {/* <Analytics /> */}
+        {/* <SpeedInsights /> */}
 
-                {/* Check if already installed */}
-                {/* Check if already installed - Only check display-mode: standalone, ignore localStorage to allow reinstall */}
-                {(window.matchMedia('(display-mode: standalone)').matches) ? (
-                  <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-2xl p-8 mb-8">
-                    <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">App Already Installed!</h2>
-                    <p className="text-gray-700 dark:text-gray-300 mb-6">
-                      You're using the installed version of কই যাবো. Enjoy the full app experience!
-                    </p>
+        {/* Menu Overlay - Works on all pages */}
+        {isMenuOpen && (
+          <div className="fixed inset-0 z-[100]">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
+            <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-xl font-bold text-dhaka-dark dark:text-gray-100">Menu</h2>
+                <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full" aria-label="Close menu">
+                  <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
+                </button>
+              </div>
 
-                    {/* Uninstall Instructions */}
-                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 text-left">
-                      <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-                        <Info className="w-5 h-5 text-blue-500" /> How to Uninstall
-                      </h3>
-                      <div className="space-y-4 text-sm text-gray-700 dark:text-gray-300">
-                        <div>
-                          <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">On Android (Chrome):</p>
-                          <ol className="list-decimal list-inside space-y-1 ml-2">
-                            <li>Long press the app icon on home screen</li>
-                            <li>Tap "Uninstall" or "App info" → "Uninstall"</li>
-                            <li>Confirm "OK"</li>
-                          </ol>
-                        </div>
-                        <div>
-                          <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">On iOS (Safari):</p>
-                          <ol className="list-decimal list-inside space-y-1 ml-2">
-                            <li>Long press the app icon on home screen</li>
-                            <li>Tap "Remove App"</li>
-                            <li>Confirm "Delete App"</li>
-                          </ol>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    {/* Top Install Button */}
-                    <button
-                      onClick={handleInstallClick}
-                      className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-8"
-                    >
-                      <Download className="w-6 h-6" />
-                      {isInstalling ? 'Installing...' : 'Install Now'}
-                    </button>
+              <div className="space-y-2 flex-1 overflow-y-auto hidden-scrollbar">
+                <button
+                  onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.AI_ASSISTANT ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800' : ''} `}
+                >
+                  <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" /> AI Assistant
+                </button>
+                <button
+                  onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.ABOUT ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800' : ''} `}
+                >
+                  <Info className="w-5 h-5 text-purple-500" /> About
+                </button>
+                <button
+                  onClick={() => { setView(AppView.WHY_USE); setIsMenuOpen(false); }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.WHY_USE ? 'bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800' : ''} `}
+                >
+                  <Sparkles className="w-5 h-5 text-pink-600 dark:text-pink-400" /> Why Use কই যাবো
+                </button>
+                <button
+                  onClick={() => { setView(AppView.FAQ); setIsMenuOpen(false); }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.FAQ ? 'bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800' : ''} `}
+                >
+                  <FileText className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> Q&A
+                </button>
+                <button
+                  onClick={() => { setView(AppView.HISTORY); setIsMenuOpen(false); }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.HISTORY ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800' : ''}`}
+                >
+                  <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> History
+                </button>
 
-                    {/* Benefits */}
-                    <div className="grid md:grid-cols-2 gap-4 mb-8 text-left">
-                      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-100">
-                        <CheckCircle2 className="w-8 h-8 text-emerald-600 mb-3" />
-                        <h3 className="font-bold text-gray-900 mb-2">Works Offline</h3>
-                        <p className="text-sm text-gray-700">Access bus routes without internet connection</p>
-                      </div>
-                      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-2xl border border-blue-100">
-                        <CheckCircle2 className="w-8 h-8 text-blue-600 mb-3" />
-                        <h3 className="font-bold text-gray-900 mb-2">Faster Loading</h3>
-                        <p className="text-sm text-gray-700">Instant access from your home screen</p>
-                      </div>
-                      <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
-                        <CheckCircle2 className="w-8 h-8 text-purple-600 mb-3" />
-                        <h3 className="font-bold text-gray-900 mb-2">Native Experience</h3>
-                        <p className="text-sm text-gray-700">Feels like a real app on your device</p>
-                      </div>
-                      <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl border border-orange-100">
-                        <CheckCircle2 className="w-8 h-8 text-orange-600 mb-3" />
-                        <h3 className="font-bold text-gray-900 mb-2">No App Store</h3>
-                        <p className="text-sm text-gray-700">Install directly without Play Store</p>
-                      </div>
-                    </div>
 
-                    {/* Install Button */}
-                    {deferredPrompt && (
-                      <div>
-                        <button
-                          onClick={handleInstallClick}
-                          disabled={isInstalling}
-                          className={`w-full md: w-auto px-12 py-4 bg-gradient - to-r from-emerald - 500 to-teal - 600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald - 500 / 40 hover: shadow-3xl hover: scale-105 transition-all active: scale-95 flex items-center justify-center gap-3 mx-auto mb-4 ${isInstalling ? 'opacity-75 cursor-not-allowed' : ''} `}
-                        >
-                          {isInstalling ? (
-                            <>
-                              <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
-                              Installing...
-                            </>
-                          ) : (
-                            <>
-                              <Download className="w-6 h-6" />
-                              Install Now
-                            </>
-                          )}
-                        </button>
-                        <p className="text-xs text-gray-400 text-center">Free • No registration • Works on all devices</p>
-                      </div>
-                    )}
-                  </div>
-                )}
 
-                {/* Bottom padding */}
-                <div className="h-20"></div>
+                {/* Install/Uninstall App - Always show */}
+                <button
+                  onClick={() => { setView(AppView.INSTALL_APP); setIsMenuOpen(false); }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.INSTALL_APP ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800' : ''}`}
+                >
+                  <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Install App
+                </button>
+
+                <button
+                  onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+                >
+                  <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Privacy Policy
+                </button>
+                <button
+                  onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+                >
+                  <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" /> Terms of Service
+                </button>
+              </div>
+
+              <div className="pt-6 border-t border-gray-100">
+                <p className="text-xs text-center text-gray-400">
+                  কই যাবো v1.0.0
+                </p>
               </div>
             </div>
-          )}
-          {view === AppView.NOT_FOUND && renderNotFound()}
-          {view === AppView.SERVER_ERROR && renderServerError()}
-        </div>
-      </main>
-
-      {/* Mobile Bottom Navigation - Always show except on BUS_DETAILS and LIVE_NAV */}
-      {view !== AppView.BUS_DETAILS && view !== AppView.LIVE_NAV && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
-          <div className="grid grid-cols-4 h-16">
-            <button
-              onClick={() => {
-                setView(AppView.HOME);
-                setPrimarySearch('LOCAL');
-              }}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
-            >
-              <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-900' : 'text-gray-400 dark:text-gray-500'} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">Routes</span>
-            </button>
-            <button
-              onClick={() => setView(AppView.AI_ASSISTANT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-purple-500 text-purple-600 dark:text-purple-400 bg-purple-50/50 dark:bg-purple-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
-            >
-              <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'text-purple-600 dark:text-purple-400 fill-purple-100 dark:fill-purple-900' : 'text-gray-400 dark:text-gray-500'} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
-            </button>
-            <button
-              onClick={() => {
-                if (view === AppView.HOME && primarySearch === 'INTERCITY') {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                  setView(AppView.HOME);
-                  setPrimarySearch('INTERCITY');
-                }
-              }}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
-            >
-              <Train className={`w-6 h-6 ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'text-blue-600 dark:text-blue-400 fill-blue-100 dark:fill-blue-900' : 'text-gray-400 dark:text-gray-500'} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">Intercity</span>
-            </button>
-            <button
-              onClick={() => setView(AppView.ABOUT)}
-              className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
-            >
-              <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'text-orange-600 dark:text-orange-400 fill-orange-100 dark:fill-orange-900' : 'text-gray-400 dark:text-gray-500'} `} />
-              <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
-            </button>
           </div>
-        </nav>
-      )}
-      {/* Vercel Analytics */}
-      {/* <Analytics /> */}
-      {/* <SpeedInsights /> */}
+        )}
 
-      {/* Menu Overlay - Works on all pages */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-[100]">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
-          <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-bold text-dhaka-dark dark:text-gray-100">Menu</h2>
-              <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full" aria-label="Close menu">
-                <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-              </button>
+        {/* Intercity Loading Overlay - Using Main App Loader */}
+        {intercityLoading && (
+          <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #006a4e 0%, #00a86b 100%)' }}>
+            <div className="text-center p-5">
+              {/* Logo Animation */}
+              <img src="/logo.png" alt="Logo" className="block h-32 w-auto mb-6 mx-auto animate-bounce" />
+              <p className="text-lg text-white/90 mb-7">Loading...</p>
+              {/* Loading Spinner */}
+              <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
             </div>
+          </div>
+        )}
 
-            <div className="space-y-2 flex-1 overflow-y-auto hidden-scrollbar">
-              <button
-                onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.AI_ASSISTANT ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800' : ''} `}
-              >
-                <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" /> AI Assistant
-              </button>
-              <button
-                onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.ABOUT ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800' : ''} `}
-              >
-                <Info className="w-5 h-5 text-purple-500" /> About
-              </button>
-              <button
-                onClick={() => { setView(AppView.WHY_USE); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.WHY_USE ? 'bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800' : ''} `}
-              >
-                <Sparkles className="w-5 h-5 text-pink-600 dark:text-pink-400" /> Why Use কই যাবো
-              </button>
-              <button
-                onClick={() => { setView(AppView.FAQ); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.FAQ ? 'bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800' : ''} `}
-              >
-                <FileText className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> Q&A
-              </button>
-              <button
-                onClick={() => { setView(AppView.HISTORY); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.HISTORY ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800' : ''}`}
-              >
-                <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> History
-              </button>
+        {/* PWA Install Prompt - Don't show on INSTALL_APP page */}
+        {showInstallPrompt && view !== AppView.INSTALL_APP && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-end md:items-center justify-center p-4 animate-in fade-in">
+            <div className="bg-white dark:bg-slate-900 rounded-t-3xl md:rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
+                  <Bus className="w-8 h-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">Install কই যাবো</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    Install our app for a better experience!
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowInstallPrompt(false)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                  aria-label="Close"
+                >
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
 
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                  <span>Works offline - No internet needed</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                  <span>Faster loading & Better performance</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                  <span>Add to home screen like a native app</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                  <span>No app store required!</span>
+                </div>
+              </div>
 
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowInstallPrompt(false)}
+                  className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+                >
+                  Maybe Later
+                </button>
+                <button
+                  onClick={handleInstallClick}
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl font-bold text-white shadow-lg shadow-emerald-500/30 dark:shadow-emerald-900/40 hover:shadow-xl hover:shadow-emerald-500/40 transition-all active:scale-95"
+                >
+                  Install Now
+                </button>
+              </div>
 
-              {/* Install/Uninstall App - Always show */}
-              <button
-                onClick={() => { setView(AppView.INSTALL_APP); setIsMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.INSTALL_APP ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800' : ''}`}
-              >
-                <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Install App
-              </button>
-
-              <button
-                onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
-              >
-                <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Privacy Policy
-              </button>
-              <button
-                onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
-                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
-              >
-                <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" /> Terms of Service
-              </button>
-            </div>
-
-            <div className="pt-6 border-t border-gray-100">
-              <p className="text-xs text-center text-gray-400">
-                কই যাবো v1.0.0
+              <p className="text-xs text-center text-gray-400 mt-4">
+                Free • No registration • Works on all devices
               </p>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Intercity Loading Overlay - Using Main App Loader */}
-      {intercityLoading && (
-        <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #006a4e 0%, #00a86b 100%)' }}>
-          <div className="text-center p-5">
-            {/* Logo Animation */}
-            <img src="/logo.png" alt="Logo" className="block h-32 w-auto mb-6 mx-auto animate-bounce" />
-            <p className="text-lg text-white/90 mb-7">Loading...</p>
-            {/* Loading Spinner */}
-            <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
-          </div>
-        </div>
-      )}
-
-      {/* PWA Install Prompt - Don't show on INSTALL_APP page */}
-      {showInstallPrompt && view !== AppView.INSTALL_APP && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-end md:items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white dark:bg-slate-900 rounded-t-3xl md:rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
-                <Bus className="w-8 h-8 text-white" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">Install কই যাবো</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Install our app for a better experience!
-                </p>
-              </div>
-              <button
-                onClick={() => setShowInstallPrompt(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
-
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
-                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                <span>Works offline - No internet needed</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
-                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                <span>Faster loading & Better performance</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
-                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                <span>Add to home screen like a native app</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
-                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                <span>No app store required!</span>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowInstallPrompt(false)}
-                className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
-              >
-                Maybe Later
-              </button>
-              <button
-                onClick={handleInstallClick}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl font-bold text-white shadow-lg shadow-emerald-500/30 dark:shadow-emerald-900/40 hover:shadow-xl hover:shadow-emerald-500/40 transition-all active:scale-95"
-              >
-                Install Now
-              </button>
-            </div>
-
-            <p className="text-xs text-center text-gray-400 mt-4">
-              Free • No registration • Works on all devices
-            </p>
-          </div>
-        </div>
-      )}
+        )}
 
 
-      <LiveLocationMap
-        isOpen={showLiveMap}
-        onClose={() => setShowLiveMap(false)}
-        userLocation={userLocation}
-        selectedRoute={selectedBus}
-      />
-    </div>
+        <LiveLocationMap
+          isOpen={showLiveMap}
+          onClose={() => setShowLiveMap(false)}
+          userLocation={userLocation}
+          selectedRoute={selectedBus}
+        />
+      </div>
+    </NotificationProvider>
   );
 };
 

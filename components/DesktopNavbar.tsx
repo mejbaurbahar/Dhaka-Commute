@@ -4,6 +4,7 @@ import { Home, Map, Bot, Heart, Info, Train, Menu, Sparkles, Navigation, Clock }
 import { AppView } from '../types';
 import ThemeToggle from './ThemeToggle';
 import { AnimatedLogo } from './AnimatedLogo'; // Assuming we can use this or just text
+import NotificationBell from './NotificationBell';
 
 interface DesktopNavbarProps {
     view: AppView;
@@ -121,6 +122,7 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
                     <span>Live Map</span>
                 </button>
                 <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+                <NotificationBell />
                 <button
                     onClick={onOpenMenu}
                     className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300"
