@@ -695,7 +695,23 @@ const App: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const sortedStations = Object.values(STATIONS).sort((a, b) => a.name.localeCompare(b.name));
+  // Get only stations that have at least one bus stopping there
+  const sortedStations = useMemo(() => {
+    // Collect all station IDs that are used by at least one bus
+    const usedStationIds = new Set<string>();
+    BUS_DATA.forEach(bus => {
+      bus.stops.forEach(stopId => {
+        if (STATIONS[stopId]) {
+          usedStationIds.add(stopId);
+        }
+      });
+    });
+
+    // Filter and sort stations
+    return Object.values(STATIONS)
+      .filter(station => usedStationIds.has(station.id))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
 
   const { fareInfo, fareStartIndex, fareEndIndex, isReversed, actualStartStation, actualEndStation } = useMemo(() => {
     if (!selectedBus) return { fareInfo: null, fareStartIndex: -1, fareEndIndex: -1, isReversed: false, actualStartStation: null, actualEndStation: null };
