@@ -178,7 +178,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
   if (stations.length === 0) return <div>No station data</div>;
 
-  // Calculate normalized Latitudes
+  // Calculate normalized Latitudes (Schematic View - Vertical Variation Only)
   const latData = React.useMemo(() => {
     if (stations.length === 0) return { minLat: 0, maxLat: 0, normalizeLat: (_: number) => 0 };
     const lats = stations.map(s => s.lat);
@@ -194,17 +194,43 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   // Base Dimensions
   const height = 600;
   const padding = 180;
-  const baseWidth = Math.max(stations.length * 120, 1000);
+  // Use fixed spacing per station to guarantee no overlap (Increased to 160px for Metro labels)
+  const baseWidth = Math.max(stations.length * 160, 1000);
 
-  // Memoize Node Positions to avoid recalculation on every render (e.g. simulation step)
+  // Memoize Node Positions - SCHEMATIC PROJECTION
   const nodePositions = React.useMemo(() => {
     return stations.map((s, i) => {
+      // Evenly spaced X axis
       const x = (i / (stations.length - 1)) * (baseWidth - (padding * 2)) + padding;
+
+      // Latitude-based Y axis (Visual interest)
       const mapContentHeight = 200;
       const y = (height - mapContentHeight) / 2 + (mapContentHeight - (latData.normalizeLat(s.lat) * mapContentHeight));
+
       return { x, y };
     });
-  }, [stations, baseWidth, padding, latData]);
+  }, [stations, baseWidth, padding, latData, height]);
+
+  // Path Generator for Smooth Curves
+  const generateSmoothPath = (points: { x: number, y: number }[]) => {
+    if (points.length < 2) return "";
+    let d = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = i > 0 ? points[i - 1] : points[i];
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const p3 = i < points.length - 2 ? points[i + 2] : points[i + 1];
+
+      // Smoother curve tension
+      const cp1x = p1.x + (p2.x - p0.x) * 0.15; // 0.15 tension for schematic
+      const cp1y = p1.y + (p2.y - p0.y) * 0.15;
+      const cp2x = p2.x - (p3.x - p1.x) * 0.15;
+      const cp2y = p2.y - (p3.y - p1.y) * 0.15;
+
+      d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+    }
+    return d;
+  };
 
   // Calculate User Position and Dynamic Map Bounds
   const { userPos, layout, nearestStationPosForLine } = React.useMemo(() => {
@@ -213,38 +239,54 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
     let nearestPos: { x: number, y: number } | null = null;
 
     if (userLocation && stations.length > 0) {
-      const lngs = stations.map(s => s.lng);
-      const minLng = Math.min(...lngs);
-      const maxLng = Math.max(...lngs);
-
-      // Calculate projected position
-      const uX = ((userLocation.lng - minLng) / (maxLng - minLng || 1)) * (baseWidth - (padding * 2)) + padding;
-      const uY = (height - 200) / 2 + (200 - (latData.normalizeLat(userLocation.lat) * 200));
-
-      uPos = { x: uX, y: uY };
-
-      // Find nearest station position
       if (userStationIndex >= 0 && userStationIndex < nodePositions.length) {
         nearestPos = nodePositions[userStationIndex];
+      } else {
+        // Fallback to first station if index invalid
+        nearestPos = nodePositions[0];
       }
 
-      if (isUserFar) {
-        // CLAMPING LOGIC
-        if (nearestPos) {
-          const dx = uX - nearestPos.x;
-          const dy = uY - nearestPos.y;
-          const distance = Math.hypot(dx, dy);
-          const maxVisualDistance = 150;
+      // Default: User is AT the nearest station
+      uPos = { ...nearestPos };
 
-          if (distance > maxVisualDistance) {
-            const ratio = maxVisualDistance / distance;
-            uPos = {
-              x: nearestPos.x + dx * ratio,
-              y: nearestPos.y + dy * ratio
-            };
-          }
+      if (isUserFar) {
+        // VISUAL OFFSET LOGIC
+        // We want to show the user "near" the station, but not ON it.
+        // We calculate a visual offset based on real lat/lng difference,
+        // but clamped tightly so it fits on screen.
+
+        const station = stations[userStationIndex >= 0 ? userStationIndex : 0];
+
+        // Calculate relative direction vectors (normalized 0-1 generally)
+        // Note: Longitude difference is sensitive, so we scale it
+        const dLng = (userLocation.lng - station.lng) * 20000; // Fake scale for visual X
+        const dLat = -(userLocation.lat - station.lat) * 20000; // Fake scale for visual Y (Negate because Y is down)
+
+        let dx = dLng;
+        let dy = dLat;
+
+        // CLAMP DISTANCE (Pixel Space)
+        // User requested "reduce gap so that i can see both".
+        // We set a very tight visual limit.
+        const maxVisualDistance = 80; // Pixels
+        const currentDistance = Math.hypot(dx, dy);
+
+        if (currentDistance > maxVisualDistance || currentDistance === 0) {
+          // Normalize and scale to maxVisualDistance
+          // If distance is 0 (rare overlap), assume slight offset
+          const safeDist = currentDistance || 1;
+          const ratio = maxVisualDistance / safeDist;
+          dx = dx * ratio;
+          dy = dy * ratio;
         }
 
+        // Apply offset to schematic station position
+        uPos = {
+          x: nearestPos.x + dx,
+          y: nearestPos.y + dy
+        };
+
+        // Calculate Bounds to include user
         const contentMinX = Math.min(0, uPos.x - padding);
         const contentMaxX = Math.max(baseWidth, uPos.x + padding);
         const contentMinY = Math.min(0, uPos.y - padding);
@@ -259,7 +301,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
       }
     }
     return { userPos: uPos, layout: lay, nearestStationPosForLine: nearestPos };
-  }, [userLocation, stations, baseWidth, padding, nodePositions, latData, userStationIndex, isUserFar, height]);
+  }, [userLocation, stations, baseWidth, padding, nodePositions, userStationIndex, isUserFar, height]);
 
 
   // Adjusted dimensions for Zoom
@@ -286,13 +328,23 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         }
       });
 
-      // If close enough (approx < 2km), show connection
+      // Show connection if reasonably close (< 2km approx check)
       if (minDistance < 0.02 && nearestBusStopIndex !== -1) {
         const busStopPos = nodePositions[nearestBusStopIndex];
-        // Position metro relative to bus stop, but offset
-        // We use a fixed offset direction for simplicity, or random based on ID
-        const offsetX = (metro.lng > stations[nearestBusStopIndex].lng ? 1 : -1) * 60;
-        const offsetY = (metro.lat > stations[nearestBusStopIndex].lat ? -1 : 1) * 60;
+
+        // SMART PLACEMENT LOGIC needed here to avoid overlapping
+        // 1. Alternating Bus Labels use: idx % 2 === 0 ? "Bottom" : "Top"
+        // 2. We should place Metro Label on the OPPOOSITE side.
+
+        const isBusLabelBottom = nearestBusStopIndex % 2 === 0;
+
+        // If Bus Label is Bottom, Metro goes Top (-Y).
+        // If Bus Label is Top, Metro goes Bottom (+Y).
+        const offsetY = isBusLabelBottom ? -80 : 80;
+
+        // Slight X offset to separate from vertical bus line
+        // Use 'metro.lng' to decide Left/Right side of station if possible, or just fixed
+        const offsetX = 0; // Keep centered on X for cleanliness
 
         connections.push({
           metroStation: metro,
@@ -353,7 +405,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
           <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur rounded-xl border border-gray-200 dark:border-slate-700 shadow-xl p-3 w-[180px] mb-2 animate-in slide-in-from-bottom-2 fade-in duration-200">
             <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-100 dark:border-slate-700">
               <p className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Map Layers</p>
-              <button onClick={() => setShowLayers(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+              <button onClick={() => setShowLayers(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors flex items-center justify-center">
                 <X className="w-3 h-3" />
               </button>
             </div>
@@ -493,42 +545,34 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                 </g>
               )}
 
-              {/* Base Path (Grey) */}
-              <polyline
-                points={nodePositions.map(p => `${p.x},${p.y}`).join(' ')}
+              {/* Base Path (Grey Shadow/Roadbed) */}
+              <path
+                d={generateSmoothPath(nodePositions)}
                 fill="none"
-                strokeWidth="4"
+                strokeWidth="8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="opacity-100 stroke-gray-200 dark:stroke-slate-700"
               />
 
-              {/* Traffic-Aware Route Segments */}
-              {!hasHighlight && nodePositions.map((pos, idx) => {
-                if (idx === nodePositions.length - 1) return null;
+              {/* Traffic-Aware Route (Default View - No Highlight) */}
+              {/* Using a single smooth path for better visual realism than segmented straight lines */}
+              {!hasHighlight && (
+                <path
+                  d={generateSmoothPath(nodePositions)}
+                  fill="none"
+                  stroke={getTrafficColor('free')} // Default to free flow green
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="opacity-100 transition-all duration-500"
+                />
+              )}
 
-                // Always use 'free' traffic as requested
-                const trafficLevel = 'free';
-                const segmentColor = getTrafficColor(trafficLevel);
-
-                return (
-                  <line
-                    key={`traffic-segment-${idx}`}
-                    x1={pos.x}
-                    y1={pos.y}
-                    x2={nodePositions[idx + 1].x}
-                    y2={nodePositions[idx + 1].y}
-                    stroke={segmentColor}
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    className="opacity-100 transition-all duration-500"
-                  />
-                );
-              })}
-
+              {/* Highlighted Segments */}
               {hasHighlight && (
-                <polyline
-                  points={nodePositions.slice(highlightStartIdx, highlightEndIdx + 1).map(p => `${p.x},${p.y}`).join(' ')}
+                <path
+                  d={generateSmoothPath(nodePositions.slice(highlightStartIdx, highlightEndIdx + 1))}
                   fill="none"
                   stroke="#006a4e"
                   strokeWidth="6"
@@ -540,8 +584,8 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
               {/* Past Path (Greyed Out) */}
               {showUserOnNode && !hasHighlight && (
-                <polyline
-                  points={nodePositions.slice(0, userStationIndex + 1).map(p => `${p.x},${p.y}`).join(' ')}
+                <path
+                  d={generateSmoothPath(nodePositions.slice(0, userStationIndex + 1))}
                   fill="none"
                   stroke="#cbd5e1"
                   strokeWidth="4"
@@ -663,7 +707,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                       {/* Status Badge (You/Dest) */}
                       {isCurrent && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
-                          <rect x="-14" y="-7" width="28" height="14" rx="3" fill="#ef4444" />
+                          <rect x="-18" y="-7" width="36" height="14" rx="3" fill="#ef4444" />
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">YOU</text>
                         </g>
                       )}
@@ -671,7 +715,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                       {/* TRANSIT Badge logic (Prioritized over Dest/Start for intermediate stops) */}
                       {tripTransferPoint === s.id && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
-                          <rect x="-20" y="-7" width="40" height="14" rx="3" fill="#6366f1" />
+                          <rect x="-26" y="-7" width="52" height="14" rx="3" fill="#6366f1" />
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">TRANSIT</text>
                         </g>
                       )}
@@ -683,7 +727,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                       */}
                       {(tripDestination === s.id || ((isReversed ? isHighlightStart : isHighlightEnd) && s.id !== tripTransferPoint)) && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
-                          <rect x="-26" y="-7" width="52" height="14" rx="3" fill="#ef4444" />
+                          <rect x="-38" y="-7" width="76" height="14" rx="3" fill="#ef4444" />
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">DESTINATION</text>
                         </g>
                       )}
@@ -695,14 +739,14 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                       */}
                       {((isReversed ? isHighlightEnd : isHighlightStart) && s.id !== tripTransferPoint) && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
-                          <rect x="-18" y="-7" width="36" height="14" rx="3" fill="#16a34a" />
+                          <rect x="-23" y="-7" width="46" height="14" rx="3" fill="#16a34a" />
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">START</text>
                         </g>
                       )}
 
                       {isUserConnectionStart && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
-                          <rect x="-24" y="-7" width="48" height="14" rx="3" fill="#f97316" />
+                          <rect x="-35" y="-7" width="70" height="14" rx="3" fill="#f97316" />
                           <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">START HERE</text>
                         </g>
                       )}
