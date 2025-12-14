@@ -1448,9 +1448,9 @@ const App: React.FC = () => {
               <button
                 type="submit"
                 disabled={!aiQuery.trim() || aiLoading || !isOnline}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:bg-gray-400 transition-all hover:bg-blue-700"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 text-white rounded-xl disabled:opacity-40 disabled:bg-gray-400 transition-all hover:shadow-lg hover:shadow-blue-500/50 hover:scale-105 active:scale-95 disabled:hover:scale-100 disabled:hover:shadow-none group"
               >
-                <Navigation className="w-4 h-4 rotate-90" />
+                <Navigation className="w-5 h-5 rotate-90 group-hover:rotate-[100deg] transition-transform" />
               </button>
             </form>
           </div>
@@ -3399,6 +3399,7 @@ const App: React.FC = () => {
           onOpenLiveMap={() => setShowLiveMap(true)}
           isDarkMode={isDarkMode}
           toggleTheme={() => setIsDarkMode(!isDarkMode)}
+          isInDhaka={isInDhaka}
         />
 
 

@@ -17,6 +17,7 @@ interface DesktopNavbarProps {
     onOpenLiveMap?: () => void;
     isDarkMode: boolean;
     toggleTheme: () => void;
+    isInDhaka: boolean;
 }
 
 export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
@@ -30,7 +31,8 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
     onOpenLiveMap,
 
     isDarkMode,
-    toggleTheme
+    toggleTheme,
+    isInDhaka
 }) => {
     // Navbar should be visible on all views for desktop now
     // if (view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) {
@@ -39,7 +41,7 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
 
     const navItems = [
         {
-            label: 'Home',
+            label: isInDhaka ? 'Home' : 'Dhaka City',
             icon: Home,
             isActive: view === AppView.HOME && primarySearch === 'LOCAL' && listFilter !== 'FAVORITES',
             onClick: () => {
