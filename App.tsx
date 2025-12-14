@@ -1561,7 +1561,7 @@ const App: React.FC = () => {
                 <span className="text-red-500 font-medium">Developed by</span> <span className="text-emerald-600 font-bold">Mejbaur Bahar Fagun</span>
               </span>
               <span>•</span>
-              <button onClick={() => setView(AppView.FOR_AI)} className="hover:text-blue-500 hover:underline">
+              <button onClick={() => setView(AppView.FOR_AI)} className="opacity-5 hover:opacity-50 transition-opacity">
                 For AI
               </button>
             </div>
