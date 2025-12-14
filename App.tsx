@@ -3054,7 +3054,7 @@ const App: React.FC = () => {
           // The user wants to use the inline search primarily.
           setPrimarySearch('INTERCITY');
         }}
-        className="hidden md:flex w-full items-center justify-between bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 border border-teal-500/30 p-4 rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-emerald-500/30 group mb-4"
+        className="hidden w-full items-center justify-between bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 border border-teal-500/30 p-4 rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-emerald-500/30 group mb-4"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
@@ -3077,7 +3077,7 @@ const App: React.FC = () => {
           e.preventDefault();
           setPrimarySearch('LOCAL');
         }}
-        className="hidden md:flex w-full items-center justify-between bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 border border-teal-500/30 p-4 rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-emerald-500/30 group mb-4"
+        className="hidden w-full items-center justify-between bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 border border-teal-500/30 p-4 rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-emerald-500/30 group mb-4"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform">
@@ -3132,7 +3132,7 @@ const App: React.FC = () => {
             {/* AI Button - Hidden on Mobile */}
             <button
               onClick={() => setView(AppView.AI_ASSISTANT)}
-              className="hidden md:flex w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group mb-4"
+              className="hidden w-full items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-600 border border-purple-200 p-4 rounded-2xl shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all hover:shadow-xl hover:shadow-purple-500/30 group mb-4"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white group-hover:scale-110 transition-transform animate-pulse">
