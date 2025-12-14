@@ -288,75 +288,26 @@ const initRealTimeConnection = () => {
 
 const updateGlobalStatsFromApi = (apiStats: any) => {
     try {
-        const currentStats = getGlobalStats();
-
-        // Get or initialize baseline (stats at first API fetch after backend reset)
-        const BASELINE_KEY = 'dhaka_commute_stats_baseline';
-        const LAST_API_TOTAL_KEY = 'dhaka_commute_last_api_total';
-
-        let baseline = currentStats;
-        let lastApiTotal = 0;
-
-        try {
-            const storedBaseline = localStorage.getItem(BASELINE_KEY);
-            const storedLastTotal = localStorage.getItem(LAST_API_TOTAL_KEY);
-            if (storedBaseline) baseline = JSON.parse(storedBaseline);
-            if (storedLastTotal) lastApiTotal = parseInt(storedLastTotal);
-        } catch (e) {
-            console.warn('Error loading baseline:', e);
-        }
-
-        // Get current API stats
+        // Get current API stats - use these values DIRECTLY (no baseline/cumulative logic)
         const apiTotal = apiStats.totalVisitors ?? apiStats.totalVisits ?? 0;
         const apiToday = apiStats.todayVisits ?? apiStats.todayVisitors ?? 0;
         const apiActive = apiStats.activeUsers ?? 1;
         const apiUnique = apiStats.uniqueVisitors ?? apiStats.totalVisitors ?? 0;
 
-        // Detect backend reset: if API total is less than last known API total
-        // This means backend was redeployed and reset
-        if (apiTotal < lastApiTotal && lastApiTotal > 0) {
-            console.log('🔄 Backend reset detected! Preserving historical stats...');
-            // Update baseline to current stats before reset
-            baseline = {
-                totalVisits: currentStats.totalVisits,
-                todayVisits: 0, // Reset today's count
-                activeUsers: apiActive,
-                uniqueVisitors: currentStats.uniqueVisitors,
-                locations: currentStats.locations,
-                lastUpdated: Date.now()
-            };
-            localStorage.setItem(BASELINE_KEY, JSON.stringify(baseline));
-        }
-
-        // If this is the first fetch (no baseline set), initialize it
-        if (!localStorage.getItem(BASELINE_KEY)) {
-            baseline = {
-                totalVisits: 0,
-                todayVisits: 0,
-                activeUsers: 0,
-                uniqueVisitors: 0,
-                locations: {},
-                lastUpdated: Date.now()
-            };
-            localStorage.setItem(BASELINE_KEY, JSON.stringify(baseline));
-        }
-
-        // Calculate cumulative stats: baseline + current API stats
+        // Use backend stats DIRECTLY - no accumulation, no baseline
+        // This ensures frontend always matches backend exactly
         const newStats: GlobalStats = {
-            totalVisits: baseline.totalVisits + apiTotal,
-            todayVisits: apiToday, // Today is always from API (resets daily anyway)
-            activeUsers: apiActive, // Always current from API
-            uniqueVisitors: baseline.uniqueVisitors + apiUnique,
-            locations: apiStats.locations || currentStats.locations,
+            totalVisits: apiTotal,           // Direct from backend
+            todayVisits: apiToday,           // Direct from backend
+            activeUsers: apiActive,          // Direct from backend
+            uniqueVisitors: apiUnique,       // Direct from backend
+            locations: apiStats.locations || {},
             lastUpdated: Date.now()
         };
 
-        // Save last API total to detect future resets
-        localStorage.setItem(LAST_API_TOTAL_KEY, apiTotal.toString());
-
         saveGlobalStats(newStats);
 
-        console.log(`📊 Stats updated - Total: ${newStats.totalVisits}, Today: ${newStats.todayVisits}, Active: ${newStats.activeUsers}`);
+        console.log(`📊 Stats synced with backend - Total: ${newStats.totalVisits}, Today: ${newStats.todayVisits}, Active: ${newStats.activeUsers}`);
     } catch (e) {
         console.error('Error updating stats from API:', e);
     }
@@ -380,6 +331,10 @@ export const fetchGlobalStats = async (): Promise<void> => {
 // Get global statistics (Sync - returns cached data)
 export const getGlobalStats = (): GlobalStats => {
     try {
+        // Clean up old baseline keys (no longer used)
+        localStorage.removeItem('dhaka_commute_stats_baseline');
+        localStorage.removeItem('dhaka_commute_last_api_total');
+
         const stored = localStorage.getItem(GLOBAL_STATS_KEY);
 
         let stats: GlobalStats;
