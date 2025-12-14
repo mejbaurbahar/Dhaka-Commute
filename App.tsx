@@ -2395,7 +2395,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden md:flex items-center gap-3 p-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-slate-900 z-50 shrink-0 md:relative fixed top-0 left-0 right-0 md:top-0 pt-safe-top md:pt-4">
+        <div className="hidden md:flex items-center gap-3 p-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-slate-900 z-50 shrink-0 sticky top-16">
           <button onClick={() => setView(AppView.HOME)} className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors" aria-label="Go back to home">
             <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </button>
@@ -2421,7 +2421,7 @@ const App: React.FC = () => {
 
         {/* Pinned Trip Info */}
         {selectedTrip && (
-          <div className="bg-slate-50 dark:bg-slate-900 px-4 pb-0 pt-[80px] md:pt-4 shrink-0 z-30">
+          <div className="bg-slate-50 dark:bg-slate-900 px-4 pb-0 pt-[80px] md:pt-20 shrink-0 z-30">
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm relative overflow-hidden">
               <h3 className="font-bold text-blue-900 dark:text-blue-200 text-sm uppercase tracking-wider mb-3 relative z-10 flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
@@ -2466,7 +2466,7 @@ const App: React.FC = () => {
         )}
 
         {/* Scrollable Content */}
-        <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${selectedTrip ? 'pt-4' : 'pt-[90px] md:pt-4'} pb-24 md:pb-4`}>
+        <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${selectedTrip ? 'pt-4 md:pt-20' : 'pt-[90px] md:pt-20'} pb-24 md:pb-4`}>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-3">
