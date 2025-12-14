@@ -3,6 +3,36 @@ import { NotificationResponse } from '../types/notification';
 const API_BASE_URL = 'https://koyjabo-backend.onrender.com/api';
 
 /**
+ * Save notifications to localStorage for offline access
+ */
+export const cacheNotifications = (notifications: NotificationResponse): void => {
+    try {
+        localStorage.setItem('dhaka_commute_cached_notifications', JSON.stringify({
+            notifications: notifications.notifications,
+            timestamp: Date.now()
+        }));
+    } catch (e) {
+        console.error('Error caching notifications:', e);
+    }
+};
+
+/**
+ * Get cached notifications from localStorage
+ */
+export const getCachedNotifications = (): NotificationResponse => {
+    try {
+        const cached = localStorage.getItem('dhaka_commute_cached_notifications');
+        if (cached) {
+            const data = JSON.parse(cached);
+            return { notifications: data.notifications || [] };
+        }
+    } catch (e) {
+        console.error('Error reading cached notifications:', e);
+    }
+    return { notifications: [] };
+};
+
+/**
  * Fetch active notifications from backend
  */
 export const fetchActiveNotifications = async (): Promise<NotificationResponse> => {
@@ -19,10 +49,22 @@ export const fetchActiveNotifications = async (): Promise<NotificationResponse> 
         }
 
         const data: NotificationResponse = await response.json();
+
+        // Cache the notifications for offline use
+        cacheNotifications(data);
+
         return data;
     } catch (error) {
         console.error('Error fetching notifications:', error);
-        // Return empty array on error
+
+        // If offline or error, try to return cached notifications
+        const cached = getCachedNotifications();
+        if (cached.notifications.length > 0) {
+            console.log('📴 Offline: Loading cached notifications');
+            return cached;
+        }
+
+        // Return empty array if no cache available
         return { notifications: [] };
     }
 };
