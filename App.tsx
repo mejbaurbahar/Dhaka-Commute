@@ -3571,7 +3571,7 @@ const App: React.FC = () => {
                 className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
               >
                 <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-900' : 'text-gray-400 dark:text-gray-500'} `} />
-                <span className="text-[10px] font-bold uppercase tracking-wide">Routes</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide">{isInDhaka ? 'Routes' : 'DhakaCity'}</span>
               </button>
               <button
                 onClick={() => setView(AppView.AI_ASSISTANT)}
