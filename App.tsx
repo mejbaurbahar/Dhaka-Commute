@@ -3442,21 +3442,21 @@ const App: React.FC = () => {
                 {/* Check if already installed */}
                 {/* Check if already installed - Only check display-mode: standalone, ignore localStorage to allow reinstall */}
                 {(window.matchMedia('(display-mode: standalone)').matches) ? (
-                  <div className="bg-green-50 border border-green-200 rounded-2xl p-8 mb-8">
+                  <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-2xl p-8 mb-8">
                     <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 mb-3">App Already Installed!</h2>
-                    <p className="text-gray-700 mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">App Already Installed!</h2>
+                    <p className="text-gray-700 dark:text-gray-300 mb-6">
                       You're using the installed version of কই যাবো. Enjoy the full app experience!
                     </p>
 
                     {/* Uninstall Instructions */}
-                    <div className="bg-white rounded-xl p-6 text-left">
-                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 text-left">
+                      <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
                         <Info className="w-5 h-5 text-blue-500" /> How to Uninstall
                       </h3>
-                      <div className="space-y-4 text-sm text-gray-700">
+                      <div className="space-y-4 text-sm text-gray-700 dark:text-gray-300">
                         <div>
-                          <p className="font-bold text-gray-900 mb-1">On Android (Chrome):</p>
+                          <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">On Android (Chrome):</p>
                           <ol className="list-decimal list-inside space-y-1 ml-2">
                             <li>Long press the app icon on home screen</li>
                             <li>Tap "Uninstall" or "App info" → "Uninstall"</li>
@@ -3464,7 +3464,7 @@ const App: React.FC = () => {
                           </ol>
                         </div>
                         <div>
-                          <p className="font-bold text-gray-900 mb-1">On iOS (Safari):</p>
+                          <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">On iOS (Safari):</p>
                           <ol className="list-decimal list-inside space-y-1 ml-2">
                             <li>Long press the app icon on home screen</li>
                             <li>Tap "Remove App"</li>
