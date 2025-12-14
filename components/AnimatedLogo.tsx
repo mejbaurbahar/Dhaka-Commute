@@ -31,7 +31,7 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
             <img
                 src="/logo.png"
                 alt="Logo"
-                className={`${size === 'large' ? 'h-24 scale-150 ml-4' : (size === 'small' ? 'h-10 md:h-20 scale-100 md:scale-125 -ml-1' : 'h-16 md:h-20 scale-[2] origin-left ml-2 md:ml-2')} w-auto`}
+                className={`${size === 'large' ? 'h-24 scale-150 ml-4' : (size === 'small' ? 'h-14 md:h-20 scale-110 md:scale-125 -ml-1' : 'h-16 md:h-20 scale-[2] origin-left ml-2 md:ml-2')} w-auto`}
             />
         </div>
     );
