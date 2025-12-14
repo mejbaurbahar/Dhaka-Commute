@@ -56,6 +56,7 @@ export enum AppView {
   WHY_USE = 'WHY_USE',
   FAQ = 'FAQ',
   HISTORY = 'HISTORY',
+  SETTINGS = 'SETTINGS',
   PRIVACY = 'PRIVACY',
   TERMS = 'TERMS',
   INSTALL_APP = 'INSTALL_APP',

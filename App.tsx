@@ -30,6 +30,8 @@ import { DesktopNavbar } from './components/DesktopNavbar';
 import { NotificationProvider } from './contexts/NotificationContext';
 import NotificationBanner from './components/NotificationBanner';
 import NotificationBell from './components/NotificationBell';
+import SettingsPage from './components/SettingsPage';
+
 
 
 
@@ -760,6 +762,7 @@ const App: React.FC = () => {
     [AppView.FAQ]: 'faq',
 
     [AppView.HISTORY]: 'history',
+    [AppView.SETTINGS]: 'settings',
     [AppView.INSTALL_APP]: 'install',
     [AppView.PRIVACY]: 'privacy',
     [AppView.TERMS]: 'terms',
@@ -3371,15 +3374,12 @@ const App: React.FC = () => {
               <AnimatedLogo size="small" />
             </div>
             <div className="flex items-center gap-1">
-              <div className="scale-75 origin-right">
-                <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
-              </div>
               <NotificationBell />
               <button onClick={() => setShowLiveMap(true)} className="p-2 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse" aria-label="Live Location">
                 <Navigation className="w-4 h-4" />
               </button>
-              <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors" aria-label="Open menu">
-                <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+              <button onClick={() => setIsMenuOpen(true)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors" aria-label="Open menu">
+                <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </button>
             </div>
           </div>
@@ -3432,6 +3432,12 @@ const App: React.FC = () => {
               <HistoryView
                 onBack={() => setView(AppView.HOME)}
                 onBusSelect={handleBusSelect}
+              />
+            )}
+            {view === AppView.SETTINGS && (
+              <SettingsPage
+                isDarkMode={isDarkMode}
+                toggleTheme={() => setIsDarkMode(!isDarkMode)}
               />
             )}
             {view === AppView.PRIVACY && renderPrivacyPolicy()}
@@ -3645,6 +3651,12 @@ const App: React.FC = () => {
                   className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.HISTORY ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800' : ''}`}
                 >
                   <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> History
+                </button>
+                <button
+                  onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.SETTINGS ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800' : ''}`}
+                >
+                  <Settings className="w-5 h-5 text-purple-600 dark:text-purple-400" /> Settings
                 </button>
 
 
