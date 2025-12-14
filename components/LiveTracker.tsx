@@ -163,7 +163,19 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
     <div className="h-full flex flex-col bg-slate-50 dark:bg-slate-900 relative">
       {/* Status Card - Now part of flex layout, not absolute */}
       <div className="bg-white dark:bg-slate-800 rounded-b-3xl shadow-sm border-b border-gray-100 dark:border-gray-700 p-5 z-20 shrink-0">
-        {/* Back Button - Mobile Only */}
+        {/* Back Button */}
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="mb-3 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-dhaka-green dark:hover:text-dhaka-green transition-colors"
+            aria-label="Go back"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            <span className="font-medium text-sm">Back</span>
+          </button>
+        )}
 
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
