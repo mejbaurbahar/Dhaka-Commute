@@ -72,6 +72,41 @@ export const generateSearchSuggestions = (query: string): SearchSuggestion[] => 
 };
 
 /**
+ * Location aliases - maps common search terms to actual station names
+ */
+const LOCATION_ALIASES: Record<string, string[]> = {
+    'dhaka university': ['shahbag', 'nilkhet', 'newmarket', 'science_lab'],
+    'du': ['shahbag', 'nilkhet', 'newmarket'],
+    'buet': ['shahbag', 'science_lab', 'newmarket'],
+    'medical college': ['shahbag', 'science_lab'],
+    'tsc': ['shahbag'],
+    'curzon hall': ['shahbag'],
+};
+
+/**
+ * Expand query with aliases
+ */
+const expandWithAliases = (query: string): string[] => {
+    const queryLower = query.toLowerCase().trim();
+    const expanded = [query]; // Always include original
+
+    // Check if query matches any alias
+    for (const [alias, stations] of Object.entries(LOCATION_ALIASES)) {
+        if (queryLower.includes(alias)) {
+            // Add station names from alias
+            stations.forEach(station => {
+                const stationObj = Object.values(STATIONS).find(s => s.id === station);
+                if (stationObj) {
+                    expanded.push(stationObj.name);
+                }
+            });
+        }
+    }
+
+    return expanded;
+};
+
+/**
  * Enhanced search that handles:
  * 1. Bus name/number search
  * 2. Destination/station search (finds buses going to that station)
@@ -87,6 +122,198 @@ export const enhancedBusSearch = (query: string): SearchResult => {
 
     const lowerQuery = query.toLowerCase().trim();
     const queryTrimmed = query.trim();
+
+    // STEP 0: Check if query is in "X to Y" format (e.g., "Jahangirnagar University to Dhaka University")
+    const toPattern = /(.+?)\s+(?:to|থেকে)\s+(.+)/i;
+    const toMatch = queryTrimmed.match(toPattern);
+
+    if (toMatch) {
+        const fromQuery = toMatch[1].trim();
+        const toQuery = toMatch[2].trim();
+
+        // Expand queries with aliases for better matching
+        const expandedFromQueries = expandWithAliases(fromQuery);
+        const expandedToQueries = expandWithAliases(toQuery);
+
+        // Find matching stations for "from" and "to" - trim station names for better matching
+        const fromStations = Object.values(STATIONS).filter(station => {
+            const stationName = station.name.trim().toLowerCase();
+
+            // Check against all expanded queries
+            return expandedFromQueries.some(query => {
+                const queryLower = query.toLowerCase();
+                const englishMatch = stationName.includes(queryLower) || queryLower.includes(stationName);
+                const bengaliMatch = station.bnName?.includes(query);
+                return englishMatch || bengaliMatch;
+            });
+        });
+
+        const toStations = Object.values(STATIONS).filter(station => {
+            const stationName = station.name.trim().toLowerCase();
+
+            // Check against all expanded queries
+            return expandedToQueries.some(query => {
+                const queryLower = query.toLowerCase();
+                const englishMatch = stationName.includes(queryLower) || queryLower.includes(stationName);
+                const bengaliMatch = station.bnName?.includes(query);
+                return englishMatch || bengaliMatch;
+            });
+        });
+
+        if (fromStations.length > 0 && toStations.length > 0) {
+            // Find buses that connect these stations
+            const fromStationIds = fromStations.map(s => s.id);
+            const toStationIds = toStations.map(s => s.id);
+
+            const connectingBuses: BusRoute[] = [];
+
+            BUS_DATA.forEach(bus => {
+                const hasFromStop = bus.stops.some(stopId => fromStationIds.includes(stopId));
+                const hasToStop = bus.stops.some(stopId => toStationIds.includes(stopId));
+
+                if (hasFromStop && hasToStop) {
+                    // Check if the route goes from "from" to "to" in the correct order
+                    const fromIndices = bus.stops
+                        .map((stopId, idx) => fromStationIds.includes(stopId) ? idx : -1)
+                        .filter(idx => idx !== -1);
+                    const toIndices = bus.stops
+                        .map((stopId, idx) => toStationIds.includes(stopId) ? idx : -1)
+                        .filter(idx => idx !== -1);
+
+                    // Check if any "from" stop comes before any "to" stop
+                    const validRoute = fromIndices.some(fromIdx =>
+                        toIndices.some(toIdx => fromIdx < toIdx)
+                    );
+
+                    if (validRoute) {
+                        connectingBuses.push(bus);
+                    }
+                }
+            });
+
+            // If direct buses found, return them
+            if (connectingBuses.length > 0) {
+                const fromName = fromStations[0].bnName || fromStations[0].name;
+                const toName = toStations[0].bnName || toStations[0].name;
+
+                return {
+                    buses: connectingBuses,
+                    matchType: 'destination',
+                    searchContext: `Routes from ${fromName} to ${toName}`,
+                    destinationStationIds: toStationIds
+                };
+            }
+
+            // FALLBACK: No direct buses, search for nearby stations to destination
+            const toStation = toStations[0];
+            const nearbyToStations = findNearbyStations(toStation.id, 2000); // Within 2km of destination
+
+            if (nearbyToStations.length > 0) {
+                const allDestinationIds = [...toStationIds, ...nearbyToStations];
+                const nearbyConnectingBuses: BusRoute[] = [];
+
+                BUS_DATA.forEach(bus => {
+                    const hasFromStop = bus.stops.some(stopId => fromStationIds.includes(stopId));
+                    const hasNearbyToStop = bus.stops.some(stopId => allDestinationIds.includes(stopId));
+
+                    if (hasFromStop && hasNearbyToStop) {
+                        // Check route direction
+                        const fromIndices = bus.stops
+                            .map((stopId, idx) => fromStationIds.includes(stopId) ? idx : -1)
+                            .filter(idx => idx !== -1);
+                        const toIndices = bus.stops
+                            .map((stopId, idx) => allDestinationIds.includes(stopId) ? idx : -1)
+                            .filter(idx => idx !== -1);
+
+                        const validRoute = fromIndices.some(fromIdx =>
+                            toIndices.some(toIdx => fromIdx < toIdx)
+                        );
+
+                        if (validRoute) {
+                            nearbyConnectingBuses.push(bus);
+                        }
+                    }
+                });
+
+                if (nearbyConnectingBuses.length > 0) {
+                    const fromName = fromStations[0].bnName || fromStations[0].name;
+                    const toName = toStations[0].bnName || toStations[0].name;
+                    const nearbyNames = getNearbyStationNames(nearbyToStations, 3);
+
+                    return {
+                        buses: nearbyConnectingBuses,
+                        matchType: 'destination',
+                        searchContext: `Routes from ${fromName} to ${toName} (via nearby: ${nearbyNames})`,
+                        destinationStationIds: allDestinationIds
+                    };
+                }
+            }
+        }
+
+        // FINAL FALLBACK for "X to Y": Show buses mentioning either location in route or stops
+        // This helps when station names don't match perfectly or stations exist but no buses stop there
+        const routeMatchBuses = BUS_DATA.filter(bus => {
+            const routeStr = (bus.routeString || '').toLowerCase();
+            const busName = bus.name.toLowerCase();
+            const fromQueryLower = fromQuery.toLowerCase();
+            const toQueryLower = toQuery.toLowerCase();
+
+            // Check if route string or bus name mentions either location
+            const routeFromMatch = routeStr.includes(fromQueryLower) || busName.includes(fromQueryLower);
+            const routeToMatch = routeStr.includes(toQueryLower) || busName.includes(toQueryLower);
+
+            // Also check if any stop names contain the query
+            const stopNames = bus.stops.map(stopId => {
+                const station = STATIONS[stopId];
+                return station ? station.name.toLowerCase() : '';
+            }).join(' ');
+
+            const stopFromMatch = stopNames.includes(fromQueryLower);
+            const stopToMatch = stopNames.includes(toQueryLower);
+
+            return (routeFromMatch || stopFromMatch) && (routeToMatch || stopToMatch);
+        });
+
+        if (routeMatchBuses.length > 0) {
+            return {
+                buses: routeMatchBuses,
+                matchType: 'fuzzy',
+                searchContext: `Buses with routes from "${fromQuery}" to "${toQuery}"`
+            };
+        }
+
+        // ULTRA FALLBACK: Show any bus mentioning either location
+        // Try with full query first, then try first significant word
+        const anyMatch = BUS_DATA.filter(bus => {
+            const routeStr = (bus.routeString || '').toLowerCase();
+            const busName = bus.name.toLowerCase();
+            const fromQueryLower = fromQuery.toLowerCase();
+            const toQueryLower = toQuery.toLowerCase();
+
+            // Try full query
+            let matched = routeStr.includes(fromQueryLower) || busName.includes(fromQueryLower) ||
+                routeStr.includes(toQueryLower) || busName.includes(toQueryLower);
+
+            if (!matched) {
+                // Try first significant word (min 4 chars) from each query
+                const fromWords = fromQueryLower.split(/\s+/).filter(w => w.length >= 4);
+                const toWords = toQueryLower.split(/\s+/).filter(w => w.length >= 4);
+
+                matched = fromWords.some(word => routeStr.includes(word) || busName.includes(word)) ||
+                    toWords.some(word => routeStr.includes(word) || busName.includes(word));
+            }
+
+            return matched;
+        });
+
+        if (anyMatch.length > 0) {
+            return {
+                buses: anyMatch,
+                matchType: 'fuzzy',
+                searchContext: `Buses mentioning "${fromQuery}" or "${toQuery}"`
+            };
+        }
+    }
 
     // STEP 1: Search for bus by name/number/ID
     const busByName = BUS_DATA.filter(bus => {
