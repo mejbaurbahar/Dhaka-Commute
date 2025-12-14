@@ -34,8 +34,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ isDarkMode, toggleTheme }) 
                                     if (isDarkMode) toggleTheme();
                                 }}
                                 className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${!isDarkMode
-                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                                     }`}
                             >
                                 <div className={`p-2 rounded-lg ${!isDarkMode ? 'bg-blue-500' : 'bg-gray-200 dark:bg-slate-700'}`}>
@@ -62,8 +62,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ isDarkMode, toggleTheme }) 
                                     if (!isDarkMode) toggleTheme();
                                 }}
                                 className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${isDarkMode
-                                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                                     }`}
                             >
                                 <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-purple-500' : 'bg-gray-200 dark:bg-slate-700'}`}>
@@ -98,17 +98,17 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ isDarkMode, toggleTheme }) 
 
                     {/* App Info */}
                     <div className="bg-slate-50 dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-                        <h2 className="text-lg font-bold text-gray-900 dark text-gray-100 mb-2">
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                             App Information
                         </h2>
                         <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
-                                <span className="text-gray-600 dark:text-gray-400">Version</span>
-                                <span className="font-medium text-gray-900 dark:text-gray-100">1.0.0</span>
+                                <span className="text-gray-600 dark:text-gray-300">Version</span>
+                                <span className="font-medium text-gray-900 dark:text-white">1.0.0</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600 dark:text-gray-400">Last Updated</span>
-                                <span className="font-medium text-gray-900 dark:text-gray-100">December 2025</span>
+                                <span className="text-gray-600 dark:text-gray-300">Last Updated</span>
+                                <span className="font-medium text-gray-900 dark:text-white">December 2025</span>
                             </div>
                         </div>
                     </div>
