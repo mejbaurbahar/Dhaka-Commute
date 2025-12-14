@@ -1453,7 +1453,7 @@ const App: React.FC = () => {
   );
 
   const renderAbout = () => (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-24 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-24 md:pt-24 overflow-y-auto w-full">
       <div className="max-w-5xl mx-auto text-center">
         <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
           <Bus className="w-10 h-10" />
@@ -1595,7 +1595,7 @@ const App: React.FC = () => {
 
   const renderPrivacyPolicy = () => (
     <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-y-auto w-full relative">
-      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-20 md:pt-24">
+      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-24 md:pt-24">
 
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100">Privacy Policy</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Last updated: November 26, 2025</p>
@@ -1679,7 +1679,7 @@ const App: React.FC = () => {
 
   const renderTerms = () => (
     <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-y-auto w-full relative">
-      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-20 md:pt-24">
+      <div className="max-w-3xl mx-auto p-6 md:p-12 pt-24 md:pt-24">
         <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100">Terms of Service</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Last updated: November 26, 2025</p>
 
@@ -1838,7 +1838,7 @@ const App: React.FC = () => {
   );
 
   const renderWhyUse = () => (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-24 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-24 md:pt-24 overflow-y-auto w-full">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100 leading-tight">Why Use <span className="text-dhaka-green">কই যাবো</span>?</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-8">Your smart companion for navigating Bangladesh's bus network</p>
@@ -2014,7 +2014,7 @@ const App: React.FC = () => {
   );
 
   const renderFAQ = () => (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-20 md:pt-24 overflow-y-auto w-full">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-24 md:pt-24 overflow-y-auto w-full">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100 leading-tight">Frequently Asked Questions</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-8">Everything you need to know about কই যাবো</p>

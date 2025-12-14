@@ -145,7 +145,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
             )}
 
             {/* Header - Fixed on mobile with proper padding */}
-            <div className="sticky top-0 md:top-20 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-10 pt-16 md:pt-0">
+            <div className="sticky top-0 md:top-20 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-10 pt-20 md:pt-0">
                 <div className="p-4 md:p-6">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                         <Clock className="w-6 h-6 text-dhaka-green" />
