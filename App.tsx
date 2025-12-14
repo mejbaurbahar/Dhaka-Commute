@@ -3160,7 +3160,7 @@ const App: React.FC = () => {
                 onClick={() => handleFilterChange('FAVORITES')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white dark:bg-slate-700 shadow-sm text-red-500' : 'text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'} `}
               >
-                <Heart className="w-3 h-3 fill-current" /> Favorites
+                <Heart className="w-4 h-4 fill-current" /> Favorites
               </button>
             </div>
 
@@ -3316,7 +3316,7 @@ const App: React.FC = () => {
                       aria-label={isFav ? `Remove ${bus.name} from favorites` : `Add ${bus.name} to favorites`}
                       className="p-1.5 -mr-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors z-20"
                     >
-                      <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-pink-500 text-pink-500 scale-110' : 'text-gray-300 dark:text-gray-600 hover:text-pink-400'} `} />
+                      <Heart className={`w-5 h-5 transition-all ${isFav ? 'fill-pink-500 text-pink-500 scale-110' : 'text-gray-300 dark:text-gray-600 hover:text-pink-400'} `} />
                     </button>
                     <div className="flex flex-col items-end">
                       <span className={`text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wide
