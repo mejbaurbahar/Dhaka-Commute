@@ -137,7 +137,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
   // Simulation Logic (Visual effect only)
   useEffect(() => {
-    if (stations.length < 2) return;
+    if (stations.length < 2 || !hasHighlight) return;
     const interval = setInterval(() => {
       setSimulationStep((prev) => {
         const next = prev + 0.002; // Speed of bus
@@ -145,7 +145,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
       });
     }, 50);
     return () => clearInterval(interval);
-  }, [stations.length]);
+  }, [stations.length, hasHighlight]);
 
   // Drag Handlers
   const onMouseDown = (e: React.MouseEvent) => {
@@ -178,79 +178,89 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
 
   if (stations.length === 0) return <div>No station data</div>;
 
-  const lats = stations.map(s => s.lat);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const normalizeLat = (val: number) => (val - minLat) / (maxLat - minLat || 1);
+  // Calculate normalized Latitudes
+  const latData = React.useMemo(() => {
+    if (stations.length === 0) return { minLat: 0, maxLat: 0, normalizeLat: (_: number) => 0 };
+    const lats = stations.map(s => s.lat);
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    return {
+      minLat,
+      maxLat,
+      normalizeLat: (val: number) => (val - minLat) / (maxLat - minLat || 1)
+    };
+  }, [stations]);
 
   // Base Dimensions
   const height = 600;
-  const padding = 180; // Increased to prevent edge cutoff
+  const padding = 180;
   const baseWidth = Math.max(stations.length * 120, 1000);
 
-
-
-  const nodePositions = stations.map((s, i) => {
-    const x = (i / (stations.length - 1)) * (baseWidth - (padding * 2)) + padding;
-    // Map lat to Y, centering it in the large height
-    const mapContentHeight = 200;
-    const y = (height - mapContentHeight) / 2 + (mapContentHeight - (normalizeLat(s.lat) * mapContentHeight));
-    return { x, y };
-  });
+  // Memoize Node Positions to avoid recalculation on every render (e.g. simulation step)
+  const nodePositions = React.useMemo(() => {
+    return stations.map((s, i) => {
+      const x = (i / (stations.length - 1)) * (baseWidth - (padding * 2)) + padding;
+      const mapContentHeight = 200;
+      const y = (height - mapContentHeight) / 2 + (mapContentHeight - (latData.normalizeLat(s.lat) * mapContentHeight));
+      return { x, y };
+    });
+  }, [stations, baseWidth, padding, latData]);
 
   // Calculate User Position and Dynamic Map Bounds
-  let userPos: { x: number, y: number } | null = null;
-  let layout = { width: baseWidth, height: height, shiftX: 0, shiftY: 0 };
-  let nearestStationPosForLine: { x: number, y: number } | null = null;
+  const { userPos, layout, nearestStationPosForLine } = React.useMemo(() => {
+    let uPos: { x: number, y: number } | null = null;
+    let lay = { width: baseWidth, height: height, shiftX: 0, shiftY: 0 };
+    let nearestPos: { x: number, y: number } | null = null;
 
-  if (userLocation) {
-    const lngs = stations.map(s => s.lng);
-    const minLng = Math.min(...lngs);
-    const maxLng = Math.max(...lngs);
+    if (userLocation && stations.length > 0) {
+      const lngs = stations.map(s => s.lng);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
 
-    // Calculate projected position
-    const uX = ((userLocation.lng - minLng) / (maxLng - minLng || 1)) * (baseWidth - (padding * 2)) + padding;
-    const uY = (height - 200) / 2 + (200 - (normalizeLat(userLocation.lat) * 200));
+      // Calculate projected position
+      const uX = ((userLocation.lng - minLng) / (maxLng - minLng || 1)) * (baseWidth - (padding * 2)) + padding;
+      const uY = (height - 200) / 2 + (200 - (latData.normalizeLat(userLocation.lat) * 200));
 
-    userPos = { x: uX, y: uY };
+      uPos = { x: uX, y: uY };
 
-    // Find nearest station position
-    if (userStationIndex >= 0 && userStationIndex < nodePositions.length) {
-      nearestStationPosForLine = nodePositions[userStationIndex];
-    }
-
-    if (isUserFar) {
-      // CLAMPING LOGIC: Shorten the visual distance
-      if (nearestStationPosForLine) {
-        const dx = uX - nearestStationPosForLine.x;
-        const dy = uY - nearestStationPosForLine.y;
-        const distance = Math.hypot(dx, dy);
-        const maxVisualDistance = 150; // Much tighter clamp (150px) to prevent long scroll
-
-        if (distance > maxVisualDistance) {
-          const ratio = maxVisualDistance / distance;
-          // Update userPos to be closer
-          userPos = {
-            x: nearestStationPosForLine.x + dx * ratio,
-            y: nearestStationPosForLine.y + dy * ratio
-          };
-        }
+      // Find nearest station position
+      if (userStationIndex >= 0 && userStationIndex < nodePositions.length) {
+        nearestPos = nodePositions[userStationIndex];
       }
 
-      // Re-calculate bounds based on the CLAMPED position
-      const contentMinX = Math.min(0, userPos.x - padding);
-      const contentMaxX = Math.max(baseWidth, userPos.x + padding);
-      const contentMinY = Math.min(0, userPos.y - padding);
-      const contentMaxY = Math.max(height, userPos.y + padding);
+      if (isUserFar) {
+        // CLAMPING LOGIC
+        if (nearestPos) {
+          const dx = uX - nearestPos.x;
+          const dy = uY - nearestPos.y;
+          const distance = Math.hypot(dx, dy);
+          const maxVisualDistance = 150;
 
-      layout = {
-        width: contentMaxX - contentMinX,
-        height: contentMaxY - contentMinY,
-        shiftX: -contentMinX,
-        shiftY: -contentMinY
-      };
+          if (distance > maxVisualDistance) {
+            const ratio = maxVisualDistance / distance;
+            uPos = {
+              x: nearestPos.x + dx * ratio,
+              y: nearestPos.y + dy * ratio
+            };
+          }
+        }
+
+        const contentMinX = Math.min(0, uPos.x - padding);
+        const contentMaxX = Math.max(baseWidth, uPos.x + padding);
+        const contentMinY = Math.min(0, uPos.y - padding);
+        const contentMaxY = Math.max(height, uPos.y + padding);
+
+        lay = {
+          width: contentMaxX - contentMinX,
+          height: contentMaxY - contentMinY,
+          shiftX: -contentMinX,
+          shiftY: -contentMinY
+        };
+      }
     }
-  }
+    return { userPos: uPos, layout: lay, nearestStationPosForLine: nearestPos };
+  }, [userLocation, stations, baseWidth, padding, nodePositions, latData, userStationIndex, isUserFar, height]);
+
 
   // Adjusted dimensions for Zoom
   const zoomedWidth = layout.width * zoom;

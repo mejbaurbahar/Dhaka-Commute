@@ -54,13 +54,16 @@ export const getCurrentLocation = (): Promise<UserLocation> => {
 
     // Force High Accuracy for Real-Time Location
     // Users reported issues with low-accuracy IP based location
+    // Optimized for Speed: user requested faster location detection
+    // 1. Allow cached positions up to 30 seconds old (Instant result if available)
+    // 2. Timeout reduced to 5s (don't hang for too long)
     navigator.geolocation.getCurrentPosition(
       successHandler,
       errorHandler,
       {
-        enableHighAccuracy: true, // Force GPS
-        timeout: 10000,
-        maximumAge: 0 // Do not use cached positions
+        enableHighAccuracy: true, // Try GPS first
+        timeout: 5000,            // Faster timeout
+        maximumAge: 30000         // Accept results from last 30s
       }
     );
   });
