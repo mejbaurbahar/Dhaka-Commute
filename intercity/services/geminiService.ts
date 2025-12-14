@@ -79,10 +79,45 @@ export const getTravelRoutes = async (origin: string, destination: string, date?
 
     const resultJson = await response.json();
 
-    // Transform backend response to match frontend format if needed
+    // NEW FORMAT: Backend returns markdown text
+    // Check if response is in new markdown format {result: string, source: string, from: string, to: string, date: string}
+    if (resultJson.result && typeof resultJson.result === 'string' && resultJson.source) {
+      console.log('📝 Received Markdown format from backend');
+
+      // Track usage after successful response
+      trackIntercitySearchUsage();
+
+      // Return the markdown result directly - let the component handle rendering
+      const markdownResponse = {
+        isMarkdown: true,
+        content: resultJson.result,
+        source: resultJson.source,
+        from: resultJson.from || origin,
+        to: resultJson.to || destination,
+        date: resultJson.date,
+        origin,
+        destination,
+        options: [] // Empty for compatibility, components will check isMarkdown
+      };
+
+      // Save to cache
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify({
+          data: markdownResponse,
+          timestamp: Date.now()
+        }));
+      } catch (e) {
+        console.warn("Could not save route to local storage cache", e);
+      }
+
+      console.log('✅ Markdown routes received');
+      return markdownResponse as any;
+    }
+
+    // OLD FORMAT: Transform backend response to match frontend format if needed
     let routingResponse: RoutingResponse;
 
-    // Check if response is in new enhanced format {from, to, date, results: {...}}
+    // Check if response is in old enhanced format {from, to, date, results: {...}}
     if (resultJson.results && (resultJson.from || resultJson.to)) {
       console.log('🔄 Transforming enhanced backend format to frontend format...');
       routingResponse = transformEnhancedResponse(resultJson, origin, destination);

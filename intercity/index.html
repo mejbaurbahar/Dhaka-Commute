@@ -313,7 +313,166 @@
         overflow-x: hidden;
       }
     }
+
+    /* ===== MARKDOWN ROUTE DISPLAY STYLES ===== */
+    .markdown-route-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 24px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .route-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .route-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin: 0;
+    }
+
+    .route-date {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin: 0.25rem 0 0 0;
+    }
+
+    .cached-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    /* Markdown Content Styling */
+    .markdown-content {
+      line-height: 1.8;
+      color: #2d3748;
+    }
+
+    .markdown-content h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 1.5rem 0 1rem;
+      color: #1a202c;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 0.5rem;
+    }
+
+    .markdown-content h4 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.75rem;
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .markdown-content ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0.75rem 0 1.5rem 1rem;
+    }
+
+    .markdown-content li {
+      padding: 0.5rem 0 0.5rem 1.5rem;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    .markdown-content li:before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #667eea;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .markdown-content strong {
+      color: #1a202c;
+      font-weight: 600;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      padding: 0.125rem 0.25rem;
+      border-radius: 3px;
+    }
+
+    .markdown-content p {
+      margin: 0.75rem 0;
+    }
+
+    /* Dark mode support for markdown */
+    .dark .markdown-route-container {
+      background: #1a202c;
+    }
+
+    .dark .route-header {
+      border-bottom-color: #4a5568;
+    }
+
+    .dark .route-title {
+      color: #f7fafc;
+    }
+
+    .dark .route-date {
+      color: #cbd5e1;
+    }
+
+    .dark .markdown-content {
+      color: #e2e8f0;
+    }
+
+    .dark .markdown-content h3,
+    .dark .markdown-content h4,
+    .dark .markdown-content strong {
+      color: #f7fafc;
+    }
+
+    .dark .markdown-content h3 {
+      border-bottom-color: #4a5568;
+    }
+
+    .dark .markdown-content strong {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+    }
+
+    @media (max-width: 768px) {
+      .markdown-route-container {
+        border-radius: 16px;
+        padding: 1rem;
+      }
+
+      .route-title {
+        font-size: 1.25rem;
+      }
+
+      .markdown-content h3 {
+        font-size: 1.125rem;
+      }
+
+      .markdown-content h4 {
+        font-size: 1rem;
+      }
+    }
   </style>
+
 
 
   <link rel="stylesheet" href="/index.css">
