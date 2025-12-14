@@ -3375,8 +3375,8 @@ const App: React.FC = () => {
                 <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
               </div>
               <NotificationBell />
-              <button onClick={() => setShowLiveMap(true)} className="p-2.5 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse" aria-label="Live Location">
-                <Navigation className="w-5 h-5" />
+              <button onClick={() => setShowLiveMap(true)} className="p-2 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse" aria-label="Live Location">
+                <Navigation className="w-4 h-4" />
               </button>
               <button onClick={() => setIsMenuOpen(true)} className="p-2.5 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors" aria-label="Open menu">
                 <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />

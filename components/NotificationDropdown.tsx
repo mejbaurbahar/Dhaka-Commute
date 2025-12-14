@@ -20,7 +20,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
     };
 
     return (
-        <div className="absolute right-0 top-full mt-2 w-80 md:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-[6000] animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-80 md:max-w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-[6000] animate-in fade-in slide-in-from-top-2 duration-200">
             {/* Header */}
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">

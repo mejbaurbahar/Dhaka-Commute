@@ -32,7 +32,7 @@ const NotificationBell: React.FC = () => {
                 className="relative p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300"
                 aria-label="Notifications"
             >
-                <Bell className="w-5 h-5" />
+                <Bell className="w-4 h-4" />
 
                 {/* Unread Count Badge */}
                 {unreadCount > 0 && (
