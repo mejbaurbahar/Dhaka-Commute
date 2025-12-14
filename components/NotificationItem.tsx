@@ -49,10 +49,6 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
         if (!isRead) {
             markAsRead(notification.id);
         }
-        if (notification.link) {
-            window.location.href = notification.link;
-            onClose?.();
-        }
     };
 
     const formatTime = (dateString: string) => {
@@ -77,7 +73,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
     return (
         <div
             onClick={handleClick}
-            className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors cursor-pointer ${!isRead ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''
+            className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors ${!isRead ? 'bg-blue-50/30 dark:bg-blue-900/10 cursor-pointer' : ''
                 }`}
         >
             <div className="flex items-start gap-3">
@@ -100,15 +96,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
                     <div className="flex items-start justify-between gap-2 mb-1">
                         <h4
                             className={`text-sm leading-tight ${isRead
-                                    ? 'text-gray-700 dark:text-gray-300'
-                                    : 'text-gray-900 dark:text-gray-100 font-bold'
+                                ? 'text-gray-700 dark:text-gray-300'
+                                : 'text-gray-900 dark:text-gray-100 font-bold'
                                 }`}
                         >
                             {notification.title}
                         </h4>
-                        {notification.link && (
-                            <ExternalLink className="w-3 h-3 text-gray-400 shrink-0" />
-                        )}
+
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-2 mb-1">
                         {notification.message}

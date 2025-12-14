@@ -28,7 +28,7 @@ import {
 import { sortBusesByLocation } from './services/locationBasedSortService';
 import { DesktopNavbar } from './components/DesktopNavbar';
 import { NotificationProvider } from './contexts/NotificationContext';
-import NotificationBanner from './components/NotificationBanner';
+
 import NotificationBell from './components/NotificationBell';
 import SettingsPage from './components/SettingsPage';
 
@@ -3401,8 +3401,7 @@ const App: React.FC = () => {
           toggleTheme={() => setIsDarkMode(!isDarkMode)}
         />
 
-        {/* Notification Banner - High Priority Notifications */}
-        <NotificationBanner />
+
 
         <main className="flex flex-1 overflow-hidden relative w-full mx-auto bg-slate-50 dark:bg-slate-900 h-full">
           {/* Left Sidebar (Desktop) / Main View (Mobile Home) */}

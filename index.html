@@ -533,15 +533,86 @@
   <div id="root">
     <!-- Loading Screen -->
     <div
-      style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #006a4e 0%, #00a86b 100%); color: white; font-family: 'Inter', sans-serif;">
-      <div style="text-align: center; padding: 20px;">
-        <img src="/logo.png" alt="কই যাবো"
-          style="display: block; margin: 0 auto 24px auto; height: 120px; width: auto; animation: bounce 1s infinite;" />
-        <p style="font-size: 18px; opacity: 0.9; margin: 0;">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
+      style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #006a4e 0%, #004d38 100%); color: white; font-family: 'Hind Siliguri', sans-serif; overflow: hidden;">
+
+      <!-- Ambient Background Animations -->
+      <div style="position: absolute; width: 100%; height: 100%; overflow: hidden; top: 0; left: 0;">
+        <!-- Clouds -->
+        <div
+          style="position: absolute; top: 10%; left: -100px; opacity: 0.1; animation: float-cloud 45s linear infinite;">
+          <svg width="100" height="60" viewBox="0 0 24 24" fill="white">
+            <path
+              d="M17.5,19c-3.037,0-5.5-2.463-5.5-5.5c0-1.053,0.306-2.036,0.83-2.87C11.963,10.222,10.53,10,9,10c-3.314,0-6,2.686-6,6 c0,3.314,2.686,6,6,6h8.5c2.485,0,4.5-2.015,4.5-4.5S19.985,13,17.5,13h-0.347C17.348,13.627,17.5,14.24,17.5,14.5 C17.5,16.985,15.485,19,13,19H17.5z" />
+          </svg>
+        </div>
+        <div
+          style="position: absolute; top: 25%; right: -100px; opacity: 0.15; animation: float-cloud 60s linear infinite reverse;">
+          <svg width="140" height="80" viewBox="0 0 24 24" fill="white">
+            <path
+              d="M17.5,19c-3.037,0-5.5-2.463-5.5-5.5c0-1.053,0.306-2.036,0.83-2.87C11.963,10.222,10.53,10,9,10c-3.314,0-6,2.686-6,6 c0,3.314,2.686,6,6,6h8.5c2.485,0,4.5-2.015,4.5-4.5S19.985,13,17.5,13h-0.347C17.348,13.627,17.5,14.24,17.5,14.5 C17.5,16.985,15.485,19,13,19H17.5z" />
+          </svg>
+        </div>
+
+        <!-- Decorative Circle Glows -->
+        <div
+          style="position: absolute; top: -30%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; pointer-events: none;">
+        </div>
+        <div
+          style="position: absolute; bottom: -30%; left: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; pointer-events: none;">
+        </div>
+      </div>
+
+      <!-- Main Card -->
+      <div
+        style="position: relative; z-index: 10; text-align: center; padding: 40px; border-radius: 30px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.15); max-width: 90%; width: 340px; transform:translateY(-20px);">
+
+        <!-- Logo Container with White Background for contrast -->
+        <div
+          style="width: 110px; height: 110px; background: rgba(255,255,255,0.95); border-radius: 50%; margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.15); animation: float-gentle 3s ease-in-out infinite;">
+          <img src="/logo.png" alt="কই যাবো" style="height: 70px; width: auto; object-fit: contain;" />
+        </div>
+
+        <h1
+          style="font-size: 32px; font-weight: 700; margin: 0 0 8px 0; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          কই যাবো</h1>
+        <p style="font-size: 16px; opacity: 0.95; margin: 0 0 28px 0; font-weight: 500; letter-spacing: 0.2px;">এক
+          ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
+
+        <!-- Modern Loading Indicator -->
+        <div style="display: flex; justify-content: center; gap: 8px;">
+          <div class="loading-bar" style="animation-delay: 0s;"></div>
+          <div class="loading-bar" style="animation-delay: 0.2s;"></div>
+          <div class="loading-bar" style="animation-delay: 0.4s;"></div>
+        </div>
+      </div>
+
+      <!-- Bottom Scene (Bus Animation) -->
+      <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 120px; overflow: hidden; z-index: 5;">
+        <!-- Road Line -->
+        <div style="position: absolute; bottom: 30px; width: 100%; height: 2px; background: rgba(255,255,255,0.2);">
+        </div>
+
+        <!-- Moving Bus -->
+        <div style="position: absolute; bottom: 32px; left: -60px; animation: drive-bus 8s linear infinite;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+            <path d="M8 6v6" />
+            <path d="M15 6v6" />
+            <path d="M2 12h19.6" />
+            <path
+              d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3" />
+            <circle cx="7" cy="18" r="2" />
+            <path d="M9 18h5" />
+            <circle cx="16" cy="18" r="2" />
+          </svg>
+        </div>
+        <div
+          style="position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 12px; opacity: 0.6; letter-spacing: 1px;">
+          LOADING RESOURCES...</div>
       </div>
     </div>
     <style>
-      @keyframes bounce {
+      @keyframes float-gentle {
 
         0%,
         100% {
@@ -549,7 +620,50 @@
         }
 
         50% {
-          transform: translateY(-20px);
+          transform: translateY(-5px);
+        }
+      }
+
+      .loading-bar {
+        width: 6px;
+        height: 24px;
+        background-color: white;
+        border-radius: 4px;
+        animation: scale-loader 1.2s infinite ease-in-out;
+      }
+
+      @keyframes scale-loader {
+
+        0%,
+        100% {
+          transform: scaleY(0.5);
+          opacity: 0.5;
+        }
+
+        50% {
+          transform: scaleY(1.2);
+          opacity: 1;
+        }
+      }
+
+      /* Reuse global animations */
+      @keyframes float-cloud {
+        0% {
+          transform: translateX(-10%);
+        }
+
+        100% {
+          transform: translateX(100vw);
+        }
+      }
+
+      @keyframes drive-bus {
+        0% {
+          transform: translateX(-100px);
+        }
+
+        100% {
+          transform: translateX(100vw);
         }
       }
     </style>
