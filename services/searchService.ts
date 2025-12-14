@@ -95,7 +95,7 @@ const expandWithAliases = (query: string): string[] => {
         if (queryLower.includes(alias)) {
             // Add station names from alias
             stations.forEach(station => {
-                const stationObj = Object.values(STATIONS).find(s => s.id === station);
+                const stationObj = STATIONS[station]; // Direct lookup instead of Object.values().find()
                 if (stationObj) {
                     expanded.push(stationObj.name);
                 }
