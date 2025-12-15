@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { getTravelRoutes } from './services/geminiService';
 import { RoutingResponse } from './types';
 import { RouteCard } from './components/RouteCard';
@@ -58,15 +58,21 @@ const SEARCH_MESSAGES = [
 
 
 // --- Animated Loading/Landing Component ---
-const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
+// Memoized to prevent unnecessary re-renders
+const LoadingAnimation = React.memo(({ isLanding = false }: { isLanding?: boolean }) => {
   const [msgIndex, setMsgIndex] = useState(0);
 
   useEffect(() => {
     if (isLanding) return;
+
     const interval = setInterval(() => {
       setMsgIndex((prev) => (prev + 1) % SEARCH_MESSAGES.length);
     }, 2500);
-    return () => clearInterval(interval);
+
+    // Critical: Cleanup interval on unmount
+    return () => {
+      clearInterval(interval);
+    };
   }, [isLanding]);
 
   return (
@@ -235,7 +241,7 @@ const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
       </div>
     </div>
   );
-};
+});
 
 
 const App: React.FC = () => {
@@ -354,7 +360,8 @@ const App: React.FC = () => {
     }
   }, [isDarkMode]);
 
-  const handleSearch = async (e: React.FormEvent) => {
+  // Memoize handleSearch to prevent unnecessary recreation
+  const handleSearch = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!origin || !destination) return;
 
@@ -384,12 +391,27 @@ const App: React.FC = () => {
         }
 
         // Save LAST route to Local Storage for quick resume on reload
-        localStorage.setItem('lastRoute', JSON.stringify({
-          data: result,
-          origin,
-          destination,
-          timestamp: new Date().toISOString()
-        }));
+        // Use requestIdleCallback to not block main thread
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => {
+            localStorage.setItem('lastRoute', JSON.stringify({
+              data: result,
+              origin,
+              destination,
+              timestamp: new Date().toISOString()
+            }));
+          });
+        } else {
+          // Fallback for browsers that don't support requestIdleCallback
+          setTimeout(() => {
+            localStorage.setItem('lastRoute', JSON.stringify({
+              data: result,
+              origin,
+              destination,
+              timestamp: new Date().toISOString()
+            }));
+          }, 0);
+        }
 
         // Track intercity search in history
         // Determine transport type from the first option (or 'markdown' for markdown results)
@@ -412,9 +434,11 @@ const App: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [origin, destination, isOffline]);
 
-  const handleOptionClick = (id: string) => {
+
+  // Memoize to avoid recreation on every render
+  const handleOptionClick = useCallback((id: string) => {
     setSelectedOptionId(id);
     // On Mobile: Scroll to details with slight delay to allow rendering
     if (window.innerWidth < 1024 && detailsRef.current) {
@@ -424,23 +448,28 @@ const App: React.FC = () => {
         detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     }
-  };
+  }, []);
 
-  const handleSwapLocations = () => {
+  const handleSwapLocations = useCallback(() => {
     const temp = origin;
     setOrigin(destination);
     setDestination(temp);
-  };
+  }, [origin, destination]);
 
-  const handleClearAll = () => {
+  const handleClearAll = useCallback(() => {
     setOrigin('');
     setDestination('');
     setData(null);
     setSelectedOptionId(null);
     setError(null);
     // Clear saved route from localStorage to prevent it from reappearing after refresh
-    localStorage.removeItem('lastRoute');
-  };
+    // Use requestIdleCallback to not block main thread
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => localStorage.removeItem('lastRoute'));
+    } else {
+      setTimeout(() => localStorage.removeItem('lastRoute'), 0);
+    }
+  }, []);
 
   // Check if current inputs match allowed locations
   const isValidSearch =

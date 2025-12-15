@@ -1,6 +1,18 @@
 import { TravelOption, TransportMode, RouteStep } from '../types';
 
+// Cache for parsed markdown results to avoid re-parsing
+const parseCache = new Map<string, TravelOption[]>();
+
 export const parseMarkdownToOptions = (markdown: string, origin: string, destination: string): TravelOption[] => {
+    // Generate cache key
+    const cacheKey = `${origin}|${destination}|${markdown.substring(0, 100)}`;
+
+    // Check cache first
+    if (parseCache.has(cacheKey)) {
+        console.log('🚀 Serving parsed markdown from cache');
+        return parseCache.get(cacheKey)!;
+    }
+
     const options: TravelOption[] = [];
 
     console.log('🔍 Starting Markdown parsing...');
@@ -103,6 +115,15 @@ export const parseMarkdownToOptions = (markdown: string, origin: string, destina
     }
 
     console.log(`✅ Parser finished with ${options.length} options`);
+
+    // Store in cache for future use (keep cache size limited)
+    if (parseCache.size > 20) {
+        // Clear oldest entry when cache gets too large
+        const firstKey = parseCache.keys().next().value;
+        parseCache.delete(firstKey);
+    }
+    parseCache.set(cacheKey, options);
+
     return options;
 };
 
