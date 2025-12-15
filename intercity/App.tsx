@@ -6,7 +6,7 @@ import { RouteCard } from './components/RouteCard';
 import { RouteDetail } from './components/RouteDetail';
 import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
 import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield, Ship, TramFront, Home } from 'lucide-react';
-
+import { MarkdownRouteDisplay } from './components/MarkdownRouteDisplay';
 
 import { AnimatedLogo } from './components/AnimatedLogo';
 import { IntercityUsageIndicator } from './components/UsageIndicator';
@@ -285,10 +285,19 @@ const App: React.FC = () => {
         getTravelRoutes(decodeURIComponent(urlFrom), decodeURIComponent(urlTo))
           .then(result => {
             console.log('✅ Search result:', result);
-            if (result && result.options.length > 0) {
+            // Check if result has Markdown content OR options array
+            const hasMarkdownContent = result && (result as any).isMarkdown && (result as any).content;
+            const hasOptions = result && result.options && result.options.length > 0;
+
+            if (hasMarkdownContent || hasOptions) {
               setData(result);
-              setSelectedOptionId(result.options[0].id);
-              const transportType = result.options[0]?.steps?.[0]?.mode || 'combined';
+              // Only set selectedOptionId if we have options (not Markdown)
+              if (hasOptions) {
+                setSelectedOptionId(result.options[0].id);
+              }
+              const transportType = hasOptions
+                ? (result.options[0]?.steps?.[0]?.mode || 'combined')
+                : 'markdown';
               trackIntercitySearch(decodeURIComponent(urlFrom), decodeURIComponent(urlTo), transportType);
             } else {
               console.warn('⚠️ No routes found in result');
@@ -362,9 +371,17 @@ const App: React.FC = () => {
 
     try {
       const result = await getTravelRoutes(origin, destination);
-      if (result && result.options.length > 0) {
+      // Check if result has Markdown content OR options array
+      const hasMarkdownContent = result && (result as any).isMarkdown && (result as any).content;
+      const hasOptions = result && result.options && result.options.length > 0;
+
+      if (hasMarkdownContent || hasOptions) {
         setData(result);
-        setSelectedOptionId(result.options[0].id); // Select first option by default
+
+        // Only set selectedOptionId if we have options (not Markdown)
+        if (hasOptions) {
+          setSelectedOptionId(result.options[0].id); // Select first option by default
+        }
 
         // Save LAST route to Local Storage for quick resume on reload
         localStorage.setItem('lastRoute', JSON.stringify({
@@ -375,8 +392,10 @@ const App: React.FC = () => {
         }));
 
         // Track intercity search in history
-        // Determine transport type from the first option
-        const transportType = result.options[0]?.steps?.[0]?.mode || 'combined';
+        // Determine transport type from the first option (or 'markdown' for markdown results)
+        const transportType = hasOptions
+          ? (result.options[0]?.steps?.[0]?.mode || 'combined')
+          : 'markdown';
         trackIntercitySearch(origin, destination, transportType);
 
       } else {
@@ -803,96 +822,113 @@ const App: React.FC = () => {
 
           {/* 4. Results State */}
           {data && !loading && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 relative mt-4">
-
-              {/* Left Column: Options List */}
-              <div className="lg:col-span-1 animate-fade-in-up">
-                <div className="lg:sticky lg:top-36 space-y-3 lg:space-y-4 max-h-[calc(100vh-8rem)] lg:overflow-y-auto custom-scrollbar p-1">
-                  <div className="flex items-center justify-between px-2">
-                    <h2 className="text-base font-bold text-gray-800 dark:text-gray-100">Available Routes</h2>
-                    <span className="text-[10px] font-bold bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-800 shadow-sm">{data.options.length} found</span>
-                  </div>
-
-                  <div className="space-y-3">
-                    {data.options.map((option) => (
-                      <RouteCard
-                        key={option.id}
-                        option={option}
-                        isSelected={selectedOptionId === option.id}
-                        onClick={() => handleOptionClick(option.id)}
-                      />
-                    ))}
-                  </div>
+            <>
+              {/* Check if this is a Markdown response */}
+              {(data as any).isMarkdown && (data as any).content ? (
+                // Markdown Display
+                <div className="mt-4 animate-fade-in-up">
+                  <MarkdownRouteDisplay
+                    content={(data as any).content}
+                    from={(data as any).from || origin}
+                    to={(data as any).to || destination}
+                    date={(data as any).date}
+                    source={(data as any).source}
+                  />
                 </div>
-              </div>
+              ) : (
+                // Traditional Options Display
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 relative mt-4">
 
-              {/* Right Column: Detailed View */}
-              {/* Added scroll-mt-32 to ensure the floating header doesn't cover the details when scrolled to */}
-              <div className="lg:col-span-2 scroll-mt-32 md:scroll-mt-40" ref={detailsRef}>
-                {selectedOption ? (
-                  <div className="animate-slide-in">
-                    <RouteDetail option={selectedOption} />
+                  {/* Left Column: Options List */}
+                  <div className="lg:col-span-1 animate-fade-in-up">
+                    <div className="lg:sticky lg:top-36 space-y-3 lg:space-y-4 max-h-[calc(100vh-8rem)] lg:overflow-y-auto custom-scrollbar p-1">
+                      <div className="flex items-center justify-between px-2">
+                        <h2 className="text-base font-bold text-gray-800 dark:text-gray-100">Available Routes</h2>
+                        <span className="text-[10px] font-bold bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-800 shadow-sm">{data.options.length} found</span>
+                      </div>
 
-                    {/* Global Tips Section - Show if we have response-level tips and no option-level tips */}
-                    {(data as any).enhancedData?.tips && !(selectedOption as any).enhancedData?.tips && (
-                      <div className="mt-6 p-5 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
-                        <div className="flex items-center gap-2 mb-4">
-                          <Sparkles className="w-5 h-5 text-purple-200" />
-                          <h3 className="text-lg font-bold text-white">💡 Travel Tips</h3>
-                        </div>
+                      <div className="space-y-3">
+                        {data.options.map((option) => (
+                          <RouteCard
+                            key={option.id}
+                            option={option}
+                            isSelected={selectedOptionId === option.id}
+                            onClick={() => handleOptionClick(option.id)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                          {(data as any).enhancedData.tips.best_option && (
-                            <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                              <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Best Option</label>
-                              <span className="text-white font-semibold">{(data as any).enhancedData.tips.best_option}</span>
-                            </div>
-                          )}
-                          {(data as any).enhancedData.tips.cheapest && (
-                            <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                              <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Cheapest</label>
-                              <span className="text-white font-semibold">{(data as any).enhancedData.tips.cheapest}</span>
-                            </div>
-                          )}
-                          {(data as any).enhancedData.tips.peak_times && (
-                            <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 md:col-span-2">
-                              <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Peak Times</label>
-                              <span className="text-white font-semibold">{(data as any).enhancedData.tips.peak_times}</span>
-                            </div>
-                          )}
-                        </div>
+                  {/* Right Column: Detailed View */}
+                  {/* Added scroll-mt-32 to ensure the floating header doesn't cover the details when scrolled to */}
+                  <div className="lg:col-span-2 scroll-mt-32 md:scroll-mt-40" ref={detailsRef}>
+                    {selectedOption ? (
+                      <div className="animate-slide-in">
+                        <RouteDetail option={selectedOption} />
 
-                        {(data as any).enhancedData.tips.booking_sites && (data as any).enhancedData.tips.booking_sites.length > 0 && (
-                          <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                            <label className="block text-xs text-purple-200 mb-2 uppercase tracking-wide">Book Online</label>
-                            <div className="flex flex-wrap gap-2">
-                              {(data as any).enhancedData.tips.booking_sites.map((site: string, index: number) => (
-                                <a
-                                  key={index}
-                                  href={`https://${site}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-medium rounded-lg transition-colors border border-white/30"
-                                >
-                                  {site}
-                                </a>
-                              ))}
+                        {/* Global Tips Section - Show if we have response-level tips and no option-level tips */}
+                        {(data as any).enhancedData?.tips && !(selectedOption as any).enhancedData?.tips && (
+                          <div className="mt-6 p-5 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
+                            <div className="flex items-center gap-2 mb-4">
+                              <Sparkles className="w-5 h-5 text-purple-200" />
+                              <h3 className="text-lg font-bold text-white">💡 Travel Tips</h3>
                             </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                              {(data as any).enhancedData.tips.best_option && (
+                                <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                  <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Best Option</label>
+                                  <span className="text-white font-semibold">{(data as any).enhancedData.tips.best_option}</span>
+                                </div>
+                              )}
+                              {(data as any).enhancedData.tips.cheapest && (
+                                <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                  <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Cheapest</label>
+                                  <span className="text-white font-semibold">{(data as any).enhancedData.tips.cheapest}</span>
+                                </div>
+                              )}
+                              {(data as any).enhancedData.tips.peak_times && (
+                                <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 md:col-span-2">
+                                  <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Peak Times</label>
+                                  <span className="text-white font-semibold">{(data as any).enhancedData.tips.peak_times}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {(data as any).enhancedData.tips.booking_sites && (data as any).enhancedData.tips.booking_sites.length > 0 && (
+                              <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                <label className="block text-xs text-purple-200 mb-2 uppercase tracking-wide">Book Online</label>
+                                <div className="flex flex-wrap gap-2">
+                                  {(data as any).enhancedData.tips.booking_sites.map((site: string, index: number) => (
+                                    <a
+                                      key={index}
+                                      href={`https://${site}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-medium rounded-lg transition-colors border border-white/30"
+                                    >
+                                      {site}
+                                    </a>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
+                    ) : (
+                      <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-[2rem] text-gray-400 bg-white/50 backdrop-blur-sm gap-3">
+                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
+                          <MapIcon className="w-8 h-8 opacity-40" />
+                        </div>
+                        <span className="font-medium">Select a route to view details</span>
+                      </div>
                     )}
                   </div>
-                ) : (
-                  <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-[2rem] text-gray-400 bg-white/50 backdrop-blur-sm gap-3">
-                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
-                      <MapIcon className="w-8 h-8 opacity-40" />
-                    </div>
-                    <span className="font-medium">Select a route to view details</span>
-                  </div>
-                )}
-              </div>
-            </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
