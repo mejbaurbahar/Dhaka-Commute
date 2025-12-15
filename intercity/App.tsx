@@ -452,7 +452,7 @@ const App: React.FC = () => {
   const isLanding = !data && !loading;
 
   return (
-    <div className="min-h-screen text-dhaka-dark pb-12">
+    <div className="min-h-screen text-dhaka-dark pb-12 bg-blue-50 dark:bg-slate-900">
       {/* Fixed Header */}
       {/* Mobile Header */}
       <header className="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-5 py-3 shadow-sm z-[5000] pt-safe-top md:hidden">
