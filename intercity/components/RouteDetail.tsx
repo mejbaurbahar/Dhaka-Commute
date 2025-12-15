@@ -474,8 +474,35 @@ const getSpotsForLocation = (location: string | undefined | null) => {
 
 // --- Tourist Modal Component ---
 const TouristSpotsModal: React.FC<{ city: string; spots: any[]; onClose: () => void }> = ({ city, spots, onClose }) => {
+  // Prevent body scrolling when modal is open
+  React.useEffect(() => {
+    // Save current scroll position
+    const scrollY = window.scrollY;
+
+    // Lock body scroll
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+
+    return () => {
+      // Restore body scroll
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+
+      // Restore scroll position
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in"
+      onClick={onClose}
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+    >
       <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl w-full max-w-2xl rounded-[2rem] shadow-2xl border border-white dark:border-slate-700 overflow-hidden flex flex-col max-h-[80vh] animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
 
         {/* Header */}
