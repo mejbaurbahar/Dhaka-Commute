@@ -15,9 +15,10 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
 
     const CurrentIcon = icons[iconIndex];
 
-    const containerSizeClass = size === 'large' ? 'w-12 h-12 rounded-2xl' : (size === 'small' ? 'w-10 h-10 rounded-xl' : 'w-10 h-10 rounded-xl');
-    const iconSize = size === 'large' ? 26 : (size === 'small' ? 20 : 22);
-    const logoSize = size === 'large' ? 'h-12' : (size === 'small' ? 'h-10' : 'h-10 md:h-12');
+    const containerSizeClass = size === 'large' ? 'w-14 h-14 rounded-2xl' : (size === 'small' ? 'w-11 h-11 rounded-xl' : 'w-12 h-12 rounded-xl');
+    const iconSize = size === 'large' ? 28 : (size === 'small' ? 22 : 24);
+    const logoSize = size === 'large' ? 'h-14' : (size === 'small' ? 'h-11' : 'h-12');
+    const textSize = size === 'large' ? 'text-2xl' : (size === 'small' ? 'text-xl' : 'text-xl md:text-2xl');
 
     return (
         <div className="flex items-center gap-2 md:gap-3 outline-none cursor-pointer select-none group">
@@ -34,6 +35,9 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
                 alt="কই যাবো"
                 className={`${logoSize} w-auto object-contain transition-transform duration-300 group-hover:scale-105`}
             />
+            <h1 className={`${textSize} font-bold text-gray-900 dark:text-white tracking-tight whitespace-nowrap`}>
+                কই যাবো
+            </h1>
         </div>
     );
 };

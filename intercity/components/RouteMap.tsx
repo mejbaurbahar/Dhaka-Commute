@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+﻿import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import { RouteStep, TransportMode } from '../types';
 
@@ -251,25 +251,12 @@ export const RouteMap: React.FC<RouteMapProps> = ({ steps }) => {
       {/* Map Container */}
       <div ref={mapRef} className="w-full h-full" />
 
-      {/* Map Legend */}
-      <div className="absolute top-2 right-2 z-[400] bg-white/95 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg border border-gray-200">
-        <div className="text-xs font-bold text-gray-700 mb-2">Transport Types</div>
-        <div className="space-y-1">
-          {steps.map((step, idx) => (
-            <div key={idx} className="flex items-center gap-2 text-xs">
-              <div
-                className="w-4 h-1 rounded-full"
-                style={{ backgroundColor: getTransportColor(step.mode as TransportMode) }}
-              />
-              <span className="text-gray-600 font-medium">{getTransportName(step.mode as TransportMode)}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Map Legend - Hidden */}
+
 
       {/* Map Controls Info */}
       <div className="absolute bottom-2 right-2 z-[400] bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] text-gray-500 shadow-sm border border-white">
-        Scroll to Zoom • Drag to Pan
+        Scroll to Zoom â€¢ Drag to Pan
       </div>
     </div>
   );
