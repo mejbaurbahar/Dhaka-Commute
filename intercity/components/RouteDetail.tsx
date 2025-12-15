@@ -474,11 +474,6 @@ const getSpotsForLocation = (location: string | undefined | null) => {
 
 // --- Tourist Modal Component ---
 const TouristSpotsModal: React.FC<{ city: string; spots: any[]; onClose: () => void }> = ({ city, spots, onClose }) => {
-  // Scroll to top when modal opens to ensure it's visible
-  React.useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
   return (
     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={onClose}>
       <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl w-full max-w-2xl rounded-[2rem] shadow-2xl border border-white dark:border-slate-700 overflow-hidden flex flex-col max-h-[80vh] animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
