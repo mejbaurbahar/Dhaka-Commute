@@ -31,7 +31,7 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
                 />
             </div>
             <img
-                src={`${import.meta.env.BASE_URL}logo.png`}
+                src={`${import.meta.env.BASE_URL}/logo.png`}
                 alt="কই যাবো"
                 className={logoClass}
             />
