@@ -17,8 +17,8 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
 
     const containerSizeClass = size === 'large' ? 'w-14 h-14 rounded-2xl' : (size === 'small' ? 'w-11 h-11 rounded-xl' : 'w-12 h-12 rounded-xl');
     const iconSize = size === 'large' ? 28 : (size === 'small' ? 22 : 24);
-    const logoSize = size === 'large' ? 'h-14' : (size === 'small' ? 'h-11' : 'h-12');
-    const textSize = size === 'large' ? 'text-2xl' : (size === 'small' ? 'text-xl' : 'text-xl md:text-2xl');
+    // Match main page logo classes exactly
+    const logoClass = size === 'large' ? 'h-16 md:h-24 scale-110 md:scale-125 -ml-1 w-auto' : (size === 'small' ? 'h-14 md:h-20 scale-110 md:scale-125 -ml-1 w-auto' : 'h-14 md:h-20 scale-110 md:scale-125 -ml-1 w-auto');
 
     return (
         <div className="flex items-center gap-2 md:gap-3 outline-none cursor-pointer select-none group">
@@ -33,11 +33,8 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
             <img
                 src={`${import.meta.env.BASE_URL}logo.png`}
                 alt="কই যাবো"
-                className={`${logoSize} w-auto object-contain transition-transform duration-300 group-hover:scale-105`}
+                className={logoClass}
             />
-            <h1 className={`${textSize} font-bold text-gray-900 dark:text-white tracking-tight whitespace-nowrap`}>
-                কই যাবো
-            </h1>
         </div>
     );
 };
