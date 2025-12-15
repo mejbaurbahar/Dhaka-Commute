@@ -212,10 +212,14 @@ function extractMetadata(section: string, rawTitle: string) {
     let cost = 'N/A';
 
     const durationMatch = section.match(/(?:Time|Duration|Est\. Time):\s*([^\n\(\)]+)/i);
-    if (durationMatch) duration = durationMatch[1].trim();
+    if (durationMatch) {
+        duration = durationMatch[1].trim().replace(/\*\*/g, '').replace(/\*/g, '');
+    }
 
     const costMatch = section.match(/(?:Cost|Price|Fare|Est\. Cost):\s*([^\n\(\)]+)/i);
-    if (costMatch) cost = costMatch[1].trim();
+    if (costMatch) {
+        cost = costMatch[1].trim().replace(/\*\*/g, '').replace(/\*/g, '');
+    }
 
     if (duration === 'N/A') {
         const titleDuration = rawTitle.match(/(\d+\s*(?:hr|hour|min|m))/i);
