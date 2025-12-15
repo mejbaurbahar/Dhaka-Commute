@@ -471,7 +471,7 @@ const App: React.FC = () => {
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              window.location.href = window.location.origin + '/#home';
+              window.location.href = '/';
             }}
             className="flex items-center gap-2 cursor-pointer outline-none hover:opacity-90 transition-opacity"
           >
@@ -494,7 +494,7 @@ const App: React.FC = () => {
           href="/"
           onClick={(e) => {
             e.preventDefault();
-            window.location.href = window.location.origin + '/';
+            window.location.href = '/';
           }}
           className="flex items-center gap-3 cursor-pointer group outline-none"
         >
@@ -507,7 +507,7 @@ const App: React.FC = () => {
         <div className="flex items-center gap-2 bg-gray-100/50 dark:bg-slate-800/50 p-1.5 rounded-2xl border border-gray-200 dark:border-gray-700">
           <a
             href="/"
-            onClick={(e) => { e.preventDefault(); window.location.href = window.location.origin + '/'; }}
+            onClick={(e) => { e.preventDefault(); window.location.href = '/'; }}
             className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
           >
             <Home className="w-4 h-4" />
@@ -521,7 +521,7 @@ const App: React.FC = () => {
           </button>
           <a
             href="/#ai-assistant"
-            onClick={(e) => { e.preventDefault(); window.location.href = window.location.origin + '/#ai-assistant'; }}
+            onClick={(e) => { e.preventDefault(); window.location.href = '/#ai-assistant'; }}
             className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
           >
             <Sparkles className="w-4 h-4" />
@@ -529,7 +529,7 @@ const App: React.FC = () => {
           </a>
           <a
             href="/#history"
-            onClick={(e) => { e.preventDefault(); window.location.href = window.location.origin + '/#history'; }}
+            onClick={(e) => { e.preventDefault(); window.location.href = '/#history'; }}
             className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
           >
             <Clock className="w-4 h-4" />
@@ -537,7 +537,7 @@ const App: React.FC = () => {
           </a>
           <a
             href="/#about"
-            onClick={(e) => { e.preventDefault(); window.location.href = window.location.origin + '/#about'; }}
+            onClick={(e) => { e.preventDefault(); window.location.href = '/#about'; }}
             className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
           >
             <Info className="w-4 h-4" />
@@ -573,7 +573,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  window.location.href = `${window.location.origin}/#ai-assistant`;
+                  window.location.href = '/#ai-assistant';
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
@@ -582,7 +582,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  window.location.href = `${window.location.origin}/#about`;
+                  window.location.href = '/#about';
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
@@ -591,7 +591,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  window.location.href = `${window.location.origin}/#why-use`;
+                  window.location.href = '/#why-use';
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
@@ -600,7 +600,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  window.location.href = `${window.location.origin}/#faq`;
+                  window.location.href = '/#faq';
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
@@ -609,7 +609,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  window.location.href = `${window.location.origin}/#history`;
+                  window.location.href = '/#history';
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
@@ -618,7 +618,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  window.location.href = `${window.location.origin}/#install`;
+                  window.location.href = '/#install';
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
@@ -627,7 +627,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  window.location.href = `${window.location.origin}/#privacy`;
+                  window.location.href = '/#privacy';
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
@@ -636,7 +636,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  window.location.href = `${window.location.origin}/#terms`;
+                  window.location.href = '/#terms';
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
@@ -669,10 +669,10 @@ const App: React.FC = () => {
               </p>
               <div className="flex flex-col gap-3">
                 <a
-                  href={`${window.location.origin}/#settings`}
+                  href="/#settings"
                   onClick={(e) => {
                     e.preventDefault();
-                    window.location.href = `${window.location.origin}/#settings`;
+                    window.location.href = '/#settings';
                   }}
                   className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold py-3 px-6 rounded-xl hover:shadow-lg transition-all"
                 >
@@ -956,7 +956,7 @@ const App: React.FC = () => {
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              window.location.href = window.location.origin + '/';
+              window.location.href = '/';
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
@@ -964,10 +964,10 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
           </a>
           <a
-            href={`${window.location.origin}/#ai-assistant`}
+            href="/#ai-assistant"
             onClick={(e) => {
               e.preventDefault();
-              window.location.href = `${window.location.origin}/#ai-assistant`;
+              window.location.href = '/#ai-assistant';
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
@@ -979,10 +979,10 @@ const App: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
           </div>
           <a
-            href={`${window.location.origin}/#about`}
+            href="/#about"
             onClick={(e) => {
               e.preventDefault();
-              window.location.href = `${window.location.origin}/#about`;
+              window.location.href = '/#about';
             }}
             className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
           >
