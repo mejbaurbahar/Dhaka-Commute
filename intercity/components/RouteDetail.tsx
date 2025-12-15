@@ -938,18 +938,6 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
                 <div className="flex flex-col pt-1">
                   <h4 className="font-bold text-dhaka-dark text-xl">Arrive at {destination}</h4>
                   <p className="text-sm text-gray-500 font-medium">Trip Completed</p>
-
-                  {/* Discovery Button */}
-                  {nearbySpots && (
-                    <button
-                      onClick={() => setShowTouristModal(true)}
-                      className="mt-4 flex items-center gap-2 bg-gradient-to-r from-teal-400 to-emerald-500 text-white px-4 py-2.5 rounded-xl shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-0.5 transition-all duration-300 w-fit group"
-                    >
-                      <Sparkles className="w-4 h-4 text-yellow-200 fill-current animate-pulse" />
-                      <span className="font-bold text-sm">Discover {nearbySpots.city}</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
