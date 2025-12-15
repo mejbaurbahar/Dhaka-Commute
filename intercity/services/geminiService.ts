@@ -1,7 +1,8 @@
 import { RoutingResponse, TravelOption, TransportMode } from "../types";
+import { parseMarkdownToOptions } from '../utils/markdownParser';
 import { canUseIntercitySearch, trackIntercitySearchUsage } from "./apiKeyManager";
 
-// Backend API Configuration
+// Backend API Configuration (Updated parser with fallback)
 const BACKEND_API_URL = 'https://koyjabo-backend.onrender.com';
 
 // --- Cache Configuration ---
@@ -79,6 +80,12 @@ export const getTravelRoutes = async (origin: string, destination: string, date?
 
     const resultJson = await response.json();
 
+
+
+    // ... (existing imports)
+
+    // ... (existing code)
+
     // NEW FORMAT: Backend returns markdown text
     // Check if response is in new markdown format {result: string, source: string, from: string, to: string, date: string}
     if (resultJson.result && typeof resultJson.result === 'string' && resultJson.source) {
@@ -86,6 +93,41 @@ export const getTravelRoutes = async (origin: string, destination: string, date?
 
       // Track usage after successful response
       trackIntercitySearchUsage();
+
+      // Attempt to parse Markdown into structured options
+      try {
+        const parsedOptions = parseMarkdownToOptions(resultJson.result, origin, destination);
+
+        if (parsedOptions.length > 0) {
+          console.log('✅ Successfully parsed Markdown into options:', parsedOptions.length);
+
+          const structuredResponse: RoutingResponse = {
+            origin,
+            destination,
+            options: parsedOptions,
+            // Add metadata that might be useful
+            enhancedData: {
+              tips: {
+                best_option: 'AI Generated Route'
+              }
+            }
+          } as any;
+
+          // Save to cache
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify({
+              data: structuredResponse,
+              timestamp: Date.now()
+            }));
+          } catch (e) {
+            console.warn("Could not save route to local storage cache", e);
+          }
+
+          return structuredResponse;
+        }
+      } catch (parseError) {
+        console.warn('Failed to parse markdown to options, falling back to text view', parseError);
+      }
 
       // Return the markdown result directly - let the component handle rendering
       const markdownResponse = {
@@ -110,7 +152,7 @@ export const getTravelRoutes = async (origin: string, destination: string, date?
         console.warn("Could not save route to local storage cache", e);
       }
 
-      console.log('✅ Markdown routes received');
+      console.log('✅ Markdown routes received (Parsing skipped/failed)');
       return markdownResponse as any;
     }
 

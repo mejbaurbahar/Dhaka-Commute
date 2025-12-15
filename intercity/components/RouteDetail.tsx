@@ -733,16 +733,77 @@ export const RouteDetail: React.FC<RouteDetailProps> = ({ option }) => {
         </div>
 
         {/* Map Section */}
-        <div className="w-full h-56 md:h-80 relative border-y border-gray-100">
+        <div className="w-full h-56 md:h-80 relative border-y border-gray-100 dark:border-gray-700">
           <RouteMap steps={option.steps} />
           {/* Gradients to blend map */}
-          <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-white to-transparent pointer-events-none z-[400]"></div>
-          <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-white to-transparent pointer-events-none z-[400]"></div>
+          <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-white dark:from-slate-800 to-transparent pointer-events-none z-[400]"></div>
+          <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-white dark:from-slate-800 to-transparent pointer-events-none z-[400]"></div>
+
+          {/* Live View Badge */}
+          <div className="absolute top-4 left-4 z-[500] bg-slate-900/90 backdrop-blur text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 border border-slate-700 shadow-lg">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            LIVE VIEW
+          </div>
         </div>
 
+        {/* Pros & Cons Section (Modern UI) */}
+        {((option as any).enhancedData?.tips?.pros || (option as any).enhancedData?.tips?.cons) && (
+          <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-slate-900">
+
+            {/* Why Choose This */}
+            {(option as any).enhancedData?.tips?.pros && (option as any).enhancedData.tips.pros.length > 0 && (
+              <div className="bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/30 rounded-2xl p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                    <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <h4 className="font-bold text-emerald-900 dark:text-emerald-400 text-sm uppercase tracking-wide">Why Choose This</h4>
+                </div>
+                <ul className="space-y-3">
+                  {(option as any).enhancedData.tips.pros.map((pro: string, i: number) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                      <div className="mt-0.5 w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+                        <svg className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="leading-relaxed">{pro}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Key Considerations */}
+            {(option as any).enhancedData?.tips?.cons && (option as any).enhancedData.tips.cons.length > 0 && (
+              <div className="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30 rounded-2xl p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                    <Flag className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <h4 className="font-bold text-amber-900 dark:text-amber-400 text-sm uppercase tracking-wide">Key Considerations</h4>
+                </div>
+                <ul className="space-y-3">
+                  {(option as any).enhancedData.tips.cons.map((con: string, i: number) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                      <div className="mt-0.5 w-4 h-4 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                        <span className="text-amber-600 dark:text-amber-400 font-bold text-[10px]">!</span>
+                      </div>
+                      <span className="leading-relaxed">{con}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Enhanced Transport Details Section */}
-        {(option as any).enhancedData && (
-          <div className="p-6 md:p-8 bg-gray-50">
+        {(option as any).enhancedData && !(option as any).enhancedData?.tips?.pros && (
+          <div className="p-6 md:p-8 bg-gray-50 dark:bg-slate-800/50">
             <EnhancedTransportDetails
               enhancedData={(option as any).enhancedData}
               tips={(option as any).enhancedData?.tips}

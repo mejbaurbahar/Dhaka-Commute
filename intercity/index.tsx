@@ -1,4 +1,5 @@
 import React from 'react';
+import { registerSW } from 'virtual:pwa-register';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
@@ -15,7 +16,7 @@ root.render(
 );
 
 // Register PWA Service Worker for Intercity App
-import { registerSW } from 'virtual:pwa-register';
+
 
 const updateSW = registerSW({
   immediate: false,
