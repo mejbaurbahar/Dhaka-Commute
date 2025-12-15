@@ -110,7 +110,7 @@ const LoadingAnimation = ({ isLanding = false }: { isLanding?: boolean }) => {
       }
     `}</style>
 
-      <div className={`relative w-full max-w-4xl ${isLanding ? 'h-64 md:h-80' : 'h-64 md:h-72'} bg-gradient-to-b from-sky-400/30 via-blue-100/40 to-emerald-50/30 rounded-3xl overflow-hidden border border-blue-200/40 shadow-2xl shadow-blue-500/10 mb-8 transition-all duration-700 backdrop-blur-sm`}>
+      <div className={`relative w-full max-w-4xl ${isLanding ? 'h-64 md:h-80' : 'h-64 md:h-72'} bg-gradient-to-br from-sky-100/60 via-blue-50/60 to-emerald-50/60 dark:from-slate-800/60 dark:via-indigo-900/60 dark:to-emerald-900/60 rounded-3xl overflow-hidden border-2 border-white/50 dark:border-gray-700/50 shadow-2xl shadow-blue-500/20 dark:shadow-indigo-500/20 mb-8 transition-all duration-700 backdrop-blur-md`}>
 
         {/* Realistic Sky with Sun */}
         <div className="absolute top-4 right-12 w-16 h-16 bg-yellow-200/60 rounded-full blur-xl"></div>
@@ -452,10 +452,20 @@ const App: React.FC = () => {
   const isLanding = !data && !loading;
 
   return (
-    <div className="min-h-screen text-dhaka-dark pb-12 bg-blue-50 dark:bg-slate-900">
+    <div className="min-h-screen text-dhaka-dark pb-12 relative overflow-x-hidden">
+      {/* Modern Gradient Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-950 -z-10"></div>
+
+      {/* Animated Background Patterns */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 -left-40 w-80 h-80 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 dark:from-emerald-500/10 dark:to-teal-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute top-20 -right-40 w-96 h-96 bg-gradient-to-bl from-blue-400/20 to-indigo-400/20 dark:from-blue-500/10 dark:to-indigo-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-t from-purple-300/20 to-pink-300/20 dark:from-purple-500/10 dark:to-pink-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+      </div>
+
       {/* Fixed Header */}
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-5 py-3 shadow-sm z-[5000] pt-safe-top md:hidden">
+      <header className="fixed top-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-5 py-3 shadow-lg shadow-black/5 z-[5000] pt-safe-top md:hidden">
         <div className="flex justify-between items-center">
           <a
             href="/"
@@ -479,7 +489,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-8 h-20 shadow-sm z-[5000] items-center justify-between transition-all duration-300">
+      <header className="hidden md:flex fixed top-0 left-0 right-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 px-8 h-20 shadow-lg shadow-black/5 z-[5000] items-center justify-between transition-all duration-300">
         <a
           href="/"
           onClick={(e) => {
@@ -550,8 +560,8 @@ const App: React.FC = () => {
       {/* Menu Overlay */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-[6000]">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
-          <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
+          <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl p-6 flex flex-col animate-in slide-in-from-right border-l-2 border-emerald-500/20 dark:border-emerald-500/10">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-xl font-bold text-dhaka-dark dark:text-gray-100">Menu</h2>
               <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full" aria-label="Close menu">
@@ -682,9 +692,9 @@ const App: React.FC = () => {
 
       {/* Main Content - Add top padding for fixed header */}
       {/* Main Content - Add top padding for fixed header */}
-      <div className="pt-16 md:pt-20 min-h-screen bg-blue-50 dark:bg-slate-900">
+      <div className="pt-16 md:pt-20 min-h-screen">
         {/* Sticky Search Header with Title - Stays visible while scrolling */}
-        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white dark:bg-slate-900 pb-4 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
+        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl pb-6 pt-4 border-b border-gray-200/30 dark:border-gray-700/30 shadow-lg shadow-black/5 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
           <div className="max-w-4xl mx-auto relative">
             {/* Page Title */}
             <h1 className="hidden md:block text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-center text-gray-800 dark:text-gray-100">
@@ -697,7 +707,10 @@ const App: React.FC = () => {
             </div>
 
 
-            <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-3 md:p-4 transition-all duration-300 ${!isLanding ? 'scale-90 origin-top' : ''} md:scale-100`}>
+            <div className={`relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-black/10 dark:shadow-black/30 border border-white/50 dark:border-gray-700/50 p-4 md:p-6 transition-all duration-500 ${!isLanding ? 'scale-95 origin-top' : 'scale-100'} hover:shadow-2xl hover:shadow-emerald-500/20 dark:hover:shadow-emerald-500/10`}>
+              {/* Decorative gradient border effect */}
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-purple-500/10 dark:from-emerald-500/5 dark:via-blue-500/5 dark:to-purple-500/5 -z-10 blur-xl"></div>
+
               {/* items-end aligns the input boxes and button to the bottom, ignoring the top labels */}
               <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 md:gap-3 w-full md:items-end">
                 {/* Row 1: From - Swap - To */}
@@ -741,10 +754,13 @@ const App: React.FC = () => {
                   <button
                     type="submit"
                     disabled={loading || !isValidSearch}
-                    className={`flex-1 md:flex-none h-[48px] md:h-[56px] bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/30 active:scale-[0.98] flex items-center justify-center gap-2 px-6 min-w-[100px] ${(loading || !isValidSearch) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    className={`relative flex-1 md:flex-none h-[52px] md:h-[58px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white font-bold rounded-2xl transition-all shadow-xl shadow-emerald-500/40 hover:shadow-2xl hover:shadow-emerald-500/50 active:scale-[0.97] flex items-center justify-center gap-2 px-8 min-w-[120px] overflow-hidden group ${(loading || !isValidSearch) ? 'opacity-60 cursor-not-allowed' : ''}`}
                   >
-                    {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <Search className="w-5 h-5" />}
-                    {loading ? 'Searching' : 'Search'}
+                    {/* Shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+
+                    {loading ? <Loader2 className="animate-spin w-5 h-5 relative z-10" /> : <Search className="w-5 h-5 relative z-10" />}
+                    <span className="relative z-10">{loading ? 'Searching...' : 'Search Routes'}</span>
                   </button>
 
                   {/* Clear Button - Inline with Search on Mobile */}
@@ -771,15 +787,15 @@ const App: React.FC = () => {
           {/* 1. Landing State */}
           {/* 1. Offline State (No Data) */}
           {isOffline && !data && !loading && (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in mt-8 bg-white rounded-3xl border-2 border-red-100 shadow-xl">
-              <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white animate-pulse">
-                <WifiOff className="w-12 h-12 text-red-600" />
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in mt-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl border-2 border-red-100/50 dark:border-red-900/50 shadow-2xl shadow-red-500/20 dark:shadow-red-500/10">
+              <div className="w-24 h-24 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white dark:border-gray-700 animate-pulse">
+                <WifiOff className="w-12 h-12 text-red-600 dark:text-red-400" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">You Are Offline</h2>
-              <p className="text-gray-600 max-w-md mx-auto leading-relaxed mb-6 text-base">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent mb-4">You Are Offline</h2>
+              <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto leading-relaxed mb-6 text-base">
                 Intercity bus search requires an internet connection to find the best routes.
               </p>
-              <p className="text-gray-500 text-sm max-w-sm mx-auto">
+              <p className="text-gray-500 dark:text-gray-400 text-sm max-w-sm mx-auto">
                 Please check your connection and try again, or view your previously saved routes.
               </p>
             </div>
@@ -797,26 +813,26 @@ const App: React.FC = () => {
 
           {/* 3. Error State */}
           {!loading && error && (
-            <div className={`backdrop-blur rounded-[2rem] p-8 flex flex-col items-center justify-center text-center shadow-soft mt-8 gap-3 animate-fade-in ${error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit')
-              ? 'bg-orange-50/80 border border-orange-200'
-              : 'bg-white/80 border border-red-100'
+            <div className={`backdrop-blur-xl rounded-3xl p-8 flex flex-col items-center justify-center text-center shadow-2xl mt-8 gap-3 animate-fade-in border-2 ${error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit')
+              ? 'bg-orange-50/80 dark:bg-orange-900/20 border-orange-200/50 dark:border-orange-800/50 shadow-orange-500/20'
+              : 'bg-white/80 dark:bg-slate-800/80 border-red-100/50 dark:border-red-900/50 shadow-red-500/20'
               }`}>
               <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-1 ${error.includes('Daily Limit Reached') || error.includes('Daily limit')
-                ? 'bg-orange-100'
-                : 'bg-red-50'
+                ? 'bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30'
+                : 'bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30'
                 }`}>
                 {error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit') ? (
-                  <Clock className="w-8 h-8 text-orange-500" />
+                  <Clock className="w-8 h-8 text-orange-500 dark:text-orange-400" />
                 ) : (
-                  <Info className="w-8 h-8 text-red-500" />
+                  <Info className="w-8 h-8 text-red-500 dark:text-red-400" />
                 )}
               </div>
-              <h3 className="font-bold text-xl text-gray-800">
+              <h3 className="font-bold text-xl bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
                 {error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit')
                   ? "Daily Usage Limit Reached"
                   : isOffline ? "Connection Error" : "No Routes Found"}
               </h3>
-              <p className="text-gray-600 max-w-md leading-relaxed whitespace-pre-wrap">{error}</p>
+              <p className="text-gray-600 dark:text-gray-300 max-w-md leading-relaxed whitespace-pre-wrap">{error}</p>
             </div>
           )}
 
@@ -934,7 +950,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-gray-200/50 dark:border-gray-700/50 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] md:hidden">
         <div className="grid grid-cols-4 h-16">
           <a
             href="/"
