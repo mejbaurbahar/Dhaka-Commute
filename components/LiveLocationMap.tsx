@@ -102,8 +102,12 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
                 mapInstanceRef.current.remove();
                 mapInstanceRef.current = null;
             }
+            // Clear marker references
+            userMarkerRef.current = null;
+            accuracyCircleRef.current = null;
         };
     }, [isOpen]);
+
 
     // Update Layers
     useEffect(() => {
@@ -169,6 +173,13 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
 
     const [hasCentered, setHasCentered] = useState(false);
 
+    // Reset hasCentered when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setHasCentered(false);
+        }
+    }, [isOpen]);
+
     // Update User Location
     useEffect(() => {
         if (!mapInstanceRef.current) return;
@@ -219,6 +230,7 @@ const LiveLocationMap: React.FC<LiveLocationMapProps> = ({
 
         }
     }, [userLocation, isOpen, hasCentered]);
+
 
     // Handle Geolocation Watch
     useEffect(() => {
