@@ -384,13 +384,13 @@ const saveGlobalStats = (stats: GlobalStats): void => {
     }
 };
 
-// Increment visit count (Triggers WS connection)
+// Increment visit count (Registers visit with backend + Triggers WS connection)
 export const incrementVisitCount = async (): Promise<void> => {
     const SESSION_KEY = 'dhaka_commute_session_init';
     const hasInitialized = sessionStorage.getItem(SESSION_KEY);
 
     if (!hasInitialized) {
-        console.log('🆕 First visit in this session - clearing stale cache and fetching latest data...');
+        console.log('🆕 First visit in this session - registering with backend...');
 
         // Clear any stale cached data on first page load
         const stored = localStorage.getItem(GLOBAL_STATS_KEY);
@@ -409,7 +409,38 @@ export const incrementVisitCount = async (): Promise<void> => {
 
         sessionStorage.setItem(SESSION_KEY, 'true');
 
-        // Immediately fetch fresh data from backend
+        // Register this visit with the backend
+        try {
+            const visitorId = getVisitorId();
+            const response = await fetch(`${API_BASE_URL}/api/visitor/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    visitorId,
+                    timestamp: Date.now(),
+                    userAgent: navigator.userAgent,
+                    referrer: document.referrer || 'direct',
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ Visit registered with backend');
+
+                // Update local stats with backend response if provided
+                if (data.stats) {
+                    updateGlobalStatsFromApi(data.stats);
+                }
+            } else {
+                console.warn('⚠️ Failed to register visit with backend, status:', response.status);
+            }
+        } catch (e) {
+            console.error('❌ Error registering visit:', e);
+        }
+
+        // Immediately fetch fresh data from backend to ensure sync
         await fetchGlobalStats();
     }
 

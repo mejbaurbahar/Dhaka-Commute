@@ -6,6 +6,19 @@
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
 
+  <!-- Prevent Flash of Light Mode (FOLM) - Apply dark mode before page renders -->
+  <script>
+    // This MUST run before page renders to prevent white flash
+    (function () {
+      const theme = localStorage.getItem('theme');
+      // Default to dark if no preference is stored, or if theme is 'dark'
+      if (!theme || theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+
+
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -235,11 +248,14 @@
     }
   </script>
   <style>
+    /* Default to dark background since dark mode is default */
     body {
-      background-color: #f8fafc;
+      background-color: #0f172a;
+      /* slate-900 for dark mode */
       overscroll-behavior-y: none;
       /* Prevent pull-to-refresh on mobile */
     }
+
 
     /* Hide scrollbar for Chrome, Safari and Opera */
     .no-scrollbar::-webkit-scrollbar {
