@@ -2386,9 +2386,9 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={() => setView(AppView.LIVE_NAV)}
-              className="ml-2 bg-gradient-to-r from-dhaka-green to-[#005c44] text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center gap-2"
+              className="ml-2 bg-gradient-to-r from-dhaka-green to-[#005c44] text-white px-3 py-2 rounded-xl font-bold text-sm shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center gap-1.5 whitespace-nowrap"
             >
-              <Navigation className="w-4 h-4" />
+              <Navigation className="w-4 h-4 flex-shrink-0" />
               Navigate
             </button>
           </div>

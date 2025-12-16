@@ -1,97 +1,166 @@
-# Mobile UI Fixes - Summary
+# Mobile UI Fixes - Button Overflow, Missing Header, Horizontal Scroll
 
-## Date: 2025-12-13
+## Issues Fixed
 
-## Changes Made:
+### 1. Navigate Button Text Overflow ✅
+**Problem**: The "Navigate" button text was getting cut off, showing "Navigat" instead of "Navigate"
 
-### 1. ✅ AI Chat Input Fixed on Mobile
-**File:** `h:\Dhaka-Commute\App.tsx`
-**Issue:** On phone devices, the AI chat input prompt was getting hidden behind the bottom navigation bar.
-**Fix:** 
-- Changed the bottom positioning from `bottom-[calc(4rem+env(safe-area-inset-bottom))]` to `bottom-0`
-- Added `pb-safe-bottom` for proper safe area padding
-- This ensures the input is always visible and accessible on mobile devices
+**Root Cause**: 
+- Button had fixed padding that didn't account for text length
+- No whitespace control, allowing text to wrap
 
-### 2. ✅ Changed "Transfer" to "Transit"
-**File:** `h:\Dhaka-Commute\services\routePlanner.ts`
-**Issue:** Text showed "Transfer at [station]" in route instructions.
-**Fix:** Changed instruction text from `Transfer at ${hub.name}` to `Transit at ${hub.name}` (Line 405)
+**Fix Applied** (`App.tsx` line 2389):
+```tsx
+// BEFORE
+className="... px-4 py-2 ... flex items-center gap-2"
+<Navigation className="w-4 h-4" />
 
-### 3. ✅ Fixed Dropdown Overlap with Background
-**Files:** 
-- `h:\Dhaka-Commute\components\SearchableSelect.tsx`
-- `h:\Dhaka-Commute\App.tsx`
+// AFTER  
+className="... px-3 py-2 ... flex items-center gap-1.5 whitespace-nowrap"
+<Navigation className="w-4 h-4 flex-shrink-0" />
+```
 
-**Issue:** The Route Dropdown (From/To fields) and autocomplete suggestions were getting overlapped by page background elements like the love/heart icon.
-**Fix:** 
-- Increased z-index from `z-[100]` to `z-[200]` for both:
-  - SearchableSelect dropdown
-  - Bus/Place search autocomplete dropdown
-- This ensures dropdowns always appear on top of other UI elements
+**Changes**:
+- Added `whitespace-nowrap` to prevent text wrapping
+- Added `flex-shrink-0` to icon to prevent it from shrinking
+- Reduced padding from `px-4` to `px-3` and gap from `gap-2` to `gap-1.5` for tighter fit
+- Button now displays "Navigate" text fully without breaking
 
-### 4. ✅ Bilingual Display for Bus/Place Names
-**Files:**
-- `h:\Dhaka-Commute\components\SearchableSelect.tsx`
-- `h:\Dhaka-Commute\App.tsx`
+---
 
-**Issue:** Bus and Place search was not showing bilingual names (English + Bengali).
-**Fix:** Updated display format to show:
-- **English name** (larger, bold) - e.g., "Mirpur 10"
-- **Bengali name** (smaller, below) - e.g., "মিরপুর ১০"
+### 2. History Page Missing Header/Back Button ✅
+**Problem**: History & Analytics page was missing the back button on mobile, making it hard to navigate back
 
-**Locations Fixed:**
-1. **Route Finder Dropdowns** (From/To station selection)
-   - Now displays both English and Bengali names
-   - English shown first in semibold
-   - Bengali shown below in smaller text
+**Root Cause**:
+- Header only had the title
+- No back button for mobile navigation
+- Users had to use browser back or bottom navigation
 
-2. **Bus/Place Search Autocomplete**
-   - Shows English name as primary (font-semibold)
-   - Shows Bengali name below (text-xs)
-   - Also shows route/subtitle information when available
+**Fix Applied** (`components/HistoryView.tsx` lines 150-162):
+```tsx
+// ADDED
+<div className="flex items-center gap-3 mb-4">
+    {/* Mobile Back Button */}
+    <button 
+        onClick={onBack}
+        className="md:hidden p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+        aria-label="Go back"
+    >
+        <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+    </button>
+    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+        <Clock className="w-6 h-6 text-dhaka-green" />
+        History & Analytics
+    </h1>
+</div>
+```
 
-## Technical Details:
+**Changes**:
+- Added back button that shows only on mobile (`md:hidden`)
+- Button calls `onBack()` prop to return to previous view
+- Matches the design pattern used in other views (Bus Details, etc.)
+- Improves mobile navigation UX
 
-### SearchableSelect Component Updates:
-- Added `bnName?: string` to Station interface
-- Updated dropdown rendering to display stacked bilingual format
-- Improved visual hierarchy with font sizes and colors
+---
 
-### AI Chat Input Updates:
-- Simplified positioning for better mobile compatibility
-- Removed complex calc() positioning
-- Added safe-area padding for modern mobile devices
+### 3. Intercity Page Horizontal Scroll on Mobile ✅
+**Problem**: Intercity page content could scroll horizontally on mobile devices, showing white space on the right
 
-### Z-Index Hierarchy:
-- Background elements: default
-- Page content: z-10 to z-50
-- Dropdowns and overlays: z-[200]
-- Modals: z-[999+]
+**Root Cause**:
+- No `overflow-x-hidden` on main container
+- Some child elements potentially extending beyond viewport width
+- No max-width constraints
 
-## Testing Recommendations:
+**Fix Applied** (`intercity/App.tsx` lines 724-739):
+```tsx
+// Main container
+<div className="pt-16 md:pt-20 min-h-screen max-w-full overflow-x-hidden">
+  
+  // Sticky header
+  <div className={`... max-w-full ...`}>
+    <div className="max-w-4xl mx-auto relative px-2">
+      
+      // Search card
+      <div className={`... max-w-full ...`}>
+```
 
-1. **Mobile Testing:**
-   - Test AI chat input on various mobile devices
-   - Verify input doesn't get hidden by navigation
-   - Test keyboard appearance behavior
+**Changes**:
+- Added `max-w-full overflow-x-hidden` to main content container
+- Added `max-w-full` to sticky header wrapper
+- Added `px-2` padding to inner container for better mobile spacing
+- Added `max-w-full` to search card container
+- Prevents any child elements from causing horizontal overflow
+- Content now properly constrained to viewport width
 
-2. **Dropdown Testing:**
-   - Test From/To dropdowns for overlap issues
-   - Verify autocomplete appears above all elements
-   - Test on phones with favorites/heart icons visible
+---
 
-3. **Bilingual Display:**
-   - Verify both English and Bengali names appear correctly
-   - Test with stations that have/don't have Bengali names
-   - Confirm text truncation works properly
+## Testing Checklist
 
-4. **Route Instructions:**
-   - Check that "Transit at" appears instead of "Transfer at"
-   - Verify in route planning results
+### Navigate Button
+- [ ] Open bus details page
+- [ ] Check if "Navigate" button shows full text
+- [ ] Text should not wrap or get cut off
+- [ ] Button should be clickable on all screen sizes
 
-## Files Modified:
-1. `h:\Dhaka-Commute\App.tsx`
-2. `h:\Dhaka-Commute\services\routePlanner.ts`
-3. `h:\Dhaka-Commute\components\SearchableSelect.tsx`
+### History Page
+- [ ] Navigate to History & Analytics
+- [ ] On mobile: Back button should appear in top-left
+- [ ] Click back button → Should return to home
+- [ ] On desktop: Back button should be hidden
 
-## Status: ✅ All Issues Resolved
+### Intercity Page  
+- [ ] Open intercity page on mobile
+- [ ] Try swiping left/right
+- [ ] Page should NOT scroll horizontally
+- [ ] All content should fit within screen width
+- [ ] No white space on right side
+
+---
+
+## Files Modified
+
+1. ✅ `App.tsx` (line 2389)
+   - Fixed Navigate button overflow
+
+2. ✅ `components/HistoryView.tsx` (lines 150-162)
+   - Added mobile back button to header
+
+3. ✅ `intercity/App.tsx` (lines 724, 726, 727, 739)
+   - Added overflow/width constraints
+
+---
+
+## Visual Comparison
+
+### Before ❌
+- Navigate button: "Navigat" (cut off)
+- History page: No back button on mobile
+- Intercity: Can scroll horizontally, shows overflow
+
+### After ✅  
+- Navigate button: "Navigate" (full text visible)
+- History page: Back button present on mobile
+- Intercity: Fixed width, no horizontal scroll
+
+---
+
+## Technical Details
+
+### CSS Classes Used
+- `whitespace-nowrap` - Prevents text wrapping
+- `flex-shrink-0` - Prevents flex item from shrinking
+- `md:hidden` - Shows only on mobile (< 768px)
+- `max-w-full` - Limits width to 100% of parent
+- `overflow-x-hidden` - Hides horizontal overflow
+
+### Responsive Breakpoints
+- Mobile: `< 768px` (md breakpoint)
+- Desktop: `≥ 768px`
+
+---
+
+## Date Fixed
+2025-12-16
+
+## Build Status
+✅ Build successful - All changes compile without errors

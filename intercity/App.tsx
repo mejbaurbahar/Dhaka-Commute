@@ -721,10 +721,10 @@ const App: React.FC = () => {
 
       {/* Main Content - Add top padding for fixed header */}
       {/* Main Content - Add top padding for fixed header */}
-      <div className="pt-16 md:pt-20 min-h-screen">
+      <div className="pt-16 md:pt-20 min-h-screen max-w-full overflow-x-hidden">
         {/* Sticky Search Header with Title - Stays visible while scrolling */}
-        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl pb-6 pt-4 border-b border-gray-200/30 dark:border-gray-700/30 shadow-lg shadow-black/5 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
-          <div className="max-w-4xl mx-auto relative">
+        <div className={`sticky top-16 md:top-20 z-[4000] px-2 md:px-0 max-w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl pb-6 pt-4 border-b border-gray-200/30 dark:border-gray-700/30 shadow-lg shadow-black/5 transition-all duration-300 ${isMenuOpen ? 'blur-sm opacity-50 pointer-events-none' : ''}`}>
+          <div className="max-w-4xl mx-auto relative px-2">
             {/* Page Title */}
             <h1 className="hidden md:block text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-center text-gray-800 dark:text-gray-100">
               কোথায় যেতে চান?
@@ -736,7 +736,7 @@ const App: React.FC = () => {
             </div>
 
 
-            <div className={`relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-black/10 dark:shadow-black/30 border border-white/50 dark:border-gray-700/50 p-4 md:p-6 transition-all duration-500 ${!isLanding ? 'scale-95 origin-top' : 'scale-100'} hover:shadow-2xl hover:shadow-emerald-500/20 dark:hover:shadow-emerald-500/10`}>
+            <div className={`relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-black/10 dark:shadow-black/30 border border-white/50 dark:border-gray-700/50 p-4 md:p-6 transition-all duration-500 max-w-full ${!isLanding ? 'scale-95 origin-top' : 'scale-100'} hover:shadow-2xl hover:shadow-emerald-500/20 dark:hover:shadow-emerald-500/10`}>
               {/* Decorative gradient border effect */}
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-purple-500/10 dark:from-emerald-500/5 dark:via-blue-500/5 dark:to-purple-500/5 -z-10 blur-xl"></div>
 
