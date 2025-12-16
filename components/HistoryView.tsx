@@ -54,11 +54,11 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
             refreshHistoryData();
         });
 
-        // Refresh stats every 5 seconds (polling for real-time updates)
+        // Refresh stats every 2 seconds (aggressive polling for real-time sync)
         const interval = setInterval(() => {
-            fetchGlobalStats(); // Poll API
+            fetchGlobalStats(); // Poll API for latest backend data
             refreshHistoryData();
-        }, 5000);
+        }, 2000); // Reduced from 5000ms to 2000ms for better sync
 
         return () => {
             unsubscribe();

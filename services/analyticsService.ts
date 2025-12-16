@@ -288,26 +288,25 @@ const initRealTimeConnection = () => {
 
 const updateGlobalStatsFromApi = (apiStats: any) => {
     try {
-        // Get current API stats - use these values DIRECTLY (no baseline/cumulative logic)
+        // ALWAYS use backend values directly - these are the source of truth
         const apiTotal = apiStats.totalVisitors ?? apiStats.totalVisits ?? 0;
         const apiToday = apiStats.todayVisits ?? apiStats.todayVisitors ?? 0;
         const apiActive = apiStats.activeUsers ?? 1;
         const apiUnique = apiStats.uniqueVisitors ?? apiStats.totalVisitors ?? 0;
 
-        // Use backend stats DIRECTLY - no accumulation, no baseline
-        // This ensures frontend always matches backend exactly
+        // Create new stats object with backend data as the ONLY source of truth
         const newStats: GlobalStats = {
-            totalVisits: apiTotal,           // Direct from backend
-            todayVisits: apiToday,           // Direct from backend
-            activeUsers: apiActive,          // Direct from backend
-            uniqueVisitors: apiUnique,       // Direct from backend
+            totalVisits: apiTotal,           // Always from backend
+            todayVisits: apiToday,           // Always from backend
+            activeUsers: apiActive,          // Always from backend
+            uniqueVisitors: apiUnique,       // Always from backend
             locations: apiStats.locations || {},
             lastUpdated: Date.now()
         };
 
         saveGlobalStats(newStats);
 
-        console.log(`📊 Stats synced with backend - Total: ${newStats.totalVisits}, Today: ${newStats.todayVisits}, Active: ${newStats.activeUsers}`);
+        console.log(`📊 Backend sync - Total: ${newStats.totalVisits}, Today: ${newStats.todayVisits}, Active: ${newStats.activeUsers} [Source: ${apiStats.totalVisitors ? 'totalVisitors' : 'totalVisits'}]`);
     } catch (e) {
         console.error('Error updating stats from API:', e);
     }
@@ -349,6 +348,16 @@ export const getGlobalStats = (): GlobalStats => {
             };
         } else {
             stats = JSON.parse(stored);
+
+            // CRITICAL: Check if data is stale (older than 30 seconds)
+            const dataAge = Date.now() - (stats.lastUpdated || 0);
+            const isStale = dataAge > 30000; // 30 seconds
+
+            if (isStale) {
+                console.log(`⚠️ Cached data is stale (${Math.round(dataAge / 1000)}s old). Triggering fresh fetch...`);
+                // Trigger a fresh fetch but return current data for now
+                fetchGlobalStats();
+            }
         }
 
         return stats;
@@ -377,19 +386,34 @@ const saveGlobalStats = (stats: GlobalStats): void => {
 
 // Increment visit count (Triggers WS connection)
 export const incrementVisitCount = async (): Promise<void> => {
-    // We don't manually increment anymore, we just ensure we are connected/fetched 
-    // The backend handles the actual "counting" based on connections/requests
-
     const SESSION_KEY = 'dhaka_commute_session_init';
     const hasInitialized = sessionStorage.getItem(SESSION_KEY);
 
     if (!hasInitialized) {
+        console.log('🆕 First visit in this session - clearing stale cache and fetching latest data...');
+
+        // Clear any stale cached data on first page load
+        const stored = localStorage.getItem(GLOBAL_STATS_KEY);
+        if (stored) {
+            try {
+                const stats = JSON.parse(stored);
+                const dataAge = Date.now() - (stats.lastUpdated || 0);
+                if (dataAge > 10000) { // If data is older than 10 seconds
+                    console.log(`🗑️ Clearing stale cache (${Math.round(dataAge / 1000)}s old)`);
+                    localStorage.removeItem(GLOBAL_STATS_KEY);
+                }
+            } catch (e) {
+                console.error('Error checking cache age:', e);
+            }
+        }
+
         sessionStorage.setItem(SESSION_KEY, 'true');
-        // Initial fetch
-        fetchGlobalStats();
+
+        // Immediately fetch fresh data from backend
+        await fetchGlobalStats();
     }
 
-    // Ensure WS is running
+    // Ensure WS is running for real-time updates
     initRealTimeConnection();
 };
 
