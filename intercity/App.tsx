@@ -5,7 +5,7 @@ import { RoutingResponse } from './types';
 import { RouteCard } from './components/RouteCard';
 import { RouteDetail } from './components/RouteDetail';
 import { LocationInput, POPULAR_LOCATIONS } from './components/LocationInput';
-import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield, Ship, TramFront, Home } from 'lucide-react';
+import { Search, Loader2, Map as MapIcon, Info, Plane, Bus, Train, User, MapPin, Flag, Compass, ArrowRightLeft, WifiOff, Sparkles, Menu, X, Bot, FileText, Settings, Clock, Download, Shield, Ship, TramFront, Home, ChevronUp, ChevronDown, Camera } from 'lucide-react';
 import { MarkdownRouteDisplay } from './components/MarkdownRouteDisplay';
 
 import { AnimatedLogo } from './components/AnimatedLogo';
@@ -242,6 +242,206 @@ const LoadingAnimation = React.memo(({ isLanding = false }: { isLanding?: boolea
     </div>
   );
 });
+
+
+// --- Discover Panel Component ---
+interface DiscoverPanelProps {
+  destination: string;
+}
+
+// Tourist spots data - basic version
+const DISCOVER_DATA: Record<string, {
+  title: string;
+  description: string;
+  highlights: string[];
+  activities: string[];
+}> = {
+  "Benapole": {
+    title: "Discover Benapole",
+    description: "Benapole is a major land port and border town connecting Bangladesh with India. It's a gateway for trade and travel.",
+    highlights: [
+      "Largest land port in Bangladesh",
+      "Historic border town",
+      "Cross-border trade hub",
+      "Gateway to West Bengal"
+    ],
+    activities: [
+      "Visit the border crossing",
+      "Explore local markets",
+      "Try authentic Bengali cuisine",
+      "Experience cross-cultural atmosphere"
+    ]
+  },
+  "Cox's Bazar": {
+    title: "Discover Cox's Bazar",
+    description: "Home to the world's longest natural sea beach stretching 120km along the Bay of Bengal.",
+    highlights: [
+      "World's longest sea beach (120km)",
+      "Stunning sunset views",
+      "Marine Drive scenic road",
+      "Himchari National Park"
+    ],
+    activities: [
+      "Beach activities & surfing",
+      "Visit Inani Beach",
+      "Explore Himchari waterfalls",
+      "Sunset watching"
+    ]
+  },
+  "Sylhet": {
+    title: "Discover Sylhet",
+    description: "Known for tea gardens, natural beauty, and spiritual sites. The land of two leaves and a bud.",
+    highlights: [
+      "Spectacular tea gardens",
+      "Ratargul Swamp Forest",
+      "Jaflong stone collection",
+      "Bholaganj sadapathar"
+    ],
+    activities: [
+      "Tea garden tours",
+      "Boat rides in Ratargul",
+      "Visit Shrine of Hazrat Shah Jalal",
+      "Explore Jaflong border area"
+    ]
+  },
+  "Chattogram": {
+    title: "Discover Chattogram",
+    description: "Bangladesh's port city and commercial capital with beaches, hills, and rich cultural heritage.",
+    highlights: [
+      "Patenga Beach",
+      "Foy's Lake",
+      "Chittagong Hill Tracts",
+      "Ethnological Museum"
+    ],
+    activities: [
+      "Beach visits",
+      "Explore Chandranath Temple",
+      "Visit War Cemetery",
+      "Shopping at New Market"
+    ]
+  },
+  "Bandarban": {
+    title: "Discover Bandarban",
+    description: "The most scenic hill district with mountains, waterfalls, and indigenous culture.",
+    highlights: [
+      "Nilgiri Hills",
+      "Nafakhum Waterfall",
+      "Golden Temple (Buddha Dhatu Jadi)",
+      "Boga Lake"
+    ],
+    activities: [
+      "Mountain hiking",
+      "Visit tribal villages",
+      "Waterfall exploration",
+      "Enjoy panoramic views"
+    ]
+  },
+  "Rangamati": {
+    title: "Discover Rangamati",
+    description: "The lake city with stunning Kaptai Lake and rich indigenous culture.",
+    highlights: [
+      "Kaptai Lake",
+      "Hanging Bridge",
+      "Tribal Cultural Institute",
+      "Shuvolong Waterfall"
+    ],
+    activities: [
+      "Boat rides on Kaptai Lake",
+      "Visit Chakma villages",
+      "Explore Rajban Vihara",
+      "Try traditional tribal cuisine"
+    ]
+  }
+};
+
+const DiscoverPanel: React.FC<DiscoverPanelProps> = ({ destination }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  // Get discover data for destination
+  const discoverInfo = DISCOVER_DATA[destination];
+
+  // If no specific data for this destination, don't show the panel
+  if (!discoverInfo) {
+    return null;
+  }
+
+  return (
+    <div className="lg:fixed lg:w-[290px] lg:right-4 lg:top-36 max-h-[calc(100vh-10rem)] bg-gradient-to-br from-indigo-500/90 via-purple-500/90 to-pink-500/90 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl overflow-hidden">
+      {/* Header - Always visible */}
+      <div
+        className="p-4 cursor-pointer hover:bg-white/10 transition-colors flex items-center justify-between border-b border-white/20"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-2">
+          <Compass className="w-5 h-5 text-white" />
+          <h2 className="text-base font-bold text-white">{discoverInfo.title}</h2>
+        </div>
+        {isExpanded ? (
+          <ChevronUp className="w-5 h-5 text-white" />
+        ) : (
+          <ChevronDown className="w-5 h-5 text-white" />
+        )}
+      </div>
+
+      {/* Expandable Content */}
+      {isExpanded && (
+        <div className="overflow-y-auto max-h-[calc(100vh-16rem)] custom-scrollbar">
+          <div className="p-4 space-y-4">
+            {/* Description */}
+            <p className="text-sm text-white/90 leading-relaxed">
+              {discoverInfo.description}
+            </p>
+
+            {/* Highlights */}
+            <div>
+              <h3 className="text-sm font-bold text-white mb-2 flex items-center gap-1">
+                <Sparkles className="w-4 h-4" />
+                Highlights
+              </h3>
+              <ul className="space-y-1.5">
+                {discoverInfo.highlights.map((highlight, idx) => (
+                  <li key={idx} className="text-xs text-white/80 flex items-start gap-2">
+                    <span className="text-yellow-300 mt-0.5">★</span>
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Activities */}
+            <div>
+              <h3 className="text-sm font-bold text-white mb-2 flex items-center gap-1">
+                <Camera className="w-4 h-4" />
+                Things to Do
+              </h3>
+              <ul className="space-y-1.5">
+                {discoverInfo.activities.map((activity, idx) => (
+                  <li key={idx} className="text-xs text-white/80 flex items-start gap-2">
+                    <span className="text-emerald-300 mt-0.5">•</span>
+                    <span>{activity}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Fun Fact or Tip */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+              <div className="flex items-start gap-2">
+                <Info className="w-4 h-4 text-yellow-300 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-xs font-bold text-white mb-1">Travel Tip</h4>
+                  <p className="text-xs text-white/80">
+                    Plan your visit during the dry season (November-March) for the best experience.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 
 const App: React.FC = () => {
@@ -811,215 +1011,257 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-3 mt-4">
-
-          {/* 1. Landing State */}
-          {/* 1. Offline State (No Data) */}
-          {isOffline && !data && !loading && (
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in mt-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl border-2 border-red-100/50 dark:border-red-900/50 shadow-2xl shadow-red-500/20 dark:shadow-red-500/10">
-              <div className="w-24 h-24 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white dark:border-gray-700 animate-pulse">
-                <WifiOff className="w-12 h-12 text-red-600 dark:text-red-400" />
-              </div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent mb-4">You Are Offline</h2>
-              <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto leading-relaxed mb-6 text-base">
-                Intercity bus search requires an internet connection to find the best routes.
-              </p>
-              <p className="text-gray-500 dark:text-gray-400 text-sm max-w-sm mx-auto">
-                Please check your connection and try again, or view your previously saved routes.
-              </p>
+        <div className="relative min-h-[calc(100vh-10rem)]">
+          {/* Loading Overlay - Prevents white screen flash */}
+          {loading && (
+            <div className="fixed inset-0 bg-gradient-to-br from-emerald-50/95 via-blue-50/95 to-purple-50/95 dark:from-slate-900/95 dark:via-slate-800/95 dark:to-indigo-950/95 z-[4500] flex items-center justify-center backdrop-blur-sm">
+              <LoadingAnimation />
             </div>
           )}
 
-          {/* 2. Landing State (Online Only) */}
-          {!isOffline && !loading && !data && !error && (
-            <div className="mt-8">
-              <LoadingAnimation isLanding={true} />
-            </div>
-          )}
+          <div className="max-w-4xl mx-auto px-3 mt-4">
 
-          {/* 2. Loading State */}
-          {loading && <div className="mt-8"><LoadingAnimation /></div>}
-
-          {/* 3. Error State */}
-          {!loading && error && (
-            <div className={`backdrop-blur-xl rounded-3xl p-8 flex flex-col items-center justify-center text-center shadow-2xl mt-8 gap-3 animate-fade-in border-2 ${error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit')
-              ? 'bg-orange-50/80 dark:bg-orange-900/20 border-orange-200/50 dark:border-orange-800/50 shadow-orange-500/20'
-              : 'bg-white/80 dark:bg-slate-800/80 border-red-100/50 dark:border-red-900/50 shadow-red-500/20'
-              }`}>
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-1 ${error.includes('Daily Limit Reached') || error.includes('Daily limit')
-                ? 'bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30'
-                : 'bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30'
-                }`}>
-                {error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit') ? (
-                  <Clock className="w-8 h-8 text-orange-500 dark:text-orange-400" />
-                ) : (
-                  <Info className="w-8 h-8 text-red-500 dark:text-red-400" />
-                )}
-              </div>
-              <h3 className="font-bold text-xl bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
-                {error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit')
-                  ? "Daily Usage Limit Reached"
-                  : isOffline ? "Connection Error" : "No Routes Found"}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 max-w-md leading-relaxed whitespace-pre-wrap">{error}</p>
-            </div>
-          )}
-
-          {/* 4. Results State */}
-          {data && !loading && (
-            <>
-              {/* Check if this is a Markdown response */}
-              {(data as any).isMarkdown && (data as any).content ? (
-                // Markdown Display
-                <div className="mt-4 animate-fade-in-up">
-                  <MarkdownRouteDisplay
-                    content={(data as any).content}
-                    from={(data as any).from || origin}
-                    to={(data as any).to || destination}
-                    date={(data as any).date}
-                    source={(data as any).source}
-                  />
+            {/* 1. Landing State */}
+            {/* 1. Offline State (No Data) */}
+            {isOffline && !data && !loading && (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in mt-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl border-2 border-red-100/50 dark:border-red-900/50 shadow-2xl shadow-red-500/20 dark:shadow-red-500/10">
+                <div className="w-24 h-24 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white dark:border-gray-700 animate-pulse">
+                  <WifiOff className="w-12 h-12 text-red-600 dark:text-red-400" />
                 </div>
-              ) : (
-                // Traditional Options Display
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 relative mt-4">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent mb-4">You Are Offline</h2>
+                <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto leading-relaxed mb-6 text-base">
+                  Intercity bus search requires an internet connection to find the best routes.
+                </p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm max-w-sm mx-auto">
+                  Please check your connection and try again, or view your previously saved routes.
+                </p>
+              </div>
+            )}
 
-                  {/* Left Column: Options List */}
-                  <div className="lg:col-span-1 animate-fade-in-up">
-                    <div className="lg:sticky lg:top-36 space-y-3 lg:space-y-4 max-h-[calc(100vh-8rem)] lg:overflow-y-auto custom-scrollbar p-1">
-                      <div className="flex items-center justify-between px-2">
-                        <h2 className="text-base font-bold text-gray-800 dark:text-gray-100">Available Routes</h2>
-                        <span className="text-[10px] font-bold bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-800 shadow-sm">{data.options.length} found</span>
+            {/* 2. Landing State (Online Only) */}
+            {!isOffline && !loading && !data && !error && (
+              <div className="mt-8">
+                <LoadingAnimation isLanding={true} />
+              </div>
+            )}
+
+            {/* 3. Error State */}
+            {!loading && error && (
+              <div className={`backdrop-blur-xl rounded-3xl p-8 flex flex-col items-center justify-center text-center shadow-2xl mt-8 gap-3 animate-fade-in border-2 ${error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit')
+                ? 'bg-orange-50/80 dark:bg-orange-900/20 border-orange-200/50 dark:border-orange-800/50 shadow-orange-500/20'
+                : 'bg-white/80 dark:bg-slate-800/80 border-red-100/50 dark:border-red-900/50 shadow-red-500/20'
+                }`}>
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-1 ${error.includes('Daily Limit Reached') || error.includes('Daily limit')
+                  ? 'bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30'
+                  : 'bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30'
+                  }`}>
+                  {error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit') ? (
+                    <Clock className="w-8 h-8 text-orange-500 dark:text-orange-400" />
+                  ) : (
+                    <Info className="w-8 h-8 text-red-500 dark:text-red-400" />
+                  )}
+                </div>
+                <h3 className="font-bold text-xl bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
+                  {error.includes('Daily Limit Reached') || error.includes('Daily limit') || error.includes('usage limit')
+                    ? "Daily Usage Limit Reached"
+                    : isOffline ? "Connection Error" : "No Routes Found"}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 max-w-md leading-relaxed whitespace-pre-wrap">{error}</p>
+              </div>
+            )}
+
+            {/* 4. Results State */}
+            {data && !loading && (
+              <>
+                {/* Check if this is a Markdown response */}
+                {(data as any).isMarkdown && (data as any).content ? (
+                  // Markdown Display
+                  <div className="mt-4 animate-fade-in-up">
+                    <MarkdownRouteDisplay
+                      content={(data as any).content}
+                      from={(data as any).from || origin}
+                      to={(data as any).to || destination}
+                      date={(data as any).date}
+                      source={(data as any).source}
+                    />
+                  </div>
+                ) : (
+                  // Traditional Options Display - Fixed Layout
+                  <div className="w-full relative mt-6">
+                    <div className="max-w-[1800px] mx-auto px-4">
+                      <div className="flex gap-4 lg:gap-6">
+
+                        {/* Left Sidebar: Fixed Available Routes */}
+                        <aside className="hidden lg:block lg:w-[280px] flex-shrink-0">
+                          <div className="sticky top-36">
+                            <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-xl p-4 max-h-[calc(100vh-10rem)] overflow-y-auto custom-scrollbar">
+                              <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-sm font-bold text-gray-800 dark:text-gray-100">Available Routes</h2>
+                                <span className="text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800 shadow-sm">
+                                  {data.options.length} found
+                                </span>
+                              </div>
+                              <div className="space-y-2.5">
+                                {data.options.map((option) => (
+                                  <RouteCard
+                                    key={option.id}
+                                    option={option}
+                                    isSelected={selectedOptionId === option.id}
+                                    onClick={() => handleOptionClick(option.id)}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </aside>
+
+                        {/* Center: Route Details */}
+                        <main className="flex-1 min-w-0" ref={detailsRef}>
+                          {selectedOption ? (
+                            <div className="animate-slide-in">
+                              <RouteDetail option={selectedOption} />
+
+                              {/* Global Tips Section */}
+                              {(data as any).enhancedData?.tips && !(selectedOption as any).enhancedData?.tips && (
+                                <div className="mt-6 p-5 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <Sparkles className="w-5 h-5 text-purple-200" />
+                                    <h3 className="text-lg font-bold text-white">💡 Travel Tips</h3>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                                    {(data as any).enhancedData.tips.best_option && (
+                                      <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                        <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Best Option</label>
+                                        <span className="text-white font-semibold">{(data as any).enhancedData.tips.best_option}</span>
+                                      </div>
+                                    )}
+                                    {(data as any).enhancedData.tips.cheapest && (
+                                      <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                        <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Cheapest</label>
+                                        <span className="text-white font-semibold">{(data as any).enhancedData.tips.cheapest}</span>
+                                      </div>
+                                    )}
+                                    {(data as any).enhancedData.tips.peak_times && (
+                                      <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 md:col-span-2">
+                                        <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Peak Times</label>
+                                        <span className="text-white font-semibold">{(data as any).enhancedData.tips.peak_times}</span>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {(data as any).enhancedData.tips.booking_sites && (data as any).enhancedData.tips.booking_sites.length > 0 && (
+                                    <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                      <label className="block text-xs text-purple-200 mb-2 uppercase tracking-wide">Book Online</label>
+                                      <div className="flex flex-wrap gap-2">
+                                        {(data as any).enhancedData.tips.booking_sites.map((site: string, index: number) => (
+                                          <a
+                                            key={index}
+                                            href={`https://${site}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-medium rounded-lg transition-colors border border-white/30"
+                                          >
+                                            {site}
+                                          </a>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-200/50 dark:border-gray-700/50 rounded-[2rem] text-gray-400 dark:text-gray-500 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm gap-3">
+                              <div className="w-16 h-16 bg-gray-50 dark:bg-slate-700/50 rounded-full flex items-center justify-center">
+                                <MapIcon className="w-8 h-8 opacity-40" />
+                              </div>
+                              <span className="font-medium">Select a route to view details</span>
+                            </div>
+                          )}
+                        </main>
+
+                        {/* Right Sidebar: Fixed Discover Panel */}
+                        <aside className="hidden lg:block lg:w-[300px] flex-shrink-0">
+                          <div className="sticky top-36">
+                            <DiscoverPanel destination={destination} />
+                          </div>
+                        </aside>
+
                       </div>
 
-                      <div className="space-y-3">
-                        {data.options.map((option) => (
-                          <RouteCard
-                            key={option.id}
-                            option={option}
-                            isSelected={selectedOptionId === option.id}
-                            onClick={() => handleOptionClick(option.id)}
-                          />
-                        ))}
+                      {/* Mobile: Available Routes (shown below on mobile) */}
+                      <div className="lg:hidden mt-6">
+                        <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-xl p-4">
+                          <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-base font-bold text-gray-800 dark:text-gray-100">Available Routes</h2>
+                            <span className="text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800 shadow-sm">
+                              {data.options.length} found
+                            </span>
+                          </div>
+                          <div className="space-y-3">
+                            {data.options.map((option) => (
+                              <RouteCard
+                                key={option.id}
+                                option={option}
+                                isSelected={selectedOptionId === option.id}
+                                onClick={() => handleOptionClick(option.id)}
+                              />
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* Right Column: Detailed View */}
-                  {/* Added scroll-mt-32 to ensure the floating header doesn't cover the details when scrolled to */}
-                  <div className="lg:col-span-2 scroll-mt-32 md:scroll-mt-40" ref={detailsRef}>
-                    {selectedOption ? (
-                      <div className="animate-slide-in">
-                        <RouteDetail option={selectedOption} />
-
-                        {/* Global Tips Section - Show if we have response-level tips and no option-level tips */}
-                        {(data as any).enhancedData?.tips && !(selectedOption as any).enhancedData?.tips && (
-                          <div className="mt-6 p-5 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
-                            <div className="flex items-center gap-2 mb-4">
-                              <Sparkles className="w-5 h-5 text-purple-200" />
-                              <h3 className="text-lg font-bold text-white">💡 Travel Tips</h3>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                              {(data as any).enhancedData.tips.best_option && (
-                                <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                                  <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Best Option</label>
-                                  <span className="text-white font-semibold">{(data as any).enhancedData.tips.best_option}</span>
-                                </div>
-                              )}
-                              {(data as any).enhancedData.tips.cheapest && (
-                                <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                                  <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Cheapest</label>
-                                  <span className="text-white font-semibold">{(data as any).enhancedData.tips.cheapest}</span>
-                                </div>
-                              )}
-                              {(data as any).enhancedData.tips.peak_times && (
-                                <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 md:col-span-2">
-                                  <label className="block text-xs text-purple-200 mb-1 uppercase tracking-wide">Peak Times</label>
-                                  <span className="text-white font-semibold">{(data as any).enhancedData.tips.peak_times}</span>
-                                </div>
-                              )}
-                            </div>
-
-                            {(data as any).enhancedData.tips.booking_sites && (data as any).enhancedData.tips.booking_sites.length > 0 && (
-                              <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                                <label className="block text-xs text-purple-200 mb-2 uppercase tracking-wide">Book Online</label>
-                                <div className="flex flex-wrap gap-2">
-                                  {(data as any).enhancedData.tips.booking_sites.map((site: string, index: number) => (
-                                    <a
-                                      key={index}
-                                      href={`https://${site}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-medium rounded-lg transition-colors border border-white/30"
-                                    >
-                                      {site}
-                                    </a>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-[2rem] text-gray-400 bg-white/50 backdrop-blur-sm gap-3">
-                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
-                          <MapIcon className="w-8 h-8 opacity-40" />
-                        </div>
-                        <span className="font-medium">Select a route to view details</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-gray-200/50 dark:border-gray-700/50 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] md:hidden">
-        <div className="grid grid-cols-4 h-16">
-          <a
-            href="/"
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.href = '/';
-            }}
-            className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
-          >
-            <MapIcon className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
-          </a>
-          <a
-            href="/#ai-assistant"
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.href = '/#ai-assistant';
-            }}
-            className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
-          >
-            <Sparkles className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">AI Help</span>
-          </a>
-          <div className="flex flex-col items-center justify-center gap-1 border-t-2 border-dhaka-green text-dhaka-green bg-green-50/50 transition-all">
-            <Train className="w-6 h-6 fill-current" />
-            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
+                )}
+              </>
+            )}
           </div>
-          <a
-            href="/#about"
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.href = '/#about';
-            }}
-            className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
-          >
-            <Info className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">About</span>
-          </a>
         </div>
-      </nav>
+
+        {/* Mobile Bottom Navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-gray-200/50 dark:border-gray-700/50 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] md:hidden">
+          <div className="grid grid-cols-4 h-16">
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = '/';
+              }}
+              className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
+            >
+              <MapIcon className="w-6 h-6" />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Routes</span>
+            </a>
+            <a
+              href="/#ai-assistant"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = '/#ai-assistant';
+              }}
+              className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
+            >
+              <Sparkles className="w-6 h-6" />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">AI Help</span>
+            </a>
+            <div className="flex flex-col items-center justify-center gap-1 border-t-2 border-dhaka-green text-dhaka-green bg-green-50/50 transition-all">
+              <Train className="w-6 h-6 fill-current" />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">Intercity</span>
+            </div>
+            <a
+              href="/#about"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = '/#about';
+              }}
+              className="flex flex-col items-center justify-center gap-1 border-t-2 border-transparent text-gray-400 hover:text-gray-600 transition-all"
+            >
+              <Info className="w-6 h-6" />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-700">About</span>
+            </a>
+          </div>
+        </nav>
+      </div>
     </div>
   );
 };
