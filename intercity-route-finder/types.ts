@@ -160,3 +160,17 @@ export interface EnhancedIntercityResponse {
   distance_km?: number;
   results: EnhancedSearchResults;
 }
+
+// Demo/Cache Response Type
+export interface RouteResponse {
+  from: string;
+  to: string;
+  date: string;
+  source: string;
+  result: string;
+}
+
+// Location District Map Type
+export type DistrictMap = {
+  [category: string]: string[];
+};
