@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map } from 'lucide-react';
+import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map, X, Bot, FileText, Settings, Shield } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
 import NotificationBell from '../components/NotificationBell';
 import { NotificationProvider } from '../contexts/NotificationContext';
@@ -18,7 +18,11 @@ function App() {
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<RouteResponse | null>(null);
+
   const [error, setError] = useState<string | null>(null);
+
+  // Menu State
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // New States for Offline and Usage
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -261,7 +265,9 @@ function App() {
               <span>Live Map</span>
             </button>
             <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
-            <button className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300">
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300">
               <Menu size={24} />
             </button>
           </div>
@@ -287,7 +293,9 @@ function App() {
               className="p-2 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse flex items-center justify-center" aria-label="Live Location">
               <Navigation className="w-4 h-4" />
             </button>
-            <button className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors flex items-center justify-center" aria-label="Open menu">
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full text-gray-600 dark:text-gray-300 transition-colors flex items-center justify-center" aria-label="Open menu">
               <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </button>
           </div>
@@ -502,6 +510,72 @@ function App() {
             </div>
           </main>
         </div>
+        {/* Menu Overlay */}
+        {isMenuOpen && (
+          <div className="fixed inset-0 z-[200]">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
+            <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Menu</h2>
+                <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full" aria-label="Close menu">
+                  <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
+                </button>
+              </div>
+
+              <div className="space-y-2 flex-1 overflow-y-auto hidden-scrollbar">
+                <button
+                  onClick={() => window.location.href = '/'}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+                >
+                  <Home className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Home
+                </button>
+                <button
+                  onClick={() => window.location.href = '/#ai-assistant'}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+                >
+                  <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" /> AI Assistant
+                </button>
+                <button
+                  onClick={() => window.location.href = '/#about'}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+                >
+                  <Info className="w-5 h-5 text-blue-500" /> About
+                </button>
+                <button
+                  onClick={() => window.location.href = '/#history'}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+                >
+                  <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> History
+                </button>
+                <button
+                  onClick={() => window.location.href = '/#settings'}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+                >
+                  <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" /> Settings
+                </button>
+                <button
+                  onClick={() => window.location.href = '/#privacy'}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+                >
+                  <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Privacy Policy
+                </button>
+                <button
+                  onClick={() => window.location.href = '/#terms'}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+                >
+                  <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" /> Terms of Service
+                </button>
+              </div>
+
+              <div className="pt-6 border-t border-gray-100 dark:border-gray-800">
+                <p className="text-xs text-center text-gray-400">
+                  কই যাবো v1.0.0
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Mobile Bottom Navigation */}
         <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
           <div className="grid grid-cols-4 h-16">
