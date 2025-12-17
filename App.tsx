@@ -3384,7 +3384,7 @@ const App: React.FC = () => {
     <NotificationProvider>
       <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-900 font-sans text-gray-800 dark:text-gray-100 overflow-hidden">
         {/* Mobile Header */}
-        <header className={`fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-5 py-3 shadow-sm z-50 pt-safe-top md:hidden transition-transform duration-300 ${(view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) ? '-translate-y-full' : 'translate-y-0'} `}>
+        <header className={`fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-5 py-3 shadow-sm z-[100] pt-safe-top md:hidden transition-transform duration-300 ${(view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) ? '-translate-y-full' : 'translate-y-0'} `}>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 outline-none cursor-pointer" onClick={() => setView(AppView.HOME)}>
               <AnimatedLogo size="small" />
