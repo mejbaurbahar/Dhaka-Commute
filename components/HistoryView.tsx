@@ -117,7 +117,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
         <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-y-auto w-full relative pt-16 md:pt-0">
             {/* Confirmation Modal */}
             {showClearConfirm && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 animate-in fade-in duration-200">
                     <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
                         <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
@@ -143,6 +143,9 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                     </div>
                 </div>
             )}
+
+            {/* Header Background Mask (prevents content showing behind global header) */}
+            <div className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 z-[40] md:hidden"></div>
 
             {/* Header - Fixed on mobile with proper padding */}
             <div className="sticky top-16 md:top-20 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-50 shadow-lg">
