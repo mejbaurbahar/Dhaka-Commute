@@ -1,7 +1,7 @@
 import { DistrictMap, RouteResponse } from './types';
 
-// Update this to your actual backend URL. 
-export const API_ENDPOINT = '/api/routes/intercity';
+// Backend API endpoint for intercity routes
+export const API_ENDPOINT = 'https://koyjabo-backend.onrender.com/api/routes/intercity';
 
 // [Latitude, Longitude] - Covering all 64 Districts + Major Spots
 export const DISTRICT_COORDINATES: { [key: string]: [number, number] } = {
