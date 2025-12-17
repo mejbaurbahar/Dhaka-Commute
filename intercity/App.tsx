@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation } from 'lucide-react';
+import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
 import ThemeToggle from '../components/ThemeToggle';
 import DistrictSelect from './components/DistrictSelect';
@@ -250,8 +250,12 @@ function App() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="relative p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300" title="Live Location">
-            <Navigation size={20} className="fill-blue-500 dark:fill-blue-400" />
+          <button
+            onClick={() => window.alert('Live Map feature coming soon!')}
+            className="flex items-center gap-2 px-4 py-2 bg-red-100/50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-full font-bold text-sm transition-all animate-pulse"
+          >
+            <Map size={16} />
+            <span>Live Map</span>
           </button>
           <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
           <button className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300">
