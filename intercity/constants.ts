@@ -165,145 +165,136 @@ export const DISTRICT_COORDINATES: { [key: string]: [number, number] } = {
 
 export const LOCATIONS_DATA: DistrictMap = {
   "Popular Tourist Spots": [
-    "Cox's Bazar", "Saint Martin's Island", "Sajek Valley", "Kuakata",
-    "Sreemangal", "Sundarbans", "Tanguar Haor", "Jaflong", "Nijhum Dwip",
-    "Inani Beach", "Himchari", "Maheshkhali", "Bichnakandi", "Bandarban",
-    "Rangamati", "Khagrachari", "Ruma", "Thanchi"
+    "Bandarban", "Bichnakandi", "Cox's Bazar", "Himchari", "Inani Beach",
+    "Jaflong", "Khagrachari", "Kuakata", "Maheshkhali", "Nijhum Dwip",
+    "Rangamati", "Ruma", "Saint Martin's Island", "Sajek Valley",
+    "Sreemangal", "Sundarbans", "Tanguar Haor", "Thanchi"
   ],
   "Dhaka Division": [
-    "Dhaka", "Savar", "Tongi", "Gazipur", "Narayanganj", "Narsingdi",
-    "Manikganj", "Munshiganj", "Faridpur", "Rajbari", "Gopalganj",
-    "Madaripur", "Shariatpur", "Kishoreganj", "Tangail",
-    "Sonargaon", "Dhamrai", "Keraniganj", "Dohar", "Nawabganj",
-    "Kapasia", "Mirzapur", "Basail", "Kalihati", "Gopalpur",
-    "Lohajang", "Sirajdikhan", "Sreenagar", "Bhairab", "Hatirjheel",
-    "Mawa", "Paturia", "Aricha", "Daulatdia", "Ashuganj"
+    "Aricha", "Ashuganj", "Basail", "Bhairab", "Dhaka", "Dhamrai",
+    "Dohar", "Faridpur", "Gazipur", "Gopalganj", "Gopalpur", "Hatirjheel",
+    "Kalihati", "Kapasia", "Keraniganj", "Kishoreganj", "Lohajang",
+    "Madaripur", "Manikganj", "Mawa", "Mirzapur", "Munshiganj",
+    "Narayanganj", "Narsingdi", "Nawabganj", "Paturia", "Rajbari",
+    "Savar", "Shariatpur", "Sirajdikhan", "Sonargaon", "Sreenagar",
+    "Tangail", "Tongi"
   ],
   "Chattogram Division": [
-    "Chattogram", "Cox's Bazar", "Comilla", "Feni", "Brahmanbaria",
-    "Chandpur", "Lakshmipur", "Noakhali", "Bandarban", "Rangamati",
-    "Khagrachari", "Mirsarai", "Sitakunda", "Hathazari", "Raozan",
-    "Anowara", "Boalkhali", "Patiya", "Lohagara", "Teknaf",
-    "Ramu", "Ukhia", "Chakaria", "Pekua", "Kutubdia",
-    "Laksam", "Burichang", "Debidwar", "Homna", "Muradnagar",
-    "Feni Town", "Daganbhuiyan", "Sonagazi", "Hajiganj", "Matlab",
-    "Kachua", "Shahrasti", "Kasba", "Nabinagar", "Sarail",
-    "Ruma", "Thanchi", "Rowangchhari", "Lama", "Alikadam",
-    "Kaptai", "Langadu", "Baghaichhari", "Belaichhari", "Juraichhari",
-    "Mainamati", "Ramgarh", "Dighinala", "Manikchhari", "Panchari"
+    "Alikadam", "Anowara", "Baghaichhari", "Bandarban", "Belaichhari",
+    "Boalkhali", "Brahmanbaria", "Burichang", "Chakaria", "Chandpur",
+    "Chattogram", "Comilla", "Cox's Bazar", "Daganbhuiyan", "Debidwar",
+    "Dighinala", "Feni", "Feni Town", "Hajiganj", "Hathazari",
+    "Homna", "Juraichhari", "Kachua", "Kaptai", "Kasba", "Khagrachari",
+    "Kutubdia", "Laksam", "Lakshmipur", "Lama", "Langadu", "Lohagara",
+    "Mainamati", "Manikchhari", "Matlab", "Mirsarai", "Muradnagar",
+    "Nabinagar", "Noakhali", "Panchari", "Patiya", "Pekua", "Ramgarh",
+    "Ramu", "Rangamati", "Raozan", "Rowangchhari", "Ruma", "Sarail",
+    "Shahrasti", "Sitakunda", "Sonagazi", "Teknaf", "Thanchi", "Ukhia"
   ],
   "Rajshahi Division": [
-    "Rajshahi", "Bogura", "Pabna", "Sirajganj", "Natore", "Naogaon",
-    "Chapainawabganj", "Joypurhat", "Mahasthangarh", "Paharpur",
-    "Godagari", "Bagmara", "Charghat", "Durgapur", "Mohanpur",
-    "Puthia", "Tanore", "Bagha", "Paba", "Shibganj",
-    "Sherpur", "Adamdighi", "Sonatola", "Dhunat", "Gabtali",
-    "Sariakandi", "Shajahanpur", "Kahaloo", "Nandigram", "Shahjahanpur",
-    "Ishwardi", "Bera", "Atgharia", "Chatmohar", "Faridpur",
-    "Belkuchi", "Kamarkhand", "Kazipur", "Raiganj", "Shahjadpur",
-    "Ullahpara", "Singra", "Gurudaspur", "Naldanga", "Lalpur",
-    "Badalgachhi", "Porsha", "Sapahar", "Patnitala", "Dhamoirhat",
-    "Gomastapur", "Nachole", "Bholahat", "Shibganj"
+    "Adamdighi", "Atgharia", "Badalgachhi", "Bagha", "Bagmara", "Bera",
+    "Bholahat", "Bogura", "Chapainawabganj", "Charghat", "Chatmohar",
+    "Dhamoirhat", "Dhunat", "Durgapur", "Faridpur", "Gabtali", "Godagari",
+    "Gomastapur", "Gurudaspur", "Ishwardi", "Joypurhat", "Kahaloo",
+    "Kamarkhand", "Kazipur", "Lalpur", "Mahasthangarh", "Mohanpur",
+    "Nachole", "Naldanga", "Nandigram", "Naogaon", "Natore", "Paba",
+    "Pabna", "Paharpur", "Patnitala", "Porsha", "Puthia", "Raiganj",
+    "Rajshahi", "Sapahar", "Sariakandi", "Shahjadpur", "Shahjahanpur",
+    "Shajahanpur", "Sherpur", "Shibganj", "Singra", "Sirajganj",
+    "Sonatola", "Tanore", "Ullahpara"
   ],
   "Khulna Division": [
-    "Khulna", "Jashore", "Satkhira", "Kushtia", "Bagerhat", "Jhenaidah",
-    "Narail", "Magura", "Chuadanga", "Meherpur", "Benapole",
-    "Mongla", "Bhomra", "Bagerhat Historic Mosque City", "Sundarbans",
-    "Dumuria", "Batiaghata", "Dacope", "Koyra", "Paikgachha",
-    "Phultala", "Dighalia", "Terokhada", "Rupsa", "Abhaynagar",
-    "Bagherpara", "Chaugachha", "Jhikargachha", "Keshabpur", "Manirampur",
-    "Sharsha", "Kaliganj", "Shyamnagar", "Tala", "Kalaroa",
-    "Assasuni", "Debhata", "Patkelghata", "Kumarkhali", "Khoksa",
-    "Mirpur", "Daulatpur", "Bheramara", "Shailkupa", "Alamdanga",
-    "Damurhuda", "Jibannagar", "Harinakunda", "Kotchandpur", "Shailkupa",
-    "Shalikha", "Sreepur", "Mohammadpur", "Lohagara", "Kalia"
+    "Abhaynagar", "Alamdanga", "Assasuni", "Bagerhat",
+    "Bagerhat Historic Mosque City", "Bagherpara", "Batiaghata", "Benapole",
+    "Bheramara", "Bhomra", "Chaugachha", "Chuadanga", "Dacope", "Damurhuda",
+    "Daulatpur", "Debhata", "Dighalia", "Dumuria", "Harinakunda", "Jashore",
+    "Jhenaidah", "Jhikargachha", "Jibannagar", "Kalaroa", "Kalia",
+    "Kaliganj", "Keshabpur", "Khoksa", "Khulna", "Kotchandpur", "Koyra",
+    "Kumarkhali", "Kushtia", "Lohagara", "Magura", "Manirampur", "Meherpur",
+    "Mirpur", "Mohammadpur", "Mongla", "Narail", "Paikgachha", "Patkelghata",
+    "Phultala", "Rupsa", "Satkhira", "Shailkupa", "Shalikha", "Sharsha",
+    "Shyamnagar", "Sreepur", "Sundarbans", "Tala", "Terokhada"
   ],
   "Barishal Division": [
-    "Barishal", "Patuakhali", "Bhola", "Barguna", "Pirojpur", "Jhalokati",
-    "Kuakata", "Nijhum Dwip", "Payra Port",
-    "Babuganj", "Bakerganj", "Banaripara", "Gaurnadi", "Hizla",
-    "Mehendiganj", "Muladi", "Wazirpur", "Agailjhara", "Bauphal",
-    "Dashmina", "Galachipa", "Kalapara", "Mirzaganj", "Dumki",
-    "Amtali", "Betagi", "Bamna", "Pathorghata", "Taltali",
-    "Bhandaria", "Kawkhali", "Mathbaria", "Nazirpur", "Nesarabad",
-    "Indurkani", "Zianagor", "Rajapur", "Kathalia", "Nalchity",
-    "Charfasson", "Daulatkhan", "Lalmohan", "Manpura", "Tazumuddin",
-    "Burhanuddin", "Monpura"
+    "Agailjhara", "Amtali", "Babuganj", "Bakerganj", "Bamna", "Banaripara",
+    "Barguna", "Barishal", "Bauphal", "Betagi", "Bhandaria", "Bhola",
+    "Burhanuddin", "Charfasson", "Dashmina", "Daulatkhan", "Dumki",
+    "Galachipa", "Gaurnadi", "Hizla", "Indurkani", "Jhalokati", "Kalapara",
+    "Kathalia", "Kawkhali", "Kuakata", "Lalmohan", "Manpura", "Mathbaria",
+    "Mehendiganj", "Mirzaganj", "Monpura", "Muladi", "Nalchity", "Nazirpur",
+    "Nesarabad", "Nijhum Dwip", "Pathorghata", "Patuakhali", "Payra Port",
+    "Pirojpur", "Rajapur", "Taltali", "Tazumuddin", "Wazirpur", "Zianagor"
   ],
   "Sylhet Division": [
-    "Sylhet", "Moulvibazar", "Habiganj", "Sunamganj", "Sreemangal",
-    "Jaflong", "Tamabil", "Bichnakandi", "Tanguar Haor", "Lawachara Forest",
-    "Ratargul Swamp Forest", "Madhabkunda Waterfall", "Srimangal Tea Garden",
-    "Barlekha", "Kamalganj", "Kulaura", "Rajnagar", "Bahubal",
-    "Chunarughat", "Nabiganj", "Madhabpur", "Ajmiriganj", "Baniachang",
-    "Lakhai", "Shaistaganj", "Bishwambarpur", "Chhatak", "Derai",
-    "Dharamapasha", "Dowarabazar", "Jagannathpur", "Jamalganj", "Sullah",
-    "Tahirpur", "Companiganj", "Gowainghat", "Jointiapur", "Kanaighat",
-    "Zakiganj", "Bishwanath", "Balaganj", "Fenchuganj", "Golapganj",
-    "Osmaninagar", "Dakshin Surma", "Beani Bazar"
+    "Ajmiriganj", "Bahubal", "Balaganj", "Baniachang", "Barlekha",
+    "Beani Bazar", "Bichnakandi", "Bishwanath", "Bishwambarpur", "Chhatak",
+    "Chunarughat", "Companiganj", "Dakshin Surma", "Derai", "Dharamapasha",
+    "Dowarabazar", "Fenchuganj", "Golapganj", "Gowainghat", "Habiganj",
+    "Jaflong", "Jagannathpur", "Jamalganj", "Jointiapur", "Kamalganj",
+    "Kanaighat", "Kulaura", "Lakhai", "Lawachara Forest",
+    "Madhabkunda Waterfall", "Madhabpur", "Moulvibazar", "Nabiganj",
+    "Osmaninagar", "Rajnagar", "Ratargul Swamp Forest", "Shaistaganj",
+    "Sreemangal", "Srimangal Tea Garden", "Sullah", "Sunamganj", "Sylhet",
+    "Tahirpur", "Tamabil", "Tanguar Haor", "Zakiganj"
   ],
   "Rangpur Division": [
-    "Rangpur", "Dinajpur", "Nilphamari", "Lalmonirhat", "Kurigram",
-    "Thakurgaon", "Panchagarh", "Gaibandha", "Burimari", "Hili",
-    "Badarganj", "Gangachara", "Kaunia", "Mithapukur", "Pirgachha",
-    "Pirganj", "Taraganj", "Birampur", "Birganj", "Biral",
-    "Bochaganj", "Chirirbandar", "Fulbari", "Ghoraghat", "Hakimpur",
-    "Khansama", "Kaharole", "Parbatipur", "Nawabganj", "Dimla",
-    "Domar", "Jaldhaka", "Kishoreganj", "Saidpur", "Aditmari",
-    "Hatibandha", "Kaliganj", "Patgram", "Tetulia", "Debiganj",
-    "Boda", "Atwari", "Baliadangi", "Haripur", "Pirganj",
-    "Ranisankail", "Gobindaganj", "Palashbari", "Sadullapur", "Saghata",
-    "Sundarganj", "Bhurungamari", "Char Rajibpur", "Chilmari", "Phulchhari",
-    "Nageshwari", "Rajarhat", "Roumari", "Ulipur"
+    "Aditmari", "Atwari", "Badarganj", "Baliadangi", "Birampur", "Biral",
+    "Birganj", "Bochaganj", "Boda", "Bhurungamari", "Burimari",
+    "Char Rajibpur", "Chilmari", "Chirirbandar", "Debiganj", "Dimla",
+    "Dinajpur", "Domar", "Fulbari", "Gaibandha", "Gangachara", "Ghoraghat",
+    "Gobindaganj", "Hakimpur", "Haripur", "Hatibandha", "Hili", "Jaldhaka",
+    "Kaharole", "Kaliganj", "Kaunia", "Khansama", "Kishoreganj", "Kurigram",
+    "Lalmonirhat", "Mithapukur", "Nageshwari", "Nawabganj", "Nilphamari",
+    "Palashbari", "Panchagarh", "Parbatipur", "Patgram", "Phulchhari",
+    "Pirgachha", "Pirganj", "Rajarhat", "Rangpur", "Ranisankail", "Roumari",
+    "Sadullapur", "Saghata", "Saidpur", "Sundarganj", "Taraganj", "Tetulia",
+    "Thakurgaon", "Ulipur"
   ],
   "Mymensingh Division": [
-    "Mymensingh", "Jamalpur", "Netrokona", "Sherpur",
-    "Bhaluka", "Dhobaura", "Fulbaria", "Gaffargaon", "Gauripur",
-    "Haluaghat", "Ishwarganj", "Muktagachha", "Nandail", "Phulpur",
-    "Trishal", "Tara Khanda", "Gafargaon", "Bhaluka", "Bakshiganj",
-    "Dewanganj", "Islampur", "Madarganj", "Melandaha", "Sarishabari",
-    "Atpara", "Barhatta", "Durgapur", "Khaliajuri", "Kalmakanda",
-    "Kendua", "Madan", "Mohanganj", "Purbadhala", "Jhenaigati",
-    "Nakla", "Nalitabari", "Sreebardi", "Sreebordi"
+    "Atpara", "Bakshiganj", "Barhatta", "Bhaluka", "Dewanganj", "Dhobaura",
+    "Durgapur", "Fulbaria", "Gafargaon", "Gaffargaon", "Gauripur",
+    "Haluaghat", "Ishwarganj", "Islampur", "Jamalpur", "Jhenaigati",
+    "Kalmakanda", "Kendua", "Khaliajuri", "Madan", "Madarganj", "Melandaha",
+    "Mohanganj", "Muktagachha", "Mymensingh", "Nakla", "Nalitabari",
+    "Nandail", "Netrokona", "Phulpur", "Purbadhala", "Sarishabari",
+    "Sherpur", "Sreebardi", "Sreebordi", "Tara Khanda", "Trishal"
   ],
   "Hill Tracts & Adventure": [
-    "Sajek Valley", "Bandarban", "Rangamati", "Khagrachari",
-    "Ruma", "Thanchi", "Alikadam", "Lama", "Remakri",
-    "Khagrachhari Town", "Rangamati Town", "Rowangchhari",
-    "Kaptai", "Langadu", "Dighinala", "Manikchhari",
-    "Belaichhari", "Juraichhari", "Baghaichhari", "Naniarchar",
-    "Matiranga", "Panchhari", "Ramgarh"
+    "Alikadam", "Baghaichhari", "Bandarban", "Belaichhari", "Dighinala",
+    "Juraichhari", "Kaptai", "Khagrachari", "Khagrachhari Town", "Lama",
+    "Langadu", "Manikchhari", "Matiranga", "Naniarchar", "Panchhari",
+    "Ramgarh", "Rangamati", "Rangamati Town", "Remakri", "Rowangchhari",
+    "Ruma", "Sajek Valley", "Thanchi"
   ],
   "Beaches & Islands": [
-    "Cox's Bazar", "Saint Martin's Island", "Kuakata",
-    "Inani Beach", "Himchari", "Parki Beach", "Maheshkhali",
-    "Sonadia Island", "Nijhum Dwip", "Teknaf", "Kutubdia",
-    "Patenga", "Kolatoli Beach", "Sugandha Beach", "Sea Beach"
+    "Cox's Bazar", "Himchari", "Inani Beach", "Kolatoli Beach", "Kuakata",
+    "Kutubdia", "Maheshkhali", "Nijhum Dwip", "Parki Beach", "Patenga",
+    "Saint Martin's Island", "Sea Beach", "Sonadia Island", "Sugandha Beach",
+    "Teknaf"
   ],
   "Historic & Cultural Sites": [
-    "Mahasthangarh", "Paharpur", "Mainamati", "Lalbagh Fort",
-    "Sonargaon", "Bagerhat Historic Mosque City", "Ahsan Manzil",
-    "Kantaji Temple", "Puthia Rajbari", "Somapura Mahavihara",
-    "Kantanagar Temple", "Shait Gumbad Mosque", "Khan Jahan Ali Mazar"
+    "Ahsan Manzil", "Bagerhat Historic Mosque City", "Kantaji Temple",
+    "Kantanagar Temple", "Khan Jahan Ali Mazar", "Lalbagh Fort",
+    "Mahasthangarh", "Mainamati", "Paharpur", "Puthia Rajbari",
+    "Shait Gumbad Mosque", "Somapura Mahavihara", "Sonargaon"
   ],
   "Border Crossings & Ports": [
-    "Benapole", "Bhomra", "Mongla", "Payra Port", "Burimari",
-    "Tamabil", "Hili", "Teknaf", "Sona Masjid", "Akhaura",
-    "Sonahat", "Banglabandha", "Chittagong Port", "Pangaon"
+    "Akhaura", "Banglabandha", "Benapole", "Bhomra", "Burimari",
+    "Chittagong Port", "Hili", "Mongla", "Pangaon", "Payra Port",
+    "Sona Masjid", "Sonahat", "Tamabil", "Teknaf"
   ],
   "Industrial & Economic Hubs": [
-    "Gazipur", "Savar", "Narayanganj", "Tongi", "Ashulia",
-    "Narsingdi", "Comilla", "Chattogram", "Mongla", "Ishwardi",
-    "Pabna", "Khulna", "Bogura"
+    "Ashulia", "Bogura", "Chattogram", "Comilla", "Gazipur", "Ishwardi",
+    "Khulna", "Mongla", "Narayanganj", "Narsingdi", "Pabna", "Savar", "Tongi"
   ],
   "Major Transit Points": [
-    "Bhairab", "Ashuganj", "Mawa", "Aricha", "Paturia", "Daulatdia",
-    "Goalundo", "Chandpur", "Bhairab Bazar", "Akhaura Junction",
-    "Laksam Junction", "Joydebpur", "Abdullahpur"
+    "Abdullahpur", "Akhaura Junction", "Aricha", "Ashuganj", "Bhairab",
+    "Bhairab Bazar", "Chandpur", "Daulatdia", "Goalundo", "Joydebpur",
+    "Laksam Junction", "Mawa", "Paturia"
   ],
   "Tea Garden Regions": [
-    "Sreemangal", "Srimangal Tea Garden", "Lawachara Forest",
-    "Moulvibazar", "Sylhet", "Kamalganj", "Kulaura", "Fatikchhari"
+    "Fatikchhari", "Kamalganj", "Kulaura", "Lawachara Forest",
+    "Moulvibazar", "Sreemangal", "Srimangal Tea Garden", "Sylhet"
   ]
 };
 
