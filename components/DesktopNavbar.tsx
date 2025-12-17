@@ -53,10 +53,9 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
         {
             label: 'Intercity',
             icon: Train,
-            isActive: view === AppView.HOME && primarySearch === 'INTERCITY',
+            isActive: false, // Never active on main page since intercity is separate
             onClick: () => {
-                setView(AppView.HOME);
-                setPrimarySearch('INTERCITY');
+                window.location.href = '/intercity';
             }
         },
         {
