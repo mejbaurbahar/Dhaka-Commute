@@ -5,6 +5,7 @@ import ThemeToggle from '../components/ThemeToggle';
 import DistrictSelect from './components/DistrictSelect';
 import ResultCard from './components/ResultCard';
 import LoadingState from './components/LoadingState';
+import LiveLocationMap from './components/LiveLocationMap';
 import { API_ENDPOINT, POPULAR_ROUTES, DEMO_RESPONSE } from './constants';
 import { RouteResponse, ErrorResponse } from './types';
 
@@ -21,6 +22,7 @@ function App() {
 
   // Menu State
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLiveMap, setShowLiveMap] = useState(false);
 
   // New States for Offline and Usage
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -255,7 +257,7 @@ function App() {
 
         <div className="flex items-center gap-4">
           <button
-            onClick={() => window.alert('Live Map feature coming soon!')}
+            onClick={() => setShowLiveMap(true)}
             className="flex items-center gap-2 px-4 py-2 bg-red-100/50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-full font-bold text-sm transition-all animate-pulse"
           >
             <Map size={16} />
@@ -288,7 +290,7 @@ function App() {
             <Bell size={20} />
           </button>
           <button
-            onClick={() => window.alert('Live Map feature coming soon!')}
+            onClick={() => setShowLiveMap(true)}
             className="p-2 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse flex items-center justify-center" aria-label="Live Location">
             <Navigation className="w-4 h-4" />
           </button>
@@ -574,6 +576,12 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Live Location Map */}
+      <LiveLocationMap
+        isOpen={showLiveMap}
+        onClose={() => setShowLiveMap(false)}
+      />
 
       {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
