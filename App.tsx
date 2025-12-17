@@ -3599,16 +3599,11 @@ const App: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  if (view === AppView.HOME && primarySearch === 'INTERCITY') {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  } else {
-                    setView(AppView.HOME);
-                    setPrimarySearch('INTERCITY');
-                  }
+                  window.location.href = '/intercity';
                 }}
-                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300`}
               >
-                <Train className={`w-6 h-6 ${(view === AppView.HOME && primarySearch === 'INTERCITY') ? 'text-blue-600 dark:text-blue-400 fill-blue-100 dark:fill-blue-900' : 'text-gray-400 dark:text-gray-500'} `} />
+                <Train className={`w-6 h-6 text-gray-400 dark:text-gray-500`} />
                 <span className="text-[10px] font-bold uppercase tracking-wide">Intercity</span>
               </button>
               <button
