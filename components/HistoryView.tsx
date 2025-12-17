@@ -58,7 +58,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
         const interval = setInterval(() => {
             fetchGlobalStats(); // Poll API for latest backend data
             refreshHistoryData();
-        }, 2000); // Reduced from 5000ms to 2000ms for better sync
+        }, 15000); // 15s interval to reduce network load
 
         return () => {
             unsubscribe();
@@ -145,7 +145,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
             )}
 
             {/* Header - Fixed on mobile with proper padding */}
-            <div className="sticky top-16 md:top-20 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-50 pt-4 md:pt-0 shadow-lg">
+            <div className="sticky top-16 md:top-20 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-50 shadow-lg">
                 <div className="p-4 md:p-6">
                     <div className="flex items-center gap-3 mb-4">
                         {/* Mobile Back Button */}
