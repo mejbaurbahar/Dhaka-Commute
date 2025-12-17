@@ -118,10 +118,7 @@ function App() {
   };
 
   const handleDemoSearch = () => {
-    if (!isOnline) {
-      setError("ডেমো দেখার জন্য ইন্টারনেট সংযোগ প্রয়োজন।");
-      return;
-    }
+    // Demo should work offline too
     setLoading(true);
     setError(null);
     setResult(null);
@@ -340,10 +337,14 @@ function App() {
 
           {/* Hero Title Section */}
           <div className="text-center mb-6 animate-fade-in">
-            <h1 className="text-2xl md:text-4xl font-extrabold mb-2 tracking-tight drop-shadow-sm">
-              <span className="text-dhaka-red">বাংলাদেশ</span>{' '}
-              <span className="text-dhaka-green">ঘুরে দেখুন</span>
-              <br />
+            <h1 className="text-2xl md:text-4xl font-extrabold mb-2 tracking-tight drop-shadow-sm flex flex-col items-center gap-1">
+              <span className="text-sm md:text-lg text-gray-500 dark:text-gray-400 font-bold tracking-wide">
+                সমগ্র
+              </span>
+              <div>
+                <span className="text-dhaka-red">বাংলাদেশ</span>{' '}
+                <span className="text-dhaka-green">ঘুরে দেখুন</span>
+              </div>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
                 আপনার পছন্দের রুটে
               </span>
@@ -499,7 +500,7 @@ function App() {
                     <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">সার্চ না করেই রেজাল্ট কার্ডের ইন্টারফেস দেখতে ডেমো বাটনে ক্লিক করুন।</p>
                     <button
                       onClick={handleDemoSearch}
-                      disabled={!isOnline}
+                      // disabled={!isOnline} // Demo works offline now
                       className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       ডেমো রেজাল্ট দেখুন
