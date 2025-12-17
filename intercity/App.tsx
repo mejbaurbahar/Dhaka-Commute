@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu } from 'lucide-react';
+import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
+import ThemeToggle from '../components/ThemeToggle';
 import DistrictSelect from './components/DistrictSelect';
 import ResultCard from './components/ResultCard';
 import LoadingState from './components/LoadingState';
@@ -249,12 +250,10 @@ function App() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300"
-          >
-            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          <button className="relative p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300" title="Live Location">
+            <Navigation size={20} className="fill-blue-500 dark:fill-blue-400" />
           </button>
+          <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
           <button className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300">
             <Menu size={24} />
           </button>

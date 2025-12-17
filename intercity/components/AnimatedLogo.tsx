@@ -22,7 +22,7 @@ export const AnimatedLogo = ({ size = 'default' }: { size?: 'small' | 'default' 
 
     return (
         <div className="flex items-center gap-2 md:gap-3 outline-none cursor-pointer select-none group">
-            <div className={`bg-gradient-to-br from-[#006a4e] to-teal-600 dark:from-teal-600 dark:to-emerald-500 text-white flex items-center justify-center shadow-md shadow-green-500/20 transition-all duration-300 group-hover:shadow-lg group-hover:scale-105 ${containerSizeClass}`}>
+            <div className={`bg-gradient-to-br from-[#006a4e] to-teal-600 dark:from-teal-600 dark:to-emerald-500 text-red-500 flex items-center justify-center shadow-md shadow-green-500/20 transition-all duration-300 group-hover:shadow-lg group-hover:scale-105 ${containerSizeClass}`}>
                 <CurrentIcon
                     size={iconSize}
                     className="animate-in fade-in zoom-in duration-500"
