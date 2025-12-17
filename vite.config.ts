@@ -91,6 +91,21 @@ export default defineConfig(({ mode }) => {
           // Cache versioning for proper updates
           cacheId: 'dhaka-commute-v2',
           runtimeCaching: [
+            // Cache Intercity App (Separate Build)
+            {
+              urlPattern: /^\/intercity(\/.*)?$/,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'intercity-app-cache',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
             // Static Assets - Cache First (Offline First Strategy)
             {
               urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
@@ -256,7 +271,6 @@ export default defineConfig(({ mode }) => {
       minify: 'esbuild',
       emptyOutDir: true,
       rollupOptions: {
-        external: ['react', 'react-dom', 'react-dom/client', 'lucide-react', '@google/genai'],
         output: {
           entryFileNames: 'assets/[name]-[hash].js',
           chunkFileNames: 'assets/[name]-[hash].js',

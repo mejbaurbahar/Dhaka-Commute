@@ -548,16 +548,11 @@ const IntercitySearchSection: React.FC<{
           </div>
 
           {/* Offline Warning */}
-          {!isOnline && (
-            <div className="mb-2 bg-red-500/80 backdrop-blur-sm border border-red-400/50 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 animate-pulse">
-              <WifiOff className="w-3.5 h-3.5" />
-              You are offline. Cannot use Intercity Search now.
-            </div>
-          )}
+
 
           <button
             onClick={() => onSearch(from, to)}
-            disabled={!from || !to || !isOnline}
+            disabled={!from || !to}
             className="w-full bg-white/20 backdrop-blur-md hover:bg-white/30 border border-white/40 text-white font-bold py-3 rounded-xl transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Search className="w-5 h-5" />
@@ -3111,15 +3106,9 @@ const App: React.FC = () => {
     );
 
     // Intercity Search Handler with Offline Check
+    // Intercity Search Handler with Offline Check
     const handleIntercitySearch = (from: string, to: string) => {
-      // Check offline status (check state AND direct navigator status to be safe)
-      if (!isOnline || !navigator.onLine) {
-        // If offline, ask confirmation/warning instead of navigating blindly
-        setPendingIntercityNav({ from, to });
-        setShowOfflineNavModal(true);
-        return;
-      }
-
+      // Allow navigation even if offline, relying on SW caching
       setIntercityLoading(true);
       setTimeout(() => {
         window.location.href = `/intercity?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
