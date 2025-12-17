@@ -146,7 +146,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
 
             {/* Header - Fixed on mobile with proper padding */}
             <div className="sticky top-16 md:top-20 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-50 shadow-lg">
-                <div className="p-4 md:p-6">
+                <div className="px-4 pb-4 pt-1 md:p-6">
                     <div className="flex items-center gap-3 mb-4">
                         {/* Mobile Back Button */}
                         <button
@@ -193,7 +193,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
             </div>
 
             {/* Content */}
-            <div className="p-4 md:p-6 space-y-6 pb-24 md:pb-6">
+            <div className="p-4 md:p-6 space-y-6 pb-24 md:pb-6 mt-2">
                 {activeTab === 'personal' ? (
                     <>
                         {/* Clear History Button */}
