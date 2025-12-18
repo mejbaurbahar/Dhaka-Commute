@@ -60,14 +60,14 @@ const DistrictSelect: React.FC<DistrictSelectProps> = ({ label, value, onChange,
             </div>
             {Object.entries(LOCATIONS_DATA).map(([category, locations]) => (
               <div key={category}>
-                <div className="px-3 py-1 text-xs font-bold text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-slate-700 sticky top-0">
+                <div className="px-3 py-1 text-xs font-bold text-red-600 dark:text-red-400 bg-gray-100 dark:bg-slate-700 sticky top-0">
                   {category}
                 </div>
                 {locations.map((location) => (
                   <div
                     key={`${category}-${location}`}
                     onClick={() => handleSelect(location)}
-                    className={`px-3 py-1.5 text-sm md:text-base hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer ${value === location ? 'bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300'
+                    className={`px-3 py-1.5 text-sm md:text-base hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer ${value === location ? 'bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 font-medium' : 'text-green-600 dark:text-green-400'
                       }`}
                   >
                     {location}
