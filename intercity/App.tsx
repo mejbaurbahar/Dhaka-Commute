@@ -261,8 +261,8 @@ function App() {
             <Map size={16} />
             <span>Live Map</span>
           </button>
-          <NotificationBell />
           <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
+          <NotificationBell />
           <button
             onClick={() => setIsMenuOpen(true)}
             className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300">
