@@ -144,9 +144,6 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                 </div>
             )}
 
-            {/* Header Background Mask (prevents content showing behind global header) */}
-            <div className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 z-[40] md:hidden"></div>
-
             {/* Header - Fixed on mobile with proper padding */}
             <div className="sticky top-16 md:top-20 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-30 shadow-lg">
                 <div className="px-4 pb-4 pt-1 md:p-6">
@@ -189,7 +186,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
             </div>
 
             {/* Content */}
-            <div className="relative z-10 p-4 md:p-6 space-y-6 pb-24 md:pb-6 mt-6">
+            <div className="relative z-10 p-4 md:p-6 space-y-6 pb-24 md:pb-6">
                 {activeTab === 'personal' ? (
                     <>
                         {/* Clear History Button */}
@@ -413,7 +410,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                 ) : (
                     <>
                         {/* Global Statistics */}
-                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-800 dark:to-slate-800 p-6 rounded-2xl border border-green-100 dark:border-slate-700">
+                        <div className="mt-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-800 dark:to-slate-800 p-6 rounded-2xl border border-green-100 dark:border-slate-700">
                             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                                 <Users className="w-5 h-5 text-green-600 dark:text-green-400" />
                                 Community Statistics
