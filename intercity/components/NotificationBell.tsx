@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell } from 'lucide-react';
+import { useNotifications } from '../contexts/NotificationContext';
 import NotificationDropdown from './NotificationDropdown';
 
 const NotificationBell: React.FC = () => {
+    const { unreadCount } = useNotifications();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +33,13 @@ const NotificationBell: React.FC = () => {
                 aria-label="Notifications"
             >
                 <Bell className="w-4 h-4" />
+
+                {/* Unread Count Badge - Moved closer */}
+                {unreadCount > 0 && (
+                    <span className="absolute top-0 right-0 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-red-500 text-white text-[9px] font-bold rounded-full">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                )}
             </button>
 
             {/* Dropdown */}
