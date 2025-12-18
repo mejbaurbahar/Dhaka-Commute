@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map, X, Bot, FileText, Settings, Shield } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
-import ThemeToggle from '../components/ThemeToggle';
-import NotificationBell from '../components/NotificationBell';
+import ThemeToggle from './components/ThemeToggle';
+import NotificationBell from './components/NotificationBell';
 import DistrictSelect from './components/DistrictSelect';
 import ResultCard from './components/ResultCard';
 import LoadingState from './components/LoadingState';
