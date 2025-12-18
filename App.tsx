@@ -3021,7 +3021,7 @@ const App: React.FC = () => {
                     options={sortedStations}
                     value={fromStation}
                     onChange={setFromStation}
-                    placeholder="Start Location"
+                    placeholder="From"
                   />
                 </div>
                 <div className="flex items-center justify-center pt-2">
@@ -3045,7 +3045,7 @@ const App: React.FC = () => {
                     options={sortedStations}
                     value={toStation}
                     onChange={setToStation}
-                    placeholder={fromStation ? "Destination" : "Select Start Location first"}
+                    placeholder={fromStation ? "To" : "To"}
                     disabled={!fromStation}
                   />
                 </div>
