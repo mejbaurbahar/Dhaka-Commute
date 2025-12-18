@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map, X, Bot, FileText, Settings, Shield, Bell } from 'lucide-react';
+import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map, X, Bot, FileText, Settings, Shield } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
 import ThemeToggle from '../components/ThemeToggle';
 import DistrictSelect from './components/DistrictSelect';
 import ResultCard from './components/ResultCard';
 import LoadingState from './components/LoadingState';
 import LiveLocationMap from './components/LiveLocationMap';
+import NotificationBell from '../components/NotificationBell';
 import { API_ENDPOINT, POPULAR_ROUTES, DEMO_RESPONSE } from './constants';
 import { RouteResponse, ErrorResponse } from './types';
 
@@ -263,6 +264,7 @@ function App() {
             <Map size={16} />
             <span>Live Map</span>
           </button>
+          <NotificationBell />
           <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
           <button
             onClick={() => setIsMenuOpen(true)}
@@ -286,9 +288,7 @@ function App() {
         </a>
 
         <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-gray-600 dark:text-gray-300">
-            <Bell size={20} />
-          </button>
+          <NotificationBell />
           <button
             onClick={() => setShowLiveMap(true)}
             className="p-2 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse flex items-center justify-center" aria-label="Live Location">
