@@ -51,7 +51,7 @@ const DistrictSelect: React.FC<DistrictSelectProps> = ({ label, value, onChange,
         </div>
 
         {isOpen && (
-          <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl shadow-lg max-h-[200px] md:max-h-[280px] overflow-y-auto">
+          <div className="absolute z-[100] w-full mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl shadow-lg max-h-[200px] md:max-h-[280px] overflow-y-auto">
             <div
               onClick={() => handleSelect('')}
               className="px-3 py-1.5 text-sm md:text-base hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer text-gray-500 dark:text-gray-400"

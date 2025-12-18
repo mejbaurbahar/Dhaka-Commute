@@ -300,7 +300,7 @@ function App() {
       </header>
 
       {/* FIXED TOP SECTION (Title + Search) - Add padding for fixed header */}
-      <div className="flex-none relative overflow-hidden bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 z-50 shadow-sm transition-colors duration-300 mt-16 md:mt-20">
+      <div className="flex-none relative overflow-visible bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 z-50 shadow-sm transition-colors duration-300 mt-16 md:mt-20">
 
         {/* === BACKGROUND ANIMATION LAYER === */}
         <div className="absolute inset-0 z-0">
@@ -349,9 +349,6 @@ function App() {
                 আপনার পছন্দের রুটে
               </span>
             </h1>
-            <p className="text-xs md:text-base text-gray-700 dark:text-gray-300 max-w-2xl mx-auto mt-2 font-medium">
-              এআই-চালিত তাৎক্ষণিক ট্রাভেল গাইড। বাস, ট্রেন, বিমান এবং লঞ্চের তথ্য খুঁজুন মুহূর্তেই।
-            </p>
           </div>
 
           {/* Search Box */}
