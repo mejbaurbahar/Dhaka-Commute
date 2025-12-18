@@ -475,22 +475,6 @@ function App() {
             {/* Empty State / Popular Routes */}
             {!loading && !result && !error && (
               <div className="mt-4 md:mt-12 animate-slide-up max-w-4xl mx-auto">
-                <h3 className="text-center text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wider text-[10px] md:text-xs mb-4 md:mb-6">জনপ্রিয় রুটসমূহ</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-                  {POPULAR_ROUTES.map((route, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setRoute(route.from, route.to)}
-                      disabled={!isOnline || usageCount >= DAILY_LIMIT}
-                      className="group bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 border border-gray-100 dark:border-slate-700 hover:border-blue-200 dark:hover:border-slate-600 p-3 md:p-4 rounded-2xl text-center transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <div className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-blue-700 dark:group-hover:text-blue-400">
-                        {route.from} <span className="text-gray-300 dark:text-gray-600 mx-1">→</span> {route.to}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-
                 <div className="mt-8 md:mt-12 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 max-w-2xl mx-auto border border-gray-100 dark:border-slate-700 shadow-sm text-center md:text-left transition-colors duration-300">
                   <div className="bg-blue-50 dark:bg-slate-700 p-4 rounded-full text-blue-500 dark:text-blue-400 animate-pulse">
                     <PlayCircle size={32} />
