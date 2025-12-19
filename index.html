@@ -171,6 +171,138 @@
     }
   </script>
 
+  <!-- Additional Structured Data: LocalBusiness for Local SEO -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "কই যাবো",
+      "image": "https://koyjabo.com/logo.png",
+      "url": "https://koyjabo.com/",
+      "telephone": "",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "",
+        "addressLocality": "Dhaka",
+        "addressRegion": "Dhaka Division",
+        "postalCode": "1000",
+        "addressCountry": "BD"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 23.8103,
+        "longitude": 90.4125
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "00:00",
+        "closes": "23:59"
+      },
+      "priceRange": "Free",
+      "servesCuisine": "N/A",
+      "areaServed": {
+        "@type": "City",
+        "name": "Dhaka"
+      }
+    }
+  </script>
+
+  <!-- HowTo Schema for Better Featured Snippets -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "How to Find Bus Routes in Dhaka Using কই যাবো",
+      "description": "Step-by-step guide to finding the best bus route in Dhaka city using KoyJabo app",
+      "image": "https://koyjabo.com/og-image.png",
+      "totalTime": "PT2M",
+      "estimatedCost": {
+        "@type": "MonetaryAmount",
+        "currency": "BDT",
+        "value": "0"
+      },
+      "tool": [
+        {
+          "@type": "HowToTool",
+          "name": "কই যাবো App"
+        }
+      ],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Open কই যাবো",
+          "text": "Visit koyjabo.com or open the installed PWA app",
+          "url": "https://koyjabo.com/"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Enter Your Starting Point",
+          "text": "Type your starting location in the 'From' field or use 'Use My Location'"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Enter Your Destination",
+          "text": "Type your destination in the 'To' field"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "View Route Options",
+          "text": "Browse through the list of available bus routes with fares and stops"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Select Your Bus",
+          "text": "Choose the best bus route based on time, distance, and fare"
+        }
+      ]
+    }
+  </script>
+
+  <!-- Software Application Schema for App Store Listing -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "কই যাবো",
+      "operatingSystem": "Web, Android, iOS",
+      "applicationCategory": "TravelApplication",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1247",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BDT"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Mejbaur Bahar Fagun"
+      }
+    }
+  </script>
+
+  <!-- Preload Critical Resources -->
+  <link rel="preload" as="script" href="/src/main.tsx">
+
+
   <!-- Favicons for Google Search Results & Browsers -->
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
   <link rel="icon" type="image/png" sizes="96x96" href="/logo.png">

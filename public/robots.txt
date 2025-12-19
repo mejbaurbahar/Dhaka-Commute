@@ -1,9 +1,55 @@
+# KoyJabo (কই যাবো) - Dhaka Bus Route Finder
+# Robots.txt for SEO Optimization
+# Updated: December 19, 2025
+
+# Allow all good bots
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /*?q=*
+Disallow: /404.html
+
+# Sitemap Location
 Sitemap: https://koyjabo.com/sitemap.xml
 
-# Block AI/ML Training Bots
+# Google Bots - Full Access
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 5
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Mobile
+Allow: /
+
+# Bing Bot - Full Access
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 5
+
+# Facebook & Social Media Crawlers - Allow for Rich Previews
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# Block AI Training Bots
 User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
 Disallow: /
 
 User-agent: CCBot
@@ -18,17 +64,13 @@ Disallow: /
 User-agent: cohere-ai
 Disallow: /
 
-# Block Social Media Bots
+User-agent: PerplexityBot
+Disallow: /
+
 User-agent: Omgilibot
 Disallow: /
 
-User-agent: FacebookBot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-# Block Scrapers and Bad Bots
+# Block SEO Tool Scrapers (Save Bandwidth)
 User-agent: SemrushBot
 Disallow: /
 
@@ -53,8 +95,17 @@ Disallow: /
 User-agent: Bytespider
 Disallow: /
 
+# Allow Yandex (Russian) - Minimal Access
 User-agent: YandexBot
-Disallow: /
+Allow: /
+Disallow: /api/
+Crawl-delay: 20
+
+# Allow Baidu (Chinese) - Minimal Access
+User-agent: Baiduspider
+Allow: /
+Disallow: /api/
+Crawl-delay: 20
 
 # Block Generic Scrapers
 User-agent: *Scraper*
@@ -64,5 +115,12 @@ User-agent: *Bot*
 Allow: /
 Disallow: /api/
 
-# Crawl Delay for allowed bots
+# Crawl Budget Management
+# Crawl-delay: 10 seconds (default for unknown bots)
 Crawl-delay: 10
+
+# Request Rate Limiting
+# Request-rate: 1/10s for unknown bots
+
+# Cache Instructions
+# Cache: max-age=86400 (24 hours)
