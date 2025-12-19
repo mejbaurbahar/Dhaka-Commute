@@ -383,6 +383,12 @@ textarea {
     display: flex;
     flex-direction: column;
   }
+
+  /* Fix bus details page scroll - no extra bottom padding */
+  .bus-details-container {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
 }
 
 /* Optimize for very small screens */
