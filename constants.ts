@@ -453,6 +453,42 @@ export const STATIONS: Record<string, Station> = {
 
   // ===== NARAYANGANJ AREA =====
   nitolganj: { id: 'nitolganj', name: 'Nitolganj', bnName: 'নিতলগঞ্জ', lat: 23.6150, lng: 90.5100 },
+
+  // ===== BRTC TERMINALS & MAJOR STOPS =====
+  cbs_2: { id: 'cbs_2', name: 'CBS-2 Fulbaria', bnName: 'সিবিএস-২ ফুলবাড়িয়া', lat: 23.7285, lng: 90.4133 },
+  nagda: { id: 'nagda', name: 'Nagda', bnName: 'নগদা', lat: 23.8420, lng: 90.4150 },
+  sheikh_russel_park: { id: 'sheikh_russel_park', name: 'Sheikh Russel Park', bnName: 'শেখ রাসেল পার্ক', lat: 23.7304, lng: 90.4129 },
+  golap_shah_mazar: { id: 'golap_shah_mazar', name: 'Golap Shah Mazar', bnName: 'গোলাপ শাহ মাজার', lat: 23.7298, lng: 90.4118 },
+  toll_plaza: { id: 'toll_plaza', name: 'Toll Plaza', bnName: 'টোল প্লাজা', lat: 23.7320, lng: 90.4180 },
+
+  atir_bazar: { id: 'atir_bazar', name: 'Atir Bazar', bnName: 'আটির বাজার', lat: 23.7520, lng: 90.3615 },
+  keraniganj_kadomtoli: { id: 'keraniganj_kadomtoli', name: 'Kadomtoli', bnName: 'কদমতলী', lat: 23.6580, lng: 90.3520 },
+
+  board_bazar: { id: 'board_bazar', name: 'Board Bazar', bnName: 'বোর্ড বাজার', lat: 23.8780, lng: 90.4050 },
+  bardo_bari_tongi: { id: 'bardo_bari_tongi', name: 'Bardo Bari Tongi', bnName: 'বড়বাড়ি', lat: 23.8920, lng: 90.4110 },
+
+  taltola: { id: 'taltola', name: 'Taltola', bnName: 'তালতলা', lat: 23.7620, lng: 90.3590 },
+  cocacola: { id: 'cocacola', name: 'Coca Cola', bnName: 'কোকাকোলা', lat: 23.8350, lng: 90.4220 },
+  bansree: { id: 'bansree', name: 'Bansree', bnName: 'বনশ্রী', lat: 23.7580, lng: 90.4380 },
+
+  jurain: { id: 'jurain', name: 'Jurain', bnName: 'জুরাইন', lat: 23.7140, lng: 90.4250 },
+  bandura: { id: 'bandura', name: 'Bandura', bnName: 'বান্দুরা', lat: 23.7050, lng: 90.4420 },
+  gauripur: { id: 'gauripur', name: 'Gauripur', bnName: 'গৌরিপুর', lat: 23.8800, lng: 90.3850 },
+
+  diabari_metro: { id: 'diabari_metro', name: 'Diabari Metro Station', bnName: 'দিয়াবাড়ী মেট্রো', lat: 23.8285, lng: 90.3920 },
+  house_building: { id: 'house_building', name: 'House Building', bnName: 'হাউজ বিল্ডিং', lat: 23.8812, lng: 90.4050 },
+
+  elevated_exp_jasimuddin: { id: 'elevated_exp_jasimuddin', name: 'Jasimuddin (Elevated Expressway)', bnName: 'জসিম উদ্দিন', lat: 23.8730, lng: 90.3980 },
+  elevated_exp_khejurbagan: { id: 'elevated_exp_khejurbagan', name: 'Khejurbagan (Elevated Expressway)', bnName: 'খেজুরবাগান', lat: 23.7850, lng: 90.4175 },
+
+  itakhola: { id: 'itakhola', name: 'Itakhola', bnName: 'ইটাখোলা', lat: 23.9785, lng: 90.5220 },
+  bishnondi_ferry: { id: 'bishnondi_ferry', name: 'Bishnondi Ferry Ghat', bnName: 'বিশনন্দী ফেরী ঘাট', lat: 23.6180, lng: 90.5550 },
+
+  narayanganj_railgate: { id: 'narayanganj_railgate', name: 'Narayanganj 1 No Rail Gate', bnName: 'নারায়ণগঞ্জ ১নং রেল গেইট', lat: 23.6238, lng: 90.5013 },
+  ghatarchar: { id: 'ghatarchar', name: 'Ghatarchar', bnName: 'ঘাটারচর', lat: 23.7490, lng: 90.3620 },
+
+  rayerbag: { id: 'rayerbag', name: 'Rayerbag', bnName: 'রায়েরবাগ', lat: 23.7220, lng: 90.3650 },
+  paglabazar: { id: 'paglabazar', name: 'Pagla Bazar', bnName: 'পাগলা বাজার', lat: 23.7180, lng: 90.3480 },
 };
 
 
