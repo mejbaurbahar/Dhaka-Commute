@@ -114,7 +114,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
     };
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-y-auto w-full relative pt-16 md:pt-0">
+        <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-y-auto w-full relative">
             {/* Confirmation Modal */}
             {showClearConfirm && (
                 <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -144,9 +144,9 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                 </div>
             )}
 
-            {/* Header - Fixed on mobile with proper padding */}
-            <div className="sticky top-16 md:top-20 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-30 shadow-lg">
-                <div className="px-4 pb-4 pt-1 md:p-6">
+            {/* Header */}
+            <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 px-4 md:px-6 pt-20 md:pt-24 pb-4">
+                <div>
                     <div className="flex items-center gap-3 mb-4">
 
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
