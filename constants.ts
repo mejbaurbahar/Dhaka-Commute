@@ -2212,6 +2212,661 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['jatrabari', 'janapath_moor', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'khidma_hospital', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'madhya_badda', 'badda', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jasimuddin_square', 'jashimuddin', 'rajlakshmi_crossing', 'rajlakshmi', 'azampur', 'uttara_sector7', 'uttara_sector5', 'uttara', 'abdullahpur', 'tongi', 'tongi_college_gate'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
+  },
+
+  // ===== BRTC DHAKA LOCAL ROUTES =====
+  {
+    id: 'brtc_mugda_tongi',
+    name: 'BRTC Mugda-Tongi',
+    bnName: 'বিআরটিসি মুগদা-টঙ্গী',
+    routeString: 'Mugda ⇄ Tongi',
+    stops: ['mugda', 'khilgaon', 'mouchak', 'malibagh', 'rampura', 'banasree', 'aftabnagar', 'badda', 'shahjadpur', 'kuril', 'airport', 'jasimuddin', 'abdullahpur', 'tongi'],
+    type: 'Double-Decker',
+    hours: '6:30 AM - 10:30 PM'
+  },
+  {
+    id: 'brtc_mugda_boardbazar',
+    name: 'BRTC Mugda-Board Bazar',
+    bnName: 'বিআরটিসি মুগদা-বোর্ড বাজার',
+    routeString: 'Mugda ⇄ Board Bazar',
+    stops: ['mugda', 'khilgaon', 'mouchak', 'malibagh', 'rampura', 'badda', 'shahjadpur', 'kuril', 'nikunja', 'khilkhet', 'airport', 'jasimuddin', 'abdullahpur', 'tongi', 'board_bazar'],
+    type: 'Double-Decker',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'brtc_taltola_secretariat',
+    name: 'BRTC Taltola-Secretariat (Women)',
+    bnName: 'বিআরটিসি তালতলা-সচিবালয় (মহিলা)',
+    routeString: 'Taltola ⇄ Secretariat',
+    stops: ['taltola', 'shyamoli', 'asad_gate', 'dhanmondi', 'science_lab', 'shahbag', 'press_club', 'secretariat'],
+    type: 'Double-Decker',
+    hours: '8:00 AM - 8:40 AM'
+  },
+  {
+    id: 'brtc_cocacola_secretariat',
+    name: 'BRTC Coca Cola-Secretariat (Women)',
+    bnName: 'বিআরটিসি কোকাকোলা-সচিবালয় (মহিলা)',
+    routeString: 'Coca Cola ⇄ Secretariat',
+    stops: ['cocacola', 'khilkhet', 'airport', 'kawran_bazar', 'farmgate', 'bangla_motor', 'shahbag', 'press_club', 'secretariat'],
+    type: 'Double-Decker',
+    hours: '8:00 AM - 8:40 AM'
+  },
+  {
+    id: 'brtc_rampura_bansree_secretariat',
+    name: 'BRTC Rampura-Bansree-Secretariat (Women)',
+    bnName: 'বিআরটিসি রামপুরা-বনশ্রী-সচিবালয় (মহিলা)',
+    routeString: 'Rampura-Bansree ⇄ Secretariat',
+    stops: ['rampura', 'bansree', 'aftabnagar', 'basabo', 'khilgaon', 'malibagh', 'mogh_bazar', 'wireless', 'shahbag', 'secretariat'],
+    type: 'Double-Decker',
+    hours: '8:00 AM - 8:35 AM'
+  },
+  {
+    id: 'brtc_gulistan_gauripur_ac',
+    name: 'BRTC Gulistan-Gauripur (AC)',
+    bnName: 'বিআরটিসি গুলিস্তান-গৌরিপুর (এসি)',
+    routeString: 'Gulistan ⇄ Gauripur',
+    stops: ['gulistan', 'sheikh_russel_park', 'farmgate', 'mohakhali', 'banani', 'gulshan1', 'badda', 'shahjadpur', 'uttara', 'abdullahpur', 'tongi', 'board_bazar', 'gauripur'],
+    type: 'AC',
+    hours: '6:00 AM - 8:00 PM'
+  },
+  {
+    id: 'brtc_gulistan_nabobganj',
+    name: 'BRTC Gulistan-Nabobganj',
+    bnName: 'বিআরটিসি গুলিস্তান-নবাবগঞ্জ',
+    routeString: 'Gulistan ⇄ Nabobganj',
+    stops: ['gulistan', 'golap_shah_mazar', 'sadarghat', 'postogola', 'jatrabari', 'demra', 'shimrail', 'tarabo', 'rupganj', 'bandura'],
+    type: 'Double-Decker',
+    hours: '7:00 AM - 8:00 PM'
+  },
+  {
+    id: 'brtc_jurain_tongi',
+    name: 'BRTC Jurain-Tongi',
+    bnName: 'বিআরটিসি জুরাইন-টঙ্গী',
+    routeString: 'Jurain ⇄ Tongi',
+    stops: ['jurain', 'jatrabari', 'malibagh', 'mogh_bazar', 'sahjalal', 'farmgate', 'mohakhali', 'banani', 'gulshan1', 'badda', 'shahjadpur', 'airport', 'jasimuddin', 'abdullahpur', 'tongi', 'bardo_bari_tongi'],
+    type: 'Double-Decker',
+    hours: '7:00 AM - 8:00 PM'
+  },
+  {
+    id: 'brtc_mirpur10_kadomtoli_gabtali',
+    name: 'BRTC Mirpur 10-Kadomtoli',
+    bnName: 'বিআরটিসি মিরপুর ১০-কদমতলী',
+    routeString: 'Mirpur 10 ⇄ Kadomtoli',
+    stops: ['mirpur10', 'mirpur11', 'mirpur13', 'sheorapara', 'shyamoli', 'asad_gate', 'mohammadpur', 'shukrabad', 'dhanmondi', 'newmarket', 'azimpur', 'press_club', 'paltan', 'motijheel', 'jatrabari', 'demra', 'keraniganj_kadomtoli'],
+    type: 'Double-Decker',
+    hours: '6:00 AM - 8:00 PM'
+  },
+  {
+    id: 'brtc_bardobari_motijheel',
+    name: 'BRTC Bardo Bari-Motijheel',
+    bnName: 'বিআরটিসি বড়বাড়ি-মতিঝিল',
+    routeString: 'Bardo Bari ⇄ Motijheel',
+    stops: ['bardo_bari_tongi', 'tongi', 'abdullahpur', 'airport', 'mohakhali', 'farmgate', 'bangla_motor', 'shahbag', 'press_club', 'gulistan', 'motijheel'],
+    type: 'Double-Decker',
+    hours: '7:30 AM - 9:30 PM'
+  },
+  {
+    id: 'brtc_mirpur_motijheel_stationroad',
+    name: 'BRTC Mirpur-Motijheel-Station Road',
+    bnName: 'বিআরটিসি মিরপুর-মতিঝিল-স্টেশন রোড',
+    routeString: 'Mirpur 12/10 ⇄ Station Road',
+    stops: ['mirpur12', 'mirpur10', 'sheorapara', 'gabtali', 'asad_gate', 'mohammadpur', 'dhanmondi', 'science_lab', 'shahbag', 'motijheel', 'kamalapur', 'malibagh', 'mouchak', 'tongi_station'],
+    type: 'Double-Decker',
+    hours: '8:00 AM - 11:30 PM'
+  },
+  {
+    id: 'brtc_mirpur12_motijheel',
+    name: 'BRTC Mirpur 12-Motijheel',
+    bnName: 'বিআরটিসি মিরপুর ১২-মতিঝিল',
+    routeString: 'Mirpur 12 ⇄ Motijheel',
+    stops: ['mirpur12', 'mirpur10', 'sheorapara', 'asad_gate', 'farmgate', 'bangla_motor', 'shahbag', 'press_club', 'motijheel'],
+    type: 'Double-Decker',
+    hours: '9:00 AM - 10:00 PM'
+  },
+  {
+    id: 'brtc_mirpur12_motijheel_women',
+    name: 'BRTC Mirpur-Motijheel (Women)',
+    bnName: 'বিআরটিসি মিরপুর-মতিঝিল (মহিলা)',
+    routeString: 'Mirpur 12 ⇄ Motijheel',
+    stops: ['mirpur12', 'mirpur10', 'sheorapara', 'asad_gate', 'farmgate', 'bangla_motor', 'shahbag', 'press_club', 'motijheel'],
+    type: 'Double-Decker',
+    hours: '7:00 AM - 9:00 PM'
+  },
+  {
+    id: 'brtc_mirpur10_motijheel_women',
+    name: 'BRTC Mirpur 10-Motijheel (Women)',
+    bnName: 'বিআরটিসি মিরপুর ১০-মতিঝিল (মহিলা)',
+    routeString: 'Mirpur 10 ⇄ Motijheel',
+    stops: ['mirpur10', 'sheorapara', 'asad_gate', 'farmgate', 'bangla_motor', 'shahbag', 'press_club', 'motijheel'],
+    type: 'Double-Decker',
+    hours: '7:30 AM - 9:30 PM'
+  },
+  {
+    id: 'brtc_rayerbag_tongi_stationroad',
+    name: 'BRTC Rayerbag-Motijheel-Station Road',
+    bnName: 'বিআরটিসি রায়েরবাগ-মতিঝিল-স্টেশন রোড',
+    routeString: 'Rayerbag ⇄ Tongi Station Road',
+    stops: ['rayerbag', 'mohammadpur', 'asad_gate', 'farmgate', 'bangla_motor', 'shahbag', 'press_club', 'motijheel', 'mouchak', 'malibagh', 'mogh_bazar', 'wireless', 'banasree', 'aftabnagar', 'badda', 'shahjadpur', 'airport', 'tongi_station'],
+    type: 'Double-Decker',
+    hours: '7:00 AM - 10:30 PM'
+  },
+  {
+    id: 'brtc_ghatarchar_kanchpur_route26',
+    name: 'BRTC Ghatarchar-Kanchpur (Route 26)',
+    bnName: 'বিআরটিসি ঘাটারচর-কাচপুর (রুট ২৬)',
+    routeString: 'Ghatarchar ⇄ Kanchpur',
+    stops: ['ghatarchar', 'mohammadpur', 'asad_gate', 'dhanmondi', 'science_lab', 'shahbag', 'press_club', 'paltan', 'motijheel', 'jatrabari', 'demra', 'kalshi', 'kanchpur'],
+    type: 'Double-Decker',
+    hours: '7:30 AM - 9:30 PM'
+  },
+  {
+    id: 'brtc_elevated_exp_jasimuddin_khejurbagan',
+    name: 'BRTC Elevated Expressway',
+    bnName: 'বিআরটিসি এলিভেটেড এক্সপ্রেসওয়ে',
+    routeString: 'Jasimuddin ⇄ Khejurbagan',
+    stops: ['elevated_exp_jasimuddin', 'kawla', 'khilkhet', 'mohakhali', 'tejgaon', 'elevated_exp_khejurbagan'],
+    type: 'Double-Decker',
+    hours: '7:00 AM - 7:30 PM'
+  },
+  {
+    id: 'brtc_kuril_itakhola_daihatsu',
+    name: 'BRTC Kuril-Itakhola (AC)',
+    bnName: 'বিআরটিসি কুড়িল-ইটাখোলা (এসি)',
+    routeString: 'Kuril Bishwaroad ⇄ Itakhola',
+    stops: ['kuril', 'khilkhet', 'airport', 'jasimuddin', 'abdullahpur', 'tongi', 'board_bazar', 'kaliakoir', 'pubail', 'salehpur', 'itakhola'],
+    type: 'AC',
+    hours: '6:10 AM - 8:00 PM'
+  },
+  {
+    id: 'brtc_kuril_itakhola_ashok',
+    name: 'BRTC Kuril-Itakhola (AC Deluxe)',
+    bnName: 'বিআরটিসি কুড়িল-ইটাখোলা (এসি ডিলাক্স)',
+    routeString: 'Kuril Bishwaroad ⇄ Itakhola',
+    stops: ['kuril', 'khilkhet', 'airport', 'jasimuddin', 'abdullahpur', 'tongi', 'board_bazar', 'kaliakoir', 'pubail', 'salehpur', 'itakhola'],
+    type: 'AC',
+    hours: '6:10 AM - 8:00 PM'
+  },
+  {
+    id: 'brtc_kuril_bishnondi',
+    name: 'BRTC Kuril-Bishnondi Ferry Ghat (AC)',
+    bnName: 'বিআরটিসি কুড়িল-বিশনন্দী (এসি)',
+    routeString: 'Kuril Bishwaroad ⇄ Bishnondi Ferry Ghat',
+    stops: ['kuril', 'khilkhet', 'shahjalal_airport', 'jasimuddin', 'uttara', 'abdullahpur', 'tongi', 'kaliakoir', 'gazipur', 'sreepur', 'kapasia', 'bishnondi_ferry'],
+    type: 'AC',
+    hours: '6:20 AM - 8:00 PM'
+  },
+  {
+    id: 'brtc_diabari_uttara_abdullahpur',
+    name: 'BRTC Diabari-Uttara-Abdullahpur (Metro Shuttle)',
+    bnName: 'বিআরটিসি দিয়াবাড়ী-উত্তরা-আব্দুল্লাহপুর',
+    routeString: 'Diabari ⇄ Uttara ⇄ Abdullahpur',
+    stops: ['diabari_metro', 'uttara', 'house_building', 'abdullahpur'],
+    type: 'Metro Shuttle',
+    hours: '6:30 AM - 8:00 PM'
+  },
+  {
+    id: 'brtc_tongi_motijheel_dd',
+    name: 'BRTC Tongi-Motijheel',
+    bnName: 'বিআরটিসি টঙ্গী-মতিঝিল',
+    routeString: 'Tongi ⇄ Motijheel',
+    stops: ['tongi', 'bardo_bari_tongi', 'abdullahpur', 'jasimuddin', 'airport', 'banani', 'mohakhali', 'farmgate', 'bangla_motor', 'shahbag', 'press_club', 'paltan', 'motijheel'],
+    type: 'Double-Decker',
+    hours: '6:00 AM - 7:00 PM'
+  },
+  {
+    id: 'brtc_mohammadpur_kuril',
+    name: 'BRTC Mohammadpur-Kuril',
+    bnName: 'বিআরটিসি মোহাম্মদপুর-কুড়িল',
+    routeString: 'Mohammadpur ⇄ Kuril Bishwaroad',
+    stops: ['mohammadpur', 'asad_gate', 'farmgate', 'bangla_motor', 'sahjalal', 'mohakhali', 'banani', 'gulshan1', 'gulshan2', 'badda', 'shahjadpur', 'kuril'],
+    type: 'Double-Decker',
+    hours: '6:30 AM - 7:20 PM'
+  },
+  {
+    id: 'brtc_mohammadpur_jigatola_motijheel_women',
+    name: 'BRTC Mohammadpur-Jigatola-Motijheel (Women)',
+    bnName: 'বিআরটিসি মোহাম্মদপুর-জিগাতলা-মতিঝিল (মহিলা)',
+    routeString: 'Mohammadpur ⇄ Motijheel',
+    stops: ['mohammadpur', 'jigatola', 'dhanmondi', 'science_lab', 'shahbag', 'press_club', 'paltan', 'motijheel'],
+    type: 'Double-Decker',
+    hours: '7:30 AM - 5:30 PM'
+  },
+  {
+    id: 'brtc_mohammadpur_tongi_motijheel',
+    name: 'BRTC Mohammadpur-Tongi-Motijheel',
+    bnName: 'বিআরটিসি মোহাম্মদপুর-টঙ্গী-মতিঝিল',
+    routeString: 'Mohammadpur ⇄ Tongi Station',
+    stops: ['mohammadpur', 'shyamoli', 'asad_gate', 'farmgate', 'mohakhali', 'banani', 'gulshan1', 'badda', 'airport', 'tongi_station', 'motijheel'],
+    type: 'Double-Decker',
+    hours: '7:30 AM - 9:00 PM'
+  },
+  {
+    id: 'brtc_mohammadpur_mirpur10_kadomtoli',
+    name: 'BRTC Mirpur 10-Kadomtoli',
+    bnName: 'বিআরটিসি মিরপুর ১০-কদমতলী',
+    routeString: 'Mirpur 10 ⇄ Kadomtoli',
+    stops: ['mirpur10', 'sheorapara', 'gabtali', 'asad_gate', 'mohammadpur', 'shukrabad', 'dhanmondi', 'newmarket', 'azimpur', 'press_club', 'jatrabari', 'demra', 'keraniganj_kadomtoli'],
+    type: 'Double-Decker',
+    hours: '7:00 AM - 7:20 PM'
+  },
+  {
+    id: 'brtc_ghatarchar_kanchpur_mohammadpur',
+    name: 'BRTC Ghatarchar-Kanchpur (Route 26)',
+    bnName: 'বিআরটিসি ঘাটারচর-কাচপুর (রুট ২৬)',
+    routeString: 'Ghatarchar ⇄ Kanchpur',
+    stops: ['ghatarchar', 'mohammadpur', 'dhanmondi', 'science_lab', 'shahbag', 'press_club', 'paltan', 'motijheel', 'jatrabari', 'demra', 'shimrail', 'kanchpur'],
+    type: 'Double-Decker',
+    hours: '7:10 AM - 6:00 PM'
+  },
+  {
+    id: 'brtc_bhairab_kanchpur_dreamholiday',
+    name: 'BRTC Bhairab-Narsingdi-Kanchpur',
+    bnName: 'বিআরটিসি ভৈরব-নরসিংদী-কাচপুর',
+    routeString: 'Bhairab ⇄ Kanchpur',
+    stops: ['bhairab', 'narsingdi', 'pagla', 'katchpur', 'shimrail', 'demra', 'jatrabari', 'malibagh', 'mogh_bazar', 'mohakhali', 'kuril', 'kanchpur'],
+    type: 'Double-Decker',
+    hours: '6:30 AM - 9:30 PM'
+  },
+  {
+    id: 'brtc_diabari_abdullahpur_shuttle',
+    name: 'BRTC Diabari-Abdullahpur Metro Shuttle',
+    bnName: 'বিআরটিসি দিয়াবাড়ী-আব্দুল্লাহপুর মেট্রো শাটল',
+    routeString: 'Diabari Metro ⇄ Abdullahpur',
+    stops: ['diabari_metro', 'uttara_sec7', 'uttara_sec5', 'uttara', 'house_building', 'abdullahpur'],
+    type: 'Double-Decker',
+    hours: '7:00 AM - 8:20 PM'
+  },
+  {
+    id: 'brtc_kalyanpur_mirpur10_kadomtoli_dd',
+    name: 'BRTC Mirpur 10-Kadomtoli',
+    bnName: 'বিআরটিসি মিরপুর ১০-কদমতলী',
+    routeString: 'Mirpur 10 ⇄ Kadomtoli',
+    stops: ['mirpur10', 'sheorapara', 'mohammadpur', 'dhanmondi', 'science_lab', 'shahbag', 'press_club', 'paltan', 'motijheel', 'jatrabari', 'demra', 'keraniganj_kadomtoli'],
+    type: 'Double-Decker',
+    hours: '6:00 AM - 8:00 PM'
+  },
+
+  // ===== BRTC INTERCITY ROUTES =====
+  // Dhaka to Divisions
+  {
+    id: 'brtc_dhaka_khulna_ac',
+    name: 'BRTC Dhaka-Khulna (AC)',
+    bnName: 'বিআরটিসি ঢাকা-খুলনা (এসি)',
+    routeString: 'Gulistan CBS-2 ⇄ Khulna',
+    stops: ['gulistan', 'cbs_2', 'dhaka', 'munshiganj', 'madaripur', 'gopalganj', 'narail', 'jessore', 'khulna'],
+    type: 'AC',
+    hours: '7:00 AM - Hourly'
+  },
+  {
+    id: 'brtc_dhaka_lakshmipur_ac',
+    name: 'BRTC Dhaka-Lakshmipur (AC)',
+    bnName: 'বিআরটিসি ঢাকা-লক্ষ্মীপুর (এসি)',
+    routeString: 'Kamalapur ⇄ Lakshmipur',
+    stops: ['kamalapur', 'motijheel', 'narayanganj', 'comilla', 'chandpur', 'ramganj', 'lakshmipur'],
+    type: 'AC',
+    hours: '7:00 AM - Every 30 min'
+  },
+  {
+    id: 'brtc_dhaka_faridpur_ac',
+    name: 'BRTC Dhaka-Faridpur (AC)',
+    bnName: 'বিআরটিসি ঢাকা-ফরিদপুর (এসি)',
+    routeString: 'Gulistan ⇄ Faridpur',
+    stops: ['gulistan', 'cbs_2', 'dhaka', 'dohar', 'nawabganj', 'faridpur'],
+    type: 'AC',
+    hours: '7:00 AM - Hourly'
+  },
+  {
+    id: 'brtc_dhaka_shyamnagar_ac',
+    name: 'BRTC Dhaka-Shyamnagar (AC)',
+    bnName: 'বিআরটিসি ঢাকা-শ্যামনগর (এসি)',
+    routeString: 'Gulistan ⇄ Shyamnagar',
+    stops: ['gulistan', 'cbs_2', 'faridpur', 'gopalganj', 'khulna', 'satkhira', 'shyamnagar'],
+    type: 'AC',
+    hours: '7:15 AM'
+  },
+  {
+    id: 'brtc_gulistan_gosairhat_ac',
+    name: 'BRTC Gulistan-Gosairhat (AC)',
+    bnName: 'বিআরটিসি গুলিস্তান-গোসাইরহাট (এসি)',
+    routeString: 'Gulistan ⇄ Gosairhat',
+    stops: ['gulistan', 'cbs_2', 'narayanganj', 'comilla', 'feni', 'noakhali', 'gosairhat'],
+    type: 'AC',
+    hours: '7:00 AM'
+  },
+  {
+    id: 'brtc_gulistan_madhukhali_ac',
+    name: 'BRTC Gulistan-Madhukhali (AC)',
+    bnName: 'বিআরটিসি গুলিস্তান-মধুখালি (এসি)',
+    routeString: 'Gulistan ⇄ Madhukhali',
+    stops: ['gulistan', 'cbs_2', 'munshiganj', 'faridpur', 'madhukhali'],
+    type: 'AC',
+    hours: '7:30 AM'
+  },
+  {
+    id: 'brtc_narsingdi_dhaka_ac',
+    name: 'BRTC Narsingdi-Dhaka (AC)',
+    bnName: 'বিআরটিসি নরসিংদী-ঢাকা (এসি)',
+    routeString: 'Narsingdi ⇄ Gulistan',
+    stops: ['narsingdi', 'bhairab', 'narayanganj', 'demra', 'jatrabari', 'gulistan'],
+    type: 'AC',
+    hours: '7:00 AM - Every 30 min'
+  },
+  {
+    id: 'brtc_bhairab_dhaka_dd',
+    name: 'BRTC Bhairab-Dhaka',
+    bnName: 'বিআরটিসি ভৈরব-ঢাকা',
+    routeString: 'Bhairab ⇄ Gulistan',
+    stops: ['bhairab', 'narsingdi', 'narayanganj', 'demra', 'jatrabari', 'motijheel', 'gulistan'],
+    type: 'Double-Decker',
+    hours: '5:40 AM - Frequent'
+  },
+  {
+    id: 'brtc_sonapur_sylhet_chatak',
+    name: 'BRTC Sonapur-Sylhet-Chatak',
+    bnName: 'বিআরটিসি সোনাপুর-সিলেট-ছাতক',
+    routeString: 'Sonapur ⇄ Chatak',
+    stops: ['sonapur', 'noakhali', 'comilla', 'brahmanbaria', 'habiganj', 'sylhet', 'chatak'],
+    type: 'Sitting',
+    hours: '5:40 AM Daily'
+  },
+  {
+    id: 'brtc_sonapur_jaflong',
+    name: 'BRTC Sonapur-Jaflong',
+    bnName: 'বিআরটিসি সোনাপুর-জাফলং',
+    routeString: 'Sonapur ⇄ Jaflong',
+    stops: ['sonapur', 'noakhali', 'comilla', 'brahmanbaria', 'habiganj', 'sylhet', 'jaflong'],
+    type: 'Sitting',
+    hours: '6:45 PM'
+  },
+  {
+    id: 'brtc_chandpur_coxsbazar_ac',
+    name: 'BRTC Chandpur-Cox\'s Bazar (AC)',
+    bnName: 'বিআরটিসি চাঁদপুর-কক্সবাজার (এসি)',
+    routeString: 'Chandpur ⇄ Cox\'s Bazar',
+    stops: ['chandpur', 'comilla', 'feni', 'chittagong', 'coxsbazar'],
+    type: 'AC',
+    hours: '6:45 PM Nightly'
+  },
+
+  // Regional Intercity Routes
+  {
+    id: 'brtc_khulna_barisal_ac',
+    name: 'BRTC Khulna-Barisal (AC)',
+    bnName: 'বিআরটিসি খুলনা-বরিশাল (এসি)',
+    routeString: 'Khulna ⇄ Barisal',
+    stops: ['khulna', 'bagerhat', 'pirojpur', 'barisal'],
+    type: 'AC',
+    hours: '8:30 AM'
+  },
+  {
+    id: 'brtc_khulna_kuakata_ac',
+    name: 'BRTC Khulna-Kuakata (AC)',
+    bnName: 'বিআরটিসি খুলনা-কুয়াকাটা (এসি)',
+    routeString: 'Khulna ⇄ Kuakata',
+    stops: ['khulna', 'bagerhat', 'pirojpur', 'patuakhali', 'kuakata'],
+    type: 'AC',
+    hours: '8:45 PM'
+  },
+  {
+    id: 'brtc_khulna_chittagong_ac',
+    name: 'BRTC Khulna-Chittagong (AC)',
+    bnName: 'বিআরটিসি খুলনা-চট্টগ্রাম (এসি)',
+    routeString: 'Khulna ⇄ Chittagong',
+    stops: ['khulna', 'bagerhat', 'barisal', 'bhola', 'noakhali', 'feni', 'chittagong'],
+    type: 'AC',
+    hours: '9:00 PM'
+  },
+  {
+    id: 'brtc_jessore_kuakata_ac',
+    name: 'BRTC Jessore-Kuakata (AC)',
+    bnName: 'বিআরটিসি যশোর-কুয়াকাটা (এসি)',
+    routeString: 'Jessore ⇄ Kuakata',
+    stops: ['jessore', 'khulna', 'bagerhat', 'pirojpur', 'patuakhali', 'kuakata'],
+    type: 'AC',
+    hours: '6:30 AM'
+  },
+  {
+    id: 'brtc_chittagong_rangamati',
+    name: 'BRTC Chittagong-Rangamati',
+    bnName: 'বিআরটিসি চট্টগ্রাম-রাঙ্গামাটি',
+    routeString: 'Chittagong CBT ⇄ Rangamati',
+    stops: ['chittagong', 'chandraghona', 'kaptai', 'rangamati'],
+    type: 'Sitting',
+    hours: '7:00 AM - Multiple daily'
+  },
+  {
+    id: 'brtc_chittagong_khagrachari',
+    name: 'BRTC Chittagong-Khagrachari',
+    bnName: 'বিআরটিসি চট্টগ্রাম-খাগড়াছড়ি',
+    routeString: 'Chittagong CBT ⇄ Khagrachari',
+    stops: ['chittagong', 'ramgarh', 'manikchhari', 'khagrachari'],
+    type: 'Sitting',
+    hours: '7:00 AM - 4 daily trips'
+  },
+  {
+    id: 'brtc_chittagong_sylhet',
+    name: 'BRTC Chittagong-Sylhet',
+    bnName: 'বিআরটিসি চট্টগ্রাম-সিলেট',
+    routeString: 'Chittagong ⇄ Sylhet',
+    stops: ['chittagong', 'feni', 'comilla', 'brahmanbaria', 'habiganj', 'sylhet'],
+    type: 'Sitting',
+    hours: '7:00 AM'
+  },
+  {
+    id: 'brtc_chittagong_sunamganj_ac',
+    name: 'BRTC Chittagong-Sunamganj (AC)',
+    bnName: 'বিআরটিসি চট্টগ্রাম-সুনামগঞ্জ (এসি)',
+    routeString: 'Chittagong ⇄ Sunamganj',
+    stops: ['chittagong', 'feni', 'comilla', 'brahmanbaria', 'habiganj', 'sylhet', 'sunamganj'],
+    type: 'AC',
+    hours: '9:15 PM'
+  },
+  {
+    id: 'brtc_barisal_kuakata_ac',
+    name: 'BRTC Barisal-Kuakata (AC)',
+    bnName: 'বিআরটিসি বরিশাল-কুয়াকাটা (এসি)',
+    routeString: 'Barisal ⇄ Kuakata',
+    stops: ['barisal', 'patuakhali', 'kuakata'],
+    type: 'AC',
+    hours: '8:00 AM'
+  },
+  {
+    id: 'brtc_barisal_rangpur',
+    name: 'BRTC Barisal-Rangpur',
+    bnName: 'বিআরটিসি বরিশাল-রংপুর',
+    routeString: 'Barisal ⇄ Rangpur',
+    stops: ['barisal', 'gopalganj', 'faridpur', 'dhaka', 'gazipur', 'mymensingh', 'jamalpur', 'rangpur'],
+    type: 'Sitting',
+    hours: '5:45 AM'
+  },
+  {
+    id: 'brtc_barisal_chapainawabganj',
+    name: 'BRTC Barisal-Chapainawabganj',
+    bnName: 'বিআরটিসি বরিশাল-চাঁপাইনবাবগঞ্জ',
+    routeString: 'Barisal ⇄ Chapainawabganj',
+    stops: ['barisal', 'gopalganj', 'faridpur', 'pabna', 'rajshahi', 'chapainawabganj'],
+    type: 'Sitting',
+    hours: '6:30 AM'
+  },
+  {
+    id: 'brtc_kuakata_dhaka_ac',
+    name: 'BRTC Kuakata-Dhaka (AC)',
+    bnName: 'বিআরটিসি কুয়াকাটা-ঢাকা (এসি)',
+    routeString: 'Kuakata ⇄ Gulistan',
+    stops: ['kuakata', 'patuakhali', 'barisal', 'gopalganj', 'faridpur', 'munshiganj', 'dhaka', 'gulistan'],
+    type: 'AC',
+    hours: '6:15 AM & 8:20 AM'
+  },
+  {
+    id: 'brtc_rangpur_shyamnagar',
+    name: 'BRTC Rangpur-Shyamnagar (Nightly)',
+    bnName: 'বিআরটিসি রংপুর-শ্যামনগর (নৈশ)',
+    routeString: 'Rangpur ⇄ Shyamnagar',
+    stops: ['rangpur', 'dinajpur', 'pabna', 'kushtia', 'jessore', 'khulna', 'satkhira', 'shyamnagar'],
+    type: 'Sitting',
+    hours: '5:30 PM Nightly'
+  },
+  {
+    id: 'brtc_kurigram_shyamnagar',
+    name: 'BRTC Kurigram-Shyamnagar',
+    bnName: 'বিআরটিসি কুড়িগ্রাম-শ্যামনগর',
+    routeString: 'Kurigram ⇄ Shyamnagar',
+    stops: ['kurigram', 'rangpur', 'bogra', 'pabna', 'kushtia', 'jessore', 'khulna', 'satkhira', 'shyamnagar'],
+    type: 'Sitting',
+    hours: '6:00 AM'
+  },
+  {
+    id: 'brtc_panchagarh_mongla',
+    name: 'BRTC Panchagarh-Mongla (Nightly)',
+    bnName: 'বিআরটিসি পঞ্চগড়-মংলা (নৈশ)',
+    routeString: 'Panchagarh ⇄ Mongla',
+    stops: ['panchagarh', 'thakurgaon', 'dinajpur', 'bogra', 'pabna', 'kushtia', 'jessore', 'khulna', 'bagerhat', 'mongla'],
+    type: 'Sitting',
+    hours: '4:00 PM Nightly'
+  },
+  {
+    id: 'brtc_panchagarh_chapai_ac',
+    name: 'BRTC Panchagarh-Chapainawabganj (AC)',
+    bnName: 'বিআরটিসি পঞ্চগড়-চাঁপাইনবাবগঞ্জ (এসি)',
+    routeString: 'Panchagarh ⇄ Chapainawabganj',
+    stops: ['panchagarh', 'thakurgaon', 'dinajpur', 'natore', 'rajshahi', 'chapainawabganj'],
+    type: 'AC',
+    hours: '6:10 AM'
+  },
+  {
+    id: 'brtc_panchagarh_pirojpur',
+    name: 'BRTC Panchagarh-Pirojpur (Nightly)',
+    bnName: 'বিআরটিসি পঞ্চগড়-পিরোজপুর (নৈশ)',
+    routeString: 'Panchagarh ⇄ Pirojpur',
+    stops: ['panchagarh', 'thakurgaon', 'dinajpur', 'bogra', 'pabna', 'faridpur', 'barisal', 'pirojpur'],
+    type: 'AC',
+    hours: '3:30 PM Nightly'
+  },
+  {
+    id: 'brtc_rangpur_gopalganj_ac',
+    name: 'BRTC Rangpur-Gopalganj (AC)',
+    bnName: 'বিআরটিসি রংপুর-গোপালগঞ্জ (এসি)',
+    routeString: 'Rangpur ⇄ Gopalganj',
+    stops: ['rangpur', 'dinajpur', 'bogra', 'pabna', 'faridpur', 'gopalganj'],
+    type: 'AC',
+    hours: '7:00 AM'
+  },
+  {
+    id: 'brtc_dinajpur_kuakata_ac',
+    name: 'BRTC Dinajpur-Kuakata (AC)',
+    bnName: 'বিআরটিসি দিনাজপুর-কুয়াকাটা (এসি)',
+    routeString: 'Dinajpur ⇄ Kuakata',
+    stops: ['dinajpur', 'bogra', 'pabna', 'faridpur', 'gopalganj', 'barisal', 'patuakhali', 'kuakata'],
+    type: 'AC',
+    hours: '3:20 PM'
+  },
+  {
+    id: 'brtc_dinajpur_benapole_ac',
+    name: 'BRTC Dinajpur-Benapole (AC)',
+    bnName: 'বিআরটিসি দিনাজপুর-বেনাপোল (এসি)',
+    routeString: 'Dinajpur ⇄ Benapole',
+    stops: ['dinajpur', 'bogra', 'pabna', 'kushtia', 'jessore', 'benapole'],
+    type: 'AC',
+    hours: '6:00 PM'
+  },
+  {
+    id: 'brtc_panchagarh_patuakhali_ac',
+    name: 'BRTC Panchagarh-Patuakhali (AC Nightly)',
+    bnName: 'বিআরটিসি পঞ্চগড়-পটুয়াখালী (এসি নৈশ)',
+    routeString: 'Panchagarh ⇄ Patuakhali',
+    stops: ['panchagarh', 'thakurgaon', 'dinajpur', 'bogra', 'pabna', 'faridpur', 'gopalganj', 'barisal', 'patuakhali'],
+    type: 'AC',
+    hours: '3:20 PM Nightly'
+  },
+  {
+    id: 'brtc_bhurunagamari_gopalganj_ac',
+    name: 'BRTC Bhurunagamari-Gopalganj (AC Nightly)',
+    bnName: 'বিআরটিসি ভুরুঙ্গামারী-গোপালগঞ্জ (এসি নৈশ)',
+    routeString: 'Bhurunagamari ⇄ Gopalganj',
+    stops: ['bhurunagamari', 'kurigram', 'rangpur', 'bogra', 'pabna', 'faridpur', 'gopalganj'],
+    type: 'AC',
+    hours: '5:20 PM Nightly'
+  },
+  {
+    id: 'brtc_kurigram_pirojpur_ac',
+    name: 'BRTC Kurigram-Pirojpur (AC Nightly)',
+    bnName: 'বিআরটিসি কুড়িগ্রাম-পিরোজপুর (এসি নৈশ)',
+    routeString: 'Kurigram ⇄ Pirojpur',
+    stops: ['kurigram', 'rangpur', 'bogra', 'pabna', 'faridpur', 'gopalganj', 'barisal', 'pirojpur'],
+    type: 'AC',
+    hours: '4:30 PM Nightly'
+  },
+  {
+    id: 'brtc_mymensingh_bholaganj',
+    name: 'BRTC Mymensingh-Bholaganj',
+    bnName: 'বিআরটিসি ময়মনসিংহ-ভোলাগঞ্জ',
+    routeString: 'Mymensingh ⇄ Bholaganj',
+    stops: ['mymensingh', 'netrokona', 'sunamganj', 'sylhet', 'bholaganj'],
+    type: 'Sitting',
+    hours: '9:00 AM'
+  },
+  {
+    id: 'brtc_netrokona_mongla',
+    name: 'BRTC Netrokona-Mongla',
+    bnName: 'বিআরটিসি নেত্রকোনা-মংলা',
+    routeString: 'Netrokona ⇄ Mongla',
+    stops: ['netrokona', 'mymensingh', 'dhaka', 'faridpur', 'gopalganj', 'khulna', 'bagerhat', 'mongla'],
+    type: 'Sitting',
+    hours: '7:00 AM'
+  },
+  {
+    id: 'brtc_mymensingh_nandail_dd',
+    name: 'BRTC Mymensingh-Nandail',
+    bnName: 'বিআরটিসি ময়মনসিংহ-নান্দাইল',
+    routeString: 'Mymensingh ⇄ Nandail',
+    stops: ['mymensingh', 'trishal', 'nandail'],
+    type: 'Double-Decker',
+    hours: '7:50 AM - Every 30 min'
+  },
+  {
+    id: 'brtc_pabna_kuakata',
+    name: 'BRTC Pabna-Kuakata',
+    bnName: 'বিআরটিসি পাবনা-কুয়াকাটা',
+    routeString: 'Pabna ⇄ Kuakata',
+    stops: ['pabna', 'kushtia', 'faridpur', 'gopalganj', 'barisal', 'patuakhali', 'kuakata'],
+    type: 'Sitting',
+    hours: '6:20 AM'
+  },
+  {
+    id: 'brtc_pabna_pathorghata',
+    name: 'BRTC Pabna-Pathorghata',
+    bnName: 'বিআরটিসি পাবনা-পাথরঘাটা',
+    routeString: 'Pabna ⇄ Pathorghata',
+    stops: ['pabna', 'kushtia', 'faridpur', 'gopalganj', 'barisal', 'barguna', 'pathorghata'],
+    type: 'Sitting',
+    hours: '5:40 AM'
+  },
+  {
+    id: 'brtc_rajshahi_naogaon_ac',
+    name: 'BRTC Rajshahi-Naogaon (AC)',
+    bnName: 'বিআরটিসি রাজশাহী-নওগাঁ (এসি)',
+    routeString: 'Rajshahi ⇄ Naogaon',
+    stops: ['rajshahi', 'natore', 'naogaon'],
+    type: 'AC',
+    hours: '6:45 AM - Multiple daily'
+  },
+  {
+    id: 'brtc_bogra_dinajpur_ac',
+    name: 'BRTC Bogra-Dinajpur (AC)',
+    bnName: 'বিআরটিসি বগুড়া-দিনাজপুর (এসি)',
+    routeString: 'Bogra ⇄ Dinajpur',
+    stops: ['bogra', 'naogaon', 'natore', 'dinajpur'],
+    type: 'AC',
+    hours: '6:50 AM'
+  },
+  {
+    id: 'brtc_bogra_panchagarh_khulna',
+    name: 'BRTC Panchagarh-Khulna',
+    bnName: 'বিআরটিসি পঞ্চগড়-খুলনা',
+    routeString: 'Panchagarh ⇄ Khulna',
+    stops: ['panchagarh', 'thakurgaon', 'dinajpur', 'bogra', 'pabna', 'kushtia', 'jessore', 'khulna'],
+    type: 'Sitting',
+    hours: '6:00 AM'
   }
 ];
 
