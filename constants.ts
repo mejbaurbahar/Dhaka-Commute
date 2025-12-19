@@ -442,6 +442,17 @@ export const STATIONS: Record<string, Station> = {
   // ===== GOVERNMENT OFFICES =====
   secretariat: { id: 'secretariat', name: 'Secretariat', bnName: 'সচিবালয়', lat: 23.7280, lng: 90.4020 },
   supreme_court: { id: 'supreme_court', name: 'Supreme Court', bnName: 'সুপ্রিম কোর্ট', lat: 23.7280, lng: 90.4030 },
+
+  // ===== SAVAR-HEMAYETPUR CORRIDOR (Additional stops) =====
+  yearpur: { id: 'yearpur', name: 'Yearpur', bnName: 'ইয়ারপুর', lat: 23.8150, lng: 90.2850 },
+  dhamsona: { id: 'dhamsona', name: 'Dhamsona', bnName: 'ধামসোনা', lat: 23.8200, lng: 90.2800 },
+  tetuljhora: { id: 'tetuljhora', name: 'Tetuljhora', bnName: 'তেঁতুলঝোড়া', lat: 23.8250, lng: 90.2780 },
+
+  // ===== INDUSTRIAL & EPZ =====
+  dhaka_epz: { id: 'dhaka_epz', name: 'Dhaka EPZ', bnName: 'ঢাকা ইপিজেড', lat: 23.8900, lng: 90.2900 },
+
+  // ===== NARAYANGANJ AREA =====
+  nitolganj: { id: 'nitolganj', name: 'Nitolganj', bnName: 'নিতলগঞ্জ', lat: 23.6150, lng: 90.5100 },
 };
 
 
@@ -2156,6 +2167,15 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['azimpur', 'eden_college', 'nilkhet', 'newmarket', 'science_lab', 'city_college', 'kalabagan', 'panthapath', 'kawran_bazar', 'bot_tola', 'satrasta', 'nabisco', 'mohakhali', 'amtola', 'wireless', 'gulshan1', 'badda', 'badda_link_road', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'kuril_chourasta'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 11:00 PM'
+  },
+  {
+    id: 'j.m_super',
+    name: 'J.M Super Paribahan',
+    bnName: 'জে.এম সুপার পরিবহন',
+    routeString: 'Jatrabari ⇄ Tongi',
+    stops: ['jatrabari', 'janapath_moor', 'sayedabad', 'mugdapara', 'bashabo', 'khilgaon', 'khidma_hospital', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'madhya_badda', 'badda', 'uttar_badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jasimuddin_square', 'jashimuddin', 'rajlakshmi_crossing', 'rajlakshmi', 'azampur', 'uttara_sector7', 'uttara_sector5', 'uttara', 'abdullahpur', 'tongi', 'tongi_college_gate'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
   }
 ];
 
