@@ -443,10 +443,6 @@ export const STATIONS: Record<string, Station> = {
   secretariat: { id: 'secretariat', name: 'Secretariat', bnName: 'সচিবালয়', lat: 23.7280, lng: 90.4020 },
   supreme_court: { id: 'supreme_court', name: 'Supreme Court', bnName: 'সুপ্রিম কোর্ট', lat: 23.7280, lng: 90.4030 },
 
-  // ===== SAVAR-HEMAYETPUR CORRIDOR (Additional stops) =====
-  yearpur: { id: 'yearpur', name: 'Yearpur', bnName: 'ইয়ারপুর', lat: 23.8150, lng: 90.2850 },
-  dhamsona: { id: 'dhamsona', name: 'Dhamsona', bnName: 'ধামসোনা', lat: 23.8200, lng: 90.2800 },
-  tetuljhora: { id: 'tetuljhora', name: 'Tetuljhora', bnName: 'তেঁতুলঝোড়া', lat: 23.8250, lng: 90.2780 },
 
   // ===== INDUSTRIAL & EPZ =====
   dhaka_epz: { id: 'dhaka_epz', name: 'Dhaka EPZ', bnName: 'ঢাকা ইপিজেড', lat: 23.8900, lng: 90.2900 },
