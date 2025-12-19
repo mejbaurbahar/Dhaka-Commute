@@ -9,6 +9,7 @@ Disallow: /api/
 Disallow: /*.json$
 Disallow: /*?q=*
 Disallow: /404.html
+Disallow: /for-ai
 
 # Sitemap Location
 Sitemap: https://koyjabo.com/sitemap.xml
