@@ -2302,6 +2302,62 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
 
+  // ===== NEW BUSES ADDED FROM WEB SCRAPING (Round 2) =====
+  {
+    id: 'shikor',
+    name: 'Shikor Paribahan',
+    bnName: 'শিখর পরিবহন',
+    routeString: 'Mirpur 12 ⇄ Jatrabari',
+    stops: ['mirpur12', 'mirpur11', 'mirpur10', 'kazipara', 'agargaon', 'farmgate', 'kawran_bazar', 'shahbag', 'matsya_bhaban', 'paltan', 'gulistan', 'tikatuli', 'sayedabad', 'jatrabari'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: '6_no_motijheel_banani',
+    name: '6 No. Motijheel Banani Transport',
+    bnName: '৬নং মতিঝিল বনানী ট্রান্সপোর্ট',
+    routeString: 'Kamalapur ⇄ Notun Bazar',
+    stops: ['kamalapur', 'motijheel', 'gulistan', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'mogbazar', 'kawran_bazar', 'farmgate', 'jahangir_gate', 'bijoy_sarani', 'mohakhali', 'gulshan1', 'gulshan2', 'notun_bazar'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'alaka',
+    name: 'Alaka ATCL',
+    bnName: 'আলাকা এটিসিএল',
+    routeString: 'Motijheel ⇄ Mohammadpur',
+    stops: ['motijheel', 'gulistan', 'paltan', 'shahbag', 'science_lab', 'city_college', 'jigatola', 'dhanmondi15', 'shankar', 'mohammadpur'],
+    type: 'Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'torongo_local',
+    name: 'Torongo',
+    bnName: 'তরঙ্গ',
+    routeString: 'Mohammadpur ⇄ Notun Bazar',
+    stops: ['mohammadpur', 'asad_gate', 'farmgate', 'mohakhali', 'amtola', 'gulshan1', 'badda', 'notun_bazar'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'volvo_2',
+    name: 'Volvo 2',
+    bnName: 'ভলভো ২',
+    routeString: 'Pallabi ⇄ Motijheel',
+    stops: ['mirpur12', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'agargaon', 'farmgate', 'shahbag', 'paltan', 'gulistan', 'motijheel'],
+    type: 'AC',
+    hours: '7:00 AM - 9:00 PM'
+  },
+  {
+    id: 'dhanmondi_circular',
+    name: 'Dhanmondi Circular Bus',
+    bnName: 'ধানমন্ডি সার্কুলার বাস',
+    routeString: 'Dhanmondi Circular',
+    stops: ['dhanmondi27', 'dhanmondi32', 'kalabagan', 'science_lab', 'newmarket', 'nilkhet', 'azimpur', 'bata_signal', 'city_college', 'jigatola', 'shankar', 'dhanmondi15', 'dhanmondi27'],
+    type: 'Local',
+    hours: '8:00 AM - 8:00 PM'
+  },
+
   // ===== BRTC DHAKA LOCAL ROUTES =====
   {
     id: 'brtc_mugda_tongi',
