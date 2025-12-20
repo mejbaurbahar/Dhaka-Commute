@@ -250,7 +250,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
       {/* Timeline */}
       <div className="flex-1 overflow-y-auto px-6 py-6 scroll-smooth">
         <h4 className="text-xs font-bold text-gray-400 dark:text-gray-500 mb-6 uppercase tracking-wider ml-11">Route Timeline</h4>
-        <div className="relative border-l-2 border-dashed border-gray-300 dark:border-gray-600 ml-3 space-y-0 pb-20">
+        <div className="relative ml-3 space-y-0 pb-20">
           {bus.stops.map((stopId, idx) => {
             const station = STATIONS[stopId];
             if (!station) return null;
@@ -265,6 +265,10 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
 
             return (
               <div key={stopId} className={`relative pb-10 ${isPassed ? 'opacity-40 grayscale blur-[0.5px]' : 'opacity-100'}`}>
+                {/* Connecting Line (Gray Dashed) */}
+                {idx < bus.stops.length - 1 && (
+                  <div className="absolute left-[-2px] top-0 bottom-0 w-1 border-l-2 border-dashed border-gray-300 dark:border-gray-600 z-0"></div>
+                )}
                 {/* Highlight Line Segment */}
                 {isInRange && idx < highlightEndIdx! && (
                   <div className="absolute left-[-2px] top-0 bottom-[-40px] w-1 bg-green-500 z-0"></div>
