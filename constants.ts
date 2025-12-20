@@ -2215,8 +2215,8 @@ export const BUS_DATA: BusRoute[] = [
     id: 'prajapati',
     name: 'Prajapati',
     bnName: 'প্রজাপতি',
-    routeString: 'Gabtoli ⇄ Abdullahpur',
-    stops: ['gabtoli', 'mazar_road', 'technical', 'ansar_camp', 'mirpur1', 'mirpur10', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'kuril_chourasta', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
+    routeString: 'Bosila ⇄ Abdullahpur',
+    stops: ['bosila', 'mohammadpur', 'asad_gate', 'college_gate', 'shyamoli', 'kallyanpur', 'technical', 'ansar_camp', 'mirpur1', 'mirpur10', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'kuril_chourasta', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -2224,8 +2224,8 @@ export const BUS_DATA: BusRoute[] = [
     id: 'konok',
     name: 'Konok',
     bnName: 'কনক',
-    routeString: 'Gabtoli ⇄ Abdullahpur',
-    stops: ['gabtoli', 'mazar_road', 'technical', 'ansar_camp', 'mirpur1', 'mirpur10', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
+    routeString: 'Mirpur 1 ⇄ Abdullahpur',
+    stops: ['mirpur1', 'mirpur10', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'uttara', 'abdullahpur'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -2279,7 +2279,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Cantonment Mini Service',
     bnName: 'ক্যান্টনমেন্ট মিনি সার্ভিস',
     routeString: 'Mirpur 14 ⇄ Mohakhali',
-    stops: ['mirpur14', 'mirpur13', 'mirpur11', 'mirpur10', 'kachukhet', 'garrison', 'adamjee_college', 'sainik_club', 'banani', 'kakali', 'mohakhali'],
+    stops: ['mirpur14', 'kachukhet', 'garrison', 'adamjee_college', 'sainik_club', 'banani', 'kakali', 'mohakhali'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -2325,8 +2325,8 @@ export const BUS_DATA: BusRoute[] = [
     id: 'alaka',
     name: 'Alaka ATCL',
     bnName: 'আলাকা এটিসিএল',
-    routeString: 'Motijheel ⇄ Mohammadpur',
-    stops: ['motijheel', 'gulistan', 'paltan', 'shahbag', 'science_lab', 'city_college', 'jigatola', 'dhanmondi15', 'shankar', 'mohammadpur'],
+    routeString: 'Arambagh ⇄ Mohammadpur',
+    stops: ['arambagh', 'motijheel', 'gulistan', 'paltan', 'shahbag', 'science_lab', 'city_college', 'jigatola', 'dhanmondi15', 'shankar', 'mohammadpur'],
     type: 'Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
