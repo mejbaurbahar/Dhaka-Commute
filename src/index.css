@@ -391,13 +391,271 @@ textarea {
   }
 }
 
-/* Optimize for very small screens */
-@media (max-width: 375px) {
-  .text-sm {
-    font-size: 0.8125rem;
+/* ===== UI/UX IMPROVEMENTS (December 2024) ===== */
+
+/* Enhanced Button Styling */
+@layer components {
+  .btn-primary {
+    @apply min-h-[48px] px-6 py-3 rounded-xl font-semibold;
+    @apply shadow-md hover:shadow-lg;
+    @apply active:scale-95 transition-all duration-200;
   }
 
-  .text-xs {
-    font-size: 0.6875rem;
+  .btn-secondary {
+    @apply min-h-[48px] px-6 py-3 rounded-xl font-semibold;
+    @apply border-2 active:scale-95 transition-all duration-200;
   }
+
+  /* Card Improvements */
+  .card-elevated {
+    @apply shadow-lg hover:shadow-xl transition-shadow duration-300;
+    @apply rounded-2xl p-6;
+  }
+
+  .card-subtle {
+    @apply shadow-sm hover:shadow-md transition-shadow duration-300;
+    @apply rounded-xl p-5;
+  }
+
+  /* Typography Scale */
+  .text-display {
+    @apply text-3xl md:text-4xl font-bold leading-tight;
+  }
+
+  .text-heading {
+    @apply text-2xl md:text-3xl font-bold leading-snug;
+  }
+
+  .text-subheading {
+    @apply text-xl md:text-2xl font-semibold leading-normal;
+  }
+
+  .text-body-large {
+    @apply text-base md:text-lg leading-relaxed;
+  }
+
+  .text-body {
+    @apply text-sm md:text-base leading-relaxed;
+  }
+
+  .text-caption {
+    @apply text-xs md:text-sm text-gray-600 dark:text-gray-400;
+  }
+}
+
+/* Better Focus States */
+*:focus-visible {
+  @apply outline-none ring-4 ring-emerald-500/30 ring-offset-2;
+}
+
+/* Improved Spacing Utilities */
+.section-spacing {
+  @apply py-8 md:py-12;
+}
+
+.container-padding {
+  @apply px-6 md:px-8 lg:px-12;
+}
+
+/* Skeleton Loader Animation */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  @apply bg-gray-200 dark:bg-gray-700 rounded;
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0) 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+/* Smooth Transitions & Animations */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Stagger Animations for Lists */
+.stagger-item {
+  animation: slide-up 0.3s ease-out backwards;
+}
+
+.stagger-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.stagger-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.stagger-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.stagger-item:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.stagger-item:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.stagger-item:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+.stagger-item:nth-child(7) {
+  animation-delay: 0.35s;
+}
+
+.stagger-item:nth-child(8) {
+  animation-delay: 0.4s;
+}
+
+/* Semantic Background Colors with Better Contrast */
+.bg-success-subtle {
+  @apply bg-emerald-50 dark:bg-emerald-900/20;
+  @apply border border-emerald-200 dark:border-emerald-800;
+}
+
+.bg-warning-subtle {
+  @apply bg-amber-50 dark:bg-amber-900/20;
+  @apply border border-amber-200 dark:border-amber-800;
+}
+
+.bg-error-subtle {
+  @apply bg-red-50 dark:bg-red-900/20;
+  @apply border border-red-200 dark:border-red-800;
+}
+
+.bg-info-subtle {
+  @apply bg-blue-50 dark:bg-blue-900/20;
+  @apply border border-blue-200 dark:border-blue-800;
+}
+
+/* Improved Text Colors for Dark Mode */
+.text-primary-contrast {
+  @apply text-gray-900 dark:text-gray-50;
+}
+
+.text-secondary-contrast {
+  @apply text-gray-700 dark:text-gray-200;
+}
+
+.text-tertiary-contrast {
+  @apply text-gray-600 dark:text-gray-300;
+}
+
+/* Loading Spinner */
+@keyframes spin-smooth {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin-smooth 1s linear infinite;
+}
+
+.loading-pulse {
+  @apply animate-pulse;
+}
+
+/* Better Bengali Text Rendering */
+.font-bengali {
+  font-family: 'Noto Sans Bengali', system-ui, sans-serif;
+  @apply leading-loose;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth Interactive Elements */
+.interactive {
+  @apply transition-all duration-200;
+  @apply hover:scale-[1.02] active:scale-[0.98];
+}
+
+.interactive-subtle {
+  @apply transition-all duration-200;
+  @apply hover:brightness-105 active:brightness-95;
+}
+
+/* Better Card Hover Effects */
+.card-hover {
+  @apply transition-all duration-300;
+  @apply hover:shadow-xl hover:-translate-y-1;
+}
+
+/* Smooth Fade Transitions */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
 }
