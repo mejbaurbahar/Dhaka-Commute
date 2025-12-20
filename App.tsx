@@ -326,91 +326,22 @@ const SettingsView: React.FC<{
       </h1>
 
       <div className="space-y-8 max-w-xl">
-        {/* API Key Section */}
-        <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
-          <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
-            <Key className="w-4 h-4" /> Google Gemini API Key
-          </h3>
-          <p className="text-xs text-blue-700 mb-4">
-            To use the AI Assistant, please provide your own Google Gemini API Key.
-            It will be stored securely on your device and not shared.
-          </p>
-
-          <div className="relative mb-3">
-            <input
-              type={showKey ? "text" : "password"}
-              value={inputKey}
-              onChange={(e) => setInputKey(e.target.value)}
-              placeholder="Enter your API Key"
-              className="w-full pl-4 pr-10 py-3 rounded-xl border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
-            />
-            <button
-              onClick={() => setShowKey(!showKey)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-            >
-              {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
-          </div>
-
-          <div className="flex gap-3 relative">
-            <button
-              onClick={handleSave}
-              className={`flex-1 py-2 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 ${saveStatus === 'success' ? 'bg-green-600 text-white' :
-                saveStatus === 'error' ? 'bg-red-600 text-white' :
-                  'bg-blue-600 text-white hover:bg-blue-700'
-                } `}
-            >
-              <Save className="w-4 h-4" />
-              {saveStatus === 'success' ? 'Saved!' : saveStatus === 'error' ? 'Invalid' : 'Save Key'}
-            </button>
-            {apiKey && (
-              <button
-                onClick={handleClearKey}
-                className="px-4 py-2 bg-white text-red-500 border border-red-100 rounded-lg font-bold text-sm hover:bg-red-50 transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            )}
-
-            {saveStatus === 'error' && (
-              <div className="absolute -bottom-12 left-0 right-0 bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-xs font-medium animate-in fade-in">
-                Please enter a valid API key (minimum 20 characters)
-              </div>
-            )}
-            {saveStatus === 'success' && (
-              <div className="absolute -bottom-12 left-0 right-0 bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded-lg text-xs font-medium animate-in fade-in">
-                ✓ API Key saved! You can now use the AI Assistant.
-              </div>
-            )}
-          </div>
-
-          {!apiKey && (
-            <div className="mt-3 flex items-center gap-1 text-[10px] text-blue-600">
-              <AlertTriangle className="w-3 h-3" /> AI feature unavailable without key
+        {/* AI Assistant Info */}
+        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 p-6 rounded-2xl border border-emerald-200 dark:border-emerald-800">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white shrink-0">
+              <Bot className="w-6 h-6" />
             </div>
-          )}
-
-          {/* API Key Instructions */}
-          <div className="mt-4 bg-white p-4 rounded-xl border border-blue-100">
-            <h4 className="text-xs font-bold text-gray-800 mb-2 flex items-center gap-2">
-              <Info className="w-3 h-3 text-blue-600" /> How to Get Your API Key
-            </h4>
-            <ol className="text-xs text-gray-600 space-y-2 ml-4 list-decimal">
-              <li>Visit <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-semibold">Google AI Studio</a></li>
-              <li>Sign in with your Google account</li>
-              <li>Click "Get API Key" or "Create API Key"</li>
-              <li>Select "Create API key in new project" (or use existing)</li>
-              <li>Copy the generated API key</li>
-              <li>Paste it in the field above and click "Save Key"</li>
-            </ol>
-            <a
-              href="https://aistudio.google.com/app/apikey"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              <ExternalLink className="w-3 h-3" /> Open Google AI Studio
-            </a>
+            <div>
+              <h3 className="font-bold text-emerald-900 dark:text-emerald-100 mb-2 text-lg">🤖 Koy Jabo AI Assistant</h3>
+              <p className="text-sm text-emerald-800 dark:text-emerald-200 leading-relaxed">
+                Our intelligent AI assistant is built-in and ready to help you find the best routes across Bangladesh. No API keys needed - just ask your questions naturally in English or Bengali!
+              </p>
+              <div className="mt-4 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">Always Available • No Setup Required • Completely Free</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1652,14 +1583,14 @@ const App: React.FC = () => {
             <p>We use your browser's local storage to save:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li><strong>Favorite buses:</strong> Your saved bus routes (stored locally on your device)</li>
-              <li><strong>API Key:</strong> Your Google Gemini API key for the AI assistant (if provided, stored locally)</li>
+              <li><strong>Search History:</strong> Your search history and favorite routes (stored locally for your convenience)</li>
             </ul>
             <p className="mt-3">You can clear this data anytime through your browser settings or the app's settings page.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">5. Third-Party Services</h2>
-            <p><strong>Google Gemini AI:</strong> If you use the AI Assistant feature with your own API key, your queries are sent to Google's Gemini API. Please refer to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">Google's Privacy Policy</a> for how they handle this data.</p>
+            <p><strong>Koy Jabo AI Assistant:</strong> Our built-in AI assistant processes your route queries to provide intelligent recommendations. Your questions are handled securely and are not stored permanently or shared with third parties.</p>
             <p className="mt-3"><strong>Google Maps:</strong> When you click "Real Map" to view routes in Google Maps, you'll be redirected to Google Maps. Google's privacy policy applies to that service.</p>
           </section>
 
@@ -1767,7 +1698,7 @@ const App: React.FC = () => {
 
           <section>
             <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">7. Third-Party Services</h2>
-            <p><strong>Google Gemini AI:</strong> If you use the AI Assistant with your own API key, you are subject to Google's terms of service and pricing.</p>
+            <p><strong>Koy Jabo AI Assistant:</strong> Our AI assistant is provided as-is to help you navigate Bangladesh more easily. It is completely free and available to all users.</p>
             <p className="mt-2"><strong>Google Maps:</strong> Links to Google Maps are provided for convenience and are subject to Google's terms of service.</p>
             <p className="mt-2">We are not responsible for the availability, accuracy, or terms of these third-party services.</p>
           </section>
@@ -2100,7 +2031,7 @@ const App: React.FC = () => {
               <span>What is the AI Assistant?</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> The AI Assistant is powered by Google Gemini and can answer questions about bus routes, suggest the best routes for your journey, and provide travel tips. You can ask questions in natural language, just like talking to a friend!
+              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> The AI Assistant is powered by Koy Jabo Official AI Agent, our intelligent route-finding system. It can answer questions about bus routes, suggest the best routes for your journey, and provide travel tips. You can ask questions in natural language in both English and Bengali, just like talking to a friend!
             </p>
           </div>
 
