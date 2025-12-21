@@ -598,6 +598,7 @@ const App: React.FC = () => {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [previousView, setPreviousView] = useState<AppView>(AppView.HOME); // Track previous view for back navigation
   const [showClearChatConfirm, setShowClearChatConfirm] = useState(false);
   const [showHistoryManager, setShowHistoryManager] = useState(false);
   const [showLiveMap, setShowLiveMap] = useState(false);
@@ -3374,7 +3375,10 @@ const App: React.FC = () => {
               <HistoryView
                 onBack={() => setView(AppView.HOME)}
                 onBusSelect={handleBusSelect}
-                onViewJourney={() => setView(AppView.DAILY_JOURNEY)}
+                onViewJourney={() => {
+                  setPreviousView(AppView.HISTORY);
+                  setView(AppView.DAILY_JOURNEY);
+                }}
               />
             )}
             {view === AppView.SETTINGS && (
@@ -3384,7 +3388,7 @@ const App: React.FC = () => {
               />
             )}
             {view === AppView.DAILY_JOURNEY && (
-              <DailyJourneyView onBack={() => setView(AppView.HOME)} />
+              <DailyJourneyView onBack={() => setView(previousView)} />
             )}
             {view === AppView.PRIVACY && renderPrivacyPolicy()}
             {view === AppView.TERMS && renderTerms()}
