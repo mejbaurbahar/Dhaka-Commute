@@ -1,6 +1,7 @@
 import { NotificationResponse } from '../types/notification';
 
-const API_BASE_URL = 'https://koyjabo-backend.onrender.com/api';
+// Support both local development and production
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://koyjabo-backend.onrender.com/api';
 
 /**
  * Save notifications to localStorage for offline access
