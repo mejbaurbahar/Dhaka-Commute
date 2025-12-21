@@ -79,19 +79,19 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
     };
 
     return (
-        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950">
-            {/* Unified Header - Shows on both mobile and desktop */}
-            <div className="fixed top-0 left-0 right-0 md:static bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-50 px-4 py-3 shadow-sm">
+        <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950 relative w-full">
+            {/* Unified Header */}
+            <div className="flex-none bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-[60] px-4 py-3 shadow-md">
                 <div className="flex items-center gap-3">
                     <button
                         onClick={onBack}
-                        className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors -ml-2"
+                        className="p-3 -ml-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center shrink-0"
                         aria-label="Go back"
                     >
-                        <ChevronRight className="w-5 h-5 rotate-180 text-gray-700 dark:text-gray-300" />
+                        <ChevronRight className="w-5 h-5 rotate-180 text-gray-700 dark:text-gray-300 stroke-[3]" />
                     </button>
                     <h1 className="text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                        <Calendar className="w-5 h-5 md:w-6 md:h-6 text-emerald-600" />
+                        <Calendar className="w-5 h-5 md:w-6 md:h-6 text-emerald-600 shrink-0" />
                         Daily Journey
                     </h1>
                     {todayJourney && todayJourney.points.length > 0 && (
@@ -107,7 +107,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 overflow-y-auto pt-16 md:pt-0">
+            <div className="flex-1 overflow-y-auto">
                 {/* Today's Journey */}
                 <div className="px-4 py-6">
                     <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
