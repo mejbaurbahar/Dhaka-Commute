@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Home, Map, Bot, Heart, Info, Train, Menu, Sparkles, Navigation, Clock } from 'lucide-react';
+import { Home, Map, Bot, Heart, Info, Train, Menu, Sparkles, Navigation, Clock, MapPin } from 'lucide-react';
 import { AppView } from '../types';
 import ThemeToggle from './ThemeToggle';
 import { AnimatedLogo } from './AnimatedLogo'; // Assuming we can use this or just text
@@ -69,6 +68,12 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
             icon: Clock,
             isActive: view === AppView.HISTORY,
             onClick: () => setView(AppView.HISTORY)
+        },
+        {
+            label: 'Journey',
+            icon: MapPin,
+            isActive: view === AppView.DAILY_JOURNEY,
+            onClick: () => setView(AppView.DAILY_JOURNEY)
         },
         {
             label: 'About',

@@ -32,6 +32,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import NotificationBell from './components/NotificationBell';
 import NotificationBanner from './components/NotificationBanner';
 import SettingsPage from './components/SettingsPage';
+import DailyJourneyView from './components/DailyJourneyView';
 
 
 
@@ -88,6 +89,7 @@ const getStoredView = (): AppView => {
         case 'privacy': return AppView.PRIVACY;
         case 'terms': return AppView.TERMS;
         case 'for-ai': return AppView.FOR_AI;
+        case 'daily-journey': return AppView.DAILY_JOURNEY;
       }
     }
 
@@ -714,7 +716,8 @@ const App: React.FC = () => {
     [AppView.LIVE_NAV]: '',
     [AppView.NOT_FOUND]: '',
     [AppView.SERVER_ERROR]: '',
-    [AppView.FOR_AI]: 'for-ai'
+    [AppView.FOR_AI]: 'for-ai',
+    [AppView.DAILY_JOURNEY]: 'daily-journey'
   };
 
   // Push state when view changes (for browser history)
@@ -3378,6 +3381,9 @@ const App: React.FC = () => {
                 isDarkMode={isDarkMode}
                 toggleTheme={() => setIsDarkMode(!isDarkMode)}
               />
+            )}
+            {view === AppView.DAILY_JOURNEY && (
+              <DailyJourneyView onBack={() => setView(AppView.HOME)} />
             )}
             {view === AppView.PRIVACY && renderPrivacyPolicy()}
             {view === AppView.TERMS && renderTerms()}
