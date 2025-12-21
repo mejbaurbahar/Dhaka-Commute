@@ -80,8 +80,34 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
 
     return (
         <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-950">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-6 shadow-lg">
+            {/* Mobile Header - Shows only on mobile */}
+            <div className="md:hidden fixed top-0 left-0 right-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 z-50 px-4 py-3 shadow-sm">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={onBack}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors -ml-2"
+                        aria-label="Go back"
+                    >
+                        <ChevronRight className="w-5 h-5 rotate-180 text-gray-700 dark:text-gray-300" />
+                    </button>
+                    <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                        <Calendar className="w-5 h-5 text-emerald-600" />
+                        Daily Journey
+                    </h1>
+                    {todayJourney && todayJourney.points.length > 0 && (
+                        <button
+                            onClick={handleClearToday}
+                            className="ml-auto p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                            aria-label="Clear today's journey"
+                        >
+                            <Trash2 className="w-5 h-5 text-red-500" />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Desktop Header - Hidden on mobile */}
+            <div className="hidden md:block bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-6 shadow-lg">
                 <div className="flex items-center justify-between mb-2">
                     <button
                         onClick={onBack}
@@ -108,7 +134,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 overflow-y-auto pt-4">
+            <div className="flex-1 overflow-y-auto pt-16 md:pt-4">
                 {/* Today's Journey */}
                 <div className="px-4 py-6">
                     <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">

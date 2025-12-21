@@ -70,12 +70,6 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
             onClick: () => setView(AppView.HISTORY)
         },
         {
-            label: 'Journey',
-            icon: MapPin,
-            isActive: view === AppView.DAILY_JOURNEY,
-            onClick: () => setView(AppView.DAILY_JOURNEY)
-        },
-        {
             label: 'About',
             icon: Info,
             isActive: view === AppView.ABOUT,
