@@ -45,9 +45,27 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
 
     const styles = getTypeStyles(notification.type);
 
+    // Extract domain from URL for display
+    const getSourceDomain = (url?: string): string | null => {
+        if (!url) return null;
+        try {
+            const domain = new URL(url).hostname.replace('www.', '');
+            return domain;
+        } catch {
+            return null;
+        }
+    };
+
     const handleClick = () => {
+        // Mark as read
         if (!isRead) {
             markAsRead(notification.id);
+        }
+
+        // Open link if available
+        if (notification.link) {
+            window.open(notification.link, '_blank', 'noopener,noreferrer');
+            onClose?.();
         }
     };
 
@@ -70,16 +88,20 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
         }
     };
 
+    const sourceDomain = getSourceDomain(notification.link);
+
     return (
         <div
             onClick={handleClick}
-            className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors ${!isRead ? 'bg-blue-50/30 dark:bg-blue-900/10 cursor-pointer' : ''
+            className={`px-4 py-3 transition-colors cursor-pointer group ${!isRead
+                    ? 'bg-blue-50/30 dark:bg-blue-900/10 hover:bg-blue-50/50 dark:hover:bg-blue-900/20'
+                    : 'hover:bg-gray-50 dark:hover:bg-slate-800'
                 }`}
         >
             <div className="flex items-start gap-3">
                 {/* Icon/Emoji and Unread Indicator */}
                 <div className="relative shrink-0 mt-0.5">
-                    <div className={`p-2 rounded-lg ${styles.bg}`}>
+                    <div className={`p-2 rounded-lg ${styles.bg} group-hover:scale-105 transition-transform`}>
                         {notification.icon ? (
                             <span className="text-lg leading-none">{notification.icon}</span>
                         ) : (
@@ -87,7 +109,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
                         )}
                     </div>
                     {!isRead && (
-                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full" />
+                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
                     )}
                 </div>
 
@@ -96,20 +118,35 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
                     <div className="flex items-start justify-between gap-2 mb-1">
                         <h4
                             className={`text-sm leading-tight ${isRead
-                                ? 'text-gray-700 dark:text-gray-300'
-                                : 'text-gray-900 dark:text-gray-100 font-bold'
+                                    ? 'text-gray-700 dark:text-gray-300'
+                                    : 'text-gray-900 dark:text-gray-100 font-bold'
                                 }`}
                         >
                             {notification.title}
                         </h4>
-
+                        {notification.link && (
+                            <ExternalLink className="w-3.5 h-3.5 text-blue-500 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        )}
                     </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-2 mb-1">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-2 mb-2">
                         {notification.message}
                     </p>
-                    <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                        {formatTime(notification.createdAt)}
-                    </span>
+
+                    {/* Footer with time and source */}
+                    <div className="flex items-center gap-2 text-[10px]">
+                        <span className="text-gray-400 dark:text-gray-500">
+                            {formatTime(notification.createdAt)}
+                        </span>
+                        {sourceDomain && (
+                            <>
+                                <span className="text-gray-300 dark:text-gray-600">•</span>
+                                <span className="text-blue-500 dark:text-blue-400 font-medium flex items-center gap-1">
+                                    {sourceDomain}
+                                    <ExternalLink className="w-2.5 h-2.5" />
+                                </span>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

@@ -11,9 +11,9 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
     const { notifications, unreadCount, markAllAsRead } = useNotifications();
 
     // Show medium and high priority in dropdown (exclude low priority)
+    // REMOVED: .slice(0, 5) to show ALL notifications with scrolling
     const dropdownNotifications = notifications
-        .filter((n) => n.priority === 'medium' || n.priority === 'high')
-        .slice(0, 5); // Show max 5 recent
+        .filter((n) => n.priority === 'medium' || n.priority === 'high');
 
     const handleMarkAllAsRead = () => {
         markAllAsRead();
@@ -26,6 +26,11 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
                 <div className="flex items-center justify-between">
                     <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm">
                         Notifications
+                        {dropdownNotifications.length > 0 && (
+                            <span className="ml-2 text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full">
+                                {dropdownNotifications.length}
+                            </span>
+                        )}
                         {unreadCount > 0 && (
                             <span className="ml-2 text-xs bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full">
                                 {unreadCount} new
@@ -44,8 +49,8 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
                 </div>
             </div>
 
-            {/* Notification List */}
-            <div className="max-h-96 overflow-y-auto">
+            {/* Notification List - SCROLLABLE with max-height for all notifications */}
+            <div className="max-h-[70vh] md:max-h-96 overflow-y-auto overscroll-contain">
                 {dropdownNotifications.length > 0 ? (
                     <div className="divide-y divide-gray-100 dark:divide-gray-800">
                         {dropdownNotifications.map((notification) => (
@@ -71,7 +76,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
 
             {/* Footer - View All (Optional) */}
             {dropdownNotifications.length > 0 && (
-                <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+                <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-800/50">
                     <button
                         onClick={onClose}
                         className="w-full text-center text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Info, CheckCircle, AlertTriangle, AlertCircle, Sparkles } from 'lucide-react';
+import { X, Info, CheckCircle, AlertTriangle, AlertCircle, Sparkles, ExternalLink } from 'lucide-react';
 import { Notification } from '../types/notification';
 import { useNotifications } from '../contexts/NotificationContext';
 
@@ -55,7 +55,19 @@ const NotificationBanner: React.FC = () => {
         }
     };
 
-    const handleDismiss = () => {
+    // Extract domain from URL for display
+    const getSourceDomain = (url?: string): string | null => {
+        if (!url) return null;
+        try {
+            const domain = new URL(url).hostname.replace('www.', '');
+            return domain;
+        } catch {
+            return null;
+        }
+    };
+
+    const handleDismiss = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent triggering the banner click
         dismissNotification(notification.id);
         if (highPriorityNotifications.length > 1) {
             setCurrentIndex((prev) => (prev >= highPriorityNotifications.length - 1 ? 0 : prev));
@@ -64,15 +76,20 @@ const NotificationBanner: React.FC = () => {
 
     const handleClick = () => {
         if (notification.link) {
-            window.location.href = notification.link;
+            window.open(notification.link, '_blank', 'noopener,noreferrer');
         }
     };
 
+    const sourceDomain = getSourceDomain(notification.link);
+    const isClickable = Boolean(notification.link);
+
     return (
         <div
+            onClick={isClickable ? handleClick : undefined}
             className={`sticky top-16 md:top-20 z-[4500] w-full border-b ${getTypeStyles(
                 notification.type
-            )} animate-in slide-in-from-top duration-300`}
+            )} animate-in slide-in-from-top duration-300 ${isClickable ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''
+                }`}
         >
             <div className="max-w-7xl mx-auto px-4 py-3">
                 <div className="flex items-start gap-3">
@@ -86,12 +103,26 @@ const NotificationBanner: React.FC = () => {
                     </div>
 
                     {/* Content */}
-                    <div
-                        className={`flex-1 min-w-0 ${notification.link ? 'cursor-pointer' : ''}`}
-                        onClick={handleClick}
-                    >
-                        <h3 className="font-bold text-sm md:text-base mb-1">{notification.title}</h3>
-                        <p className="text-xs md:text-sm opacity-90 leading-relaxed">{notification.message}</p>
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                            <h3 className="font-bold text-sm md:text-base">
+                                {notification.title}
+                            </h3>
+                            {isClickable && (
+                                <ExternalLink className="w-4 h-4 shrink-0 opacity-70" />
+                            )}
+                        </div>
+                        <p className="text-xs md:text-sm opacity-90 leading-relaxed mb-1">
+                            {notification.message}
+                        </p>
+
+                        {/* Source domain */}
+                        {sourceDomain && (
+                            <div className="flex items-center gap-1 text-[10px] md:text-xs opacity-75 mt-1">
+                                <span>Source:</span>
+                                <span className="font-medium underline">{sourceDomain}</span>
+                            </div>
+                        )}
                     </div>
 
                     {/* Dismiss Button */}
