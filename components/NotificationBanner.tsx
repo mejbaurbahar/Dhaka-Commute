@@ -91,7 +91,7 @@ const NotificationBanner: React.FC = () => {
             )} animate-in slide-in-from-top duration-300 ${isClickable ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''
                 }`}
         >
-            <div className="max-w-7xl mx-auto px-4 py-3">
+            <div className="px-4 py-3">
                 <div className="flex items-start gap-3">
                     {/* Icon or Emoji */}
                     <div className="shrink-0 mt-0.5">
