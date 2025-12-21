@@ -3374,6 +3374,7 @@ const App: React.FC = () => {
               <HistoryView
                 onBack={() => setView(AppView.HOME)}
                 onBusSelect={handleBusSelect}
+                onViewJourney={() => setView(AppView.DAILY_JOURNEY)}
               />
             )}
             {view === AppView.SETTINGS && (

@@ -22,9 +22,10 @@ import { BusRoute } from '../types';
 interface HistoryViewProps {
     onBack: () => void;
     onBusSelect: (bus: BusRoute, fromHistory?: boolean) => void;
+    onViewJourney?: () => void;
 }
 
-const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
+const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJourney }) => {
     const [activeTab, setActiveTab] = useState<'personal' | 'global'>('personal');
     const [globalStats, setGlobalStats] = useState<GlobalStats>(getGlobalStats());
     const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -219,6 +220,35 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect }) => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Daily Journey Button */}
+                        {onViewJourney && (
+                            <div
+                                onClick={onViewJourney}
+                                className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-6 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 cursor-pointer hover:shadow-lg transition-all group"
+                            >
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-12 h-12 bg-emerald-500 dark:bg-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                            <MapPin className="w-6 h-6 text-white" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                                View Today's Journey
+                                            </h3>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                See your complete travel route and stops for the day
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <ArrowRight className="w-6 h-6 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                                </div>
+                                <div className="mt-4 flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/30 px-3 py-2 rounded-lg w-fit">
+                                    <Activity className="w-3 h-3" />
+                                    <span className="font-medium">100% Offline • Privacy-First</span>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Most Used Buses */}
                         {mostUsedBuses.length > 0 && (
