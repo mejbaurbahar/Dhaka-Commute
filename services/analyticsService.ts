@@ -323,7 +323,7 @@ export const fetchGlobalStats = async (): Promise<void> => {
             updateGlobalStatsFromApi(data);
         }
     } catch (e) {
-        console.warn('Failed to fetch global stats:', e);
+        // console.warn('Failed to fetch global stats:', e);
     }
 };
 
@@ -434,14 +434,14 @@ export const incrementVisitCount = async (): Promise<void> => {
                     updateGlobalStatsFromApi(data.stats);
                 }
             } else {
-                console.warn('⚠️ Failed to register visit with backend, status:', response.status);
+                // console.warn('⚠️ Failed to register visit with backend, status:', response.status);
             }
         } catch (e) {
-            console.error('❌ Error registering visit:', e);
+            // console.debug('❌ Error registering visit (likely blocking/CORS):', e);
         }
 
-        // Immediately fetch fresh data from backend to ensure sync
-        await fetchGlobalStats();
+        // Immediately fetch fresh data from backend to ensure sync (silently)
+        await fetchGlobalStats().catch(() => { });
     }
 
     // Ensure WS is running for real-time updates
