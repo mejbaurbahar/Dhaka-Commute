@@ -4,6 +4,9 @@ import { Notification } from '../types/notification';
 import { useNotifications } from '../contexts/NotificationContext';
 
 const NotificationBanner: React.FC = () => {
+    // Banner is disabled - not showing notifications
+    return null;
+
     const { notifications, dismissNotification } = useNotifications();
     const [currentIndex, setCurrentIndex] = useState(0);
 
