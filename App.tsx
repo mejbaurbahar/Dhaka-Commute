@@ -3234,10 +3234,10 @@ const App: React.FC = () => {
                   }
                 }}
                 aria-label={`Select ${bus.name} bus route from ${bus.routeString} `}
-                className={`w-full text-left bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden cursor-pointer ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100 dark:hover:border-green-800'} `}
+                className={`w-full text-left bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border transition-all group relative overflow-hidden cursor-pointer ${selectedBus?.id === bus.id ? 'border-dhaka-green ring-1 ring-dhaka-green' : 'border-transparent hover:border-green-100 dark:hover:border-green-800'} `}
               >
                 {selectedBus?.id === bus.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-dhaka-green"></div>}
-                <div className="flex justify-between items-start mb-3">
+                <div className="flex justify-between items-start mb-2">
                   <div className="flex items-start gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold shadow-sm shrink-0
                       ${bus.type === 'AC' ? 'bg-blue-100 text-blue-700' :
@@ -3278,7 +3278,7 @@ const App: React.FC = () => {
                     <span className="text-gray-400 dark:text-gray-500 mr-1" aria-hidden="true">●</span> {bus.routeString.split('⇄').pop()}
                   </div>
                 </div>
-                <div className="mt-3 flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-700/50 px-2 py-1 rounded-md w-fit">
+                <div className="mt-2 flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-700/50 px-2 py-1 rounded-md w-fit">
                   <Coins className="w-3 h-3 text-amber-600 dark:text-amber-400" />
                   <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
                 </div>
