@@ -233,7 +233,7 @@ export const trackIntercitySearch = (from: string, to: string, transportType: st
 };
 
 let wsConnection: WebSocket | null = null;
-let wsReconnectTimer: NodeJS.Timeout | null = null;
+let wsReconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let isConnecting = false;
 
 // Initialize Real-time connection
@@ -288,25 +288,30 @@ const initRealTimeConnection = () => {
 
 const updateGlobalStatsFromApi = (apiStats: any) => {
     try {
+        // Get current cached stats
+        const currentStats = getGlobalStats();
+
         // ALWAYS use backend values directly - these are the source of truth
         const apiTotal = apiStats.totalVisitors ?? apiStats.totalVisits ?? 0;
         const apiToday = apiStats.todayVisits ?? apiStats.todayVisitors ?? 0;
         const apiActive = apiStats.activeUsers ?? 1;
         const apiUnique = apiStats.uniqueVisitors ?? apiStats.totalVisitors ?? 0;
 
-        // Create new stats object with backend data as the ONLY source of truth
+        // SMART MERGE: Take the maximum between backend and cached values
+        // This handles backend restart scenarios where backend might start from 0
+        // but localStorage has historical data
         const newStats: GlobalStats = {
-            totalVisits: apiTotal,           // Always from backend
-            todayVisits: apiToday,           // Always from backend
-            activeUsers: apiActive,          // Always from backend
-            uniqueVisitors: apiUnique,       // Always from backend
-            locations: apiStats.locations || {},
+            totalVisits: Math.max(apiTotal, currentStats.totalVisits || 0),
+            todayVisits: Math.max(apiToday, currentStats.todayVisits || 0),
+            activeUsers: apiActive, // Always use backend for active (real-time metric)
+            uniqueVisitors: Math.max(apiUnique, currentStats.uniqueVisitors || 0),
+            locations: apiStats.locations || currentStats.locations || {},
             lastUpdated: Date.now()
         };
 
         saveGlobalStats(newStats);
 
-        console.log(`📊 Backend sync - Total: ${newStats.totalVisits}, Today: ${newStats.todayVisits}, Active: ${newStats.activeUsers} [Source: ${apiStats.totalVisitors ? 'totalVisitors' : 'totalVisits'}]`);
+        console.log(`📊 Stats merged - Total: ${newStats.totalVisits} (API: ${apiTotal}, Cache: ${currentStats.totalVisits}), Today: ${newStats.todayVisits} (API: ${apiToday}, Cache: ${currentStats.todayVisits}), Active: ${newStats.activeUsers}`);
     } catch (e) {
         console.error('Error updating stats from API:', e);
     }
@@ -330,15 +335,12 @@ export const fetchGlobalStats = async (): Promise<void> => {
 // Get global statistics (Sync - returns cached data)
 export const getGlobalStats = (): GlobalStats => {
     try {
-        // Clean up old baseline keys (no longer used)
-        localStorage.removeItem('dhaka_commute_stats_baseline');
-        localStorage.removeItem('dhaka_commute_last_api_total');
-
         const stored = localStorage.getItem(GLOBAL_STATS_KEY);
 
         let stats: GlobalStats;
 
         if (!stored) {
+            // First time user - start from 0 but will update from backend
             stats = {
                 totalVisits: 0,
                 todayVisits: 0,
@@ -349,7 +351,7 @@ export const getGlobalStats = (): GlobalStats => {
         } else {
             stats = JSON.parse(stored);
 
-            // CRITICAL: Check if data is stale (older than 30 seconds)
+            // IMPORTANT: Check if data is stale (older than 30 seconds)
             const dataAge = Date.now() - (stats.lastUpdated || 0);
             const isStale = dataAge > 30000; // 30 seconds
 
@@ -358,10 +360,17 @@ export const getGlobalStats = (): GlobalStats => {
                 // Trigger a fresh fetch but return current data for now
                 fetchGlobalStats();
             }
+
+            // CRITICAL FIX: Ensure stats never show 0 if we had previous data
+            // This handles backend restart scenarios
+            if (stats.totalVisits === 0 && stats.uniqueVisitors > 0) {
+                stats.totalVisits = stats.uniqueVisitors; // Use uniqueVisitors as fallback
+            }
         }
 
         return stats;
     } catch (e) {
+        console.error('Error loading global stats:', e);
         return {
             totalVisits: 0,
             todayVisits: 0,
@@ -391,21 +400,6 @@ export const incrementVisitCount = async (): Promise<void> => {
 
     if (!hasInitialized) {
         console.log('🆕 First visit in this session - registering with backend...');
-
-        // Clear any stale cached data on first page load
-        const stored = localStorage.getItem(GLOBAL_STATS_KEY);
-        if (stored) {
-            try {
-                const stats = JSON.parse(stored);
-                const dataAge = Date.now() - (stats.lastUpdated || 0);
-                if (dataAge > 10000) { // If data is older than 10 seconds
-                    console.log(`🗑️ Clearing stale cache (${Math.round(dataAge / 1000)}s old)`);
-                    localStorage.removeItem(GLOBAL_STATS_KEY);
-                }
-            } catch (e) {
-                console.error('Error checking cache age:', e);
-            }
-        }
 
         sessionStorage.setItem(SESSION_KEY, 'true');
 
