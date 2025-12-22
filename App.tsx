@@ -2761,7 +2761,7 @@ const App: React.FC = () => {
     const renderLocalBusSearch = () => (
       <div className="relative mb-4 group isolate z-50">
         {/* Background Layer - Clipped */}
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-[2rem] shadow-xl shadow-emerald-500/30 overflow-hidden transition-all duration-300">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-2xl md:rounded-[2rem] shadow-xl shadow-emerald-500/30 overflow-hidden transition-all duration-300">
           {/* Decorative Elements */}
           <div className="absolute top-0 right-0 -mr-12 -mt-12 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
           <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
@@ -2769,18 +2769,18 @@ const App: React.FC = () => {
         </div>
 
         {/* Content Layer - Visible Overflow for Dropdowns */}
-        <div className="relative z-10 text-white rounded-[2rem]">
+        <div className="relative z-10 text-white rounded-2xl md:rounded-[2rem]">
 
           {/* Text Content */}
-          <div className="px-6 pt-6 pb-4 relative z-10">
+          <div className="px-4 md:px-6 pt-4 md:pt-6 pb-2 md:pb-4 relative z-10">
             <div>
-              <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg">{isInDhaka ? 'কোথায় যেতে চান?' : 'কোথায় যেতে চান ঢাকায়?'}</h2>
-              <p className="text-white/90 text-sm font-medium">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
+              <h2 className="text-2xl md:text-3xl font-bold mb-1 md:mb-2 font-bengali drop-shadow-lg">{isInDhaka ? 'কোথায় যেতে চান?' : 'কোথায় যেতে চান ঢাকায়?'}</h2>
+              <p className="text-white/90 text-xs md:text-sm font-medium">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
             </div>
           </div>
 
           {/* Mode Toggle */}
-          <div className="flex px-6 pb-4 gap-4">
+          <div className="flex px-4 md:px-6 pb-2 md:pb-4 gap-3 md:gap-4">
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -2805,7 +2805,7 @@ const App: React.FC = () => {
             </button>
           </div>
 
-          <div className="px-6 pb-6">
+          <div className="px-4 md:px-6 pb-4 md:pb-6">
             {searchMode === 'TEXT' ? (
               <div className="relative group">
                 <div className="relative flex items-center">
