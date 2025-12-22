@@ -1186,5 +1186,706 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         lat: 24.0022,
         lng: 90.4264,
         area: 'Gazipur'
+    },
+
+    // === GAZIPUR DISTRICT - COMPREHENSIVE COVERAGE ===
+
+    {
+        id: 'gazipur_sadar_hospital',
+        name: 'Gazipur Sadar Hospital',
+        bnName: 'গাজীপুর সদর হাসপাতাল',
+        type: 'hospital',
+        phone: '029261281',
+        lat: 23.9950,
+        lng: 90.4164,
+        area: 'Gazipur Sadar'
+    },
+    {
+        id: 'international_medical_tongi',
+        name: 'International Medical College Hospital, Tongi',
+        bnName: 'ইন্টারন্যাশনাল মেডিকেল কলেজ হাসপাতাল, টঙ্গী',
+        type: 'hospital',
+        phone: '029814550',
+        lat: 23.8900,
+        lng: 90.4050,
+        area: 'Tongi'
+    },
+    {
+        id: 'general_hospital_tongi',
+        name: 'General Hospital, Tongi',
+        bnName: 'জেনারেল হাসপাতাল, টঙ্গী',
+        type: 'hospital',
+        phone: '01730324821',
+        lat: 23.8920,
+        lng: 90.4070,
+        area: 'Tongi'
+    },
+    {
+        id: 'popular_gazipur',
+        name: 'Popular Diagnostic Centre, Gazipur',
+        bnName: 'পপুলার ডায়াগনস্টিক সেন্টার, গাজীপুর',
+        type: 'hospital',
+        phone: '09666787816',
+        lat: 23.9960,
+        lng: 90.4150,
+        area: 'Gazipur'
+    },
+    {
+        id: 'gmp_sadar',
+        name: 'Gazipur Sadar Police Station',
+        bnName: 'গাজীপুর সদর थाना',
+        type: 'police',
+        phone: '01320070524',
+        lat: 23.9980,
+        lng: 90.4200,
+        area: 'Gazipur Sadar'
+    },
+    {
+        id: 'gmp_bason',
+        name: 'Bason Police Station',
+        bnName: 'বাসন থানা',
+        type: 'police',
+        phone: '01320072998',
+        lat: 23.9850,
+        lng: 90.4100,
+        area: 'Gazipur'
+    },
+    {
+        id: 'gmp_konabari',
+        name: 'Konabari Police Station',
+        bnName: 'কোনাবাড়ী থানা',
+        type: 'police',
+        phone: '01320072998',
+        lat: 24.0100,
+        lng: 90.4300,
+        area: 'Gazipur'
+    },
+    {
+        id: 'gmp_kashimpur',
+        name: 'Kashimpur Police Station',
+        bnName: 'কাশিমপুর থানা',
+        type: 'police',
+        phone: '01320072998',
+        lat: 24.0050,
+        lng: 90.4250,
+        area: 'Gazipur'
+    },
+    {
+        id: 'gmp_gacha',
+        name: 'Gacha Police Station',
+        bnName: 'গাছা থানা',
+        type: 'police',
+        phone: '01320072998',
+        lat: 24.0150,
+        lng: 90.4350,
+        area: 'Gazipur'
+    },
+    {
+        id: 'gmp_pubail',
+        name: 'Pubail Police Station',
+        bnName: 'পূবাইল থানা',
+        type: 'police',
+        phone: '01320072998',
+        lat: 23.9700,
+        lng: 90.4400,
+        area: 'Gazipur'
+    },
+    {
+        id: 'gmp_tongi_east',
+        name: 'Tongi East Police Station',
+        bnName: 'টঙ্গী পূর্ব থানা',
+        type: 'police',
+        phone: '01320072998',
+        lat: 23.8950,
+        lng: 90.4100,
+        area: 'Tongi'
+    },
+    {
+        id: 'gmp_tongi_west',
+        name: 'Tongi West Police Station',
+        bnName: 'টঙ্গী পশ্চিম থানা',
+        type: 'police',
+        phone: '01320072998',
+        lat: 23.8900,
+        lng: 90.4000,
+        area: 'Tongi'
+    },
+    {
+        id: 'jaydebpur_fire',
+        name: 'Jaydebpur Fire Station',
+        bnName: 'জয়দেবপুর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020868',
+        lat: 23.9950,
+        lng: 90.4200,
+        area: 'Gazipur'
+    },
+    {
+        id: 'gazipur_chowrasta_fire',
+        name: 'Gazipur Chowrasta Modern Fire Station',
+        bnName: 'গাজীপুর চৌরাস্তা ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020874',
+        lat: 23.9980,
+        lng: 90.4180,
+        area: 'Gazipur'
+    },
+    {
+        id: 'rajendrapur_fire',
+        name: 'Rajendrapur Modern Fire Station',
+        bnName: 'রাজেন্দ্রপুর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020876',
+        lat: 24.0100,
+        lng: 90.4300,
+        area: 'Gazipur'
+    },
+    {
+        id: 'konabari_fire',
+        name: 'Konabari Modern Fire Station',
+        bnName: 'কোনাবাড়ী ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020878',
+        lat: 24.0100,
+        lng: 90.4350,
+        area: 'Gazipur'
+    },
+    {
+        id: 'sarabo_fire',
+        name: 'Sarabo Modern Fire Station',
+        bnName: 'সারাবো ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020872',
+        lat: 23.9800,
+        lng: 90.4100,
+        area: 'Gazipur'
+    },
+    {
+        id: 'sreepur_fire',
+        name: 'Sreepur Fire Station',
+        bnName: 'শ্রীপুর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020900',
+        lat: 24.3050,
+        lng: 90.4550,
+        area: 'Gazipur'
+    },
+    {
+        id: 'kapasia_fire',
+        name: 'Kapasia Fire Station',
+        bnName: 'কাপাসিয়া ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020898',
+        lat: 24.4800,
+        lng: 90.6500,
+        area: 'Gazipur'
+    },
+    {
+        id: 'kaliganj_fire',
+        name: 'Kaliganj Fire Station',
+        bnName: 'কালিগঞ্জ ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020896',
+        lat: 24.0700,
+        lng: 90.0800,
+        area: 'Gazipur'
+    },
+    {
+        id: 'tongi_fire',
+        name: 'Tongi Fire Station',
+        bnName: 'টঙ্গী ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020866',
+        lat: 23.8900,
+        lng: 90.4050,
+        area: 'Tongi'
+    },
+    {
+        id: 'kaliakair_fire',
+        name: 'Kaliakair Fire Station',
+        bnName: 'কালিয়াকৈর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020892',
+        lat: 24.0500,
+        lng: 90.2150,
+        area: 'Gazipur'
+    },
+
+    // === SAVAR / ASHULIA ===
+
+    {
+        id: 'savar_prime',
+        name: 'Savar Prime Hospital',
+        bnName: 'সাভার প্রাইম হাসপাতাল',
+        type: 'hospital',
+        phone: '09611530530',
+        lat: 23.8580,
+        lng: 90.2670,
+        area: 'Savar'
+    },
+    {
+        id: 'savar_care',
+        name: 'Savar Care Hospital',
+        bnName: 'সাভার কেয়ার হাসপাতাল',
+        type: 'hospital',
+        phone: '01993000800',
+        lat: 23.8550,
+        lng: 90.2650,
+        area: 'Savar'
+    },
+
+    // === MANIKGANJ DISTRICT ===
+
+    {
+        id: 'manikganj_250bed',
+        name: '250 Bed District Hospital, Manikganj',
+        bnName: 'মানিকগঞ্জ ২৫০ শয্যা জেলা হাসপাতাল',
+        type: 'hospital',
+        phone: '02996610227',
+        lat: 23.8644,
+        lng: 90.0047,
+        area: 'Manikganj'
+    },
+    {
+        id: 'manikganj_sadar_ps',
+        name: 'Manikganj Sadar Police Station',
+        bnName: 'মানিকগঞ্জ সদর থানা',
+        type: 'police',
+        phone: '01320094375',
+        lat: 23.8644,
+        lng: 90.0047,
+        area: 'Manikganj'
+    },
+    {
+        id: 'saturia_ps',
+        name: 'Saturia Police Station',
+        bnName: 'সাটুরিয়া থানা',
+        type: 'police',
+        phone: '01320094401',
+        lat: 23.7800,
+        lng: 89.7900,
+        area: 'Manikganj'
+    },
+    {
+        id: 'singair_ps',
+        name: 'Singair Police Station',
+        bnName: 'সিঙ্গাইর থানা',
+        type: 'police',
+        phone: '01320094400',
+        lat: 23.9800,
+        lng: 90.1200,
+        area: 'Manikganj'
+    },
+    {
+        id: 'ghior_ps',
+        name: 'Ghior Police Station',
+        bnName: 'ঘিওর থানা',
+        type: 'police',
+        phone: '01320094400',
+        lat: 23.9200,
+        lng: 89.9500,
+        area: 'Manikganj'
+    },
+
+    // === MUNSHIGANJ / KERANIGANJ ===
+
+    {
+        id: 'munshiganj_general',
+        name: 'Munshiganj General Hospital',
+        bnName: 'মুন্সীগঞ্জ জেনারেল হাসপাতাল',
+        type: 'hospital',
+        phone: '01730324783',
+        lat: 23.5422,
+        lng: 90.5305,
+        area: 'Munshiganj'
+    },
+    {
+        id: 'keraniganj_health',
+        name: 'Keraniganj Upazila Health Complex',
+        bnName: 'কেরানীগঞ্জ উপজেলা স্বাস্থ্য কমপ্লেক্স',
+        type: 'hospital',
+        phone: '01730324402',
+        lat: 23.7100,
+        lng: 90.3700,
+        area: 'Keraniganj'
+    },
+    {
+        id: 'munshiganj_sadar_ps',
+        name: 'Munshiganj Sadar Police Station',
+        bnName: 'মুন্সীগঞ্জ সদর থানা',
+        type: 'police',
+        phone: '01320093300',
+        lat: 23.5422,
+        lng: 90.5305,
+        area: 'Munshiganj'
+    },
+    {
+        id: 'gazaria_ps',
+        name: 'Gazaria Police Station',
+        bnName: 'গজারিয়া থানা',
+        type: 'police',
+        phone: '01320093300',
+        lat: 23.6800,
+        lng: 90.4800,
+        area: 'Munshiganj'
+    },
+    {
+        id: 'louhojong_ps',
+        name: 'Louhojong Police Station',
+        bnName: 'লৌহজং থানা',
+        type: 'police',
+        phone: '01320093300',
+        lat: 23.5200,
+        lng: 90.4200,
+        area: 'Munshiganj'
+    },
+    {
+        id: 'sirajdikhan_ps',
+        name: 'Sirajdikhan Police Station',
+        bnName: 'সিরাজদিখান থানা',
+        type: 'police',
+        phone: '01320093300',
+        lat: 23.4500,
+        lng: 90.4800,
+        area: 'Munshiganj'
+    },
+    {
+        id: 'sreenagar_ps',
+        name: 'Sreenagar Police Station',
+        bnName: 'শ্রীনগর থানা',
+        type: 'police',
+        phone: '01320093300',
+        lat: 23.4000,
+        lng: 90.5800,
+        area: 'Munshiganj'
+    },
+    {
+        id: 'tongibari_ps',
+        name: 'Tongibari Police Station',
+        bnName: 'টংগীবাড়ি থানা',
+        type: 'police',
+        phone: '01320093300',
+        lat: 23.4700,
+        lng: 90.4200,
+        area: 'Munshiganj'
+    },
+    {
+        id: 'munshiganj_fire',
+        name: 'Munshiganj Fire Station',
+        bnName: 'মুন্সীগঞ্জ ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020984',
+        lat: 23.5422,
+        lng: 90.5305,
+        area: 'Munshiganj'
+    },
+    {
+        id: 'gazaria_fire',
+        name: 'Gazaria Fire Station',
+        bnName: 'গজারিয়া ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020928',
+        lat: 23.6800,
+        lng: 90.4800,
+        area: 'Munshiganj'
+    },
+
+    // === NARSINGDI DISTRICT ===
+
+    {
+        id: 'narsingdi_100bed',
+        name: 'Narsingdi 100 Bed Zilla Hospital',
+        bnName: 'নরসিংদী ১০০ শয্যা জেলা হাসপাতাল',
+        type: 'hospital',
+        phone: '01730324787',
+        lat: 23.9232,
+        lng: 90.7150,
+        area: 'Narsingdi'
+    },
+    {
+        id: 'narsingdi_sadar_hospital',
+        name: 'Narsingdi Sadar Hospital',
+        bnName: 'নরসিংদী সদর হাসপাতাল',
+        type: 'hospital',
+        phone: '062862006',
+        lat: 23.9232,
+        lng: 90.7150,
+        area: 'Narsingdi'
+    },
+    {
+        id: 'narsingdi_model_ps',
+        name: 'Narsingdi Model Police Station',
+        bnName: 'নরসিংদী মডেল থানা',
+        type: 'police',
+        phone: '01713373412',
+        lat: 23.9232,
+        lng: 90.7150,
+        area: 'Narsingdi'
+    },
+    {
+        id: 'narsingdi_fire',
+        name: 'Narsingdi Fire Station',
+        bnName: 'নরসিংদী ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020902',
+        lat: 23.9232,
+        lng: 90.7150,
+        area: 'Narsingdi'
+    },
+    {
+        id: 'palash_fire',
+        name: 'Palash Fire Station',
+        bnName: 'পলাশ ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020914',
+        lat: 23.9700,
+        lng: 90.6500,
+        area: 'Narsingdi'
+    },
+    {
+        id: 'madhobdi_fire',
+        name: 'Madhobdi Fire Station',
+        bnName: 'মধবদী ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020904',
+        lat: 24.0500,
+        lng: 90.7800,
+        area: 'Narsingdi'
+    },
+    {
+        id: 'monoharodi_fire',
+        name: 'Monoharodi Fire Station',
+        bnName: 'মনোহরদী ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020912',
+        lat: 24.0300,
+        lng: 90.8000,
+        area: 'Narsingdi'
+    },
+    {
+        id: 'belabo_fire',
+        name: 'Belabo Fire Station',
+        bnName: 'বেলাবো ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020910',
+        lat: 24.0800,
+        lng: 90.6500,
+        area: 'Narsingdi'
+    },
+    {
+        id: 'shibpur_fire',
+        name: 'Shibpur Fire Station',
+        bnName: 'শিবপুর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020920',
+        lat: 24.0200,
+        lng: 90.7300,
+        area: 'Narsingdi'
+    },
+    {
+        id: 'raipura_fire',
+        name: 'Raipura Fire Station',
+        bnName: 'রায়পুরা ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020918',
+        lat: 23.9800,
+        lng: 90.7700,
+        area: 'Narsingdi'
+    },
+
+    // === NARAYANGANJ DISTRICT ===
+
+    {
+        id: 'narayanganj_victoria',
+        name: 'General Hospital (Victoria), Narayanganj',
+        bnName: 'জেনারেল হাসপাতাল (ভিক্টরিয়া), নারায়ণগঞ্জ',
+        type: 'hospital',
+        phone: '01730324784',
+        lat: 23.6150,
+        lng: 90.5050,
+        area: 'Narayanganj'
+    },
+    {
+        id: 'popular_narayanganj',
+        name: 'Popular Diagnostic Centre, Narayanganj',
+        bnName: 'পপুলার ডায়াগনস্টিক সেন্টার, নারায়ণগঞ্জ',
+        type: 'hospital',
+        phone: '09666787804',
+        lat: 23.6200,
+        lng: 90.5080,
+        area: 'Narayanganj'
+    },
+    {
+        id: 'siddhirganj_ps',
+        name: 'Siddhirganj Police Station',
+        bnName: 'সিদ্ধিরগঞ্জ থানা',
+        type: 'police',
+        phone: '01320090429',
+        lat: 23.6800,
+        lng: 90.5100,
+        area: 'Narayanganj'
+    },
+    {
+        id: 'rupganj_ps',
+        name: 'Rupganj Police Station',
+        bnName: 'রূপগঞ্জ থানা',
+        type: 'police',
+        phone: '01320090481',
+        lat: 23.7000,
+        lng: 90.5300,
+        area: 'Narayanganj'
+    },
+
+    // === ADDITIONAL DHAKA FIRE STATIONS ===
+
+    {
+        id: 'baridhara_fire',
+        name: 'Baridhara Fire Service Station',
+        bnName: 'বারিধারা ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01730002245',
+        lat: 23.8100,
+        lng: 90.4200,
+        area: 'Baridhara'
+    },
+    {
+        id: 'bhashantek_fire',
+        name: 'Bhashantek Fire Service Station',
+        bnName: 'ভাসানটেক ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01901020772',
+        lat: 23.8200,
+        lng: 90.3680,
+        area: 'Mirpur'
+    },
+    {
+        id: 'dhaka_epz_fire',
+        name: 'Dhaka EPZ Fire Service Station',
+        bnName: 'ঢাকা ইপিজেড ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01730002231',
+        lat: 23.8550,
+        lng: 90.2670,
+        area: 'Savar'
+    },
+    {
+        id: 'dhamrai_fire',
+        name: 'Dhamrai Fire Service Station',
+        bnName: 'ধামরাই ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01742302850',
+        lat: 23.9050,
+        lng: 90.1220,
+        area: 'Dhamrai'
+    },
+    {
+        id: 'dohar_fire',
+        name: 'Dohar Fire Service Station',
+        bnName: 'দোহার ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01726845949',
+        lat: 23.5920,
+        lng: 90.1350,
+        area: 'Dohar'
+    },
+    {
+        id: 'hajaribagh_fire',
+        name: 'Hajaribagh Fire Service Station',
+        bnName: 'হাজারীবাগ ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01721733114',
+        lat: 23.7250,
+        lng: 90.3680,
+        area: 'Hazaribagh'
+    },
+    {
+        id: 'khilgaon_fire',
+        name: 'Khilgaon Fire Service Station',
+        bnName: 'খিলগাঁও ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01730002225',
+        lat: 23.7350,
+        lng: 90.4280,
+        area: 'Khilgaon'
+    },
+    {
+        id: 'kurmitola_fire',
+        name: 'Kurmitola Fire Service Station',
+        bnName: 'কুর্মিটোলা ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01730002232',
+        lat: 23.8250,
+        lng: 90.4050,
+        area: 'Cantonment'
+    },
+    {
+        id: 'lalbagh_fire',
+        name: 'Lalbagh Fire Service Station',
+        bnName: 'লালবাগ ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01730002218',
+        lat: 23.7180,
+        lng: 90.3850,
+        area: 'Lalbagh'
+    },
+    {
+        id: 'palashi_fire',
+        name: 'Palashi Barrack Fire Service Station',
+        bnName: 'পলাশী ব্যারাক ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01730002219',
+        lat: 23.7380,
+        lng: 90.3980,
+        area: 'Shahbag'
+    },
+    {
+        id: 'postogola_fire',
+        name: 'Postogola Fire Service Station',
+        bnName: 'পোস্তগোলা ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01713002216',
+        lat: 23.6950,
+        lng: 90.4300,
+        area: 'Postogola'
+    },
+    {
+        id: 'sadarghat_fire',
+        name: 'Sadarghat Fire Service Station',
+        bnName: 'সদরঘাট ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01730002214',
+        lat: 23.7050,
+        lng: 90.4120,
+        area: 'Sadarghat'
+    },
+    {
+        id: 'sadarghat_river_fire',
+        name: 'Sadarghat River Fire Service Station',
+        bnName: 'সদরঘাট নদী ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01711577451',
+        lat: 23.7050,
+        lng: 90.4120,
+        area: 'Sadarghat'
+    },
+    {
+        id: 'siddik_bazar_fire',
+        name: 'Siddik Bazar Fire Service Station',
+        bnName: 'সিদ্দিক বাজার ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01730002210',
+        lat: 23.7080,
+        lng: 90.4100,
+        area: 'Dhaka'
+    },
+    {
+        id: 'sutrapur_fire',
+        name: 'Sutrapur Fire Service Station',
+        bnName: 'সূত্রাপুর ফায়ার স্টেশন',
+        type: 'fire',
+        phone: '01794117037',
+        lat: 23.7050,
+        lng: 90.4150,
+        area: 'Sutrapur'
     }
 ];
