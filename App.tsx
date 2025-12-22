@@ -2317,7 +2317,7 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={() => setView(AppView.LIVE_NAV)}
-              className="ml-2 bg-gradient-to-r from-dhaka-green to-[#005c44] text-white px-3 py-2 rounded-xl font-bold text-sm shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center gap-1.5 whitespace-nowrap"
+              className="ml-2 bg-gradient-to-r from-dhaka-green to-[#005c44] text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center gap-1.5 whitespace-nowrap min-w-fit"
             >
               <Navigation className="w-4 h-4 flex-shrink-0" />
               Navigate
@@ -2397,7 +2397,7 @@ const App: React.FC = () => {
         )}
 
         {/* Scrollable Content */}
-        <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${selectedTrip ? 'pt-4 md:pt-20' : 'pt-[90px] md:pt-20'} pb-24 md:pb-4`}>
+        <div className={`flex-1 p-4 space-y-4 ${selectedTrip ? 'pt-4 md:pt-20' : 'pt-[90px] md:pt-20'} pb-24 md:pb-4`}>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-3">
