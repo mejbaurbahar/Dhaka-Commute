@@ -2297,7 +2297,7 @@ const App: React.FC = () => {
 
     const generalFareInfo = calculateFare(selectedBus);
     return (
-      <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 overflow-hidden w-full">
+      <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 overflow-y-auto w-full">
         {/* Mobile Header */}
         <div className="block md:hidden fixed top-0 w-full z-40">
           <div className="bg-white dark:bg-slate-900 px-5 py-4 shadow-sm border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
@@ -2305,7 +2305,7 @@ const App: React.FC = () => {
               <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </button>
             <div className="flex-1 ml-3">
-              <h2 className="text-lg font-bold text-dhaka-dark dark:text-gray-100 truncate max-w-[200px]">{formatBusName(selectedBus.name)}</h2>
+              <h2 className="text-lg font-bold text-dhaka-dark dark:text-gray-100 truncate max-w-[160px]">{formatBusName(selectedBus.name)}</h2>
               <p className="text-xs text-gray-500 dark:text-gray-400">{selectedBus.bnName}</p>
             </div>
             <button
@@ -2317,10 +2317,10 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={() => setView(AppView.LIVE_NAV)}
-              className="ml-2 bg-gradient-to-r from-dhaka-green to-[#005c44] text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center gap-1.5 whitespace-nowrap min-w-fit"
+              className="ml-2 bg-gradient-to-r from-dhaka-green to-[#005c44] text-white p-2.5 rounded-xl font-bold shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center"
+              aria-label="Start Navigation"
             >
-              <Navigation className="w-4 h-4 flex-shrink-0" />
-              Navigate
+              <Navigation className="w-5 h-5" />
             </button>
           </div>
         </div>
