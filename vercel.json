@@ -7,6 +7,18 @@
         {
             "source": "/api/routes/:path*",
             "destination": "https://koyjabo-backend.onrender.com/api/routes/:path*"
+        },
+        {
+            "source": "/api/trains/:path*",
+            "destination": "https://koyjabo-backend.onrender.com/api/trains/:path*"
+        },
+        {
+            "source": "/api/notifications/:path*",
+            "destination": "https://koyjabo-backend.onrender.com/api/notifications/:path*"
+        },
+        {
+            "source": "/api/stats",
+            "destination": "https://koyjabo-backend.onrender.com/api/stats"
         }
     ],
     "buildCommand": "npm run build",

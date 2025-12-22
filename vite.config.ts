@@ -19,6 +19,26 @@ export default defineConfig(({ mode }) => {
           target: 'https://koyjabo-backend.onrender.com',
           changeOrigin: true,
           secure: false
+        },
+        '/api/routes': {
+          target: 'https://koyjabo-backend.onrender.com',
+          changeOrigin: true,
+          secure: false
+        },
+        '/api/trains': {
+          target: 'https://koyjabo-backend.onrender.com',
+          changeOrigin: true,
+          secure: false
+        },
+        '/api/notifications': {
+          target: 'https://koyjabo-backend.onrender.com',
+          changeOrigin: true,
+          secure: false
+        },
+        '/api/stats': {
+          target: 'https://koyjabo-backend.onrender.com',
+          changeOrigin: true,
+          secure: false
         }
       }
     },
