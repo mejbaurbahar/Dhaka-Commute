@@ -396,6 +396,156 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         lng: 90.3950,
         area: 'Shahbag'
     },
+    {
+        id: 'ibrahim_cardiac',
+        name: 'Ibrahim Cardiac Hospital & Research Institute',
+        bnName: 'ইব্রাহিম কার্ডিয়াক হাসপাতাল',
+        type: 'hospital',
+        phone: '029671147',
+        lat: 23.7380,
+        lng: 90.3980,
+        area: 'Shahbag'
+    },
+    {
+        id: 'bangladesh_specialized',
+        name: 'Bangladesh Specialized Hospital',
+        bnName: 'বাংলাদেশ স্পেশালাইজড হাসপাতাল',
+        type: 'hospital',
+        phone: '09666700100',
+        lat: 23.7650,
+        lng: 90.3680,
+        area: 'Mirpur'
+    },
+    {
+        id: 'al_helal',
+        name: 'Al Helal Specialized Hospital',
+        bnName: 'আল হেলাল স্পেশালাইজড হাসপাতাল',
+        type: 'hospital',
+        phone: '029006820',
+        lat: 23.8070,
+        lng: 90.3687,
+        area: 'Mirpur-10'
+    },
+    {
+        id: 'delta_hospital',
+        name: 'Delta Hospital Ltd.',
+        bnName: 'ডেল্টা হাসপাতাল',
+        type: 'hospital',
+        phone: '029022410',
+        lat: 23.7300,
+        lng: 90.3950,
+        area: 'Dhaka'
+    },
+    {
+        id: 'city_hospital',
+        name: 'City Hospital & Diagnostic Center',
+        bnName: 'সিটি হাসপাতাল এন্ড ডায়াগনস্টিক',
+        type: 'hospital',
+        phone: '028143312',
+        lat: 23.7650,
+        lng: 90.3600,
+        area: 'Mohammadpur'
+    },
+    {
+        id: 'evercare_hospital',
+        name: 'Evercare Hospital Dhaka',
+        bnName: 'এভারকেয়ার হাসপাতাল ঢাকা',
+        type: 'hospital',
+        phone: '0255037242',
+        lat: 23.8100,
+        lng: 90.4120,
+        area: 'Bashundhara'
+    },
+    {
+        id: 'al_markazul',
+        name: 'Al-Markazul Islami Hospital',
+        bnName: 'আল-মারকাজুল ইসলামী হাসপাতাল',
+        type: 'hospital',
+        phone: '01995559999',
+        lat: 23.7620,
+        lng: 90.3600,
+        area: 'Mohammadpur'
+    },
+    {
+        id: 'samorita',
+        name: 'Samorita Hospital',
+        bnName: 'সমরিতা হাসপাতাল',
+        type: 'hospital',
+        phone: '029131901',
+        lat: 23.7520,
+        lng: 90.3880,
+        area: 'Panthapath'
+    },
+    {
+        id: 'central_hospital',
+        name: 'Central Hospital Ltd.',
+        bnName: 'সেন্ট্রাল হাসপাতাল',
+        type: 'hospital',
+        phone: '029660015',
+        lat: 23.7450,
+        lng: 90.3800,
+        area: 'Dhanmondi'
+    },
+    {
+        id: 'ispahani_eye',
+        name: 'Ispahani Islamia Eye Institute and Hospital',
+        bnName: 'ইস্পাহানী ইসলামিয়া চক্ষু ইনস্টিটিউট',
+        type: 'hospital',
+        phone: '09610998333',
+        lat: 23.7550,
+        lng: 90.3850,
+        area: 'Farmgate'
+    },
+    {
+        id: 'addin_women',
+        name: 'Ad-Din Women\'s Medical College Hospital',
+        bnName: 'আদ-দ্বীন উইমেন্স মেডিকেল কলেজ',
+        type: 'hospital',
+        phone: '029353391',
+        lat: 23.7500,
+        lng: 90.4150,
+        area: 'Maghbazar'
+    },
+    {
+        id: 'japan_bangladesh',
+        name: 'Japan Bangladesh Friendship Hospital',
+        bnName: 'জাপান বাংলাদেশ ফ্রেন্ডশিপ হাসপাতাল',
+        type: 'hospital',
+        phone: '029672277',
+        lat: 23.7450,
+        lng: 90.3720,
+        area: 'Zigatola'
+    },
+    {
+        id: 'universal_medical',
+        name: 'Universal Medical College Hospital Ltd.',
+        bnName: 'ইউনিভার্সাল মেডিকেল কলেজ হাসপাতাল',
+        type: 'hospital',
+        phone: '09606111222',
+        lat: 23.7800,
+        lng: 90.3950,
+        area: 'Mohakhali'
+    },
+    {
+        id: 'national_heart',
+        name: 'National Heart Foundation Hospital & Research Institute',
+        bnName: 'জাতীয় হূদরোগ ফাউন্ডেশন হাসপাতাল',
+        type: 'hospital',
+        phone: '029033442',
+        lat: 23.7380,
+        lng: 90.3980,
+        area: 'Mirpur'
+    },
+    {
+        id: 'neuroscience',
+        name: 'National Institute of Neuroscience',
+        bnName: 'জাতীয় স্নায়ুবিজ্ঞান ইনস্টিটিউট',
+        type: 'hospital',
+        phone: '029112709',
+        lat: 23.7750,
+        lng: 90.3650,
+        area: 'Agargaon'
+    },
 
     // === POLICE STATIONS (Verified) ===
 
@@ -652,16 +802,7 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
         lng: 90.2670,
         area: 'Savar'
     },
-    {
-        id: 'gabtoli_fire',
-        name: 'Gabtoli Fire Station',
-        bnName: 'গাবতলী ফায়ার স্টেশন',
-        type: 'fire',
-        phone: '01713398807',
-        lat: 23.7820,
-        lng: 90.3460,
-        area: 'Gabtoli'
-    },
+    // Removed duplicate - Gabtoli is actually Kallyanpur Fire Station
 
     // === MILITARY & DEFENSE ===
 
