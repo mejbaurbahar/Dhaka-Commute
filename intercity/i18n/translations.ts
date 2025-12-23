@@ -200,7 +200,7 @@ export const translations: Record<Language, Translations> = {
             example3: 'বরিশাল যাওয়ার লঞ্চের সন্ধান দিন।',
             clearChat: 'চ্যাট মুছুন',
             emptyState: 'বাংলাদেশের যাত্রা নিয়ে কিছু জানতে চাইলে, আমাকে জিজ্ঞাসা করুন',
-            queriesRemaining: 'বিনামূল্যে এআই প্রশ্ন আজ',
+            queriesRemaining: 'আজকের বিনামূল্যে প্রশ্ন',
             exampleQuestion1: 'মিরপুর ১০ থেকে বনানী?',
             exampleQuestion2: 'ফার্মগেটের জন্য সেরা বাস কোনটি?',
         },
