@@ -141,7 +141,9 @@ const SmartDetailView: React.FC<{ content: string, summary: string }> = ({ conte
               </div>
               <div>
                 <h5 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5">
-                  {item.key}
+                  {t(`intercity.results.${item.key.replace(/\s+/g, '').replace(/[^\w]/g, '').toLowerCase()}`) !== `intercity.results.${item.key.replace(/\s+/g, '').replace(/[^\w]/g, '').toLowerCase()}`
+                    ? t(`intercity.results.${item.key.replace(/\s+/g, '').replace(/[^\w]/g, '').toLowerCase()}`)
+                    : item.key}
                 </h5>
                 <p className="text-sm font-medium text-slate-800 dark:text-gray-100 leading-snug">
                   {item.value}

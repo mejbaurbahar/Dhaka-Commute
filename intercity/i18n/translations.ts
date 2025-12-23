@@ -562,6 +562,36 @@ export const translations: Record<Language, Translations> = {
                 "Industrial & Economic Hubs": "শিল্প ও অর্থনৈতিক কেন্দ্র",
                 "Major Transit Points": "প্রধান ট্রানজিট পয়েন্ট",
                 "Tea Garden Regions": "চা বাগান অঞ্চল"
+            },
+            nav: {
+                home: 'হোম',
+                intercity: 'আন্তঃনগর',
+                aiAssistant: 'এআই সহায়ক',
+                history: 'ইতিহাস',
+                saved: 'সংরক্ষিত',
+                about: 'সম্পর্কে',
+                settings: 'সেটিংস',
+                privacy: 'গোপনীয়তা',
+                terms: 'শর্তাবলী',
+                menu: 'মেনু'
+            },
+            results: {
+                operators: 'অপারেটর',
+                terminals: 'টার্মিনাল',
+                airlines: 'এয়ারলাইন্স',
+                train: 'ট্রেন',
+                notes: 'নোট',
+                distance: 'দূরত্ব',
+                travelTime: 'ভ্রমণ সময়',
+                routeType: 'রুটের ধরন',
+                mainHighway: 'প্রধান মহাসড়ক',
+                overview: 'সারসংক্ষেপ',
+                services: 'সার্ভিস',
+                departingFrom: 'যাত্রা শুরু',
+                arrivalAt: 'গন্তব্য',
+                ships: 'জাহাজ',
+                ferry: 'ফেরি',
+                flight: 'ফ্লাইট'
             }
         },
     },
@@ -1107,6 +1137,36 @@ export const translations: Record<Language, Translations> = {
                 "Industrial & Economic Hubs": "Industrial & Economic Hubs",
                 "Major Transit Points": "Major Transit Points",
                 "Tea Garden Regions": "Tea Garden Regions"
+            },
+            nav: {
+                home: 'Home',
+                intercity: 'Intercity',
+                aiAssistant: 'AI Assistant',
+                history: 'History',
+                saved: 'Saved',
+                about: 'About',
+                settings: 'Settings',
+                privacy: 'Privacy',
+                terms: 'Terms',
+                menu: 'Menu'
+            },
+            results: {
+                operators: 'Operators',
+                terminals: 'Terminals',
+                airlines: 'Airlines',
+                train: 'Train',
+                notes: 'Notes',
+                distance: 'Distance',
+                travelTime: 'Travel Time',
+                routeType: 'Route Type',
+                mainHighway: 'Main Highway',
+                overview: 'Overview',
+                services: 'Services',
+                departingFrom: 'Departing From',
+                arrivalAt: 'Arrival At',
+                ships: 'Ships',
+                ferry: 'Ferry',
+                flight: 'Flight'
             }
         },
     }

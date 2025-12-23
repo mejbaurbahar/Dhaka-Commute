@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import 'leaflet/dist/leaflet.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
