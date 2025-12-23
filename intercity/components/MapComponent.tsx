@@ -39,6 +39,30 @@ const MODE_ICONS: { [key: string]: string } = {
   'Default': '📍'
 };
 
+const BENGALI_TO_ENGLISH_NAMES: { [key: string]: string } = {
+  "ঢাকা": "Dhaka", "চট্টগ্রাম": "Chattogram", "রাজশাহী": "Rajshahi", "খুলনা": "Khulna",
+  "বরিশাল": "Barishal", "সিলেট": "Sylhet", "রংপুর": "Rangpur", "ময়মনসিংহ": "Mymensingh",
+  "কক্সবাজার": "Cox's Bazar", "সেন্টমার্টিন": "Saint Martin's Island", "টেকনাফ": "Teknaf",
+  "কুমিল্লা": "Cumilla", "নোয়াখালী": "Noakhali", "ফেনী": "Feni", "বগুড়া": "Bogura",
+  "সিরাজগঞ্জ": "Sirajganj", "টাঙ্গাইল": "Tangail", "গাজীপুর": "Gazipur", "সাভার": "Savar",
+  "মাদারীপুর": "Madaripur", "শরীয়তপুর": "Shariatpur", "গোপালগঞ্জ": "Gopalganj",
+  "ফরিদপুর": "Faridpur", "মুন্সীগঞ্জ": "Munshiganj", "নারায়ণগঞ্জ": "Narayanganj",
+  "নরসিংদী": "Narsingdi", "কিশোরগঞ্জ": "Kishoreganj", "ব্রাহ্মণবাড়িয়া": "Brahmanbaria",
+  "চাঁদপুর": "Chandpur", "লক্ষ্মীপুর": "Lakshmipur", "রাঙ্গামাটি": "Rangamati",
+  "বান্দরবান": "Bandarban", "খাগড়াছড়ি": "Khagrachari", "নাটোর": "Natore",
+  "পাবনা": "Pabna", "নওগাঁ": "Naogaon", "চাঁপাইনবাবগঞ্জ": "Chapainawabganj",
+  "জয়পুরহাট": "Joypurhat", "কুষ্টিয়া": "Kushtia", "যশোর": "Jashore", "ঝিনাইদহ": "Jhenaidah",
+  "মাগুরা": "Magura", "নড়াইল": "Narail", "বাগেরহাট": "Bagerhat", "সাতক্ষীরা": "Satkhira",
+  "মেহেরপুর": "Meherpur", "চুয়াডাঙ্গা": "Chuadanga", "ভোলা": "Bhola", "পটুয়াখালী": "Patuakhali",
+  "বরগুনা": "Barguna", "ঝালকাঠি": "Jhalokati", "পিরোজপুর": "Pirojpur", "হবিগঞ্জ": "Habiganj",
+  "মৌলভীবাজার": "Moulvibazar", "সুনামগঞ্জ": "Sunamganj", "দিনাজপুর": "Dinajpur",
+  "কুড়িগ্রাম": "Kurigram", "লালমনিরহাট": "Lalmonirhat", "নীলফামারী": "Nilphamari",
+  "পঞ্চগড়": "Panchagarh", "ঠাকুরগাঁও": "Thakurgaon", "গাইবান্ধা": "Gaibandha",
+  "শেরপুর": "Sherpur", "জামালপুর": "Jamalpur", "নেত্রকোনা": "Netrokona",
+  "সাজেক": "Sajek Valley", "কুয়াকাটা": "Kuakata", "শ্রীমঙ্গল": "Sreemangal",
+  "মাওয়া": "Mawa", "আরিচা": "Aricha", "পাটুরিয়া": "Paturia", "দৌলতদিয়া": "Daulatdia"
+};
+
 const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTitle = '' }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
@@ -65,8 +89,16 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
 
     // Helper to get coords
     const getCoords = (name: string): [number, number] | null => {
+      // 1. Try direct match or Bengali mapping
+      let searchName = name;
+      const bnMatch = Object.keys(BENGALI_TO_ENGLISH_NAMES).find(bn => name.includes(bn));
+      if (bnMatch) {
+        searchName = BENGALI_TO_ENGLISH_NAMES[bnMatch];
+      }
+
+      // 2. Find in coordinates map
       const key = Object.keys(DISTRICT_COORDINATES).find(k =>
-        name.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(name.toLowerCase())
+        searchName.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(searchName.toLowerCase())
       );
       return key ? DISTRICT_COORDINATES[key] : null;
     };

@@ -25,43 +25,43 @@ const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
 
     // List of known major transit points in Bangladesh with coordinates
     const potentialStops = [
-      { name: "Teknaf", lat: 20.8644, lng: 92.2985 },
-      { name: "Cox's Bazar", lat: 21.4272, lng: 92.0058 },
-      { name: "Chattogram", lat: 22.3569, lng: 91.7832 },
-      { name: "Cumilla", lat: 23.4607, lng: 91.1809 },
-      { name: "Brahmanbaria", lat: 23.9571, lng: 91.1119 },
-      { name: "Bhairab", lat: 24.0514, lng: 90.9764 },
-      { name: "Ashuganj", lat: 23.9897, lng: 91.0996 },
-      { name: "Mawa", lat: 23.4425, lng: 90.2358 },
-      { name: "Padma Bridge", lat: 23.4425, lng: 90.2358 },
-      { name: "Barishal", lat: 22.7010, lng: 90.3535 },
-      { name: "Khulna", lat: 22.8456, lng: 89.5403 },
-      { name: "Jashore", lat: 23.1634, lng: 89.2182 },
-      { name: "Sylhet", lat: 24.8949, lng: 91.8687 },
-      { name: "Sreemangal", lat: 24.3113, lng: 91.7299 },
-      { name: "Tangail", lat: 24.2513, lng: 89.9167 },
-      { name: "Sirajganj", lat: 24.4533, lng: 89.7006 },
-      { name: "Bogura", lat: 24.8465, lng: 89.3770 },
-      { name: "Rangpur", lat: 25.7439, lng: 89.2752 },
-      { name: "Aricha", lat: 23.7593, lng: 89.7858 },
-      { name: "Paturia", lat: 23.7842, lng: 89.8444 },
-      { name: "Daulatdia", lat: 23.4350, lng: 89.8589 },
-      { name: "Hatiya", lat: 22.4439, lng: 91.1064 },
-      { name: "Sandwip", lat: 22.4851, lng: 91.4416 },
-      { name: "Bhola", lat: 22.6859, lng: 90.6482 }
+      { name: "Teknaf", bnName: "টেকনাফ", lat: 20.8644, lng: 92.2985 },
+      { name: "Cox's Bazar", bnName: "কক্সবাজার", lat: 21.4272, lng: 92.0058 },
+      { name: "Chattogram", bnName: "চট্টগ্রাম", lat: 22.3569, lng: 91.7832 },
+      { name: "Cumilla", bnName: "কুমিল্লা", lat: 23.4607, lng: 91.1809 },
+      { name: "Brahmanbaria", bnName: "ব্রাহ্মণবাড়িয়া", lat: 23.9571, lng: 91.1119 },
+      { name: "Bhairab", bnName: "ভৈরব", lat: 24.0514, lng: 90.9764 },
+      { name: "Ashuganj", bnName: "আশুগঞ্জ", lat: 23.9897, lng: 91.0996 },
+      { name: "Mawa", bnName: "মাওয়া", lat: 23.4425, lng: 90.2358 },
+      { name: "Padma Bridge", bnName: "পদ্মা সেতু", lat: 23.4425, lng: 90.2358 },
+      { name: "Barishal", bnName: "বরিশাল", lat: 22.7010, lng: 90.3535 },
+      { name: "Khulna", bnName: "খুলনা", lat: 22.8456, lng: 89.5403 },
+      { name: "Jashore", bnName: "যশোর", lat: 23.1634, lng: 89.2182 },
+      { name: "Sylhet", bnName: "সিলেট", lat: 24.8949, lng: 91.8687 },
+      { name: "Sreemangal", bnName: "শ্রীমঙ্গল", lat: 24.3113, lng: 91.7299 },
+      { name: "Tangail", bnName: "টাঙ্গাইল", lat: 24.2513, lng: 89.9167 },
+      { name: "Sirajganj", bnName: "সিরাজগঞ্জ", lat: 24.4533, lng: 89.7006 },
+      { name: "Bogura", bnName: "বগুড়া", lat: 24.8465, lng: 89.3770 },
+      { name: "Rangpur", bnName: "রংপুর", lat: 25.7439, lng: 89.2752 },
+      { name: "Aricha", bnName: "আরিচা", lat: 23.7593, lng: 89.7858 },
+      { name: "Paturia", bnName: "পাটুরিয়া", lat: 23.7842, lng: 89.8444 },
+      { name: "Daulatdia", bnName: "দৌলতদিয়া", lat: 23.4350, lng: 89.8589 },
+      { name: "Hatiya", bnName: "হাতিয়া", lat: 22.4439, lng: 91.1064 },
+      { name: "Sandwip", bnName: "সন্দ্বীপ", lat: 22.4851, lng: 91.4416 },
+      { name: "Bhola", bnName: "ভোলা", lat: 22.6859, lng: 90.6482 }
     ];
 
     // Find matches in the text
     const content = selectedMode.fullContent;
     const matchedStops = potentialStops.filter(stop =>
-      content.includes(stop.name) &&
-      !data.from.includes(stop.name) &&
-      !data.to.includes(stop.name)
+      (content.includes(stop.name) || content.includes(stop.bnName)) &&
+      !data.from.includes(stop.name) && !data.from.includes(stop.bnName) &&
+      !data.to.includes(stop.name) && !data.to.includes(stop.bnName)
     );
 
     // Get FROM and TO coordinates from the same list
-    const fromStop = potentialStops.find(s => data.from.includes(s.name));
-    const toStop = potentialStops.find(s => data.to.includes(s.name));
+    const fromStop = potentialStops.find(s => data.from.includes(s.name) || data.from.includes(s.bnName));
+    const toStop = potentialStops.find(s => data.to.includes(s.name) || data.to.includes(s.bnName));
 
     // If we have coordinates for both endpoints, filter waypoints geographically
     // This requires a mock 'map' or coordinate logic. Since we don't have L here, 
