@@ -118,31 +118,34 @@ export default defineConfig(({ mode }) => {
             { url: '/intercity/index.html', revision: null }
           ],
           runtimeCaching: [
-            // Cache Intercity App HTML - CacheFirst for immediate offline access
+            // Cache Intercity App HTML - Custom handler for navigation requests
             {
-              urlPattern: ({ url }) => url.pathname.startsWith('/intercity'),
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'intercity-html-cache',
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-                },
-                cacheableResponse: {
-                  statuses: [0, 200]
-                },
-                // Ensure we cache and serve intercity/index.html
-                plugins: [
-                  {
-                    cacheWillUpdate: async ({ response }) => {
-                      if (response && response.status === 200) {
-                        return response;
-                      }
-                      return null;
-                    }
+              urlPattern: ({ request, url }) => {
+                return request.destination === 'document' && url.pathname.startsWith('/intercity');
+              },
+              handler: async ({ event, url }) => {
+                try {
+                  // Try network first
+                  const response = await fetch(event.request);
+                  // Cache the response for future offline use
+                  const cache = await caches.open('intercity-html-cache');
+                  cache.put('/intercity/index.html', response.clone());
+                  return response;
+                } catch (error) {
+                  // Network failed, serve from cache
+                  const cache = await caches.open('intercity-html-cache');
+                  const cachedResponse = await cache.match('/intercity/index.html');
+                  if (cachedResponse) {
+                    return cachedResponse;
                   }
-                ]
-              }
+                  // If no cache, return a basic error response
+                  return new Response(
+                    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Offline</title></head><body><h1>Offline</h1><p>Please connect to the internet.</p></body></html>',
+                    { headers: { 'Content-Type': 'text/html' } }
+                  );
+                }
+              },
+              method: 'GET'
             },
             // Static Assets - Cache First (Offline First Strategy)
             {
