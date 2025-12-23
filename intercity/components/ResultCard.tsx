@@ -19,27 +19,76 @@ const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
     return parsedData.modes.find(m => m.id === selectedModeId);
   }, [parsedData.modes, selectedModeId]);
 
-  // Extract stops for the map
+  // Intelligent Stop detection with Geographic Filtering
   const currentModeStops = useMemo(() => {
     if (!selectedMode) return [];
 
+    // List of known major transit points in Bangladesh with coordinates
     const potentialStops = [
       { name: "Teknaf", lat: 20.8644, lng: 92.2985 },
       { name: "Cox's Bazar", lat: 21.4272, lng: 92.0058 },
       { name: "Chattogram", lat: 22.3569, lng: 91.7832 },
       { name: "Cumilla", lat: 23.4607, lng: 91.1809 },
+      { name: "Brahmanbaria", lat: 23.9571, lng: 91.1119 },
+      { name: "Bhairab", lat: 24.0514, lng: 90.9764 },
+      { name: "Ashuganj", lat: 23.9897, lng: 91.0996 },
       { name: "Mawa", lat: 23.4425, lng: 90.2358 },
+      { name: "Padma Bridge", lat: 23.4425, lng: 90.2358 },
       { name: "Barishal", lat: 22.7010, lng: 90.3535 },
       { name: "Khulna", lat: 22.8456, lng: 89.5403 },
+      { name: "Jashore", lat: 23.1634, lng: 89.2182 },
       { name: "Sylhet", lat: 24.8949, lng: 91.8687 },
-      { name: "Bogura", lat: 24.8465, lng: 89.3770 }
+      { name: "Sreemangal", lat: 24.3113, lng: 91.7299 },
+      { name: "Tangail", lat: 24.2513, lng: 89.9167 },
+      { name: "Sirajganj", lat: 24.4533, lng: 89.7006 },
+      { name: "Bogura", lat: 24.8465, lng: 89.3770 },
+      { name: "Rangpur", lat: 25.7439, lng: 89.2752 },
+      { name: "Aricha", lat: 23.7593, lng: 89.7858 },
+      { name: "Paturia", lat: 23.7842, lng: 89.8444 },
+      { name: "Daulatdia", lat: 23.4350, lng: 89.8589 },
+      { name: "Hatiya", lat: 22.4439, lng: 91.1064 },
+      { name: "Sandwip", lat: 22.4851, lng: 91.4416 },
+      { name: "Bhola", lat: 22.6859, lng: 90.6482 }
     ];
 
+    // Find matches in the text
     const content = selectedMode.fullContent;
-    return potentialStops
-      .filter(stop => content.includes(stop.name))
-      .map(s => s.name);
-  }, [selectedMode]);
+    const matchedStops = potentialStops.filter(stop =>
+      content.includes(stop.name) &&
+      !data.from.includes(stop.name) &&
+      !data.to.includes(stop.name)
+    );
+
+    // Get FROM and TO coordinates from the same list
+    const fromStop = potentialStops.find(s => data.from.includes(s.name));
+    const toStop = potentialStops.find(s => data.to.includes(s.name));
+
+    // If we have coordinates for both endpoints, filter waypoints geographically
+    // This requires a mock 'map' or coordinate logic. Since we don't have L here, 
+    // we use a simple distance logic
+    if (fromStop && toStop && matchedStops.length > 0) {
+      const filteredStops = matchedStops.filter(waypoint => {
+        const dLat_FT = toStop.lat - fromStop.lat;
+        const dLng_FT = toStop.lng - fromStop.lng;
+        const totalDist_FT = Math.sqrt(dLat_FT * dLat_FT + dLng_FT * dLng_FT);
+
+        const dLat_FW = waypoint.lat - fromStop.lat;
+        const dLng_FW = waypoint.lng - fromStop.lng;
+
+        const dotProduct = (dLat_FT * dLat_FW + dLng_FT * dLng_FW);
+        const projection = dotProduct / (totalDist_FT * totalDist_FT);
+
+        if (projection <= 0 || projection >= 1.2) return false;
+
+        const perpDist = Math.abs((dLng_FT * dLat_FW - dLat_FT * dLng_FW) / totalDist_FT);
+        return perpDist < 1.0;
+      });
+
+      return Array.from(new Set(filteredStops.map(s => s.name)));
+    }
+
+    return Array.from(new Set(matchedStops.map(s => s.name)));
+  }, [selectedMode, data.from, data.to]);
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden transition-colors duration-300">

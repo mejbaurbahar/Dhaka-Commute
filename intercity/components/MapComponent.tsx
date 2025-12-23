@@ -15,18 +15,27 @@ declare global {
 }
 
 // Icon dictionary
-const MODE_ICONS: {[key: string]: string} = {
+const MODE_ICONS: { [key: string]: string } = {
   'Bus': '🚌',
+  'বাস': '🚌',
   'Train': '🚂',
+  'ট্রেন': '🚂',
   'Air': '✈️',
+  'বিমান': '✈️',
   'Flight': '✈️',
   'Plane': '✈️',
   'Ship': '🚢',
+  'জাহাজ': '🚢',
   'Launch': '🚢',
+  'লঞ্চ': '🚢',
   'Ferry': '🚢',
+  'ফেরি': '🚢',
   'Car': '🚗',
+  'কার': '🚗',
   'Taxi': '🚕',
+  'ট্যাক্সি': '🚕',
   'Road': '🚗',
+  'সড়ক': '🚗',
   'Default': '📍'
 };
 
@@ -42,7 +51,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
     // Initialize Map only once
     if (!mapInstance.current) {
       mapInstance.current = window.L.map(mapRef.current).setView([23.8103, 90.4125], 7);
-      
+
       window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(mapInstance.current);
@@ -56,7 +65,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
 
     // Helper to get coords
     const getCoords = (name: string): [number, number] | null => {
-      const key = Object.keys(DISTRICT_COORDINATES).find(k => 
+      const key = Object.keys(DISTRICT_COORDINATES).find(k =>
         name.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(name.toLowerCase())
       );
       return key ? DISTRICT_COORDINATES[key] : null;
@@ -69,9 +78,9 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
 
     // --- 1. Intelligent Route Ordering (Geometric Sorting) ---
     // This fixes "Zig-Zag" issues by sorting Via points based on distance from Start.
-    
+
     let sortedVia = [...via];
-    
+
     // Get coords for sorting
     const viaWithCoords = sortedVia
       .map(v => ({ name: v, coords: getCoords(v) }))
@@ -91,36 +100,41 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
     // --- 2. Determine Transport Modes per Segment ---
     const cleanTitle = modeTitle.replace('By ', '').replace(/\*\*/g, '');
     const modes = cleanTitle.split('+').map(m => m.trim());
-    
+
     const segments: { p1: [number, number], p2: [number, number], mode: string, dist: number }[] = [];
-    
+
     for (let i = 0; i < routePoints.length - 1; i++) {
       const p1 = routePoints[i];
-      const p2 = routePoints[i+1];
+      const p2 = routePoints[i + 1];
       const dist = mapInstance.current.distance(p1, p2);
-      
+
       let segmentMode = 'Default';
-      
+
       if (modes.length === 1) {
         segmentMode = modes[0];
       } else {
-        if (i === routePoints.length - 2 && (modes.includes('Ship') || modes.includes('Launch'))) {
+        const hasShip = modes.some(m => m.includes('Ship') || m.includes('Launch') || m.includes('জাহাজ') || m.includes('লঞ্চ'));
+        const hasAir = modes.some(m => m.includes('Air') || m.includes('Flight') || m.includes('বিমান'));
+        const hasBus = modes.some(m => m.includes('Bus') || m.includes('Road') || m.includes('Car') || m.includes('বাস') || m.includes('সড়ক'));
+        const hasTrain = modes.some(m => m.includes('Train') || m.includes('ট্রেন'));
+
+        if (i === routePoints.length - 2 && hasShip) {
           segmentMode = 'Ship';
-        } else if (i === 0 && (modes.includes('Air') || modes.includes('Flight'))) {
+        } else if (i === 0 && hasAir) {
           segmentMode = 'Air';
-        } else if (modes.includes('Bus') || modes.includes('Road') || modes.includes('Car')) {
+        } else if (hasBus) {
           segmentMode = 'Bus';
-          if (modes.includes('Train') && !modes.includes('Air')) segmentMode = 'Train';
+          if (hasTrain && !hasAir) segmentMode = 'Train';
         } else {
-           segmentMode = modes[i % modes.length];
+          segmentMode = modes[i % modes.length];
         }
       }
-      
+
       segments.push({ p1, p2, mode: segmentMode, dist });
     }
 
     // --- 3. Draw Elements ---
-    
+
     const addMarker = (coords: [number, number], label: string, color: string) => {
       const iconHtml = `
         <div style="
@@ -160,16 +174,16 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
 
     // Fix for Mobile Rendering: Force invalidateSize after transition
     setTimeout(() => {
-        if (mapInstance.current) {
-            mapInstance.current.invalidateSize();
-            mapInstance.current.fitBounds(polyline.getBounds(), { padding: [80, 80] });
-        }
+      if (mapInstance.current) {
+        mapInstance.current.invalidateSize();
+        mapInstance.current.fitBounds(polyline.getBounds(), { padding: [80, 80] });
+      }
     }, 400);
 
     // --- 4. Animation ---
     const vehicleIconDiv = window.L.divIcon({
       className: 'vehicle-anim-icon',
-      html: '', 
+      html: '',
       iconSize: [30, 30],
       iconAnchor: [15, 15]
     });
@@ -177,7 +191,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
 
     const totalDist = segments.reduce((acc, s) => acc + s.dist, 0);
     // Slowed down animation: 12 seconds
-    const duration = 12000; 
+    const duration = 12000;
     let startTime: number | null = null;
 
     const animate = (timestamp: number) => {
@@ -188,7 +202,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
       const currentDist = progress * totalDist;
       let accumulatedDist = 0;
       let currentSegment = segments[0];
-      
+
       for (const seg of segments) {
         if (accumulatedDist + seg.dist >= currentDist) {
           currentSegment = seg;
@@ -198,7 +212,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
       }
 
       const segmentProgress = (currentDist - accumulatedDist) / currentSegment.dist;
-      
+
       const lat = currentSegment.p1[0] + (currentSegment.p2[0] - currentSegment.p1[0]) * segmentProgress;
       const lng = currentSegment.p1[1] + (currentSegment.p2[1] - currentSegment.p1[1]) * segmentProgress;
 
@@ -210,9 +224,9 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
           break;
         }
       }
-      
+
       const iconHtml = `<div style="font-size: 28px; line-height: 1; transform: translate(-50%, -50%); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); transition: all 0.2s;">${iconChar}</div>`;
-      
+
       const newIcon = window.L.divIcon({
         className: 'vehicle-anim-icon',
         html: iconHtml,
@@ -226,7 +240,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
     };
 
     animationRef.current = requestAnimationFrame(animate);
-    
+
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
