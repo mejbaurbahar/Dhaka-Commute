@@ -103,8 +103,8 @@ export default defineConfig(({ mode }) => {
             '**/*.{js,css,html,ico,png,svg,json,woff,woff2,ttf}',
             'intercity/**/*.{js,css,html,ico,png,svg,json,woff,woff2,ttf}'
           ],
-          navigateFallback: 'index.html',
-          navigateFallbackDenylist: [/^\/api/, /^\/intercity/],
+          navigateFallback: null,  // Disable automatic fallback, we'll handle routes explicitly
+          navigateFallbackDenylist: [/^\/api/],
           cleanupOutdatedCaches: true,
           clientsClaim: true,
           skipWaiting: true,
@@ -118,34 +118,42 @@ export default defineConfig(({ mode }) => {
             { url: '/intercity/index.html', revision: null }
           ],
           runtimeCaching: [
-            // Cache Intercity App HTML - Custom handler for navigation requests
+            // Cache Intercity App - NetworkFirst with fast fallback to cache
             {
               urlPattern: ({ request, url }) => {
+                // Match HTML navigation requests to /intercity
                 return request.destination === 'document' && url.pathname.startsWith('/intercity');
               },
-              handler: async ({ event, url }) => {
-                try {
-                  // Try network first
-                  const response = await fetch(event.request);
-                  // Cache the response for future offline use
-                  const cache = await caches.open('intercity-html-cache');
-                  cache.put('/intercity/index.html', response.clone());
-                  return response;
-                } catch (error) {
-                  // Network failed, serve from cache
-                  const cache = await caches.open('intercity-html-cache');
-                  const cachedResponse = await cache.match('/intercity/index.html');
-                  if (cachedResponse) {
-                    return cachedResponse;
-                  }
-                  // If no cache, return a basic error response
-                  return new Response(
-                    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Offline</title></head><body><h1>Offline</h1><p>Please connect to the internet.</p></body></html>',
-                    { headers: { 'Content-Type': 'text/html' } }
-                  );
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'intercity-pages',
+                networkTimeoutSeconds: 2,  // Quick timeout to fall back to cache
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 30 * 24 * 60 * 60
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
                 }
+              }
+            },
+            // Main App - Handle all other HTML navigation requests
+            {
+              urlPattern: ({ request, url }) => {
+                return request.destination === 'document' && !url.pathname.startsWith('/intercity') && !url.pathname.startsWith('/api');
               },
-              method: 'GET'
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'main-pages',
+                networkTimeoutSeconds: 2,
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 24 * 60 * 60
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
             },
             // Static Assets - Cache First (Offline First Strategy)
             {
