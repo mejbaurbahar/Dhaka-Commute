@@ -206,7 +206,7 @@ export const translations: Record<Language, Translations> = {
             example1: 'মিরপুর থেকে মতিঝিল যেতে কোন বাস?',
             clearChat: 'চ্যাট মুছুন',
             emptyState: 'ঢাকার বাস সম্পর্কে কিছু জানতে চাইলে, আমাকে জিজ্ঞাসা করুন',
-            queriesRemaining: 'Today AI chat Limit',
+            queriesRemaining: 'আজকের এআই চ্যাট সীমা',
         },
 
         // History & Analytics
@@ -735,7 +735,7 @@ export const translations: Record<Language, Translations> = {
             example1: 'Which bus goes from Mirpur to Motijheel?',
             clearChat: 'Clear Chat',
             emptyState: 'Ask me anything about buses in Dhaka',
-            queriesRemaining: 'Free AI Queries Today',
+            queriesRemaining: 'Today AI chat Limit',
         },
 
         // History & Analytics
