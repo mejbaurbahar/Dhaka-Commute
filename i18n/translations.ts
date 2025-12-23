@@ -202,13 +202,9 @@ export const translations: Record<Language, Translations> = {
             askQuestion: 'প্রশ্ন করুন',
             examples: 'উদাহরণ প্রশ্ন',
             example1: 'মিরপুর থেকে মতিঝিল যেতে কোন বাস?',
-            example2: 'ঢাকা থেকে চট্টগ্রাম যাওয়ার উপায়?',
-            example3: 'মোহাম্মদপুর থেকে উত্তরা যাওয়ার ভাড়া কত?',
             clearChat: 'চ্যাট মুছুন',
             emptyState: 'ঢাকার বাস সম্পর্কে কিছু জানতে চাইলে, আমাকে জিজ্ঞাসা করুন',
             queriesRemaining: 'বিনামূল্যে এআই প্রশ্ন আজ',
-            exampleQuestion1: 'মিরপুর ১০ থেকে বনানী?',
-            exampleQuestion2: 'ফার্মগেটের জন্য সেরা বাস কোনটি?',
         },
 
         // History & Analytics
@@ -733,13 +729,9 @@ export const translations: Record<Language, Translations> = {
             askQuestion: 'Ask Question',
             examples: 'Example Questions',
             example1: 'Which bus goes from Mirpur to Motijheel?',
-            example2: 'How to go from Dhaka to Chittagong?',
-            example3: 'What is the fare from Mohammadpur to Uttara?',
             clearChat: 'Clear Chat',
             emptyState: 'Ask me anything about buses in Dhaka',
             queriesRemaining: 'Free AI Queries Today',
-            exampleQuestion1: 'Mirpur 10 to Banani?',
-            exampleQuestion2: 'Best bus for Farmgate?',
         },
 
         // History & Analytics

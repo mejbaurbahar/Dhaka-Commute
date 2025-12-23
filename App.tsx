@@ -1391,10 +1391,6 @@ const App: React.FC = () => {
               <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
                 <Bot className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('ai.emptyState')}</p>
-                <div className="flex flex-wrap gap-2 justify-center mt-4">
-                  <button onClick={() => setAiQuery(t('ai.example1'))} className="text-xs bg-white dark:bg-slate-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">{t('ai.exampleQuestion1')}</button>
-                  <button onClick={() => setAiQuery(t('ai.example2'))} className="text-xs bg-white dark:bg-slate-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">{t('ai.exampleQuestion2')}</button>
-                </div>
               </div>
             ) : (
               chatHistory.map((msg, idx) => (
@@ -2823,7 +2819,7 @@ const App: React.FC = () => {
               }}
               className={`flex-1 max-w-[50%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer relative z-50 ${searchMode === 'TEXT' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
             >
-              <Search className="w-4 h-4 shrink-0" /> {t('home.localBusSearch')}
+              <Search className="w-4 h-4 shrink-0 ml-2" /> {t('home.localBusSearch')}
             </button>
             <button
               onClick={(e) => {
@@ -2834,7 +2830,7 @@ const App: React.FC = () => {
               }}
               className={`flex-1 max-w-[50%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer relative z-50 ${searchMode === 'ROUTE' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
             >
-              <MapPin className="w-4 h-4 shrink-0" /> {t('home.routeFinder')}
+              <MapPin className="w-4 h-4 shrink-0 ml-2" /> {t('home.routeFinder')}
             </button>
           </div>
 
