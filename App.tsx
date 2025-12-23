@@ -2803,7 +2803,7 @@ const App: React.FC = () => {
           {/* Text Content */}
           <div className="px-4 md:px-6 pt-4 md:pt-6 pb-2 md:pb-4 relative z-10">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-1 md:mb-2 font-bengali drop-shadow-lg">{isInDhaka ? t('home.whereToGo') : t('home.whereToGoInDhaka')}</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-1 md:mb-2 font-bengali drop-shadow-lg bg-gradient-to-r from-[#FF6B35] via-[#FFA500] to-[#FFD700] bg-clip-text text-transparent">{isInDhaka ? t('home.whereToGo') : t('home.whereToGoInDhaka')}</h2>
               <p className="text-white/90 text-xs md:text-sm font-medium">{t('home.findPerfectRoute')}</p>
             </div>
           </div>
