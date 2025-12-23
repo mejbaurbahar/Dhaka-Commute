@@ -629,7 +629,7 @@ export const translations: Record<Language, Translations> = {
             installApp: 'Install App',
             whyUse: 'Why Use',
             allDhakaLocalBuses: 'All Dhaka Local Buses',
-            whereToGo: 'Where do you want to go?',
+            whereToGo: 'Where would you like to go in Dhaka?',
             whereToGoInDhaka: 'Where do you want to go in Dhaka?',
             findPerfectRoute: 'Find your perfect route in one click',
             findIntercityRoutes: 'Find Intercity Routes',
