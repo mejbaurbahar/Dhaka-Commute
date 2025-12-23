@@ -315,11 +315,11 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                                     <div className="w-10 h-10 bg-dhaka-red rounded-lg flex items-center justify-center">
                                                         <MapPin className="w-5 h-5 text-white" />
                                                     </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2 text-sm">
-                                                            <span className="font-bold text-gray-900 dark:text-gray-100 truncate">{getStationName(from)}</span>
-                                                            <ArrowRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                                                            <span className="font-bold text-gray-900 dark:text-gray-100 truncate">{getStationName(to)}</span>
+                                                    <div className="flex-1 min-w-0 max-w-[calc(100%-100px)]">
+                                                        <div className="flex items-center gap-2 text-sm flex-wrap">
+                                                            <span className="font-bold text-gray-900 dark:text-gray-100 truncate max-w-[120px]">{getStationName(from)}</span>
+                                                            <ArrowRight className="w-4 h-4 text-dhaka-gray-400 flex-shrink-0" />
+                                                            <span className="font-bold text-gray-900 dark:text-gray-100 truncate max-w-[120px]">{getStationName(to)}</span>
                                                         </div>
                                                     </div>
                                                 </div>
