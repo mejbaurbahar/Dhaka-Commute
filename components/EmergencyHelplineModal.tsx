@@ -19,7 +19,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
     userLocation,
     currentLocationName
 }) => {
-    const { t } = useLanguage();
+    const { t, formatNumber } = useLanguage();
     const nearestServices = useMemo(() => {
         if (!userLocation) return null;
         return findNearestEmergencyServicesByType(userLocation, 2);
@@ -76,7 +76,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                         <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{service.bnName}</p>
                         <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                             <MapPin className="w-3 h-3" />
-                            <span>{service.area} • {formatDistance(service.distance)} {t('emergency.away')}</span>
+                            <span>{service.area} • {formatNumber(formatDistance(service.distance))} {t('emergency.away')}</span>
                         </div>
                     </div>
                     <button
@@ -144,7 +144,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                                         className="shrink-0 bg-dhaka-red hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-sm active:scale-95 flex items-center gap-2"
                                     >
                                         <Phone className="w-4 h-4" />
-                                        {helpline.number}
+                                        {formatNumber(helpline.number)}
                                     </button>
                                 </div>
                             ))}
@@ -207,7 +207,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                 {/* Footer */}
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-slate-800 shrink-0 rounded-b-3xl md:rounded-b-2xl">
                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-                        {t('emergency.emergencyFooter')} <span className="font-bold text-dhaka-red">999</span> {t('emergency.immediately')}
+                        {t('emergency.emergencyFooter')} <span className="font-bold text-dhaka-red">{formatNumber(999)}</span> {t('emergency.immediately')}
                     </p>
                 </div>
             </div>

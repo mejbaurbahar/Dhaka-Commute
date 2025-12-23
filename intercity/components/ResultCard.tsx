@@ -11,7 +11,7 @@ interface ResultCardProps {
 }
 
 const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
-  const { t } = useLanguage();
+  const { t, formatNumber } = useLanguage();
   const parsedData = useMemo(() => parseRouteMarkdown(data.result), [data.result]);
   const [selectedModeId, setSelectedModeId] = useState<number>(parsedData.modes.length > 0 ? 1 : 0);
 
@@ -162,7 +162,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
                   <div className="flex flex-wrap gap-2">
                     {selectedMode.summary.split('|').map((part, i) => (
                       <span key={i} className="text-xs font-bold bg-white dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 shadow-sm">
-                        {part.trim()}
+                        {formatNumber(part.trim())}
                       </span>
                     ))}
                   </div>

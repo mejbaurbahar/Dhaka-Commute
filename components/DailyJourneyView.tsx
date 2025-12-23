@@ -25,7 +25,7 @@ interface DailyJourneyViewProps {
 }
 
 const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
-    const { t, formatNumber } = useLanguage();
+    const { t, formatNumber, language } = useLanguage();
     const [todayJourney, setTodayJourney] = useState<DailyJourney | null>(null);
     const [history, setHistory] = useState<DailyJourney[]>([]);
     const [refreshKey, setRefreshKey] = useState(0);
@@ -55,7 +55,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
 
     const formatTime = (timestamp: number) => {
         const date = new Date(timestamp);
-        return date.toLocaleTimeString('en-US', {
+        return date.toLocaleTimeString(language === 'bn' ? 'bn-BD' : 'en-US', {
             hour: 'numeric',
             minute: '2-digit',
             hour12: true,
@@ -73,7 +73,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
         } else if (dateStr === yesterday.toISOString().split('T')[0]) {
             return t('journey.yesterday');
         } else {
-            return date.toLocaleDateString('en-US', {
+            return date.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', {
                 month: 'short',
                 day: 'numeric',
             });

@@ -502,7 +502,7 @@ const IntercitySearchSection: React.FC<{
 
 const App: React.FC = () => {
   // Multi-language support
-  const { t, formatNumber } = useLanguage();
+  const { t, formatNumber, language } = useLanguage();
 
   // Polyfill for requestIdleCallback (Safari support)
   const requestIdleCallback = window.requestIdleCallback || ((cb: IdleRequestCallback) => {
@@ -515,7 +515,13 @@ const App: React.FC = () => {
     }, 1);
   });
 
-  const formatBusName = (name: string) => name.replace(/Paribahan/i, '').trim();
+  const formatBusName = (name: string) => {
+    let formatted = name.replace(/Paribahan/i, '').trim();
+    if (language === 'bn') {
+      formatted = formatted.replace(/No\.?/i, 'নং').replace(/Route/i, 'রুট');
+    }
+    return formatNumber(formatted);
+  };
 
   const [view, setView] = useState<AppView>(getStoredView);
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(getStoredBus);
@@ -2916,7 +2922,7 @@ const App: React.FC = () => {
                           )}
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-gray-900 dark:text-gray-100 truncate text-sm">
-                              {suggestion.name}
+                              {suggestion.type === 'bus' ? formatBusName(suggestion.name) : formatNumber(suggestion.name)}
                             </div>
                             {suggestion.bnName && (
                               <div className="text-xs text-gray-600 dark:text-gray-400 truncate mt-0.5">
@@ -3266,7 +3272,7 @@ const App: React.FC = () => {
                         bus.type === 'Sitting' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
                       }
 `}>
-                      {bus.name.charAt(0)}
+                      {formatNumber(bus.name.charAt(0))}
                     </div>
                     <div>
                       <h4 className="font-bold text-sm md:text-base text-gray-900 dark:text-gray-100 leading-tight group-hover:text-dhaka-green transition-colors">{formatBusName(bus.name)}</h4>
@@ -3305,7 +3311,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="mt-1.5 md:mt-2 flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-700/50 px-2 py-1 rounded-md w-fit">
                   <Coins className="w-3 h-3 text-amber-600 dark:text-amber-400" />
-                  <span>{t('home.estimatedFare')}: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
+                  <span>{t('home.estimatedFare')}: ৳{formatNumber(estimatedFare.min)} - ৳{formatNumber(estimatedFare.max)}</span>
                 </div>
               </div>
             );
