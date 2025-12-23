@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MapPin, ChevronDown } from 'lucide-react';
 import { LOCATIONS_DATA } from '../constants';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface DistrictSelectProps {
   label: string;
@@ -11,6 +12,7 @@ interface DistrictSelectProps {
 }
 
 const DistrictSelect: React.FC<DistrictSelectProps> = ({ label, value, onChange, name, placeholder }) => {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +32,7 @@ const DistrictSelect: React.FC<DistrictSelectProps> = ({ label, value, onChange,
     setIsOpen(false);
   };
 
-  const displayValue = value || placeholder || "Select Location";
+  const displayValue = value || placeholder || t('common.select');
 
   return (
     <div className="relative group" ref={dropdownRef}>
@@ -56,12 +58,12 @@ const DistrictSelect: React.FC<DistrictSelectProps> = ({ label, value, onChange,
               onClick={() => handleSelect('')}
               className="px-3 py-1.5 text-sm md:text-base hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer text-gray-500 dark:text-gray-400"
             >
-              {placeholder || "Select Location"}
+              {placeholder || t('common.select')}
             </div>
             {Object.entries(LOCATIONS_DATA).map(([category, locations]) => (
               <div key={category}>
                 <div className="px-3 py-1 text-xs font-bold text-red-600 dark:text-red-400 bg-gray-100 dark:bg-slate-700 sticky top-0">
-                  {category}
+                  {t(`intercity.locationCategories.${category}`)}
                 </div>
                 {locations.map((location) => (
                   <div

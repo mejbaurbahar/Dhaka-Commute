@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from './contexts/LanguageContext';
 import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map, X, Bot, FileText, Settings, Shield } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
 import ThemeToggle from './components/ThemeToggle';
@@ -11,6 +12,7 @@ import { API_ENDPOINT, POPULAR_ROUTES, DEMO_RESPONSE } from './constants';
 import { RouteResponse, ErrorResponse } from './types';
 
 function App() {
+  const { t, language, setLanguage, formatNumber } = useLanguage();
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   // Default to today's date for API, but removed from UI
@@ -62,7 +64,8 @@ function App() {
     };
     const handleOffline = () => {
       setIsOnline(false);
-      setError("আপনার ইন্টারনেট সংযোগ বিচ্ছিন্ন হয়েছে।");
+      setIsOnline(false);
+      setError(t('intercity.offlineMessage'));
     };
 
     window.addEventListener('online', handleOnline);
@@ -137,18 +140,18 @@ function App() {
     e.preventDefault();
 
     if (!isOnline) {
-      setError("আপনি অফলাইনে আছেন। ইন্টারনেট সংযোগ পরীক্ষা করুন।");
+      setError(t('intercity.offlineCheck'));
       return;
     }
 
     if (!from || !to) {
-      setError("অনুগ্রহ করে যাত্রা শুরু এবং গন্তব্যস্থল নির্বাচন করুন।");
+      setError(t('intercity.selectStartEnd'));
       return;
     }
 
     // Check usage limit before calling API (Frontend Check)
     if (usageCount >= DAILY_LIMIT) {
-      setError("আপনার আজকের দৈনিক সার্চ লিমিট (২/২) শেষ হয়েছে। অনুগ্রহ করে আগামীকাল চেষ্টা করুন।");
+      setError(t('intercity.dailyLimitReached'));
       return;
     }
 
@@ -172,11 +175,11 @@ function App() {
 
         if (response.status === 429) {
           // Backend limit reached
-          throw new Error("দৈনিক সীমা অতিক্রান্ত হয়েছে। অনুগ্রহ করে অপেক্ষা করুন।");
+          throw new Error(t('intercity.backendLimitReached'));
         } else if (response.status === 503) {
-          throw new Error("এআই সার্ভিস বর্তমানে ব্যস্ত। কিছুক্ষণ পর আবার চেষ্টা করুন।");
+          throw new Error(t('intercity.aiBusy'));
         } else {
-          throw new Error(errorData.message || errorData.error || "অজানা ত্রুটি ঘটেছে।");
+          throw new Error(errorData.message || errorData.error || t('errors.unknown'));
         }
       }
 
@@ -186,7 +189,7 @@ function App() {
       incrementUsage();
 
     } catch (err: any) {
-      setError(err.message || "রুট তথ্য লোড করতে ব্যর্থ। আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন।");
+      setError(err.message || t('intercity.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -218,14 +221,15 @@ function App() {
             onClick={(e) => { e.preventDefault(); window.location.href = '/'; }}
             className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
           >
+
             <Home size={16} />
-            Home
+            {t('nav.home')}
           </a>
           <button
             className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm transform scale-100"
           >
             <Train size={16} className="animate-pulse" />
-            Intercity
+            {t('nav.intercity')}
           </button>
           <a
             href="/#ai-assistant"
@@ -233,7 +237,7 @@ function App() {
             className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
           >
             <Sparkles size={16} />
-            AI Chat
+            {t('nav.aiAssistant')}
           </a>
           <a
             href="/#history"
@@ -241,7 +245,7 @@ function App() {
             className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
           >
             <Clock size={16} />
-            History
+            {t('nav.history')}
           </a>
           <a
             href="/#about"
@@ -249,7 +253,7 @@ function App() {
             className="relative px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50"
           >
             <Info size={16} />
-            About
+            {t('nav.about')}
           </a>
         </div>
 
@@ -259,7 +263,7 @@ function App() {
             className="flex items-center gap-2 px-4 py-2 bg-red-100/50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-full font-bold text-sm transition-all animate-pulse"
           >
             <Map size={16} />
-            <span>Live Map</span>
+            <span>{t('busDetails.liveView')}</span>
           </button>
           <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
           <NotificationBell />
@@ -328,7 +332,7 @@ function App() {
             : 'bg-blue-50/90 text-blue-600 border-blue-200 dark:bg-blue-900/40 dark:text-blue-400 dark:border-blue-800'
             }`}>
             <Activity size={14} />
-            <span>সার্চ লিমিট: {usageCount}/{DAILY_LIMIT}</span>
+            <span>{t('intercity.searchLimit')}: {formatNumber(usageCount)}/{formatNumber(DAILY_LIMIT)}</span>
           </div>
         </div>
 
@@ -339,14 +343,14 @@ function App() {
           <div className="text-center mb-6 animate-fade-in">
             <h1 className="text-2xl md:text-4xl font-extrabold mb-2 tracking-tight drop-shadow-sm flex flex-col items-center gap-1">
               <span className="text-sm md:text-lg text-gray-500 dark:text-gray-400 font-bold tracking-wide">
-                সমগ্র
+                {t('intercity.exploreBangladesh')}
               </span>
               <div>
-                <span className="text-dhaka-red">বাংলাদেশ</span>{' '}
-                <span className="text-dhaka-green">ঘুরে দেখুন</span>
+                <span className="text-dhaka-red">{t('settings.bangla')}</span>{' '}
+                <span className="text-dhaka-green">{t('nav.home')}</span>
               </div>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
-                আপনার পছন্দের রুটে
+                {t('intercity.onYourRoute')}
               </span>
             </h1>
           </div>
@@ -357,7 +361,7 @@ function App() {
             {!isOnline && (
               <div className="absolute -top-12 left-0 right-0 mx-auto w-max max-w-[90%] bg-red-500 text-white text-xs md:text-sm px-4 py-2 rounded-full shadow-md flex items-center gap-2 justify-center animate-slide-up z-50">
                 <WifiOff size={16} />
-                <span className="font-semibold">আপনি অফলাইনে আছেন। ইন্টারনেট সংযোগ পরীক্ষা করুন।</span>
+                <span className="font-semibold">{t('intercity.offlineCheck')}</span>
               </div>
             )}
 
@@ -366,11 +370,11 @@ function App() {
               {/* FROM */}
               <div className="flex-1 min-w-[140px]">
                 <DistrictSelect
-                  label="কোথা থেকে"
+                  label={t('intercity.from')}
                   name="from"
                   value={from}
                   onChange={setFrom}
-                  placeholder="শুরুর স্থান"
+                  placeholder={t('intercity.startLocationPlaceholder')}
                 />
               </div>
 
@@ -401,11 +405,11 @@ function App() {
               {/* TO */}
               <div className="flex-1 min-w-[140px]">
                 <DistrictSelect
-                  label="কোথায় যাবেন"
+                  label={t('intercity.to')}
                   name="to"
                   value={to}
                   onChange={setTo}
-                  placeholder="গন্তব্যের নাম"
+                  placeholder={t('intercity.destinationPlaceholder')}
                 />
               </div>
 
@@ -427,17 +431,17 @@ function App() {
                   ) : !isOnline ? (
                     <>
                       <WifiOff size={16} className="md:w-[18px]" />
-                      <span>অফলাইন</span>
+                      <span>{t('intercity.offline')}</span>
                     </>
                   ) : usageCount >= DAILY_LIMIT ? (
                     <>
                       <Activity size={16} className="md:w-[18px]" />
-                      <span>লিমিট শেষ</span>
+                      <span>{t('intercity.limitReached')}</span>
                     </>
                   ) : (
                     <>
                       <Search size={16} className="md:w-[18px]" />
-                      <span>খুঁজুন</span>
+                      <span>{t('intercity.search')}</span>
                     </>
                   )}
                 </button>
@@ -477,14 +481,14 @@ function App() {
                     <PlayCircle size={32} />
                   </div>
                   <div>
-                    <h4 className="text-gray-900 dark:text-white font-bold text-lg mb-2">কিভাবে কাজ করে দেখতে চান?</h4>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">সার্চ না করেই রেজাল্ট কার্ডের ইন্টারফেস দেখতে ডেমো বাটনে ক্লিক করুন।</p>
+                    <h4 className="text-gray-900 dark:text-white font-bold text-lg mb-2">{t('intercity.demoTitle')}</h4>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{t('intercity.demoDesc')}</p>
                     <button
                       onClick={handleDemoSearch}
                       // disabled={!isOnline} // Demo works offline now
                       className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      ডেমো রেজাল্ট দেখুন
+                      {t('intercity.viewDemo')}
                     </button>
                   </div>
                 </div>
@@ -499,7 +503,7 @@ function App() {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
           <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Menu</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('nav.menu')}</h2>
               <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full" aria-label="Close menu">
                 <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
               </button>
@@ -510,49 +514,49 @@ function App() {
                 onClick={() => window.location.href = '/'}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <Home className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Home
+                <Home className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> {t('nav.home')}
               </button>
               <button
                 onClick={() => window.location.href = '/#ai-assistant'}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" /> AI Assistant
+                <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" /> {t('nav.aiAssistant')}
               </button>
               <button
                 onClick={() => window.location.href = '/#about'}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <Info className="w-5 h-5 text-blue-500" /> About
+                <Info className="w-5 h-5 text-blue-500" /> {t('nav.about')}
               </button>
               <button
                 onClick={() => window.location.href = '/#history'}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> History
+                <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> {t('nav.history')}
               </button>
               <button
                 onClick={() => window.location.href = '/#settings'}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" /> Settings
+                <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" /> {t('nav.settings')}
               </button>
               <button
                 onClick={() => window.location.href = '/#privacy'}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Privacy Policy
+                <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> {t('nav.privacy')}
               </button>
               <button
                 onClick={() => window.location.href = '/#terms'}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" /> Terms of Service
+                <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" /> {t('nav.terms')}
               </button>
             </div>
 
             <div className="pt-6 border-t border-gray-100 dark:border-gray-800">
               <p className="text-xs text-center text-gray-400">
-                কই যাবো v1.0.0
+                {t('common.appName')} {t('settings.version')} {formatNumber('1.0.0')}
               </p>
             </div>
           </div>
@@ -573,7 +577,7 @@ function App() {
             className="flex flex-col items-center justify-center gap-1 border-t-2 transition-all border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <Home className="w-6 h-6 text-gray-400 dark:text-gray-500" />
-            <span className="text-[10px] font-bold uppercase tracking-wide">Home</span>
+            <span className="text-[10px] font-bold uppercase tracking-wide">{t('nav.home')}</span>
           </button>
 
           <button
@@ -581,14 +585,14 @@ function App() {
             className="flex flex-col items-center justify-center gap-1 border-t-2 transition-all border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <Sparkles className="w-6 h-6 text-gray-400 dark:text-gray-500" />
-            <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
+            <span className="text-[10px] font-bold uppercase tracking-wide">{t('nav.aiAssistant')}</span>
           </button>
 
           <button
             className="flex flex-col items-center justify-center gap-1 border-t-2 transition-all border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20"
           >
             <Train className="w-6 h-6 text-blue-600 dark:text-blue-400 fill-blue-100 dark:fill-blue-900" />
-            <span className="text-[10px] font-bold uppercase tracking-wide">Intercity</span>
+            <span className="text-[10px] font-bold uppercase tracking-wide">{t('nav.intercity')}</span>
           </button>
 
           <button
@@ -596,7 +600,7 @@ function App() {
             className="flex flex-col items-center justify-center gap-1 border-t-2 transition-all border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <Info className="w-6 h-6 text-gray-400 dark:text-gray-500" />
-            <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
+            <span className="text-[10px] font-bold uppercase tracking-wide">{t('nav.about')}</span>
           </button>
         </div>
       </nav>

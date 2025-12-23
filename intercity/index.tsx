@@ -2,6 +2,7 @@ import React from 'react';
 import { registerSW } from 'virtual:pwa-register';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { LanguageProvider } from './contexts/LanguageContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 
 const rootElement = document.getElementById('root');
@@ -12,9 +13,11 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <NotificationProvider>
-      <App />
-    </NotificationProvider>
+    <LanguageProvider>
+      <NotificationProvider>
+        <App />
+      </NotificationProvider>
+    </LanguageProvider>
   </React.StrictMode>
 );
 

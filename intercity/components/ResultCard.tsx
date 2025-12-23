@@ -4,6 +4,7 @@ import { RouteResponse } from '../types';
 import { Zap, Bot, Calendar, Navigation, ChevronRight, ArrowLeft, Users, Clock, Banknote, MapPin, Anchor, Plane, Train, Info } from 'lucide-react';
 import { parseRouteMarkdown } from '../helpers';
 import MapComponent from './MapComponent';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ResultCardProps {
   data: RouteResponse;
@@ -88,6 +89,7 @@ const extractSmartDetails = (text: string) => {
 };
 
 const SmartDetailView: React.FC<{ content: string, summary: string }> = ({ content, summary }) => {
+  const { t } = useLanguage();
   const { description, details } = useMemo(() => extractSmartDetails(content), [content]);
 
   // Extract time and price from summary string "Time: X | Price: Y"
@@ -105,7 +107,7 @@ const SmartDetailView: React.FC<{ content: string, summary: string }> = ({ conte
             <div className="bg-blue-100 dark:bg-blue-800 p-2 rounded-full mb-1 text-blue-600 dark:text-blue-300">
               <Clock size={18} />
             </div>
-            <span className="text-xs text-blue-500 dark:text-blue-400 font-medium uppercase tracking-wider">আনুমানিক সময়</span>
+            <span className="text-xs text-blue-500 dark:text-blue-400 font-medium uppercase tracking-wider">{t('intercity.estimatedTime')}</span>
             <span className="font-bold text-slate-800 dark:text-white text-sm md:text-base">{time.replace(/\*\*/g, '')}</span>
           </div>
         )}
@@ -114,7 +116,7 @@ const SmartDetailView: React.FC<{ content: string, summary: string }> = ({ conte
             <div className="bg-emerald-100 dark:bg-emerald-800 p-2 rounded-full mb-1 text-emerald-600 dark:text-emerald-300">
               <Banknote size={18} />
             </div>
-            <span className="text-xs text-emerald-500 dark:text-emerald-400 font-medium uppercase tracking-wider">আনুমানিক ভাড়া</span>
+            <span className="text-xs text-emerald-500 dark:text-emerald-400 font-medium uppercase tracking-wider">{t('intercity.estimatedFare')}</span>
             <span className="font-bold text-slate-800 dark:text-white text-sm md:text-base">{price.replace(/\*\*/g, '')}</span>
           </div>
         )}
@@ -154,6 +156,7 @@ const SmartDetailView: React.FC<{ content: string, summary: string }> = ({ conte
 };
 
 const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
+  const { t } = useLanguage();
   const parsedData = useMemo(() => parseRouteMarkdown(data.result), [data.result]);
   const [selectedModeId, setSelectedModeId] = useState<number>(parsedData.modes.length > 0 ? 1 : 0);
   const [showMobileDetail, setShowMobileDetail] = useState(false);
@@ -272,7 +275,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
               <div className="flex items-center space-x-1">
                 {data.source === 'memory_cache' ? <Zap size={12} className="text-yellow-500" /> : <Bot size={12} className="text-green-500" />}
                 <span className="text-xs font-medium bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded-full dark:text-gray-300">
-                  {data.source === 'memory_cache' ? 'ইনস্ট্যান্ট' : 'এআই'}
+                  {data.source === 'memory_cache' ? t('intercity.instant') : t('intercity.ai')}
                 </span>
               </div>
             </div>
@@ -299,7 +302,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
 
         {/* Left Column: List (Visible on Desktop. Hidden on Mobile if Detail Open) */}
         <div className={`w-full lg:w-4/12 overflow-y-auto border-r border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-900/30 p-4 custom-scrollbar h-full ${showMobileDetail ? 'hidden lg:block' : 'block'} transition-colors`}>
-          <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4 px-2 hidden lg:block">প্রস্তাবিত যাতায়াত মাধ্যম</h3>
+          <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4 px-2 hidden lg:block">{t('intercity.suggestedModes')}</h3>
 
           <div className="space-y-4 pb-20 lg:pb-0">
             {parsedData.modes.map((mode) => (
@@ -321,7 +324,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
                     <div>
                       <h4 className={`font-bold text-base md:text-lg leading-tight transition-colors ${selectedModeId === mode.id ? 'text-slate-900 dark:text-white' : 'text-slate-800 dark:text-gray-200'}`}>{mode.title.replace(/\*\*/g, '')}</h4>
                       <span className="text-[10px] md:text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-md mt-1 inline-block">
-                        অপশন {mode.id}
+                        {t('intercity.option')} {mode.id}
                       </span>
                     </div>
                   </div>
@@ -352,7 +355,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
 
                 {/* Mobile Hint */}
                 <div className="lg:hidden text-[10px] text-gray-400 dark:text-gray-500 mt-2 flex items-center gap-1">
-                  <span>ম্যাপ এবং বিস্তারিত দেখতে ট্যাপ করুন</span>
+                  <span>{t('intercity.tapToView')}</span>
                 </div>
               </div>
             ))}
@@ -372,12 +375,12 @@ const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
           <div className="absolute bottom-6 left-6 right-6 z-[1000] pointer-events-none">
             <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-white/50 dark:border-slate-700/50 flex items-center justify-between pointer-events-auto">
               <div>
-                <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">রুট ম্যাপ</p>
+                <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">{t('intercity.routeMap')}</p>
                 <p className="font-semibold text-slate-800 dark:text-white">{selectedMode?.title.replace(/\*\*/g, '') || 'Overview'}</p>
               </div>
               {currentModeStops.length > 0 && (
                 <div className="text-xs text-right">
-                  <p className="text-gray-400 dark:text-gray-500 text-[10px]">ভায়া</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-[10px]">{t('intercity.via')}</p>
                   <p className="font-medium text-slate-700 dark:text-slate-300">{currentModeStops.slice(0, 3).join(', ')}{currentModeStops.length > 3 ? '...' : ''}</p>
                 </div>
               )}
@@ -413,7 +416,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ data }) => {
               {/* Map Overlay Badge */}
               <div className="absolute bottom-2 right-2 z-[400]">
                 <span className="bg-black/60 dark:bg-black/80 text-white text-[10px] px-2 py-1 rounded-full backdrop-blur-sm">
-                  {currentModeStops.length > 0 ? `ভায়া ${currentModeStops[0]}` : 'সরাসরি'}
+                  {currentModeStops.length > 0 ? `${t('intercity.via')} ${currentModeStops[0]}` : t('intercity.direct')}
                 </span>
               </div>
             </div>
