@@ -406,6 +406,7 @@ const IntercitySearchSection: React.FC<{
   onSearch: (from: string, to: string) => void;
   isOnline: boolean;
 }> = ({ onSearch, isOnline }) => {
+  const { t } = useLanguage();
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [showFromSuggestions, setShowFromSuggestions] = useState(false);
@@ -423,8 +424,8 @@ const IntercitySearchSection: React.FC<{
       {/* Text Content */}
       <div className="px-6 pt-6 pb-4 relative z-10 pointer-events-none">
         <div>
-          <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-white">আন্তঃজেলা রুট খুঁজুন</h2>
-          <p className="text-white/90 text-sm font-medium">শহর থেকে শহরে বাস, ট্রেন ও ফ্লাইট খুঁজুন</p>
+          <h2 className="text-3xl font-bold mb-2 font-bengali drop-shadow-lg text-white">{t('home.intercitySearch')}</h2>
+          <p className="text-white/90 text-sm font-medium">{t('home.findBusesBetweenCities')}</p>
         </div>
       </div>
 
@@ -2795,8 +2796,8 @@ const App: React.FC = () => {
           {/* Text Content */}
           <div className="px-4 md:px-6 pt-4 md:pt-6 pb-2 md:pb-4 relative z-10">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-1 md:mb-2 font-bengali drop-shadow-lg">{isInDhaka ? 'কোথায় যেতে চান?' : 'কোথায় যেতে চান ঢাকায়?'}</h2>
-              <p className="text-white/90 text-xs md:text-sm font-medium">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
+              <h2 className="text-2xl md:text-3xl font-bold mb-1 md:mb-2 font-bengali drop-shadow-lg">{isInDhaka ? t('home.whereToGo') : t('home.whereToGoInDhaka')}</h2>
+              <p className="text-white/90 text-xs md:text-sm font-medium">{t('home.findPerfectRoute')}</p>
             </div>
           </div>
 
@@ -3029,8 +3030,8 @@ const App: React.FC = () => {
             <Train className="w-5 h-5" />
           </div>
           <div className="text-left">
-            <h3 className="font-bold text-white text-sm">আন্তঃজেলা রুট খুঁজুন</h3>
-            <p className="text-xs text-white/90">শহর থেকে শহরে বাস খুঁজুন</p>
+            <h3 className="font-bold text-white text-sm">{t('home.findIntercityRoutes')}</h3>
+            <p className="text-xs text-white/90">{t('home.findBusesBetweenCities')}</p>
           </div>
         </div>
         <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
@@ -3052,8 +3053,8 @@ const App: React.FC = () => {
             <Bus className="w-5 h-5" />
           </div>
           <div className="text-left">
-            <h3 className="font-bold text-white text-sm">{isInDhaka ? 'কোথায় যেতে চান?' : 'কোথায় যেতে চান ঢাকায়?'}</h3>
-            <p className="text-xs text-white/90">এক ক্লিকে, আপনার সঠিক রুট খুঁজুন</p>
+            <h3 className="font-bold text-white text-sm">{isInDhaka ? t('home.whereToGo') : t('home.whereToGoInDhaka')}</h3>
+            <p className="text-xs text-white/90">{t('home.findPerfectRoute')}</p>
           </div>
         </div>
         <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full">
