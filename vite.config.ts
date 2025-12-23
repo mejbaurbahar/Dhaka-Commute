@@ -99,9 +99,12 @@ export default defineConfig(({ mode }) => {
           ]
         },
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2,ttf}'],
+          globPatterns: [
+            '**/*.{js,css,html,ico,png,svg,json,woff,woff2,ttf}',
+            'intercity/**/*.{js,css,html,ico,png,svg,json,woff,woff2,ttf}'
+          ],
           navigateFallback: 'index.html',
-          navigateFallbackDenylist: [/^\/api/],
+          navigateFallbackDenylist: [/^\/api/, /^\/intercity/],
           cleanupOutdatedCaches: true,
           clientsClaim: true,
           skipWaiting: true,
@@ -110,26 +113,35 @@ export default defineConfig(({ mode }) => {
           sourcemap: false,
           // Cache versioning for proper updates
           cacheId: 'dhaka-commute-v2',
-          // Precache intercity route for offline-first experience
+          // Precache intercity index.html for offline access
           additionalManifestEntries: [
-            { url: '/intercity/', revision: null },
             { url: '/intercity/index.html', revision: null }
           ],
           runtimeCaching: [
-            // Cache Intercity App (Separate Build) - NetworkFirst to ensure offline on first visit
+            // Cache Intercity App HTML - CacheFirst for immediate offline access
             {
-              urlPattern: /^\/intercity(\/.*)?$/,
-              handler: 'NetworkFirst',
+              urlPattern: ({ url }) => url.pathname.startsWith('/intercity'),
+              handler: 'CacheFirst',
               options: {
-                cacheName: 'intercity-app-cache',
-                networkTimeoutSeconds: 3,
+                cacheName: 'intercity-html-cache',
                 expiration: {
-                  maxEntries: 50,
+                  maxEntries: 10,
                   maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
                 },
                 cacheableResponse: {
                   statuses: [0, 200]
-                }
+                },
+                // Ensure we cache and serve intercity/index.html
+                plugins: [
+                  {
+                    cacheWillUpdate: async ({ response }) => {
+                      if (response && response.status === 200) {
+                        return response;
+                      }
+                      return null;
+                    }
+                  }
+                ]
               }
             },
             // Static Assets - Cache First (Offline First Strategy)
