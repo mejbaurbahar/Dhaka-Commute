@@ -3314,7 +3314,13 @@ const App: React.FC = () => {
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Bus className="w-8 h-8 opacity-40" />
               </div>
-              <p>No buses found {searchMode === 'ROUTE' ? `between selected stations` : listFilter === 'FAVORITES' ? 'in favorites' : `matching "${searchQuery}"`}</p>
+              <p>
+                {searchMode === 'ROUTE'
+                  ? t('home.noBusesBetweenStations')
+                  : listFilter === 'FAVORITES'
+                    ? t('home.noBusesInFavorites')
+                    : `${t('home.noBusesMatching')}"${searchQuery}"`}
+              </p>
               {inputValue && inputValue !== searchQuery && searchMode === 'TEXT' && (
                 <button onClick={handleSearchCommit} className="mt-2 text-xs text-dhaka-green underline">
                   Click to search for "{inputValue}"
