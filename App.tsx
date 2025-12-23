@@ -113,14 +113,15 @@ const getStoredView = (): AppView => {
 
 
 
+// --- AI Thinking Indicator ---
 const AiThinkingIndicator = () => {
+  const { t } = useLanguage();
   const [step, setStep] = useState(0);
   const steps = [
-    "Thinking...",
-    "Understanding request...",
-    "Planning route...",
-    "Checking traffic...",
-    "Finalizing response..."
+    t('ai.thinkingStep1'),
+    t('ai.thinkingStep2'),
+    t('ai.thinkingStep3'),
+    t('ai.thinkingStep4')
   ];
 
   useEffect(() => {
@@ -128,11 +129,11 @@ const AiThinkingIndicator = () => {
       setStep((prev) => (prev + 1) % steps.length);
     }, 1500);
     return () => clearInterval(interval);
-  }, []);
+  }, [steps.length]);
 
   return (
     <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300 my-2">
-      <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center gap-3 max-w-[85%]">
+      <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-gray-700 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center gap-3 max-w-[85%]">
         <div className="relative shrink-0">
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-200">
             <Bot size={16} />
@@ -141,8 +142,8 @@ const AiThinkingIndicator = () => {
         </div>
 
         <div className="flex flex-col">
-          <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-0.5">AI Assistant</span>
-          <span key={step} className="text-sm text-gray-600 animate-in fade-in slide-in-from-bottom-1 duration-300 leading-snug">
+          <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-0.5">{t('nav.aiAssistant')}</span>
+          <span key={step} className="text-sm text-gray-600 dark:text-gray-300 animate-in fade-in slide-in-from-bottom-1 duration-300 leading-snug">
             {steps[step]}
           </span>
         </div>
@@ -1252,7 +1253,11 @@ const App: React.FC = () => {
     const latestApiKey = localStorage.getItem('gemini_api_key') || '';
 
     // Pass the FULL updated history to the service
-    const result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`, latestApiKey, updatedHistory);
+    let result = await askGeminiRoute(queryToSend + ` [Context: ${locationContext}]`, latestApiKey, updatedHistory);
+
+    if (result === 'ERROR_DAILY_LIMIT') {
+      result = `⏰ ${t('ai.dailyLimitReached')}\n\n${t('ai.usedQueries', { count: formatNumber(2) })}`;
+    }
 
     const assistantMessage: ChatMessage = { role: 'assistant', text: result };
     setChatHistory(prev => [...prev, assistantMessage]);
@@ -1339,9 +1344,9 @@ const App: React.FC = () => {
           <Bot className="w-6 h-6" />
         </div>
         <div className="flex-1">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">কই যাবো AI Assistant</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">{t('common.appName')} {t('nav.aiAssistant')}</h2>
           <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'} `}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'} `}></span> {isOnline ? 'Online' : 'Offline'}
+            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'} `}></span> {isOnline ? t('common.online') : t('common.offline')}
           </p>
         </div>
       </div>
@@ -1356,7 +1361,7 @@ const App: React.FC = () => {
           <Bot className="w-6 h-6" />
         </div>
         <div className="flex-1">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">কই যাবো AI Assistant</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">{t('common.appName')} {t('nav.aiAssistant')}</h2>
           <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'} `}>
             <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'} `}></span> {isOnline ? t('common.online') : t('common.offline')}
           </p>
@@ -1381,7 +1386,7 @@ const App: React.FC = () => {
         </div>
       ) : (
         <>
-          <div className="flex-1 p-4 space-y-4 bg-slate-50 dark:bg-slate-900 pb-[140px] md:pb-4">
+          <div className="flex-1 p-4 space-y-4 bg-slate-50 dark:bg-slate-900 pb-[140px] md:pb-4 overflow-y-auto">
             {chatHistory.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
                 <Bot className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
@@ -2816,9 +2821,9 @@ const App: React.FC = () => {
                 setSearchMode('TEXT');
                 setSuggestedRoutes([]);
               }}
-              className={`flex-1 max-w-[50%] py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer relative z-50 ${searchMode === 'TEXT' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
+              className={`flex-1 max-w-[50%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer relative z-50 ${searchMode === 'TEXT' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
             >
-              <Search className="w-4 h-4" /> {t('home.localBusSearch')}
+              <Search className="w-4 h-4 shrink-0" /> {t('home.localBusSearch')}
             </button>
             <button
               onClick={(e) => {
@@ -2827,9 +2832,9 @@ const App: React.FC = () => {
                 setSearchMode('ROUTE');
                 setSuggestedRoutes([]);
               }}
-              className={`flex-1 max-w-[50%] py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer relative z-50 ${searchMode === 'ROUTE' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
+              className={`flex-1 max-w-[50%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer relative z-50 ${searchMode === 'ROUTE' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
             >
-              <MapPin className="w-4 h-4" /> {t('home.routeFinder')}
+              <MapPin className="w-4 h-4 shrink-0" /> {t('home.routeFinder')}
             </button>
           </div>
 
@@ -2837,7 +2842,7 @@ const App: React.FC = () => {
             {searchMode === 'TEXT' ? (
               <div className="relative group">
                 <div className="relative flex items-center">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10 flex items-center justify-center">
+                  <div className="absolute left-[18px] top-1/2 -translate-y-1/2 pointer-events-none z-10 flex items-center justify-center">
                     <Search className="text-emerald-500 w-5 h-5 group-focus-within:text-emerald-600 transition-colors" />
                   </div>
                   <input

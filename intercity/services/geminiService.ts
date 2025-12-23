@@ -37,7 +37,7 @@ export const getTravelRoutes = async (origin: string, destination: string, date?
 
     // 3. Check usage limit before making API call
     if (!canUseIntercitySearch()) {
-      throw new Error('⏰ Daily Limit Reached\n\nYou\'ve used your 2 free Intercity searches for today. The limit resets at midnight. Come back tomorrow!');
+      throw new Error('ERROR_DAILY_LIMIT');
     }
 
     // 4. Call Backend API
@@ -61,7 +61,7 @@ export const getTravelRoutes = async (origin: string, destination: string, date?
 
     // Handle rate limiting (backend)
     if (response.status === 429) {
-      throw new Error('⏰ Daily Limit Reached\n\nYou\'ve used your 2 free Intercity searches for today. The limit resets at midnight. Come back tomorrow!');
+      throw new Error('ERROR_DAILY_LIMIT');
     }
 
     // Handle server errors

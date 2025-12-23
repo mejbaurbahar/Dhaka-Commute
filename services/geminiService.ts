@@ -41,7 +41,7 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
 
   // Check usage limit before making API call
   if (!canUseAiChat()) {
-    return "⏰ Daily Limit Reached\n\nYou've used your 2 free AI Chat queries for today. The limit resets at midnight. Come back tomorrow!";
+    return "ERROR_DAILY_LIMIT";
   }
 
   try {
@@ -99,7 +99,7 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
 
       // Handle rate limiting (backend)
       if (response.status === 429) {
-        return "⏰ Daily Limit Reached\n\nYou've used your 2 free AI Chat queries for today. The limit resets at midnight. Come back tomorrow!";
+        return "ERROR_DAILY_LIMIT";
       }
 
       // Handle payload too large

@@ -2,6 +2,7 @@ import React from 'react';
 import { Clock, CheckCheck } from 'lucide-react';
 import { useNotifications } from '../contexts/NotificationContext';
 import NotificationItem from './NotificationItem';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface NotificationDropdownProps {
     onClose: () => void;
@@ -9,6 +10,7 @@ interface NotificationDropdownProps {
 
 const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) => {
     const { notifications, unreadCount, markAllAsRead } = useNotifications();
+    const { t, formatNumber } = useLanguage();
 
     // Show medium and high priority in dropdown (exclude low priority)
     const dropdownNotifications = notifications
@@ -25,10 +27,10 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
                     <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm">
-                        Notifications
+                        {t('notifications.title')}
                         {unreadCount > 0 && (
                             <span className="ml-2 text-xs bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full">
-                                {unreadCount} new
+                                {formatNumber(unreadCount)} {t('notifications.new')}
                             </span>
                         )}
                     </h3>
@@ -38,7 +40,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
                             className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                         >
                             <CheckCheck className="w-3 h-3" />
-                            Mark all read
+                            {t('notifications.markAllRead')}
                         </button>
                     )}
                 </div>
@@ -61,9 +63,9 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
                         <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Clock className="w-8 h-8 text-gray-400" />
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">No notifications</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{t('notifications.noNotifications')}</p>
                         <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                            You're all caught up!
+                            {t('notifications.allCaughtUp')}
                         </p>
                     </div>
                 )}
@@ -76,7 +78,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
                         onClick={onClose}
                         className="w-full text-center text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                     >
-                        Close
+                        {t('common.close')}
                     </button>
                 </div>
             )}

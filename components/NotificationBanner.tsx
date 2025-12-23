@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { X, Info, CheckCircle, AlertTriangle, AlertCircle, Sparkles, ExternalLink } from 'lucide-react';
 import { Notification } from '../types/notification';
 import { useNotifications } from '../contexts/NotificationContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const NotificationBanner: React.FC = () => {
-    // Banner is disabled - not showing notifications
-    return null;
-
+    const { t, language } = useLanguage();
     const { notifications, dismissNotification } = useNotifications();
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -85,6 +84,8 @@ const NotificationBanner: React.FC = () => {
 
     const sourceDomain = getSourceDomain(notification.link);
     const isClickable = Boolean(notification.link);
+    const displayTitle = language === 'bn' && notification.bnTitle ? notification.bnTitle : notification.title;
+    const displayMessage = language === 'bn' && notification.bnMessage ? notification.bnMessage : notification.message;
 
     return (
         <div
@@ -109,20 +110,20 @@ const NotificationBanner: React.FC = () => {
                     <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
                             <h3 className="font-bold text-sm md:text-base">
-                                {notification.title}
+                                {displayTitle}
                             </h3>
                             {isClickable && (
                                 <ExternalLink className="w-4 h-4 shrink-0 opacity-70" />
                             )}
                         </div>
                         <p className="text-xs md:text-sm opacity-90 leading-relaxed mb-1">
-                            {notification.message}
+                            {displayMessage}
                         </p>
 
                         {/* Source domain */}
                         {sourceDomain && (
                             <div className="flex items-center gap-1 text-[10px] md:text-xs opacity-75 mt-1">
-                                <span>Source:</span>
+                                <span>{t('notifications.source')}:</span>
                                 <span className="font-medium underline">{sourceDomain}</span>
                             </div>
                         )}
@@ -132,7 +133,7 @@ const NotificationBanner: React.FC = () => {
                     <button
                         onClick={handleDismiss}
                         className="shrink-0 p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full transition-colors"
-                        aria-label="Dismiss notification"
+                        aria-label={t('notifications.dismiss')}
                     >
                         <X className="w-5 h-5" />
                     </button>

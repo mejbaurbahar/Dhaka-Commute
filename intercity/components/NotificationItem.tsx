@@ -3,6 +3,7 @@ import { Info, CheckCircle, AlertTriangle, AlertCircle, Sparkles, ExternalLink }
 import { Notification } from '../types/notification';
 import { useNotifications } from '../contexts/NotificationContext';
 import { getReadNotifications } from '../services/notificationService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface NotificationItemProps {
     notification: Notification;
@@ -11,6 +12,7 @@ interface NotificationItemProps {
 
 const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClose }) => {
     const { markAsRead } = useNotifications();
+    const { t, language, formatNumber } = useLanguage();
     const isRead = getReadNotifications().includes(notification.id);
 
     const getTypeStyles = (type: string) => {
@@ -60,15 +62,18 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
             const diffHours = Math.floor(diffMins / 60);
             const diffDays = Math.floor(diffHours / 24);
 
-            if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return `${diffMins}m ago`;
-            if (diffHours < 24) return `${diffHours}h ago`;
-            if (diffDays < 7) return `${diffDays}d ago`;
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            if (diffMins < 1) return t('notifications.justNow');
+            if (diffMins < 60) return `${formatNumber(diffMins)}${t('notifications.m')} ${t('notifications.ago')}`;
+            if (diffHours < 24) return `${formatNumber(diffHours)}${t('notifications.h')} ${t('notifications.ago')}`;
+            if (diffDays < 7) return `${formatNumber(diffDays)}${t('notifications.d')} ${t('notifications.ago')}`;
+            return date.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', { month: 'short', day: 'numeric' });
         } catch {
             return '';
         }
     };
+
+    const displayTitle = language === 'bn' && notification.bnTitle ? notification.bnTitle : notification.title;
+    const displayMessage = language === 'bn' && notification.bnMessage ? notification.bnMessage : notification.message;
 
     return (
         <div
@@ -100,12 +105,12 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
                                 : 'text-gray-900 dark:text-gray-100 font-bold'
                                 }`}
                         >
-                            {notification.title}
+                            {displayTitle}
                         </h4>
 
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-2 mb-1">
-                        {notification.message}
+                        {displayMessage}
                     </p>
                     <span className="text-[10px] text-gray-400 dark:text-gray-500">
                         {formatTime(notification.createdAt)}

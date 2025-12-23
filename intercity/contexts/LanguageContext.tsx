@@ -4,7 +4,7 @@ import { translations, Language } from '../i18n/translations';
 interface LanguageContextType {
     language: Language;
     setLanguage: (lang: Language) => void;
-    t: (key: string) => string;
+    t: (key: string, params?: Record<string, string | number>) => string;
     formatNumber: (num: number | string) => string;
 }
 
@@ -29,7 +29,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     };
 
     // Translation function
-    const t = (key: string): string => {
+    const t = (key: string, params?: Record<string, string | number>): string => {
         const keys = key.split('.');
         let value: any = translations[language];
 
@@ -43,14 +43,21 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
                     if (value && typeof value === 'object') {
                         value = value[fallbackKey];
                     } else {
-                        return key; // Return key itself if translation not found
+                        value = key; // Return key itself if translation not found
+                        break;
                     }
                 }
-                return value || key;
+                break;
             }
         }
 
-        return value || key;
+        let result = value || key;
+        if (params) {
+            Object.entries(params).forEach(([k, v]) => {
+                result = result.replace(`{${k}}`, v.toString());
+            });
+        }
+        return result;
     };
 
     // Number formatting function

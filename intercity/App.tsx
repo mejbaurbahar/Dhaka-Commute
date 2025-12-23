@@ -190,7 +190,11 @@ function App() {
       incrementUsage();
 
     } catch (err: any) {
-      setError(err.message || t('intercity.loadFailed'));
+      if (err.message === 'ERROR_DAILY_LIMIT') {
+        setError(t('intercity.dailyLimitReached'));
+      } else {
+        setError(err.message || t('intercity.loadFailed'));
+      }
     } finally {
       setLoading(false);
     }

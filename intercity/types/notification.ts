@@ -4,7 +4,9 @@ export type NotificationPriority = 'high' | 'medium' | 'low';
 export interface Notification {
     id: string;
     title: string;
+    bnTitle?: string;
     message: string;
+    bnMessage?: string;
     type: NotificationType;
     priority: NotificationPriority;
     isActive: boolean;
