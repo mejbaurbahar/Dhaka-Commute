@@ -31,7 +31,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { useLanguage } from './contexts/LanguageContext';
 
 import NotificationBell from './components/NotificationBell';
-import NotificationBanner from './components/NotificationBanner';
+
 import SettingsPage from './components/SettingsPage';
 import DailyJourneyView from './components/DailyJourneyView';
 
@@ -3382,8 +3382,8 @@ const App: React.FC = () => {
         />
 
 
-        {/* High-Priority Notification Banner */}
-        <NotificationBanner />
+
+
 
         <main className="flex flex-1 overflow-hidden relative w-full mx-auto bg-slate-50 dark:bg-slate-900 h-full">
           {/* Left Sidebar (Desktop) / Main View (Mobile Home) */}
