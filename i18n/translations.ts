@@ -136,6 +136,7 @@ export const translations: Record<Language, Translations> = {
             selectFromFirst: 'প্রথমে থেকে নির্বাচন করুন',
             awayFrom: 'দূরত্ব',
             stops: 'স্টপ',
+            startHere: 'শুরু করুন',
         },
 
         // Live Navigation
@@ -663,6 +664,7 @@ export const translations: Record<Language, Translations> = {
             transit: 'Transit',
             help: 'Help',
             selectFromFirst: 'Select From first',
+            startHere: 'Start Here',
             awayFrom: 'away from',
         },
 
