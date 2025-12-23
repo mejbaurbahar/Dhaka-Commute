@@ -340,17 +340,15 @@ function App() {
         {/* Container - Content sits relative above background */}
         <div className="py-4 md:py-8 px-4 relative z-10">
 
-          {/* Hero Title Section */}
           <div className="text-center mb-6 animate-fade-in">
-            <h1 className="text-2xl md:text-4xl font-extrabold mb-2 tracking-tight drop-shadow-sm flex flex-col items-center gap-1">
-              <span className="text-sm md:text-lg text-gray-500 dark:text-gray-400 font-bold tracking-wide">
-                {t('intercity.exploreBangladesh')}
+            <h1 className="text-2xl md:text-5xl font-extrabold mb-2 tracking-tight drop-shadow-sm flex flex-col items-center gap-1.5">
+              <span className="text-xs md:text-lg text-gray-400 dark:text-gray-500 font-bold tracking-[0.2em] uppercase">
+                {t('intercity.exploreMini')}
               </span>
-              <div>
-                <span className="text-dhaka-red">{t('settings.bangla')}</span>{' '}
-                <span className="text-dhaka-green">{t('nav.home')}</span>
-              </div>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+              <span className="text-3xl md:text-6xl text-slate-900 dark:text-white leading-tight">
+                {t('intercity.exploreMain')}
+              </span>
+              <span className="text-lg md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 font-bold mt-1">
                 {t('intercity.onYourRoute')}
               </span>
             </h1>
