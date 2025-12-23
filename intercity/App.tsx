@@ -346,7 +346,19 @@ function App() {
                 {t('intercity.exploreMini')}
               </span>
               <span className="text-3xl md:text-6xl text-slate-900 dark:text-white leading-tight">
-                {t('intercity.exploreMain')}
+                {language === 'bn' ? (
+                  <>
+                    <span className="text-dhaka-red">বাংলা</span>
+                    <span className="text-dhaka-green">দেশ</span>
+                    <span> ঘুরে দেখুন</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Whole </span>
+                    <span className="text-dhaka-red">Bangla</span>
+                    <span className="text-dhaka-green">desh</span>
+                  </>
+                )}
               </span>
               <span className="text-lg md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 font-bold mt-1">
                 {t('intercity.onYourRoute')}
