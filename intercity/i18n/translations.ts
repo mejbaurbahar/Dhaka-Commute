@@ -74,6 +74,7 @@ export const translations: Record<Language, Translations> = {
             terms: 'শর্তাবলী',
             faq: 'প্রশ্ন ও উত্তর',
             forAI: 'এআই এর জন্য',
+            intercity: 'আন্তঃনগর',
         },
 
         // Home/Search
@@ -563,18 +564,7 @@ export const translations: Record<Language, Translations> = {
                 "Major Transit Points": "প্রধান ট্রানজিট পয়েন্ট",
                 "Tea Garden Regions": "চা বাগান অঞ্চল"
             },
-            nav: {
-                home: 'হোম',
-                intercity: 'আন্তঃনগর',
-                aiAssistant: 'এআই সহায়ক',
-                history: 'ইতিহাস',
-                saved: 'সংরক্ষিত',
-                about: 'সম্পর্কে',
-                settings: 'সেটিংস',
-                privacy: 'গোপনীয়তা',
-                terms: 'শর্তাবলী',
-                menu: 'মেনু'
-            },
+
             results: {
                 operators: 'অপারেটর',
                 terminals: 'টার্মিনাল',
@@ -671,6 +661,7 @@ export const translations: Record<Language, Translations> = {
             terms: 'Terms of Service',
             faq: 'FAQ',
             forAI: 'For AI',
+            intercity: 'Intercity',
         },
 
         // Home/Search
@@ -1144,18 +1135,7 @@ export const translations: Record<Language, Translations> = {
                 "Major Transit Points": "Major Transit Points",
                 "Tea Garden Regions": "Tea Garden Regions"
             },
-            nav: {
-                home: 'Home',
-                intercity: 'Intercity',
-                aiAssistant: 'AI Assistant',
-                history: 'History',
-                saved: 'Saved',
-                about: 'About',
-                settings: 'Settings',
-                privacy: 'Privacy',
-                terms: 'Terms',
-                menu: 'Menu'
-            },
+
             results: {
                 operators: 'Operators',
                 terminals: 'Terminals',
