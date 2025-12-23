@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Train, Search, Calendar, Clock, MapPin, Coins, ExternalLink, Loader2, AlertCircle, ArrowRight, X } from 'lucide-react';
 import { trainService, Train as TrainType, getClassDisplay, getTrainTypeIcon, formatDate } from '../services/trainService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const TrainSearch: React.FC = () => {
+    const { formatNumber } = useLanguage();
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [date, setDate] = useState('');
@@ -236,7 +238,7 @@ const TrainSearch: React.FC = () => {
                 <div className="space-y-4">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            Found {results.length} train{results.length !== 1 ? 's' : ''}
+                            Found {formatNumber(results.length)} train{results.length !== 1 ? 's' : ''}
                         </h2>
                         <a
                             href={bookingURL}
@@ -263,7 +265,7 @@ const TrainSearch: React.FC = () => {
                                             {train.trainName}
                                         </h3>
                                         <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm font-semibold">
-                                            {train.trainNumber}
+                                            {formatNumber(train.trainNumber)}
                                         </span>
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -278,7 +280,7 @@ const TrainSearch: React.FC = () => {
                                     <Clock className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                                     <div>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">Departure</p>
-                                        <p className="font-semibold text-gray-900 dark:text-white">{train.departureTime}</p>
+                                        <p className="font-semibold text-gray-900 dark:text-white">{formatNumber(train.departureTime)}</p>
                                     </div>
                                 </div>
 
@@ -286,7 +288,7 @@ const TrainSearch: React.FC = () => {
                                     <ArrowRight className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                                     <div>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">Duration</p>
-                                        <p className="font-semibold text-gray-900 dark:text-white">{train.duration}</p>
+                                        <p className="font-semibold text-gray-900 dark:text-white">{formatNumber(train.duration)}</p>
                                     </div>
                                 </div>
 
@@ -294,7 +296,7 @@ const TrainSearch: React.FC = () => {
                                     <Clock className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                                     <div>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">Arrival</p>
-                                        <p className="font-semibold text-gray-900 dark:text-white">{train.arrivalTime}</p>
+                                        <p className="font-semibold text-gray-900 dark:text-white">{formatNumber(train.arrivalTime)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -323,7 +325,7 @@ const TrainSearch: React.FC = () => {
                                 {train.fare && (
                                     <span className="flex items-center gap-1">
                                         <Coins className="w-4 h-4" />
-                                        ৳{train.fare}
+                                        ৳{formatNumber(train.fare)}
                                     </span>
                                 )}
                             </div>
@@ -332,7 +334,7 @@ const TrainSearch: React.FC = () => {
                             {train.stops && train.stops.length > 0 && (
                                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
                                     <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        Stops ({train.stops.length}):
+                                        Stops ({formatNumber(train.stops.length)}):
                                     </p>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">
                                         {train.stops.join(' • ')}

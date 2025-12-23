@@ -4,6 +4,7 @@ import { X, Phone, Shield, Activity, Flame, MapPin, Navigation2 } from 'lucide-r
 import { UserLocation } from '../types';
 import { NATIONAL_HELPLINES } from '../data/emergencyHelplines';
 import { findNearestEmergencyServicesByType, formatDistance, NearestEmergencyService } from '../services/emergencyService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface EmergencyHelplineModalProps {
     isOpen: boolean;
@@ -18,6 +19,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
     userLocation,
     currentLocationName
 }) => {
+    const { t } = useLanguage();
     const nearestServices = useMemo(() => {
         if (!userLocation) return null;
         return findNearestEmergencyServicesByType(userLocation, 2);
@@ -74,7 +76,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                         <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{service.bnName}</p>
                         <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                             <MapPin className="w-3 h-3" />
-                            <span>{service.area} • {formatDistance(service.distance)} away</span>
+                            <span>{service.area} • {formatDistance(service.distance)} {t('emergency.away')}</span>
                         </div>
                     </div>
                     <button
@@ -100,12 +102,12 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                     <div>
                         <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                             <Phone className="w-5 h-5 text-dhaka-red" />
-                            Emergency Helplines
+                            {t('emergency.title')}
                         </h2>
                         {currentLocationName && (
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
                                 <Navigation2 className="w-3 h-3" />
-                                Near {currentLocationName}
+                                {t('emergency.near')} {currentLocationName}
                             </p>
                         )}
                     </div>
@@ -124,7 +126,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                     <div>
                         <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide flex items-center gap-2">
                             <Shield className="w-4 h-4 text-dhaka-red" />
-                            National Emergency Numbers
+                            {t('emergency.nationalEmergencyNumbers')}
                         </h3>
                         <div className="grid grid-cols-1 gap-2">
                             {NATIONAL_HELPLINES.map((helpline) => (
@@ -157,7 +159,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                                 <div>
                                     <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide flex items-center gap-2">
                                         <Shield className="w-4 h-4 text-blue-600" />
-                                        Nearest Police Stations
+                                        {t('emergency.nearestPoliceStations')}
                                     </h3>
                                     <div className="space-y-2">
                                         {nearestServices.police.map(renderServiceCard)}
@@ -170,7 +172,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                                 <div>
                                     <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide flex items-center gap-2">
                                         <Activity className="w-4 h-4 text-green-600" />
-                                        Nearest Hospitals
+                                        {t('emergency.nearestHospitals')}
                                     </h3>
                                     <div className="space-y-2">
                                         {nearestServices.hospital.map(renderServiceCard)}
@@ -183,7 +185,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                                 <div>
                                     <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide flex items-center gap-2">
                                         <Flame className="w-4 h-4 text-red-600" />
-                                        Nearest Fire Stations
+                                        {t('emergency.nearestFireStations')}
                                     </h3>
                                     <div className="space-y-2">
                                         {nearestServices.fire.map(renderServiceCard)}
@@ -196,8 +198,8 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                     {!userLocation && (
                         <div className="text-center py-8 text-gray-500">
                             <MapPin className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                            <p className="text-sm">Location not available</p>
-                            <p className="text-xs mt-1">Enable location to see nearby emergency services</p>
+                            <p className="text-sm">{t('emergency.locationNotAvailable')}</p>
+                            <p className="text-xs mt-1">{t('emergency.enableLocation')}</p>
                         </div>
                     )}
                 </div>
@@ -205,7 +207,7 @@ const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
                 {/* Footer */}
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-slate-800 shrink-0 rounded-b-3xl md:rounded-b-2xl">
                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-                        In case of emergency, call <span className="font-bold text-dhaka-red">999</span> immediately
+                        {t('emergency.emergencyFooter')} <span className="font-bold text-dhaka-red">999</span> {t('emergency.immediately')}
                     </p>
                 </div>
             </div>

@@ -5,6 +5,7 @@ import { getCurrentLocation, findNearestStation, getDistance } from '../services
 import { STATIONS } from '../constants';
 import { Navigation, Clock, MapPin, AlertCircle, RefreshCw, Compass, Gauge, Flag, Phone } from 'lucide-react';
 import EmergencyHelplineModal from './EmergencyHelplineModal';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface LiveTrackerProps {
   bus: BusRoute;
@@ -16,6 +17,7 @@ interface LiveTrackerProps {
 }
 
 const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highlightEndIdx, userLocation: propUserLocation, speed: propSpeed, onBack }) => {
+  const { t, formatNumber } = useLanguage();
   const [location, setLocation] = useState<UserLocation | null>(null);
   const [speed, setSpeed] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -99,13 +101,13 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
         <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4 animate-pulse">
           <AlertCircle className="w-8 h-8 text-red-500 dark:text-red-400" />
         </div>
-        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-6">Location Needed</h3>
+        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-6">{t('liveNav.locationNeeded')}</h3>
 
         <button
           onClick={() => { setLoading(true); window.location.reload(); }}
           className="px-6 py-3 bg-dhaka-green text-white rounded-xl font-bold shadow-lg shadow-green-200 dark:shadow-green-900/40 active:scale-95 transition-transform"
         >
-          Enable Location
+          {t('liveNav.enableLocation')}
         </button>
       </div>
     );
@@ -121,8 +123,8 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
             <Compass className="w-8 h-8 text-dhaka-green animate-pulse" />
           </div>
         </div>
-        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Finding Satellite...</h3>
-        <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">Detecting your position on the bus</p>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('liveNav.findingSatellite')}</h3>
+        <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">{t('liveNav.detectingPosition')}</p>
       </div>
     );
   }
@@ -173,13 +175,13 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
-            <span className="font-medium text-sm">Back</span>
+            <span className="font-medium text-sm">{t('common.back')}</span>
           </button>
         )}
 
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-            <MapPin className="w-3 h-3" /> {isAtStation ? "CURRENT STOP" : "NEAREST STOP"}
+            <MapPin className="w-3 h-3" /> {isAtStation ? t('liveNav.currentStop') : t('liveNav.nearestStop')}
           </span>
           <span className="flex items-center gap-1 text-[10px] text-dhaka-green bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
             <RefreshCw className="w-3 h-3 animate-spin" /> Live
@@ -190,7 +192,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
         </h2>
         {!isAtStation && (
           <p className="text-xs font-bold text-orange-600 bg-orange-50 dark:bg-orange-900/30 dark:text-orange-400 inline-block px-2 py-0.5 rounded mt-1">
-            You are {(distanceToStation / 1000).toFixed(1)} km away
+            {t('liveNav.youAre')} {formatNumber((distanceToStation / 1000).toFixed(1))} km {t('emergency.away')}
           </p>
         )}
         <p className="text-xs text-gray-500 dark:text-gray-400 font-bengali mt-1 mb-3 ml-0.5">{currentStation?.bnName}</p>
@@ -203,14 +205,14 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
                 <Gauge className="w-3 h-3" />
                 <span className="text-[10px] font-bold uppercase">Speed</span>
               </div>
-              <p className="text-lg font-bold text-blue-900 dark:text-blue-100">{(speed || 0).toFixed(0)} <span className="text-[10px] font-normal text-blue-600 dark:text-blue-400">km/h</span></p>
+              <p className="text-lg font-bold text-blue-900 dark:text-blue-100">{formatNumber((speed || 0).toFixed(0))} <span className="text-[10px] font-normal text-blue-600 dark:text-blue-400">km/h</span></p>
             </div>
             <div className="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-xl text-center">
               <div className="flex items-center justify-center gap-1 text-purple-600 dark:text-purple-400 mb-1">
                 <Flag className="w-3 h-3" />
                 <span className="text-[10px] font-bold uppercase">Dist</span>
               </div>
-              <p className="text-lg font-bold text-purple-900 dark:text-purple-100">{(distToDest / 1000).toFixed(1)} <span className="text-[10px] font-normal text-purple-600 dark:text-purple-400">km</span></p>
+              <p className="text-lg font-bold text-purple-900 dark:text-purple-100">{formatNumber((distToDest / 1000).toFixed(1))} <span className="text-[10px] font-normal text-purple-600 dark:text-purple-400">km</span></p>
             </div>
             <div className="bg-green-50 dark:bg-green-900/20 p-2 rounded-xl text-center">
               <div className="flex items-center justify-center gap-1 text-green-600 dark:text-green-400 mb-1">
@@ -219,8 +221,8 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
               </div>
               <p className="text-lg font-bold text-green-900 dark:text-green-100">
                 {etaMinutes < 60
-                  ? `${etaMinutes.toFixed(0)} min`
-                  : `${Math.floor(etaMinutes / 60)}h ${Math.round(etaMinutes % 60)}m`
+                  ? `${formatNumber(etaMinutes.toFixed(0))} min`
+                  : `${formatNumber(Math.floor(etaMinutes / 60))}h ${formatNumber(Math.round(etaMinutes % 60))}m`
                 }
               </p>
             </div>
@@ -232,16 +234,16 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
                 <Clock className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wide">Next Stop In</p>
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wide">{t('liveNav.nextStopIn')}</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{(distToNext / 1000 * 3 + 2).toFixed(0)} min</span>
-                  <span className="text-xs text-gray-400">({(distToNext / 1000).toFixed(1)} km)</span>
+                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{formatNumber((distToNext / 1000 * 3 + 2).toFixed(0))} min</span>
+                  <span className="text-xs text-gray-400">({formatNumber((distToNext / 1000).toFixed(1))} km)</span>
                 </div>
               </div>
             </div>
           ) : (
             <div className="pt-3 border-t border-gray-100 dark:border-gray-700 text-sm text-green-600 dark:text-green-400 font-bold">
-              You have reached the destination!
+              {t('liveNav.arrivedDestination')}
             </div>
           )
         )}
@@ -249,7 +251,7 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
 
       {/* Timeline */}
       <div className="flex-1 overflow-y-auto px-6 py-6 scroll-smooth">
-        <h4 className="text-xs font-bold text-gray-400 dark:text-gray-500 mb-6 uppercase tracking-wider ml-11">Route Timeline</h4>
+        <h4 className="text-xs font-bold text-gray-400 dark:text-gray-500 mb-6 uppercase tracking-wider ml-11">{t('liveNav.routeTimeline')}</h4>
         <div className="relative ml-3 space-y-0 pb-20">
           {bus.stops.map((stopId, idx) => {
             const station = STATIONS[stopId];
@@ -305,31 +307,31 @@ const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highl
                       <button
                         onClick={() => setShowEmergencyModal(true)}
                         className="shrink-0 bg-dhaka-red hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-1.5"
-                        aria-label="Emergency Helplines"
+                        aria-label={t('liveNav.emergencyHelplines')}
                       >
                         <Phone className="w-3.5 h-3.5" />
-                        Help
+                        {t('liveNav.help')}
                       </button>
                     )}
                   </div>
                   {isCurrent && isAtStation && (
                     <span className="inline-block mt-1 px-2 py-0.5 bg-dhaka-red text-white text-[10px] rounded font-bold uppercase tracking-wide shadow-sm">
-                      Current Location
+                      {t('busDetails.you')}
                     </span>
                   )}
                   {isStart && (
                     <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-[10px] rounded font-bold uppercase tracking-wide shadow-sm mr-2">
-                      Start
+                      {t('busDetails.start')}
                     </span>
                   )}
                   {isEnd && (
                     <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-700 text-[10px] rounded font-bold uppercase tracking-wide shadow-sm">
-                      Destination
+                      {t('busDetails.destination')}
                     </span>
                   )}
                   {isCurrent && !isAtStation && (
                     <span className="inline-block mt-1 px-2 py-0.5 bg-orange-100 text-orange-700 text-[10px] rounded font-bold uppercase tracking-wide shadow-sm">
-                      Nearest Stop ({(distanceToStation / 1000).toFixed(1)} km)
+                      {t('liveNav.nearestStop')} ({formatNumber((distanceToStation / 1000).toFixed(1))} km)
                     </span>
                   )}
                   {!isCurrent && (

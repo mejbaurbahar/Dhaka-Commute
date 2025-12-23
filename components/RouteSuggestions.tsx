@@ -1,6 +1,7 @@
 import React from 'react';
 import { SuggestedRoute, RouteStep } from '../services/routePlanner';
 import { Bus, Train, Navigation, Clock, Coins, ArrowRight, MapPin, TrendingUp, Zap, Award } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface RouteSuggestionsProps {
     routes: SuggestedRoute[];
@@ -43,6 +44,7 @@ const RouteTypeBadge: React.FC<{ type: SuggestedRoute['routeType'] }> = ({ type 
 };
 
 const RouteSuggestions: React.FC<RouteSuggestionsProps> = ({ routes, onSelectRoute, currentLocation }) => {
+    const { formatNumber } = useLanguage();
     if (routes.length === 0) {
         return (
             <div className="text-center py-8 text-gray-400">
@@ -79,7 +81,7 @@ const RouteSuggestions: React.FC<RouteSuggestionsProps> = ({ routes, onSelectRou
                         <div className="flex items-start justify-between mb-2">
                             <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-lg font-bold text-gray-900 dark:text-white">Route {idx + 1}</span>
+                                    <span className="text-lg font-bold text-gray-900 dark:text-white">Route {formatNumber(idx + 1)}</span>
                                     <RouteTypeBadge type={route.routeType} />
                                 </div>
                                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">{route.title}</h3>
@@ -93,21 +95,21 @@ const RouteSuggestions: React.FC<RouteSuggestionsProps> = ({ routes, onSelectRou
                                     <Clock className="w-3 h-3" />
                                     <span className="text-[9px] font-bold uppercase">Time</span>
                                 </div>
-                                <p className="text-sm font-bold text-gray-900 dark:text-white">{Math.round(route.totalDuration)} min</p>
+                                <p className="text-sm font-bold text-gray-900 dark:text-white">{formatNumber(Math.round(route.totalDuration))} min</p>
                             </div>
                             <div className="bg-white dark:bg-slate-700 rounded-lg p-2 border border-gray-100 dark:border-slate-600">
                                 <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mb-1">
                                     <Coins className="w-3 h-3" />
                                     <span className="text-[9px] font-bold uppercase">Fare</span>
                                 </div>
-                                <p className="text-sm font-bold text-gray-900 dark:text-white">৳{route.totalFare}</p>
+                                <p className="text-sm font-bold text-gray-900 dark:text-white">৳{formatNumber(route.totalFare)}</p>
                             </div>
                             <div className="bg-white dark:bg-slate-700 rounded-lg p-2 border border-gray-100 dark:border-slate-600">
                                 <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 mb-1">
                                     <ArrowRight className="w-3 h-3" />
                                     <span className="text-[9px] font-bold uppercase">Changes</span>
                                 </div>
-                                <p className="text-sm font-bold text-gray-900 dark:text-white">{route.transfers}</p>
+                                <p className="text-sm font-bold text-gray-900 dark:text-white">{formatNumber(route.transfers)}</p>
                             </div>
                         </div>
                     </div>
@@ -153,13 +155,13 @@ const RouteSuggestions: React.FC<RouteSuggestionsProps> = ({ routes, onSelectRou
                                         {step.duration && (
                                             <span className="flex items-center gap-1">
                                                 <Clock className="w-3 h-3" />
-                                                {Math.round(step.duration)} min
+                                                {formatNumber(Math.round(step.duration))} min
                                             </span>
                                         )}
                                         {step.fare && (
                                             <span className="flex items-center gap-1">
                                                 <Coins className="w-3 h-3" />
-                                                ৳{step.fare}
+                                                ৳{formatNumber(step.fare)}
                                             </span>
                                         )}
                                     </div>

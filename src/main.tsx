@@ -2,6 +2,7 @@ import React, { ErrorInfo, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from '../App';
 import './index.css';
+import { LanguageProvider } from '../contexts/LanguageContext';
 
 interface ErrorBoundaryProps {
   children?: ReactNode;
@@ -72,7 +73,9 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
       <ErrorBoundary>
-        <App />
+        <LanguageProvider>
+          <App />
+        </LanguageProvider>
       </ErrorBoundary>
     </React.StrictMode>
   );

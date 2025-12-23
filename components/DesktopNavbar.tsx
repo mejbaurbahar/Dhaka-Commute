@@ -4,6 +4,7 @@ import { AppView } from '../types';
 import ThemeToggle from './ThemeToggle';
 import { AnimatedLogo } from './AnimatedLogo'; // Assuming we can use this or just text
 import NotificationBell from './NotificationBell';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface DesktopNavbarProps {
     view: AppView;
@@ -33,6 +34,8 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
     toggleTheme,
     isInDhaka
 }) => {
+    const { t } = useLanguage();
+
     // Navbar should be visible on all views for desktop now
     // if (view === AppView.BUS_DETAILS || view === AppView.LIVE_NAV) {
     //   return null;
@@ -40,7 +43,7 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
 
     const navItems = [
         {
-            label: isInDhaka ? 'Home' : 'Dhaka City',
+            label: isInDhaka ? t('nav.home') : t('nav.home'),
             icon: Home,
             isActive: view === AppView.HOME && primarySearch === 'LOCAL' && listFilter !== 'FAVORITES',
             onClick: () => {
@@ -50,7 +53,7 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
             }
         },
         {
-            label: 'Intercity',
+            label: t('intercity.title'),
             icon: Train,
             isActive: false, // Never active on main page since intercity is separate
             onClick: () => {
@@ -58,19 +61,19 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
             }
         },
         {
-            label: 'AI Chat',
+            label: t('ai.title'),
             icon: Sparkles,
             isActive: view === AppView.AI_ASSISTANT,
             onClick: () => setView(AppView.AI_ASSISTANT)
         },
         {
-            label: 'History',
+            label: t('nav.history'),
             icon: Clock,
             isActive: view === AppView.HISTORY,
             onClick: () => setView(AppView.HISTORY)
         },
         {
-            label: 'About',
+            label: t('nav.about'),
             icon: Info,
             isActive: view === AppView.ABOUT,
             onClick: () => setView(AppView.ABOUT)
@@ -119,7 +122,7 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = ({
                     className="flex items-center gap-2 px-4 py-2 bg-red-100/50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-full font-bold text-sm transition-all animate-pulse"
                 >
                     <Map className="w-4 h-4" />
-                    <span>Live Map</span>
+                    <span>{t('busDetails.liveView')}</span>
                 </button>
                 <ThemeToggle isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
                 <NotificationBell />

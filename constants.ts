@@ -232,7 +232,7 @@ export const STATIONS: Record<string, Station> = {
   'palli_bidyut': { id: 'palli_bidyut', name: 'Palli Bidyut', bnName: 'পল্লী বিদ্যুৎ', lat: 23.9000, lng: 90.2600 },
   'mirpur_dohs': { id: 'mirpur_dohs', name: 'Mirpur DOHS', bnName: 'মিরপুর ডোহস', lat: 23.8300, lng: 90.3700 },
   '300_feet': { id: '300_feet', name: '300 Feet', bnName: '৩০০ ফুট', lat: 23.8200, lng: 90.4500 },
-  'kanchpur': { id: 'kanchpur', name: 'Kanchpur', bnName: 'কাচপুর', lat: 23.6900, lng: 90.5200 },
+
   'police_plaza': { id: 'police_plaza', name: 'Police Plaza', bnName: 'পুলিশ প্লাজা', lat: 23.7700, lng: 90.4100 },
   'duairipara': { id: 'duairipara', name: 'Duairipara', bnName: 'দুয়ারিপাড়া', lat: 23.8200, lng: 90.3600 },
   'shial_bari': { id: 'shial_bari', name: 'Shial Bari', bnName: 'শিয়াল বাড়ি', lat: 23.8100, lng: 90.3500 },
@@ -264,7 +264,7 @@ export const STATIONS: Record<string, Station> = {
   'sikder_medical': { id: 'sikder_medical', name: 'Sikder Medical', bnName: 'সিকদার মেডিকেল', lat: 23.7400, lng: 90.3600 },
   'kalabagan': { id: 'kalabagan', name: 'Kalabagan', bnName: 'কলাবাগান', lat: 23.7450, lng: 90.3820 },
   'hazaribag': { id: 'hazaribag', name: 'Hazaribag', bnName: 'হাজারীবাগ', lat: 23.7300, lng: 90.3700 },
-  'dholairpar': { id: 'dholairpar', name: 'Dholairpar', bnName: 'ঢোলাইরপাড়', lat: 23.7026, lng: 90.4353 },
+
   'star_kabab': { id: 'star_kabab', name: 'Star Kabab', bnName: 'স্টার কাবাব', lat: 23.7550, lng: 90.3650 },
   'bot_tola': { id: 'bot_tola', name: 'Bot Tola', bnName: 'বট তলা', lat: 23.7520, lng: 90.3920 },
   'cantonment': { id: 'cantonment', name: 'Cantonment', bnName: 'ক্যান্টনমেন্ট', lat: 23.8200, lng: 90.4000 },
@@ -454,20 +454,20 @@ export const STATIONS: Record<string, Station> = {
   cbs_2: { id: 'cbs_2', name: 'CBS-2 Fulbaria', bnName: 'সিবিএস-২ ফুলবাড়িয়া', lat: 23.7285, lng: 90.4133 },
   nagda: { id: 'nagda', name: 'Nagda', bnName: 'নগদা', lat: 23.8420, lng: 90.4150 },
   sheikh_russel_park: { id: 'sheikh_russel_park', name: 'Sheikh Russel Park', bnName: 'শেখ রাসেল পার্ক', lat: 23.7304, lng: 90.4129 },
-  golap_shah_mazar: { id: 'golap_shah_mazar', name: 'Golap Shah Mazar', bnName: 'গোলাপ শাহ মাজার', lat: 23.7298, lng: 90.4118 },
+
   toll_plaza: { id: 'toll_plaza', name: 'Toll Plaza', bnName: 'টোল প্লাজা', lat: 23.7320, lng: 90.4180 },
 
   atir_bazar: { id: 'atir_bazar', name: 'Atir Bazar', bnName: 'আটির বাজার', lat: 23.7520, lng: 90.3615 },
   keraniganj_kadomtoli: { id: 'keraniganj_kadomtoli', name: 'Kadomtoli', bnName: 'কদমতলী', lat: 23.6580, lng: 90.3520 },
 
-  board_bazar: { id: 'board_bazar', name: 'Board Bazar', bnName: 'বোর্ড বাজার', lat: 23.8780, lng: 90.4050 },
+
   bardo_bari_tongi: { id: 'bardo_bari_tongi', name: 'Bardo Bari Tongi', bnName: 'বড়বাড়ি', lat: 23.8920, lng: 90.4110 },
 
-  taltola: { id: 'taltola', name: 'Taltola', bnName: 'তালতলা', lat: 23.7620, lng: 90.3590 },
+
   cocacola: { id: 'cocacola', name: 'Coca Cola', bnName: 'কোকাকোলা', lat: 23.8350, lng: 90.4220 },
   bansree: { id: 'bansree', name: 'Bansree', bnName: 'বনশ্রী', lat: 23.7580, lng: 90.4380 },
 
-  jurain: { id: 'jurain', name: 'Jurain', bnName: 'জুরাইন', lat: 23.7140, lng: 90.4250 },
+
   bandura: { id: 'bandura', name: 'Bandura', bnName: 'বান্দুরা', lat: 23.7050, lng: 90.4420 },
   gauripur: { id: 'gauripur', name: 'Gauripur', bnName: 'গৌরিপুর', lat: 23.8800, lng: 90.3850 },
 
@@ -483,7 +483,7 @@ export const STATIONS: Record<string, Station> = {
   narayanganj_railgate: { id: 'narayanganj_railgate', name: 'Narayanganj 1 No Rail Gate', bnName: 'নারায়ণগঞ্জ ১নং রেল গেইট', lat: 23.6238, lng: 90.5013 },
   ghatarchar: { id: 'ghatarchar', name: 'Ghatarchar', bnName: 'ঘাটারচর', lat: 23.7490, lng: 90.3620 },
 
-  rayerbag: { id: 'rayerbag', name: 'Rayerbag', bnName: 'রায়েরবাগ', lat: 23.7220, lng: 90.3650 },
+
   paglabazar: { id: 'paglabazar', name: 'Pagla Bazar', bnName: 'পাগলা বাজার', lat: 23.7180, lng: 90.3480 },
 };
 

@@ -18,6 +18,7 @@ import {
 } from '../services/analyticsService';
 import { BUS_DATA, STATIONS } from '../constants';
 import { BusRoute } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface HistoryViewProps {
     onBack: () => void;
@@ -26,6 +27,7 @@ interface HistoryViewProps {
 }
 
 const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJourney }) => {
+    const { t, formatNumber } = useLanguage();
     const [activeTab, setActiveTab] = useState<'personal' | 'global'>('personal');
     const [globalStats, setGlobalStats] = useState<GlobalStats>(getGlobalStats());
     const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -106,12 +108,12 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
         const diffHours = Math.floor(diffMins / 60);
         const diffDays = Math.floor(diffHours / 24);
 
-        if (diffMins < 1) return 'Just now';
-        if (diffMins < 60) return `${diffMins}m ago`;
-        if (diffHours < 24) return `${diffHours}h ago`;
-        if (diffDays < 7) return `${diffDays}d ago`;
+        if (diffMins < 1) return t('history.justNow');
+        if (diffMins < 60) return `${formatNumber(diffMins)} ${t('history.minutesAgo')}`;
+        if (diffHours < 24) return `${formatNumber(diffHours)} ${t('history.hoursAgo')}`;
+        if (diffDays < 7) return `${formatNumber(diffDays)} ${t('history.daysAgo')}`;
 
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return formatNumber(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
     };
 
     return (
@@ -123,22 +125,22 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                         <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 text-center mb-2">Clear History?</h3>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 text-center mb-2">{t('history.clearHistory')}</h3>
                         <p className="text-gray-500 dark:text-gray-400 text-center text-sm mb-6">
-                            Are you sure you want to clear all your search history? This action cannot be undone.
+                            {t('history.clearConfirm')}
                         </p>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setShowClearConfirm(false)}
                                 className="flex-1 py-2.5 rounded-xl font-bold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
                             >
-                                Cancel
+                                {t('history.cancel')}
                             </button>
                             <button
                                 onClick={confirmClearHistory}
                                 className="flex-1 py-2.5 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition-colors"
                             >
-                                Yes, Clear
+                                {t('history.yesClear')}
                             </button>
                         </div>
                     </div>
@@ -152,7 +154,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
 
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                             <Clock className="w-6 h-6 text-dhaka-green" />
-                            History & Analytics
+                            {t('history.title')}
                         </h1>
                     </div>
 
@@ -167,7 +169,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                         >
                             <div className="flex items-center justify-center gap-2">
                                 <Clock className="w-4 h-4" />
-                                My History
+                                {t('history.myHistory')}
                             </div>
                         </button>
                         <button
@@ -179,7 +181,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                         >
                             <div className="flex items-center justify-center gap-2">
                                 <Users className="w-4 h-4" />
-                                Global Stats
+                                {t('history.globalStats')}
                             </div>
                         </button>
                     </div>
@@ -198,7 +200,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                     className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                                 >
                                     <Trash2 className="w-4 h-4" />
-                                    Clear All History
+                                    {t('history.clearAllHistory')}
                                 </button>
                             </div>
                         )}
@@ -207,16 +209,16 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 p-6 rounded-2xl border border-blue-100 dark:border-slate-700">
                             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                                 <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                                Today's Activity
+                                {t('history.todayActivity')}
                             </h2>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-white dark:bg-slate-700 p-4 rounded-xl">
-                                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{todayBuses.length}</div>
-                                    <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Buses Searched</div>
+                                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{formatNumber(todayBuses.length)}</div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">{t('history.busesSearched')}</div>
                                 </div>
                                 <div className="bg-white dark:bg-slate-700 p-4 rounded-xl">
-                                    <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{todayRoutes.length}</div>
-                                    <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">Routes Searched</div>
+                                    <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{formatNumber(todayRoutes.length)}</div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">{t('history.routesSearched')}</div>
                                 </div>
                             </div>
                         </div>
@@ -234,10 +236,10 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                         </div>
                                         <div>
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                                                View Today's Journey
+                                                {t('history.viewTodayJourney')}
                                             </h3>
                                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                See your complete travel route and stops for the day
+                                                {t('history.journeyDescription')}
                                             </p>
                                         </div>
                                     </div>
@@ -245,7 +247,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                 </div>
                                 <div className="mt-4 flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/30 px-3 py-2 rounded-lg w-fit">
                                     <Activity className="w-3 h-3" />
-                                    <span className="font-medium">100% Offline • Privacy-First</span>
+                                    <span className="font-medium">{t('history.offlinePrivacy')}</span>
                                 </div>
                             </div>
                         )}
@@ -255,7 +257,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                             <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                                     <TrendingUp className="w-5 h-5 text-dhaka-green" />
-                                    Most Used Buses
+                                    {t('history.mostUsedBuses')}
                                 </h2>
                                 <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {(mostUsedBuses || []).map((item, idx) => {
@@ -282,7 +284,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <span className="px-3 py-1 bg-dhaka-green/10 text-dhaka-green rounded-full text-sm font-bold">
-                                                        {count}x
+                                                        {formatNumber(count)}x
                                                     </span>
                                                     <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-dhaka-green transition-colors" />
                                                 </div>
@@ -298,7 +300,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                             <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                                     <TrendingUp className="w-5 h-5 text-dhaka-red" />
-                                    Most Used Routes
+                                    {t('history.mostUsedRoutes')}
                                 </h2>
                                 <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {(mostUsedRoutes || []).map((item, index) => {
@@ -322,7 +324,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                                     </div>
                                                 </div>
                                                 <span className="px-3 py-1 bg-dhaka-red/10 text-dhaka-red rounded-full text-sm font-bold ml-2">
-                                                    {count}x
+                                                    {formatNumber(count)}x
                                                 </span>
                                             </div>
                                         );
@@ -336,7 +338,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                             <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                                     <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                    Recent Bus Searches
+                                    {t('history.recentBusSearches')}
                                 </h2>
                                 <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {recentBusSearches.map((record, index) => {
@@ -369,7 +371,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                             <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                                     <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                                    Recent Route Searches
+                                    {t('history.recentRouteSearches')}
                                 </h2>
                                 <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {recentRouteSearches.map((record, index) => (
@@ -397,7 +399,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                             <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                                     <TrendingUp className="w-5 h-5 text-purple-600" />
-                                    Recent Intercity Trips
+                                    {t('history.recentIntercityTrips')}
                                 </h2>
                                 <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                                     {recentIntercitySearches.map((record, index) => {
@@ -430,9 +432,9 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                         {recentBusSearches.length === 0 && recentRouteSearches.length === 0 && recentIntercitySearches.length === 0 && (
                             <div className="text-center py-12">
                                 <Clock className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">No History Yet</h3>
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">{t('history.noHistoryYet')}</h3>
                                 <p className="text-gray-500 dark:text-gray-400">
-                                    Start searching for buses and routes to see your history here
+                                    {t('history.startSearching')}
                                 </p>
                             </div>
                         )}
@@ -443,10 +445,10 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                         <div className="mt-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-800 dark:to-slate-800 p-6 rounded-2xl border border-green-100 dark:border-slate-700 flex flex-col gap-4">
                             <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                                 <Users className="w-5 h-5 text-green-600 dark:text-green-400" />
-                                Community Statistics
+                                {t('history.communityStats')}
                                 <span className="ml-auto text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center gap-1">
                                     <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                    {globalStats.activeUsers > 0 ? `${globalStats.activeUsers} Online` : 'Live'}
+                                    {globalStats.activeUsers > 0 ? `${formatNumber(globalStats.activeUsers)} ${t('history.online')}` : t('history.live')}
                                 </span>
                             </h2>
 
@@ -458,9 +460,9 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                         </div>
                                         <div>
                                             <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-                                                {globalStats.totalVisits.toLocaleString()}
+                                                {formatNumber(globalStats.totalVisits.toLocaleString())}
                                             </div>
-                                            <div className="text-sm text-gray-600 dark:text-gray-300">Total Visits</div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-300">{t('history.totalVisits')}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -472,13 +474,13 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                         </div>
                                         <div>
                                             <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                                                {globalStats.todayVisits.toLocaleString()}
+                                                {formatNumber(globalStats.todayVisits.toLocaleString())}
                                             </div>
-                                            <div className="text-sm text-gray-600 dark:text-gray-300">Today's Visits</div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-300">{t('history.todayVisits')}</div>
                                         </div>
                                     </div>
                                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                        Updated in real-time
+                                        {t('history.updatedRealtime')}
                                     </div>
                                 </div>
 
@@ -489,13 +491,13 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                         </div>
                                         <div>
                                             <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                                                {globalStats.activeUsers.toLocaleString()}
+                                                {formatNumber(globalStats.activeUsers.toLocaleString())}
                                                 <span className="flex h-3 w-3 relative">
                                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                                     <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                                                 </span>
                                             </div>
-                                            <div className="text-sm text-gray-600 dark:text-gray-300">Live Active Users</div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-300">{t('history.liveActiveUsers')}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -509,10 +511,9 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                     <Eye className="w-5 h-5 text-blue-600" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">Real-time Updates</h3>
+                                    <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">{t('history.realtimeUpdates')}</h3>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                                        These statistics are updated in real-time and shared across all users.
-                                        The data persists across sessions and updates automatically when other users visit the app.
+                                        {t('history.realtimeDescription')}
                                     </p>
                                 </div>
                             </div>
@@ -520,16 +521,16 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
 
                         {/* Community Impact */}
                         <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-                            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Community Impact</h2>
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">{t('history.communityImpact')}</h2>
                             <div className="space-y-4">
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
                                         <Bus className="w-4 h-4 text-green-600" />
                                     </div>
                                     <div>
-                                        <div className="font-bold text-gray-900 dark:text-gray-100">Helping Commuters</div>
+                                        <div className="font-bold text-gray-900 dark:text-gray-100">{t('history.helpingCommuters')}</div>
                                         <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                            Together, we've helped thousands of people find their way around Dhaka
+                                            {t('history.helpingDescription')}
                                         </div>
                                     </div>
                                 </div>
@@ -538,9 +539,9 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onViewJo
                                         <MapPin className="w-4 h-4 text-blue-600" />
                                     </div>
                                     <div>
-                                        <div className="font-bold text-gray-900 dark:text-gray-100">Growing Community</div>
+                                        <div className="font-bold text-gray-900 dark:text-gray-100">{t('history.growingCommunity')}</div>
                                         <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                            Every search helps us improve the app for everyone
+                                            {t('history.growingDescription')}
                                         </div>
                                     </div>
                                 </div>

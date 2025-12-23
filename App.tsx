@@ -28,6 +28,7 @@ import {
 import { sortBusesByLocation } from './services/locationBasedSortService';
 import { DesktopNavbar } from './components/DesktopNavbar';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { useLanguage } from './contexts/LanguageContext';
 
 import NotificationBell from './components/NotificationBell';
 import NotificationBanner from './components/NotificationBanner';
@@ -262,16 +263,16 @@ const calculateFare = (route: BusRoute, fromId?: string, toId?: string): { min: 
 };
 
 // Helper: Format ETA
-const formatETA = (minutes: number): string => {
+const formatETA = (minutes: number, formatter: (n: number | string) => string = (n) => n.toString()): string => {
   if (minutes < 60) {
-    return `${Math.round(minutes)} min`;
+    return `${formatter(Math.round(minutes))} min`;
   }
   const hours = Math.floor(minutes / 60);
   const mins = Math.round(minutes % 60);
   if (mins === 0) {
-    return `${hours} ${hours === 1 ? 'hour' : 'hours'} `;
+    return `${formatter(hours)} ${hours === 1 ? 'hour' : 'hours'} `;
   }
-  return `${hours} ${hours === 1 ? 'hour' : 'hours'} ${mins} min`;
+  return `${formatter(hours)} ${hours === 1 ? 'hour' : 'hours'} ${formatter(mins)} min`;
 };
 
 
@@ -499,6 +500,9 @@ const IntercitySearchSection: React.FC<{
 };
 
 const App: React.FC = () => {
+  // Multi-language support
+  const { t, formatNumber } = useLanguage();
+
   // Polyfill for requestIdleCallback (Safari support)
   const requestIdleCallback = window.requestIdleCallback || ((cb: IdleRequestCallback) => {
     const start = Date.now();
@@ -1347,7 +1351,7 @@ const App: React.FC = () => {
         <div className="flex-1">
           <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">কই যাবো AI Assistant</h2>
           <p className={`text-xs font-bold flex items-center gap-1 ${isOnline ? 'text-green-600' : 'text-red-600'} `}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'} `}></span> {isOnline ? 'Online' : 'Offline'}
+            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-red-500'} `}></span> {isOnline ? t('common.online') : t('common.offline')}
           </p>
         </div>
       </div>
@@ -1362,9 +1366,9 @@ const App: React.FC = () => {
           <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
             <AlertTriangle className="w-8 h-8 text-orange-500" />
           </div>
-          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">You're Offline</h3>
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">{t('offline.youAreOffline')}</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs">
-            AI Assistant requires an internet connection. You can still add or update your API key while offline.
+            {t('offline.aiRequiresInternet')}
           </p>
 
         </div>
@@ -1374,10 +1378,10 @@ const App: React.FC = () => {
             {chatHistory.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
                 <Bot className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">ঢাকার বাস সম্পর্কে কিছু জানতে চাইলে, আমাকে জিজ্ঞেস করুন</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('ai.emptyState')}</p>
                 <div className="flex flex-wrap gap-2 justify-center mt-4">
-                  <button onClick={() => setAiQuery("মিরপুর ১০ থেকে বনানী যাওয়ার উপায় কি?")} className="text-xs bg-white dark:bg-slate-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">মিরপুর ১০ থেকে বনানী?</button>
-                  <button onClick={() => setAiQuery("ফার্মগেটের জন্য সেরা বাস কোনটি?")} className="text-xs bg-white dark:bg-slate-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">ফার্মগেটের জন্য সেরা বাস কোনটি?</button>
+                  <button onClick={() => setAiQuery(t('ai.example1'))} className="text-xs bg-white dark:bg-slate-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">{t('ai.exampleQuestion1')}</button>
+                  <button onClick={() => setAiQuery(t('ai.example2'))} className="text-xs bg-white dark:bg-slate-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 px-3 py-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">{t('ai.exampleQuestion2')}</button>
                 </div>
               </div>
             ) : (
@@ -1398,7 +1402,7 @@ const App: React.FC = () => {
             {!isOnline && (
               <div className="mb-3 bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" />
-                You need to be online to use AI Assistant
+                {t('offline.aiRequiresInternet')}
               </div>
             )}
             <form onSubmit={handleAiSubmit} className="flex gap-2 relative">
@@ -1406,7 +1410,7 @@ const App: React.FC = () => {
                 type="text"
                 value={aiQuery}
                 onChange={(e) => setAiQuery(e.target.value)}
-                placeholder={isOnline ? "Ask about a route..." : "Connect to internet to use AI"}
+                placeholder={isOnline ? t('ai.placeholder') : t('offline.aiRequiresInternet')}
                 disabled={!isOnline}
                 className="w-full bg-gray-100 dark:bg-slate-800 border-0 rounded-xl pl-4 pr-12 py-3 text-sm dark:text-gray-100 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 focus:bg-white dark:focus:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               />
@@ -1430,72 +1434,71 @@ const App: React.FC = () => {
         <div className="w-20 h-20 bg-dhaka-red rounded-3xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-red-200 rotate-3 hover:rotate-6 transition-transform">
           <Bus className="w-10 h-10" />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">🚍 Find Routes Across Bangladesh</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">🚍 {t('about.title')}</h1>
         <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-200">কই<span className="text-dhaka-red ml-2">যাবো</span> <span className="text-gray-600 dark:text-gray-400 text-lg">(KoyJabo)</span></h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">Version 1.0.0</p>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">{t('settings.version')} 1.0.0</p>
 
         <div className="text-left space-y-6 bg-slate-50 dark:bg-slate-800 p-8 rounded-3xl border border-gray-100 dark:border-gray-700">
           <p className="leading-relaxed text-gray-700 dark:text-gray-300 text-lg">
-            Travel anywhere in Bangladesh with confidence. Whether you're moving between districts, cities, towns, or local areas,
-            <span className="font-bold text-dhaka-green"> কই যাবো (KoyJabo)</span> helps you discover the best and most accurate route instantly.
+            {t('about.description')}
           </p>
 
 
           <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm mb-6">
-            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-lg">🚀 Your All-in-One Bangladesh Route Finder</h3>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-lg">{t('about.allInOne')}</h3>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-              KoyJabo is the ultimate <strong className="text-dhaka-green">Bangladesh route finder</strong> and travel companion. We bring together:
+              {t('about.allInOneDesc')}
             </p>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">🚌 Bus Routes</h4>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Complete database of <strong>local bus routes in Bangladesh</strong> and <strong>intercity bus routes</strong> (Dhaka to Chittagong, Sylhet, Cox's Bazar, etc.).</p>
+                <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">{t('about.busRoutesTitle')}</h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t('about.busRoutesDesc')}</p>
               </div>
               <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">🚆 Train & Metro</h4>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Up-to-date <strong>Bangladesh train routes</strong> and <strong>Dhaka Metro (MRT Line 6)</strong> schedules.</p>
+                <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">{t('about.trainMetroTitle')}</h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t('about.trainMetroDesc')}</p>
               </div>
               <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">✈️ Domestic Flights</h4>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Find <strong>Bangladesh domestic flights</strong> and air travel options quickly.</p>
+                <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">{t('about.flightsTitle')}</h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t('about.flightsDesc')}</p>
               </div>
               <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">🤖 AI Travel Assistant</h4>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Get smart <strong>Bangladesh travel itinerary AI</strong> suggestions and route planning.</p>
+                <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">{t('about.aiAssistantTitle')}</h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t('about.aiAssistantDesc')}</p>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-lg">✨ Why Choose KoyJabo?</h3>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-lg">{t('about.whyChoose')}</h3>
             <ul className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span><strong>Comprehensive Transport Search:</strong> From <strong>local bus routes</strong> to <strong>long-distance buses</strong>, we cover it all.</span>
+                <span><strong>{t('about.comprehensiveSearch')}:</strong> {t('about.comprehensiveSearchDesc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span><strong>Smart Fare Estimation:</strong> Use our <strong>travel cost calculator BD</strong> to plan your budget with accurate <strong>bus fare Bangladesh</strong> info.</span>
+                <span><strong>{t('about.smartFare')}:</strong> {t('about.smartFareDesc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span><strong>Tourist Friendly:</strong> Discover popular <strong>tourist spots in Bangladesh</strong> and <strong>how to reach Cox’s Bazar</strong> or Sylhet easily.</span>
+                <span><strong>{t('about.touristFriendly')}:</strong> {t('about.touristFriendlyDesc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span><strong>Real-Time & Offline:</strong> Access <strong>Bangladesh railway schedules</strong> and maps offline, or track live status online.</span>
+                <span><strong>{t('about.realTimeOffline')}:</strong> {t('about.realTimeOfflineDesc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <span><strong>AI-Powered Planning:</strong> Our <strong>AI travel assistant Bangladesh</strong> helps you find the <strong>best way to travel across Bangladesh</strong>.</span>
+                <span><strong>{t('about.aiPowered')}:</strong> {t('about.aiPoweredDesc')}</span>
               </li>
             </ul>
           </div>
 
           <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
-            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-lg">👥 Who Is It For?</h3>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-lg">{t('about.whoIsItFor')}</h3>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              Daily commuters, students, office goers, travelers, and anyone who wants a smooth, stress-free travel plan across Bangladesh.
+              {t('about.whoIsItForDesc')}
             </p>
           </div>
 
@@ -1504,13 +1507,13 @@ const App: React.FC = () => {
             className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-4"
           >
             <Download className="w-6 h-6" />
-            {isInstalling ? 'Installing...' : 'Install Now'}
+            {isInstalling ? t('common.loading') : t('home.installApp')}
           </button>
 
           <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-6 rounded-2xl border border-emerald-200 dark:border-emerald-800/50">
-            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-lg">🎯 Our Goal:</h3>
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-lg">{t('about.ourGoal')}</h3>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
-              Make travel across Bangladesh simpler, smarter, and more accessible for everyone.
+              {t('about.ourGoalDesc')}
             </p>
           </div>
 
@@ -1569,17 +1572,17 @@ const App: React.FC = () => {
     <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-y-auto w-full relative">
       <div className="max-w-3xl mx-auto p-6 md:p-12 pt-24 md:pt-24">
 
-        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100">Privacy Policy</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Last updated: November 26, 2025</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100">{t('privacy.title')}</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">{t('privacy.lastUpdated')}: November 26, 2025</p>
 
         <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed">
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">1. Introduction</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">1. {t('privacy.introduction')}</h2>
             <p>Welcome to কই যাবো. We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we handle your information when you use our bus route finder application for traveling across Bangladesh.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">2. Data We Do NOT Collect</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">2. {t('privacy.dataWeDoNotCollect')}</h2>
             <p>কই যাবো is designed with privacy in mind. We do NOT collect, store, or transmit:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Personal identification information (name, email, phone number)</li>
@@ -1591,7 +1594,7 @@ const App: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">3. Local Data Processing</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">3. {t('privacy.localDataProcessing')}</h2>
             <p><strong>Location Services:</strong> When you grant location permission, your GPS coordinates are processed entirely on your device to:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Show your position on the route map</li>
@@ -1602,7 +1605,7 @@ const App: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">4. Local Storage</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">4. {t('privacy.localStorage')}</h2>
             <p>We use your browser's local storage to save:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li><strong>Favorite buses:</strong> Your saved bus routes (stored locally on your device)</li>
@@ -1612,28 +1615,28 @@ const App: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">5. Third-Party Services</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">5. {t('privacy.thirdPartyServices')}</h2>
             <p><strong>Koy Jabo AI Assistant:</strong> Our built-in AI assistant processes your route queries to provide intelligent recommendations. Your questions are handled securely and are not stored permanently or shared with third parties.</p>
             <p className="mt-3"><strong>Google Maps:</strong> When you click "Real Map" to view routes in Google Maps, you'll be redirected to Google Maps. Google's privacy policy applies to that service.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">6. Cookies</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">6. {t('privacy.cookies')}</h2>
             <p>কই যাবো does not use cookies for tracking or analytics. We only use browser local storage for the features mentioned above.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">7. Children's Privacy</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">7. {t('privacy.childrensPrivacy')}</h2>
             <p>Our service is available to users of all ages. Since we don't collect any personal data, there are no special considerations for children's privacy.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">8. Changes to This Policy</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">8. {t('privacy.changesToPolicy')}</h2>
             <p>We may update this privacy policy from time to time. Any changes will be posted on this page with an updated "Last updated" date.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">9. Contact Us</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">9. {t('privacy.contactUs')}</h2>
             <p>If you have any questions about this privacy policy, please contact us through our <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">LinkedIn profile</a>.</p>
           </section>
 
@@ -1652,17 +1655,17 @@ const App: React.FC = () => {
   const renderTerms = () => (
     <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-y-auto w-full relative">
       <div className="max-w-3xl mx-auto p-6 md:p-12 pt-24 md:pt-24">
-        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100">Terms of Service</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Last updated: November 26, 2025</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100">{t('terms.title')}</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">{t('terms.lastUpdated')}: November 26, 2025</p>
 
         <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed">
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">1. Acceptance of Terms</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">1. {t('terms.acceptanceOfTerms')}</h2>
             <p>By accessing and using কই যাবো, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">2. Service Description</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">2. {t('terms.serviceDescription')}</h2>
             <p>কই যাবো is a free, web-based application that provides:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Bus route information across Bangladesh (inter-district, inter-city, local, and highway routes)</li>
@@ -1674,7 +1677,7 @@ const App: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">3. No Warranty</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">3. {t('terms.noWarranty')}</h2>
             <p>কই যাবো is provided "AS IS" and "AS AVAILABLE" without any warranties of any kind, either express or implied, including but not limited to:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Accuracy of bus routes, schedules, or fare information</li>
@@ -1685,7 +1688,7 @@ const App: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">4. Data Accuracy</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">4. {t('terms.dataAccuracy')}</h2>
             <p><strong>Important Notice:</strong> Bus routes, stops, timings, and fares are subject to change by transport authorities without notice. We make reasonable efforts to keep information current, but:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Routes may be modified or discontinued</li>
@@ -1697,7 +1700,7 @@ const App: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">5. Limitation of Liability</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">5. {t('terms.limitationOfLiability')}</h2>
             <p>To the maximum extent permitted by law, কই যাবো and its developers shall not be liable for:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Any direct, indirect, incidental, or consequential damages</li>
@@ -1708,7 +1711,7 @@ const App: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">6. User Responsibilities</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">6. {t('terms.userResponsibilities')}</h2>
             <p>When using কই যাবো, you agree to:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Use the service for lawful purposes only</li>
@@ -1720,19 +1723,19 @@ const App: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">7. Third-Party Services</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">7. {t('terms.thirdPartyServices')}</h2>
             <p><strong>Koy Jabo AI Assistant:</strong> Our AI assistant is provided as-is to help you navigate Bangladesh more easily. It is completely free and available to all users.</p>
             <p className="mt-2"><strong>Google Maps:</strong> Links to Google Maps are provided for convenience and are subject to Google's terms of service.</p>
             <p className="mt-2">We are not responsible for the availability, accuracy, or terms of these third-party services.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">8. Intellectual Property</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">8. {t('terms.intellectualProperty')}</h2>
             <p>The কই যাবো application, including its design, code, and content, is the property of its developers. Bus route data is compiled from publicly available sources and transport authority information.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">9. Service Modifications</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">9. {t('terms.serviceModifications')}</h2>
             <p>We reserve the right to:</p>
             <ul className="list-disc list-inside space-y-2 mt-2 ml-4">
               <li>Modify or discontinue the service at any time</li>
@@ -1743,12 +1746,12 @@ const App: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">10. Governing Law</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">10. {t('terms.governingLaw')}</h2>
             <p>These terms shall be governed by and construed in accordance with the laws of Bangladesh, without regard to its conflict of law provisions.</p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">11. Contact Information</h2>
+            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">11. {t('terms.contactUs')}</h2>
             <p>For questions about these terms, please contact us through our <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">LinkedIn profile</a>.</p>
           </section>
 
@@ -1812,8 +1815,8 @@ const App: React.FC = () => {
   const renderWhyUse = () => (
     <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-24 md:pt-24 overflow-y-auto w-full">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100 leading-tight">Why Use <span className="text-dhaka-green">কই যাবো</span>?</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">Your smart companion for navigating Bangladesh's bus network</p>
+        <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100 leading-tight">{t('whyUse.title')}</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">{t('whyUse.subtitle')}</p>
 
         <div className="space-y-6">
           {/* Benefit 1 */}
@@ -1823,9 +1826,9 @@ const App: React.FC = () => {
                 <Zap className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">⚡ Lightning Fast Search</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.lightningFast')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Find your bus route in seconds! Search in English or Bengali - our smart search understands both languages and finds the perfect bus for your journey.
+                  {t('whyUse.lightningFastDesc')}
                 </p>
               </div>
             </div>
@@ -1838,9 +1841,9 @@ const App: React.FC = () => {
                 <MapIcon className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">🗺️ Complete Route Database</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.completeRoute')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Access 200+ bus routes covering all major areas of Dhaka. From Mirpur to Motijheel, Uttara to Sadarghat - we've got every route mapped out for you.
+                  {t('whyUse.completeRouteDesc')}
                 </p>
               </div>
             </div>
@@ -1853,9 +1856,9 @@ const App: React.FC = () => {
                 <Bot className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">🤖 AI-Powered Assistant</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.aiPowered')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Not sure which bus to take? Ask our AI assistant! Get personalized route suggestions, travel tips, and answers to all your commute questions in natural language.
+                  {t('whyUse.aiPoweredDesc')}
                 </p>
               </div>
             </div>
@@ -1868,9 +1871,9 @@ const App: React.FC = () => {
                 <Coins className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">💰 Accurate Fare Calculator</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.accurateFare')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Know exactly how much your trip will cost before you board! Our fare calculator uses official 2022 rates and calculates based on actual distance traveled.
+                  {t('whyUse.accurateFareDesc')}
                 </p>
               </div>
             </div>
@@ -1883,9 +1886,9 @@ const App: React.FC = () => {
                 <Navigation className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">🧭 Live Navigation</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.liveNavigation')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Never miss your stop again! Our live navigation feature tracks your location and shows you exactly where you are on the route, with real-time updates.
+                  {t('whyUse.liveNavigationDesc')}
                 </p>
               </div>
             </div>
@@ -1898,9 +1901,9 @@ const App: React.FC = () => {
                 <Heart className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">❤️ Save Your Favorites</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.saveFavorites')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Take the same route every day? Save your favorite buses for quick access. Your daily commute just got a whole lot easier!
+                  {t('whyUse.saveFavoritesDesc')}
                 </p>
               </div>
             </div>
@@ -1913,9 +1916,9 @@ const App: React.FC = () => {
                 <Phone className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">🚨 Emergency Helpline Access</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.emergencyHelp')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Travel with peace of mind! Access emergency services (Police, Hospitals, Fire Stations) near your current location during navigation. One-tap calling to 80+ verified emergency contacts across Bangladesh including national helplines (999, 100, 102) and location-based services in all major cities.
+                  {t('whyUse.emergencyHelpDesc')}
                 </p>
               </div>
             </div>
@@ -1928,9 +1931,9 @@ const App: React.FC = () => {
                 <WifiOff className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">📡 Works Offline</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.worksOffline')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  No internet? No problem! The entire bus route database is stored on your device, so you can search for routes and check bus details even without a data connection.
+                  {t('whyUse.worksOfflineDesc')}
                 </p>
               </div>
             </div>
@@ -1943,9 +1946,9 @@ const App: React.FC = () => {
                 <Train className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">🚇 Metro Rail Integration</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.metroIntegration')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Complete MRT Line 6 information included! Find the best combination of bus and metro for your journey across Dhaka.
+                  {t('whyUse.metroIntegrationDesc')}
                 </p>
               </div>
             </div>
@@ -1958,9 +1961,9 @@ const App: React.FC = () => {
                 <Plane className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">✈️ Railway & Airport Finder</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('whyUse.railwayAirport')}</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Easily locate the nearest railway station and airport from your current location. Perfect for planning intercity travel and catching flights on time!
+                  {t('whyUse.railwayAirportDesc')}
                 </p>
               </div>
             </div>
@@ -1969,13 +1972,13 @@ const App: React.FC = () => {
 
         {/* CTA Section */}
         <div className="mt-12 bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-2xl p-8 text-white text-center shadow-lg dark:shadow-emerald-900/20">
-          <h2 className="text-2xl font-bold mb-3">Ready to Navigate Dhaka Like a Pro?</h2>
-          <p className="mb-6 opacity-90">Join thousands of commuters who trust কই যাবো for their daily travels</p>
+          <h2 className="text-2xl font-bold mb-3">{t('whyUse.readyToNavigate')}</h2>
+          <p className="mb-6 opacity-90">{t('whyUse.readyToNavigateDesc')}</p>
           <button
             onClick={() => setView(AppView.HOME)}
             className="bg-white text-emerald-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg"
           >
-            Start Finding Routes
+            {t('whyUse.startFinding')}
           </button>
         </div>
 
@@ -1988,18 +1991,18 @@ const App: React.FC = () => {
   const renderFAQ = () => (
     <div className="flex flex-col h-full bg-white dark:bg-slate-900 p-6 md:p-12 pt-24 md:pt-24 overflow-y-auto w-full">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100 leading-tight">Frequently Asked Questions</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">Everything you need to know about কই যাবো</p>
+        <h1 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100 leading-tight">{t('faq.title')}</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">{t('faq.subtitle')}</p>
 
         <div className="space-y-4">
           {/* FAQ 1 */}
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>What is কই যাবো?</span>
+              <span>{t('faq.q1')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> কই যাবো (Koi Jabo) means "Where to go?" in Bengali. It's a free web app that helps you find bus routes across Bangladesh. Simply search for your destination or starting point, and we'll show you which buses to take, their routes, and estimated fares - whether you're traveling within cities or between districts.
+              {t('faq.a1')}
             </p>
           </div>
 
@@ -2007,10 +2010,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>How do I search for a bus route?</span>
+              <span>{t('faq.q2')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> You can search in two ways: (1) Type the name of a bus, station, or area in the search box (works in both English and Bengali), or (2) Use the Route Finder to select your starting point and destination from the dropdown menus.
+              {t('faq.a2')}
             </p>
           </div>
 
@@ -2018,10 +2021,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>Is the app free to use?</span>
+              <span>{t('faq.q3')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> Yes! কই যাবো is completely free. No registration, no subscription, no hidden fees. We built this app to help Dhaka commuters navigate the city more easily.
+              {t('faq.a3')}
             </p>
           </div>
 
@@ -2029,10 +2032,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>Does it work offline?</span>
+              <span>{t('faq.q4')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> Yes! All bus routes and station data are stored locally on your device, so you can search for routes even without an internet connection. The AI Assistant and live navigation features require internet connectivity.
+              {t('faq.a4')}
             </p>
           </div>
 
@@ -2040,10 +2043,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>How accurate are the bus fares?</span>
+              <span>{t('faq.q5')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> Our fare calculator uses the official 2022 government-approved fare structure for Dhaka buses. Fares are calculated based on actual distance traveled. However, actual fares may vary slightly depending on the bus operator and current regulations.
+              {t('faq.a5')}
             </p>
           </div>
 
@@ -2051,10 +2054,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>What is the AI Assistant?</span>
+              <span>{t('faq.q6')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> The AI Assistant is powered by Koy Jabo Official AI Agent, our intelligent route-finding system. It can answer questions about bus routes, suggest the best routes for your journey, and provide travel tips. You can ask questions in natural language in both English and Bengali, just like talking to a friend!
+              {t('faq.a6')}
             </p>
           </div>
 
@@ -2062,10 +2065,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-red-300 dark:hover:border-red-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-red-500">Q:</span>
-              <span>How do I access Emergency Helplines?</span>
+              <span>{t('faq.q7')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> During live navigation, you'll see a red "Help Line" button beside your current location. Click it to access national emergency numbers (999, 100, 102, 199, 109) and nearest location-based services (Police Stations, Hospitals, Fire Stations). We cover 80+ emergency services across all major cities in Bangladesh with verified phone numbers for one-tap calling.
+              {t('faq.a7')}
             </p>
           </div>
 
@@ -2073,10 +2076,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>How do I use Live Navigation?</span>
+              <span>{t('faq.q8')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> Select a bus route, then click "Start Navigation". The app will use your device's GPS to show your current location on the route and alert you as you approach each stop. Make sure to allow location access when prompted.
+              {t('faq.a8')}
             </p>
           </div>
 
@@ -2084,10 +2087,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>Can I search in Bengali?</span>
+              <span>{t('faq.q9')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> Absolutely! You can search for buses and stations in both English and Bengali. For example, search "ফার্মগেট" or "Farmgate" - both will work perfectly.
+              {t('faq.a9')}
             </p>
           </div>
 
@@ -2095,10 +2098,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>Is my location data private?</span>
+              <span>{t('faq.q10')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> Yes! Your location data is only used locally on your device for navigation purposes and is never sent to our servers or shared with third parties. Check our Privacy Policy for more details.
+              {t('faq.a10')}
             </p>
           </div>
 
@@ -2106,25 +2109,25 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-emerald-300 dark:hover:border-emerald-500 transition-colors">
             <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-start gap-2">
               <span className="text-emerald-500">Q:</span>
-              <span>Who built this app?</span>
+              <span>{t('faq.q11')}</span>
             </h3>
             <p className="text-gray-700 dark:text-gray-300 ml-6 leading-relaxed">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">A:</span> কই যাবো was developed by Mejbaur Bahar Fagun, a software engineer passionate about solving real-world problems for Dhaka commuters. Connect on <a href="https://linkedin.com/in/mejbaur/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">LinkedIn</a>.
+              {t('faq.a11')}
             </p>
           </div>
         </div>
 
         {/* Still have questions? */}
         <div className="mt-12 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl p-8 text-center border border-blue-100 dark:border-slate-700">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">Still Have Questions?</h2>
-          <p className="text-gray-700 dark:text-gray-300 mb-6">Try asking our AI Assistant or reach out to us!</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{t('faq.stillHaveQuestions')}</h2>
+          <p className="text-gray-700 dark:text-gray-300 mb-6">{t('faq.tryAskingAI')}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => setView(AppView.AI_ASSISTANT)}
               className="bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-600 transition-all shadow-lg flex items-center justify-center gap-2"
             >
               <Bot className="w-5 h-5" />
-              Ask AI Assistant
+              {t('faq.askAI')}
             </button>
             <a
               href="https://linkedin.com/in/mejbaur/"
@@ -2133,7 +2136,7 @@ const App: React.FC = () => {
               className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg flex items-center justify-center gap-2"
             >
               <Linkedin className="w-5 h-5" />
-              Contact Developer
+              {t('faq.contactDeveloper')}
             </a>
           </div>
         </div>
@@ -2336,7 +2339,7 @@ const App: React.FC = () => {
             <button
               onClick={() => setView(AppView.LIVE_NAV)}
               className="ml-2 bg-gradient-to-r from-dhaka-green to-[#005c44] text-white p-2.5 rounded-xl font-bold shadow-lg shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center"
-              aria-label="Start Navigation"
+              aria-label={t('liveNav.startNavigation')}
             >
               <Navigation className="w-5 h-5" />
             </button>
@@ -2357,7 +2360,7 @@ const App: React.FC = () => {
             className="bg-dhaka-green text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-green-700 transition-colors flex items-center gap-2 mr-2"
           >
             <Navigation className="w-4 h-4" />
-            Start Navigation
+            {t('liveNav.startNavigation')}
           </button>
           <button
             onClick={(e) => toggleFavorite(e, selectedBus.id)}
@@ -2394,17 +2397,17 @@ const App: React.FC = () => {
                             'bg-green-200 text-green-700'
                         }
    `}>
-                        {idx + 1}
+                        {formatNumber(idx + 1)}
                       </div>
                       {idx < selectedTrip.steps.length - 1 && <div className="w-0.5 h-full bg-gray-200 my-1"></div>}
                     </div>
                     <div className="pb-2 flex-1">
                       <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 leading-tight">{step.instruction}</p>
                       {step.type === 'bus' && step.busRoute?.id === selectedBus.id && (
-                        <span className="inline-block mt-1 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Current Viewing</span>
+                        <span className="inline-block mt-1 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">{t('busDetails.currentViewing')}</span>
                       )}
                       {step.type === 'bus' && step.busRoute?.id !== selectedBus.id && (
-                        <span className="inline-block mt-1 text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">Click to View</span>
+                        <span className="inline-block mt-1 text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">{t('busDetails.clickToView')}</span>
                       )}
                     </div>
                   </div>
@@ -2430,12 +2433,12 @@ const App: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white mb-2 shadow-lg shadow-orange-500/30">
                 <Bus className="w-5 h-5" />
               </div>
-              <span className="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold tracking-wider">Stops</span>
+              <span className="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold tracking-wider">{t('busDetails.stops')}</span>
               <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
                 {fareStart && fareEnd ? (
-                  Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
+                  formatNumber(Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1)
                 ) : (
-                  selectedBus.stops.length
+                  formatNumber(selectedBus.stops.length)
                 )}
               </span>
             </div>
@@ -2443,12 +2446,12 @@ const App: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center text-white mb-2 shadow-lg shadow-amber-500/30">
                 <Coins className="w-5 h-5" />
               </div>
-              <span className="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold tracking-wider">{fareStart && fareEnd ? 'Fare' : 'Max Fare'}</span>
+              <span className="text-[10px] text-gray-600 dark:text-gray-400 uppercase font-bold tracking-wider">{fareStart && fareEnd ? t('home.fare') : t('busDetails.maxFare')}</span>
               <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
                 {fareStart && fareEnd && fareInfo ? (
-                  `৳${fareInfo.min}${fareInfo.max !== fareInfo.min ? ` - ${fareInfo.max}` : ''} `
+                  `৳${formatNumber(fareInfo.min)}${fareInfo.max !== fareInfo.min ? ` - ${formatNumber(fareInfo.max)}` : ''} `
                 ) : (
-                  `~৳${generalFareInfo.max} `
+                  `~৳${formatNumber(generalFareInfo.max)} `
                 )}
               </span>
             </div>
@@ -2462,12 +2465,12 @@ const App: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white mb-2 shadow-lg shadow-indigo-500/30">
                     <Gauge className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{userLocation ? 'Speed' : 'Stops'}</span>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{userLocation ? t('busDetails.speed') : t('busDetails.stops')}</span>
                   <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
                     {userLocation ? (
-                      `${(speed || 0).toFixed(0)} km / h`
+                      `${formatNumber((speed || 0).toFixed(0))} km / h`
                     ) : (
-                      Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1
+                      formatNumber(Math.abs(selectedBus.stops.indexOf(fareEnd) - selectedBus.stops.indexOf(fareStart)) + 1)
                     )}
                   </span>
                 </div>
@@ -2475,18 +2478,18 @@ const App: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white mb-2 shadow-lg shadow-pink-500/30">
                     <Flag className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Distance</span>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('busDetails.awayFrom')}</span>
                   <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
-                    {fareInfo ? `${fareInfo.distance.toFixed(1)} km` : '-- km'}
+                    {fareInfo ? `${formatNumber(fareInfo.distance.toFixed(1))} km` : '-- km'}
                   </span>
                 </div>
                 <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col items-center text-center justify-center">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white mb-2 shadow-lg shadow-emerald-500/30">
                     <Clock className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ETA</span>
+                  <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('busDetails.eta')}</span>
                   <span className="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">
-                    {fareInfo ? formatETA((fareInfo.distance / 15) * 60) : '--'}
+                    {fareInfo ? formatETA((fareInfo.distance / 15) * 60, formatNumber) : '--'}
                   </span>
                 </div>
               </div>
@@ -2497,10 +2500,10 @@ const App: React.FC = () => {
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-gray-700 overflow-hidden w-full">
             <div className="px-4 py-3 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-slate-700/30">
               <h3 className="font-bold text-gray-700 dark:text-gray-200 text-sm flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div> Live View
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div> {t('busDetails.liveView')}
               </h3>
-              <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded text-gray-500 font-medium hidden md:block">Click & Drag to pan</span>
-              <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded text-gray-500 font-medium md:hidden">Scroll to pan</span>
+              <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded text-gray-500 font-medium hidden md:block">{t('busDetails.clickDragPan')}</span>
+              <span className="text-[10px] bg-white border border-gray-200 px-2 py-0.5 rounded text-gray-500 font-medium md:hidden">{t('busDetails.scrollToPan')}</span>
             </div>
             <div className="w-full">
               <MapVisualizer
@@ -2520,11 +2523,11 @@ const App: React.FC = () => {
           {/* Fare Calculator */}
           <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2 text-sm">
-              <Coins className="w-4 h-4 text-yellow-500" /> Stop-to-Stop Fare
+              <Coins className="w-4 h-4 text-yellow-500" /> {t('busDetails.stopToStopFare')}
             </h3>
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
-                <label className="text-[10px] font-bold text-gray-400 dark:text-gray-300 uppercase mb-1 block">From</label>
+                <label className="text-[10px] font-bold text-gray-400 dark:text-gray-300 uppercase mb-1 block">{t('liveNav.homeFrom')}</label>
                 <select
                   className="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-dhaka-green/20 dark:text-gray-200"
                   value={fareStart}
@@ -2536,7 +2539,7 @@ const App: React.FC = () => {
                     }
                   }}
                 >
-                  <option value="">Select...</option>
+                  <option value="">{t('common.select')}</option>
                   {selectedBus.stops.map(id => {
                     const s = STATIONS[id] || METRO_STATIONS[id] || RAILWAY_STATIONS[id] || AIRPORTS[id];
                     return s ? <option key={id} value={id}>{s.name}</option> : null;
@@ -2544,7 +2547,7 @@ const App: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-bold text-gray-400 dark:text-gray-300 uppercase mb-1 block">To</label>
+                <label className="text-[10px] font-bold text-gray-400 dark:text-gray-300 uppercase mb-1 block">{t('liveNav.homeTo')}</label>
                 <select
                   className="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-dhaka-green/20 disabled:opacity-50 disabled:cursor-not-allowed dark:text-gray-200"
                   value={fareEnd}
@@ -2557,7 +2560,7 @@ const App: React.FC = () => {
                   }}
                   disabled={!fareStart}
                 >
-                  <option value="">{fareStart ? 'Select...' : 'Select From first'}</option>
+                  <option value="">{fareStart ? t('common.select') : t('busDetails.selectFromFirst')}</option>
                   {selectedBus.stops.map(id => {
                     const s = STATIONS[id] || METRO_STATIONS[id] || RAILWAY_STATIONS[id] || AIRPORTS[id];
                     return s ? <option key={id} value={id}>{s.name}</option> : null;
@@ -2568,21 +2571,21 @@ const App: React.FC = () => {
             {fareInfo ? (
               <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-xl border border-green-100 dark:border-green-800 flex justify-between items-center animate-in fade-in slide-in-from-top-2">
                 <div>
-                  <p className="text-[10px] text-green-600 dark:text-green-400 font-bold uppercase">Estimated Cost</p>
-                  <p className="text-xs text-green-600 dark:text-green-400">Distance: {fareInfo.distance.toFixed(1)} km</p>
+                  <p className="text-[10px] text-green-600 dark:text-green-400 font-bold uppercase">{t('busDetails.estimatedCost')}</p>
+                  <p className="text-xs text-green-600 dark:text-green-400">{t('busDetails.awayFrom')}: {formatNumber(fareInfo.distance.toFixed(1))} km</p>
                 </div>
-                <span className="text-xl font-bold text-green-800 dark:text-green-300">৳{fareInfo.min} - {fareInfo.max}</span>
+                <span className="text-xl font-bold text-green-800 dark:text-green-300">৳{formatNumber(fareInfo.min)} - {formatNumber(fareInfo.max)}</span>
               </div>
             ) : (
               <div className="bg-gray-50 dark:bg-slate-700 p-3 rounded-xl border border-gray-100 dark:border-gray-600 text-center">
-                <p className="text-xs text-gray-400 dark:text-gray-300">Select start and end stops to calculate fare</p>
+                <p className="text-xs text-gray-400 dark:text-gray-300">{t('busDetails.selectStartEnd')}</p>
               </div>
             )}
           </div>
 
           {/* Full Route List */}
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-gray-700 overflow-hidden">
-            <h3 className="font-bold text-gray-700 dark:text-gray-200 px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/30 dark:bg-slate-700/30 text-sm">Full Route List</h3>
+            <h3 className="font-bold text-gray-700 dark:text-gray-200 px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/30 dark:bg-slate-700/30 text-sm">{t('busDetails.fullRouteList')}</h3>
             <div className="relative">
               <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-gray-100 dark:bg-gray-700"></div>
               <div className="space-y-0">
@@ -2647,27 +2650,27 @@ const App: React.FC = () => {
                           <div className="flex items-center justify-between gap-2">
                             <p className={`text-sm group-hover:text-dhaka-green transition-colors ${isFirst || isLast || isNearest || isHighlighted || isUserStart || isUserEnd ? 'font-bold text-gray-900 dark:text-gray-100' : 'font-medium text-gray-700 dark:text-gray-300'} ${isNearest && isWithinRange && idx < (nearestStopIndex !== -1 ? selectedBus.stops.indexOf(validStopIds[nearestStopIndex]) : -1) ? 'text-gray-400 line-through decoration-gray-300' : ''} `}>
                               {station.name}
-                              {isNearest && isWithinRange && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">You</span>}
-                              {isNearest && !isWithinRange && <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{(nearestStopDistance / 1000).toFixed(1)}km away from {globalNearestStationName || 'location'}</span>}
+                              {isNearest && isWithinRange && <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{t('busDetails.you')}</span>}
+                              {isNearest && !isWithinRange && <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wide">{formatNumber((nearestStopDistance / 1000).toFixed(1))} km {t('emergency.away')}</span>}
 
                               {/* Start Badge */}
-                              {isUserStart && !isTransfer && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Start</span>}
+                              {isUserStart && !isTransfer && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">{t('busDetails.start')}</span>}
 
                               {/* Destination Badge */}
-                              {isUserEnd && !isTransfer && <span className="ml-2 text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Destination</span>}
+                              {isUserEnd && !isTransfer && <span className="ml-2 text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">{t('busDetails.destination')}</span>}
 
                               {/* Transit Badge */}
-                              {isTransfer && (isUserStart || isUserEnd) && <span className="ml-2 text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">Transit</span>}
+                              {isTransfer && (isUserStart || isUserEnd) && <span className="ml-2 text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full uppercase tracking-wide font-bold">{t('busDetails.transit')}</span>}
                             </p>
                             {/* Helpline Button - Show beside current location */}
                             {isNearest && isWithinRange && userLocation && (
                               <button
                                 onClick={() => setShowEmergencyModal(true)}
                                 className="shrink-0 bg-dhaka-red hover:bg-red-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-1"
-                                aria-label="Emergency Helplines"
+                                aria-label={t('liveNav.emergencyHelplines')}
                               >
                                 <Phone className="w-3 h-3" />
-                                Help
+                                {t('busDetails.help')}
                               </button>
                             )}
                           </div>
@@ -2808,7 +2811,7 @@ const App: React.FC = () => {
               }}
               className={`flex-1 max-w-[50%] py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer relative z-50 ${searchMode === 'TEXT' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
             >
-              <Search className="w-4 h-4" /> Bus or Place
+              <Search className="w-4 h-4" /> {t('home.localBusSearch')}
             </button>
             <button
               onClick={(e) => {
@@ -2819,7 +2822,7 @@ const App: React.FC = () => {
               }}
               className={`flex-1 max-w-[50%] py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer relative z-50 ${searchMode === 'ROUTE' ? 'bg-white text-dhaka-green shadow-sm ring-1 ring-white' : 'bg-black/10 text-white/70 hover:bg-black/20'} `}
             >
-              <MapPin className="w-4 h-4" /> Route
+              <MapPin className="w-4 h-4" /> {t('home.routeFinder')}
             </button>
           </div>
 
@@ -2832,7 +2835,7 @@ const App: React.FC = () => {
                   </div>
                   <input
                     type="text"
-                    placeholder="Search bus or place..."
+                    placeholder={t('home.searchPlaceholder')}
                     className="w-full pl-12 pr-12 py-3.5 bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-400/30 dark:focus:ring-green-500/30 transition-all text-base shadow-sm font-medium placeholder:text-gray-400 dark:placeholder-gray-500"
                     value={inputValue}
                     onChange={(e) => {
@@ -2975,7 +2978,7 @@ const App: React.FC = () => {
                     options={sortedStations}
                     value={fromStation}
                     onChange={setFromStation}
-                    placeholder="From"
+                    placeholder={t('common.from')}
                   />
                 </div>
                 <div className="flex items-center justify-center pt-2">
@@ -2999,7 +3002,7 @@ const App: React.FC = () => {
                     options={sortedStations}
                     value={toStation}
                     onChange={setToStation}
-                    placeholder={fromStation ? "To" : "To"}
+                    placeholder={t('common.to')}
                     disabled={!fromStation}
                   />
                 </div>
@@ -3113,19 +3116,19 @@ const App: React.FC = () => {
                 onClick={() => handleFilterChange('ALL')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${listFilter === 'ALL' ? 'bg-white dark:bg-slate-700 shadow-sm text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'} `}
               >
-                All Dhaka Local Buses
+                {t('home.allDhakaLocalBuses')}
               </button>
               <button
                 onClick={() => handleFilterChange('FAVORITES')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${listFilter === 'FAVORITES' ? 'bg-white dark:bg-slate-700 shadow-sm text-red-500' : 'text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'} `}
               >
-                <Heart className="w-4 h-4 fill-current" /> Favorites
+                <Heart className="w-4 h-4 fill-current" /> {t('home.favorites')}
               </button>
             </div>
 
             <div className="flex items-center justify-between px-2">
-              <h3 className="font-bold text-dhaka-dark dark:text-gray-100 text-lg">{listFilter === 'FAVORITES' ? 'Saved Routes' : 'All Buses'}</h3>
-              <span className="text-[10px] bg-gray-200 dark:bg-slate-700 px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-300 font-bold">{filteredBuses.length}</span>
+              <h3 className="font-bold text-dhaka-dark dark:text-gray-100 text-lg">{listFilter === 'FAVORITES' ? t('home.savedRoutes') : t('home.allBuses')}</h3>
+              <span className="text-[10px] bg-gray-200 dark:bg-slate-700 px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-300 font-bold">{formatNumber(filteredBuses.length)}</span>
             </div>
           </div>
         </div>
@@ -3283,7 +3286,10 @@ const App: React.FC = () => {
                           bus.type === 'AC' ? 'bg-blue-50 text-blue-700' :
                             'bg-orange-50 text-orange-700'
                         } `}>
-                        {bus.type}
+                        {bus.type === 'Local' ? t('common.local') :
+                          bus.type === 'Sitting' ? t('common.sitting') :
+                            bus.type === 'AC' ? t('common.ac') :
+                              bus.type}
                       </span>
                     </div>
                   </div>
@@ -3298,7 +3304,7 @@ const App: React.FC = () => {
                 </div>
                 <div className="mt-1.5 md:mt-2 flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-700/50 px-2 py-1 rounded-md w-fit">
                   <Coins className="w-3 h-3 text-amber-600 dark:text-amber-400" />
-                  <span>Est. Fare: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
+                  <span>{t('home.estimatedFare')}: ৳{estimatedFare.min} - ৳{estimatedFare.max}</span>
                 </div>
               </div>
             );
@@ -3419,39 +3425,39 @@ const App: React.FC = () => {
                     <Bus className="w-12 h-12" />
                   </div>
 
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Install কই যাবো</h1>
-                  <p className="text-gray-500 dark:text-gray-400 mb-8">Get the app on your device for a better experience</p>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('install.title')}</h1>
+                  <p className="text-gray-500 dark:text-gray-400 mb-8">{t('install.subtitle')}</p>
 
                   {/* Check if already installed */}
                   {/* Check if already installed - Only check display-mode: standalone, ignore localStorage to allow reinstall */}
                   {(window.matchMedia('(display-mode: standalone)').matches) ? (
                     <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-2xl p-8 mb-8">
                       <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">App Already Installed!</h2>
+                      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{t('install.alreadyInstalled')}</h2>
                       <p className="text-gray-700 dark:text-gray-300 mb-6">
-                        You're using the installed version of কই যাবো. Enjoy the full app experience!
+                        {t('install.enjoyFullApp')}
                       </p>
 
                       {/* Uninstall Instructions */}
                       <div className="bg-white dark:bg-slate-800 rounded-xl p-6 text-left">
                         <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-                          <Info className="w-5 h-5 text-blue-500" /> How to Uninstall
+                          <Info className="w-5 h-5 text-blue-500" /> {t('install.howToUninstall')}
                         </h3>
                         <div className="space-y-4 text-sm text-gray-700 dark:text-gray-300">
                           <div>
-                            <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">On Android (Chrome):</p>
+                            <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">{t('install.onAndroid')}</p>
                             <ol className="list-decimal list-inside space-y-1 ml-2">
-                              <li>Long press the app icon on home screen</li>
-                              <li>Tap "Uninstall" or "App info" → "Uninstall"</li>
-                              <li>Confirm "OK"</li>
+                              <li>{t('install.longPressIcon')}</li>
+                              <li>{t('install.tapUninstall')}</li>
+                              <li>{t('install.confirmOK')}</li>
                             </ol>
                           </div>
                           <div>
-                            <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">On iOS (Safari):</p>
+                            <p className="font-bold text-gray-900 dark:text-gray-100 mb-1">{t('install.onIOS')}</p>
                             <ol className="list-decimal list-inside space-y-1 ml-2">
-                              <li>Long press the app icon on home screen</li>
-                              <li>Tap "Remove App"</li>
-                              <li>Confirm "Delete App"</li>
+                              <li>{t('install.longPressIcon')}</li>
+                              <li>{t('install.tapRemoveApp')}</li>
+                              <li>{t('install.confirmDelete')}</li>
                             </ol>
                           </div>
                         </div>
@@ -3465,30 +3471,30 @@ const App: React.FC = () => {
                         className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl font-bold text-white text-lg shadow-2xl shadow-emerald-500/40 hover:shadow-3xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-3 mx-auto mb-8"
                       >
                         <Download className="w-6 h-6" />
-                        {isInstalling ? 'Installing...' : 'Install Now'}
+                        {isInstalling ? t('install.installing') : t('install.installButton')}
                       </button>
 
                       {/* Benefits */}
                       <div className="grid md:grid-cols-2 gap-4 mb-8 text-left">
                         <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl border border-emerald-100">
                           <CheckCircle2 className="w-8 h-8 text-emerald-600 mb-3" />
-                          <h3 className="font-bold text-gray-900 mb-2">Works Offline</h3>
-                          <p className="text-sm text-gray-700">Access bus routes without internet connection</p>
+                          <h3 className="font-bold text-gray-900 mb-2">{t('install.worksOffline')}</h3>
+                          <p className="text-sm text-gray-700">{t('install.worksOfflineDesc')}</p>
                         </div>
                         <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-2xl border border-blue-100">
                           <CheckCircle2 className="w-8 h-8 text-blue-600 mb-3" />
-                          <h3 className="font-bold text-gray-900 mb-2">Faster Loading</h3>
-                          <p className="text-sm text-gray-700">Instant access from your home screen</p>
+                          <h3 className="font-bold text-gray-900 mb-2">{t('install.fasterLoading')}</h3>
+                          <p className="text-sm text-gray-700">{t('install.fasterLoadingDesc')}</p>
                         </div>
                         <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
                           <CheckCircle2 className="w-8 h-8 text-purple-600 mb-3" />
-                          <h3 className="font-bold text-gray-900 mb-2">Native Experience</h3>
-                          <p className="text-sm text-gray-700">Feels like a real app on your device</p>
+                          <h3 className="font-bold text-gray-900 mb-2">{t('install.nativeExperience')}</h3>
+                          <p className="text-sm text-gray-700">{t('install.nativeExperienceDesc')}</p>
                         </div>
                         <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl border border-orange-100">
                           <CheckCircle2 className="w-8 h-8 text-orange-600 mb-3" />
-                          <h3 className="font-bold text-gray-900 mb-2">No App Store</h3>
-                          <p className="text-sm text-gray-700">Install directly without Play Store</p>
+                          <h3 className="font-bold text-gray-900 mb-2">{t('install.noAppStore')}</h3>
+                          <p className="text-sm text-gray-700">{t('install.noAppStoreDesc')}</p>
                         </div>
                       </div>
 
@@ -3503,16 +3509,16 @@ const App: React.FC = () => {
                             {isInstalling ? (
                               <>
                                 <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
-                                Installing...
+                                {t('install.installing')}
                               </>
                             ) : (
                               <>
                                 <Download className="w-6 h-6" />
-                                Install Now
+                                {t('install.installButton')}
                               </>
                             )}
                           </button>
-                          <p className="text-xs text-gray-400 text-center">Free • No registration • Works on all devices</p>
+                          <p className="text-xs text-gray-400 text-center">{t('install.freeNoRegistration')}</p>
                         </div>
                       )}
                     </div>
@@ -3540,14 +3546,14 @@ const App: React.FC = () => {
                 className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all duration-300 transform ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20 scale-105' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:scale-105'} `}
               >
                 <MapIcon className={`w-6 h-6 transition-all duration-300 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-900 animate-pulse' : 'text-gray-400 dark:text-gray-500'} `} />
-                <span className="text-[10px] font-bold uppercase tracking-wide">{isInDhaka ? 'Home' : 'DhakaCity'}</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide">{t('nav.home')}</span>
               </button>
               <button
                 onClick={() => setView(AppView.AI_ASSISTANT)}
                 className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.AI_ASSISTANT ? 'border-purple-500 text-purple-600 dark:text-purple-400 bg-purple-50/50 dark:bg-purple-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
               >
                 <Sparkles className={`w-6 h-6 ${view === AppView.AI_ASSISTANT ? 'text-purple-600 dark:text-purple-400 fill-purple-100 dark:fill-purple-900' : 'text-gray-400 dark:text-gray-500'} `} />
-                <span className="text-[10px] font-bold uppercase tracking-wide">AI Help</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide">{t('ai.title')}</span>
               </button>
               <button
                 onClick={() => {
@@ -3563,14 +3569,14 @@ const App: React.FC = () => {
                 className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all duration-300 transform ${!isInDhaka && view === AppView.HOME && primarySearch === 'INTERCITY' ? 'border-teal-500 text-teal-600 dark:text-teal-400 bg-teal-50/50 dark:bg-teal-900/20 scale-105' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:scale-105'} `}
               >
                 <Train className={`w-6 h-6 transition-all duration-300 ${!isInDhaka && view === AppView.HOME && primarySearch === 'INTERCITY' ? 'text-teal-600 dark:text-teal-400 fill-teal-100 dark:fill-teal-900 animate-pulse' : 'text-gray-400 dark:text-gray-500'} `} />
-                <span className="text-[10px] font-bold uppercase tracking-wide">Intercity</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide">{t('intercity.title')}</span>
               </button>
               <button
                 onClick={() => setView(AppView.ABOUT)}
                 className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.ABOUT ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
               >
                 <Info className={`w-6 h-6 ${view === AppView.ABOUT ? 'text-orange-600 dark:text-orange-400 fill-orange-100 dark:fill-orange-900' : 'text-gray-400 dark:text-gray-500'} `} />
-                <span className="text-[10px] font-bold uppercase tracking-wide">About</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide">{t('nav.about')}</span>
               </button>
             </div>
           </nav>
@@ -3585,7 +3591,7 @@ const App: React.FC = () => {
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
             <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
               <div className="flex justify-between items-center mb-8">
-                <h2 className="text-xl font-bold text-dhaka-dark dark:text-gray-100">Menu</h2>
+                <h2 className="text-xl font-bold text-dhaka-dark dark:text-gray-100">{t('common.menu')}</h2>
                 <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full" aria-label="Close menu">
                   <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                 </button>
@@ -3596,37 +3602,37 @@ const App: React.FC = () => {
                   onClick={() => { setView(AppView.AI_ASSISTANT); setIsMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.AI_ASSISTANT ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800' : ''} `}
                 >
-                  <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" /> AI Assistant
+                  <Bot className="w-5 h-5 text-purple-600 dark:text-purple-400" /> {t('ai.title')}
                 </button>
                 <button
                   onClick={() => { setView(AppView.ABOUT); setIsMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.ABOUT ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800' : ''} `}
                 >
-                  <Info className="w-5 h-5 text-purple-500" /> About
+                  <Info className="w-5 h-5 text-purple-500" /> {t('nav.about')}
                 </button>
                 <button
                   onClick={() => { setView(AppView.WHY_USE); setIsMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.WHY_USE ? 'bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800' : ''} `}
                 >
-                  <Sparkles className="w-5 h-5 text-pink-600 dark:text-pink-400" /> Why Use কই যাবো
+                  <Sparkles className="w-5 h-5 text-pink-600 dark:text-pink-400" /> {t('home.whyUse')}
                 </button>
                 <button
                   onClick={() => { setView(AppView.FAQ); setIsMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.FAQ ? 'bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800' : ''} `}
                 >
-                  <FileText className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> Q&A
+                  <FileText className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> {t('nav.faq')}
                 </button>
                 <button
                   onClick={() => { setView(AppView.HISTORY); setIsMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.HISTORY ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800' : ''}`}
                 >
-                  <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> History
+                  <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" /> {t('nav.history')}
                 </button>
                 <button
                   onClick={() => { setView(AppView.SETTINGS); setIsMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.SETTINGS ? 'bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800' : ''}`}
                 >
-                  <Settings className="w-5 h-5 text-purple-600 dark:text-purple-400" /> Settings
+                  <Settings className="w-5 h-5 text-purple-600 dark:text-purple-400" /> {t('nav.settings')}
                 </button>
 
 
@@ -3636,26 +3642,26 @@ const App: React.FC = () => {
                   onClick={() => { setView(AppView.INSTALL_APP); setIsMenuOpen(false); }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors ${view === AppView.INSTALL_APP ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800' : ''}`}
                 >
-                  <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Install App
+                  <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> {t('home.installApp')}
                 </button>
 
                 <button
                   onClick={() => { setView(AppView.PRIVACY); setIsMenuOpen(false); }}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
                 >
-                  <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Privacy Policy
+                  <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> {t('nav.privacy')}
                 </button>
                 <button
                   onClick={() => { setView(AppView.TERMS); setIsMenuOpen(false); }}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
                 >
-                  <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" /> Terms of Service
+                  <FileText className="w-5 h-5 text-orange-600 dark:text-orange-400" /> {t('nav.terms')}
                 </button>
               </div>
 
               <div className="pt-6 border-t border-gray-100">
                 <p className="text-xs text-center text-gray-400">
-                  কই যাবো v1.0.0
+                  {t('common.appName')} {t('settings.version')} {formatNumber('1.0.0')}
                 </p>
               </div>
             </div>
@@ -3747,7 +3753,7 @@ const App: React.FC = () => {
           selectedRoute={selectedBus}
         />
       </div>
-    </NotificationProvider>
+    </NotificationProvider >
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Search } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface Station {
     id: string;
@@ -16,6 +17,7 @@ interface SearchableSelectProps {
 }
 
 export const SearchableSelect: React.FC<SearchableSelectProps> = ({ options, value, onChange, placeholder, disabled }) => {
+    const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const wrapperRef = useRef<HTMLDivElement>(null);
@@ -99,7 +101,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({ options, val
                             </div>
                         ))
                     ) : (
-                        <div className="px-4 py-3 text-xs text-gray-400 text-center">No stations found</div>
+                        <div className="px-4 py-3 text-xs text-gray-400 text-center">{t('home.noResults')}</div>
                     )}
                 </div>
             )}

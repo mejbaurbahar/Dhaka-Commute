@@ -18,12 +18,14 @@ import {
     type DailyJourney,
     type JourneyStop,
 } from '../services/journeyTrackerService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface DailyJourneyViewProps {
     onBack: () => void;
 }
 
 const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
+    const { t, formatNumber } = useLanguage();
     const [todayJourney, setTodayJourney] = useState<DailyJourney | null>(null);
     const [history, setHistory] = useState<DailyJourney[]>([]);
     const [refreshKey, setRefreshKey] = useState(0);
@@ -45,7 +47,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
     }, [refreshKey]);
 
     const handleClearToday = () => {
-        if (confirm('Are you sure you want to clear today\'s journey?')) {
+        if (confirm(t('journey.clearConfirm'))) {
             clearTodayJourney();
             setRefreshKey((k) => k + 1);
         }
@@ -67,9 +69,9 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
         yesterday.setDate(yesterday.getDate() - 1);
 
         if (dateStr === today.toISOString().split('T')[0]) {
-            return 'Today';
+            return t('journey.today');
         } else if (dateStr === yesterday.toISOString().split('T')[0]) {
-            return 'Yesterday';
+            return t('journey.yesterday');
         } else {
             return date.toLocaleDateString('en-US', {
                 month: 'short',
@@ -92,7 +94,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
                     </button>
                     <h1 className="text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                         <Calendar className="w-5 h-5 md:w-6 md:h-6 text-emerald-600 shrink-0" />
-                        Daily Journey
+                        {t('journey.title')}
                     </h1>
                     {todayJourney && todayJourney.points.length > 0 && (
                         <button
@@ -121,26 +123,26 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
                             <div className="grid grid-cols-3 gap-3 mb-6">
                                 <div className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
                                     <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                                        Distance
+                                        {t('journey.distance')}
                                     </div>
                                     <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                                        {formatDistance(todayJourney.totalDistance)}
+                                        {formatNumber(formatDistance(todayJourney.totalDistance))}
                                     </div>
                                 </div>
                                 <div className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
                                     <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                                        Duration
+                                        {t('journey.duration')}
                                     </div>
                                     <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                                        {formatDuration(todayJourney.totalDuration)}
+                                        {formatNumber(formatDuration(todayJourney.totalDuration))}
                                     </div>
                                 </div>
                                 <div className="bg-white dark:bg-slate-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
                                     <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                                        Stops
+                                        {t('journey.stops')}
                                     </div>
                                     <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                                        {todayJourney.stops.filter((s) => s.isSignificant).length}
+                                        {formatNumber(todayJourney.stops.filter((s) => s.isSignificant).length)}
                                     </div>
                                 </div>
                             </div>
@@ -159,18 +161,18 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-start justify-between gap-2 mb-1">
                                                     <h3 className="font-bold text-gray-900 dark:text-gray-100">
-                                                        Stop #{index + 1}
+                                                        {t('journey.stopNumber')} #{formatNumber(index + 1)}
                                                     </h3>
                                                     <span className="text-xs text-gray-500 dark:text-gray-400">
-                                                        {formatTime(stop.arrivalTime)}
+                                                        {formatNumber(formatTime(stop.arrivalTime))}
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                                    {stop.location.latitude.toFixed(4)}, {stop.location.longitude.toFixed(4)}
+                                                    {formatNumber(stop.location.latitude.toFixed(4))}, {formatNumber(stop.location.longitude.toFixed(4))}
                                                 </p>
                                                 <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                                                     <Clock className="w-3 h-3" />
-                                                    <span>Stayed {formatDuration(stop.duration)}</span>
+                                                    <span>{t('journey.stayed')} {formatNumber(formatDuration(stop.duration))}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -180,7 +182,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
                                             <div className="ml-5 mt-3 pl-5 border-l-2 border-dashed border-gray-200 dark:border-gray-700 py-2">
                                                 <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                                                     <Navigation className="w-3 h-3" />
-                                                    <span>Traveled to next location</span>
+                                                    <span>{t('journey.traveledToNext')}</span>
                                                 </div>
                                             </div>
                                         )}
@@ -194,11 +196,11 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
                                             <div className="flex items-center gap-2 mb-1">
                                                 <Circle className="w-3 h-3 text-blue-600 dark:text-blue-400 animate-pulse" />
                                                 <span className="text-sm font-bold text-blue-900 dark:text-blue-100">
-                                                    Current Location
+                                                    {t('journey.currentLocation')}
                                                 </span>
                                             </div>
                                             <p className="text-xs text-blue-700 dark:text-blue-300">
-                                                Tracking active...
+                                                {t('journey.trackingActive')}
                                             </p>
                                         </div>
                                     )}
@@ -210,10 +212,10 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
                                 <MapPin className="w-8 h-8 text-gray-400" />
                             </div>
                             <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">
-                                No journey today
+                                {t('journey.noJourneyToday')}
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Enable Live Location to start tracking your journey
+                                {t('journey.enableLocation')}
                             </p>
                         </div>
                     )}
@@ -224,7 +226,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
                     <div className="px-4 pb-6">
                         <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                             <TrendingUp className="w-5 h-5 text-purple-600" />
-                            Past Journeys
+                            {t('journey.pastJourneys')}
                         </h2>
                         <div className="space-y-3">
                             {history.map((jour) => (
@@ -234,20 +236,20 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <h3 className="font-bold text-gray-900 dark:text-gray-100">
-                                            {formatDate(jour.date)}
+                                            {formatNumber(formatDate(jour.date))}
                                         </h3>
                                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                                            {jour.stops.filter((s) => s.isSignificant).length} stops
+                                            {formatNumber(jour.stops.filter((s) => s.isSignificant).length)} {t('journey.stopsCount')}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-gray-400">
                                         <div className="flex items-center gap-1">
                                             <Navigation className="w-3 h-3" />
-                                            {formatDistance(jour.totalDistance)}
+                                            {formatNumber(formatDistance(jour.totalDistance))}
                                         </div>
                                         <div className="flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
-                                            {formatDuration(jour.totalDuration)}
+                                            {formatNumber(formatDuration(jour.totalDuration))}
                                         </div>
                                     </div>
                                 </div>

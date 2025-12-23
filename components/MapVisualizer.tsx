@@ -4,6 +4,7 @@ import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constan
 import { findNearestStation, getDistance } from '../services/locationService';
 import { getTrafficColor, TrafficLevel } from '../services/trafficSimulator';
 import { MapPin, Bus, Plus, Minus, Navigation, AlertCircle, Grip, ArrowUpRight, Train, Plane, Layers, X } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface MapVisualizerProps {
   route: BusRoute | null;
@@ -27,6 +28,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   tripDestination,
   tripTransferPoint
 }) => {
+  const { t } = useLanguage();
   const [simulationStep, setSimulationStep] = useState(0);
 
   // Layer visibility toggles - Metro off by default, others off
@@ -404,7 +406,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
         {showLayers && (
           <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur rounded-xl border border-gray-200 dark:border-slate-700 shadow-xl p-3 w-[180px] mb-2 animate-in slide-in-from-bottom-2 fade-in duration-200">
             <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-100 dark:border-slate-700">
-              <p className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Map Layers</p>
+              <p className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t('liveNav.layers')}</p>
               <button onClick={() => setShowLayers(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors flex items-center justify-center">
                 <X className="w-3 h-3" />
               </button>
@@ -421,7 +423,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   onChange={(e) => setShowMetro(e.target.checked)}
                   className="hidden"
                 />
-                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">Metro Rail</span>
+                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">{t('home.metroRail')}</span>
               </label>
 
               <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-1.5 rounded-lg transition-colors group">
@@ -434,7 +436,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   onChange={(e) => setShowRailway(e.target.checked)}
                   className="hidden"
                 />
-                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">Railway</span>
+                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">{t('intercity.byTrain')}</span>
               </label>
 
               <label className="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-1.5 rounded-lg transition-colors group">
@@ -447,7 +449,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                   onChange={(e) => setShowAirport(e.target.checked)}
                   className="hidden"
                 />
-                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">Airports</span>
+                <span className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">{t('intercity.byAir')}</span>
               </label>
             </div>
           </div>
@@ -462,7 +464,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
             }`}
         >
           <Layers className={`w-4 h-4 ${!showLayers && 'group-hover:scale-110 transition-transform'}`} />
-          <span className="text-xs font-bold">Layers</span>
+          <span className="text-xs font-bold">{t('liveNav.layers')}</span>
         </button>
       </div>
 
@@ -708,7 +710,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                       {isCurrent && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
                           <rect x="-18" y="-7" width="36" height="14" rx="3" fill="#ef4444" />
-                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">YOU</text>
+                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">{t('busDetails.you')}</text>
                         </g>
                       )}
 
@@ -728,7 +730,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                       {(tripDestination === s.id || ((isReversed ? isHighlightStart : isHighlightEnd) && s.id !== tripTransferPoint)) && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
                           <rect x="-38" y="-7" width="76" height="14" rx="3" fill="#ef4444" />
-                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">DESTINATION</text>
+                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">{t('busDetails.destination')}</text>
                         </g>
                       )}
 
@@ -740,7 +742,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                       {((isReversed ? isHighlightEnd : isHighlightStart) && s.id !== tripTransferPoint) && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
                           <rect x="-23" y="-7" width="46" height="14" rx="3" fill="#16a34a" />
-                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">START</text>
+                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">{t('busDetails.start')}</text>
                         </g>
                       )}
 
