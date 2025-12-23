@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from './contexts/LanguageContext';
-import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map, X, Bot, FileText, Settings, Shield } from 'lucide-react';
+import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map, X, Bot, FileText, Settings, Shield, Download } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
 import ThemeToggle from './components/ThemeToggle';
 import NotificationBell from './components/NotificationBell';
@@ -504,7 +504,7 @@ function App() {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
           <div className="absolute top-0 right-0 bottom-0 w-3/4 max-w-xs bg-white dark:bg-slate-900 shadow-2xl p-6 flex flex-col animate-in slide-in-from-right">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('nav.menu')}</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('common.menu')}</h2>
               <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full" aria-label="Close menu">
                 <X className="w-6 h-6 text-gray-500 dark:text-gray-400" />
               </button>
@@ -530,6 +530,18 @@ function App() {
                 <Info className="w-5 h-5 text-blue-500" /> {t('nav.about')}
               </button>
               <button
+                onClick={() => window.location.href = '/#why-use'}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <Sparkles className="w-5 h-5 text-pink-600 dark:text-pink-400" /> {t('home.whyUse')}
+              </button>
+              <button
+                onClick={() => window.location.href = '/#faq'}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <FileText className="w-5 h-5 text-cyan-600 dark:text-cyan-400" /> {t('nav.faq')}
+              </button>
+              <button
                 onClick={() => window.location.href = '/#history'}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
@@ -539,7 +551,13 @@ function App() {
                 onClick={() => window.location.href = '/#settings'}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
               >
-                <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" /> {t('nav.settings')}
+                <Settings className="w-5 h-5 text-purple-600 dark:text-purple-400" /> {t('nav.settings')}
+              </button>
+              <button
+                onClick={() => window.location.href = '/#install-app'}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 font-medium transition-colors"
+              >
+                <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> {t('home.installApp')}
               </button>
               <button
                 onClick={() => window.location.href = '/#privacy'}
