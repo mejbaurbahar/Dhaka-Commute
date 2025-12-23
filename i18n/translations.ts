@@ -206,7 +206,7 @@ export const translations: Record<Language, Translations> = {
             example1: 'মিরপুর থেকে মতিঝিল যেতে কোন বাস?',
             clearChat: 'চ্যাট মুছুন',
             emptyState: 'ঢাকার বাস সম্পর্কে কিছু জানতে চাইলে, আমাকে জিজ্ঞাসা করুন',
-            queriesRemaining: 'আজকের বিনামূল্যে প্রশ্ন',
+            queriesRemaining: 'Today AI chat Limit',
         },
 
         // History & Analytics
