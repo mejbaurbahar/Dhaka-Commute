@@ -8,7 +8,7 @@ import DistrictSelect from './components/DistrictSelect';
 import ResultCard from './components/ResultCard';
 import LoadingState from './components/LoadingState';
 import LiveLocationMap from './components/LiveLocationMap';
-import { API_ENDPOINT, POPULAR_ROUTES, DEMO_RESPONSE } from './constants';
+import { API_ENDPOINT, POPULAR_ROUTES, DEMO_RESPONSE, DEMO_RESPONSE_BN } from './constants';
 import { RouteResponse, ErrorResponse } from './types';
 
 function App() {
@@ -129,9 +129,10 @@ function App() {
 
     // Simulate network delay for realistic feel
     setTimeout(() => {
-      setFrom(DEMO_RESPONSE.from);
-      setTo(DEMO_RESPONSE.to);
-      setResult(DEMO_RESPONSE);
+      const demoData = language === 'bn' ? DEMO_RESPONSE_BN : DEMO_RESPONSE;
+      setFrom(demoData.from);
+      setTo(demoData.to);
+      setResult(demoData);
       setLoading(false);
     }, 1500);
   };

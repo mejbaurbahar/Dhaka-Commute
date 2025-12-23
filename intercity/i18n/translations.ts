@@ -591,7 +591,13 @@ export const translations: Record<Language, Translations> = {
                 arrivalAt: 'গন্তব্য',
                 ships: 'জাহাজ',
                 ferry: 'ফেরি',
-                flight: 'ফ্লাইট'
+                flight: 'ফ্লাইট',
+                busoperators: 'বাস অপারেটর',
+                trainname: 'ট্রেনের নাম',
+                trains: 'ট্রেনসমূহ',
+                stations: 'স্টেশন',
+                note: 'নোট',
+                tips: 'টিপস'
             }
         },
     },
@@ -1166,7 +1172,13 @@ export const translations: Record<Language, Translations> = {
                 arrivalAt: 'Arrival At',
                 ships: 'Ships',
                 ferry: 'Ferry',
-                flight: 'Flight'
+                flight: 'Flight',
+                busoperators: 'Bus Operators',
+                trainname: 'Train Name',
+                trains: 'Trains',
+                stations: 'Stations',
+                note: 'Note',
+                tips: 'Tips'
             }
         },
     }
