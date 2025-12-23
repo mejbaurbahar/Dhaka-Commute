@@ -514,6 +514,7 @@ const App: React.FC = () => {
 
   const [view, setView] = useState<AppView>(getStoredView);
   const [selectedBus, setSelectedBus] = useState<BusRoute | null>(getStoredBus);
+  const [initialLocationChecked, setInitialLocationChecked] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Dark Mode State
@@ -619,8 +620,15 @@ const App: React.FC = () => {
 
   // Sync primary search with location, but only on significant changes or init
   useEffect(() => {
-    setPrimarySearch(isInDhaka ? 'LOCAL' : 'INTERCITY');
-  }, [isInDhaka]);
+    if (initialLocationChecked) {
+      setPrimarySearch(isInDhaka ? 'LOCAL' : 'INTERCITY');
+
+      // If user is outside Dhaka and on HOME view, switch to showing Intercity search
+      if (!isInDhaka && view === AppView.HOME) {
+        setPrimarySearch('INTERCITY');
+      }
+    }
+  }, [isInDhaka, initialLocationChecked]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -898,8 +906,18 @@ const App: React.FC = () => {
       .then(loc => {
         setUserLocation(loc);
         console.log("Initial location fetched:", loc);
+
+        const inDhaka = checkIfInDhaka(loc);
+        // Set initial primary search based on location
+        if (!inDhaka) {
+          setPrimarySearch('INTERCITY');
+        }
+        setInitialLocationChecked(true);
       })
-      .catch(err => console.log("Initial location fetch failed:", err));
+      .catch(err => {
+        console.log("Initial location fetch failed:", err);
+        setInitialLocationChecked(true);
+      });
   }, []);
 
   // Auto-preload offline map tiles in background
@@ -3522,7 +3540,7 @@ const App: React.FC = () => {
                 className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
               >
                 <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-900' : 'text-gray-400 dark:text-gray-500'} `} />
-                <span className="text-[10px] font-bold uppercase tracking-wide">{isInDhaka ? 'Routes' : 'DhakaCity'}</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide">{isInDhaka ? 'Home' : 'DhakaCity'}</span>
               </button>
               <button
                 onClick={() => setView(AppView.AI_ASSISTANT)}
@@ -3533,11 +3551,18 @@ const App: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  window.location.href = '/intercity';
+                  if (!isInDhaka) {
+                    // For users outside Dhaka, this is their main/active tab
+                    setView(AppView.HOME);
+                    setPrimarySearch('INTERCITY');
+                  } else {
+                    // For users inside Dhaka, navigate to intercity page
+                    window.location.href = '/intercity';
+                  }
                 }}
-                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300`}
+                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${!isInDhaka && view === AppView.HOME && primarySearch === 'INTERCITY' ? 'border-teal-500 text-teal-600 dark:text-teal-400 bg-teal-50/50 dark:bg-teal-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
               >
-                <Train className={`w-6 h-6 text-gray-400 dark:text-gray-500`} />
+                <Train className={`w-6 h-6 ${!isInDhaka && view === AppView.HOME && primarySearch === 'INTERCITY' ? 'text-teal-600 dark:text-teal-400 fill-teal-100 dark:fill-teal-900' : 'text-gray-400 dark:text-gray-500'} `} />
                 <span className="text-[10px] font-bold uppercase tracking-wide">Intercity</span>
               </button>
               <button
