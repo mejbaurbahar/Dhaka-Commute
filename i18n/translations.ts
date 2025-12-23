@@ -166,7 +166,7 @@ export const translations: Record<Language, Translations> = {
             detectingPosition: 'বাসে আপনার অবস্থান শনাক্ত করা হচ্ছে',
             locationNeeded: 'অবস্থান প্রয়োজন',
             enableLocation: 'অবস্থান চালু করুন',
-            startHere: 'এখান থেকে শুরু করুন',
+            startHere: 'শুরু করুন',
             arrivedDestination: 'আপনি গন্তব্যে পৌঁছে গেছেন!',
         },
 
