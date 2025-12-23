@@ -64,8 +64,7 @@ function App() {
     };
     const handleOffline = () => {
       setIsOnline(false);
-      setIsOnline(false);
-      setError(t('intercity.offlineMessage'));
+      // Don't set error here - let demo section remain visible
     };
 
     window.addEventListener('online', handleOnline);

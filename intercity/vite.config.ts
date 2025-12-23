@@ -58,6 +58,8 @@ export default defineConfig(({ mode }) => {
           skipWaiting: true,
           // Cache versioning for proper updates
           cacheId: 'dhaka-commute-intercity-v2',
+          // Runtime caching for intercity navigation
+          navigateFallbackAllowlist: [/^\/intercity/],  // Only handle intercity routes
           // Runtime caching for intercity external resources
           runtimeCaching: [
             // Tailwind CSS CDN - Critical for offline styling
