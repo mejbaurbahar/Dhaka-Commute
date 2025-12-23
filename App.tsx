@@ -3076,16 +3076,16 @@ const App: React.FC = () => {
         <div className="flex-none bg-white dark:bg-slate-900 z-20 md:pt-24">
           <div className="p-4 space-y-1">
             {primarySearch === 'LOCAL' ? (
-              <>
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
                 {renderLocalBusSearch()}
                 <div className="mb-4"></div>
                 {renderIntercityButton()}
-              </>
+              </div>
             ) : (
-              <>
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
                 <IntercitySearchSection onSearch={handleIntercitySearch} isOnline={isOnline} />
                 {renderLocalBusButton()}
-              </>
+              </div>
             )}
 
             {/* AI Button - Hidden on Mobile */}
@@ -3537,9 +3537,9 @@ const App: React.FC = () => {
                   setView(AppView.HOME);
                   setPrimarySearch('LOCAL');
                 }}
-                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all duration-300 transform ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-900/20 scale-105' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:scale-105'} `}
               >
-                <MapIcon className={`w-6 h-6 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-900' : 'text-gray-400 dark:text-gray-500'} `} />
+                <MapIcon className={`w-6 h-6 transition-all duration-300 ${view === AppView.HOME && primarySearch === 'LOCAL' ? 'text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-900 animate-pulse' : 'text-gray-400 dark:text-gray-500'} `} />
                 <span className="text-[10px] font-bold uppercase tracking-wide">{isInDhaka ? 'Home' : 'DhakaCity'}</span>
               </button>
               <button
@@ -3560,9 +3560,9 @@ const App: React.FC = () => {
                     window.location.href = '/intercity';
                   }
                 }}
-                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all ${!isInDhaka && view === AppView.HOME && primarySearch === 'INTERCITY' ? 'border-teal-500 text-teal-600 dark:text-teal-400 bg-teal-50/50 dark:bg-teal-900/20' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'} `}
+                className={`flex flex-col items-center justify-center gap-1 border-t-2 transition-all duration-300 transform ${!isInDhaka && view === AppView.HOME && primarySearch === 'INTERCITY' ? 'border-teal-500 text-teal-600 dark:text-teal-400 bg-teal-50/50 dark:bg-teal-900/20 scale-105' : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:scale-105'} `}
               >
-                <Train className={`w-6 h-6 ${!isInDhaka && view === AppView.HOME && primarySearch === 'INTERCITY' ? 'text-teal-600 dark:text-teal-400 fill-teal-100 dark:fill-teal-900' : 'text-gray-400 dark:text-gray-500'} `} />
+                <Train className={`w-6 h-6 transition-all duration-300 ${!isInDhaka && view === AppView.HOME && primarySearch === 'INTERCITY' ? 'text-teal-600 dark:text-teal-400 fill-teal-100 dark:fill-teal-900 animate-pulse' : 'text-gray-400 dark:text-gray-500'} `} />
                 <span className="text-[10px] font-bold uppercase tracking-wide">Intercity</span>
               </button>
               <button
