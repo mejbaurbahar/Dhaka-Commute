@@ -14,29 +14,42 @@ export interface ParsedRouteData {
 
 export const parseRouteMarkdown = (markdown: string): ParsedRouteData => {
   // 1. Separate the Footer (Booking Links)
-  const parts = markdown.split('**Booking Links:**');
-  const mainContent = parts[0];
-  const footer = parts.length > 1 ? `**Booking Links:**\n${parts[1]}` : '';
+  const footerHeaders = ['**Booking Links:**', '**বুকিং লিংক:**'];
+  let mainContent = markdown;
+  let footer = '';
+
+  for (const header of footerHeaders) {
+    if (markdown.includes(header)) {
+      const parts = markdown.split(header);
+      mainContent = parts[0];
+      footer = `${header}\n${parts[1]}`;
+      break;
+    }
+  }
 
   // 2. Separate Header (Intro) from Modes
-  // Look for the first occurrence of "**Recommended Modes:**"
-  const modeSplit = mainContent.split('**Recommended Modes:**');
-  const intro = modeSplit[0].trim();
-  const modesContent = modeSplit.length > 1 ? modeSplit[1] : '';
+  // Look for "Recommended Modes:" or "প্রস্তাবিত যাতায়াত মাধ্যম:"
+  const modeHeaders = ['**Recommended Modes:**', '**প্রস্তাবিত যাতায়াত মাধ্যম:**'];
+  let intro = mainContent.trim();
+  let modesContent = '';
+
+  for (const header of modeHeaders) {
+    if (mainContent.includes(header)) {
+      const split = mainContent.split(header);
+      intro = split[0].trim();
+      modesContent = split[1].trim();
+      break;
+    }
+  }
 
   // 3. Parse individual modes
-  // Regex to split by icons like 🚗, 🚌, 🚂, ✈️, 🚢, starting a new line
-  // We use a lookahead to keep the icon in the split result or just split manually
-  
   const modes: ParsedMode[] = [];
-  
-  // Clean up newlines and split by double asterisks that likely start a mode with an icon preceding it
-  // A simpler approach: Split by double newline, check if line starts with an icon
+
   const lines = modesContent.split('\n');
   let currentMode: Partial<ParsedMode> | null = null;
   let buffer = '';
 
-  const iconRegex = /^(🚗|🚌|🚂|✈️|🚢)/;
+  const iconRegex = /^([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}])/u;
 
   lines.forEach((line) => {
     const trimmed = line.trim();
@@ -57,11 +70,11 @@ export const parseRouteMarkdown = (markdown: string): ParsedRouteData => {
       const icon = match[1];
       // Remove icon from text for title
       let text = trimmed.substring(icon.length).trim();
-      
+
       // Extract Title (usually bold **By Bus**)
       const titleMatch = text.match(/\*\*([^*]+)\*\*/);
       const title = titleMatch ? titleMatch[1] : text;
-      
+
       // Extract Summary (Time/Price usually follows the dash)
       // e.g. "**By Bus** – Time: 5h | Price: 500"
       let summary = "";
