@@ -101,7 +101,7 @@ export default defineConfig(({ mode }) => {
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2,ttf}'],
           navigateFallback: 'index.html',
-          navigateFallbackDenylist: [/^\/api/, /^\/intercity/],
+          navigateFallbackDenylist: [/^\/api/],
           cleanupOutdatedCaches: true,
           clientsClaim: true,
           skipWaiting: true,
@@ -110,13 +110,19 @@ export default defineConfig(({ mode }) => {
           sourcemap: false,
           // Cache versioning for proper updates
           cacheId: 'dhaka-commute-v2',
+          // Precache intercity route for offline-first experience
+          additionalManifestEntries: [
+            { url: '/intercity/', revision: null },
+            { url: '/intercity/index.html', revision: null }
+          ],
           runtimeCaching: [
-            // Cache Intercity App (Separate Build)
+            // Cache Intercity App (Separate Build) - NetworkFirst to ensure offline on first visit
             {
               urlPattern: /^\/intercity(\/.*)?$/,
-              handler: 'StaleWhileRevalidate',
+              handler: 'NetworkFirst',
               options: {
                 cacheName: 'intercity-app-cache',
+                networkTimeoutSeconds: 3,
                 expiration: {
                   maxEntries: 50,
                   maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
