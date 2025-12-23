@@ -81,7 +81,7 @@ export const translations: Record<Language, Translations> = {
         // Home/Search
         home: {
             searchPlaceholder: 'বাস, স্টেশন বা এলাকা খুঁজুন...',
-            localBusSearch: 'স্থানীয় বাস অনুসন্ধান',
+            localBusSearch: 'স্থান / বাস খুজুন',
             intercitySearch: 'আন্তঃশহর অনুসন্ধান',
             routeFinder: 'গন্তব্য খুজুন',
             findRoute: 'রুট খুঁজুন',
