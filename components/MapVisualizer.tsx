@@ -749,7 +749,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
                       {isUserConnectionStart && (
                         <g transform={`translate(${x}, ${idx % 2 === 0 ? y + 42 : y - 48})`}>
                           <rect x="-35" y="-7" width="70" height="14" rx="3" fill="#f97316" />
-                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">START HERE</text>
+                          <text x="0" y="3" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">{t('busDetails.startHere').toUpperCase()}</text>
                         </g>
                       )}
                     </g>
