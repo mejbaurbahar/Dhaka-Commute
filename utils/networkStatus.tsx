@@ -14,12 +14,10 @@ export const useNetworkStatus = (): boolean => {
 
     React.useEffect(() => {
         const handleOnline = () => {
-            console.log('📶 Network: Back online');
             setIsOnline(true);
         };
 
         const handleOffline = () => {
-            console.log('📵 Network: Gone offline');
             setIsOnline(false);
         };
 

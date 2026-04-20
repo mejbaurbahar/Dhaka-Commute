@@ -98,7 +98,6 @@ export function getTodayJourney(): DailyJourney | null {
 
         return JSON.parse(stored);
     } catch (error) {
-        console.error('Error getting today journey:', error);
         return null;
     }
 }
@@ -163,7 +162,7 @@ function archiveJourney(journey: DailyJourney): void {
 
         localStorage.setItem(STORAGE_KEYS.JOURNEY_HISTORY, JSON.stringify(filtered));
     } catch (error) {
-        console.error('Error archiving journey:', error);
+        // ignore
     }
 }
 
@@ -223,10 +222,8 @@ export function addJourneyPoint(
 
         // Save
         localStorage.setItem(STORAGE_KEYS.TODAY_JOURNEY, JSON.stringify(journey));
-
-        console.log('📍 Journey point added:', point);
     } catch (error) {
-        console.error('Error adding journey point:', error);
+        // ignore
     }
 }
 
@@ -291,7 +288,6 @@ export function getJourneyHistory(): DailyJourney[] {
         const historyStr = localStorage.getItem(STORAGE_KEYS.JOURNEY_HISTORY);
         return historyStr ? JSON.parse(historyStr) : [];
     } catch (error) {
-        console.error('Error getting journey history:', error);
         return [];
     }
 }

@@ -14,19 +14,9 @@ export async function ensureIntercityDataCached(): Promise<boolean> {
         localStorage.setItem('intercity_routes_cache', JSON.stringify(data));
         localStorage.setItem('intercity_routes_cache_time', new Date().toISOString());
 
-        console.log('✅ Intercity data cached:', data.metadata.coverage.totalRoutes, 'routes');
         return true;
-    } catch (error) {
-        console.warn('⚠️ Could not cache intercity data:', error);
-
-        // Check if we have cached data from before
-        const cached = localStorage.getItem('intercity_routes_cache');
-        if (cached) {
-            console.log('✅ Using previously cached intercity data');
-            return true;
-        }
-
-        return false;
+    } catch {
+        return !!localStorage.getItem('intercity_routes_cache');
     }
 }
 
@@ -35,14 +25,12 @@ export function getIntercityRoutesOffline(origin?: string, destination?: string)
     const cached = localStorage.getItem('intercity_routes_cache');
 
     if (!cached) {
-        console.warn('⚠️ No intercity data cached');
         return { routes: [], metadata: null };
     }
 
     try {
         const data = JSON.parse(cached);
 
-        // Filter if origin/destination provided
         if (origin && destination) {
             const filtered = data.routes.filter((route: any) =>
                 route.origin === origin && route.destination === destination
@@ -51,8 +39,7 @@ export function getIntercityRoutesOffline(origin?: string, destination?: string)
         }
 
         return data;
-    } catch (error) {
-        console.error('Error parsing cached intercity data:', error);
+    } catch {
         return { routes: [], metadata: null };
     }
 }
@@ -181,24 +168,8 @@ export function searchIntercityOffline(query: string) {
 
 // 8. Initialize offline support
 export async function initializeOfflineSupport(): Promise<void> {
-    console.log('🔄 Initializing offline support...');
-
-    // Check if online
-    if (!navigator.onLine) {
-        console.log('📴 Currently offline - using cached data');
-        const hasCache = !!localStorage.getItem('intercity_routes_cache');
-        console.log(hasCache ? '✅ Cached data available' : '⚠️ No cached data');
-        return;
-    }
-
-    // If online, ensure data is cached
-    const success = await ensureIntercityDataCached();
-
-    if (success) {
-        console.log('✅ Offline support ready!');
-    } else {
-        console.warn('⚠️ Offline support initialization incomplete');
-    }
+    if (!navigator.onLine) return;
+    await ensureIntercityDataCached();
 }
 
 // 9. Get all available cities (offline)

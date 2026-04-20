@@ -114,19 +114,8 @@ function App() {
       visitorId = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       localStorage.setItem(visitorKey, visitorId);
     }
-    fetch('/api/gh', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        requestId: crypto.randomUUID(),
-        action: 'record-visit',
-        email: '',
-        passwordHash: '',
-        userId: authUser?.id ?? '',
-        data: JSON.stringify({ visitorId }),
-      }),
-    }).catch(() => {});
+    // No server proxy on static hosting — visit recorded in localStorage only
+    void visitorId;
   }, []);
 
   // Disable right-click and devtools keyboard shortcuts
@@ -248,19 +237,8 @@ function App() {
           mostUsedIntercity: history.mostUsedIntercity,
           mostUsedTrains: history.mostUsedTrains || {},
         };
-        fetch('/api/gh', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            requestId: crypto.randomUUID(),
-            action: 'save-history',
-            email: '',
-            passwordHash: '',
-            userId,
-            data: JSON.stringify(trimmed),
-          }),
-        }).catch(() => {});
+        // No server proxy on static hosting — history is localStorage-only
+        void trimmed;
       }
     } catch {
       // best-effort

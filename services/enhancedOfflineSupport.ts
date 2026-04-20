@@ -12,31 +12,16 @@ import { BUS_DATA, STATIONS, METRO_STATIONS, METRO_LINES, RAILWAY_STATIONS, AIRP
  */
 export async function cacheAllEssentialData(): Promise<boolean> {
     try {
-        console.log('🔄 Caching all essential data for offline use...');
-
-        // 1. Cache Intercity Routes
         await cacheIntercityData();
-
-        // 2. Cache Local Bus Data (from constants)
         cacheLocalBusData();
-
-        // 3. Cache Metro Data
         cacheMetroData();
-
-        // 4. Cache Railway Data
         cacheRailwayData();
-
-        // 5. Cache Airport Data
         cacheAirportData();
 
-        // 6. Mark as cached
         localStorage.setItem('offline_cache_complete', 'true');
         localStorage.setItem('offline_cache_timestamp', new Date().toISOString());
-
-        console.log('✅ All essential data cached successfully!');
         return true;
-    } catch (error) {
-        console.error('❌ Error caching data:', error);
+    } catch {
         return false;
     }
 }
@@ -51,16 +36,8 @@ async function cacheIntercityData(): Promise<void> {
 
         localStorage.setItem('intercity_routes_cache', JSON.stringify(data));
         localStorage.setItem('intercity_routes_cache_time', new Date().toISOString());
-
-        console.log('✅ Intercity data cached:', data.metadata?.coverage?.totalRoutes || 0, 'routes');
-    } catch (error) {
-        console.warn('⚠️ Could not cache intercity data:', error);
-
-        // Check if we have cached data from before
-        const cached = localStorage.getItem('intercity_routes_cache');
-        if (cached) {
-            console.log('✅ Using previously cached intercity data');
-        }
+    } catch {
+        // fall back to existing cache
     }
 }
 
@@ -85,9 +62,8 @@ function cacheLocalBusData(): void {
         };
 
         localStorage.setItem('local_bus_cache', JSON.stringify(busData));
-        console.log('✅ Local bus data cached:', busData.totalBuses, 'buses');
-    } catch (error) {
-        console.warn('⚠️ Could not cache local bus data:', error);
+    } catch {
+        // ignore
     }
 }
 
@@ -103,9 +79,8 @@ function cacheMetroData(): void {
         };
 
         localStorage.setItem('metro_cache', JSON.stringify(metroData));
-        console.log('✅ Metro data cached:', metroData.totalStations, 'stations');
-    } catch (error) {
-        console.warn('⚠️ Could not cache metro data:', error);
+    } catch {
+        // ignore
     }
 }
 
@@ -120,9 +95,8 @@ function cacheRailwayData(): void {
         };
 
         localStorage.setItem('railway_cache', JSON.stringify(railwayData));
-        console.log('✅ Railway data cached:', railwayData.totalStations, 'stations');
-    } catch (error) {
-        console.warn('⚠️ Could not cache railway data:', error);
+    } catch {
+        // ignore
     }
 }
 
@@ -137,9 +111,8 @@ function cacheAirportData(): void {
         };
 
         localStorage.setItem('airport_cache', JSON.stringify(airportData));
-        console.log('✅ Airport data cached:', airportData.totalAirports, 'airports');
-    } catch (error) {
-        console.warn('⚠️ Could not cache airport data:', error);
+    } catch {
+        // ignore
     }
 }
 
@@ -154,8 +127,8 @@ export function getLocalBusDataOffline() {
     if (cached) {
         try {
             return JSON.parse(cached);
-        } catch (error) {
-            console.error('Error parsing cached bus data:', error);
+        } catch {
+            // fall through to constants fallback
         }
     }
 
@@ -175,14 +148,12 @@ export function getIntercityRoutesOffline(origin?: string, destination?: string)
     const cached = localStorage.getItem('intercity_routes_cache');
 
     if (!cached) {
-        console.warn('⚠️ No intercity data cached');
         return { routes: [], metadata: null };
     }
 
     try {
         const data = JSON.parse(cached);
 
-        // Filter if origin/destination provided
         if (origin && destination) {
             const filtered = data.routes.filter((route: any) =>
                 route.origin === origin && route.destination === destination
@@ -191,8 +162,7 @@ export function getIntercityRoutesOffline(origin?: string, destination?: string)
         }
 
         return data;
-    } catch (error) {
-        console.error('Error parsing cached intercity data:', error);
+    } catch {
         return { routes: [], metadata: null };
     }
 }
@@ -206,8 +176,8 @@ export function getMetroDataOffline() {
     if (cached) {
         try {
             return JSON.parse(cached);
-        } catch (error) {
-            console.error('Error parsing cached metro data:', error);
+        } catch {
+            // fall through to constants fallback
         }
     }
 
@@ -510,25 +480,8 @@ export function getOfflineFeaturesList(language: 'en' | 'bn' = 'en'): string[] {
  * Initialize offline support
  */
 export async function initializeOfflineSupport(): Promise<void> {
-    console.log('🔄 Initializing enhanced offline support...');
-
-    // Check if online
-    if (!navigator.onLine) {
-        console.log('📴 Currently offline - using cached data');
-        const hasCache = isOfflineCacheAvailable();
-        console.log(hasCache ? '✅ Cached data available' : '⚠️ No cached data');
-        return;
-    }
-
-    // If online, cache all data
-    const success = await cacheAllEssentialData();
-
-    if (success) {
-        console.log('✅ Enhanced offline support ready!');
-        console.log('📊 Offline Features:', getOfflineFeaturesList('en'));
-    } else {
-        console.warn('⚠️ Offline support initialization incomplete');
-    }
+    if (!navigator.onLine) return;
+    await cacheAllEssentialData();
 }
 
 // ==================== EXPORTS ====================

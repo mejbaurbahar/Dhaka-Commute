@@ -4,6 +4,7 @@ import { SangsadBhaban, ShaheedMinar, CurzonHall, AhsanManzil, NationalMemorial,
 import { Cloud, Airplane, MetroTrack, MetroTrain, CityBus, RiverBoat, Sun, Moon, Skyline, Stars, RiverWaves, Rain, Fog, TrafficPolice } from './DhakaAnimationElements';
 import { X, Sparkles } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getLocationByIP } from '../services/locationService';
 
 // --- Fixed Landmark Data ---
 const landmarkData: Record<string, string> = {
@@ -77,8 +78,7 @@ const DhakaAlive: React.FC<{ hideIndicator?: boolean }> = ({ hideIndicator = fal
                         setWeather('clear');
                     }
                 }
-            } catch (error) {
-                console.error("Failed to fetch weather, reverting to simulation:", error);
+            } catch {
                 setUsingLiveWeather(false); // Fallback will take over next interval
             }
         };
@@ -86,18 +86,11 @@ const DhakaAlive: React.FC<{ hideIndicator?: boolean }> = ({ hideIndicator = fal
         // 3. Initialize
         runSimulation(); // Run immediate fallback check
 
-        // PERFORMANCE OPTIMIZATION: Defer weather API to avoid blocking critical path
-        // Previously this was blocking LCP with 2,483ms delay!
-        const weatherTimer = setTimeout(() => {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        fetchLiveWeather(position.coords.latitude, position.coords.longitude);
-                    },
-                    (error) => {
-                        console.log("Location access denied or unavailable, using simulation.");
-                    }
-                );
+        // PERFORMANCE OPTIMIZATION: Use IP-based location for weather to avoid browser violations (gesture req)
+        const weatherTimer = setTimeout(async () => {
+            const loc = await getLocationByIP();
+            if (loc) {
+                fetchLiveWeather(loc.lat, loc.lng);
             }
         }, 2000); // Wait 2 seconds before fetching weather
 

@@ -77,8 +77,7 @@ const DhakaAlive: React.FC<{ hideIndicator?: boolean }> = ({ hideIndicator = fal
                         setWeather('clear');
                     }
                 }
-            } catch (error) {
-                console.error("Failed to fetch weather, reverting to simulation:", error);
+            } catch {
                 setUsingLiveWeather(false); // Fallback will take over next interval
             }
         };
@@ -86,18 +85,16 @@ const DhakaAlive: React.FC<{ hideIndicator?: boolean }> = ({ hideIndicator = fal
         // 3. Initialize
         runSimulation(); // Run immediate fallback check
 
-        // PERFORMANCE OPTIMIZATION: Defer weather API to avoid blocking critical path
-        // Previously this was blocking LCP with 2,483ms delay!
-        const weatherTimer = setTimeout(() => {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        fetchLiveWeather(position.coords.latitude, position.coords.longitude);
-                    },
-                    (error) => {
-                        console.log("Location access denied or unavailable, using simulation.");
-                    }
-                );
+        // PERFORMANCE OPTIMIZATION: Use IP-based location for weather to avoid browser violations (gesture req)
+        const weatherTimer = setTimeout(async () => {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+                if (data.latitude && data.longitude) {
+                    fetchLiveWeather(data.latitude, data.longitude);
+                }
+            } catch {
+                // fallback will continue automatically
             }
         }, 2000); // Wait 2 seconds before fetching weather
 

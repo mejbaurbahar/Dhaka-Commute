@@ -124,10 +124,6 @@ export const loadHistoryData = (data: Partial<UserHistory>): void => {
     }
 };
 
-// ── Server proxy endpoints (token/repo never in browser) ─────────────────────
-const PROXY = '/api/gh';
-const STATS_PATH = 'data/stats/global.json';
-
 // ── Date helper ───────────────────────────────────────────────────────────────
 const getTodayDate = (): string => new Date().toISOString().split('T')[0];
 
@@ -171,37 +167,9 @@ const saveGlobalStats = (stats: GlobalStats): void => {
 
 // ── GitHub reads ──────────────────────────────────────────────────────────────
 
-/** Fetch global stats via server-side proxy (token/repo names stay on server). */
+/** Fetch global stats — no-op on static hosting (no server proxy available). */
 export const fetchGlobalStats = async (): Promise<void> => {
-    try {
-        const res = await fetch(
-            `${PROXY}?r=d&p=${encodeURIComponent(STATS_PATH)}`,
-            { credentials: 'same-origin', signal: AbortSignal.timeout(6000) }
-        );
-        if (!res.ok) return;
-        const ghStats = await res.json() as GlobalStats & { todayDate?: string };
-        // Reset todayVisits if the date has changed
-        if (ghStats.todayDate && ghStats.todayDate !== getTodayDate()) {
-            ghStats.todayVisits = 0;
-        }
-        const today = getTodayDate();
-        // Only reset todayVisits if todayDate is explicitly set AND differs from today
-        // If todayDate is missing, trust the stored todayVisits value
-        const todayVisitsValue =
-            ghStats.todayDate && ghStats.todayDate !== today
-                ? 0
-                : (ghStats.todayVisits || 0);
-        const merged: GlobalStats = {
-            totalVisits:    Math.max(ghStats.totalVisits || 0, getGlobalStats().totalVisits || 0),
-            todayVisits:    todayVisitsValue,
-            activeUsers:    0,
-            uniqueVisitors: ghStats.uniqueVisitors || 0,
-            lastUpdated:    Date.now()
-        };
-        saveGlobalStats(merged);
-    } catch {
-        // silently fail — cached data is used
-    }
+    // No server proxy on GitHub Pages; stats are localStorage-only
 };
 
 // ── Visit recording (fire-and-forget via GitHub Actions) ──────────────────────
@@ -214,24 +182,18 @@ export const incrementVisitCount = async (): Promise<void> => {
     }
     sessionStorage.setItem(SESSION_KEY, 'true');
 
-    // Fetch current stats from GitHub first (non-blocking)
-    fetchGlobalStats().catch(() => {});
-
-    // Fire-and-forget via proxy (no token in browser)
+    // Increment local visit count (no server proxy on static hosting)
     const visitorId = getVisitorId();
-    fetch(PROXY, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            requestId: crypto.randomUUID(),
-            action: 'record-visit',
-            email: '',
-            passwordHash: '',
-            userId: '',
-            data: JSON.stringify({ visitorId }),
-        }),
-    }).catch(() => {}); // Non-critical, ignore errors
+    const local = getGlobalStats();
+    saveGlobalStats({
+        ...local,
+        totalVisits: (local.totalVisits || 0) + 1,
+        todayVisits: (local.todayVisits || 0) + 1,
+        uniqueVisitors: local.uniqueVisitors || 0,
+        lastUpdated: Date.now(),
+    });
+    // Keep visitorId in scope (used for future server-side reporting)
+    void visitorId;
 };
 
 // ── User history ──────────────────────────────────────────────────────────────

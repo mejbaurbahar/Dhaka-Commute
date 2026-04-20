@@ -75,8 +75,7 @@ const App: React.FC = () => {
             setWeather('clear');
           }
         }
-      } catch (error) {
-        console.error("Failed to fetch weather, reverting to simulation:", error);
+      } catch {
         setUsingLiveWeather(false); // Fallback will take over next interval
       }
     };
@@ -84,16 +83,8 @@ const App: React.FC = () => {
     // 3. Initialize
     runSimulation(); // Run immediate fallback check
 
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          fetchLiveWeather(position.coords.latitude, position.coords.longitude);
-        },
-        (error) => {
-          console.log("Location access denied or unavailable, using simulation.");
-        }
-      );
-    }
+    // Note: navigator.geolocation removed from mount to avoid console violation.
+    // Landing page relies on simulation for the "WOW" effect without errors.
 
     // 4. Background Loop for Simulation Fallback (updates every minute)
     const interval = setInterval(runSimulation, 60000);

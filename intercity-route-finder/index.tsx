@@ -20,16 +20,8 @@ root.render(
 
 const updateSW = registerSW({
   immediate: false,
-  onNeedRefresh() {
-    console.log('🔄 New content available for intercity. Will update on next visit.');
-  },
-  onOfflineReady() {
-    console.log('✅ Intercity app is ready to work offline');
-  },
-  onRegistered(registration) {
-    console.log('📝 Intercity SW registered:', registration);
-  },
-  onRegisterError(error) {
-    console.error('❌ Intercity SW registration error:', error);
-  }
+  onNeedRefresh() {},
+  onOfflineReady() {},
+  onRegistered(_registration) {},
+  onRegisterError(_error) {}
 });

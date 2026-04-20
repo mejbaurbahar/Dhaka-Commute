@@ -21,27 +21,12 @@ interface SyncResult {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-async function ghGet<T>(path: string): Promise<T | null> {
-  try {
-    const res = await fetch(`/api/gh?r=d&p=${encodeURIComponent(path)}`);
-    if (!res.ok) return null;
-    return res.json() as Promise<T>;
-  } catch {
-    return null;
-  }
+async function ghGet<T>(_path: string): Promise<T | null> {
+  return null;
 }
 
-async function ghPut(path: string, content: unknown): Promise<boolean> {
-  try {
-    const res = await fetch('/api/gh-data', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path, content }),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
+async function ghPut(_path: string, _content: unknown): Promise<boolean> {
+  return false;
 }
 
 function getCacheMeta(): SyncMeta | null {

@@ -59,17 +59,6 @@ export async function precacheDhakaMapTiles(
 
     // Generate all tile URLs
     for (const zoom of zoomLevels) {
-        const tiles = getTilesInBounds(
-            DHAKA_BOUNDS.minLat,
-            DHAKA_BOUNDS.maxLat,
-            DHAKA_BOUNDS.minLng,
-            DHAKA_BOUNDS.maxLng,
-            zoom
-        );
-        allTiles.push(...tiles);
-    }
-
-    console.log(`📥 Pre-caching ${allTiles.length} map tiles for Dhaka...`);
 
     // Cache tiles in batches to avoid overwhelming the browser
     const batchSize = 50;
@@ -95,7 +84,7 @@ export async function precacheDhakaMapTiles(
                         }
                     }
                 } catch (error) {
-                    console.warn(`Failed to cache tile: ${url}`, error);
+                    // silent fail
                 }
             })
         );
@@ -103,8 +92,6 @@ export async function precacheDhakaMapTiles(
         // Small delay between batches to avoid rate limiting
         await new Promise(resolve => setTimeout(resolve, 100));
     }
-
-    console.log(`✅ Cached ${cached} of ${allTiles.length} tiles for offline use`);
 }
 
 // Check if tiles are cached
@@ -124,7 +111,7 @@ export async function checkOfflineMapStatus(): Promise<{
             };
         }
     } catch (error) {
-        console.error('Failed to check cache status:', error);
+        // ignore
     }
 
     return { hasCachedTiles: false, cacheSize: 0 };
@@ -132,31 +119,20 @@ export async function checkOfflineMapStatus(): Promise<{
 
 // Auto-cache tiles when online (runs in background)
 export function autoPreloadMapTiles() {
-    if (!navigator.onLine) {
-        console.log('📴 Offline - skipping auto map tile preload');
-        return;
-    }
+    if (!navigator.onLine) return;
 
     // Check if we've already preloaded recently
     const lastPreload = localStorage.getItem('map_tiles_preloaded');
     const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
 
-    if (lastPreload && parseInt(lastPreload) > oneWeekAgo) {
-        console.log('✅ Map tiles already preloaded recently');
-        return;
+    if (!lastPreload || parseInt(lastPreload) <= oneWeekAgo) {
+        // Preload in the background
+        setTimeout(() => {
+            precacheDhakaMapTiles().then(() => {
+                localStorage.setItem('map_tiles_preloaded', Date.now().toString());
+            });
+        }, 5000);
     }
-
-    // Preload in the background
-    setTimeout(() => {
-        precacheDhakaMapTiles((current, total) => {
-            if (current % 100 === 0) {
-                console.log(`📥 Cached ${current}/${total} map tiles...`);
-            }
-        }).then(() => {
-            localStorage.setItem('map_tiles_preloaded', Date.now().toString());
-            console.log('🗺️ Offline maps ready!');
-        });
-    }, 5000); // Wait 5 seconds after page load to start
 }
 
 // Manual download button helper
