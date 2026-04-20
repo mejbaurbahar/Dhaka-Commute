@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dev-dist/
+.env*
+.wrangler/
+.claude/
+intercity/node_modules/
+intercity/dist/
+intercity-route-finder/node_modules/
+intercity-route-finder/dist/

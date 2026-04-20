@@ -1,9 +1,18 @@
 name: Build & Deploy to koyjabo.com
 
+<<<<<<< HEAD
 # Runs from koyjabo-core (private repo). Disabled push trigger here to
 # prevent circular builds once source code is removed from this repo.
 on:
   workflow_dispatch: # Manual trigger only
+=======
+# Runs from koyjabo-core (private repo) → deploys built dist to Dhaka-Commute.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+>>>>>>> fix-console-errors
 
 permissions:
   contents: write  # needed for GITHUB_TOKEN self-push (Dhaka-Commute → itself)
@@ -30,7 +39,6 @@ jobs:
       - name: Build project
         run: npm run build
         env:
-          VITE_GITHUB_TOKEN: ${{ secrets.VITE_GITHUB_TOKEN }}
           NODE_ENV: production
           GENERATE_SOURCEMAP: false
 

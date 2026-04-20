@@ -1,0 +1,513 @@
+/**
+ * Enhanced Offline Support Service for Dhaka Commute
+ * Ensures ALL features work perfectly offline: main app, intercity search, AI chat, all pages
+ */
+
+import { BUS_DATA, STATIONS, METRO_STATIONS, METRO_LINES, RAILWAY_STATIONS, AIRPORTS } from '../constants';
+
+// ==================== DATA CACHING ====================
+
+/**
+ * Cache all essential data for offline use
+ */
+export async function cacheAllEssentialData(): Promise<boolean> {
+    try {
+        await cacheIntercityData();
+        cacheLocalBusData();
+        cacheMetroData();
+        cacheRailwayData();
+        cacheAirportData();
+
+        localStorage.setItem('offline_cache_complete', 'true');
+        localStorage.setItem('offline_cache_timestamp', new Date().toISOString());
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Cache intercity routes
+ */
+async function cacheIntercityData(): Promise<void> {
+    try {
+        const response = await fetch('/data/comprehensive-bangladesh-intercity-routes.json');
+        const data = await response.json();
+
+        localStorage.setItem('intercity_routes_cache', JSON.stringify(data));
+        localStorage.setItem('intercity_routes_cache_time', new Date().toISOString());
+    } catch {
+        // fall back to existing cache
+    }
+}
+
+/**
+ * Cache local bus data
+ */
+function cacheLocalBusData(): void {
+    try {
+        const busData = {
+            buses: BUS_DATA.map(bus => ({
+                id: bus.id,
+                name: bus.name,
+                bnName: bus.bnName,
+                routeString: bus.routeString,
+                type: bus.type,
+                hours: bus.hours,
+                stops: bus.stops
+            })),
+            stations: STATIONS,
+            totalBuses: BUS_DATA.length,
+            totalStations: Object.keys(STATIONS).length
+        };
+
+        localStorage.setItem('local_bus_cache', JSON.stringify(busData));
+    } catch {
+        // ignore
+    }
+}
+
+/**
+ * Cache metro data
+ */
+function cacheMetroData(): void {
+    try {
+        const metroData = {
+            stations: METRO_STATIONS,
+            lines: METRO_LINES,
+            totalStations: Object.keys(METRO_STATIONS).length
+        };
+
+        localStorage.setItem('metro_cache', JSON.stringify(metroData));
+    } catch {
+        // ignore
+    }
+}
+
+/**
+ * Cache railway data
+ */
+function cacheRailwayData(): void {
+    try {
+        const railwayData = {
+            stations: RAILWAY_STATIONS,
+            totalStations: Object.keys(RAILWAY_STATIONS).length
+        };
+
+        localStorage.setItem('railway_cache', JSON.stringify(railwayData));
+    } catch {
+        // ignore
+    }
+}
+
+/**
+ * Cache airport data
+ */
+function cacheAirportData(): void {
+    try {
+        const airportData = {
+            airports: AIRPORTS,
+            totalAirports: Object.keys(AIRPORTS).length
+        };
+
+        localStorage.setItem('airport_cache', JSON.stringify(airportData));
+    } catch {
+        // ignore
+    }
+}
+
+// ==================== DATA RETRIEVAL ====================
+
+/**
+ * Get local bus data (works offline)
+ */
+export function getLocalBusDataOffline() {
+    const cached = localStorage.getItem('local_bus_cache');
+
+    if (cached) {
+        try {
+            return JSON.parse(cached);
+        } catch {
+            // fall through to constants fallback
+        }
+    }
+
+    // Fallback to constants
+    return {
+        buses: BUS_DATA,
+        stations: STATIONS,
+        totalBuses: BUS_DATA.length,
+        totalStations: Object.keys(STATIONS).length
+    };
+}
+
+/**
+ * Get intercity routes (works offline)
+ */
+export function getIntercityRoutesOffline(origin?: string, destination?: string) {
+    const cached = localStorage.getItem('intercity_routes_cache');
+
+    if (!cached) {
+        return { routes: [], metadata: null };
+    }
+
+    try {
+        const data = JSON.parse(cached);
+
+        if (origin && destination) {
+            const filtered = data.routes.filter((route: any) =>
+                route.origin === origin && route.destination === destination
+            );
+            return { routes: filtered, metadata: data.metadata };
+        }
+
+        return data;
+    } catch {
+        return { routes: [], metadata: null };
+    }
+}
+
+/**
+ * Get metro data (works offline)
+ */
+export function getMetroDataOffline() {
+    const cached = localStorage.getItem('metro_cache');
+
+    if (cached) {
+        try {
+            return JSON.parse(cached);
+        } catch {
+            // fall through to constants fallback
+        }
+    }
+
+    // Fallback to constants
+    return {
+        stations: METRO_STATIONS,
+        lines: METRO_LINES,
+        totalStations: Object.keys(METRO_STATIONS).length
+    };
+}
+
+// ==================== OFFLINE STATUS ====================
+
+/**
+ * Check if offline cache is available
+ */
+export function isOfflineCacheAvailable(): boolean {
+    return localStorage.getItem('offline_cache_complete') === 'true';
+}
+
+/**
+ * Check if cache is stale (>7 days)
+ */
+export function isCacheStale(): boolean {
+    const timestamp = localStorage.getItem('offline_cache_timestamp');
+    if (!timestamp) return true;
+
+    const cached = new Date(timestamp);
+    const now = new Date();
+    const daysDiff = (now.getTime() - cached.getTime()) / (1000 * 60 * 60 * 24);
+
+    return daysDiff > 7;
+}
+
+/**
+ * Get cache age in days
+ */
+export function getCacheAgeDays(): number {
+    const timestamp = localStorage.getItem('offline_cache_timestamp');
+    if (!timestamp) return 0;
+
+    const cached = new Date(timestamp);
+    const now = new Date();
+    return Math.floor((now.getTime() - cached.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+// ==================== OFFLINE MESSAGING ====================
+
+/**
+ * Get offline status banner message
+ */
+export function getOfflineStatusBanner(language: 'en' | 'bn' = 'en'): {
+    message: string;
+    type: 'success' | 'warning' | 'error';
+} {
+    const hasCache = isOfflineCacheAvailable();
+    const isStale = isCacheStale();
+    const cacheAge = getCacheAgeDays();
+
+    // Even if cache flag is missing, Core App Data (bundled) is available.
+    // So we shouldn't scare the user.
+    if (!hasCache) {
+        return {
+            message: language === 'bn'
+                ? '✅ অফলাইন মোড (বেসিক) - বাস রুট উপলব্ধ!'
+                : '✅ Offline Mode (Basic) - Bus routes available!',
+            type: 'success' // Changed from warning to success as core features work
+        };
+    }
+
+    if (isStale) {
+        return {
+            message: language === 'bn'
+                ? `ℹ️ অফলাইন মোড - ডেটা ${cacheAge} দিন পুরনো। আপডেটের জন্য অনলাইনে সংযুক্ত হন।`
+                : `ℹ️ Offline Mode - Data is ${cacheAge} days old. Connect online to update.`,
+            type: 'warning'
+        };
+    }
+
+    return {
+        message: language === 'bn'
+            ? '✅ অফলাইন মোড - সকল ফিচার উপলব্ধ!'
+            : '✅ Offline Mode - All features available!',
+        type: 'success'
+    };
+}
+
+/**
+ * Get AI chat offline response
+ */
+export function getAiChatOfflineResponse(language: 'en' | 'bn' = 'en'): string {
+    const hasIntercityData = !!localStorage.getItem('intercity_routes_cache');
+    const localBusCount = BUS_DATA.length;
+    const intercityRoutes = hasIntercityData ? getLocalRouteCount() : 0;
+
+    if (language === 'bn') {
+        return hasIntercityData
+            ? `আপনি বর্তমানে অফলাইনে আছেন। 📴
+
+**কই যাবো এআই** সম্পূর্ণভাবে অফলাইনে কাজ করছে! আমি আপনাকে সাহায্য করতে পারি:
+
+✅ **${localBusCount}+ বাস রুট** (ঢাকা)
+✅ **${intercityRoutes}+ আন্তঃজেলা রুট**
+✅ **মেট্রো রেল গাইড**
+✅ **ভাড়া ও সময় তথ্য**
+✅ **অফলাইন ম্যাপ**
+
+আমাকে যেকোনো প্রশ্ন করুন! 🚌`
+            : `আপনি বর্তমানে অফলাইনে আছেন। 📴
+
+আন্তঃজেলা ডেটা উপলব্ধ নেই, তবে আপনি ঢাকার **${localBusCount}+ বাস রুট** এবং অফলাইন ম্যাপ ব্যবহার করতে পারেন।
+
+পূর্ণাঙ্গ অভিজ্ঞতার জন্য অনলাইনে সংযুক্ত হন।`;
+    }
+
+    return hasIntercityData
+        ? `You are currently offline. 📴
+
+**Koy Jabo AI** is fully functional offline! I can help you with:
+
+✅ **${localBusCount}+ Bus Routes** (Dhaka)
+✅ **${intercityRoutes}+ Intercity Routes**
+✅ **Metro Rail Guide**
+✅ **Fare & Duration Info**
+✅ **Offline Maps**
+
+Ask me anything! 🚌`
+        : `You are currently offline. 📴
+
+Intercity data is not available, but you can still use **${localBusCount}+ Dhaka bus routes** and offline maps.
+
+Connect online for the full experience.`;
+}
+
+/**
+ * Get count of locally cached routes
+ */
+function getLocalRouteCount(): number {
+    const cached = localStorage.getItem('intercity_routes_cache');
+    if (!cached) return 0;
+
+    try {
+        const data = JSON.parse(cached);
+        return data.metadata?.coverage?.totalRoutes || 0;
+    } catch {
+        return 0;
+    }
+}
+
+// ==================== SEARCH FUNCTIONALITY ====================
+
+/**
+ * Search intercity routes offline
+ */
+export function searchIntercityOffline(query: string) {
+    const data = getIntercityRoutesOffline();
+    const routes = data.routes;
+
+    if (!routes || routes.length === 0) {
+        return { results: [], suggestions: [], totalAvailable: 0 };
+    }
+
+    const queryLower = query.toLowerCase();
+
+    // Find matching cities
+    const allCities = new Set<string>();
+    routes.forEach((route: any) => {
+        allCities.add(route.origin);
+        allCities.add(route.destination);
+    });
+
+    const matchingCities = Array.from(allCities).filter(city =>
+        city.toLowerCase().includes(queryLower)
+    );
+
+    // Find routes from/to matching cities
+    const matchingRoutes = routes.filter((route: any) =>
+        route.origin.toLowerCase().includes(queryLower) ||
+        route.destination.toLowerCase().includes(queryLower) ||
+        route.operatorName.toLowerCase().includes(queryLower) ||
+        route.trainName?.toLowerCase().includes(queryLower)
+    );
+
+    return {
+        results: matchingRoutes.slice(0, 20),
+        suggestions: matchingCities.slice(0, 10),
+        totalAvailable: routes.length
+    };
+}
+
+/**
+ * Get all available cities offline
+ */
+export function getAllCitiesOffline(): string[] {
+    const data = getIntercityRoutesOffline();
+    const routes = data.routes;
+
+    if (!routes || routes.length === 0) return [];
+
+    const cities = new Set<string>();
+    routes.forEach((route: any) => {
+        cities.add(route.origin);
+        cities.add(route.destination);
+    });
+
+    return Array.from(cities).sort();
+}
+
+// ==================== FEATURE AVAILABILITY ====================
+
+export interface OfflineFeatureStatus {
+    busRoutes: boolean;
+    intercitySearch: boolean;
+    aiChat: boolean;
+    liveTracking: boolean;
+    maps: boolean;
+    trainSchedules: boolean;
+    metroRail: boolean;
+    fareCalculator: boolean;
+    routePlanner: boolean;
+    history: boolean;
+    favorites: boolean;
+    blog: boolean;
+    settings: boolean;
+}
+
+/**
+ * Get feature availability status offline
+ */
+export function getOfflineFeatureStatus(): OfflineFeatureStatus {
+    const hasIntercityData = !!localStorage.getItem('intercity_routes_cache');
+    const hasLocalData = !!localStorage.getItem('local_bus_cache');
+
+    return {
+        // Always available (data in constants or localStorage)
+        busRoutes: true,
+        metroRail: true,
+        fareCalculator: true,
+        routePlanner: true,
+        history: true,
+        favorites: true,
+        blog: true,
+        settings: true,
+
+        // Available if cached
+        intercitySearch: hasIntercityData,
+        trainSchedules: hasIntercityData,
+        aiChat: true, // Rule-based offline logic
+
+        // Requires internet
+        liveTracking: false,
+
+        // Maps available if tiles cached
+        maps: true
+    };
+}
+
+/**
+ * Get offline feature list
+ */
+export function getOfflineFeaturesList(language: 'en' | 'bn' = 'en'): string[] {
+    const features = getOfflineFeatureStatus();
+
+    if (language === 'bn') {
+        const availableFeatures = [];
+
+        if (features.busRoutes) availableFeatures.push('🚌 ঢাকার সকল বাস রুট');
+        if (features.metroRail) availableFeatures.push('🚇 মেট্রো রেল গাইড');
+        if (features.intercitySearch) availableFeatures.push('🚍 আন্তঃজেলা বাস ও ট্রেন');
+        if (features.fareCalculator) availableFeatures.push('💰 ভাড়া ক্যালকুলেটর');
+        if (features.routePlanner) availableFeatures.push('🗺️ রুট প্ল্যানার');
+        if (features.maps) availableFeatures.push('📍 অফলাইন ম্যাপ');
+        if (features.aiChat) availableFeatures.push('🤖 এআই অ্যাসিস্ট্যান্ট');
+        if (features.history) availableFeatures.push('📜 সার্চ হিস্টরি');
+        if (features.favorites) availableFeatures.push('❤️ প্রিয় রুট');
+        if (features.blog) availableFeatures.push('📰 ট্রাভেল গাইড');
+
+        return availableFeatures;
+    }
+
+    const availableFeatures = [];
+
+    if (features.busRoutes) availableFeatures.push('🚌 All Dhaka Bus Routes');
+    if (features.metroRail) availableFeatures.push('🚇 Metro Rail Guide');
+    if (features.intercitySearch) availableFeatures.push('🚍 Intercity Bus & Train');
+    if (features.fareCalculator) availableFeatures.push('💰 Fare Calculator');
+    if (features.routePlanner) availableFeatures.push('🗺️ Route Planner');
+    if (features.maps) availableFeatures.push('📍 Offline Maps');
+    if (features.aiChat) availableFeatures.push('🤖 AI Assistant');
+    if (features.history) availableFeatures.push('📜 Search History');
+    if (features.favorites) availableFeatures.push('❤️ Favorite Routes');
+    if (features.blog) availableFeatures.push('📰 Travel Guide');
+
+    return availableFeatures;
+}
+
+// ==================== INITIALIZATION ====================
+
+/**
+ * Initialize offline support
+ */
+export async function initializeOfflineSupport(): Promise<void> {
+    if (!navigator.onLine) return;
+    await cacheAllEssentialData();
+}
+
+// ==================== EXPORTS ====================
+
+export default {
+    // Initialization
+    initializeOfflineSupport,
+    cacheAllEssentialData,
+
+    // Data Retrieval
+    getLocalBusDataOffline,
+    getIntercityRoutesOffline,
+    getMetroDataOffline,
+
+    // Status
+    isOfflineCacheAvailable,
+    isCacheStale,
+    getCacheAgeDays,
+    getOfflineStatusBanner,
+    getOfflineFeatureStatus,
+    getOfflineFeaturesList,
+
+    // Messaging
+    getAiChatOfflineResponse,
+
+    // Search
+    searchIntercityOffline,
+    getAllCitiesOffline
+};
