@@ -215,10 +215,15 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
       }
 
       const totalDist = roadSegments.reduce((acc, s) => acc + s.dist, 0);
-      const duration = 15000; // 15 seconds for a smooth journey
+      
+      // Scale duration based on distance (min 10s, max 40s)
+      const duration = Math.min(40000, Math.max(10000, totalDist / 10)); 
       let startTime: number | null = null;
 
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+
       const animate = (timestamp: number) => {
+        if (!isMounted) return;
         if (!startTime) startTime = timestamp;
         const elapsed = timestamp - startTime;
         const progress = (elapsed % duration) / duration;
@@ -256,7 +261,17 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
           }
         }
 
-        const iconHtml = `<div style="font-size: 28px; line-height: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">${iconChar}</div>`;
+        const iconHtml = `
+          <div style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            font-size: 26px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+          ">${iconChar}</div>
+        `;
         const newIcon = window.L.divIcon({
           className: 'vehicle-anim-icon',
           html: iconHtml,
@@ -265,7 +280,9 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
         });
         
         vehicleMarker.setIcon(newIcon);
-        vehicleMarker.setLatLng([lat, lng]);
+        if (isMounted) {
+            vehicleMarker.setLatLng([lat, lng]);
+        }
 
         animationRef.current = requestAnimationFrame(animate);
       };
@@ -307,10 +324,12 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
       mapInstance.current.fitBounds(polyline.getBounds(), { padding: [80, 80] });
 
       // Start animation along the REAL road points
-      startAnimation(roadPoints);
+      if (isMounted) {
+        startAnimation(roadPoints);
+      }
 
       setTimeout(() => {
-        if (mapInstance.current) {
+        if (mapInstance.current && isMounted) {
           mapInstance.current.invalidateSize();
           mapInstance.current.fitBounds(polyline.getBounds(), { padding: [80, 80] });
         }

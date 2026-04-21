@@ -97,7 +97,7 @@ jobs:
 
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           git commit -m "deploy: $(date -u '+%Y-%m-%d %H:%M UTC') | core@${SHORT_SHA}"
-          git push origin main
+          git push origin main:gh-pages --force
 
       - name: Deploy summary
         if: success()
