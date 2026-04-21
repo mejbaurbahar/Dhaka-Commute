@@ -28,3 +28,27 @@ dist-ssr
 
 dev-dist/
 .claude/
+
+# Secure Core Files
+.env.local
+.env.*.local
+*.local
+setup-secrets.cjs
+server.js
+wrangler.toml
+netlify.toml
+vercel.json
+render.yaml
+tmp_runs.json
+visitor-counter.html
+visitor-sync-test.html
+redirect.html
+error-page.html
+index.html.backup
+
+# Secure Core Folders
+api/
+scripts/
+scratch/
+.github/workflows/
+.github/scripts/
