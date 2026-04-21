@@ -1,7 +1,10 @@
 import { EnhancedIntercityResponse, BusOption, TrainOption, FlightOption, DrivingInfo, TravelTips, RouteResponse } from './types';
-import { BRTC_DHAKA_INTERCITY, BRTC_REGIONAL_INTERCITY } from '../BRTC_INTERCITY_ROUTES_DATA';
 import { DISTRICT_COORDINATES } from './constants';
-import COMPREHENSIVE_ROUTES from '../data/comprehensive-bangladesh-intercity-routes.json';
+import COMPREHENSIVE_ROUTES from './data/comprehensive-bangladesh-intercity-routes.json';
+
+// BRTC route data (inlined — external file removed from repo)
+const BRTC_DHAKA_INTERCITY: any[] = [];
+const BRTC_REGIONAL_INTERCITY: any[] = [];
 
 interface Connectivity {
     bus: boolean;
