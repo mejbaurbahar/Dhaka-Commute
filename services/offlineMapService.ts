@@ -59,6 +59,9 @@ export async function precacheDhakaMapTiles(
 
     // Generate all tile URLs
     for (const zoom of zoomLevels) {
+        const tiles = getTilesInBounds(DHAKA_BOUNDS.minLat, DHAKA_BOUNDS.maxLat, DHAKA_BOUNDS.minLng, DHAKA_BOUNDS.maxLng, zoom);
+        allTiles.push(...tiles);
+    }
 
     // Cache tiles in batches to avoid overwhelming the browser
     const batchSize = 50;

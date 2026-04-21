@@ -31,18 +31,38 @@ interface SyncMeta {
   transportVersion: string;
 }
 
-// ── Low-level helpers ─────────────────────────────────────────────────────────
-// Remote sync requires a server-side token proxy (not available on GitHub Pages).
-// All functions return null/false gracefully — localStorage handles local persistence.
+const PROXY = 'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function repoGet<T>(_path: string): Promise<T | null> {
-  return null;
+async function repoGet<T>(path: string): Promise<T | null> {
+  try {
+    const res = await fetch(`${PROXY}/gh?r=d&p=${encodeURIComponent(path)}`, {
+      credentials: 'omit',
+    });
+    if (res.status === 404) return null;
+    if (!res.ok) return null;
+    return await res.json() as T;
+  } catch {
+    return null;
+  }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function repoPut(_path: string, _content: unknown): Promise<boolean> {
-  return false;
+async function repoPut(path: string, content: unknown): Promise<boolean> {
+  try {
+    const requestId = crypto.randomUUID();
+    const res = await fetch(`${PROXY}/gh`, {
+      method: 'POST',
+      credentials: 'omit',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        requestId,
+        action: 'save-history', // generic action for saving data
+        data: JSON.stringify({ path, content })
+      }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 function readMeta(): SyncMeta {

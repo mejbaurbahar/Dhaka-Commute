@@ -21,12 +21,35 @@ interface SyncResult {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-async function ghGet<T>(_path: string): Promise<T | null> {
-  return null;
+const PROXY = 'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
+
+async function ghGet<T>(path: string): Promise<T | null> {
+  try {
+    const res = await fetch(`${PROXY}/gh?r=d&p=${encodeURIComponent(path)}`);
+    if (res.status === 404) return null;
+    if (!res.ok) return null;
+    return await res.json() as T;
+  } catch {
+    return null;
+  }
 }
 
-async function ghPut(_path: string, _content: unknown): Promise<boolean> {
-  return false;
+async function ghPut(path: string, content: unknown): Promise<boolean> {
+  try {
+    const requestId = crypto.randomUUID();
+    const res = await fetch(`${PROXY}/gh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        requestId,
+        action: 'save-history', // we use save-history as a generic write action
+        data: JSON.stringify({ path, content })
+      })
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 function getCacheMeta(): SyncMeta | null {

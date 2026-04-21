@@ -59,9 +59,7 @@ export const liveBusService = {
             );
         }
 
-        activeBroadcasting = true;
-        currentBusName = busName;
-        connect();
+    },
 
     // Stop broadcasting
     stopBroadcasting: () => {

@@ -167,9 +167,19 @@ const saveGlobalStats = (stats: GlobalStats): void => {
 
 // ── GitHub reads ──────────────────────────────────────────────────────────────
 
-/** Fetch global stats — no-op on static hosting (no server proxy available). */
+const PROXY = 'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
+
+/** Fetch global stats from the GitHub data repo. */
 export const fetchGlobalStats = async (): Promise<void> => {
-    // No server proxy on GitHub Pages; stats are localStorage-only
+    try {
+        const res = await fetch(`${PROXY}/gh?r=d&p=data%2Fstats%2Fglobal.json`);
+        if (res.ok) {
+            const stats = await res.json() as GlobalStats;
+            saveGlobalStats(stats);
+        }
+    } catch (e) {
+        console.error('Failed to fetch global stats:', e);
+    }
 };
 
 // ── Visit recording (fire-and-forget via GitHub Actions) ──────────────────────
@@ -182,18 +192,32 @@ export const incrementVisitCount = async (): Promise<void> => {
     }
     sessionStorage.setItem(SESSION_KEY, 'true');
 
-    // Increment local visit count (no server proxy on static hosting)
+    // Increment local visit count
     const visitorId = getVisitorId();
     const local = getGlobalStats();
-    saveGlobalStats({
+    const updated = {
         ...local,
         totalVisits: (local.totalVisits || 0) + 1,
         todayVisits: (local.todayVisits || 0) + 1,
         uniqueVisitors: local.uniqueVisitors || 0,
         lastUpdated: Date.now(),
-    });
-    // Keep visitorId in scope (used for future server-side reporting)
-    void visitorId;
+    };
+    saveGlobalStats(updated);
+
+    // Sync to server (fire-and-forget)
+    try {
+        fetch(`${PROXY}/gh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                requestId: crypto.randomUUID(),
+                action: 'record-visit',
+                data: JSON.stringify({ visitorId })
+            })
+        }).catch(() => {});
+    } catch {
+        // silent
+    }
 };
 
 // ── User history ──────────────────────────────────────────────────────────────
