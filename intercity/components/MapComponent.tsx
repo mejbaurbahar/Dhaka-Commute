@@ -226,16 +226,23 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
         const targetDist = progress * totalDist;
         let accumulatedDist = 0;
         let currentSeg = roadSegments[0];
-
-        for (const seg of roadSegments) {
-          if (accumulatedDist + seg.dist >= targetDist) {
+        
+        // Find current segment
+        for (let i = 0; i < roadSegments.length; i++) {
+          const seg = roadSegments[i];
+          if (accumulatedDist + seg.dist >= targetDist || i === roadSegments.length - 1) {
             currentSeg = seg;
             break;
           }
           accumulatedDist += seg.dist;
         }
 
-        const segProgress = (targetDist - accumulatedDist) / currentSeg.dist;
+        // Calculate progress within segment
+        let segProgress = 0;
+        if (currentSeg.dist > 0) {
+          segProgress = Math.min(1, Math.max(0, (targetDist - accumulatedDist) / currentSeg.dist));
+        }
+
         const lat = currentSeg.p1[0] + (currentSeg.p2[0] - currentSeg.p1[0]) * segProgress;
         const lng = currentSeg.p1[1] + (currentSeg.p2[1] - currentSeg.p1[1]) * segProgress;
 
@@ -249,7 +256,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
           }
         }
 
-        const iconHtml = `<div style="font-size: 28px; line-height: 1; transform: translate(-50%, -50%); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">${iconChar}</div>`;
+        const iconHtml = `<div style="font-size: 28px; line-height: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">${iconChar}</div>`;
         const newIcon = window.L.divIcon({
           className: 'vehicle-anim-icon',
           html: iconHtml,
