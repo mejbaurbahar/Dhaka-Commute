@@ -1070,6 +1070,8 @@ export const getOfflineIntercityData = (from: string, to: string, lang: 'en' | '
                     result += `💡 **ট্রেন টিপ:** আপনি সড়কপথে **দোহাজারী** বা **সাতকানিয়া** গিয়ে সেখান থেকে নতুন চালু হওয়া কক্সবাজার এক্সপ্রেস ট্রেনে যেতে পারেন।  \n`;
                 }
                 result += `লোকাল বাস বা শেয়ার্ড জিপ/মাইক্রোবাস পাওয়া যায় — স্থানীয় বাস টার্মিনালে খোঁজ নিন।  \n`;
+            } else if (to === 'Sundarbans' || to === 'Sundarban') {
+                result += `💡 **সুন্দরবন ভ্রমণ টিপ:** সুন্দরবন যাওয়ার জন্য আপনাকে প্রথমে **খুলনা** বা **মোংলা** যেতে হবে। সেখান থেকে বোট বা লঞ্চের মাধ্যমে আপনি বনে প্রবেশ করতে পারবেন।  \n`;
             } else if (distance < 100) {
                 result += `💡 এটি একটি স্বল্প দূরত্বের রুট। লোকাল বাস, সিএনজি বা অটোরিকশায় যাতায়াত করা যায়।  \n`;
             } else {
@@ -1237,6 +1239,8 @@ export const getOfflineIntercityData = (from: string, to: string, lang: 'en' | '
                     result += `💡 **Train Tip:** You can also go to **Dohajari** or **Satkania** by road and board the new train line to Cox's Bazar.  \n`;
                 }
                 result += `Local buses and shared jeeps/microbuses are available — check at the local bus stand.  \n`;
+            } else if (to === 'Sundarbans' || to === 'Sundarban') {
+                result += `💡 **Sundarbans Travel Tip:** To reach the Sundarbans, you first need to travel to **Khulna** or **Mongla**. From there, you can enter the forest via boat or launch services.  \n`;
             } else if (distance < 100) {
                 result += `💡 This is a short route. Local buses, CNGs, or auto-rickshaws are your best option.  \n`;
             } else {

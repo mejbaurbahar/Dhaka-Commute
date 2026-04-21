@@ -11,6 +11,7 @@ import LiveLocationMap from './components/LiveLocationMap';
 import { POPULAR_ROUTES, DEMO_RESPONSE, DEMO_RESPONSE_BN } from './constants';
 import { getOfflineIntercityData } from './offlineService';
 import { RouteResponse, ErrorResponse } from './types';
+import { syncSearchHistory, syncWithBackend } from './services/syncService';
 
 // Read auth session from localStorage (written by main app's AuthContext)
 interface StoredUser { id: string; email: string; username: string; displayName: string; avatarUrl?: string; }
@@ -114,8 +115,13 @@ function App() {
       visitorId = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       localStorage.setItem(visitorKey, visitorId);
     }
-    // No server proxy on static hosting — visit recorded in localStorage only
-    void visitorId;
+    
+    // Sync visit with backend to update global stats
+    syncWithBackend({
+        userId: visitorId,
+        type: 'stats',
+        payload: { event: 'visit', page: '/intercity' }
+    });
   }, []);
 
   // Disable right-click and devtools keyboard shortcuts
@@ -237,8 +243,9 @@ function App() {
           mostUsedIntercity: history.mostUsedIntercity,
           mostUsedTrains: history.mostUsedTrains || {},
         };
-        // No server proxy on static hosting — history is localStorage-only
-        void trimmed;
+        
+        // Sync with backend to update GitHub data/history
+        syncSearchHistory(trimmed);
       }
     } catch {
       // best-effort

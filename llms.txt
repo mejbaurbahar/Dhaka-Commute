@@ -164,10 +164,25 @@ A: Updated regularly by community. Covers 200+ verified Dhaka bus routes and liv
 - **Users:** Growing community
 - **Emergency Contacts:** 80+ verified
 
+## About the Founder
+
+Mejbaur Bahar Fagun is a Senior Software Test Engineer based in Dhaka, Bangladesh. He created KoyJabo with the mission to democratize transport information and make commuting stress-free for everyone in Bangladesh. He is a passionate software advocate and problem solver.
+
+## Travel Guide for Popular Spots
+
+### 🌳 Sundarbans (Royal Bengal Tiger Territory)
+- **Primary Gateway:** Khulna or Mongla (Bagerhat).
+- **Travel from Dhaka:** 
+  - **By Bus:** 3.5 - 4.5 hours via Padma Bridge (Fastest).
+  - **By Train:** Sundarban Express (~9h) or Jahanabad Express (~4h via Padma Bridge).
+  - **By Air:** Fly to Jashore, then 2h drive.
+- **Tip:** For the best experience, take the Sundarban launch service from Khulna/Mongla.
+
 ---
 
-**Last Updated:** December 28, 2025
-**Version:** 1.0.0
+**Last Updated:** April 21, 2026
+**Version:** 1.2.0
+**Lead Developer:** Mejbaur Bahar Fagun
 **Status:** Active Development
 **License:** Open Source (MIT)
 

@@ -89,7 +89,7 @@ export const DISTRICT_COORDINATES: { [key: string]: [number, number] } = {
   "Sajek Valley": [23.3820, 92.2938],
   "Kuakata": [21.8218, 90.1174],
   "Sreemangal": [24.3065, 91.7296],
-  "Sundarbans": [21.9497, 89.1833],
+  "Sundarbans": [22.4833, 89.5833], // Moved to Mongla Gateway for better road routing
   "Teknaf": [20.8700, 92.2900],
   "Benapole": [23.0381, 88.8976],
   "Jaflong": [25.1633, 92.0175],

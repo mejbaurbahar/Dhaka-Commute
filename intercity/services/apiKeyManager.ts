@@ -1,6 +1,7 @@
 // API Key Manager - Usage Tracking Only
 // API keys are now managed on the backend
 // This only tracks client-side usage limits
+import { syncUsageStats } from './syncService';
 
 interface UsageRecord {
     aiChatCount: number;
@@ -126,6 +127,9 @@ export const trackAiChatUsage = (): void => {
     const record = getUsageRecord();
     record.aiChatCount += 1;
     saveUsageRecord(record);
+    
+    // Sync with backend telemetry
+    syncUsageStats(record);
 };
 
 // Track Intercity Search usage (call this after successful API call)
@@ -133,6 +137,9 @@ export const trackIntercitySearchUsage = (): void => {
     const record = getUsageRecord();
     record.intercitySearchCount += 1;
     saveUsageRecord(record);
+
+    // Sync with backend telemetry
+    syncUsageStats(record);
 };
 
 // Get remaining uses for today

@@ -198,97 +198,10 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
     const vehicleIconDiv = window.L.divIcon({
       className: 'vehicle-anim-icon',
       html: '',
-      iconSize: [30, 30],
-      iconAnchor: [15, 15]
+      iconSize: [34, 34],
+      iconAnchor: [17, 17]
     });
     const vehicleMarker = window.L.marker(startCoords, { icon: vehicleIconDiv, zIndexOffset: 1000 }).addTo(layers);
-
-    const startAnimation = (points: [number, number][]) => {
-      if (points.length < 2) return;
-      
-      // Calculate distances for the full road path
-      const roadSegments: { p1: [number, number], p2: [number, number], dist: number }[] = [];
-      for (let i = 0; i < points.length - 1; i++) {
-        const p1 = points[i];
-        const p2 = points[i+1];
-        roadSegments.push({ p1, p2, dist: mapInstance.current.distance(p1, p2) });
-      }
-
-      const totalDist = roadSegments.reduce((acc, s) => acc + s.dist, 0);
-      
-      // Scale duration based on distance (min 10s, max 40s)
-      const duration = Math.min(40000, Math.max(10000, totalDist / 10)); 
-      let startTime: number | null = null;
-
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-
-      const animate = (timestamp: number) => {
-        if (!isMounted) return;
-        if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
-        const progress = (elapsed % duration) / duration;
-
-        const targetDist = progress * totalDist;
-        let accumulatedDist = 0;
-        let currentSeg = roadSegments[0];
-        
-        // Find current segment
-        for (let i = 0; i < roadSegments.length; i++) {
-          const seg = roadSegments[i];
-          if (accumulatedDist + seg.dist >= targetDist || i === roadSegments.length - 1) {
-            currentSeg = seg;
-            break;
-          }
-          accumulatedDist += seg.dist;
-        }
-
-        // Calculate progress within segment
-        let segProgress = 0;
-        if (currentSeg.dist > 0) {
-          segProgress = Math.min(1, Math.max(0, (targetDist - accumulatedDist) / currentSeg.dist));
-        }
-
-        const lat = currentSeg.p1[0] + (currentSeg.p2[0] - currentSeg.p1[0]) * segProgress;
-        const lng = currentSeg.p1[1] + (currentSeg.p2[1] - currentSeg.p1[1]) * segProgress;
-
-        // Use modeTitle or context to pick icon
-        const rawMode = modeTitle || '';
-        let iconChar = '📍';
-        for (const key of Object.keys(MODE_ICONS)) {
-          if (rawMode.includes(key)) {
-            iconChar = MODE_ICONS[key];
-            break;
-          }
-        }
-
-        const iconHtml = `
-          <div style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            font-size: 26px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-          ">${iconChar}</div>
-        `;
-        const newIcon = window.L.divIcon({
-          className: 'vehicle-anim-icon',
-          html: iconHtml,
-          iconSize: [30, 30],
-          iconAnchor: [15, 15]
-        });
-        
-        vehicleMarker.setIcon(newIcon);
-        if (isMounted) {
-            vehicleMarker.setLatLng([lat, lng]);
-        }
-
-        animationRef.current = requestAnimationFrame(animate);
-      };
-
-      animationRef.current = requestAnimationFrame(animate);
-    };
 
     // Fetch road-following route from OSRM, fall back to straight lines
     const drawRoute = async () => {
@@ -306,10 +219,12 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
           const coords = data?.routes?.[0]?.geometry?.coordinates;
           if (coords && coords.length > 1) {
             // OSRM returns [lng, lat], Leaflet needs [lat, lng]
-            roadPoints = coords.map(c => [c[1], c[0]] as [number, number]);
+            const osrmCoords = coords.map(c => [c[1], c[0]] as [number, number]);
+            // Ensure path connects to the actual markers
+            roadPoints = [startCoords, ...osrmCoords, endCoords];
           }
         }
-      } catch { /* fallback to routePoints already handled */ }
+      } catch { /* fallback already handled */ }
 
       if (!isMounted) return;
 
@@ -323,7 +238,100 @@ const MapComponent: React.FC<MapComponentProps> = ({ from, to, via = [], modeTit
 
       mapInstance.current.fitBounds(polyline.getBounds(), { padding: [80, 80] });
 
-      // Start animation along the REAL road points
+      // Improved and Optimized Animation
+      const startAnimation = (points: [number, number][]) => {
+        if (points.length < 2) return;
+        
+        const roadSegments: { p1: [number, number], p2: [number, number], dist: number }[] = [];
+        for (let i = 0; i < points.length - 1; i++) {
+          const p1 = points[i];
+          const p2 = points[i+1];
+          roadSegments.push({ p1, p2, dist: mapInstance.current.distance(p1, p2) });
+        }
+
+        const totalDist = roadSegments.reduce((acc, s) => acc + s.dist, 0);
+        const duration = Math.min(40000, Math.max(10000, totalDist / 12)); 
+        let startTime: number | null = null;
+        let lastSegmentIndex = 0;
+
+        if (animationRef.current) cancelAnimationFrame(animationRef.current);
+
+        const animate = (timestamp: number) => {
+          if (!isMounted) return;
+          if (!startTime) startTime = timestamp;
+          const elapsed = timestamp - startTime;
+          const progress = (elapsed % duration) / duration;
+
+          const targetDist = progress * totalDist;
+          let accumulatedDist = 0;
+          let currentSeg = roadSegments[0];
+          
+          // Optimized segment finder starting from last known index
+          let i = 0;
+          for (i = 0; i < roadSegments.length; i++) {
+            const seg = roadSegments[i];
+            if (accumulatedDist + seg.dist >= targetDist) {
+              currentSeg = seg;
+              break;
+            }
+            accumulatedDist += seg.dist;
+          }
+          if (i === roadSegments.length) currentSeg = roadSegments[i-1];
+
+          let segProgress = 0;
+          if (currentSeg.dist > 0) {
+            segProgress = (targetDist - accumulatedDist) / currentSeg.dist;
+          }
+
+          const lat = currentSeg.p1[0] + (currentSeg.p2[0] - currentSeg.p1[0]) * segProgress;
+          const lng = currentSeg.p1[1] + (currentSeg.p2[1] - currentSeg.p1[1]) * segProgress;
+
+          // Calculate bearing for rotation (especially for flights/ships)
+          const angle = Math.atan2(currentSeg.p2[1] - currentSeg.p1[1], currentSeg.p2[0] - currentSeg.p1[0]) * 180 / Math.PI;
+          
+          const rawMode = modeTitle || '';
+          let iconChar = '📍';
+          let shouldRotate = false;
+          for (const key of Object.keys(MODE_ICONS)) {
+            if (rawMode.includes(key)) {
+              iconChar = MODE_ICONS[key];
+              if (key === 'Air' || key === 'Plane' || key === 'Flight' || key === 'Ship' || key === 'Launch') shouldRotate = true;
+              break;
+            }
+          }
+
+          const rotationStyle = shouldRotate ? `transform: rotate(${angle - 45}deg);` : '';
+
+          const iconHtml = `
+            <div style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 34px;
+              height: 34px;
+              font-size: 26px;
+              ${rotationStyle}
+              filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+              transition: transform 0.1s linear;
+            ">${iconChar}</div>
+          `;
+          
+          const newIcon = window.L.divIcon({
+            className: 'vehicle-anim-icon',
+            html: iconHtml,
+            iconSize: [34, 34],
+            iconAnchor: [17, 17]
+          });
+          
+          vehicleMarker.setIcon(newIcon);
+          vehicleMarker.setLatLng([lat, lng]);
+
+          animationRef.current = requestAnimationFrame(animate);
+        };
+
+        animationRef.current = requestAnimationFrame(animate);
+      };
+
       if (isMounted) {
         startAnimation(roadPoints);
       }
