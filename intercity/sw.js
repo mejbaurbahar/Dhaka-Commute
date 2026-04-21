@@ -1,1 +1,87 @@
-if(!self.define){let e,s={};const t=(t,n)=>(t=new URL(t+".js",n).href,s[t]||new Promise(s=>{if("document"in self){const e=document.createElement("script");e.src=t,e.onload=s,document.head.appendChild(e)}else e=t,importScripts(t),s()}).then(()=>{let e=s[t];if(!e)throw new Error(`Module ${t} didn’t register its module`);return e}));self.define=(n,i)=>{const c=e||("document"in self?document.currentScript.src:"")||location.href;if(s[c])return;let a={};const o=e=>t(e,c),r={module:{uri:c},exports:a,require:o};s[c]=Promise.all(n.map(e=>r[e]||o(e))).then(e=>(i(...e),a))}}define(["./workbox-b55d6771"],function(e){"use strict";e.setCacheNameDetails({prefix:"dhaka-commute-intercity-v4"}),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"logo.png",revision:"c5633b8a7bc362054c50c171d7406b0d"},{url:"index.html",revision:"979d0c51012f8f7c94b48d3f49fdfdbd"},{url:"data/comprehensive-bangladesh-intercity-routes.json",revision:"577849cd9487d6615fda7021b039a8bc"},{url:"data/bangladesh-intercity-routes.json",revision:"db867ace31dcb6438edc6bc56b4eb799"},{url:"assets/workbox-window.prod.es5-BIl4cyR9.js",revision:null},{url:"assets/logo-js9G3PIJ.png",revision:null},{url:"assets/index-DesUeep2.css",revision:null},{url:"assets/index-CrfBaBEW.js",revision:null},{url:"logo.png",revision:"c5633b8a7bc362054c50c171d7406b0d"},{url:"manifest.webmanifest",revision:"3a10b74bded33e65c1ddb4d577a708b7"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html"),{allowlist:[/^\/intercity/]})),e.registerRoute(/^https:\/\/cdn\.tailwindcss\.com\/.*/i,new e.CacheFirst({cacheName:"intercity-tailwind-cache",plugins:[new e.ExpirationPlugin({maxEntries:10,maxAgeSeconds:31536e3}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute(/^https:\/\/fonts\.googleapis\.com\/.*/i,new e.CacheFirst({cacheName:"intercity-fonts-cache",plugins:[new e.ExpirationPlugin({maxEntries:20,maxAgeSeconds:31536e3}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute(/^https:\/\/fonts\.gstatic\.com\/.*/i,new e.CacheFirst({cacheName:"intercity-gstatic-cache",plugins:[new e.ExpirationPlugin({maxEntries:30,maxAgeSeconds:31536e3}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute(/^https:\/\/unpkg\.com\/leaflet.*/i,new e.CacheFirst({cacheName:"intercity-leaflet-cache",plugins:[new e.ExpirationPlugin({maxEntries:10,maxAgeSeconds:31536e3}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute(/^https:\/\/aistudiocdn\.com\/.*/i,new e.CacheFirst({cacheName:"intercity-aistudio-cache",plugins:[new e.ExpirationPlugin({maxEntries:50,maxAgeSeconds:2592e3}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute(/^https:\/\/esm\.sh\/.*/i,new e.CacheFirst({cacheName:"intercity-esm-cache",plugins:[new e.ExpirationPlugin({maxEntries:30,maxAgeSeconds:31536e3}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET"),e.registerRoute(/^https:\/\/[a-c]\.tile\.openstreetmap\.org\/.*/i,new e.CacheFirst({cacheName:"intercity-map-tiles",plugins:[new e.ExpirationPlugin({maxEntries:500,maxAgeSeconds:2592e3}),new e.CacheableResponsePlugin({statuses:[0,200]})]}),"GET")});
+const CACHE_NAME = 'intercity-go-v1';
+const DYNAMIC_CACHE = 'intercity-go-dynamic-v1';
+
+// Assets to pre-cache immediately
+const PRE_CACHE_ASSETS = [
+  '/intercity/',
+  '/intercity/index.html',
+  '/intercity/manifest.json',
+  '/intercity/data/comprehensive-bangladesh-intercity-routes.json',
+  '/intercity/data/bangladesh-intercity-routes.json'
+];
+
+// Install Event: Cache core static assets
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); // Force activation
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(PRE_CACHE_ASSETS);
+    })
+  );
+});
+
+// Activate Event: Clean up old caches
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME && key !== DYNAMIC_CACHE) {
+            return caches.delete(key);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
+});
+
+// Fetch Event: The Core Caching Strategy
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // 1. API Requests: Network Only (Let App.tsx handle offline errors)
+  if (url.pathname.startsWith('/api/')) {
+    return;
+  }
+
+  // 2. External CDNs (ESM, Tailwind, Leaflet, Fonts): Stale-While-Revalidate
+  // This makes the app load instantly from cache, then update in background
+  if (
+    url.hostname.includes('esm.sh') ||
+    url.hostname.includes('tailwindcss.com') ||
+    url.hostname.includes('unpkg.com') ||
+    url.hostname.includes('googleapis.com') ||
+    url.hostname.includes('gstatic.com')
+  ) {
+    event.respondWith(
+      caches.open(DYNAMIC_CACHE).then((cache) => {
+        return cache.match(event.request).then((cachedResponse) => {
+          const fetchPromise = fetch(event.request).then((networkResponse) => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          }).catch(() => {
+            // Swallow errors for background updates if offline
+          });
+          return cachedResponse || fetchPromise;
+        });
+      })
+    );
+    return;
+  }
+
+  // 3. General Strategy for local files: Cache First, fall back to Network
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request).then((networkResponse) => {
+        // Cache new local files visited
+        return caches.open(DYNAMIC_CACHE).then((cache) => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+      });
+    })
+  );
+});
