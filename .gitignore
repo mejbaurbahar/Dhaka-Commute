@@ -47,8 +47,5 @@ error-page.html
 index.html.backup
 
 # Secure Core Folders
-api/
 scripts/
 scratch/
-.github/workflows/
-.github/scripts/
