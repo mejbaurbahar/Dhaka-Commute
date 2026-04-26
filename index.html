@@ -28,14 +28,14 @@
   <meta name="theme-color" content="#0f172a">
 
   <!-- Manifest -->
-  <link rel="manifest" href="/assets/manifest--JczbSnz--JczbSnz.json">
+  <link rel="manifest" href="/manifest.json">
 
   <!-- Apple Touch Icons & Favicons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon-CMX6C1nT-CMX6C1nT.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192x192-C0rTl7WI-C0rTl7WI.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512x512-B6aAGCDQ-B6aAGCDQ.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo-js9G3PIJ-js9G3PIJ.png">
-  <link rel="shortcut icon" href="/assets/logo-js9G3PIJ-js9G3PIJ.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512x512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/logo.png">
+  <link rel="shortcut icon" href="/logo.png">
 
   <!-- SEO Meta Tags -->
   <title>কই যাবো | ঢাকা বাস রুট, মেট্রো রেল ও বাংলাদেশ ট্রান্সপোর্ট গাইড - Bangladesh Bus & Route Finder</title>
@@ -54,20 +54,10 @@
   <meta name="distribution" content="global" />
   <meta name="rating" content="general" />
 
-  <!-- Google AdSense - Delayed Dynamic Load to prevent console noise -->
+  <!-- Google AdSense -->
   <meta name="google-adsense-account" content="ca-pub-6933713424631305">
-  <script>
-    window.addEventListener('load', function() {
-      setTimeout(function() {
-        var script = document.createElement('script');
-        script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6933713424631305";
-        script.async = true;
-        script.crossOrigin = "anonymous";
-        script.onerror = function() { /* Silent fail if blocked */ };
-        document.head.appendChild(script);
-      }, 3000); // 3 second delay to ensure clean console on initial load
-    });
-  </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6933713424631305"
+    crossorigin="anonymous"></script>
 
 
 
@@ -393,7 +383,7 @@
 
 
   <!-- Preload LCP image for faster rendering -->
-  <link rel="preload" as="image" href="/assets/logo-js9G3PIJ-js9G3PIJ.png" fetchpriority="high">
+  <link rel="preload" as="image" href="/logo.png" fetchpriority="high">
 
   <!-- Preconnect to critical origins for faster resource loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -401,6 +391,7 @@
   <link rel="preconnect" href="https://aistudiocdn.com" crossorigin>
   <link rel="dns-prefetch" href="https://api.open-meteo.com">
   <!-- Offline fallback CSS - loads first to ensure app works offline -->
+  <link rel="stylesheet" href="/offline-styles.css">
 
 
   <!-- Google Fonts with font-display: swap for better performance -->
@@ -460,10 +451,9 @@
       },
     }
   </script>
-  <link rel="manifest" href="/assets/manifest-Dhmf_sE9-Dhmf_sE9.webmanifest">  
-  <script type="module" crossorigin src="/assets/index-DJR13Zex.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CS7iO2cP.css">
-</head>
+    <script type="module" crossorigin src="/assets/index-DgDytLjW.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DirYvrMf.css">
+  <link rel="manifest" href="/manifest.webmanifest"></head>
 
 <body>
 
@@ -712,12 +702,12 @@
 
       <div class="loader-card">
         <div class="loader-logo-container">
-          <img src="/assets/logo-js9G3PIJ-js9G3PIJ.png" alt="কই যাবো" class="loader-logo">
+          <img src="/logo.png" alt="কই যাবো" class="loader-logo">
         </div>
 
         <div class="loader-text">
           <h1 class="loader-title">কই যাবো</h1>
-          <p class="loader-subtitle">Dhaka's Smart Transport Finder</p>
+          <p class="loader-subtitle">Bangladesh Smart Transport Finder</p>
         </div>
 
         <div class="loader-progress-container">
@@ -852,7 +842,7 @@
       </nav>
     </div>
   </noscript>
-
+
 
 
 </body>
