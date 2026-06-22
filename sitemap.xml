@@ -263,7 +263,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Bus Routes (394) -->
+  <!-- Bus Routes (399) -->
   <url>
     <loc>https://koyjabo.com/bus/13-no</loc>
     <lastmod>2026-06-22</lastmod>
@@ -2078,6 +2078,36 @@
   </url>
   <url>
     <loc>https://koyjabo.com/bus/shyamoli-dhaka-sunamganj</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/imperial-express-dhaka-moulvibazar</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/comfort-line-pvt-ltd-dhaka-faridpur</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/labiba-classic-dhaka-kuakata</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/emad-dhaka-kuakata</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/bilash-dhaka-moulvibazar</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
