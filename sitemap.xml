@@ -263,7 +263,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Bus Routes (390) -->
+  <!-- Bus Routes (394) -->
   <url>
     <loc>https://koyjabo.com/bus/13-no</loc>
     <lastmod>2026-06-22</lastmod>
@@ -1940,6 +1940,30 @@
   </url>
   <url>
     <loc>https://koyjabo.com/bus/master-travels-dhaka-khulna</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/shyamoli-dhaka-bandarban</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/hanif-enterprise-dhaka-bandarban</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/saintmartin-hyundai-dhaka-bandarban</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/soudia-coach-service-dhaka-bandarban</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
