@@ -263,7 +263,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Bus Routes (349) -->
+  <!-- Bus Routes (357) -->
   <url>
     <loc>https://koyjabo.com/bus/13-no</loc>
     <lastmod>2026-06-22</lastmod>
@@ -1808,6 +1808,54 @@
   </url>
   <url>
     <loc>https://koyjabo.com/bus/brtc-dinajpur-benapole-ac</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/shohagh-dhaka-benapole-via-narail</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/shohagh-dhaka-benapole-via-muksudpur</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/shohagh-abdullahpur-benapole-via-muksudpur</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/shohagh-dhaka-benapole-via-magura-ac</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/hanif-enterprise-dhaka-benapole</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/royal-coach-dhaka-benapole-ac</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/royal-maitri-service-dhaka-benapole</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/star-deluxe-dhaka-benapole-ac</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
