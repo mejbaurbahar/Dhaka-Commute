@@ -263,7 +263,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Bus Routes (399) -->
+  <!-- Bus Routes (401) -->
   <url>
     <loc>https://koyjabo.com/bus/13-no</loc>
     <lastmod>2026-06-22</lastmod>
@@ -2078,6 +2078,18 @@
   </url>
   <url>
     <loc>https://koyjabo.com/bus/shyamoli-dhaka-sunamganj</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/bangla-star-dhaka-pabna</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/pabna-express-dhaka-pabna-via-sirajganj</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
