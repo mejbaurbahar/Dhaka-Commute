@@ -46,16 +46,16 @@ export const INTERCITY_BUS_ROUTES: IntercityBusRoute[] = [
     { district: "Dhaka", division: "Dhaka", busOperators: ["Hub for all buses"], mainContactNumber: "-", route: "-", costNonAC: "-", costAC: "-" },
     { district: "Gazipur", division: "Dhaka", busOperators: ["Provati Banasree", "Soukhin", "Gazipur Paribahan"], mainContactNumber: "01712-965380", route: "Dhaka (Gulistan) ⇄ Gazipur", costNonAC: "৳100 - 150", costAC: "-" },
     { district: "Narayanganj", division: "Dhaka", busOperators: ["Bandhan", "Utsab", "Shital"], mainContactNumber: "01916-568326", route: "Dhaka (Gulistan) ⇄ Narayanganj", costNonAC: "৳55 - 80", costAC: "-" },
-    { district: "Narsingdi", division: "Dhaka", busOperators: ["PPL", "Meghalaya Luxury", "Badsha"], mainContactNumber: "01711-163276", route: "Dhaka (Sayedabad) ⇄ Narsingdi", costNonAC: "৳250", costAC: "৳350" },
-    { district: "Manikganj", division: "Dhaka", busOperators: ["Shubho Jatra", "Paturiagami", "Selfi"], mainContactNumber: "-", route: "Dhaka (Gabtoli) ⇄ Manikganj", costNonAC: "৳150", costAC: "৳250" },
-    { district: "Munshiganj", division: "Dhaka", busOperators: ["Nayan", "Dighirpar Transport"], mainContactNumber: "-", route: "Dhaka (Gulistan) ⇄ Munshiganj", costNonAC: "৳100 - 150", costAC: "-" },
-    { district: "Tangail", division: "Dhaka", busOperators: ["Nirala Super", "Dhaleshwari", "Jhatika"], mainContactNumber: "01711-356655", route: "Dhaka (Mohakhali) ⇄ Tangail", costNonAC: "৳300", costAC: "৳500" },
-    { district: "Faridpur", division: "Dhaka", busOperators: ["Comfort Line Pvt Ltd", "Golden Line", "Hanif Enterprise", "Sakura"], mainContactNumber: "01705-403333", route: "Dhaka (Gabtoli/Nabinagar) ⇄ Faridpur (via Padma Bridge)", costNonAC: "৳400", costAC: "৳600" },
-    { district: "Gopalganj", division: "Dhaka", busOperators: ["Tungipara Express", "Imad", "Dola"], mainContactNumber: "01711-266512", route: "Dhaka (Sayedabad) ⇄ Gopalganj", costNonAC: "৳500", costAC: "৳800" },
-    { district: "Madaripur", division: "Dhaka", busOperators: ["Chandra Paribahan", "Sharbick"], mainContactNumber: "01716-249539", route: "Dhaka ⇄ Madaripur (via Padma Bridge)", costNonAC: "৳400", costAC: "৳600" },
-    { district: "Rajbari", division: "Dhaka", busOperators: ["Rabeya", "Hanif", "Soudia"], mainContactNumber: "01713-402641", route: "Dhaka ⇄ Rajbari", costNonAC: "৳450", costAC: "৳700" },
-    { district: "Shariatpur", division: "Dhaka", busOperators: ["Shariatpur Super", "Glory Express"], mainContactNumber: "01712-588339", route: "Dhaka ⇄ Shariatpur", costNonAC: "৳400", costAC: "৳600" },
-    { district: "Kishoreganj", division: "Dhaka", busOperators: ["Ena Transport", "Anannya Classic", "Jalsiri"], mainContactNumber: "01712-069722", route: "Dhaka (Mohakhali) ⇄ Kishoreganj", costNonAC: "৳400", costAC: "৳600" },
+    { district: "Narsingdi", division: "Dhaka", busOperators: ["PPL", "Meghalaya Luxury", "Badsha"], mainContactNumber: "01711-163276", route: "Dhaka (Sayedabad) ⇄ Narsingdi", costNonAC: "৳134", costAC: "৳350" },
+    { district: "Manikganj", division: "Dhaka", busOperators: ["Shubho Jatra", "Paturiagami", "Selfi"], mainContactNumber: "-", route: "Dhaka (Gabtoli) ⇄ Manikganj", costNonAC: "৳134", costAC: "৳250" },
+    { district: "Munshiganj", division: "Dhaka", busOperators: ["Nayan", "Dighirpar Transport"], mainContactNumber: "-", route: "Dhaka (Gulistan) ⇄ Munshiganj", costNonAC: "৳66-৳97", costAC: "-" },
+    { district: "Tangail", division: "Dhaka", busOperators: ["Nirala Super", "Dhaleshwari", "Jhatika"], mainContactNumber: "01711-356655", route: "Dhaka (Mohakhali) ⇄ Tangail", costNonAC: "৳201", costAC: "৳500" },
+    { district: "Faridpur", division: "Dhaka", busOperators: ["Comfort Line Pvt Ltd", "Golden Line", "Hanif Enterprise", "Sakura"], mainContactNumber: "01705-403333", route: "Dhaka (Gabtoli/Nabinagar) ⇄ Faridpur (via Padma Bridge)", costNonAC: "৳314", costAC: "৳600" },
+    { district: "Gopalganj", division: "Dhaka", busOperators: ["Tungipara Express", "Imad", "Dola"], mainContactNumber: "01711-266512", route: "Dhaka (Gabtoli) ⇄ Gopalganj (via Faridpur, Padma Bridge)", costNonAC: "৳462", costAC: "৳800" },
+    { district: "Madaripur", division: "Dhaka", busOperators: ["Chandra Paribahan", "Sharbick"], mainContactNumber: "01716-249539", route: "Dhaka ⇄ Madaripur (via Padma Bridge)", costNonAC: "৳300", costAC: "৳600" },
+    { district: "Rajbari", division: "Dhaka", busOperators: ["Rabeya", "Hanif", "Soudia"], mainContactNumber: "01713-402641", route: "Dhaka ⇄ Rajbari", costNonAC: "৳311", costAC: "৳700" },
+    { district: "Shariatpur", division: "Dhaka", busOperators: ["Shariatpur Super", "Glory Express"], mainContactNumber: "01712-588339", route: "Dhaka (Sayedabad) ⇄ Shariatpur (via Padma Bridge)", costNonAC: "৳233", costAC: "৳600" },
+    { district: "Kishoreganj", division: "Dhaka", busOperators: ["Ena Transport", "Anannya Classic", "Jalsiri"], mainContactNumber: "01712-069722", route: "Dhaka (Sayedabad) ⇄ Kishoreganj (via Narsingdi)", costNonAC: "৳312", costAC: "৳600" },
 
     // Chattogram Division (11 Districts) — operators confirmed from Shohoz
     { district: "Chattogram", division: "Chattogram", busOperators: ["Shohagh Paribahan", "Soudia Coach Service", "Hanif Enterprise", "Saintmartin Hyundai (Robi Express)", "Evergreen Transport", "S. Alam Service", "Al-Madani Exclusive", "London Express", "Shyamoli Paribahan", "BRTC"], mainContactNumber: "16557", route: "Dhaka (Sayedabad/Mohakhali) ⇄ Chattogram", costNonAC: "৳680-৳700", costAC: "৳1,050-৳2,050" },
@@ -129,7 +129,7 @@ export const MAJOR_TRANSPORT_HUBS: IntercityBusRoute[] = [
     { district: "Teknaf", division: "Chattogram", busOperators: ["Saintmartin Travels", "Saintmartin Travels Ltd.", "Shyamoli Paribahan"], mainContactNumber: "01762-691341", route: "Dhaka ⇄ Teknaf (via Cox's Bazar)", costNonAC: "-", costAC: "৳1,500-৳2,000" },
     { district: "Kuakata", division: "Barishal", busOperators: ["LABIBA Classic", "Shyamoli Paribahan", "Ena Transport", "Emad Paribahan", "Soudia Coach Service", "S. Alam Service"], mainContactNumber: "01711-131742", route: "Dhaka ⇄ Kuakata (via Barisal/Patuakhali)", costNonAC: "৳800-৳950", costAC: "৳1,000-৳1,400" },
     { district: "Sreemangal", division: "Sylhet", busOperators: ["Hanif Enterprise", "Bilash Paribahan", "Ena Transport", "Shyamoli Paribahan", "Imperial Express"], mainContactNumber: "01712-069722", route: "Dhaka ⇄ Sreemangal (via Shaistaganj)", costNonAC: "৳580-৳600", costAC: "৳750-৳1,100" },
-    { district: "Bhairab", division: "Dhaka", busOperators: ["Ena", "Anannya", "Chalantika"], mainContactNumber: "01712-069722", route: "Dhaka ⇄ Bhairab", costNonAC: "৳300", costAC: "৳450" },
+    { district: "Bhairab", division: "Dhaka", busOperators: ["Ena", "Anannya", "Chalantika"], mainContactNumber: "01712-069722", route: "Dhaka (Sayedabad) ⇄ Bhairab (via Narsingdi)", costNonAC: "৳181", costAC: "৳450" },
 ];
 
 // Train Routes from Dhaka (Kamalapur) to Major Stations
