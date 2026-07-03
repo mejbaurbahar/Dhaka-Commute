@@ -38,8 +38,10 @@ export function ProfilePage(props: ScreenProps) {
   const lbl = (en: string, bn: string) => T(lang, bn, en);
   const font = lang === 'bn' ? BEN : SANS;
   const [confirmSignOut, setConfirmSignOut] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user: authUser } = useAuth();
   const user = getAuthUser();
+
+  if (!authUser) { onNav('signin'); return null; }
   const history = getUserHistory();
   const favoriteCount = getFavoriteBusIds().length;
   const recentRecords = [

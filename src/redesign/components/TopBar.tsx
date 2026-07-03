@@ -211,15 +211,24 @@ export function TopBar({
               }
               {avatarMenuOpen && (
                 <div style={{ position:'absolute',top:'calc(100% + 8px)',right:0,background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:12,overflow:'hidden',boxShadow:tk.shadowLg,minWidth:140,zIndex:9999 }}>
-                  <button onClick={() => { setAvatarMenuOpen(false); onNav('profile'); }}
-                    style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.text,textAlign:'left' }}>
-                    <span>👤</span>{T(lang,'প্রোফাইল','Profile')}
-                  </button>
-                  <div style={{ height:1,background:tk.line }}/>
-                  <button onClick={() => { setAvatarMenuOpen(false); onLogout?.(); }}
-                    style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.accent,textAlign:'left' }}>
-                    <span>🚪</span>{T(lang,'সাইন আউট','Sign out')}
-                  </button>
+                  {user ? (
+                    <>
+                      <button onClick={() => { setAvatarMenuOpen(false); onNav('profile'); }}
+                        style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.text,textAlign:'left' }}>
+                        <span>👤</span>{T(lang,'প্রোফাইল','Profile')}
+                      </button>
+                      <div style={{ height:1,background:tk.line }}/>
+                      <button onClick={() => { setAvatarMenuOpen(false); onLogout?.(); }}
+                        style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.accent,textAlign:'left' }}>
+                        <span>🚪</span>{T(lang,'সাইন আউট','Sign out')}
+                      </button>
+                    </>
+                  ) : (
+                    <button onClick={() => { setAvatarMenuOpen(false); onNav('signin'); }}
+                      style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.primary,textAlign:'left' }}>
+                      <span>🔑</span>{T(lang,'সাইন ইন','Sign in')}
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -273,15 +282,24 @@ export function TopBar({
                 }
                 {avatarMenuOpen && (
                   <div style={{ position:'absolute',top:'calc(100% + 8px)',right:0,background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:12,overflow:'hidden',boxShadow:tk.shadowLg,minWidth:140,zIndex:9999 }}>
-                    <button onClick={() => { setAvatarMenuOpen(false); onNav('profile'); }}
-                      style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.text,textAlign:'left' }}>
-                      <span>👤</span>{T(lang,'প্রোফাইল','Profile')}
-                    </button>
-                    <div style={{ height:1,background:tk.line }}/>
-                    <button onClick={() => { setAvatarMenuOpen(false); onLogout?.(); }}
-                      style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.accent,textAlign:'left' }}>
-                      <span>🚪</span>{T(lang,'সাইন আউট','Sign out')}
-                    </button>
+                    {user ? (
+                      <>
+                        <button onClick={() => { setAvatarMenuOpen(false); onNav('profile'); }}
+                          style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.text,textAlign:'left' }}>
+                          <span>👤</span>{T(lang,'প্রোফাইল','Profile')}
+                        </button>
+                        <div style={{ height:1,background:tk.line }}/>
+                        <button onClick={() => { setAvatarMenuOpen(false); onLogout?.(); }}
+                          style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.accent,textAlign:'left' }}>
+                          <span>🚪</span>{T(lang,'সাইন আউট','Sign out')}
+                        </button>
+                      </>
+                    ) : (
+                      <button onClick={() => { setAvatarMenuOpen(false); onNav('signin'); }}
+                        style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.primary,textAlign:'left' }}>
+                        <span>🔑</span>{T(lang,'সাইন ইন','Sign in')}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
