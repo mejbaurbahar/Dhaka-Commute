@@ -14,7 +14,7 @@ import { classifyIntent, estimateDistanceKm, buildRouteOptions, estimateDuration
 import { getOfflineIntercityData } from '../intercity/offlineService';
 
 const _PROXY = (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_API_PROXY)
-  || 'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
+  || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 function _getUid(): string {
   try { return JSON.parse(localStorage.getItem('koyjabo_auth_session') ?? '{}')?.user?.id || 'anonymous'; }

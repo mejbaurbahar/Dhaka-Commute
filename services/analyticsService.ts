@@ -135,7 +135,7 @@ export const loadHistoryData = (data: Partial<UserHistory>): void => {
 
 // ── Server proxy endpoints (token/repo never in browser) ─────────────────────
 const PROXY = (import.meta.env.VITE_API_PROXY as string | undefined)
-    || 'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
+    || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 const STATS_PATH = 'data/stats/global.json';
 
 // ── Date helper ───────────────────────────────────────────────────────────────

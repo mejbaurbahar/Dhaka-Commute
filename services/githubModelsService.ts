@@ -2,7 +2,7 @@ import { ChatMessage } from './geminiService';
 
 const CF_WORKER_URL =
   import.meta.env.VITE_CF_WORKER_URL ||
-  'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
+  'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 export async function askGitHubModels(
   message: string,

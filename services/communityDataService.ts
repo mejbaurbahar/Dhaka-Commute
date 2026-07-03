@@ -7,7 +7,7 @@
  */
 
 const PROXY = (import.meta.env.VITE_API_PROXY as string | undefined)
-  || 'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
+  || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 // In-memory cache to avoid hammering the proxy with duplicate reads (e.g. 60 concurrent ratings fetches)
 const _cache = new Map<string, { data: unknown; expiresAt: number }>();
