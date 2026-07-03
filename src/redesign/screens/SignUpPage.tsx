@@ -4,10 +4,9 @@ import { PageShell } from './PageShell';
 import { AdCluster } from '../components/AdSlot';
 import { Logo } from '../components/Logo';
 import { Turnstile } from '../components/Turnstile';
-import { signupUser } from '../../services/githubAuthService';
+import { signupUser, loginWithGoogle } from '../../services/githubAuthService';
 import { useAuth } from '../../contexts/AuthContext';
-import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider, isFirebaseConfigured } from '../../services/firebaseConfig';
+import { isFirebaseConfigured } from '../../services/firebaseConfig';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -34,23 +33,22 @@ export function SignUpPage(props: Props) {
     setGoogleLoading(true);
     setError('');
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const u = result.user;
-      const username = (u.email || '').split('@')[0].replace(/[^a-z0-9_]/gi, '_').toLowerCase();
+      const result = await loginWithGoogle();
       login({
-        id: u.uid,
-        email: u.email || '',
-        username,
-        displayName: u.displayName || username,
-        avatarUrl: u.photoURL || undefined,
+        id: result.userId,
+        email: result.email,
+        username: result.username,
+        displayName: result.displayName,
+        avatarUrl: result.googlePhotoUrl,
         createdAt: Date.now(),
         provider: 'google' as any,
-        hasPassword: false,
+        hasPassword: result.hasPassword,
       });
       onNav('home');
     } catch (err: any) {
-      if (err?.code !== 'auth/popup-closed-by-user') {
-        setError(T(lang, 'গুগল সাইন ইন ব্যর্থ হয়েছে', 'Google sign in failed'));
+      const msg = err?.message || '';
+      if (!msg.includes('cancelled')) {
+        setError(msg || T(lang, 'গুগল সাইন আপ ব্যর্থ হয়েছে', 'Google sign up failed'));
       }
     } finally {
       setGoogleLoading(false);
