@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 
 interface ConfirmModalProps {
@@ -35,7 +36,7 @@ export function ConfirmModal({
   const cancelLabel = T(lang, 'বাতিল', 'Cancel');
   const confirmText = confirmLabel ?? T(lang, 'নিশ্চিত করুন', 'Confirm');
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -130,6 +131,7 @@ export function ConfirmModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
