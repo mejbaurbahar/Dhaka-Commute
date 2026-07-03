@@ -216,6 +216,7 @@ export function KoyJaboApp() {
   const [showConsentModal, setShowConsentModal] = useState(false);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const vignetteTimer = useRef<number>(0);
+  const adNavRef = useRef(false);
 
   // Inject global styles once
   useEffect(() => { injectGlobalStyles(); }, []);
@@ -252,6 +253,19 @@ export function KoyJaboApp() {
 
   const top = stack[stack.length - 1];
   const canBack = stack.length > 1;
+
+  // On SPA navigation: notify AdSense Auto Ads of virtual page change + reset anchor
+  useEffect(() => {
+    if (!adNavRef.current) { adNavRef.current = true; return; }
+    setAnchorOn(true);
+    try {
+      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({
+        google_ad_client: 'ca-pub-8425219156685369',
+        enable_page_level_ads: true,
+      });
+    } catch {}
+  }, [top.route]);
+
   const tk = KJ_TOKENS[theme];
 
   const pushUrl = useCallback((entry: StackEntry, replace = false) => {
@@ -509,7 +523,7 @@ export function KoyJaboApp() {
           <SideRailAd tk={tk} lang={lang} side="right"/>
         </>
       )}
-      {showAnchor && <AnchorAd tk={tk} lang={lang} onClose={() => setAnchorOn(false)}/>}
+      {showAnchor && <AnchorAd key={top.route} tk={tk} lang={lang} onClose={() => setAnchorOn(false)}/>}
       <VignetteAd tk={tk} lang={lang} open={vignette} onClose={() => setVignette(false)}/>
       <LocationConsentModal
         tk={tk} lang={lang} open={showConsentModal}

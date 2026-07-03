@@ -117,29 +117,38 @@ export function SideRailAd({ tk, lang, side }: { tk: Tokens; lang: Lang; side: '
   );
 }
 
-// ── AnchorAd: sticky bottom bar — hidden when AdSense doesn't fill
+// ── AnchorAd: sticky bottom bar — hidden during detection, shown when filled
 export function AnchorAd({ tk, lang, onClose }: { tk: Tokens; lang: Lang; onClose: () => void }) {
   const [filled, setFilled] = useState<boolean | null>(null);
 
-  // Auto-close if AdSense doesn't fill — no house ad
   useEffect(() => {
     if (filled === false) onClose();
   }, [filled]);
 
-  if (filled === false || filled === null) return null;
+  // Collapse when definitively unfilled — onClose() handles unmounting via parent
+  if (filled === false) return null;
 
+  const isFilled = filled === true;
+
+  // During detection (filled===null): render ins element invisible so AdSense can measure and fill.
+  // Without this, ins never mounts → AdSense never fills → anchor never shows.
   return (
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9000,
-      background: tk.panel, borderTop: `1px solid ${tk.line}`,
+      background: isFilled ? tk.panel : 'transparent',
+      borderTop: isFilled ? `1px solid ${tk.line}` : 'none',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '8px 16px', minHeight: 64, backdropFilter: 'blur(12px)',
-      paddingBottom: 'calc(8px + env(safe-area-inset-bottom))',
+      padding: isFilled ? '8px 16px' : 0,
+      minHeight: 64,
+      backdropFilter: isFilled ? 'blur(12px)' : 'none',
+      paddingBottom: isFilled ? 'calc(8px + env(safe-area-inset-bottom))' : 0,
+      visibility: isFilled ? 'visible' : 'hidden',
+      pointerEvents: isFilled ? 'auto' : 'none',
     }}>
       <div style={{ flex: 1, minHeight: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <AdsenseUnit slot="3797668998" format="horizontal" onFillResult={setFilled}/>
       </div>
-      <button onClick={onClose} style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, color: tk.textFaint, cursor: 'pointer', fontSize: 16, width: 32, height: 32, lineHeight: 1 }}>×</button>
+      {isFilled && <button onClick={onClose} style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, color: tk.textFaint, cursor: 'pointer', fontSize: 16, width: 32, height: 32, lineHeight: 1 }}>×</button>}
     </div>
   );
 }
