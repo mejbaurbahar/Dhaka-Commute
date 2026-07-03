@@ -144,11 +144,11 @@ export function BusDetailPage(props: Props) {
       let km = 0;
       for (let i = 1; i < segment.length; i++) {
         const a = STATIONS[segment[i - 1]], b = STATIONS[segment[i]];
-        if (a?.lat && b?.lat) km += haversineKm({ lat: a.lat, lng: a.lng }, { lat: b.lat, lng: b.lng });
+        km += (a?.lat && b?.lat) ? haversineKm({ lat: a.lat, lng: a.lng }, { lat: b.lat, lng: b.lng }) : 1.2;
       }
       if (km > 0) {
         const rate = bus.type === 'AC' ? 5.0 : bus.type === 'Double-Decker' ? 3.2 : 2.53;
-        return Math.max(10, Math.ceil(km * 1.2 * rate));
+        return Math.max(10, Math.ceil(km * rate));
       }
     }
     return bus.type === 'AC' ? 60 : bus.type === 'Double-Decker' ? 50 : 30;
