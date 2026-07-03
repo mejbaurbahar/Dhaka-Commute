@@ -6,6 +6,8 @@ import { Logo } from '../components/Logo';
 import { Turnstile } from '../components/Turnstile';
 import { signupUser } from '../../services/githubAuthService';
 import { useAuth } from '../../contexts/AuthContext';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider, isFirebaseConfigured } from '../../services/firebaseConfig';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -25,6 +27,35 @@ export function SignUpPage(props: Props) {
   const [cfToken, setCfToken] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  async function handleGoogleSignIn() {
+    if (!isFirebaseConfigured) return;
+    setGoogleLoading(true);
+    setError('');
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const u = result.user;
+      const username = (u.email || '').split('@')[0].replace(/[^a-z0-9_]/gi, '_').toLowerCase();
+      login({
+        id: u.uid,
+        email: u.email || '',
+        username,
+        displayName: u.displayName || username,
+        avatarUrl: u.photoURL || undefined,
+        createdAt: Date.now(),
+        provider: 'google' as any,
+        hasPassword: false,
+      });
+      onNav('home');
+    } catch (err: any) {
+      if (err?.code !== 'auth/popup-closed-by-user') {
+        setError(T(lang, 'গুগল সাইন ইন ব্যর্থ হয়েছে', 'Google sign in failed'));
+      }
+    } finally {
+      setGoogleLoading(false);
+    }
+  }
 
   const strength = pw.length > 12 ? 5 : pw.length > 8 ? 4 : pw.length > 5 ? 3 : pw.length > 2 ? 2 : pw.length > 0 ? 1 : 0;
   const strengthLabel = ['','Weak','Fair','Good','Strong','Excellent'][strength];
@@ -156,6 +187,28 @@ export function SignUpPage(props: Props) {
               {T(lang,'আমি ','I agree to the ')}<span style={{ color:tk.primary }}>{T(lang,'গোপনীয়তা নীতি','Privacy Policy')}</span>{T(lang,' এবং ','  and ')}<span style={{ color:tk.primary }}>{T(lang,'সেবার শর্তাবলি','Terms of Service')}</span>{T(lang,'-তে সম্মত আছি','')}
             </span>
           </div>
+
+          {isFirebaseConfigured && (
+            <>
+              <div style={{ display:'flex',alignItems:'center',gap:10,margin:'4px 0 12px' }}>
+                <div style={{ flex:1,height:1,background:tk.line }}/>
+                <span style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint,whiteSpace:'nowrap' }}>{T(lang,'অথবা','or')}</span>
+                <div style={{ flex:1,height:1,background:tk.line }}/>
+              </div>
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                disabled={googleLoading||loading}
+                style={{ width:'100%',background:tk.panelMuted,border:`1px solid ${tk.line}`,borderRadius:14,padding:'12px 20px',fontFamily:SANS,fontWeight:600,fontSize:14,color:tk.text,cursor:(googleLoading||loading)?'not-allowed':'pointer',marginBottom:16,display:'flex',alignItems:'center',justifyContent:'center',gap:10,opacity:(googleLoading||loading)?0.7:1 }}
+              >
+                {googleLoading
+                  ? <span style={{ width:16,height:16,borderRadius:'50%',border:`2px solid ${tk.line}`,borderTopColor:tk.primary,display:'inline-block',animation:'kj-spin 0.7s linear infinite' }}/>
+                  : <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+                }
+                {googleLoading ? T(lang,'সাইন ইন হচ্ছে…','Signing in…') : T(lang,'গুগল দিয়ে সাইন আপ','Continue with Google')}
+              </button>
+            </>
+          )}
 
           <Turnstile theme={theme} onVerify={setCfToken} onExpire={() => setCfToken('')} />
 

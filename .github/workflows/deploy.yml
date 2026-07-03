@@ -35,7 +35,7 @@ jobs:
         env:
           NODE_ENV: production
           GENERATE_SOURCEMAP: false
-          VITE_API_PROXY: https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev
+          VITE_API_PROXY: https://koyjabo-auth-proxy.fagun115946.workers.dev
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
           VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
           VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
