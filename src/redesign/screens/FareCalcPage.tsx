@@ -37,7 +37,7 @@ function calcFare(mode: Mode, stationsApart: number): number {
   const km = stationsApart;
   switch (mode) {
     case 'metro':     return calcMetroFare(stationsApart);
-    case 'bus':       return 20 + 5 * km;
+    case 'bus':       return Math.max(10, Math.ceil(km * 4.0));
     case 'cng':       return 80 + 15 * km;
     case 'rideshare': return 100 + 20 * km;
   }

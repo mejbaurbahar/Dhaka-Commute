@@ -136,7 +136,23 @@ export function BusDetailPage(props: Props) {
 
   const colPair = TYPE_COLOR[bus.type] ?? ['#1e3a8a','#3b82f6'];
   const badge = bus.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const fareAmt = bus.type==='AC'?60:bus.type==='Double-Decker'?50:30;
+  const fareAmt = (() => {
+    const f = bus.stops.indexOf(fromId);
+    const t = bus.stops.indexOf(toId);
+    if (f !== -1 && t !== -1 && f !== t) {
+      const segment = bus.stops.slice(Math.min(f, t), Math.max(f, t) + 1);
+      let km = 0;
+      for (let i = 1; i < segment.length; i++) {
+        const a = STATIONS[segment[i - 1]], b = STATIONS[segment[i]];
+        if (a?.lat && b?.lat) km += haversineKm({ lat: a.lat, lng: a.lng }, { lat: b.lat, lng: b.lng });
+      }
+      if (km > 0) {
+        const rate = bus.type === 'AC' ? 5.0 : bus.type === 'Double-Decker' ? 3.2 : 2.53;
+        return Math.max(10, Math.ceil(km * 1.2 * rate));
+      }
+    }
+    return bus.type === 'AC' ? 60 : bus.type === 'Double-Decker' ? 50 : 30;
+  })();
   const isFavorite = favoriteIds.includes(bus.id);
   const nearestStopName = nearest ? realStops[nearest.index]?.en : undefined;
 
