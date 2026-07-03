@@ -23,6 +23,8 @@ export function SignUpPage(props: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [cfToken, setCfToken] = useState('');
+  const [showPw, setShowPw] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const strength = pw.length > 12 ? 5 : pw.length > 8 ? 4 : pw.length > 5 ? 3 : pw.length > 2 ? 2 : pw.length > 0 ? 1 : 0;
   const strengthLabel = ['','Weak','Fair','Good','Strong','Excellent'][strength];
@@ -98,15 +100,23 @@ export function SignUpPage(props: Props) {
               style={{ width:'100%',background:tk.inputBg,border:`1px solid ${tk.line}`,borderRadius:12,padding:'12px 14px',color:tk.text,fontFamily:SANS,fontSize:14,outline:'none',boxSizing:'border-box',opacity:loading?0.6:1 }}
             />
             <div>
-              <input
-                type="password"
-                value={pw}
-                onChange={e => setPw(e.target.value)}
-                placeholder={T(lang,'পাসওয়ার্ড','Password')}
-                disabled={loading}
-                required
-                style={{ width:'100%',background:tk.inputBg,border:`1px solid ${tk.line}`,borderRadius:12,padding:'12px 14px',color:tk.text,fontFamily:SANS,fontSize:14,outline:'none',boxSizing:'border-box',opacity:loading?0.6:1 }}
-              />
+              <div style={{ position:'relative' }}>
+                <input
+                  type={showPw?'text':'password'}
+                  value={pw}
+                  onChange={e => setPw(e.target.value)}
+                  placeholder={T(lang,'পাসওয়ার্ড','Password')}
+                  disabled={loading}
+                  required
+                  style={{ width:'100%',background:tk.inputBg,border:`1px solid ${tk.line}`,borderRadius:12,padding:'12px 40px 12px 14px',color:tk.text,fontFamily:SANS,fontSize:14,outline:'none',boxSizing:'border-box',opacity:loading?0.6:1 }}
+                />
+                <button type="button" onClick={()=>setShowPw(p=>!p)} style={{ position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',background:'none',border:0,color:tk.textFaint,cursor:'pointer',padding:4,lineHeight:0 }}>
+                  {showPw
+                    ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  }
+                </button>
+              </div>
               {pw.length > 0 && (
                 <div style={{ display:'flex',gap:4,marginTop:8,alignItems:'center' }}>
                   {[1,2,3,4,5].map(n=><div key={n} style={{ flex:1,height:4,borderRadius:999,background:n<=strength?strengthColor:tk.line,transition:'background .2s' }}/>)}
@@ -114,15 +124,23 @@ export function SignUpPage(props: Props) {
                 </div>
               )}
             </div>
-            <input
-              type="password"
-              placeholder={T(lang,'পাসওয়ার্ড নিশ্চিত করুন','Confirm password')}
-              value={confirmPw}
-              onChange={e => setConfirmPw(e.target.value)}
-              disabled={loading}
-              required
-              style={{ width:'100%',background:tk.inputBg,border:`1px solid ${confirmPw&&confirmPw!==pw?tk.accent:tk.line}`,borderRadius:12,padding:'12px 14px',color:tk.text,fontFamily:SANS,fontSize:14,outline:'none',boxSizing:'border-box',opacity:loading?0.6:1 }}
-            />
+            <div style={{ position:'relative' }}>
+              <input
+                type={showConfirm?'text':'password'}
+                placeholder={T(lang,'পাসওয়ার্ড নিশ্চিত করুন','Confirm password')}
+                value={confirmPw}
+                onChange={e => setConfirmPw(e.target.value)}
+                disabled={loading}
+                required
+                style={{ width:'100%',background:tk.inputBg,border:`1px solid ${confirmPw&&confirmPw!==pw?tk.accent:tk.line}`,borderRadius:12,padding:'12px 40px 12px 14px',color:tk.text,fontFamily:SANS,fontSize:14,outline:'none',boxSizing:'border-box',opacity:loading?0.6:1 }}
+              />
+              <button type="button" onClick={()=>setShowConfirm(p=>!p)} style={{ position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',background:'none',border:0,color:tk.textFaint,cursor:'pointer',padding:4,lineHeight:0 }}>
+                {showConfirm
+                  ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                }
+              </button>
+            </div>
             {confirmPw && confirmPw !== pw && (
               <span style={{ fontFamily:SANS,fontSize:11,color:tk.accent,marginTop:-6 }}>
                 {T(lang,'পাসওয়ার্ড মিলছে না','Passwords do not match')}
