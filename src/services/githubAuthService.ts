@@ -14,7 +14,7 @@
 import type { AuthResult, Device } from '../types/auth';
 
 const PROXY = (import.meta.env.VITE_API_PROXY as string | undefined)
-  || 'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
+  || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 const SESSION_TOKEN_LS_KEY = 'koyjabo_session_token';
 
