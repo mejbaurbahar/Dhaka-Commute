@@ -7,6 +7,7 @@ import { loginUser, loginWithGoogle } from '../../services/githubAuthService';
 import { useAuth } from '../../contexts/AuthContext';
 import { checkRateLimit, getRateLimitRemainingMs, sanitizeFormField } from '../../utils/security';
 import { isFirebaseConfigured } from '../../services/firebaseConfig';
+import { Turnstile } from '../components/Turnstile';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -22,6 +23,7 @@ export function SignInPage(props: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [cfToken, setCfToken] = useState('');
 
   async function handleGoogleSignIn() {
     if (!isFirebaseConfigured) return;
@@ -61,7 +63,7 @@ export function SignInPage(props: Props) {
     setLoading(true);
     setError('');
     try {
-      const result = await loginUser(sanitizeFormField(email, 'email'), password);
+      const result = await loginUser(sanitizeFormField(email, 'email'), password, cfToken);
       login({
         id: result.userId,
         email: result.email,
@@ -79,7 +81,7 @@ export function SignInPage(props: Props) {
     }
   }
 
-  const canSubmit = email.trim().length > 0 && password.length > 0 && !loading;
+  const canSubmit = email.trim().length > 0 && password.length > 0 && !!cfToken && !loading;
 
   return (
     <PageShell {...props}>
@@ -130,6 +132,8 @@ export function SignInPage(props: Props) {
               </button>
             </div>
           </div>
+
+          <Turnstile theme={theme} onVerify={setCfToken} onExpire={() => setCfToken('')} />
 
           <button
             type="submit"
