@@ -105,7 +105,7 @@ export function RateReviewPage(props: Props) {
           {T(lang,'রিভিউ পোস্ট করুন','Post Review')}
         </button>
         <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <AdCluster tk={tk} lang={lang} count={5} isMobile={isMobile}/>
+          <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
         </div>
       </div>
     </PageShell>

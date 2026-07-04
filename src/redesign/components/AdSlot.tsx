@@ -56,14 +56,13 @@ function RealAd({
       return false;
     };
 
-    // Poll every 1s for up to 20s — gives AdSense time to recover from transient
-    // network/CSP errors and inject iframe even when initial push appears to fail
+    // Poll every 500ms for up to 5s — enough for AdSense to respond
     const startPolling = () => {
       const startedAt = Date.now();
       const tick = () => {
         if (checkFill()) return;
-        if (Date.now() - startedAt > 20000) { resolve(false); return; }
-        pollId = window.setTimeout(tick, 1000);
+        if (Date.now() - startedAt > 5000) { resolve(false); return; }
+        pollId = window.setTimeout(tick, 500);
       };
       tick();
     };
@@ -90,9 +89,10 @@ function RealAd({
       startPolling();
     };
 
+    // Hard timeout — if AdSense script never loaded, collapse after 5s
     const blockTimeout = window.setTimeout(() => {
       if (!pushed.current) resolve(false);
-    }, 25000);
+    }, 5000);
 
     if ('IntersectionObserver' in window) {
       const scroller = ins.closest('[data-app-scroller]') as Element | null;
@@ -122,7 +122,7 @@ function RealAd({
     <ins
       ref={insRef as any}
       className="adsbygoogle"
-      style={{ display: 'block', width: '100%', minWidth: 0 }}
+      style={{ display: 'block', width: '100%', minWidth: 0, minHeight: 'inherit' }}
       data-ad-client="ca-pub-8425219156685369"
       data-ad-slot={slot}
       data-ad-format={format}
@@ -146,12 +146,9 @@ export function AdSlot({
   const { w, h, format, slot, layout } = DIMS[kind];
   const [filled, setFilled] = useState<boolean | null>(null);
 
-  // Collapsed when null (detecting) or false (unfilled) — no empty box, no house ad
   if (filled === false) return null;
 
-  // Reserve height during detection (filled === null) so AdSense sees valid slot
-  // dimensions and actually fills. Collapsing to 0 before push was suppressing fills.
-  const reservedHeight = filled === null ? h : (filled === true ? h : 0);
+  const detecting = filled === null;
 
   return (
     <div
@@ -166,12 +163,29 @@ export function AdSlot({
         zIndex: sticky ? 10 : undefined,
         flexShrink: 0,
         margin: '0 auto',
-        minHeight: reservedHeight,
-        visibility: filled === true ? 'visible' : 'hidden',
-        pointerEvents: filled === true ? 'auto' : 'none',
+        minHeight: h,
+        // Skeleton while detecting — shows a subtle pulse instead of invisible blank
+        background: detecting ? (tk.panelMuted || 'rgba(128,128,128,0.08)') : 'transparent',
+        transition: 'background 0.3s ease, min-height 0.3s ease',
       }}
     >
+      {/* Shimmer animation overlay while detecting */}
+      {detecting && (
+        <div
+          className="kj-ad-shimmer"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%)',
+            backgroundSize: '200% 100%',
+            animation: 'kj-shimmer 1.5s infinite',
+            borderRadius: 12,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
       <RealAd format={format} slot={slot} layout={layout} onFillResult={setFilled} />
+      <style>{`@keyframes kj-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
     </div>
   );
 }
@@ -215,7 +229,8 @@ export function AdCluster({
     { kind: midKind, titleBn: 'আপনার জন্য প্রস্তাবিত', titleEn: 'Recommended for you', subBn: 'ট্রিপ ও ডিল', subEn: 'Trips & deals', icon: '🎁', compact: true },
     { kind: 'in-article', titleBn: 'ভ্রমণ ও যাত্রা টিপস', titleEn: 'Travel & journey tips', icon: '💡' },
   ];
-  const slots = preset.slice(0, Math.min(count, preset.length));
+  // Cap at 3 to avoid 5 simultaneous blank slots causing repeated CLS
+  const slots = preset.slice(0, Math.min(count, 3, preset.length));
   return (
     <>
       {slots.map((s, i) => (
@@ -255,22 +270,20 @@ export function NativeAdCard({
   const [filled, setFilled] = useState<boolean | null>(null);
   const font = lang === 'bn' ? BEN : SANS;
 
-  // Detecting: reserve height so AdSense measures a real slot (transparent — no ghost dark box).
-  // Unfilled: collapse entirely — no ghost card in the layout.
   if (filled === false) return null;
 
-  const reservedHeight = filled === null ? h : h;
   const padY = compact ? 10 : 14;
   const padX = compact ? 12 : 16;
   const isFilled = filled === true;
+  const detecting = filled === null;
 
   return (
     <div
       style={{
-        background: isFilled ? tk.panel : 'transparent',
-        border: isFilled ? `1px solid ${tk.line}` : 'none',
+        background: isFilled ? tk.panel : detecting ? (tk.panelMuted || 'rgba(128,128,128,0.06)') : 'transparent',
+        border: isFilled ? `1px solid ${tk.line}` : detecting ? `1px solid ${tk.line}40` : 'none',
         borderRadius: 18,
-        padding: isFilled ? `${padY}px ${padX}px` : 0,
+        padding: isFilled ? `${padY}px ${padX}px` : detecting ? `${padY}px ${padX}px` : 0,
         boxShadow: isFilled ? tk.shadow : 'none',
         display: 'flex',
         flexDirection: 'column',
@@ -279,13 +292,29 @@ export function NativeAdCard({
         boxSizing: 'border-box',
         width: '100%',
         maxWidth: '100%',
-        visibility: isFilled ? 'visible' : 'hidden',
-        pointerEvents: isFilled ? 'auto' : 'none',
+        position: 'relative',
+        transition: 'background 0.3s ease, border-color 0.3s ease',
+        minHeight: detecting ? h + (title ? 44 : 0) : undefined,
       }}
     >
-      {/* Header row: only shown when filled — don't show floating title with no ad */}
-      {title && isFilled && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, minHeight: 18 }}>
+      {/* Shimmer overlay while detecting */}
+      {detecting && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%)',
+            backgroundSize: '200% 100%',
+            animation: 'kj-shimmer 1.5s infinite',
+            borderRadius: 18,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
+      {/* Header row: shown when filled or detecting (skeleton) */}
+      {title && (isFilled || detecting) && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, minHeight: 18, opacity: isFilled ? 1 : 0 }}>
           {icon && (
             <span
               style={{
@@ -337,11 +366,11 @@ export function NativeAdCard({
         </div>
       )}
 
-      {/* Ad body — reserve height while detecting so AdSense can fill */}
+      {/* Ad body */}
       <div
         style={{
           width: '100%',
-          minHeight: reservedHeight,
+          minHeight: h,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

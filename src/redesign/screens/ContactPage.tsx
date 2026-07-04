@@ -72,7 +72,7 @@ export function ContactPage(props: Props) {
           icon="💬"
         />
       </div>
-          <AdCluster tk={tk} lang={lang} count={4} isMobile={isMobile}/>
+          <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
     </PageShell>
   );
 }
