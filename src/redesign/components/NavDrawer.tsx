@@ -23,13 +23,11 @@ const GROUPS: { heading: { bn: string; en: string }; links: DrawerLink[] }[] = [
     ],
   },
   {
-    heading: { bn: 'অ্যাকাউন্ট', en: 'Account' },
+    heading: { bn: 'আমার', en: 'My' },
     links: [
-      { bn: 'প্রোফাইল', en: 'Profile', route: 'profile' },
       { bn: 'সেভড', en: 'Favorites', route: 'favorites' },
       { bn: 'ইতিহাস', en: 'History', route: 'history' },
       { bn: 'সেটিংস', en: 'Settings', route: 'settings' },
-      { bn: 'সাইন ইন', en: 'Sign In', route: 'signin' },
     ],
   },
   {
@@ -185,11 +183,7 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute, isLo
               </div>
 
               {/* Links */}
-              {group.links.filter(link => {
-                // Hide Sign In when user is already logged in
-                if (link.route === 'signin' && isLoggedIn) return false;
-                return true;
-              }).map((link) => {
+              {group.links.map((link) => {
                 const isActive = activeRoute === link.route;
                 return (
                   <button

@@ -63,7 +63,6 @@ export function SettingsPage(props: ScreenProps) {
   }
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [confirmSignOut, setConfirmSignOut] = useState(false);
 
   const card: React.CSSProperties = { background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, overflow: 'hidden', marginBottom: 4 };
 
@@ -83,14 +82,6 @@ export function SettingsPage(props: ScreenProps) {
   );
 
   const groups = [
-    {
-      title: lbl('Account', 'অ্যাকাউন্ট'),
-      items: [
-        { icon: '👤', label: lbl('Edit profile', 'প্রোফাইল সম্পাদনা'), sub: lbl('Name, email, phone', 'নাম, ইমেইল, ফোন'), onClick: () => onNav('edit-profile') },
-        { icon: '🔐', label: lbl('Password & security', 'পাসওয়ার্ড ও নিরাপত্তা'), sub: lbl('2FA enabled', '2FA চালু'), onClick: () => onNav('password') },
-        { icon: '📱', label: lbl('Devices', 'ডিভাইস'), sub: lbl('1 active', '১টি সক্রিয়'), onClick: () => onNav('devices') },
-      ],
-    },
     {
       title: lbl('Appearance', 'চেহারা'),
       items: [
@@ -163,14 +154,6 @@ export function SettingsPage(props: ScreenProps) {
           icon="🎯"
         />
 
-        {/* Sign out */}
-        <button
-          onClick={() => setConfirmSignOut(true)}
-          style={{ marginTop: 20, width: '100%', background: tk.accentSoft, color: tk.accent, border: `1px solid ${tk.accent}44`, borderRadius: 12, padding: '14px', fontFamily: font, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
-        >
-          {lbl('Sign out', 'সাইন আউট')}
-        </button>
-
         <div style={{ textAlign: 'center', marginTop: 16, fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>
           KoyJabo · v1.5.2 · Build 2026.06.18
         </div>
@@ -186,7 +169,6 @@ export function SettingsPage(props: ScreenProps) {
 
       <ConfirmModal tk={tk} lang={lang} open={confirmClear} title={lbl('Clear search history?', 'অনুসন্ধান ইতিহাস মুছবেন?')} message={lbl('All your search history will be permanently deleted.', 'আপনার সমস্ত অনুসন্ধান ইতিহাস স্থায়ীভাবে মুছে যাবে।')} confirmLabel={lbl('Clear', 'মুছুন')} onConfirm={() => setConfirmClear(false)} onClose={() => setConfirmClear(false)} />
       <ConfirmModal tk={tk} lang={lang} open={confirmDelete} title={lbl('Delete account?', 'অ্যাকাউন্ট মুছবেন?')} message={lbl('This action is irreversible. All your data will be permanently deleted.', 'এই পদক্ষেপ অপরিবর্তনীয়।')} confirmLabel={lbl('Delete', 'মুছুন')} onConfirm={() => setConfirmDelete(false)} onClose={() => setConfirmDelete(false)} />
-      <ConfirmModal tk={tk} lang={lang} open={confirmSignOut} title={lbl('Sign out?', 'সাইন আউট করবেন?')} message={lbl('You will be signed out of your account.', 'আপনি সাইন আউট হয়ে যাবেন।')} confirmLabel={lbl('Sign out', 'সাইন আউট')} onConfirm={() => { setConfirmSignOut(false); onNav('signin'); }} onClose={() => setConfirmSignOut(false)} />
           <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
     </PageShell>
   );
