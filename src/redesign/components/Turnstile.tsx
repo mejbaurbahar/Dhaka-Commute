@@ -1,6 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 
-const SITE_KEY = '0x4AAAAAADqrYOUQASAcL2gU';
+// Cloudflare test key (always passes) for non-production hostnames
+const SITE_KEY = window.location.hostname === 'koyjabo.com'
+  ? '0x4AAAAAADqrYOUQASAcL2gU'
+  : '1x00000000000000000000AA';
 
 interface TurnstileProps {
   theme: 'dark' | 'light';
