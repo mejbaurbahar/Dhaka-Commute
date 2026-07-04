@@ -62,7 +62,6 @@ export function SettingsPage(props: ScreenProps) {
     }
   }
   const [confirmClear, setConfirmClear] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const card: React.CSSProperties = { background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, overflow: 'hidden', marginBottom: 4 };
 
@@ -104,7 +103,6 @@ export function SettingsPage(props: ScreenProps) {
         { icon: '📊', label: lbl('Anonymous usage stats', 'বেনামী ব্যবহার পরিসংখ্যান'), right: <Toggle on={privacy.stats} onChange={() => setPrivacy(p => ({ ...p, stats: !p.stats }))} tk={tk} />, onClick: undefined },
         { icon: '📍', label: lbl('Location for AI & nearby buses', 'AI ও কাছের বাসের জন্য অবস্থান'), sub: privacy.location ? lbl('Active – detecting location', 'সক্রিয় – অবস্থান শনাক্ত হচ্ছে') : lbl('Off – enable for smarter results', 'বন্ধ – চালু করলে ভালো ফলাফল পাবেন'), right: <Toggle on={privacy.location} onChange={handleLocationToggle} tk={tk} />, onClick: undefined },
         { icon: '🗑', label: lbl('Clear search history', 'অনুসন্ধান ইতিহাস মুছুন'), right: null, onClick: () => setConfirmClear(true) },
-        { icon: '⚠️', label: lbl('Delete account', 'অ্যাকাউন্ট মুছুন'), danger: true, right: null, onClick: () => setConfirmDelete(true) },
       ],
     },
     {
@@ -125,7 +123,7 @@ export function SettingsPage(props: ScreenProps) {
       <div style={{ maxWidth: isMobile ? '100%' : 720, margin: '0 auto', padding: isMobile ? '16px 12px 100px' : '24px 40px 60px' }}>
 
         <h1 style={{ margin: '0 0 4px', fontFamily: font, fontWeight: 700, fontSize: 26, color: tk.text, letterSpacing: -0.5 }}>{lbl('Settings', 'সেটিংস')}</h1>
-        <p style={{ margin: '0 0 20px', fontFamily: SANS, fontSize: 13, color: tk.textDim }}>{lbl('Manage your preferences and account', 'আপনার পছন্দ এবং অ্যাকাউন্ট পরিচালনা করুন')}</p>
+        <p style={{ margin: '0 0 20px', fontFamily: SANS, fontSize: 13, color: tk.textDim }}>{lbl('Manage your preferences', 'আপনার পছন্দ পরিচালনা করুন')}</p>
 
         {groups.map((g, gi) => (
           <div key={gi}>
@@ -168,7 +166,6 @@ export function SettingsPage(props: ScreenProps) {
       </div>
 
       <ConfirmModal tk={tk} lang={lang} open={confirmClear} title={lbl('Clear search history?', 'অনুসন্ধান ইতিহাস মুছবেন?')} message={lbl('All your search history will be permanently deleted.', 'আপনার সমস্ত অনুসন্ধান ইতিহাস স্থায়ীভাবে মুছে যাবে।')} confirmLabel={lbl('Clear', 'মুছুন')} onConfirm={() => setConfirmClear(false)} onClose={() => setConfirmClear(false)} />
-      <ConfirmModal tk={tk} lang={lang} open={confirmDelete} title={lbl('Delete account?', 'অ্যাকাউন্ট মুছবেন?')} message={lbl('This action is irreversible. All your data will be permanently deleted.', 'এই পদক্ষেপ অপরিবর্তনীয়।')} confirmLabel={lbl('Delete', 'মুছুন')} onConfirm={() => setConfirmDelete(false)} onClose={() => setConfirmDelete(false)} />
           <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
     </PageShell>
   );
