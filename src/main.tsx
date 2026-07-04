@@ -118,10 +118,10 @@ async function registerPWAWorker() {
       },
       onRegisteredSW(_swUrl, registration) {
         if (!registration) return;
-        // Poll for a new SW every 60s — Workbox by default only checks
-        // on navigation, which doesn't fire inside a SPA. This makes
-        // long-lived tabs pick up new deploys without manual refresh.
-        const POLL_MS = 60_000;
+        // Check immediately on registration so fresh deploys show on first visit/refresh
+        registration.update().catch(() => {});
+        // Poll every 15s — fast enough that a normal refresh always picks up new deploys
+        const POLL_MS = 15_000;
         setInterval(() => {
           if (document.visibilityState === 'visible') {
             registration.update().catch(() => {});
