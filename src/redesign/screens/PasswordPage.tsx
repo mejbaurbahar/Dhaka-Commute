@@ -244,7 +244,7 @@ export function PasswordPage(props: Props) {
       </div>
       <style>{`@keyframes kj-spin{to{transform:rotate(360deg)}}`}</style>
       <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <AdCluster tk={tk} lang={lang} count={5} isMobile={isMobile} />
+        <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile} />
       </div>
     </PageShell>
   );

@@ -110,7 +110,7 @@ export function ForgotPasswordPage(props: Props) {
         </form>
       </div>
         <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <AdCluster tk={tk} lang={lang} count={5} isMobile={isMobile}/>
+          <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
         </div>
     </PageShell>
   );

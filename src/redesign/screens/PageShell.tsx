@@ -97,8 +97,8 @@ export function PageShell({
         <AdSlot tk={tk} lang={lang} kind={isMobile ? 'mob-banner' : 'leaderboard'} />
       </div>
 
-      {/* Scrollable main content */}
-      <main style={{ position: 'relative', zIndex: 1 }}>
+      {/* Scrollable main content — paddingBottom on mobile to clear fixed tab bar (67px) + anchor ad (50px) */}
+      <main style={{ position: 'relative', zIndex: 1, paddingBottom: isMobile ? 130 : 0 }}>
         {children}
       </main>
 

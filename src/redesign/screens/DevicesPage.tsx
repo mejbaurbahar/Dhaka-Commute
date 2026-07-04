@@ -70,7 +70,7 @@ export function DevicesPage(props: Props) {
           onClose={()=>setConfirm(c=>({...c,open:false}))}
           onConfirm={()=>setConfirm(c=>({...c,open:false}))}/>
         <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <AdCluster tk={tk} lang={lang} count={5} isMobile={isMobile}/>
+          <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
         </div>
       </div>
     </PageShell>
