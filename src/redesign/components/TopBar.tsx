@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Tokens, Lang, Theme, SANS, BEN, T } from '../tokens';
 import { Logo } from './Logo';
 import { Icon } from './Icons';
@@ -29,6 +29,7 @@ interface TopBarProps {
   canBack?: boolean;
   onBack?: () => void;
   user?: { displayName?: string; username?: string; avatarUrl?: string } | null;
+  onLogout?: () => void;
 }
 
 
@@ -43,9 +44,23 @@ export function TopBar({
   onTheme,
   onMenu,
   user,
+  onLogout,
 }: TopBarProps) {
   const isMobile = device === 'mobile';
   const initials = (user?.displayName || user?.username || 'KJ').slice(0, 2).toUpperCase();
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
+  const avatarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!avatarMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (avatarRef.current && !avatarRef.current.contains(e.target as Node)) {
+        setAvatarMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [avatarMenuOpen]);
 
   const controlBtn: React.CSSProperties = {
     background: tk.panelMuted,
@@ -185,13 +200,38 @@ export function TopBar({
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
           {/* Avatar — desktop */}
           {!isMobile && (
-            user?.avatarUrl
-              ? <img src={user.avatarUrl} alt={initials} onClick={() => onNav('profile')}
-                  style={{ width:34,height:34,borderRadius:999,objectFit:'cover',flexShrink:0,cursor:'pointer',border:`2px solid ${tk.primarySoft}` }}/>
-              : <div onClick={() => onNav('profile')}
-                  style={{ width:34,height:34,borderRadius:999,background:tk.primarySoft,color:tk.primaryDeep,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:SANS,fontWeight:700,fontSize:12,flexShrink:0,cursor:'pointer' }}>
-                  {initials}
+            <div ref={avatarRef} style={{ position: 'relative', flexShrink: 0 }}>
+              {user?.avatarUrl
+                ? <img src={user.avatarUrl} alt={initials} onClick={() => setAvatarMenuOpen(o => !o)}
+                    style={{ width:34,height:34,borderRadius:999,objectFit:'cover',cursor:'pointer',border:`2px solid ${tk.primarySoft}`,display:'block' }}/>
+                : <div onClick={() => setAvatarMenuOpen(o => !o)}
+                    style={{ width:34,height:34,borderRadius:999,background:tk.primarySoft,color:tk.primaryDeep,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:SANS,fontWeight:700,fontSize:12,cursor:'pointer' }}>
+                    {initials}
+                  </div>
+              }
+              {avatarMenuOpen && (
+                <div style={{ position:'absolute',top:'calc(100% + 8px)',right:0,background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:12,overflow:'hidden',boxShadow:tk.shadowLg,minWidth:140,zIndex:9999 }}>
+                  {user ? (
+                    <>
+                      <button onClick={() => { setAvatarMenuOpen(false); onNav('profile'); }}
+                        style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.text,textAlign:'left' }}>
+                        <span>👤</span>{T(lang,'প্রোফাইল','Profile')}
+                      </button>
+                      <div style={{ height:1,background:tk.line }}/>
+                      <button onClick={() => { setAvatarMenuOpen(false); onLogout?.(); }}
+                        style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.accent,textAlign:'left' }}>
+                        <span>🚪</span>{T(lang,'সাইন আউট','Sign out')}
+                      </button>
+                    </>
+                  ) : (
+                    <button onClick={() => { setAvatarMenuOpen(false); onNav('signin'); }}
+                      style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.primary,textAlign:'left' }}>
+                      <span>🔑</span>{T(lang,'সাইন ইন','Sign in')}
+                    </button>
+                  )}
                 </div>
+              )}
+            </div>
           )}
 
           {/* Menu button — desktop */}
@@ -231,14 +271,38 @@ export function TopBar({
           {/* Avatar + menu — mobile only */}
           {isMobile && (
             <>
-              {user?.avatarUrl
-                ? <img src={user.avatarUrl} alt={initials} onClick={() => onNav('profile')}
-                    style={{ width:36,height:36,borderRadius:999,objectFit:'cover',flexShrink:0,cursor:'pointer',border:`2px solid ${tk.primarySoft}` }}/>
-                : <div onClick={() => onNav('profile')}
-                    style={{ width:36,height:36,borderRadius:999,background:tk.primarySoft,color:tk.primaryDeep,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:SANS,fontWeight:700,fontSize:13,flexShrink:0,cursor:'pointer' }}>
-                    {initials}
+              <div ref={isMobile ? avatarRef : undefined} style={{ position:'relative',flexShrink:0 }}>
+                {user?.avatarUrl
+                  ? <img src={user.avatarUrl} alt={initials} onClick={() => setAvatarMenuOpen(o => !o)}
+                      style={{ width:36,height:36,borderRadius:999,objectFit:'cover',cursor:'pointer',border:`2px solid ${tk.primarySoft}`,display:'block' }}/>
+                  : <div onClick={() => setAvatarMenuOpen(o => !o)}
+                      style={{ width:36,height:36,borderRadius:999,background:tk.primarySoft,color:tk.primaryDeep,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:SANS,fontWeight:700,fontSize:13,cursor:'pointer' }}>
+                      {initials}
+                    </div>
+                }
+                {avatarMenuOpen && (
+                  <div style={{ position:'absolute',top:'calc(100% + 8px)',right:0,background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:12,overflow:'hidden',boxShadow:tk.shadowLg,minWidth:140,zIndex:9999 }}>
+                    {user ? (
+                      <>
+                        <button onClick={() => { setAvatarMenuOpen(false); onNav('profile'); }}
+                          style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.text,textAlign:'left' }}>
+                          <span>👤</span>{T(lang,'প্রোফাইল','Profile')}
+                        </button>
+                        <div style={{ height:1,background:tk.line }}/>
+                        <button onClick={() => { setAvatarMenuOpen(false); onLogout?.(); }}
+                          style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.accent,textAlign:'left' }}>
+                          <span>🚪</span>{T(lang,'সাইন আউট','Sign out')}
+                        </button>
+                      </>
+                    ) : (
+                      <button onClick={() => { setAvatarMenuOpen(false); onNav('signin'); }}
+                        style={{ width:'100%',background:'none',border:'none',padding:'11px 16px',display:'flex',alignItems:'center',gap:10,cursor:'pointer',fontFamily:SANS,fontSize:13,fontWeight:600,color:tk.primary,textAlign:'left' }}>
+                        <span>🔑</span>{T(lang,'সাইন ইন','Sign in')}
+                      </button>
+                    )}
                   </div>
-              }
+                )}
+              </div>
               <button onClick={onMenu} style={iconBtn} aria-label="Open menu">
                 <Icon.menu s={20} />
               </button>

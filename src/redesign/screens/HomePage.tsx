@@ -18,6 +18,7 @@ import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { getFavoriteBusIds } from '../utils/favorites';
 import { getUserHistory } from '../../../services/analyticsService';
+import { useAuth } from '../../contexts/AuthContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1859,6 +1860,8 @@ export function HomePage({
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const font = lang === 'bn' ? BEN : SANS;
+  const { user: authUser } = useAuth();
+  const firstName = authUser?.displayName?.split(' ')[0] || authUser?.username || null;
   const [homeSearchMode, setHomeSearchMode] = useState<SearchModeId>('bus');
 
   const section: React.CSSProperties = {
@@ -1927,7 +1930,9 @@ export function HomePage({
                     textWrap: 'balance' as any,
                   }}
                 >
-                  {T(lang, 'কোথায় যেতে চান, মেজবাউর?', 'Where are you headed, Mejbaur?')}
+                  {firstName
+                    ? T(lang, `কোথায় যেতে চান, ${firstName}?`, `Where are you headed, ${firstName}?`)
+                    : T(lang, 'কোথায় যেতে চান?', 'Where are you headed?')}
                 </h1>
                 <p
                   style={{

@@ -36,7 +36,7 @@ interface SyncMeta {
 // All functions return null/false gracefully — localStorage handles local persistence.
 
 const PROXY = (import.meta.env.VITE_API_PROXY as string | undefined)
-  || 'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
+  || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 async function repoGet<T>(path: string): Promise<T | null> {
   try {

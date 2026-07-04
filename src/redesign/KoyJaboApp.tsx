@@ -201,7 +201,7 @@ function getInitialLang(): Lang {
 }
 
 export function KoyJaboApp() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [theme, setTheme] = useState<Theme>('dark');
   const [lang, setLang] = useState<Lang>(getInitialLang);
   const [forceDesktop, setForceDesktop] = useState(false); // phone user can request desktop view
@@ -498,6 +498,7 @@ export function KoyJaboApp() {
         onTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
         onMenu={() => setMenuOpen(true)}
         user={user}
+        onLogout={() => { logout(); nav('signin'); }}
       />
       {/* Mobile tab bar — outside scroller too */}
       {isPhone && (
