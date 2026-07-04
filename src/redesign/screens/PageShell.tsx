@@ -3,7 +3,6 @@ import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang, chipBtn } from '../tokens';
 import { TopBar } from '../components/TopBar';
 import { MobileTabBar } from '../components/MobileTabBar';
 import { KJFooter } from '../components/KJFooter';
-import { AdSlot } from '../components/AdSlot';
 // AIFab rendered by KoyJaboApp shell
 
 export interface PageShellProps {
@@ -91,11 +90,6 @@ export function PageShell({
           </span>
         </div>
       )}
-
-      {/* Above-fold leaderboard — always in initial viewport → high viewability */}
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 16px 0', position: 'relative', zIndex: 1 }}>
-        <AdSlot tk={tk} lang={lang} kind={isMobile ? 'mob-banner' : 'leaderboard'} />
-      </div>
 
       {/* Scrollable main content — paddingBottom on mobile to clear fixed tab bar (67px) + anchor ad (50px) */}
       <main style={{ position: 'relative', zIndex: 1, paddingBottom: isMobile ? 130 : 0 }}>
