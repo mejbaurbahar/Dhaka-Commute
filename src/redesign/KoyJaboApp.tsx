@@ -29,15 +29,10 @@ const FlightDetailPage = React.lazy(() => import('./screens/FlightDetailPage').t
 const RateReviewPage = React.lazy(() => import('./screens/RateReviewPage').then(m => ({ default: m.RateReviewPage })));
 const MetroTokenPage = React.lazy(() => import('./screens/MetroTokenPage').then(m => ({ default: m.MetroTokenPage })));
 const MetroPassPage = React.lazy(() => import('./screens/MetroPassPage').then(m => ({ default: m.MetroPassPage })));
-const ProfilePage = React.lazy(() => import('./screens/ProfilePage').then(m => ({ default: m.ProfilePage })));
 const FavoritesPage = React.lazy(() => import('./screens/FavoritesPage').then(m => ({ default: m.FavoritesPage })));
 const HistoryPage = React.lazy(() => import('./screens/HistoryPage').then(m => ({ default: m.HistoryPage })));
 const SettingsPage = React.lazy(() => import('./screens/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const EditProfilePage = React.lazy(() => import('./screens/EditProfilePage').then(m => ({ default: m.EditProfilePage })));
-const PasswordPage = React.lazy(() => import('./screens/PasswordPage').then(m => ({ default: m.PasswordPage })));
 const DevicesPage = React.lazy(() => import('./screens/DevicesPage').then(m => ({ default: m.DevicesPage })));
-const SignInPage = React.lazy(() => import('./screens/SignInPage').then(m => ({ default: m.SignInPage })));
-const SignUpPage = React.lazy(() => import('./screens/SignUpPage').then(m => ({ default: m.SignUpPage })));
 const WhyPage = React.lazy(() => import('./screens/WhyPage').then(m => ({ default: m.WhyPage })));
 const AboutPage = React.lazy(() => import('./screens/AboutPage').then(m => ({ default: m.AboutPage })));
 const BlogsPage = React.lazy(() => import('./screens/BlogsPage').then(m => ({ default: m.BlogsPage })));
@@ -71,14 +66,14 @@ interface StackEntry {
 const SECTION_MAP: Record<string, string> = {
   home: 'home', 'bus-hub': 'search', 'metro-hub': 'search', 'train-hub': 'search',
   'launch-hub': 'search', 'flights-hub': 'search', 'truck-hub': 'search', intercity: 'search',
-  ai: 'ai', favorites: 'saved', profile: 'you', history: 'you', settings: 'you',
+  ai: 'ai', favorites: 'saved', history: 'you', settings: 'you',
 };
 
 // Routes that show a back button (detail / leaf pages reached from search results)
 const SHOW_BACK_ROUTES = new Set([
   'bus-detail', 'train-detail', 'metro-detail', 'intercity-detail', 'vehicle',
-  'rate-review', 'metro-token', 'metro-pass', 'blog-detail', 'edit-profile',
-  'password', 'devices', 'results', 'install', 'flight-detail',
+  'rate-review', 'metro-token', 'metro-pass', 'blog-detail',
+  'devices', 'results', 'install', 'flight-detail',
 ]);
 
 const ROUTE_PATHS: Record<string, string> = {
@@ -94,10 +89,7 @@ const ROUTE_PATHS: Record<string, string> = {
   ai: '/ai',
   favorites: '/favorites',
   history: '/history',
-  profile: '/profile',
   settings: '/settings',
-  signin: '/signin',
-  signup: '/signup',
   why: '/why',
   about: '/about',
   blogs: '/blog',
@@ -383,15 +375,17 @@ export function KoyJaboApp() {
       case 'rate-review': return <RateReviewPage {...p}/>;
       case 'metro-token': return <MetroTokenPage {...p}/>;
       case 'metro-pass': return <MetroPassPage {...p}/>;
-      case 'profile': return <ProfilePage {...p}/>;
       case 'favorites': return <FavoritesPage {...p}/>;
       case 'history': return <HistoryPage {...p}/>;
       case 'settings': return <SettingsPage {...p}/>;
-      case 'edit-profile': return <EditProfilePage {...p}/>;
-      case 'password': return <PasswordPage {...p}/>;
       case 'devices': return <DevicesPage {...p}/>;
-      case 'signin': return <SignInPage {...p}/>;
-      case 'signup': return <SignUpPage {...p}/>;
+      case 'profile':
+      case 'edit-profile':
+      case 'password':
+      case 'signin':
+      case 'signup':
+      case 'forgot-password':
+      case 'reset-password': return <HomePage {...p}/>;
       case 'why': return <WhyPage {...p}/>;
       case 'about': return <AboutPage {...p}/>;
       case 'blogs': return <BlogsPage {...p}/>;
@@ -498,7 +492,7 @@ export function KoyJaboApp() {
         onTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
         onMenu={() => setMenuOpen(true)}
         user={user}
-        onLogout={() => { logout(); nav('signin'); }}
+        onLogout={() => { logout(); nav('home'); }}
       />
       {/* Mobile tab bar — outside scroller too */}
       {isPhone && (

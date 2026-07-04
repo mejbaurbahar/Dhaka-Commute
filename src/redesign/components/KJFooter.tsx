@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 import { Logo } from './Logo';
-import { useAuth } from '../../contexts/AuthContext';
 
 const COLS = [
   {
@@ -17,13 +16,11 @@ const COLS = [
     ],
   },
   {
-    h: { bn: 'অ্যাকাউন্ট', en: 'Account' },
+    h: { bn: 'আমার', en: 'My' },
     items: [
-      { bn: 'প্রোফাইল', en: 'Profile', route: 'profile' },
       { bn: 'প্রিয়', en: 'Favorites', route: 'favorites' },
       { bn: 'যাত্রার ইতিহাস', en: 'Trip history', route: 'history' },
       { bn: 'সেটিংস', en: 'Settings', route: 'settings' },
-      { bn: 'সাইন ইন', en: 'Sign in', route: 'signin' },
     ],
   },
   {
@@ -59,13 +56,7 @@ interface KJFooterProps {
 }
 
 export function KJFooter({ tk, lang, isMobile, onNav }: KJFooterProps) {
-  const { user } = useAuth();
-  const isLoggedIn = !!user;
-
-  const cols = COLS.map(col => ({
-    ...col,
-    items: col.items.filter(item => !(isLoggedIn && item.route === 'signin')),
-  }));
+  const cols = COLS;
 
   return (
     <footer
