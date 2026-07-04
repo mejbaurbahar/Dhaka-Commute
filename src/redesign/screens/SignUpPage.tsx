@@ -186,7 +186,7 @@ export function SignUpPage(props: Props) {
             </span>
           </div>
 
-          {isFirebaseConfigured && (
+          {false && isFirebaseConfigured && (
             <>
               <div style={{ display:'flex',alignItems:'center',gap:10,margin:'4px 0 12px' }}>
                 <div style={{ flex:1,height:1,background:tk.line }}/>

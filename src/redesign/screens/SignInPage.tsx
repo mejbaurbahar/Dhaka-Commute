@@ -152,7 +152,7 @@ export function SignInPage(props: Props) {
             {loading ? T(lang,'সাইন ইন হচ্ছে…','Signing in…') : T(lang,'সাইন ইন করুন','Sign in')}
           </button>
 
-          {isFirebaseConfigured && (
+          {false && isFirebaseConfigured && (
             <>
               <div style={{ display:'flex',alignItems:'center',gap:10,margin:'4px 0 12px' }}>
                 <div style={{ flex:1,height:1,background:tk.line }}/>
