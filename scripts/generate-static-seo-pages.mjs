@@ -80,8 +80,12 @@ function jsonLdScript(id, data) {
   return `<script type="application/ld+json" data-static-seo="${id}">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
 }
 
+function canonicalPath(pathname) {
+  return pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
+}
+
 function renderPage({ path: pagePath, title, description, keywords = [], bodyHtml, schema }) {
-  const url = `${baseUrl}${pagePath}`;
+  const url = `${baseUrl}${canonicalPath(pagePath)}`;
   const fullTitle = title.includes('KoyJabo') || title.includes('কই যাবো') ? title : `${title} | KoyJabo`;
   let html = template;
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(fullTitle)}</title>`);
@@ -244,6 +248,87 @@ function renderHubPages() {
       text: 'Plan truck and freight movement in Bangladesh with route guidance, vehicle type information and practical fare estimates.',
       aboutType: 'Service',
     },
+    {
+      path: '/ai',
+      title: 'KoyJabo AI Transport Assistant',
+      description: 'Ask KoyJabo AI for Bangladesh transport help in Bengali or English: Dhaka bus routes, metro fares, train schedules and travel planning.',
+      keywords: ['KoyJabo AI', 'Bangladesh transport AI', 'Dhaka bus route assistant', 'বাংলা ট্রান্সপোর্ট AI'],
+      heading: 'KoyJabo AI Transport Assistant',
+      text: 'Use KoyJabo AI to ask route, fare, schedule and travel-planning questions for Dhaka and Bangladesh transport.',
+      aboutType: 'WebApplication',
+    },
+    {
+      path: '/about',
+      title: 'About KoyJabo - Bangladesh Transport Guide',
+      description: 'Learn about KoyJabo, a free Bengali-English Bangladesh transport guide for Dhaka buses, metro, trains, launches, flights and intercity travel.',
+      keywords: ['about KoyJabo', 'Bangladesh transport guide', 'Dhaka bus app', 'কই যাবো'],
+      heading: 'About KoyJabo',
+      text: 'KoyJabo is a free Bangladesh transport guide built to make Dhaka and intercity travel easier in Bengali and English.',
+      aboutType: 'Organization',
+    },
+    {
+      path: '/faq',
+      title: 'KoyJabo FAQ - Dhaka Bus, Metro & Bangladesh Travel',
+      description: 'Answers to common KoyJabo questions about Dhaka bus routes, Metro Rail fares, train schedules, intercity travel and offline use.',
+      keywords: ['KoyJabo FAQ', 'Dhaka bus FAQ', 'Bangladesh travel questions', 'metro fare FAQ'],
+      heading: 'KoyJabo Frequently Asked Questions',
+      text: 'Find answers about using KoyJabo for Dhaka bus routes, Metro Rail, Bangladesh Railway, intercity buses and travel fare planning.',
+      aboutType: 'FAQPage',
+    },
+    {
+      path: '/privacy',
+      title: 'KoyJabo Privacy Policy',
+      description: 'Read the KoyJabo privacy policy for the Bangladesh transport guide, including app data, location use, analytics and account information.',
+      keywords: ['KoyJabo privacy', 'privacy policy', 'Bangladesh transport app privacy'],
+      heading: 'KoyJabo Privacy Policy',
+      text: 'KoyJabo explains how the app handles privacy, location features, analytics and user account data.',
+      aboutType: 'WebPage',
+    },
+    {
+      path: '/terms',
+      title: 'KoyJabo Terms of Service',
+      description: 'Read KoyJabo terms for using the Bangladesh transport guide, route data, fare estimates, AI assistant and travel planning tools.',
+      keywords: ['KoyJabo terms', 'terms of service', 'transport guide terms'],
+      heading: 'KoyJabo Terms of Service',
+      text: 'KoyJabo terms explain how to use the transport guide, route data, fare estimates and AI assistant responsibly.',
+      aboutType: 'WebPage',
+    },
+    {
+      path: '/contact',
+      title: 'Contact KoyJabo',
+      description: 'Contact KoyJabo for Bangladesh transport guide feedback, Dhaka bus route corrections, advertising and support.',
+      keywords: ['contact KoyJabo', 'Dhaka bus route correction', 'Bangladesh transport support'],
+      heading: 'Contact KoyJabo',
+      text: 'Contact the KoyJabo team for support, feedback, route corrections, partnership and advertising questions.',
+      aboutType: 'ContactPage',
+    },
+    {
+      path: '/for-ai',
+      title: 'KoyJabo Data for AI and Search Crawlers',
+      description: 'Machine-readable KoyJabo transport data and crawler guidance for AI assistants, search engines and Bangladesh travel discovery.',
+      keywords: ['KoyJabo AI data', 'llms.txt', 'Bangladesh transport data', 'crawler guidance'],
+      heading: 'KoyJabo for AI and Search Crawlers',
+      text: 'KoyJabo provides machine-readable transport summaries, sitemap data and crawler guidance for search engines and AI assistants.',
+      aboutType: 'Dataset',
+    },
+    {
+      path: '/history',
+      title: 'KoyJabo Travel History',
+      description: 'KoyJabo travel history helps users revisit recent Bangladesh transport searches, routes and trip planning activity.',
+      keywords: ['KoyJabo history', 'travel history', 'route search history'],
+      heading: 'KoyJabo Travel History',
+      text: 'KoyJabo lets users revisit recent route searches and transport planning activity inside the app.',
+      aboutType: 'WebPage',
+    },
+    {
+      path: '/advertise',
+      title: 'Advertise on KoyJabo',
+      description: 'Advertise with KoyJabo to reach Bangladesh commuters and travelers searching for Dhaka bus routes, metro, train and intercity travel.',
+      keywords: ['advertise KoyJabo', 'Bangladesh travel advertising', 'Dhaka commuter ads'],
+      heading: 'Advertise on KoyJabo',
+      text: 'Reach Bangladesh transport users, Dhaka commuters and travelers through KoyJabo advertising and partnership options.',
+      aboutType: 'Service',
+    },
   ];
 
   return hubs.map(hub => renderPage({
@@ -261,7 +346,7 @@ function renderHubPages() {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
       name: hub.heading,
-      url: `${baseUrl}${hub.path}`,
+      url: `${baseUrl}${canonicalPath(hub.path)}`,
       description: hub.description,
       about: { '@type': hub.aboutType, name: hub.heading },
       inLanguage: ['en', 'bn'],
@@ -282,11 +367,11 @@ pages.push(renderPage({
     <h1>Dhaka Bus Route Finder - ঢাকা বাস রুট</h1>
     <p>KoyJabo helps riders search Dhaka local bus routes, stops and fares for 200+ bus services. Popular searches include dhaka bus route, bus route dhaka, ঢাকা বাস রুট, Dhaka local bus route, Shikor bus route, Victor Classic bus route and Ajmeri Glory bus route.</p>
   `,
-  schema: {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: 'Dhaka Bus Route Finder',
-    url: `${baseUrl}/local-bus`,
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: 'Dhaka Bus Route Finder',
+    url: `${baseUrl}/local-bus/`,
     description: 'Find Dhaka bus routes, stops and fares in Bengali or English.',
     inLanguage: ['en', 'bn'],
   },
@@ -309,7 +394,7 @@ for (const post of extractBlogPosts()) {
       '@type': 'BlogPosting',
       headline: post.title,
       description: truncate(post.excerpt),
-      url: `${baseUrl}/blog/${post.slug}`,
+      url: `${baseUrl}/blog/${post.slug}/`,
       datePublished: post.publishDate,
       dateModified: post.publishDate,
       publisher: { '@type': 'Organization', name: 'KoyJabo' },
@@ -333,7 +418,7 @@ for (const route of extractBusRoutes()) {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
       name: `${route.name} Bus Route`,
-      url: `${baseUrl}/bus/${route.slug}`,
+      url: `${baseUrl}/bus/${route.slug}/`,
       description: `${route.name} bus route in Dhaka.`,
       about: { '@type': 'BusTrip', name: `${route.name} Bus Route` },
     },
@@ -356,7 +441,7 @@ for (const train of extractTrainRoutes()) {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
       name: `${train.name} Train Schedule`,
-      url: `${baseUrl}/train/${train.slug}`,
+      url: `${baseUrl}/train/${train.slug}/`,
       description: `${train.name} train route, schedule and fare guide.`,
       about: {
         '@type': 'TrainTrip',

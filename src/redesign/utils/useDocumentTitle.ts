@@ -26,7 +26,10 @@ export function setCanonicalUrl(path: string) {
 
 export function absoluteUrl(path: string) {
   if (/^https?:\/\//i.test(path)) return path;
-  return `${BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
+  const withLeadingSlash = path.startsWith('/') ? path : '/' + path;
+  const [, pathname = '/', suffix = ''] = withLeadingSlash.match(/^([^?#]*)(.*)$/) ?? [];
+  const canonicalPath = pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
+  return `${BASE_URL}${canonicalPath}${suffix}`;
 }
 
 export function setMetaTag(name: string, content: string) {

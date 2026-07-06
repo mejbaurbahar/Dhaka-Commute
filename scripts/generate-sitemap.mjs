@@ -78,6 +78,11 @@ function urlEntry(loc, lastmod, changefreq, priority) {
   return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 }
 
+function pageUrl(pathname) {
+  const path = pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
+  return `${BASE}${path}`;
+}
+
 const busSlugs = extractBusSlugs();
 const trainSlugs = extractTrainSlugs();
 const blogEntries = extractBlogSlugs();
@@ -85,37 +90,37 @@ const blogEntries = extractBlogSlugs();
 console.log(`Extracted ${busSlugs.length} bus slugs, ${trainSlugs.length} train slugs, ${blogEntries.length} blog entries`);
 
 const staticPages = [
-  urlEntry(`${BASE}/`, TODAY, 'daily', '1.0'),
-  urlEntry(`${BASE}/intercity`, TODAY, 'daily', '0.9'),
-  urlEntry(`${BASE}/ai`, TODAY, 'weekly', '0.8'),
-  urlEntry(`${BASE}/blog`, TODAY, 'daily', '0.8'),
-  urlEntry(`${BASE}/about`, TODAY, 'monthly', '0.7'),
-  urlEntry(`${BASE}/faq`, TODAY, 'monthly', '0.7'),
-  urlEntry(`${BASE}/privacy`, TODAY, 'monthly', '0.5'),
-  urlEntry(`${BASE}/terms`, TODAY, 'monthly', '0.5'),
-  urlEntry(`${BASE}/contact`, TODAY, 'monthly', '0.5'),
-  urlEntry(`${BASE}/for-ai`, TODAY, 'monthly', '0.6'),
-  urlEntry(`${BASE}/history`, TODAY, 'monthly', '0.4'),
-  urlEntry(`${BASE}/train`, TODAY, 'weekly', '0.8'),
-  urlEntry(`${BASE}/local-bus`, TODAY, 'weekly', '0.8'),
-  urlEntry(`${BASE}/metro`, TODAY, 'weekly', '0.8'),
-  urlEntry(`${BASE}/launch`, TODAY, 'weekly', '0.7'),
-  urlEntry(`${BASE}/air`, TODAY, 'weekly', '0.7'),
-  urlEntry(`${BASE}/truck`, TODAY, 'weekly', '0.7'),
-  urlEntry(`${BASE}/advertise`, TODAY, 'monthly', '0.5'),
-  urlEntry(`${BASE}/fare`, TODAY, 'monthly', '0.6'),
+  urlEntry(pageUrl('/'), TODAY, 'daily', '1.0'),
+  urlEntry(pageUrl('/intercity'), TODAY, 'daily', '0.9'),
+  urlEntry(pageUrl('/ai'), TODAY, 'weekly', '0.8'),
+  urlEntry(pageUrl('/blog'), TODAY, 'daily', '0.8'),
+  urlEntry(pageUrl('/about'), TODAY, 'monthly', '0.7'),
+  urlEntry(pageUrl('/faq'), TODAY, 'monthly', '0.7'),
+  urlEntry(pageUrl('/privacy'), TODAY, 'monthly', '0.5'),
+  urlEntry(pageUrl('/terms'), TODAY, 'monthly', '0.5'),
+  urlEntry(pageUrl('/contact'), TODAY, 'monthly', '0.5'),
+  urlEntry(pageUrl('/for-ai'), TODAY, 'monthly', '0.6'),
+  urlEntry(pageUrl('/history'), TODAY, 'monthly', '0.4'),
+  urlEntry(pageUrl('/train'), TODAY, 'weekly', '0.8'),
+  urlEntry(pageUrl('/local-bus'), TODAY, 'weekly', '0.8'),
+  urlEntry(pageUrl('/metro'), TODAY, 'weekly', '0.8'),
+  urlEntry(pageUrl('/launch'), TODAY, 'weekly', '0.7'),
+  urlEntry(pageUrl('/air'), TODAY, 'weekly', '0.7'),
+  urlEntry(pageUrl('/truck'), TODAY, 'weekly', '0.7'),
+  urlEntry(pageUrl('/advertise'), TODAY, 'monthly', '0.5'),
+  urlEntry(pageUrl('/fare'), TODAY, 'monthly', '0.6'),
 ];
 
 const blogPages = blogEntries.map(({ slug, date }) =>
-  urlEntry(`${BASE}/blog/${slug}`, date, 'monthly', '0.8')
+  urlEntry(pageUrl(`/blog/${slug}`), date, 'monthly', '0.8')
 );
 
 const busPages = busSlugs.map(slug =>
-  urlEntry(`${BASE}/bus/${slug}`, TODAY, 'monthly', '0.7')
+  urlEntry(pageUrl(`/bus/${slug}`), TODAY, 'monthly', '0.7')
 );
 
 const trainPages = trainSlugs.map(slug =>
-  urlEntry(`${BASE}/train/${slug}`, TODAY, 'monthly', '0.7')
+  urlEntry(pageUrl(`/train/${slug}`), TODAY, 'monthly', '0.7')
 );
 
 const xml = [
