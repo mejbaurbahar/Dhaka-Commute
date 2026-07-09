@@ -341,7 +341,7 @@ export function AIChatPage(props: Props) {
 
   return (
     <PageShell {...props}>
-      <div style={{ display:'flex', height: isMobile ? 'calc(100dvh - 52px - 60px)' : 'calc(100vh - 60px)', overflow:'hidden', position:'relative' }}>
+      <div style={{ display:'flex', height: isMobile ? 'calc(100dvh - 52px - 60px)' : 'calc(100vh - 60px)', overflow:'hidden' }}>
         {/* Left sidebar — fixed on desktop */}
         {!isMobile && (
           <div style={{ width:280,flexShrink:0,borderRight:`1px solid ${tk.line}`,display:'flex',flexDirection:'column',overflow:'hidden auto',background:tk.panel }}>
@@ -391,8 +391,8 @@ export function AIChatPage(props: Props) {
         )}
 
         {/* Main chat */}
-        <div style={{ flex:1,display:'flex',flexDirection:'column',overflow:'hidden' }}>
-          <div style={{ flex:1, minHeight:0, overflow:'auto', padding:'16px', paddingBottom: isMobile ? '120px' : '16px', display:'flex',flexDirection:'column',gap:14 }}>
+        <div style={{ flex:1,display:'flex',flexDirection:'column',minHeight:0 }}>
+          <div style={{ flex:1, minHeight:0, overflow:'auto', padding:'16px', paddingBottom:'16px', display:'flex',flexDirection:'column',gap:14 }}>
             {messages.map(msg => <ChatBubble key={msg.id} msg={msg} tk={tk} lang={lang} userAvatarUrl={userAvatarUrl} userInitials={userInitials}/>)}
             {isLoading && (
               <div style={{ display:'flex',gap:10,alignSelf:'flex-start',maxWidth:'80%' }}>
@@ -406,7 +406,7 @@ export function AIChatPage(props: Props) {
           </div>
           {/* Mobile suggestion chips */}
           {isMobile && (
-            <div style={{ display:'flex',gap:6,padding:'8px 12px',overflowX:'auto',borderTop:`1px solid ${tk.line}` }}>
+            <div style={{ flexShrink:0, display:'flex',gap:6,padding:'8px 12px',overflowX:'auto',borderTop:`1px solid ${tk.line}`, scrollbarWidth:'none' } as React.CSSProperties}>
               {suggestions.slice(0,3).map((s,i)=>(
                 <button key={i} onClick={()=>setInput(T(lang,s.bn,s.en))} style={{ flexShrink:0,background:tk.panelMuted,border:`1px solid ${tk.line}`,borderRadius:999,padding:'6px 12px',fontFamily:BEN,fontSize:11,color:tk.textDim,cursor:'pointer',whiteSpace:'nowrap' }}>
                   {T(lang,s.bn,s.en)}
@@ -414,13 +414,9 @@ export function AIChatPage(props: Props) {
               ))}
             </div>
           )}
-          {/* Input bar — fixed on mobile so it's always visible above tab bar */}
+          {/* Input bar — always visible at bottom via flex layout (no fixed positioning) */}
           <div style={{
-            position: isMobile ? 'fixed' : 'relative',
-            bottom: isMobile ? 'calc(60px + env(safe-area-inset-bottom, 0px))' : 'auto',
-            left: isMobile ? 0 : 'auto',
-            right: isMobile ? 0 : 'auto',
-            zIndex: isMobile ? 160 : 'auto',
+            flexShrink: 0,
             padding: '10px 12px',
             paddingBottom: isMobile ? 'calc(10px + env(safe-area-inset-bottom, 0px))' : '10px',
             borderTop:`1px solid ${tk.line}`,
@@ -428,8 +424,6 @@ export function AIChatPage(props: Props) {
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
             display:'flex', gap:8, alignItems:'center',
-            boxSizing: 'border-box',
-            width: isMobile ? '100%' : 'auto',
           }}>
             <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()}
               placeholder={T(lang,'আপনার প্রশ্ন লিখুন...','Type your question...')}
