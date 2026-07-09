@@ -2040,16 +2040,9 @@ export function HomePage({
           <PromoBanner tk={tk} lang={lang} page="home" onNav={onNav} />
         </div>
 
-        {/* ── Ad: leaderboard/mob-banner (native card) ── */}
+        {/* ── Gov service banner ── */}
         <div style={section}>
-          <NativeAdCard
-            tk={tk}
-            lang={lang}
-            kind={isMobile ? 'mob-banner' : 'leaderboard'}
-            title={T(lang, 'অংশীদার অফার', 'Partner offers')}
-            subtitle={T(lang, 'ভ্রমণ ও পরিবহন', 'Travel & transport')}
-            icon="🎯"
-          />
+          <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['biwtc', 'biman', 'nid', 'passport']} />
         </div>
 
         {/* ── Mode tiles ── */}
@@ -2085,14 +2078,13 @@ export function HomePage({
           </div>
         </div>
 
-        {/* ── Ad strip (native card) ── */}
+        {/* ── Gov service compact cards ── */}
         <div style={section}>
-          <NativeAdCard
-            tk={tk}
-            lang={lang}
-            kind={isMobile ? 'mob-banner' : 'leaderboard'}
-            title={T(lang, 'জনপ্রিয় ভ্রমণ ডিল', 'Popular travel deals')}
-            icon="🧳"
+          <GovAdPoster
+            tk={tk} lang={lang}
+            ids={['dghs', 'bpsc', 'nbr', 'btcl', 'land']}
+            columns={isMobile ? 1 : 3}
+            label
           />
         </div>
 
@@ -2111,15 +2103,9 @@ export function HomePage({
           <KoyJaboStory tk={tk} lang={lang} onNav={onNav} />
         </div>
 
-        {/* ── Ad strip (native card) ── */}
+        {/* ── Gov service banner ── */}
         <div style={section}>
-          <NativeAdCard
-            tk={tk}
-            lang={lang}
-            kind={isMobile ? 'mob-banner' : 'leaderboard'}
-            title={T(lang, 'পরিবহন ও ভ্রমণ', 'Transport & travel')}
-            icon="🚀"
-          />
+          <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['mygov', 'brta', 'dmtcl', 'railway']} />
         </div>
 
         {/* ── Metro Live ── */}
@@ -2156,14 +2142,13 @@ export function HomePage({
           <SavedRoutes tk={tk} lang={lang} isMobile={isMobile} onNav={onNav} />
         </div>
 
-        {/* ── Ad strip (native card) ── */}
+        {/* ── Gov service compact cards ── */}
         <div style={section}>
-          <NativeAdCard
-            tk={tk}
-            lang={lang}
-            kind={isMobile ? 'mob-banner' : 'leaderboard'}
-            title={T(lang, 'আপনার পছন্দের রুটের জন্য', 'For your favorite routes')}
-            icon="⭐"
+          <GovAdPoster
+            tk={tk} lang={lang}
+            ids={['nid', 'passport', 'biman', 'biwtc']}
+            columns={isMobile ? 1 : 2}
+            label
           />
         </div>
 
@@ -2194,15 +2179,14 @@ export function HomePage({
 
             {/* Right column */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <NativeAdCard
-                tk={tk}
-                lang={lang}
-                kind="mid-rect"
-                title={T(lang, 'সংশ্লিষ্ট অফার', 'Related offers')}
-                subtitle={T(lang, 'পরিবহন ও ভ্রমণ', 'Transport & travel')}
-                icon="🎯"
-                compact
-              />
+              {!isMobile && (
+                <GovAdPoster
+                  tk={tk} lang={lang}
+                  ids={['bpsc', 'land', 'dghs']}
+                  columns={1}
+                  label={false}
+                />
+              )}
               <EmergencyGrid tk={tk} lang={lang} />
             </div>
           </div>
