@@ -4,6 +4,7 @@ import { TopBar } from '../components/TopBar';
 import { MobileTabBar } from '../components/MobileTabBar';
 import { AdSlot, NativeAdCard } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
+import { GovAdBanner } from '../components/GovAdBanner';
 import { PromoBanner } from '../components/PromoBanner';
 import { Icon } from '../components/Icons';
 import { Pill } from '../components/Pill';
@@ -1958,6 +1959,8 @@ export function HomePage({
                 activeMode={homeSearchMode}
                 setActiveMode={setHomeSearchMode}
               />
+              {/* Gov ad banner — fills empty left-column space below search */}
+              <GovAdBanner lang={lang} height={isMobile ? 200 : 240} />
             </div>
 
             {/* Right: desktop only — minWidth:0 prevents grid overflow */}
