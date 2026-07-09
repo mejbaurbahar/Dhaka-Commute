@@ -1743,14 +1743,20 @@ const QUICK_LINKS = [
 function GovQuickLinks({ lang, tk }: { lang: Lang; tk: Tokens }) {
   const isBn = lang === 'bn';
   const font = isBn ? BEN : SANS;
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const scroll = (dir: 'l' | 'r') => {
+    scrollRef.current?.scrollBy({ left: dir === 'r' ? 200 : -200, behavior: 'smooth' });
+  };
   React.useEffect(() => {
     if (document.getElementById('gql-anim')) return;
     const s = document.createElement('style');
     s.id = 'gql-anim';
     s.textContent = `
       @keyframes gql-bounce { 0%,100%{transform:translateY(0) scale(1)} 30%{transform:translateY(-6px) scale(1.12)} 60%{transform:translateY(-2px) scale(1.05)} }
+      @keyframes gql-nudge { 0%{transform:translateX(0)} 30%{transform:translateX(6px)} 60%{transform:translateX(-3px)} 100%{transform:translateX(0)} }
       .gql-item:hover .gql-icon, .gql-item:active .gql-icon { animation: gql-bounce 0.55s ease; }
       .gql-item { -webkit-tap-highlight-color: transparent; }
+      .gql-scroll-hint { animation: gql-nudge 1.4s ease 1.2s 3; }
     `;
     document.head.appendChild(s);
   }, []);
@@ -1777,8 +1783,27 @@ function GovQuickLinks({ lang, tk }: { lang: Lang; tk: Tokens }) {
         </span>
       </div>
 
+      {/* Scroll arrows + row */}
+      <div style={{ position: 'relative' }}>
+        {/* Left arrow */}
+        <button onClick={() => scroll('l')} aria-label="scroll left" style={{
+          position: 'absolute', left: -10, top: '50%', transform: 'translateY(-60%)',
+          zIndex: 2, width: 28, height: 28, borderRadius: '50%',
+          background: tk.panelSolid, border: `1px solid ${tk.line}`,
+          boxShadow: tk.shadow, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', fontSize: 13, color: tk.textDim, padding: 0,
+        }}>‹</button>
+        {/* Right arrow + nudge hint */}
+        <button onClick={() => scroll('r')} aria-label="scroll right" className="gql-scroll-hint" style={{
+          position: 'absolute', right: -10, top: '50%', transform: 'translateY(-60%)',
+          zIndex: 2, width: 28, height: 28, borderRadius: '50%',
+          background: tk.primary, border: 'none',
+          boxShadow: `0 2px 8px ${tk.primary}55`, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', fontSize: 13, color: tk.primaryInk, padding: 0, fontWeight: 700,
+        }}>›</button>
+
       {/* Scrollable row */}
-      <div style={{ display: 'flex', gap: 10, overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+      <div ref={scrollRef} style={{ display: 'flex', gap: 10, overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', paddingBottom: 4 } as React.CSSProperties}>
         {QUICK_LINKS.map((ql, i) => (
           <a
             key={i}
@@ -1815,6 +1840,7 @@ function GovQuickLinks({ lang, tk }: { lang: Lang; tk: Tokens }) {
             </span>
           </a>
         ))}
+      </div>
       </div>
     </div>
   );
