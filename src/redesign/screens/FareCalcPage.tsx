@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang } from '../tokens';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { GovServiceCards } from '../components/GovServiceCards';
 import { PageShell } from './PageShell';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:Lang; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
@@ -296,6 +297,11 @@ export function FareCalcPage(props: Props) {
             {lbl('Please select two different stations to calculate fare.', 'ভাড়া হিসাব করতে দুটি আলাদা স্টেশন বেছে নিন।')}
           </div>
         )}
+
+        {/* Gov service cards — BRTA, Railway, MyGov */}
+        <div style={{ margin: '16px 0' }}>
+          <GovServiceCards tk={tk} lang={lang} isMobile={isMobile} cards={['brta', 'mygov']} compact />
+        </div>
 
         {/* Ad slot */}
         <div style={{ margin: '12px 0' }}>

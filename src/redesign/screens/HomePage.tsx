@@ -3,6 +3,7 @@ import { KJ_TOKENS, Tokens, Lang, SANS, BEN, T, N } from '../tokens';
 import { TopBar } from '../components/TopBar';
 import { MobileTabBar } from '../components/MobileTabBar';
 import { AdSlot, NativeAdCard } from '../components/AdSlot';
+import { GovServiceCards } from '../components/GovServiceCards';
 import { PromoBanner } from '../components/PromoBanner';
 import { Icon } from '../components/Icons';
 import { Pill } from '../components/Pill';
@@ -2110,15 +2111,14 @@ export function HomePage({
           <MetroLiveStrip tk={tk} lang={lang} isMobile={isMobile} />
         </div>
 
-        {/* ── In-article native card ── */}
+        {/* ── Government services info cards ── */}
         <div style={section}>
-          <NativeAdCard
+          <GovServiceCards
             tk={tk}
             lang={lang}
-            kind="in-article"
-            title={T(lang, 'সংশ্লিষ্ট বিষয়বস্তু', 'Related content')}
-            subtitle={T(lang, 'ভ্রমণ ও পরিবহন বিষয়ে', 'Around travel & transport')}
-            icon="📰"
+            isMobile={isMobile}
+            cards={['brta', 'railway', 'mygov', 'biman', 'biwtc']}
+            variant={isMobile ? 'list' : 'grid'}
           />
         </div>
 
