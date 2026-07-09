@@ -1971,7 +1971,6 @@ export function HomePage({
                   isMobile={false}
                   cards={['brta', 'railway', 'mygov']}
                   compact
-                  defaultExpanded
                 />
                 <NativeAdCard
                   tk={tk}
@@ -2002,7 +2001,6 @@ export function HomePage({
                 isMobile={true}
                 cards={['brta', 'railway', 'mygov']}
                 compact
-                defaultExpanded
               />
             </div>
           )}

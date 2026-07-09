@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 
 interface GovCard {
@@ -21,8 +21,8 @@ const GOV_CARDS: GovCard[] = [
     nameEn: 'BRTA',
     tagBn: 'সড়ক পরিবহন কর্তৃপক্ষ',
     tagEn: 'Road Transport Authority',
-    descBn: 'গাড়ির রেজিস্ট্রেশন, ড্রাইভিং লাইসেন্স ও ফিটনেস সার্টিফিকেট চেক করুন।',
-    descEn: 'Check vehicle registration, driving license status & fitness certificate.',
+    descBn: 'লাইসেন্স, গাড়ির রেজিস্ট্রেশন ও ফিটনেস সার্টিফিকেট চেক করুন।',
+    descEn: 'Check driving license, vehicle registration & fitness certificate.',
     links: [
       { labelBn: 'লাইসেন্স যাচাই', labelEn: 'License check', url: 'https://bsp.brta.gov.bd/license-check' },
       { labelBn: 'গাড়ি যাচাই', labelEn: 'Vehicle check', url: 'https://bsp.brta.gov.bd/vehicle-check' },
@@ -37,8 +37,8 @@ const GOV_CARDS: GovCard[] = [
     nameEn: 'BD Railway',
     tagBn: 'ট্রেন টিকিট ও সময়সূচি',
     tagEn: 'Train Tickets & Schedule',
-    descBn: 'অনলাইনে ট্রেনের টিকিট কিনুন এবং সময়সূচি দেখুন।',
-    descEn: 'Buy train tickets online and view schedules for all routes.',
+    descBn: 'অনলাইনে ট্রেনের টিকিট কিনুন ও সময়সূচি দেখুন।',
+    descEn: 'Buy train tickets online and view schedules.',
     links: [
       { labelBn: 'টিকিট কিনুন', labelEn: 'Buy tickets', url: 'https://eticket.railway.gov.bd' },
       { labelBn: 'সময়সূচি', labelEn: 'Schedule', url: 'https://railway.gov.bd/pages/train_schedule.php' },
@@ -58,7 +58,6 @@ const GOV_CARDS: GovCard[] = [
     links: [
       { labelBn: 'সেবা খুঁজুন', labelEn: 'Find services', url: 'https://www.mygov.bd' },
       { labelBn: 'আবেদনের অবস্থা', labelEn: 'Application status', url: 'https://www.mygov.bd/en/application-status' },
-      { labelBn: 'ই-সেবা', labelEn: 'e-Services', url: 'https://www.mygov.bd/en/category' },
     ],
     color: '#059669',
     bgColor: 'rgba(5,150,105,0.1)',
@@ -95,21 +94,18 @@ const GOV_CARDS: GovCard[] = [
   },
 ];
 
-// Single compact gov card
+// Single gov card — always shows links (no expand/collapse)
 function GovCardItem({
   tk,
   lang,
   card,
   compact,
-  defaultExpanded,
 }: {
   tk: Tokens;
   lang: Lang;
   card: GovCard;
   compact?: boolean;
-  defaultExpanded?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(defaultExpanded ?? false);
   const font = lang === 'bn' ? BEN : SANS;
 
   return (
@@ -124,18 +120,12 @@ function GovCardItem({
       }}
     >
       {/* Header */}
-      <button
-        onClick={() => setExpanded(e => !e)}
+      <div
         style={{
-          width: '100%',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          padding: compact ? '12px 14px' : '14px 16px',
+          padding: compact ? '12px 14px 8px' : '14px 16px 10px',
           display: 'flex',
           alignItems: 'center',
           gap: 12,
-          textAlign: 'left',
         }}
       >
         <div
@@ -180,84 +170,63 @@ function GovCardItem({
               {lang === 'bn' ? card.tagBn : card.tagEn}
             </span>
           </div>
-          {!compact && (
-            <div
-              style={{
-                fontFamily: font,
-                fontSize: 11,
-                color: tk.textDim,
-                marginTop: 2,
-                lineHeight: 1.4,
-              }}
-            >
-              {lang === 'bn' ? card.descBn : card.descEn}
-            </div>
-          )}
+          <div
+            style={{
+              fontFamily: font,
+              fontSize: 11,
+              color: tk.textDim,
+              marginTop: 2,
+              lineHeight: 1.4,
+            }}
+          >
+            {lang === 'bn' ? card.descBn : card.descEn}
+          </div>
         </div>
-        <span style={{ color: tk.textFaint, fontSize: 12, flexShrink: 0 }}>
-          {expanded ? '▲' : '▼'}
-        </span>
-      </button>
+      </div>
 
-      {/* Expanded links */}
-      {expanded && (
-        <div
-          style={{
-            borderTop: `1px solid ${tk.line}`,
-            padding: '10px 14px 14px',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 8,
-          }}
-        >
-          {compact && (
-            <div
-              style={{
-                width: '100%',
-                fontFamily: font,
-                fontSize: 11,
-                color: tk.textDim,
-                marginBottom: 6,
-                lineHeight: 1.4,
-              }}
-            >
-              {lang === 'bn' ? card.descBn : card.descEn}
-            </div>
-          )}
-          {card.links.map((link, i) => (
-            <a
-              key={i}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                background: card.bgColor,
-                color: card.color,
-                border: `1px solid ${card.color}30`,
-                borderRadius: 999,
-                padding: '6px 14px',
-                fontFamily: font,
-                fontSize: 12,
-                fontWeight: 600,
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 4,
-              }}
-            >
-              {lang === 'bn' ? link.labelBn : link.labelEn} →
-            </a>
-          ))}
-        </div>
-      )}
+      {/* Links — always visible */}
+      <div
+        style={{
+          borderTop: `1px solid ${tk.line}`,
+          padding: '8px 14px 12px',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 6,
+        }}
+      >
+        {card.links.map((link, i) => (
+          <a
+            key={i}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: card.bgColor,
+              color: card.color,
+              border: `1px solid ${card.color}30`,
+              borderRadius: 999,
+              padding: '5px 12px',
+              fontFamily: font,
+              fontSize: 11,
+              fontWeight: 600,
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {lang === 'bn' ? link.labelBn : link.labelEn} →
+          </a>
+        ))}
+      </div>
     </div>
   );
 }
 
-// ── GovServiceCards: renders a section of govt service info cards ─────────────
-// Use `variant="grid"` for 2-column layout on wide screens.
-// Use `cards` to select specific ones: ['brta','railway','mygov','biman','biwtc']
-// Defaults to first 3 (BRTA, Railway, MyGov).
+// ── GovServiceCards ───────────────────────────────────────────────────────────
+// cards: select from 'brta' | 'railway' | 'mygov' | 'biman' | 'biwtc'
+// variant: 'list' (1-col) | 'grid' (2-col on desktop)
 export function GovServiceCards({
   tk,
   lang,
@@ -265,7 +234,6 @@ export function GovServiceCards({
   cards = ['brta', 'railway', 'mygov'],
   variant = 'list',
   compact,
-  defaultExpanded,
 }: {
   tk: Tokens;
   lang: Lang;
@@ -273,7 +241,6 @@ export function GovServiceCards({
   cards?: Array<'brta' | 'railway' | 'mygov' | 'biman' | 'biwtc'>;
   variant?: 'list' | 'grid';
   compact?: boolean;
-  defaultExpanded?: boolean;
 }) {
   const keyMap: Record<string, GovCard> = {
     brta: GOV_CARDS[0],
@@ -289,23 +256,8 @@ export function GovServiceCards({
   return (
     <div style={{ width: '100%', boxSizing: 'border-box' }}>
       {/* Section label */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          marginBottom: 10,
-        }}
-      >
-        <div
-          style={{
-            width: 3,
-            height: 18,
-            borderRadius: 2,
-            background: tk.primary,
-            flexShrink: 0,
-          }}
-        />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+        <div style={{ width: 3, height: 18, borderRadius: 2, background: tk.primary, flexShrink: 0 }} />
         <span
           style={{
             fontFamily: font,
@@ -324,20 +276,12 @@ export function GovServiceCards({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns:
-            variant === 'grid' && !isMobile ? 'repeat(2, 1fr)' : '1fr',
+          gridTemplateColumns: variant === 'grid' && !isMobile ? 'repeat(2, 1fr)' : '1fr',
           gap: 10,
         }}
       >
         {selected.map((card, i) => (
-          <GovCardItem
-            key={i}
-            tk={tk}
-            lang={lang}
-            card={card}
-            compact={compact}
-            defaultExpanded={defaultExpanded}
-          />
+          <GovCardItem key={i} tk={tk} lang={lang} card={card} compact={compact} />
         ))}
       </div>
     </div>
