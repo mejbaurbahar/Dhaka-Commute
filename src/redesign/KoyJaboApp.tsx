@@ -194,7 +194,7 @@ function getInitialLang(): Lang {
 
 export function KoyJaboApp() {
   const { user, logout } = useAuth();
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
   const [lang, setLang] = useState<Lang>(getInitialLang);
   const [forceDesktop, setForceDesktop] = useState(false); // phone user can request desktop view
   const [stack, setStack] = useState<StackEntry[]>(() => [entryFromLocation()]);

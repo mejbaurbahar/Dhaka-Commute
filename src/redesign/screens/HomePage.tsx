@@ -1966,15 +1966,15 @@ export function HomePage({
 
             {/* Right: desktop only — minWidth:0 prevents grid overflow */}
             {!isMobile && (
-              <div style={{ minWidth: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <TravelHeroScene tk={tk} height={280} />
                 <OfflinePWACard tk={tk} lang={lang} />
-                <GovServiceCards
+                <GovAdPoster
                   tk={tk}
                   lang={lang}
-                  isMobile={false}
-                  cards={['brta', 'railway', 'mygov']}
-                  compact
+                  ids={['brta', 'railway', 'dmtcl']}
+                  columns={1}
+                  label={false}
                 />
                 <NativeAdCard
                   tk={tk}
@@ -1996,15 +1996,14 @@ export function HomePage({
             </div>
           )}
 
-          {/* Mobile: gov service cards below hero */}
+          {/* Mobile: gov poster ads below hero — immediately visible */}
           {isMobile && (
-            <div style={{ marginTop: 16 }}>
-              <GovServiceCards
+            <div style={{ marginTop: 16, padding: '0 16px' }}>
+              <GovAdPoster
                 tk={tk}
                 lang={lang}
-                isMobile={true}
-                cards={['brta', 'railway', 'mygov']}
-                compact
+                ids={['brta', 'railway', 'dmtcl', 'mygov']}
+                columns={1}
               />
             </div>
           )}
@@ -2140,7 +2139,7 @@ export function HomePage({
           <GovAdPoster
             tk={tk}
             lang={lang}
-            ids={['brta', 'railway', 'mygov', 'biwtc', 'biman', 'nid', 'passport', 'land', 'dghs', 'bpsc', 'nbr', 'btcl']}
+            ids={['brta', 'railway', 'dmtcl', 'mygov', 'biwtc', 'biman', 'nid', 'passport', 'land', 'dghs', 'bpsc', 'nbr', 'btcl']}
             columns={isMobile ? 1 : 2}
           />
         </div>

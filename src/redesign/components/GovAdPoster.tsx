@@ -188,10 +188,24 @@ const ALL_POSTERS: Record<string, PosterDef> = {
       { en: 'BTCL Portal', bn: 'BTCL পোর্টাল', url: 'https://www.btcl.gov.bd', primary: true },
     ],
   },
+  dmtcl: {
+    id: 'dmtcl',
+    icon: '🚌',
+    gradA: '#0d1f0d', gradB: '#14532d',
+    accent: '#4ade80',
+    nameEn: 'DMTCL', nameBn: 'ঢাকা মাস ট্রানজিট',
+    tagEn: 'Dhaka Mass Transit Co. Ltd.', tagBn: 'ঢাকা ম্যাস ট্রানজিট কোম্পানি',
+    bulletEn: ['MRT Line-6 metro info', 'Station guide & fares', 'Smart card (Rapid Pass)', 'Route map & timings'],
+    bulletBn: ['MRT লাইন-৬ মেট্রো তথ্য', 'স্টেশন গাইড ও ভাড়া', 'র‍্যাপিড পাস স্মার্ট কার্ড', 'রুট ম্যাপ ও সময়সূচি'],
+    links: [
+      { en: 'DMTCL Portal', bn: 'DMTCL পোর্টাল', url: 'https://dmtcl.gov.bd', primary: true },
+      { en: 'Rapid Pass', bn: 'র‍্যাপিড পাস', url: 'https://dmtcl.gov.bd/rapidpass' },
+    ],
+  },
 };
 
 // Ordered by relevance to transport app users
-export const POSTER_IDS_ALL = ['brta', 'railway', 'biwtc', 'biman', 'mygov', 'nid', 'passport', 'land', 'dghs', 'bpsc', 'nbr', 'btcl'];
+export const POSTER_IDS_ALL = ['brta', 'railway', 'biwtc', 'biman', 'dmtcl', 'mygov', 'nid', 'passport', 'land', 'dghs', 'bpsc', 'nbr', 'btcl'];
 
 // ── Single poster card ────────────────────────────────────────────────────────
 

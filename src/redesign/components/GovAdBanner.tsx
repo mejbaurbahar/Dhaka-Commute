@@ -391,9 +391,23 @@ const BANNERS: Record<string, BannerCfg> = {
     ctaUrl: 'https://www.dghs.gov.bd',
     Illus: PortalSVG,
   },
+  dmtcl: {
+    id: 'dmtcl',
+    gradA: '#0d1f0d', gradB: '#14532d', gradC: '#166534',
+    accent: '#4ade80', accentText: '#14532d',
+    icon: '🚌',
+    nameEn: 'DMTCL Metro Rail', nameBn: 'ঢাকা মেট্রোরেল DMTCL',
+    tagEn: 'Dhaka Mass Transit Co. Ltd.', tagBn: 'ঢাকা ম্যাস ট্রানজিট',
+    descEn: 'MRT Line-6 metro rail info, station guide, fares & Rapid Pass smart card.', descBn: 'MRT লাইন-৬ মেট্রোরেল তথ্য, স্টেশন গাইড, ভাড়া ও র‍্যাপিড পাস কার্ড।',
+    badgeEn: 'Govt. Metro Authority', badgeBn: 'সরকারি মেট্রো কর্তৃপক্ষ',
+    chips: [{ icon: '🚇', en: 'MRT Line-6', bn: 'MRT লাইন-৬' }, { icon: '💳', en: 'Rapid Pass', bn: 'র‍্যাপিড পাস' }, { icon: '🗺️', en: 'Route Map', bn: 'রুট ম্যাপ' }],
+    ctaEn: 'DMTCL Portal', ctaBn: 'DMTCL পোর্টালে যান',
+    ctaUrl: 'https://dmtcl.gov.bd',
+    Illus: TrainSVG,
+  },
 };
 
-const DEFAULT_IDS = ['brta', 'railway', 'mygov', 'biwtc', 'biman', 'nid', 'passport', 'dghs'];
+const DEFAULT_IDS = ['brta', 'railway', 'dmtcl', 'mygov', 'biwtc', 'biman', 'nid', 'passport', 'dghs'];
 
 // ── Single slide ─────────────────────────────────────────────────────────────
 
