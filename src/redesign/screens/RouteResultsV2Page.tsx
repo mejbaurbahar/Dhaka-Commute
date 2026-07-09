@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang } from '../tokens';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { GovAdBanner } from '../components/GovAdBanner';
 import { PageShell } from './PageShell';
 import { BUS_DATA, STATIONS } from '../../../constants';
 import { trackBusSearch } from '../../../services/analyticsService';
@@ -448,6 +449,9 @@ export function RouteResultsV2Page(props: Props) {
         </div>
       </div>
     </div>
+          <div style={{ padding: isMobile ? '16px 16px 0' : '16px 40px 0' }}>
+            <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['brta','mygov','railway','biman','biwtc']} />
+          </div>
           <AdCluster tk={tk} lang={lang} count={1} isMobile={isMobile}/>
     </PageShell>
   );

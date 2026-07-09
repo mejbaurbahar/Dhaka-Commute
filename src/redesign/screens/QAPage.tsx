@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { GovAdBanner } from '../components/GovAdBanner';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -82,6 +83,9 @@ export function QAPage(props: Props) {
             icon="🧭"
           />
       </div>
+          <div style={{ padding: isMobile ? '16px 16px 0' : '16px 40px 0' }}>
+            <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['mygov','brta','railway','biman','biwtc']} />
+          </div>
           <AdCluster tk={tk} lang={lang} count={2} isMobile={isMobile}/>
     </PageShell>
   );

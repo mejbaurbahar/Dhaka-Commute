@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, N } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { GovAdBanner } from '../components/GovAdBanner';
 import {
   getBalance, isAdFree, getAdFreeUntil, getTransactions,
   activateAdFree, claimDailyBonus, claimOneTimeBonus, isOneTimeClaimed,
@@ -298,6 +299,9 @@ export function KoyCoinsPage(props: Props) {
           />
         </div>
       </div>
+          <div style={{ padding: isMobile ? '16px 16px 0' : '16px 40px 0' }}>
+            <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['mygov','brta','railway']} />
+          </div>
           <AdCluster tk={tk} lang={lang} count={2} isMobile={isMobile}/>
     </PageShell>
   );
