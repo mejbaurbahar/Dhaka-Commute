@@ -96,8 +96,8 @@ export function PageShell({
         {children}
       </main>
 
-      {/* Footer — hidden on AI chat page on mobile (chat needs full height) */}
-      {!(isMobile && route === 'ai') && (
+      {/* Footer — hidden on AI chat page entirely */}
+      {route !== 'ai' && (
         <KJFooter tk={tk} lang={lang} isMobile={isMobile} onNav={onNav} />
       )}
 
