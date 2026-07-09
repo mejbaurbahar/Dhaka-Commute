@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { GovAdBanner } from '../components/GovAdBanner';
 import { Pill } from '../components/Pill';
 import { BUS_DATA, STATIONS } from '../../../constants';
 import BusRouteMap from '../../../components/BusRouteMap';
@@ -305,6 +306,9 @@ export function BusDetailPage(props: Props) {
         userLocation={userLocation}
         currentLocationName={nearestStopName}
       />
+          <div style={{ padding: isMobile ? '16px 16px 0' : '16px 40px 0' }}>
+            <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['brta','mygov','railway']} />
+          </div>
           <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
     </PageShell>
   );

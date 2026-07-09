@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "cd intercity && npm install && npm run build && cd .. && export BUILD_VERSION=$(node -e 'process.stdout.write(String(Date.now()))') && node scripts/generate-sitemap.mjs && vite build",
+    "build": "cd intercity && npm install && npm run build && cd .. && export BUILD_VERSION=$(node -e 'process.stdout.write(String(Date.now()))') && node scripts/generate-sitemap.mjs && vite build && node scripts/generate-static-seo-pages.mjs",
     "build:sitemap": "node scripts/generate-sitemap.mjs",
+    "gsc:blog": "node scripts/analyze-gsc-blog-opportunities.mjs",
     "build:qa": "node scripts/build-advanced-qa.mjs",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",

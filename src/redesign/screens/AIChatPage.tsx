@@ -341,7 +341,7 @@ export function AIChatPage(props: Props) {
 
   return (
     <PageShell {...props}>
-      <div style={{ display:'flex', height: isMobile ? 'calc(100vh - 52px - 60px)' : 'calc(100vh - 60px)', overflow:'hidden', position:'relative' }}>
+      <div style={{ display:'flex', height: isMobile ? 'calc(100dvh - 52px - 60px)' : 'calc(100vh - 60px)', overflow:'hidden', position:'relative' }}>
         {/* Left sidebar — fixed on desktop */}
         {!isMobile && (
           <div style={{ width:280,flexShrink:0,borderRight:`1px solid ${tk.line}`,display:'flex',flexDirection:'column',overflow:'hidden auto',background:tk.panel }}>
@@ -392,7 +392,7 @@ export function AIChatPage(props: Props) {
 
         {/* Main chat */}
         <div style={{ flex:1,display:'flex',flexDirection:'column',overflow:'hidden' }}>
-          <div style={{ flex:1, minHeight:0, overflow:'auto', padding:'16px', paddingBottom: isMobile ? '80px' : '16px', display:'flex',flexDirection:'column',gap:14 }}>
+          <div style={{ flex:1, minHeight:0, overflow:'auto', padding:'16px', paddingBottom: isMobile ? '120px' : '16px', display:'flex',flexDirection:'column',gap:14 }}>
             {messages.map(msg => <ChatBubble key={msg.id} msg={msg} tk={tk} lang={lang} userAvatarUrl={userAvatarUrl} userInitials={userInitials}/>)}
             {isLoading && (
               <div style={{ display:'flex',gap:10,alignSelf:'flex-start',maxWidth:'80%' }}>
@@ -417,17 +417,19 @@ export function AIChatPage(props: Props) {
           {/* Input bar — fixed on mobile so it's always visible above tab bar */}
           <div style={{
             position: isMobile ? 'fixed' : 'relative',
-            bottom: isMobile ? 60 : 'auto',
+            bottom: isMobile ? 'calc(60px + env(safe-area-inset-bottom, 0px))' : 'auto',
             left: isMobile ? 0 : 'auto',
             right: isMobile ? 0 : 'auto',
             zIndex: isMobile ? 120 : 'auto',
-            padding:'12px 16px',
-            paddingBottom: isMobile ? '14px' : '12px',
+            padding: '10px 12px',
+            paddingBottom: isMobile ? 'calc(10px + env(safe-area-inset-bottom, 0px))' : '10px',
             borderTop:`1px solid ${tk.line}`,
-            background: tk.panel,
+            background: tk.panelSolid ?? tk.panel,
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
-            display:'flex', gap:10, alignItems:'flex-end',
+            display:'flex', gap:8, alignItems:'center',
+            boxSizing: 'border-box',
+            width: isMobile ? '100%' : 'auto',
           }}>
             <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()}
               placeholder={T(lang,'আপনার প্রশ্ন লিখুন...','Type your question...')}

@@ -194,7 +194,7 @@ function getInitialLang(): Lang {
 
 export function KoyJaboApp() {
   const { user, logout } = useAuth();
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
   const [lang, setLang] = useState<Lang>(getInitialLang);
   const [forceDesktop, setForceDesktop] = useState(false); // phone user can request desktop view
   const [stack, setStack] = useState<StackEntry[]>(() => [entryFromLocation()]);
@@ -202,6 +202,7 @@ export function KoyJaboApp() {
   const [dir, setDir] = useState<'fwd' | 'back'>('fwd');
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [splash, setSplash] = useState(true);
+  const [updateReady, setUpdateReady] = useState(false);
   const [vignette, setVignette] = useState(false);
   const [anchorOn, setAnchorOn] = useState(true);
   const [vw, setVw] = useState(window.innerWidth);
@@ -215,6 +216,13 @@ export function KoyJaboApp() {
 
   // Daily login bonus
   useEffect(() => { claimDailyBonus(); }, []);
+
+  // Listen for new SW / version — show update toast
+  useEffect(() => {
+    const handler = () => setUpdateReady(true);
+    window.addEventListener('kj-update-available', handler);
+    return () => window.removeEventListener('kj-update-available', handler);
+  }, []);
 
   // Dismiss both splash screens after 1.4s, then show consent modal on first visit
   useEffect(() => {
@@ -520,6 +528,52 @@ export function KoyJaboApp() {
       )}
       {showAnchor && <AnchorAd key={top.route} tk={tk} lang={lang} onClose={() => setAnchorOn(false)}/>}
       <VignetteAd tk={tk} lang={lang} open={vignette} onClose={() => setVignette(false)}/>
+      {/* ── Update-available toast ── */}
+      {updateReady && (
+        <div style={{
+          position: 'fixed', bottom: isPhone ? 76 : 24, left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999,
+          display: 'flex', alignItems: 'center', gap: 12,
+          background: tk.primary,
+          color: '#fff',
+          borderRadius: 999,
+          padding: '10px 10px 10px 18px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2)',
+          fontFamily: lang === 'bn' ? "'Noto Sans Bengali', sans-serif" : "'Inter', sans-serif",
+          fontSize: 13, fontWeight: 600,
+          whiteSpace: 'nowrap',
+          animation: 'kjUpdateSlideUp 0.35s ease',
+        }}>
+          <span style={{ fontSize: 18 }}>🎉</span>
+          <span>{lang === 'bn' ? 'নতুন আপডেট পাওয়া গেছে!' : 'New update available!'}</span>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              background: 'rgba(255,255,255,0.22)',
+              border: '1.5px solid rgba(255,255,255,0.4)',
+              color: '#fff',
+              borderRadius: 999,
+              padding: '6px 16px',
+              fontFamily: 'inherit', fontWeight: 700, fontSize: 12,
+              cursor: 'pointer', whiteSpace: 'nowrap',
+            }}
+          >
+            {lang === 'bn' ? '↺ রিফ্রেশ করুন' : '↺ Refresh'}
+          </button>
+          <button
+            onClick={() => setUpdateReady(false)}
+            aria-label="Dismiss"
+            style={{
+              background: 'transparent', border: 'none',
+              color: 'rgba(255,255,255,0.7)',
+              fontSize: 18, cursor: 'pointer', padding: '0 4px',
+              lineHeight: 1,
+            }}
+          >✕</button>
+          <style>{`@keyframes kjUpdateSlideUp { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`}</style>
+        </div>
+      )}
       <LocationConsentModal
         tk={tk} lang={lang} open={showConsentModal}
         onNav={(r) => { setShowConsentModal(false); nav(r); }}

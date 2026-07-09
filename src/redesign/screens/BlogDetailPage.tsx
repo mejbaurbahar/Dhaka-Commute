@@ -5,7 +5,7 @@ import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { Pill } from '../components/Pill';
 import { PromoBanner } from '../components/PromoBanner';
 import { BLOG_POSTS } from '../../../data/blogPosts';
-import { useDocumentTitle, setCanonicalUrl } from '../utils/useDocumentTitle';
+import { absoluteUrl, setCanonicalUrl, setJsonLd, setMetaTag, setPropertyMetaTag, useDocumentTitle } from '../utils/useDocumentTitle';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -163,9 +163,47 @@ export function BlogDetailPage(props: Props) {
   const content = lang === 'bn' && post.bnContent ? post.bnContent : post.content;
   const excerpt = lang === 'bn' && post.bnExcerpt ? post.bnExcerpt : post.excerpt;
   const font = lang === 'bn' ? BEN : SANS;
+  const canonicalPath = `/blog/${post.slug}`;
+  const canonicalUrl = absoluteUrl(canonicalPath);
+  const imageUrl = absoluteUrl(post.coverImage || '/logo.png');
 
   useDocumentTitle(post.title);
-  useEffect(() => { setCanonicalUrl(`/blog/${post.slug}`); }, [post.slug]);
+  useEffect(() => {
+    setCanonicalUrl(canonicalPath);
+    setMetaTag('description', post.excerpt);
+    setMetaTag('keywords', post.keywords.join(', '));
+    setMetaTag('author', post.author);
+    setMetaTag('twitter:card', 'summary_large_image');
+    setMetaTag('twitter:title', post.title);
+    setMetaTag('twitter:description', post.excerpt);
+    setMetaTag('twitter:image', imageUrl);
+    setPropertyMetaTag('og:type', 'article');
+    setPropertyMetaTag('og:site_name', 'KoyJabo');
+    setPropertyMetaTag('og:title', post.title);
+    setPropertyMetaTag('og:description', post.excerpt);
+    setPropertyMetaTag('og:url', canonicalUrl);
+    setPropertyMetaTag('og:image', imageUrl);
+    setPropertyMetaTag('article:published_time', post.publishDate);
+    setPropertyMetaTag('article:author', post.author);
+    setJsonLd('blog-post', {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.excerpt,
+      image: imageUrl,
+      url: canonicalUrl,
+      datePublished: post.publishDate,
+      dateModified: post.publishDate,
+      author: { '@type': 'Organization', name: post.author },
+      publisher: {
+        '@type': 'Organization',
+        name: 'KoyJabo',
+        logo: { '@type': 'ImageObject', url: absoluteUrl('/logo.png') },
+      },
+      keywords: post.keywords,
+      mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
+    });
+  }, [canonicalPath, canonicalUrl, imageUrl, post]);
 
   // Related posts (same category, excluding current)
   const related = BLOG_POSTS.filter(p => p.category === post.category && p.slug !== post.slug).slice(0, 3);
