@@ -109,9 +109,9 @@ async function registerPWAWorker() {
     const updateSW = mod.registerSW({
       immediate: true,
       onNeedRefresh() {
-        // New SW waiting → ask it to skipWaiting (already configured in vite),
-        // then reload once it takes control via the controllerchange listener.
-        silentReload();
+        // Show a user-visible update banner instead of silently reloading.
+        // The banner lets the user tap to refresh at a convenient moment.
+        window.dispatchEvent(new CustomEvent('kj-update-available'));
       },
       onOfflineReady() {
         window.dispatchEvent(new CustomEvent('pwa-offline-ready'));
@@ -154,7 +154,7 @@ void registerPWAWorker();
 // This catches the case where skipWaiting activates a new SW mid-session.
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    silentReload();
+    window.dispatchEvent(new CustomEvent('kj-update-available'));
   });
 
   // BUILD_VERSION fallback — if HTML refreshes but SW didn't update for any
@@ -168,7 +168,7 @@ if ('serviceWorker' in navigator) {
       if (!r.ok) return;
       const { version } = await r.json();
       if (version && version !== RUNNING_VERSION) {
-        silentReload();
+        window.dispatchEvent(new CustomEvent('kj-update-available'));
       }
     } catch { /* offline or missing — ignore */ }
   };

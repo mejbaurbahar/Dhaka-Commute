@@ -3,6 +3,7 @@ import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang, N, Fare } from '../tokens';
 import { AdSlot, NativeAdCard } from '../components/AdSlot';
 import { GovAdBanner } from '../components/GovAdBanner';
 import { GovServiceCards } from '../components/GovServiceCards';
+import { GovAdPoster } from '../components/GovAdPoster';
 import { PromoBanner } from '../components/PromoBanner';
 import { PageShell } from './PageShell';
 import { Plane3D } from '../components/Vehicles3D';
@@ -743,8 +744,8 @@ export function IntercityPage(props: Props) {
         <PromoBanner tk={tk} lang={lang} page="intercity" onNav={onNav}/>
         <div style={{ marginBottom: 16 }}>
           <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['railway','biman','biwtc','brta','mygov']} />
-          <div style={{ marginTop: 14 }}>
-            <GovServiceCards tk={tk} lang={lang} isMobile={isMobile} cards={['railway','biman','biwtc','mygov']} variant={isMobile ? 'list' : 'grid'} compact />
+          <div style={{ marginTop: 16 }}>
+            <GovAdPoster tk={tk} lang={lang} ids={['railway','biman','biwtc','mygov','passport','nbr']} columns={isMobile ? 1 : 2} />
           </div>
         </div>
         <NativeAdCard

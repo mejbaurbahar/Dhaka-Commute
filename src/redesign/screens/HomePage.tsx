@@ -5,6 +5,7 @@ import { MobileTabBar } from '../components/MobileTabBar';
 import { AdSlot, NativeAdCard } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
 import { GovAdBanner } from '../components/GovAdBanner';
+import { GovAdPoster } from '../components/GovAdPoster';
 import { PromoBanner } from '../components/PromoBanner';
 import { Icon } from '../components/Icons';
 import { Pill } from '../components/Pill';
@@ -2134,14 +2135,13 @@ export function HomePage({
           <MetroLiveStrip tk={tk} lang={lang} isMobile={isMobile} />
         </div>
 
-        {/* ── Government services info cards ── */}
+        {/* ── Government service poster ads ── */}
         <div style={section}>
-          <GovServiceCards
+          <GovAdPoster
             tk={tk}
             lang={lang}
-            isMobile={isMobile}
-            cards={['brta', 'railway', 'mygov', 'biman', 'biwtc']}
-            variant={isMobile ? 'list' : 'grid'}
+            ids={['brta', 'railway', 'mygov', 'biwtc', 'biman', 'nid', 'passport', 'land', 'dghs', 'bpsc', 'nbr', 'btcl']}
+            columns={isMobile ? 1 : 2}
           />
         </div>
 

@@ -349,9 +349,51 @@ const BANNERS: Record<string, BannerCfg> = {
     ctaUrl: 'https://www.biman-airlines.com',
     Illus: PlaneSVG,
   },
+  nid: {
+    id: 'nid',
+    gradA: '#1a0532', gradB: '#3b0764', gradC: '#4c1d95',
+    accent: '#a78bfa', accentText: '#2e1065',
+    icon: '🪪',
+    nameEn: 'NID / Smart Card', nameBn: 'NID / স্মার্ট কার্ড',
+    tagEn: 'National Identity Services', tagBn: 'জাতীয় পরিচয়পত্র সেবা',
+    descEn: 'Verify your NID, check smart card status, and request corrections online.', descBn: 'NID যাচাই, স্মার্ট কার্ড স্ট্যাটাস ও সংশোধন আবেদন করুন।',
+    badgeEn: 'Bangladesh EC', badgeBn: 'নির্বাচন কমিশন',
+    chips: [{ icon: '🔍', en: 'NID Verify', bn: 'NID যাচাই' }, { icon: '📲', en: 'Smart Card', bn: 'স্মার্ট কার্ড' }, { icon: '✏️', en: 'Correction', bn: 'সংশোধন' }],
+    ctaEn: 'NID Services Portal', ctaBn: 'NID পোর্টালে যান',
+    ctaUrl: 'https://services.nidw.gov.bd',
+    Illus: PortalSVG,
+  },
+  passport: {
+    id: 'passport',
+    gradA: '#0a1628', gradB: '#1a2f4e', gradC: '#1e3a5f',
+    accent: '#93c5fd', accentText: '#1e3a5f',
+    icon: '🛂',
+    nameEn: 'e-Passport Services', nameBn: 'ই-পাসপোর্ট সেবা',
+    tagEn: 'Apply & Track Passport', tagBn: 'পাসপোর্ট আবেদন ও ট্র্যাক',
+    descEn: 'Apply for new passport, renew MRP, and track delivery status online.', descBn: 'নতুন পাসপোর্ট আবেদন, MRP নবায়ন ও ডেলিভারি স্ট্যাটাস ট্র্যাক করুন।',
+    badgeEn: 'Official Govt. Service', badgeBn: 'সরকারি সেবা',
+    chips: [{ icon: '📋', en: 'New Apply', bn: 'নতুন আবেদন' }, { icon: '🔄', en: 'Renewal', bn: 'নবায়ন' }, { icon: '📦', en: 'Delivery', bn: 'ডেলিভারি' }],
+    ctaEn: 'Apply for Passport', ctaBn: 'পাসপোর্টের আবেদন করুন',
+    ctaUrl: 'https://www.epassport.gov.bd',
+    Illus: PortalSVG,
+  },
+  dghs: {
+    id: 'dghs',
+    gradA: '#011a0f', gradB: '#022c18', gradC: '#064e3b',
+    accent: '#6ee7b7', accentText: '#052e16',
+    icon: '🏥',
+    nameEn: 'DGHS Health Portal', nameBn: 'স্বাস্থ্য সেবা পোর্টাল',
+    tagEn: 'Directorate General of Health', tagBn: 'স্বাস্থ্য অধিদপ্তর',
+    descEn: 'Find hospitals, doctors, check medicine prices & call health hotline 16000.', descBn: 'হাসপাতাল ও ডাক্তার খুঁজুন, ওষুধের দাম চেক করুন, হটলাইন ১৬০০০।',
+    badgeEn: 'Ministry of Health', badgeBn: 'স্বাস্থ্য মন্ত্রণালয়',
+    chips: [{ icon: '🏨', en: 'Hospitals', bn: 'হাসপাতাল' }, { icon: '👨‍⚕️', en: 'Doctors', bn: 'ডাক্তার' }, { icon: '💊', en: 'Medicine', bn: 'ওষুধ' }],
+    ctaEn: 'Health Services', ctaBn: 'স্বাস্থ্য সেবা দেখুন',
+    ctaUrl: 'https://www.dghs.gov.bd',
+    Illus: PortalSVG,
+  },
 };
 
-const DEFAULT_IDS = ['brta', 'railway', 'mygov', 'biwtc', 'biman'];
+const DEFAULT_IDS = ['brta', 'railway', 'mygov', 'biwtc', 'biman', 'nid', 'passport', 'dghs'];
 
 // ── Single slide ─────────────────────────────────────────────────────────────
 
