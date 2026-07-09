@@ -1740,7 +1740,7 @@ const QUICK_LINKS = [
   { icon: '🗺️', color: '#b45309', en: 'Land Records',   bn: 'ভূমি তথ্য',        url: 'https://land.gov.bd' },
 ];
 
-function GovQuickLinks({ lang, tk }: { lang: Lang; tk: Tokens }) {
+function GovQuickLinks({ lang, tk, isMobile }: { lang: Lang; tk: Tokens; isMobile: boolean }) {
   const isBn = lang === 'bn';
   const font = isBn ? BEN : SANS;
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -1785,22 +1785,24 @@ function GovQuickLinks({ lang, tk }: { lang: Lang; tk: Tokens }) {
 
       {/* Scroll arrows + row */}
       <div style={{ position: 'relative' }}>
-        {/* Left arrow */}
-        <button onClick={() => scroll('l')} aria-label="scroll left" style={{
-          position: 'absolute', left: -10, top: '50%', transform: 'translateY(-60%)',
-          zIndex: 2, width: 28, height: 28, borderRadius: '50%',
-          background: tk.panelSolid, border: `1px solid ${tk.line}`,
-          boxShadow: tk.shadow, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', fontSize: 13, color: tk.textDim, padding: 0,
-        }}>‹</button>
-        {/* Right arrow + nudge hint */}
-        <button onClick={() => scroll('r')} aria-label="scroll right" className="gql-scroll-hint" style={{
-          position: 'absolute', right: -10, top: '50%', transform: 'translateY(-60%)',
-          zIndex: 2, width: 28, height: 28, borderRadius: '50%',
-          background: tk.primary, border: 'none',
-          boxShadow: `0 2px 8px ${tk.primary}55`, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', fontSize: 13, color: tk.primaryInk, padding: 0, fontWeight: 700,
-        }}>›</button>
+        {isMobile && <>
+          {/* Left arrow */}
+          <button onClick={() => scroll('l')} aria-label="scroll left" style={{
+            position: 'absolute', left: -10, top: '50%', transform: 'translateY(-60%)',
+            zIndex: 2, width: 28, height: 28, borderRadius: '50%',
+            background: tk.panelSolid, border: `1px solid ${tk.line}`,
+            boxShadow: tk.shadow, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', fontSize: 13, color: tk.textDim, padding: 0,
+          }}>‹</button>
+          {/* Right arrow + nudge hint */}
+          <button onClick={() => scroll('r')} aria-label="scroll right" className="gql-scroll-hint" style={{
+            position: 'absolute', right: -10, top: '50%', transform: 'translateY(-60%)',
+            zIndex: 2, width: 28, height: 28, borderRadius: '50%',
+            background: tk.primary, border: 'none',
+            boxShadow: `0 2px 8px ${tk.primary}55`, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', fontSize: 13, color: tk.primaryInk, padding: 0, fontWeight: 700,
+          }}>›</button>
+        </>}
 
       {/* Scrollable row */}
       <div ref={scrollRef} style={{ display: 'flex', gap: 10, overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', paddingBottom: 4 } as React.CSSProperties}>
@@ -2198,7 +2200,7 @@ export function HomePage({
 
         {/* ── Quick Government Links (Style B: horizontal icon strip) ── */}
         <div style={section}>
-          <GovQuickLinks lang={lang} tk={tk} />
+          <GovQuickLinks lang={lang} tk={tk} isMobile={isMobile} />
         </div>
 
         {/* ── AdIntentRow ── */}
