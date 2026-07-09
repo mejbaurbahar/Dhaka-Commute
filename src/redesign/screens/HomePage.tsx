@@ -1723,6 +1723,98 @@ function AdIntentRow({ tk, lang }: { tk: Tokens; lang: Lang }) {
 
 // NativeAdSection and KJFooter imported from components above
 
+// ─── GovQuickLinks — Style B: flat horizontal strip, totally different from banner/cards ──
+
+const QUICK_LINKS = [
+  { icon: '🚗', color: '#059669', en: 'BRTA License',    bn: 'লাইসেন্স যাচাই',  url: 'https://bsp.brta.gov.bd/license-check' },
+  { icon: '🚂', color: '#2563eb', en: 'Train Ticket',    bn: 'ট্রেন টিকিট',      url: 'https://eticket.railway.gov.bd' },
+  { icon: '🚇', color: '#0891b2', en: 'Rapid Pass',      bn: 'র‍্যাপিড পাস',      url: 'https://dmtcl.gov.bd/rapidpass' },
+  { icon: '🪪', color: '#7c3aed', en: 'NID Verify',      bn: 'NID যাচাই',        url: 'https://services.nidw.gov.bd' },
+  { icon: '🛂', color: '#1d4ed8', en: 'e-Passport',      bn: 'ই-পাসপোর্ট',       url: 'https://www.epassport.gov.bd' },
+  { icon: '🏛️', color: '#047857', en: 'MyGov',           bn: 'মাইগভ',            url: 'https://www.mygov.bd' },
+  { icon: '⛴️', color: '#0369a1', en: 'Launch Schedule', bn: 'লঞ্চ সময়সূচি',    url: 'https://biwtc.gov.bd' },
+  { icon: '✈️', color: '#dc2626', en: 'Biman Flights',   bn: 'বিমান ফ্লাইট',    url: 'https://www.biman-airlines.com' },
+  { icon: '🏥', color: '#0f766e', en: 'Health 16000',    bn: 'স্বাস্থ্য হটলাইন', url: 'tel:16000' },
+  { icon: '📝', color: '#c2410c', en: 'BCS / BPSC',     bn: 'BCS পরীক্ষা',      url: 'https://bpsc.teletalk.com.bd' },
+  { icon: '💰', color: '#0369a1', en: 'e-Tax Return',    bn: 'ই-ট্যাক্স রিটার্ন', url: 'https://etaxnbr.gov.bd' },
+  { icon: '🗺️', color: '#b45309', en: 'Land Records',   bn: 'ভূমি তথ্য',        url: 'https://land.gov.bd' },
+];
+
+function GovQuickLinks({ lang, tk }: { lang: Lang; tk: Tokens }) {
+  const isBn = lang === 'bn';
+  const font = isBn ? BEN : SANS;
+  return (
+    <div style={{
+      background: tk.panelSolid,
+      border: `1px solid ${tk.line}`,
+      borderRadius: 20,
+      padding: '18px 20px',
+      boxShadow: tk.shadow,
+    }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+        <span style={{ fontSize: 18 }}>⚡</span>
+        <span style={{ fontFamily: font, fontSize: 13, fontWeight: 700, color: tk.text }}>
+          {isBn ? 'দ্রুত সেবা লিংক' : 'Quick Government Links'}
+        </span>
+        <span style={{
+          marginLeft: 'auto', fontFamily: SANS, fontSize: 9, fontWeight: 700,
+          color: tk.primary, background: tk.primarySoft,
+          borderRadius: 999, padding: '2px 8px', letterSpacing: 0.4,
+        }}>
+          {QUICK_LINKS.length} {isBn ? 'টি সেবা' : 'services'}
+        </span>
+      </div>
+
+      {/* Scrollable row */}
+      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+        {QUICK_LINKS.map((ql, i) => (
+          <a
+            key={i}
+            href={ql.url}
+            target={ql.url.startsWith('tel:') ? '_self' : '_blank'}
+            rel="noopener noreferrer"
+            style={{
+              flexShrink: 0, textDecoration: 'none',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+              width: 72,
+            }}
+          >
+            <div style={{
+              width: 48, height: 48, borderRadius: 14, flexShrink: 0,
+              background: `${ql.color}15`,
+              border: `1.5px solid ${ql.color}30`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 22, position: 'relative',
+            }}>
+              {ql.icon}
+              <div style={{
+                position: 'absolute', top: -5, right: -5,
+                width: 16, height: 16, borderRadius: '50%',
+                background: ql.color, color: '#fff',
+                fontFamily: SANS, fontSize: 8, fontWeight: 800,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: `0 1px 4px ${ql.color}60`,
+              }}>
+                {i + 1}
+              </div>
+            </div>
+            <span style={{
+              fontFamily: font, fontSize: 10, fontWeight: 600,
+              color: tk.textDim, textAlign: 'center', lineHeight: 1.25,
+              width: 72,
+              overflow: 'hidden', display: '-webkit-box',
+              WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+            } as React.CSSProperties}>
+              {isBn ? ql.bn : ql.en}
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── SectionHeader ────────────────────────────────────────────────────────────
 
 function SectionHeader({
@@ -2040,11 +2132,6 @@ export function HomePage({
           <PromoBanner tk={tk} lang={lang} page="home" onNav={onNav} />
         </div>
 
-        {/* ── Gov service banner ── */}
-        <div style={section}>
-          <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['biwtc', 'biman', 'nid', 'passport']} />
-        </div>
-
         {/* ── Mode tiles ── */}
         <div style={section}>
           <SectionHeader
@@ -2078,14 +2165,9 @@ export function HomePage({
           </div>
         </div>
 
-        {/* ── Gov service compact cards ── */}
+        {/* ── Quick Government Links (Style B: horizontal icon strip) ── */}
         <div style={section}>
-          <GovAdPoster
-            tk={tk} lang={lang}
-            ids={['dghs', 'bpsc', 'nbr', 'btcl', 'land']}
-            columns={isMobile ? 1 : 3}
-            label
-          />
+          <GovQuickLinks lang={lang} tk={tk} />
         </div>
 
         {/* ── AdIntentRow ── */}
@@ -2101,11 +2183,6 @@ export function HomePage({
             title={T(lang, 'KoyJabo কীভাবে কাজ করে?', 'How does KoyJabo work?')}
           />
           <KoyJaboStory tk={tk} lang={lang} onNav={onNav} />
-        </div>
-
-        {/* ── Gov service banner ── */}
-        <div style={section}>
-          <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['mygov', 'brta', 'dmtcl', 'railway']} />
         </div>
 
         {/* ── Metro Live ── */}
@@ -2142,16 +2219,6 @@ export function HomePage({
           <SavedRoutes tk={tk} lang={lang} isMobile={isMobile} onNav={onNav} />
         </div>
 
-        {/* ── Gov service compact cards ── */}
-        <div style={section}>
-          <GovAdPoster
-            tk={tk} lang={lang}
-            ids={['nid', 'passport', 'biman', 'biwtc']}
-            columns={isMobile ? 1 : 2}
-            label
-          />
-        </div>
-
         {/* ── Popular routes + AI card + mid-rect + Emergency (2-col desktop) ── */}
         <div style={section}>
           <div
@@ -2179,14 +2246,6 @@ export function HomePage({
 
             {/* Right column */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {!isMobile && (
-                <GovAdPoster
-                  tk={tk} lang={lang}
-                  ids={['bpsc', 'land', 'dghs']}
-                  columns={1}
-                  label={false}
-                />
-              )}
               <EmergencyGrid tk={tk} lang={lang} />
             </div>
           </div>
