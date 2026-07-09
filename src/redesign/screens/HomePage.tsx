@@ -1743,6 +1743,17 @@ const QUICK_LINKS = [
 function GovQuickLinks({ lang, tk }: { lang: Lang; tk: Tokens }) {
   const isBn = lang === 'bn';
   const font = isBn ? BEN : SANS;
+  React.useEffect(() => {
+    if (document.getElementById('gql-anim')) return;
+    const s = document.createElement('style');
+    s.id = 'gql-anim';
+    s.textContent = `
+      @keyframes gql-bounce { 0%,100%{transform:translateY(0) scale(1)} 30%{transform:translateY(-6px) scale(1.12)} 60%{transform:translateY(-2px) scale(1.05)} }
+      .gql-item:hover .gql-icon, .gql-item:active .gql-icon { animation: gql-bounce 0.55s ease; }
+      .gql-item { -webkit-tap-highlight-color: transparent; }
+    `;
+    document.head.appendChild(s);
+  }, []);
   return (
     <div style={{
       background: tk.panelSolid,
@@ -1767,42 +1778,36 @@ function GovQuickLinks({ lang, tk }: { lang: Lang; tk: Tokens }) {
       </div>
 
       {/* Scrollable row */}
-      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+      <div style={{ display: 'flex', gap: 10, overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
         {QUICK_LINKS.map((ql, i) => (
           <a
             key={i}
             href={ql.url}
             target={ql.url.startsWith('tel:') ? '_self' : '_blank'}
             rel="noopener noreferrer"
+            className="gql-item"
             style={{
               flexShrink: 0, textDecoration: 'none',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-              width: 72,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7,
+              width: 80,
             }}
           >
-            <div style={{
-              width: 48, height: 48, borderRadius: 14, flexShrink: 0,
-              background: `${ql.color}15`,
-              border: `1.5px solid ${ql.color}30`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 22, position: 'relative',
-            }}>
-              {ql.icon}
-              <div style={{
-                position: 'absolute', top: -5, right: -5,
-                width: 16, height: 16, borderRadius: '50%',
-                background: ql.color, color: '#fff',
-                fontFamily: SANS, fontSize: 8, fontWeight: 800,
+            <div
+              className="gql-icon"
+              style={{
+                width: 62, height: 62, borderRadius: 18, flexShrink: 0,
+                background: `${ql.color}18`,
+                border: `1.5px solid ${ql.color}35`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: `0 1px 4px ${ql.color}60`,
-              }}>
-                {i + 1}
-              </div>
+                fontSize: 28,
+              }}
+            >
+              {ql.icon}
             </div>
             <span style={{
-              fontFamily: font, fontSize: 10, fontWeight: 600,
+              fontFamily: font, fontSize: 10.5, fontWeight: 600,
               color: tk.textDim, textAlign: 'center', lineHeight: 1.25,
-              width: 72,
+              width: 80,
               overflow: 'hidden', display: '-webkit-box',
               WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
             } as React.CSSProperties}>
