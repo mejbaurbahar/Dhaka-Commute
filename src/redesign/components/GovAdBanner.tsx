@@ -649,17 +649,19 @@ export function GovAdBanner({
 
       {/* Dot nav */}
       {cfgs.length > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 5, marginTop: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 10 }}>
           {cfgs.map((c, i) => (
             <button
               key={c.id}
               aria-label={`Show ${c.nameEn}`}
               onClick={() => { clearInterval(timerRef.current); goTo(i); }}
               style={{
-                width: i === active ? 24 : 6, height: 6,
-                borderRadius: 3, border: 'none', padding: 0, cursor: 'pointer',
-                background: i === active ? cfg.accent : 'rgba(128,128,128,0.28)',
-                transition: 'width 0.38s ease, background 0.38s ease',
+                width: 7, height: 7,
+                borderRadius: '50%', border: 'none', padding: 0, cursor: 'pointer',
+                background: i === active ? cfg.accent : 'rgba(128,128,128,0.32)',
+                transform: i === active ? 'scale(1.25)' : 'scale(1)',
+                transition: 'background 0.35s ease, transform 0.35s ease',
+                flexShrink: 0,
               }}
             />
           ))}
