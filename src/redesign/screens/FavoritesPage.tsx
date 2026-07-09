@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, Tokens } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { GovAdBanner } from '../components/GovAdBanner';
+import { GovServiceCards } from '../components/GovServiceCards';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { BUS_DATA } from '../../../constants';
 import { getFavoriteBusIds, setFavoriteBusIds } from '../utils/favorites';
@@ -159,6 +161,12 @@ export function FavoritesPage(props: ScreenProps) {
         onConfirm={() => removeTarget && removeFavorite(removeTarget)}
         onClose={() => setRemoveTarget(null)}
       />
+          <div style={{ padding: isMobile ? '16px 16px 0' : '16px 40px 0' }}>
+            <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['brta','mygov','railway']} />
+            <div style={{ marginTop: 16 }}>
+              <GovServiceCards tk={tk} lang={lang} isMobile={isMobile} cards={['brta','mygov']} compact />
+            </div>
+          </div>
           <AdCluster tk={tk} lang={lang} count={2} isMobile={isMobile}/>
     </PageShell>
   );

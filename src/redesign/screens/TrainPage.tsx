@@ -3,6 +3,7 @@ import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
+import { GovAdBanner } from '../components/GovAdBanner';
 import { PromoBanner } from '../components/PromoBanner';
 import { SectionHeader } from '../components/SectionHeader';
 import { Icon } from '../components/Icons';
@@ -671,6 +672,9 @@ export function TrainPage(props: Props) {
         </div>
       </div>
           <div style={{ padding: isMobile ? '0 16px 8px' : '0 0 8px' }}>
+            <div style={{ marginBottom: 14 }}>
+              <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['railway', 'brta', 'mygov']} />
+            </div>
             <GovServiceCards tk={tk} lang={lang} isMobile={isMobile} cards={['railway', 'brta', 'mygov']} variant="grid" compact />
           </div>
           <AdCluster tk={tk} lang={lang} count={1} isMobile={isMobile}/>

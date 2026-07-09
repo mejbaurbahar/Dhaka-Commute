@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang, N, Fare } from '../tokens';
 import { AdSlot, NativeAdCard } from '../components/AdSlot';
+import { GovAdBanner } from '../components/GovAdBanner';
+import { GovServiceCards } from '../components/GovServiceCards';
 import { PromoBanner } from '../components/PromoBanner';
 import { PageShell } from './PageShell';
 import { Plane3D } from '../components/Vehicles3D';
@@ -739,6 +741,12 @@ export function IntercityPage(props: Props) {
           icon="💡"
         />
         <PromoBanner tk={tk} lang={lang} page="intercity" onNav={onNav}/>
+        <div style={{ marginBottom: 16 }}>
+          <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['railway','biman','biwtc','brta','mygov']} />
+          <div style={{ marginTop: 14 }}>
+            <GovServiceCards tk={tk} lang={lang} isMobile={isMobile} cards={['railway','biman','biwtc','mygov']} variant={isMobile ? 'list' : 'grid'} compact />
+          </div>
+        </div>
         <NativeAdCard
           tk={tk}
           lang={lang}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang } from '../tokens';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
+import { GovAdBanner } from '../components/GovAdBanner';
 import { PageShell } from './PageShell';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:Lang; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
@@ -300,6 +301,9 @@ export function FareCalcPage(props: Props) {
 
         {/* Gov service cards — BRTA, Railway, MyGov */}
         <div style={{ margin: '16px 0' }}>
+          <div style={{ marginBottom: 14 }}>
+            <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['brta', 'mygov', 'railway']} />
+          </div>
           <GovServiceCards tk={tk} lang={lang} isMobile={isMobile} cards={['brta', 'mygov']} compact />
         </div>
 
