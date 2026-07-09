@@ -1965,6 +1965,14 @@ export function HomePage({
               <div style={{ minWidth: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <TravelHeroScene tk={tk} height={280} />
                 <OfflinePWACard tk={tk} lang={lang} />
+                <GovServiceCards
+                  tk={tk}
+                  lang={lang}
+                  isMobile={false}
+                  cards={['brta', 'railway', 'mygov']}
+                  compact
+                  defaultExpanded
+                />
                 <NativeAdCard
                   tk={tk}
                   lang={lang}
@@ -1982,6 +1990,20 @@ export function HomePage({
           {isMobile && (
             <div style={{ marginTop: 20 }}>
               <TravelHeroScene tk={tk} height={200} />
+            </div>
+          )}
+
+          {/* Mobile: gov service cards below hero */}
+          {isMobile && (
+            <div style={{ marginTop: 16 }}>
+              <GovServiceCards
+                tk={tk}
+                lang={lang}
+                isMobile={true}
+                cards={['brta', 'railway', 'mygov']}
+                compact
+                defaultExpanded
+              />
             </div>
           )}
         </div>

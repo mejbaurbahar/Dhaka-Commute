@@ -101,13 +101,15 @@ function GovCardItem({
   lang,
   card,
   compact,
+  defaultExpanded,
 }: {
   tk: Tokens;
   lang: Lang;
   card: GovCard;
   compact?: boolean;
+  defaultExpanded?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded ?? false);
   const font = lang === 'bn' ? BEN : SANS;
 
   return (
@@ -263,6 +265,7 @@ export function GovServiceCards({
   cards = ['brta', 'railway', 'mygov'],
   variant = 'list',
   compact,
+  defaultExpanded,
 }: {
   tk: Tokens;
   lang: Lang;
@@ -270,6 +273,7 @@ export function GovServiceCards({
   cards?: Array<'brta' | 'railway' | 'mygov' | 'biman' | 'biwtc'>;
   variant?: 'list' | 'grid';
   compact?: boolean;
+  defaultExpanded?: boolean;
 }) {
   const keyMap: Record<string, GovCard> = {
     brta: GOV_CARDS[0],
@@ -332,6 +336,7 @@ export function GovServiceCards({
             lang={lang}
             card={card}
             compact={compact}
+            defaultExpanded={defaultExpanded}
           />
         ))}
       </div>
