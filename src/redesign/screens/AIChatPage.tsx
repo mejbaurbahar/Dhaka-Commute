@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { STATIONS } from '../../../constants';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn } from '../tokens';
 import { PageShell } from './PageShell';
-import { AdSlot, AdCluster } from '../components/AdSlot';
+
 import { Icon } from '../components/Icons';
 import { askGeminiRoute, ChatMessage } from '../../../services/geminiService';
 import { askGitHubModels } from '../../../services/githubModelsService';
@@ -341,48 +341,68 @@ export function AIChatPage(props: Props) {
 
   return (
     <PageShell {...props}>
-      <div style={{ display:'flex', height: isMobile ? 'calc(100dvh - 52px - 60px)' : 'calc(100vh - 60px)', overflow:'hidden' }}>
-        {/* Left sidebar — fixed on desktop */}
+      <div style={{ display:'flex', height: isMobile ? 'calc(100dvh - 52px - 60px)' : 'calc(100vh - 60px)', overflow:'hidden', background: tk.bg }}>
+
+        {/* ── Desktop sidebar ── */}
         {!isMobile && (
-          <div style={{ width:280,flexShrink:0,borderRight:`1px solid ${tk.line}`,display:'flex',flexDirection:'column',overflow:'hidden auto',background:tk.panel }}>
-            <div style={{ padding:'14px 16px', borderBottom:`1px solid ${tk.line}` }}>
-              <div style={{ fontFamily:SANS,fontSize:10,fontWeight:700,color:tk.textFaint,letterSpacing:1.4,textTransform:'uppercase',marginBottom:10 }}>
-                {T(lang,'সাম্প্রতিক কথোপকথন','Recent conversations')}
+          <div style={{ width:300,flexShrink:0,borderRight:`1px solid ${tk.line}`,display:'flex',flexDirection:'column',background:tk.panel }}>
+
+            {/* Sidebar AI branding header */}
+            <div style={{ padding:'20px 20px 16px', borderBottom:`1px solid ${tk.line}`, background:`linear-gradient(135deg,${tk.primarySoft} 0%,${tk.accentSoft ?? tk.panelMuted} 100%)` }}>
+              <div style={{ display:'flex',alignItems:'center',gap:10,marginBottom:6 }}>
+                <div style={{ width:34,height:34,borderRadius:10,background:`linear-gradient(135deg,${tk.primary},${tk.accent})`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>
+                  <svg viewBox="0 0 32 32" width="20" height="20"><rect x="8" y="10" width="16" height="14" rx="5" fill="rgba(255,255,255,0.9)"/><circle cx="13" cy="16" r="1.8" fill={tk.primaryDeep}/><circle cx="19" cy="16" r="1.8" fill={tk.primaryDeep}/></svg>
+                </div>
+                <div>
+                  <div style={{ fontFamily:SANS,fontSize:13,fontWeight:800,color:tk.text }}>KoyJabo AI</div>
+                  <div style={{ fontFamily:BEN,fontSize:10,color:tk.textDim }}>পরিবহন সহায়ক • Transport Assistant</div>
+                </div>
+              </div>
+              <button onClick={()=>{setSessionId(null);setMessages(INIT_MESSAGES);}} style={{ width:'100%',padding:'7px 12px',borderRadius:10,border:`1px solid ${tk.primary}40`,background:tk.primarySoft,color:tk.primary,fontFamily:BEN,fontSize:12,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6 }}>
+                <span>✦</span> {T(lang,'নতুন কথোপকথন','New conversation')}
+              </button>
+            </div>
+
+            {/* Recent conversations */}
+            <div style={{ flex:1,overflowY:'auto',padding:'12px 12px 0' }}>
+              <div style={{ fontFamily:SANS,fontSize:9,fontWeight:700,color:tk.textFaint,letterSpacing:1.4,textTransform:'uppercase',marginBottom:8,paddingLeft:4 }}>
+                {T(lang,'সাম্প্রতিক','Recents')}
               </div>
               {recents.length > 0 ? (
                 <>
                   {recents.map((r) => (
-                    <div key={r.id}
-                      onClick={() => loadSession(r.id)}
-                      style={{ display:'flex',alignItems:'center',gap:6,padding:'7px 8px',borderRadius:10,cursor:'pointer',fontFamily:BEN,fontSize:12,color:tk.textDim,marginBottom:3,background: sessionId===r.id ? tk.primarySoft : 'transparent' }}
-                      onMouseEnter={e=>(e.currentTarget.style.background=tk.chipBg)}
-                      onMouseLeave={e=>(e.currentTarget.style.background=sessionId===r.id ? tk.primarySoft : 'transparent')}>
-                      <span style={{ flexShrink:0 }}>💬</span>
+                    <div key={r.id} onClick={() => loadSession(r.id)}
+                      style={{ display:'flex',alignItems:'center',gap:8,padding:'8px 10px',borderRadius:12,cursor:'pointer',fontFamily:BEN,fontSize:12,color:sessionId===r.id?tk.primary:tk.textDim,marginBottom:2,background:sessionId===r.id?tk.primarySoft:'transparent',border:`1px solid ${sessionId===r.id?tk.primary+'30':'transparent'}`,transition:'all 0.15s' }}
+                      onMouseEnter={e=>{if(sessionId!==r.id)(e.currentTarget.style.background=tk.chipBg)}}
+                      onMouseLeave={e=>{if(sessionId!==r.id)(e.currentTarget.style.background='transparent')}}>
+                      <span style={{ fontSize:14,flexShrink:0 }}>💬</span>
                       <span style={{ flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap' }}>{r.title}</span>
-                      <button
-                        onClick={e => handleDeleteSession(r.id, e)}
-                        style={{ flexShrink:0,background:'none',border:'none',cursor:'pointer',color:tk.textFaint,fontSize:14,padding:'0 2px',lineHeight:1 }}
-                        title={T(lang,'মুছুন','Delete')}>×</button>
+                      <button onClick={e=>handleDeleteSession(r.id,e)} style={{ flexShrink:0,background:'none',border:'none',cursor:'pointer',color:tk.textFaint,fontSize:16,padding:'0 2px',lineHeight:1,opacity:0.6 }}>×</button>
                     </div>
                   ))}
                   {allRecents.length > 5 && (
-                    <button onClick={() => setShowAllRecents(v => !v)} style={{ width:'100%',background:'none',border:`1px solid ${tk.line}`,borderRadius:8,padding:'5px',fontFamily:SANS,fontSize:11,color:tk.textFaint,cursor:'pointer',marginTop:4 }}>
-                      {showAllRecents ? T(lang,'কম দেখুন','Show less') : T(lang,`আরও ${allRecents.length - 5}টি দেখুন`,`Load ${allRecents.length - 5} more`)}
+                    <button onClick={()=>setShowAllRecents(v=>!v)} style={{ width:'100%',background:'none',border:`1px solid ${tk.line}`,borderRadius:8,padding:'5px',fontFamily:SANS,fontSize:11,color:tk.textFaint,cursor:'pointer',marginTop:4 }}>
+                      {showAllRecents ? T(lang,'কম দেখুন','Show less') : T(lang,`আরও ${allRecents.length-5}টি`,`+${allRecents.length-5} more`)}
                     </button>
                   )}
                 </>
               ) : (
-                <div style={{ fontFamily:BEN,fontSize:12,color:tk.textFaint,lineHeight:1.6,padding:'6px 0' }}>
+                <div style={{ fontFamily:BEN,fontSize:12,color:tk.textFaint,lineHeight:1.6,padding:'6px 4px',textAlign:'center',marginTop:12 }}>
                   {T(lang,'এখনো কোনো কথোপকথন নেই।','No conversations yet.')}
                 </div>
               )}
             </div>
-            <div style={{ padding:'14px 16px' }}>
-              <div style={{ fontFamily:SANS,fontSize:10,fontWeight:700,color:tk.textFaint,letterSpacing:1.4,textTransform:'uppercase',marginBottom:10 }}>
-                {T(lang,'পরামর্শ','Suggestions')}
+
+            {/* Suggestions */}
+            <div style={{ padding:'12px',borderTop:`1px solid ${tk.line}` }}>
+              <div style={{ fontFamily:SANS,fontSize:9,fontWeight:700,color:tk.textFaint,letterSpacing:1.4,textTransform:'uppercase',marginBottom:8,paddingLeft:4 }}>
+                {T(lang,'দ্রুত প্রশ্ন','Quick questions')}
               </div>
               {suggestions.map((s,i)=>(
-                <button key={i} onClick={()=>setInput(T(lang,s.bn,s.en))} style={{ display:'block',width:'100%',textAlign:'left',padding:'7px 10px',borderRadius:10,border:`1px solid ${tk.line}`,background:'transparent',color:tk.text,fontFamily:BEN,fontSize:12,cursor:'pointer',marginBottom:5 }}>
+                <button key={i} onClick={()=>setInput(T(lang,s.bn,s.en))} style={{ display:'flex',alignItems:'center',gap:8,width:'100%',textAlign:'left',padding:'8px 10px',borderRadius:10,border:`1px solid ${tk.line}`,background:'transparent',color:tk.text,fontFamily:BEN,fontSize:12,cursor:'pointer',marginBottom:5,transition:'background 0.12s' }}
+                  onMouseEnter={e=>(e.currentTarget.style.background=tk.chipBg)}
+                  onMouseLeave={e=>(e.currentTarget.style.background='transparent')}>
+                  <span style={{ color:tk.primary,flexShrink:0 }}>→</span>
                   {T(lang,s.bn,s.en)}
                 </button>
               ))}
@@ -390,55 +410,71 @@ export function AIChatPage(props: Props) {
           </div>
         )}
 
-        {/* Main chat */}
-        <div style={{ flex:1,display:'flex',flexDirection:'column',minHeight:0 }}>
-          <div style={{ flex:1, minHeight:0, overflow:'auto', padding:'16px', paddingBottom:'16px', display:'flex',flexDirection:'column',gap:14 }}>
+        {/* ── Main chat column ── */}
+        <div style={{ flex:1,display:'flex',flexDirection:'column',minHeight:0,background:`linear-gradient(180deg,${tk.bg} 0%,${tk.panelSolid ?? tk.panel} 100%)` }}>
+
+          {/* Desktop chat header bar */}
+          {!isMobile && (
+            <div style={{ flexShrink:0,padding:'14px 20px',borderBottom:`1px solid ${tk.line}`,display:'flex',alignItems:'center',gap:12,background:tk.panel }}>
+              <AvatarAI tk={tk}/>
+              <div>
+                <div style={{ fontFamily:SANS,fontSize:14,fontWeight:700,color:tk.text }}>KoyJabo AI</div>
+                <div style={{ display:'flex',alignItems:'center',gap:5 }}>
+                  <span style={{ width:7,height:7,borderRadius:'50%',background:'#22c55e',display:'inline-block' }}/>
+                  <span style={{ fontFamily:SANS,fontSize:11,color:tk.textDim }}>{T(lang,'সক্রিয়','Online')}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Messages area */}
+          <div style={{ flex:1,minHeight:0,overflowY:'auto',padding: isMobile ? '14px 12px' : '20px 24px',display:'flex',flexDirection:'column',gap: isMobile ? 12 : 16 }}>
             {messages.map(msg => <ChatBubble key={msg.id} msg={msg} tk={tk} lang={lang} userAvatarUrl={userAvatarUrl} userInitials={userInitials}/>)}
             {isLoading && (
               <div style={{ display:'flex',gap:10,alignSelf:'flex-start',maxWidth:'80%' }}>
                 <AvatarAI tk={tk}/>
-                <div style={{ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:16,padding:'12px 16px',color:tk.textDim,fontFamily:SANS,fontSize:18,letterSpacing:4 }}>
-                  <span className="kj-ai-dots">···</span>
+                <div style={{ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:20,borderBottomLeftRadius:4,padding:'14px 18px',boxShadow:`0 2px 8px ${tk.shadow ?? 'rgba(0,0,0,0.08)'}` }}>
+                  <span className="kj-ai-dots" style={{ fontFamily:SANS,fontSize:20,letterSpacing:6,color:tk.textDim }}>···</span>
                 </div>
               </div>
             )}
-            <div ref={bottomRef} style={{ height:1, flexShrink:0 }}/>
+            <div ref={bottomRef} style={{ height:1,flexShrink:0 }}/>
           </div>
+
           {/* Mobile suggestion chips */}
           {isMobile && (
-            <div style={{ flexShrink:0, display:'flex',gap:6,padding:'8px 12px',overflowX:'auto',borderTop:`1px solid ${tk.line}`, scrollbarWidth:'none' } as React.CSSProperties}>
-              {suggestions.slice(0,3).map((s,i)=>(
-                <button key={i} onClick={()=>setInput(T(lang,s.bn,s.en))} style={{ flexShrink:0,background:tk.panelMuted,border:`1px solid ${tk.line}`,borderRadius:999,padding:'6px 12px',fontFamily:BEN,fontSize:11,color:tk.textDim,cursor:'pointer',whiteSpace:'nowrap' }}>
+            <div style={{ flexShrink:0,display:'flex',gap:6,padding:'8px 12px',overflowX:'auto',background:tk.panel,borderTop:`1px solid ${tk.line}`,scrollbarWidth:'none' } as React.CSSProperties}>
+              {suggestions.slice(0,4).map((s,i)=>(
+                <button key={i} onClick={()=>setInput(T(lang,s.bn,s.en))} style={{ flexShrink:0,background:tk.primarySoft,border:`1px solid ${tk.primary}30`,borderRadius:999,padding:'6px 14px',fontFamily:BEN,fontSize:11,fontWeight:600,color:tk.primary,cursor:'pointer',whiteSpace:'nowrap' }}>
                   {T(lang,s.bn,s.en)}
                 </button>
               ))}
             </div>
           )}
-          {/* Input bar — always visible at bottom via flex layout (no fixed positioning) */}
+
+          {/* Input bar */}
           <div style={{
-            flexShrink: 0,
-            padding: '10px 12px',
-            paddingBottom: isMobile ? 'calc(10px + env(safe-area-inset-bottom, 0px))' : '10px',
+            flexShrink:0,
+            padding: isMobile ? '10px 12px' : '14px 20px',
+            paddingBottom: isMobile ? 'calc(10px + env(safe-area-inset-bottom, 0px))' : '14px',
             borderTop:`1px solid ${tk.line}`,
-            background: tk.panelSolid ?? tk.panel,
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            display:'flex', gap:8, alignItems:'center',
+            background:tk.panel,
+            display:'flex',gap:8,alignItems:'center',
           }}>
-            <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()}
-              placeholder={T(lang,'আপনার প্রশ্ন লিখুন...','Type your question...')}
-              style={{ flex:1,background:tk.inputBg,border:`1px solid ${tk.line}`,borderRadius:14,padding: isMobile ? '14px 16px' : '12px 14px',fontFamily:BEN,fontSize: isMobile ? 16 : 14,color:tk.text,outline:'none',minWidth:0 }}/>
-            <button onClick={send} disabled={isLoading} style={{ width:44,height:44,borderRadius:999,background:isLoading?tk.panelMuted:tk.primary,color:tk.primaryInk,border:0,cursor:isLoading?'not-allowed':'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>
+            <div style={{ flex:1,display:'flex',alignItems:'center',background:tk.inputBg,border:`1.5px solid ${tk.line}`,borderRadius:999,padding:'0 16px',gap:8,transition:'border-color 0.2s' }}>
+              <span style={{ fontSize:16,flexShrink:0 }}>🔍</span>
+              <input
+                value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()}
+                placeholder={T(lang,'পরিবহন সম্পর্কে জিজ্ঞেস করুন...','Ask about transport in Bangladesh...')}
+                style={{ flex:1,background:'transparent',border:'none',padding: isMobile ? '14px 0' : '12px 0',fontFamily:BEN,fontSize: isMobile ? 16 : 14,color:tk.text,outline:'none',minWidth:0 }}
+              />
+            </div>
+            <button onClick={send} disabled={isLoading} style={{ width: isMobile ? 46 : 48,height: isMobile ? 46 : 48,borderRadius:999,background:isLoading?tk.panelMuted:`linear-gradient(135deg,${tk.primary},${tk.accent})`,color:'#fff',border:0,cursor:isLoading?'not-allowed':'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:isLoading?'none':`0 4px 14px ${tk.primary}55`,transition:'all 0.2s' }}>
               <Icon.arrowR s={18}/>
             </button>
           </div>
         </div>
       </div>
-      {!isMobile && (
-        <div style={{ padding: '20px 40px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
-        </div>
-      )}
     </PageShell>
   );
 }
