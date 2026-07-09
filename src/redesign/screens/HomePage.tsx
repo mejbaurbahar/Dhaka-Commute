@@ -1910,7 +1910,7 @@ export function HomePage({
             }}
           >
             {/* Left: greeting + SearchPanel */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0, alignSelf: 'start' }}>
               <div>
                 {/* Location bar */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
@@ -1966,7 +1966,7 @@ export function HomePage({
 
             {/* Right: desktop only — minWidth:0 prevents grid overflow */}
             {!isMobile && (
-              <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12, alignSelf: 'start' }}>
                 <TravelHeroScene tk={tk} height={280} />
                 <OfflinePWACard tk={tk} lang={lang} />
                 <GovAdPoster
