@@ -76,7 +76,7 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute, isLo
         style={{
           position: 'fixed',
           inset: 0,
-          zIndex: 99,
+          zIndex: 249,
           background: 'rgba(0,0,0,0.5)',
           backdropFilter: open ? 'blur(4px)' : 'none',
           WebkitBackdropFilter: open ? 'blur(4px)' : 'none',
@@ -89,7 +89,7 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute, isLo
       {/* Clipping wrapper — clips the translateX(105%) drawer to viewport */}
       <div
         onClick={onClose}
-        style={{ position: 'fixed', inset: 0, zIndex: 100, overflow: 'hidden', overscrollBehavior: 'contain', pointerEvents: open ? 'auto' : 'none' }}
+        style={{ position: 'fixed', inset: 0, zIndex: 250, overflow: 'hidden', overscrollBehavior: 'contain', pointerEvents: open ? 'auto' : 'none' }}
       >
 
       {/* Drawer panel */}

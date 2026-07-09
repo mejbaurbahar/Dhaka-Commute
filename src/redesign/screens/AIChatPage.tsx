@@ -420,7 +420,7 @@ export function AIChatPage(props: Props) {
             bottom: isMobile ? 'calc(60px + env(safe-area-inset-bottom, 0px))' : 'auto',
             left: isMobile ? 0 : 'auto',
             right: isMobile ? 0 : 'auto',
-            zIndex: isMobile ? 120 : 'auto',
+            zIndex: isMobile ? 160 : 'auto',
             padding: '10px 12px',
             paddingBottom: isMobile ? 'calc(10px + env(safe-area-inset-bottom, 0px))' : '10px',
             borderTop:`1px solid ${tk.line}`,
