@@ -13,7 +13,7 @@ import { getBusRatings, BusRatingSummary } from '../../../services/communityData
 import { earnCoins } from '../utils/koyCoinService';
 import type { UserLocation } from '../../../types';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
-import { useDocumentTitle, setCanonicalUrl } from '../utils/useDocumentTitle';
+import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag } from '../utils/useDocumentTitle';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -59,7 +59,15 @@ export function BusDetailPage(props: Props) {
   const startName = STATIONS[bus.stops[0]]?.name ?? bus.stops[0];
   const endName = STATIONS[bus.stops[bus.stops.length - 1]]?.name ?? bus.stops[bus.stops.length - 1];
   useDocumentTitle(`${bus.name}: ${startName} ⇄ ${endName}`);
-  useEffect(() => { setCanonicalUrl(`/bus/${busId}`); }, [busId]);
+  useEffect(() => {
+    setCanonicalUrl(`/bus/${busId}`);
+    const midStops = bus.stops.slice(1, -1).slice(0, 3).map(sid => STATIONS[sid]?.name ?? sid.replace(/_/g, ' ')).join(', ');
+    const desc = `${bus.name} Dhaka bus route: ${startName} to ${endName}${midStops ? ` via ${midStops}` : ''}. Stops, fares & route map. Free KoyJabo guide.`;
+    setMetaTag('description', desc);
+    setPropertyMetaTag('og:description', desc);
+    setPropertyMetaTag('og:title', `${bus.name}: ${startName} ⇄ ${endName} | কই যাবো`);
+    setPropertyMetaTag('og:image', 'https://koyjabo.com/og-image.png');
+  }, [busId, bus.name, bus.stops, startName, endName]);
 
   // Detect if user's from→to direction is reverse of the bus route order
   // e.g. bus goes Gabtoli(0)→Gulshan(5), user searched Gulshan→Gabtoli → isReversed=true

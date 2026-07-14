@@ -4,7 +4,7 @@ import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { Pill } from '../components/Pill';
 import { BD_TRAIN_ROUTES, TRAIN_STATIONS } from '../../../data/bangladeshTrainData';
-import { useDocumentTitle, setCanonicalUrl } from '../utils/useDocumentTitle';
+import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag } from '../utils/useDocumentTitle';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -35,7 +35,16 @@ export function TrainDetailPage(props: Props) {
   const fromName = stationName(stops[0]?.city ?? train.from);
   const toName = stationName(stops[stops.length - 1]?.city ?? train.to);
   useDocumentTitle(`${train.name}: ${fromName} → ${toName}`);
-  useEffect(() => { setCanonicalUrl(`/train/${train.id}`); }, [train.id]);
+  useEffect(() => {
+    setCanonicalUrl(`/train/${train.id}`);
+    const minFareVal = train.fare.shuvan || train.fare.shuvanChair || '';
+    const minFare = minFareVal ? ` from ৳${minFareVal}` : '';
+    const desc = `${train.name}: ${fromName} to ${toName}. Departs ${depTime}, arrives ${arrTime}. Fares${minFare}. Stops, schedule & booking guide on KoyJabo.`;
+    setMetaTag('description', desc);
+    setPropertyMetaTag('og:description', desc);
+    setPropertyMetaTag('og:title', `${train.name}: ${fromName} → ${toName} Train | কই যাবো`);
+    setPropertyMetaTag('og:image', 'https://koyjabo.com/og-image.png');
+  }, [train.id, train.name, fromName, toName, depTime, arrTime, train.fare.shuvan, train.fare.shuvanChair]);
 
   const coaches = [
     { l:'Shuvan', bn:'শোভন', c:'#6b7280', f:Fare(train.fare.shuvan, lang) },
