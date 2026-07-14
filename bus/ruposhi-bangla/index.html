@@ -19,6 +19,17 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://www.google.com https://adservice.google.com https://aistudiocdn.com https://shop.daamdekhi.com https://cdn.tailwindcss.com https://apis.google.com https://www.ezojs.com https://go.ezoic.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://koyjabo-auth-proxy.fagun115946.workers.dev https://api.koyjabo.com https://*.koyjabo.com https://api.github.com https://raw.githubusercontent.com https://challenges.cloudflare.com https://www.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://*.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://csi.gstatic.com https://www.google.com.bd https://api.tomtom.com https://api.maptiler.com https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebaseinstallations.googleapis.com https://www.googleapis.com https://aistudiocdn.com https://fundingchoicesmessages.google.com https://www.ezojs.com https://*.ezoic.net; frame-src https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://*.firebaseapp.com https://apis.google.com https://accounts.google.com https://*.ezoic.net; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
 
 
+  <!-- GitHub Pages SPA path restore — convert /?/bus/achia/ back to /bus/achia/ -->
+  <script>
+    (function () {
+      var s = window.location.search;
+      if (s && s[1] === '/') {
+        var path = '/' + s.slice(2).split('&').map(function (seg) { return seg.replace(/~and~/g, '&'); }).join('?') + window.location.hash;
+        window.history.replaceState(null, null, path);
+      }
+    })();
+  </script>
+
   <!-- Prevent Flash of Light Mode (FOLM) - Apply dark mode before page renders -->
   <script>
     // This MUST run before page renders to prevent white flash
@@ -137,20 +148,20 @@
   <meta property="og:locale:alternate" content="bn_BD" />
 
   <!-- Social Media Preview Image -->
-  <link rel="image_src" href="https://koyjabo.com/logo.png" />
-  <meta property="og:image" content="https://koyjabo.com/logo.png" />
-  <meta property="og:image:secure_url" content="https://koyjabo.com/logo.png" />
+  <link rel="image_src" href="https://koyjabo.com/og-image.png" />
+  <meta property="og:image" content="https://koyjabo.com/og-image.png" />
+  <meta property="og:image:secure_url" content="https://koyjabo.com/og-image.png" />
   <meta property="og:image:type" content="image/png" />
-  <meta property="og:image:width" content="512" />
-  <meta property="og:image:height" content="512" />
-  <meta property="og:image:alt" content="কই যাবো - Logo" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="কই যাবো - Bangladesh Transport Guide" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@koyjabo" />
   <meta name="twitter:title" content="Ruposhi Bangla Bus Route - রূপসী বাংলা | KoyJabo" />
   <meta name="twitter:description" content="Ruposhi Bangla bus route in Dhaka. See stops, fare guidance and route details in Bengali and English on KoyJabo." />
-  <meta name="twitter:image" content="https://koyjabo.com/logo.png" />
+  <meta name="twitter:image" content="https://koyjabo.com/og-image.png" />
 
   <!-- Structured Data (JSON-LD) -->
   <script type="application/ld+json">
@@ -715,7 +726,7 @@
     @keyframes kjLoadBar { 0% { transform: translateX(-120%); } 100% { transform: translateX(330%); } }
     @keyframes kjWheel { from { transform: rotate(0); } to { transform: rotate(360deg); } }
   </style>
-    <script type="module" crossorigin src="/assets/index-OSyHs_Br.js"></script>
+    <script type="module" crossorigin src="/assets/index-CzVLwatA.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/leaflet-BF7F7cMi.js">
     <link rel="modulepreload" crossorigin href="/assets/react-ClBwdsT_.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-Dh4DHJYO.js">
