@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>কই যাবো - লোড হচ্ছে...</title>
     <script>
-        // GitHub Pages SPA redirect — store path, send to main app
-        try { sessionStorage.setItem('redirect', location.href); } catch(e) {}
-        window.location.replace('/');
+        // GitHub Pages SPA redirect — encode path as query param so Googlebot can render pages
+        (function() {
+          var l = window.location;
+          try { sessionStorage.setItem('redirect', l.href); } catch(e) {}
+          // Encode path as /?/bus/achia/ so index.html serves with HTTP 200 and Google can render
+          var p = l.pathname.slice(1);
+          var q = l.search ? '&' + l.search.slice(1) : '';
+          window.location.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + '/?/' + p + q + l.hash);
+        })();
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
