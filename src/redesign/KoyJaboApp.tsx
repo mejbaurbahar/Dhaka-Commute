@@ -254,16 +254,11 @@ export function KoyJaboApp() {
   const top = stack[stack.length - 1];
   const canBack = stack.length > 1;
 
-  // On SPA navigation: notify AdSense Auto Ads of virtual page change + reset anchor
+  // On SPA navigation: reset anchor ad. Auto Ads detects URL changes natively —
+  // pushing enable_page_level_ads again throws a TagError and breaks ad serving.
   useEffect(() => {
     if (!adNavRef.current) { adNavRef.current = true; return; }
     setAnchorOn(true);
-    try {
-      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({
-        google_ad_client: 'ca-pub-8425219156685369',
-        enable_page_level_ads: true,
-      });
-    } catch {}
   }, [top.route]);
 
   const tk = KJ_TOKENS[theme];
