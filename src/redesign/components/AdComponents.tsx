@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 
-function AdsenseUnit({ slot, format = 'auto', layout, onFillResult }: { slot: string; format?: string; layout?: string; onFillResult?: (filled: boolean) => void }) {
+// immediate=true: skip IntersectionObserver and push on first RAF — used by
+// AnchorAd so it wins the slot-3797668998 race against inline banner placements.
+function AdsenseUnit({ slot, format = 'auto', layout, onFillResult, immediate = false }: { slot: string; format?: string; layout?: string; onFillResult?: (filled: boolean) => void; immediate?: boolean }) {
   const insRef = useRef<HTMLElement>(null);
   const pushed = useRef(false);
   const timer = useRef<number>(0);
@@ -64,6 +66,13 @@ function AdsenseUnit({ slot, format = 'auto', layout, onFillResult }: { slot: st
     const blockTimeout = window.setTimeout(() => {
       if (!pushed.current) resolve(false);
     }, 25000);
+
+    if (immediate) {
+      // Push synchronously in this effect — runs before IntersectionObserver callbacks
+      // from other slots fire, guaranteeing AnchorAd wins the slot-3797668998 race.
+      doPush();
+      return () => { clearTimeout(timer.current); clearTimeout(blockTimeout); clearTimeout(pollId); };
+    }
 
     if ('IntersectionObserver' in window) {
       const scroller = ins.closest('[data-app-scroller]') as Element | null;
@@ -150,7 +159,7 @@ export function AnchorAd({ tk, lang, onClose, bottomOffset = '0px' }: { tk: Toke
       pointerEvents: isFilled ? 'auto' : 'none',
     }}>
       <div style={{ flex: 1, minHeight: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <AdsenseUnit slot="3797668998" format="horizontal" onFillResult={setFilled}/>
+        <AdsenseUnit slot="3797668998" format="horizontal" onFillResult={setFilled} immediate={true}/>
       </div>
       {isFilled && <button onClick={onClose} style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, color: tk.textFaint, cursor: 'pointer', fontSize: 16, width: 32, height: 32, lineHeight: 1 }}>×</button>}
     </div>
