@@ -351,7 +351,8 @@ export function KoyJaboApp() {
 
   const section = SECTION_MAP[top.route] || 'home';
   const showRails = resolvedDevice === 'desktop' && vw >= 1500;
-  const showAnchor = anchorOn && resolvedDevice === 'desktop';
+  // Show anchor ad on all devices — mobile positions it above the tab bar
+  const showAnchor = anchorOn;
   const isPhone = resolvedDevice === 'mobile';
   const showFrame = false; // no phone frame mode — always full responsive
 
@@ -424,7 +425,9 @@ export function KoyJaboApp() {
   const aiFab = top.route !== 'ai' ? (
     <div style={{
       position: 'fixed', right: 16,
-      bottom: isPhone ? 'calc(92px + env(safe-area-inset-bottom))' : (showAnchor ? 'calc(96px + env(safe-area-inset-bottom))' : 24),
+      bottom: isPhone
+        ? (anchorOn ? 'calc(144px + env(safe-area-inset-bottom))' : 'calc(92px + env(safe-area-inset-bottom))')
+        : (anchorOn ? 'calc(96px + env(safe-area-inset-bottom))' : 24),
       zIndex: 9200, pointerEvents: 'auto',
     }}>
       <AIFab tk={tk} lang={lang} onNav={() => nav('ai')}/>
@@ -521,7 +524,7 @@ export function KoyJaboApp() {
           <SideRailAd tk={tk} lang={lang} side="right"/>
         </>
       )}
-      {showAnchor && <AnchorAd key={top.route} tk={tk} lang={lang} onClose={() => setAnchorOn(false)}/>}
+      {showAnchor && <AnchorAd key={top.route} tk={tk} lang={lang} onClose={() => setAnchorOn(false)} bottomOffset={isPhone ? 'calc(72px + env(safe-area-inset-bottom))' : '0px'}/>}
       <VignetteAd tk={tk} lang={lang} open={vignette} onClose={() => setVignette(false)}/>
       {/* ── Update-available toast ── */}
       {updateReady && (

@@ -118,7 +118,9 @@ export function SideRailAd({ tk, lang, side }: { tk: Tokens; lang: Lang; side: '
 }
 
 // ── AnchorAd: sticky bottom bar — hidden during detection, shown when filled
-export function AnchorAd({ tk, lang, onClose }: { tk: Tokens; lang: Lang; onClose: () => void }) {
+// bottomOffset: CSS value for `bottom` property — use 'calc(72px + env(safe-area-inset-bottom))' on mobile
+//               to sit above the tab bar instead of at screen bottom.
+export function AnchorAd({ tk, lang, onClose, bottomOffset = '0px' }: { tk: Tokens; lang: Lang; onClose: () => void; bottomOffset?: string }) {
   const [filled, setFilled] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -129,19 +131,21 @@ export function AnchorAd({ tk, lang, onClose }: { tk: Tokens; lang: Lang; onClos
   if (filled === false) return null;
 
   const isFilled = filled === true;
+  const isAboveTabBar = bottomOffset !== '0px';
 
   // During detection (filled===null): render ins element invisible so AdSense can measure and fill.
   // Without this, ins never mounts → AdSense never fills → anchor never shows.
   return (
     <div style={{
-      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9000,
+      position: 'fixed', bottom: bottomOffset, left: 0, right: 0, zIndex: 9000,
       background: isFilled ? tk.panel : 'transparent',
       borderTop: isFilled ? `1px solid ${tk.line}` : 'none',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: isFilled ? '8px 16px' : 0,
       minHeight: 64,
       backdropFilter: isFilled ? 'blur(12px)' : 'none',
-      paddingBottom: isFilled ? 'calc(8px + env(safe-area-inset-bottom))' : 0,
+      // On mobile the ad is already above safe-area zone — no extra inset needed
+      paddingBottom: isFilled ? (isAboveTabBar ? '8px' : 'calc(8px + env(safe-area-inset-bottom))') : 0,
       visibility: isFilled ? 'visible' : 'hidden',
       pointerEvents: isFilled ? 'auto' : 'none',
     }}>
