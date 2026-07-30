@@ -16,7 +16,7 @@
        <script>/<style>. Switching to nonces would force every ads / Tailwind
        drop-in to opt in too. Everything else has been narrowed to a fixed
        origin list — no `https:` wildcards, no open connect-src. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://www.google.com https://adservice.google.com https://aistudiocdn.com https://shop.daamdekhi.com https://cdn.tailwindcss.com https://apis.google.com https://www.ezojs.com https://go.ezoic.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://koyjabo-auth-proxy.fagun115946.workers.dev https://api.koyjabo.com https://*.koyjabo.com https://api.github.com https://raw.githubusercontent.com https://challenges.cloudflare.com https://www.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://*.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://csi.gstatic.com https://www.google.com.bd https://api.tomtom.com https://api.maptiler.com https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebaseinstallations.googleapis.com https://www.googleapis.com https://aistudiocdn.com https://fundingchoicesmessages.google.com https://www.ezojs.com https://*.ezoic.net; frame-src https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://*.firebaseapp.com https://apis.google.com https://accounts.google.com https://*.ezoic.net; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://www.google.com https://adservice.google.com https://aistudiocdn.com https://shop.daamdekhi.com https://cdn.tailwindcss.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://koyjabo-auth-proxy.fagun115946.workers.dev https://api.koyjabo.com https://*.koyjabo.com https://api.github.com https://raw.githubusercontent.com https://challenges.cloudflare.com https://www.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://*.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://csi.gstatic.com https://www.google.com.bd https://api.tomtom.com https://api.maptiler.com https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebaseinstallations.googleapis.com https://www.googleapis.com https://aistudiocdn.com https://fundingchoicesmessages.google.com; frame-src https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://*.firebaseapp.com https://apis.google.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
 
 
   <!-- GitHub Pages SPA path restore — convert /?/bus/achia/ back to /bus/achia/ -->
@@ -107,10 +107,6 @@
   <meta name="google-adsense-account" content="ca-pub-8425219156685369">
   <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
   <link rel="dns-prefetch" href="https://googlesyndication.com">
-  <!-- Ezoic + Media.net preconnects -->
-  <link rel="preconnect" href="https://www.ezojs.com" crossorigin>
-  <link rel="dns-prefetch" href="https://go.ezoic.net">
-
   <!-- AdSense ad-blocking recovery message (Funding Choices) -->
   <script async src="https://fundingchoicesmessages.google.com/i/pub-8425219156685369?ers=1"></script>
   <script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
@@ -726,7 +722,7 @@
     @keyframes kjLoadBar { 0% { transform: translateX(-120%); } 100% { transform: translateX(330%); } }
     @keyframes kjWheel { from { transform: rotate(0); } to { transform: rotate(360deg); } }
   </style>
-    <script type="module" crossorigin src="/assets/index-Bypn7viP.js"></script>
+    <script type="module" crossorigin src="/assets/index-DOuwt7Hh.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/leaflet-BF7F7cMi.js">
     <link rel="modulepreload" crossorigin href="/assets/react-ClBwdsT_.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-Dh4DHJYO.js">
@@ -926,31 +922,6 @@
       google_ad_client: "ca-pub-8425219156685369",
       enable_page_level_ads: true
     });
-  </script>
-
-  <!-- ─── Ezoic Leap (SPA mode) ──────────────────────────────────────────────
-       SETUP: Sign up at https://ezoic.com → Sites → Add Site → choose "Ezoic Leap (JS)"
-       Replace YOUR_EZOIC_SITE_ID below with your numeric site ID from the Ezoic dashboard.
-       ──────────────────────────────────────────────────────────────────────── -->
-  <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
-  <script>
-    window.ezstandalone = window.ezstandalone || {};
-    ezstandalone.cmd = ezstandalone.cmd || [];
-    // SPA: called by router on each page change (see src/redesign/KoyJaboApp.tsx)
-    window.__ezInitAds = function () {
-      ezstandalone.cmd.push(function () {
-        if (ezstandalone.enabled) {
-          ezstandalone.destroyAll();
-          ezstandalone.display();
-        } else {
-          // Placeholder IDs — create these in Ezoic dashboard → Ad Tester
-          ezstandalone.define(101, 102, 103, 104, 105);
-          ezstandalone.enable();
-          ezstandalone.display();
-        }
-      });
-    };
-    window.__ezInitAds();
   </script>
 
   <!-- Daamdekhi AEO Tag — tracks AI crawler visits, LLM citations, and assistant referrals -->
