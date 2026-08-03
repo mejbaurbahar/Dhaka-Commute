@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 
 export interface CourseData {
-  id: 'spoken-english' | 'vocabulary';
+  id: 'spoken-english' | 'vocabulary' | 'deer-scooter';
   titleBn: string;
   titleEn: string;
   subBn: string;
@@ -13,6 +13,8 @@ export interface CourseData {
   badge: string;
   rating: string;
   learners: string;
+  btnTextBn?: string;
+  btnTextEn?: string;
 }
 
 export const COURSES: CourseData[] = [
@@ -28,6 +30,8 @@ export const COURSES: CourseData[] = [
     badge: 'BESTSELLER',
     rating: '4.9 ★',
     learners: '১৫ লক্ষ+ শিক্ষার্থী',
+    btnTextBn: 'এখনই ভর্তি হন',
+    btnTextEn: 'Enroll Now',
   },
   {
     id: 'vocabulary',
@@ -41,13 +45,30 @@ export const COURSES: CourseData[] = [
     badge: 'POPULAR',
     rating: '4.8 ★',
     learners: '১০ লক্ষ+ শিক্ষার্থী',
+    btnTextBn: 'এখনই ভর্তি হন',
+    btnTextEn: 'Enroll Now',
+  },
+  {
+    id: 'deer-scooter',
+    titleBn: 'DEER Pogo Scooter Slip Resistance',
+    titleEn: 'DEER Pogo Scooter Slip Resistance',
+    subBn: 'Brand: DEER — আরামদায়ক ও নিরাপদ ট্রাভেল স্কুটার',
+    subEn: 'Brand: DEER — Comfortable & Safe Travel Scooter',
+    url: 'https://rkmri.co/meoyI5TNe0Al/',
+    localImg: '/images/pogo-scooter-affiliate.png',
+    fallbackImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/DEER_Pogo_Scooter_Slip_Resistance-DEER-a941a-285145.png',
+    badge: 'HOT DEAL',
+    rating: '4.9 ★',
+    learners: 'প্রিমিয়াম কোয়ালিটি',
+    btnTextBn: 'এখনই কিনুন',
+    btnTextEn: 'Buy Now',
   },
 ];
 
 export interface AffiliateBannerProps {
   tk: Tokens;
   lang: Lang;
-  course?: 'spoken-english' | 'vocabulary' | 'both';
+  course?: 'spoken-english' | 'vocabulary' | 'deer-scooter' | 'all';
   variant?: 'auto' | 'slider' | 'glass-stack' | 'spotlight' | 'strip' | 'grid' | 'hero' | 'mid' | 'compact';
   route?: string;
   compact?: boolean;
@@ -76,6 +97,8 @@ function AffiliateSlider({ tk, lang }: { tk: Tokens; lang: Lang }) {
   const handleClick = () => {
     window.open(course.url, '_blank', 'noopener,noreferrer');
   };
+
+  const btnText = T(lang, course.btnTextBn || 'এখনই দেখুন', course.btnTextEn || 'View Now');
 
   return (
     <div
@@ -117,20 +140,25 @@ function AffiliateSlider({ tk, lang }: { tk: Tokens; lang: Lang }) {
             overflow: 'hidden',
             flexShrink: 0,
             boxShadow: '0 6px 16px rgba(0,0,0,0.5)',
+            background: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 4,
           }}
         >
           <img
             src={imgSrc}
             onError={() => setImgSrc(course.fallbackImg)}
             alt={course.titleBn}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />
           <span
             style={{
               position: 'absolute',
               top: 6,
               left: 6,
-              background: '#ff2a6d',
+              background: course.badge === 'BESTSELLER' ? '#ff2a6d' : course.badge === 'HOT DEAL' ? '#ff9900' : '#00c8f0',
               color: '#fff',
               fontFamily: SANS,
               fontWeight: 900,
@@ -196,7 +224,7 @@ function AffiliateSlider({ tk, lang }: { tk: Tokens; lang: Lang }) {
               boxShadow: '0 4px 14px rgba(0,240,255,0.35)',
             }}
           >
-            {T(lang, 'এখনই ভর্তি হন ➔', 'Enroll Now ➔')}
+            {btnText} ➔
           </button>
         </div>
       </div>
@@ -207,7 +235,7 @@ function AffiliateSlider({ tk, lang }: { tk: Tokens; lang: Lang }) {
           display: 'flex',
           justifyContent: 'center',
           gap: 6,
-          marginTop: 10,
+          marginTop: 12,
         }}
       >
         {COURSES.map((_, i) => (
@@ -218,8 +246,8 @@ function AffiliateSlider({ tk, lang }: { tk: Tokens; lang: Lang }) {
               setIndex(i);
             }}
             style={{
-              width: i === index ? 20 : 6,
-              height: 6,
+              width: i === index ? 22 : 7,
+              height: 7,
               borderRadius: 999,
               background: i === index ? '#00f0ff' : 'rgba(255,255,255,0.3)',
               cursor: 'pointer',
@@ -272,7 +300,9 @@ function GlassStack({ tk, lang }: { tk: Tokens; lang: Lang }) {
               width: 85,
               height: 65,
               borderRadius: 10,
-              objectFit: 'cover',
+              objectFit: 'contain',
+              background: '#ffffff',
+              padding: 2,
               flexShrink: 0,
               boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
             }}
@@ -320,7 +350,7 @@ function GlassStack({ tk, lang }: { tk: Tokens; lang: Lang }) {
 
 // ── 3. Spotlight Showcase ──────────────────────────────────────────────────
 function SpotlightShowcase({ tk, lang }: { tk: Tokens; lang: Lang }) {
-  const course = COURSES[0];
+  const course = COURSES[2] || COURSES[0]; // DEER Scooter
   return (
     <div
       onClick={() => window.open(course.url, '_blank', 'noopener,noreferrer')}
@@ -345,11 +375,11 @@ function SpotlightShowcase({ tk, lang }: { tk: Tokens; lang: Lang }) {
             (e.target as HTMLImageElement).src = course.fallbackImg;
           }}
           alt={course.titleBn}
-          style={{ width: 100, height: 75, borderRadius: 12, objectFit: 'cover' }}
+          style={{ width: 90, height: 75, borderRadius: 12, objectFit: 'contain', background: '#fff', padding: 4 }}
         />
         <div>
-          <span style={{ color: '#ff2a6d', fontSize: 10, fontWeight: 900, fontFamily: SANS }}>
-            🔥 FEATURED COURSE
+          <span style={{ color: '#ff9900', fontSize: 10, fontWeight: 900, fontFamily: SANS }}>
+            🔥 FEATURED TRAVEL PRODUCT
           </span>
           <h3 style={{ fontFamily: BEN, fontWeight: 800, fontSize: 17, color: '#fff', margin: '2px 0' }}>
             {T(lang, course.titleBn, course.titleEn)}
@@ -373,7 +403,7 @@ function SpotlightShowcase({ tk, lang }: { tk: Tokens; lang: Lang }) {
           cursor: 'pointer',
         }}
       >
-        {T(lang, 'কোর্স দেখুন ➔', 'View Course ➔')}
+        {T(lang, 'এখনই কিনুন ➔', 'Buy Now ➔')}
       </button>
     </div>
   );
@@ -381,7 +411,7 @@ function SpotlightShowcase({ tk, lang }: { tk: Tokens; lang: Lang }) {
 
 // ── 4. Slim Strip ──────────────────────────────────────────────────────────
 function SlimStrip({ tk, lang }: { tk: Tokens; lang: Lang }) {
-  const course = COURSES[1];
+  const course = COURSES[2];
   return (
     <div
       onClick={() => window.open(course.url, '_blank', 'noopener,noreferrer')}
@@ -406,19 +436,19 @@ function SlimStrip({ tk, lang }: { tk: Tokens; lang: Lang }) {
             (e.target as HTMLImageElement).src = course.fallbackImg;
           }}
           alt={course.titleBn}
-          style={{ width: 44, height: 34, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }}
+          style={{ width: 44, height: 34, borderRadius: 6, objectFit: 'contain', background: '#fff', padding: 2, flexShrink: 0 }}
         />
         <div style={{ minWidth: 0 }}>
           <div style={{ fontFamily: BEN, fontWeight: 800, fontSize: 13, color: '#fff', truncate: 'ellipsis' }}>
             {T(lang, course.titleBn, course.titleEn)}
           </div>
           <div style={{ fontFamily: BEN, fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
-            by মুনজেরিন শহীদ
+            Brand: DEER
           </div>
         </div>
       </div>
       <span style={{ color: '#00f0ff', fontWeight: 800, fontSize: 13, whiteSpace: 'nowrap' }}>
-        {T(lang, 'ভর্তি হন ➔', 'Enroll ➔')}
+        {T(lang, 'কিনুন ➔', 'Buy ➔')}
       </span>
     </div>
   );
@@ -428,7 +458,7 @@ function SlimStrip({ tk, lang }: { tk: Tokens; lang: Lang }) {
 export function AffiliateBanner({
   tk,
   lang,
-  course = 'both',
+  course = 'all',
   variant = 'auto',
   route,
   compact = false,
