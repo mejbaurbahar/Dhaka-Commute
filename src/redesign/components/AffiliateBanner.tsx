@@ -75,181 +75,218 @@ export interface AffiliateBannerProps {
   className?: string;
 }
 
-// ── 1. Slider / Carousel Banner ──────────────────────────────────────────────
+// ── 1. Slider / Carousel Banner — slides left-to-right every 1 second ────────
 function AffiliateSlider({ tk, lang }: { tk: Tokens; lang: Lang }) {
-  const [index, setIndex] = useState(0);
+  const total = COURSES.length;
+  // We keep track of which slide the track is currently showing (0-based)
+  const [current, setCurrent] = useState(0);
+  // sliding: true while the CSS transition is in progress
+  const [sliding, setSliding] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const course = COURSES[index];
-  const [imgSrc, setImgSrc] = useState(course.localImg);
+  const [imgSrcs, setImgSrcs] = useState<string[]>(COURSES.map((c) => c.localImg));
 
-  useEffect(() => {
-    setImgSrc(COURSES[index].localImg);
-  }, [index]);
-
+  // Auto-advance every 1 second
   useEffect(() => {
     if (hovered) return;
     const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % COURSES.length);
-    }, 4500);
+      setSliding(true);
+    }, 1000);
     return () => clearInterval(timer);
   }, [hovered]);
 
-  const handleClick = () => {
-    window.open(course.url, '_blank', 'noopener,noreferrer');
+  // When sliding starts, after transition ends (0.5s) update the index
+  useEffect(() => {
+    if (!sliding) return;
+    const t = setTimeout(() => {
+      setCurrent((prev) => (prev + 1) % total);
+      setSliding(false);
+    }, 500);
+    return () => clearTimeout(t);
+  }, [sliding, total]);
+
+  const handleImgError = (i: number) => {
+    setImgSrcs((prev) => {
+      const next = [...prev];
+      next[i] = COURSES[i].fallbackImg;
+      return next;
+    });
   };
 
-  const btnText = T(lang, course.btnTextBn || 'এখনই দেখুন', course.btnTextEn || 'View Now');
+  const goTo = (i: number) => {
+    if (i === current) return;
+    setCurrent(i);
+  };
+
+  const course = COURSES[current];
 
   return (
     <div
-      onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        cursor: 'pointer',
         borderRadius: 20,
         overflow: 'hidden',
-        background: hovered
-          ? 'linear-gradient(135deg, #09132e 0%, #0d214d 50%, #092e5c 100%)'
-          : 'linear-gradient(135deg, #050b1a 0%, #081738 50%, #062247 100%)',
-        border: `2px solid ${hovered ? '#00f0ff' : 'rgba(0,240,255,0.3)'}`,
-        boxShadow: hovered
-          ? '0 12px 36px rgba(0,240,255,0.3)'
-          : '0 6px 24px rgba(0,0,0,0.4)',
-        transition: 'all 0.25s ease',
-        padding: '16px 20px',
+        background: 'linear-gradient(135deg, #050b1a 0%, #081738 50%, #062247 100%)',
+        border: '2px solid rgba(0,240,255,0.3)',
+        boxShadow: '0 6px 24px rgba(0,0,0,0.4)',
         position: 'relative',
         width: '100%',
         boxSizing: 'border-box',
       }}
     >
+      {/* Sliding track — holds all slides in a row */}
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
-          gap: 16,
-          flexWrap: 'wrap',
+          width: `${total * 100}%`,
+          transform: `translateX(-${(current * 100) / total}%)`,
+          transition: sliding ? 'transform 0.5s cubic-bezier(0.4,0,0.2,1)' : 'none',
         }}
       >
-        <div
-          style={{
-            position: 'relative',
-            width: 120,
-            height: 90,
-            borderRadius: 14,
-            overflow: 'hidden',
-            flexShrink: 0,
-            boxShadow: '0 6px 16px rgba(0,0,0,0.5)',
-            background: '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 4,
-          }}
-        >
-          <img
-            src={imgSrc}
-            onError={() => setImgSrc(course.fallbackImg)}
-            alt={course.titleBn}
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-          />
-          <span
-            style={{
-              position: 'absolute',
-              top: 6,
-              left: 6,
-              background: course.badge === 'BESTSELLER' ? '#ff2a6d' : course.badge === 'HOT DEAL' ? '#ff9900' : '#00c8f0',
-              color: '#fff',
-              fontFamily: SANS,
-              fontWeight: 900,
-              fontSize: 8,
-              padding: '2px 6px',
-              borderRadius: 4,
-            }}
-          >
-            {course.badge}
-          </span>
-        </div>
-
-        <div style={{ flex: '1 1 200px', minWidth: 0 }}>
+        {COURSES.map((c, i) => (
           <div
+            key={c.id}
+            onClick={() => window.open(c.url, '_blank', 'noopener,noreferrer')}
             style={{
-              fontFamily: SANS,
-              fontSize: 10,
-              fontWeight: 800,
-              color: '#00f0ff',
-              letterSpacing: 1,
-              marginBottom: 2,
-            }}
-          >
-            {course.rating} · {course.learners}
-          </div>
-          <h3
-            style={{
-              fontFamily: BEN,
-              fontWeight: 800,
-              fontSize: 18,
-              color: '#fff',
-              margin: '0 0 4px',
-            }}
-          >
-            {T(lang, course.titleBn, course.titleEn)}
-          </h3>
-          <p
-            style={{
-              fontFamily: BEN,
-              fontSize: 13,
-              color: 'rgba(255,255,255,0.85)',
-              margin: 0,
-            }}
-          >
-            {T(lang, course.subBn, course.subEn)}
-          </p>
-        </div>
-
-        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button
-            type="button"
-            onClick={handleClick}
-            style={{
-              background: 'linear-gradient(135deg, #00f0ff 0%, #0070f0 100%)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 12,
-              padding: '10px 18px',
-              fontFamily: BEN,
-              fontWeight: 800,
-              fontSize: 14,
+              width: `${100 / total}%`,
+              flexShrink: 0,
               cursor: 'pointer',
-              boxShadow: '0 4px 14px rgba(0,240,255,0.35)',
+              padding: '16px 20px',
+              boxSizing: 'border-box',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              flexWrap: 'wrap',
             }}
           >
-            {btnText} ➔
-          </button>
-        </div>
+            {/* Thumbnail */}
+            <div
+              style={{
+                position: 'relative',
+                width: 120,
+                height: 90,
+                borderRadius: 14,
+                overflow: 'hidden',
+                flexShrink: 0,
+                boxShadow: '0 6px 16px rgba(0,0,0,0.5)',
+                background: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 4,
+              }}
+            >
+              <img
+                src={imgSrcs[i]}
+                onError={() => handleImgError(i)}
+                alt={c.titleBn}
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
+              <span
+                style={{
+                  position: 'absolute',
+                  top: 6,
+                  left: 6,
+                  background:
+                    c.badge === 'BESTSELLER' ? '#ff2a6d'
+                    : c.badge === 'HOT DEAL' ? '#ff9900'
+                    : '#00c8f0',
+                  color: '#fff',
+                  fontFamily: SANS,
+                  fontWeight: 900,
+                  fontSize: 8,
+                  padding: '2px 6px',
+                  borderRadius: 4,
+                }}
+              >
+                {c.badge}
+              </span>
+            </div>
+
+            {/* Text */}
+            <div style={{ flex: '1 1 180px', minWidth: 0 }}>
+              <div
+                style={{
+                  fontFamily: SANS,
+                  fontSize: 10,
+                  fontWeight: 800,
+                  color: '#00f0ff',
+                  letterSpacing: 1,
+                  marginBottom: 2,
+                }}
+              >
+                {c.rating} · {c.learners}
+              </div>
+              <h3
+                style={{
+                  fontFamily: BEN,
+                  fontWeight: 800,
+                  fontSize: 18,
+                  color: '#fff',
+                  margin: '0 0 4px',
+                }}
+              >
+                {T(lang, c.titleBn, c.titleEn)}
+              </h3>
+              <p
+                style={{
+                  fontFamily: BEN,
+                  fontSize: 13,
+                  color: 'rgba(255,255,255,0.85)',
+                  margin: 0,
+                }}
+              >
+                {T(lang, c.subBn, c.subEn)}
+              </p>
+            </div>
+
+            {/* CTA */}
+            <div style={{ flexShrink: 0 }}>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(c.url, '_blank', 'noopener,noreferrer');
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, #00f0ff 0%, #0070f0 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 12,
+                  padding: '10px 18px',
+                  fontFamily: BEN,
+                  fontWeight: 800,
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(0,240,255,0.35)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {T(lang, c.btnTextBn || 'দেখুন', c.btnTextEn || 'View')} ➔
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Dots navigation */}
+      {/* Dot indicators */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'center',
           gap: 6,
-          marginTop: 12,
+          paddingBottom: 12,
         }}
       >
         {COURSES.map((_, i) => (
           <span
             key={i}
-            onClick={(e) => {
-              e.stopPropagation();
-              setIndex(i);
-            }}
+            onClick={() => goTo(i)}
             style={{
-              width: i === index ? 22 : 7,
+              width: i === current ? 22 : 7,
               height: 7,
               borderRadius: 999,
-              background: i === index ? '#00f0ff' : 'rgba(255,255,255,0.3)',
+              background: i === current ? '#00f0ff' : 'rgba(255,255,255,0.3)',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
             }}
