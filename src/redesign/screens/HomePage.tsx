@@ -11,6 +11,7 @@ import { Icon } from '../components/Icons';
 import { Pill } from '../components/Pill';
 import { Bus3D, MiniVehicle, TravelHeroScene } from '../components/Vehicles3D';
 import { KJFooter as KJFooterComponent } from '../components/KJFooter';
+import { AffiliateBanner } from '../components/AffiliateBanner';
 import { NativeAdSection as NativeAdSectionReal } from '../components/AdComponents';
 import { STATIONS, BUS_DATA, METRO_STATIONS as REAL_METRO_STATIONS } from '../../../constants';
 import { BD_TRAIN_ROUTES, TRAIN_STATIONS } from '../../../data/bangladeshTrainData';
@@ -2291,6 +2292,11 @@ export function HomePage({
 
         {/* ── Multiplex ad — no wrapper padding when slot is empty ── */}
         <AdSlot tk={tk} lang={lang} kind="multiplex" />
+
+        {/* ── Affiliate banner ── */}
+        <div style={{ padding: isMobile ? '0 14px 18px' : '0 24px 24px', maxWidth: 800, margin: '0 auto', width: '100%', boxSizing: 'border-box' as const }}>
+          <AffiliateBanner tk={tk} lang={lang} compact={isMobile} />
+        </div>
 
         {/* ── Footer ── */}
         <KJFooterComponent tk={tk} lang={lang} isMobile={isMobile} onNav={onNav}/>

@@ -3,6 +3,7 @@ import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang, chipBtn } from '../tokens';
 import { TopBar } from '../components/TopBar';
 import { MobileTabBar } from '../components/MobileTabBar';
 import { KJFooter } from '../components/KJFooter';
+import { AffiliateBanner } from '../components/AffiliateBanner';
 // AIFab rendered by KoyJaboApp shell
 
 export interface PageShellProps {
@@ -95,6 +96,13 @@ export function PageShell({
       <main style={{ position: 'relative', zIndex: 1, paddingBottom: isMobile ? 130 : 0 }}>
         {children}
       </main>
+
+      {/* Affiliate banner — shown on all pages except AI chat */}
+      {route !== 'ai' && (
+        <div style={{ padding: isMobile ? '0 14px 18px' : '0 24px 24px', maxWidth: 800, margin: '0 auto', width: '100%', boxSizing: 'border-box' as const }}>
+          <AffiliateBanner tk={tk} lang={lang} compact={isMobile} />
+        </div>
+      )}
 
       {/* Footer — hidden on AI chat page entirely */}
       {route !== 'ai' && (
