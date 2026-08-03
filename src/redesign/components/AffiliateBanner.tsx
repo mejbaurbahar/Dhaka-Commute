@@ -1,106 +1,126 @@
 import React, { useState } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 
-const AFFILIATE_URL = 'https://rkmri.co/00oMTAyRMISe/';
-const AFFILIATE_IMAGE = '/images/spoken-english-affiliate.jpg';
-const FALLBACK_IMAGE = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7ggR7qjHddhAVpSNO0vzd3EFe8z1eguVWSBoxogYKZg&s=10';
+export interface CourseData {
+  id: 'spoken-english' | 'vocabulary';
+  titleBn: string;
+  titleEn: string;
+  subBn: string;
+  subEn: string;
+  url: string;
+  localImg: string;
+  fallbackImg: string;
+  badge: string;
+}
+
+export const COURSES: CourseData[] = [
+  {
+    id: 'spoken-english',
+    titleBn: 'ঘরে বসে Spoken English',
+    titleEn: 'Spoken English at Home',
+    subBn: 'Grammar শেখা ছাড়াই ইংরেজি বলার উপায় — by মুনজেরিন শহীদ',
+    subEn: 'Speak English without learning grammar — by Munzereen Shahid',
+    url: 'https://rkmri.co/00oMTAyRMISe/',
+    localImg: '/images/spoken-english-affiliate.jpg',
+    fallbackImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7ggR7qjHddhAVpSNO0vzd3EFe8z1eguVWSBoxogYKZg&s=10',
+    badge: 'BESTSELLER',
+  },
+  {
+    id: 'vocabulary',
+    titleBn: 'সবার জন্য Vocabulary',
+    titleEn: 'Vocabulary for Everyone',
+    subBn: 'মুখস্থ করা ছাড়াই Vocabulary শিখুন — by মুনজেরিন শহীদ',
+    subEn: 'Learn Vocabulary without memorizing — by Munzereen Shahid',
+    url: 'https://rkmri.co/pol0oM0MEoey/',
+    localImg: '/images/vocabulary-affiliate.jpg',
+    fallbackImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNmXmgbu_8kA5DQ4ZrPpxxIEeUDlJM0kbdJzobzNa3kw&s=10',
+    badge: 'POPULAR',
+  },
+];
 
 export interface AffiliateBannerProps {
   tk: Tokens;
   lang: Lang;
+  course?: 'spoken-english' | 'vocabulary' | 'both';
   variant?: 'hero' | 'mid' | 'compact';
-  compact?: boolean; // backwards compatibility
+  compact?: boolean;
   className?: string;
 }
 
-export function AffiliateBanner({
+function CourseCard({
+  course,
   tk,
   lang,
   variant,
-  compact = false,
-  className = '',
-}: AffiliateBannerProps) {
+}: {
+  course: CourseData;
+  tk: Tokens;
+  lang: Lang;
+  variant: 'hero' | 'mid' | 'compact';
+}) {
   const [hovered, setHovered] = useState(false);
-  const [imgSrc, setImgSrc] = useState(AFFILIATE_IMAGE);
+  const [imgSrc, setImgSrc] = useState(course.localImg);
 
-  const activeVariant = variant || (compact ? 'compact' : 'mid');
-
-  const handleClick = () => {
-    window.open(AFFILIATE_URL, '_blank', 'noopener,noreferrer');
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(course.url, '_blank', 'noopener,noreferrer');
   };
 
   const handleImgError = () => {
-    if (imgSrc !== FALLBACK_IMAGE) {
-      setImgSrc(FALLBACK_IMAGE);
+    if (imgSrc !== course.fallbackImg) {
+      setImgSrc(course.fallbackImg);
     }
   };
 
-  if (activeVariant === 'hero') {
+  if (variant === 'hero') {
     return (
       <div
         onClick={handleClick}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className={`kj-affiliate-hero ${className}`}
         style={{
           cursor: 'pointer',
-          borderRadius: 20,
+          borderRadius: 18,
           overflow: 'hidden',
           background: hovered
             ? 'linear-gradient(135deg, #09132e 0%, #0d214d 50%, #092e5c 100%)'
             : 'linear-gradient(135deg, #050b1a 0%, #081738 50%, #062247 100%)',
           border: `2px solid ${hovered ? '#00f0ff' : 'rgba(0,240,255,0.3)'}`,
           boxShadow: hovered
-            ? '0 12px 40px rgba(0,240,255,0.3), 0 0 20px rgba(0,240,255,0.15)'
-            : '0 6px 24px rgba(0,0,0,0.4)',
-          transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+            ? '0 10px 32px rgba(0,240,255,0.3), 0 0 16px rgba(0,240,255,0.15)'
+            : '0 4px 20px rgba(0,0,0,0.4)',
+          transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
           width: '100%',
           boxSizing: 'border-box',
           position: 'relative',
-          padding: '16px',
+          padding: '14px 16px',
           transform: hovered ? 'translateY(-2px)' : 'none',
         }}
       >
-        {/* Glow ambient background */}
-        <div
-          style={{
-            position: 'absolute',
-            top: -40,
-            right: -40,
-            width: 180,
-            height: 180,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(0,240,255,0.18) 0%, transparent 70%)',
-            pointerEvents: 'none',
-          }}
-        />
-
         <div
           style={{
             display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
             alignItems: 'center',
-            gap: 16,
+            gap: 14,
           }}
         >
-          {/* Course Thumbnail Image */}
+          {/* Thumbnail */}
           <div
             style={{
               position: 'relative',
-              width: 130,
-              height: 95,
-              borderRadius: 14,
+              width: 110,
+              height: 82,
+              borderRadius: 12,
               overflow: 'hidden',
               flexShrink: 0,
-              boxShadow: '0 6px 18px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.15)',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.5)',
               background: '#09152b',
             }}
           >
             <img
               src={imgSrc}
               onError={handleImgError}
-              alt="ঘরে বসে Spoken English by মুনজেরিন শহীদ"
+              alt={course.titleBn}
               style={{
                 width: '100%',
                 height: '100%',
@@ -112,60 +132,53 @@ export function AffiliateBanner({
             <span
               style={{
                 position: 'absolute',
-                top: 6,
-                left: 6,
-                background: '#ff2a6d',
+                top: 5,
+                left: 5,
+                background: course.badge === 'BESTSELLER' ? '#ff2a6d' : '#00c8f0',
                 color: '#fff',
                 fontFamily: SANS,
                 fontWeight: 900,
-                fontSize: 9,
-                padding: '2px 6px',
+                fontSize: 8,
+                padding: '2px 5px',
                 borderRadius: 4,
                 textTransform: 'uppercase',
-                letterSpacing: 0.5,
               }}
             >
-              BESTSELLER
+              {course.badge}
             </span>
           </div>
 
           {/* Details */}
-          <div style={{ flex: '1 1 200px', minWidth: 0 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <h3
               style={{
                 fontFamily: BEN,
                 fontWeight: 800,
-                fontSize: 18,
+                fontSize: 16,
                 color: '#ffffff',
                 lineHeight: 1.25,
-                margin: '0 0 6px 0',
+                margin: '0 0 4px 0',
               }}
             >
-              {T(lang, 'ঘরে বসে Spoken English', 'Spoken English at Home')}
+              {T(lang, course.titleBn, course.titleEn)}
             </h3>
 
             <p
               style={{
                 fontFamily: BEN,
-                fontSize: 13,
+                fontSize: 12,
                 color: 'rgba(255,255,255,0.85)',
                 margin: 0,
                 fontWeight: 600,
                 lineHeight: 1.35,
               }}
             >
-              Grammar শেখা ছাড়াই ইংরেজি বলার উপায় — <span style={{ color: '#00f0ff', fontWeight: 700 }}>by মুনজেরিন শহীদ</span>
+              {T(lang, course.subBn, course.subEn)}
             </p>
           </div>
 
-          {/* Action button */}
-          <div
-            style={{
-              flexShrink: 0,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
+          {/* CTA */}
+          <div style={{ flexShrink: 0 }}>
             <button
               type="button"
               onClick={handleClick}
@@ -175,212 +188,159 @@ export function AffiliateBanner({
                   : 'linear-gradient(135deg, #00c8f0 0%, #0050d0 100%)',
                 color: '#ffffff',
                 border: 'none',
-                borderRadius: 12,
-                padding: '12px 20px',
+                borderRadius: 10,
+                padding: '10px 16px',
                 fontFamily: BEN,
                 fontWeight: 800,
-                fontSize: 14,
+                fontSize: 13,
                 cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(0,200,240,0.4)',
+                boxShadow: '0 4px 12px rgba(0,200,240,0.35)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8,
+                gap: 6,
                 transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
               }}
             >
               <span>{T(lang, 'এখনই ভর্তি হন', 'Enroll Now')}</span>
-              <span style={{ fontSize: 16 }}>➔</span>
+              <span style={{ fontSize: 14 }}>➔</span>
             </button>
           </div>
         </div>
-        <style>{`
-          @keyframes kj-affiliate-pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.85); }
-          }
-        `}</style>
       </div>
     );
   }
 
-  if (activeVariant === 'mid') {
-    return (
-      <div
-        onClick={handleClick}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className={`kj-affiliate-mid ${className}`}
-        style={{
-          cursor: 'pointer',
-          borderRadius: 16,
-          overflow: 'hidden',
-          background: hovered
-            ? 'linear-gradient(135deg, #0c1836 0%, #0e2754 100%)'
-            : 'linear-gradient(135deg, #081026 0%, #0a1b3d 100%)',
-          border: `1.5px solid ${hovered ? '#00f0ff' : 'rgba(0,240,255,0.25)'}`,
-          boxShadow: hovered
-            ? '0 8px 30px rgba(0,240,255,0.22)'
-            : '0 4px 16px rgba(0,0,0,0.3)',
-          transition: 'all 0.22s ease',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 14,
-          padding: '12px 16px',
-          width: '100%',
-          boxSizing: 'border-box',
-          position: 'relative',
-          transform: hovered ? 'translateY(-1px)' : 'none',
-        }}
-      >
-        {/* Course Thumbnail Image */}
-        <div
-          style={{
-            position: 'relative',
-            width: 80,
-            height: 60,
-            borderRadius: 10,
-            overflow: 'hidden',
-            flexShrink: 0,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-            background: '#09152b',
-          }}
-        >
-          <img
-            src={imgSrc}
-            onError={handleImgError}
-            alt="Spoken English by Munzereen Shahid"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          />
-        </div>
-
-        {/* Text */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              fontFamily: BEN,
-              fontWeight: 800,
-              fontSize: 15,
-              color: '#ffffff',
-              lineHeight: 1.25,
-              marginBottom: 2,
-            }}
-          >
-            {T(lang, 'ঘরে বসে Spoken English', 'Spoken English at Home')}
-          </div>
-
-          <div
-            style={{
-              fontFamily: BEN,
-              fontSize: 12,
-              color: 'rgba(255,255,255,0.75)',
-              lineHeight: 1.3,
-            }}
-          >
-            Grammar শেখা ছাড়াই ইংরেজি বলুন — by মুনজেরিন শহীদ
-          </div>
-        </div>
-
-        {/* CTA Button */}
-        <div style={{ flexShrink: 0 }}>
-          <span
-            style={{
-              background: hovered ? '#00f0ff' : 'rgba(0,240,255,0.18)',
-              color: hovered ? '#050b1a' : '#00f0ff',
-              border: `1px solid ${hovered ? '#00f0ff' : 'rgba(0,240,255,0.4)'}`,
-              borderRadius: 10,
-              padding: '8px 14px',
-              fontFamily: BEN,
-              fontWeight: 800,
-              fontSize: 13,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 5,
-              transition: 'all 0.2s ease',
-            }}
-          >
-            {T(lang, 'অফার দেখুন', 'View Offer')} ➔
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  // Compact variant
+  // Mid or Compact variant
   return (
     <div
       onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`kj-affiliate-compact ${className}`}
       style={{
         cursor: 'pointer',
-        borderRadius: 12,
+        borderRadius: 14,
         overflow: 'hidden',
         background: hovered
-          ? 'linear-gradient(135deg, #0d1b3a 0%, #0d2959 100%)'
-          : 'linear-gradient(135deg, #091229 0%, #0a1d42 100%)',
-        border: `1px solid ${hovered ? '#00f0ff' : 'rgba(0,240,255,0.25)'}`,
+          ? 'linear-gradient(135deg, #0c1836 0%, #0e2754 100%)'
+          : 'linear-gradient(135deg, #081026 0%, #0a1b3d 100%)',
+        border: `1.5px solid ${hovered ? '#00f0ff' : 'rgba(0,240,255,0.25)'}`,
         boxShadow: hovered
-          ? '0 6px 20px rgba(0,240,255,0.2)'
-          : '0 3px 12px rgba(0,0,0,0.3)',
-        transition: 'all 0.2s ease',
+          ? '0 6px 24px rgba(0,240,255,0.22)'
+          : '0 4px 14px rgba(0,0,0,0.3)',
+        transition: 'all 0.22s ease',
         display: 'flex',
         alignItems: 'center',
-        gap: 10,
-        padding: '8px 12px',
+        gap: 12,
+        padding: '10px 14px',
         width: '100%',
         boxSizing: 'border-box',
+        transform: hovered ? 'translateY(-1px)' : 'none',
       }}
     >
       <img
         src={imgSrc}
         onError={handleImgError}
-        alt="Spoken English by Munzereen Shahid"
+        alt={course.titleBn}
         style={{
-          width: 50,
-          height: 40,
+          width: 70,
+          height: 52,
           borderRadius: 8,
           objectFit: 'cover',
           flexShrink: 0,
+          boxShadow: '0 3px 10px rgba(0,0,0,0.4)',
         }}
       />
+
       <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{
             fontFamily: BEN,
             fontWeight: 800,
-            fontSize: 13,
+            fontSize: 14,
             color: '#ffffff',
-            lineHeight: 1.2,
-            truncate: 'ellipsis',
+            lineHeight: 1.25,
+            marginBottom: 2,
           }}
         >
-          {T(lang, 'ঘরে বসে Spoken English', 'Spoken English at Home')}
+          {T(lang, course.titleBn, course.titleEn)}
         </div>
+
         <div
           style={{
             fontFamily: BEN,
             fontSize: 11,
-            color: 'rgba(255,255,255,0.7)',
+            color: 'rgba(255,255,255,0.75)',
+            lineHeight: 1.3,
           }}
         >
-          by মুনজেরিন শহীদ
+          {T(lang, course.subBn, course.subEn)}
         </div>
       </div>
-      <div
-        style={{
-          color: '#00f0ff',
-          fontSize: 16,
-          fontWeight: 800,
-          flexShrink: 0,
-        }}
-      >
-        ➔
+
+      <div style={{ flexShrink: 0 }}>
+        <span
+          style={{
+            background: hovered ? '#00f0ff' : 'rgba(0,240,255,0.18)',
+            color: hovered ? '#050b1a' : '#00f0ff',
+            border: `1px solid ${hovered ? '#00f0ff' : 'rgba(0,240,255,0.4)'}`,
+            borderRadius: 8,
+            padding: '6px 12px',
+            fontFamily: BEN,
+            fontWeight: 800,
+            fontSize: 12,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            transition: 'all 0.2s ease',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {T(lang, 'অফার দেখুন', 'View Offer')} ➔
+        </span>
       </div>
+    </div>
+  );
+}
+
+export function AffiliateBanner({
+  tk,
+  lang,
+  course = 'both',
+  variant,
+  compact = false,
+  className = '',
+}: AffiliateBannerProps) {
+  const activeVariant = variant || (compact ? 'compact' : 'mid');
+
+  const selectedCourses =
+    course === 'both'
+      ? COURSES
+      : COURSES.filter((c) => c.id === course);
+
+  return (
+    <div
+      className={`kj-affiliate-container ${className}`}
+      style={{
+        display: 'grid',
+        gridTemplateColumns:
+          selectedCourses.length > 1
+            ? 'repeat(auto-fit, minmax(300px, 1fr))'
+            : '1fr',
+        gap: 12,
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
+      {selectedCourses.map((c) => (
+        <CourseCard
+          key={c.id}
+          course={c}
+          tk={tk}
+          lang={lang}
+          variant={activeVariant}
+        />
+      ))}
     </div>
   );
 }
