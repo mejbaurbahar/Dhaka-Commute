@@ -2161,6 +2161,11 @@ export function HomePage({
           </details>
         </div>
 
+        {/* ── Top Affiliate Banner (Hero) ── */}
+        <div style={section}>
+          <AffiliateBanner tk={tk} lang={lang} variant="hero" />
+        </div>
+
         {/* ── KoyJabo Deals banner ── */}
         <div style={section}>
           <PromoBanner tk={tk} lang={lang} page="home" onNav={onNav} />
@@ -2188,10 +2193,6 @@ export function HomePage({
                 tile={tile}
                 lang={lang}
                 onClick={() => {
-                  // Navigate to the tile's hub page so the click actually
-                  // opens that section instead of just changing the search
-                  // mode at the top of Home (which felt like "nothing
-                  // happened" to users).
                   onNav(tile.route);
                 }}
               />
@@ -2229,6 +2230,11 @@ export function HomePage({
             onAction={() => onNav('metro-hub')}
           />
           <MetroLiveStrip tk={tk} lang={lang} isMobile={isMobile} />
+        </div>
+
+        {/* ── Middle Affiliate Banner ── */}
+        <div style={section}>
+          <AffiliateBanner tk={tk} lang={lang} variant="mid" />
         </div>
 
         {/* ── Government service poster ads ── */}
@@ -2293,9 +2299,9 @@ export function HomePage({
         {/* ── Multiplex ad — no wrapper padding when slot is empty ── */}
         <AdSlot tk={tk} lang={lang} kind="multiplex" />
 
-        {/* ── Affiliate banner ── */}
-        <div style={{ padding: isMobile ? '0 14px 18px' : '0 24px 24px', maxWidth: 800, margin: '0 auto', width: '100%', boxSizing: 'border-box' as const }}>
-          <AffiliateBanner tk={tk} lang={lang} compact={isMobile} />
+        {/* ── Bottom Affiliate banner (Hero) ── */}
+        <div style={{ padding: isMobile ? '0 14px 18px' : '0 24px 24px', maxWidth: 1120, margin: '0 auto', width: '100%', boxSizing: 'border-box' as const }}>
+          <AffiliateBanner tk={tk} lang={lang} variant="hero" />
         </div>
 
         {/* ── Footer ── */}
