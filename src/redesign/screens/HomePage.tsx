@@ -2229,9 +2229,9 @@ export function HomePage({
           <MetroLiveStrip tk={tk} lang={lang} isMobile={isMobile} />
         </div>
 
-        {/* ── Middle Affiliate Banner ── */}
+        {/* ── Middle Affiliate Slider Banner ── */}
         <div style={section}>
-          <AffiliateBanner tk={tk} lang={lang} variant="mid" />
+          <AffiliateBanner tk={tk} lang={lang} variant="slider" />
         </div>
 
         {/* ── Government service poster ads ── */}

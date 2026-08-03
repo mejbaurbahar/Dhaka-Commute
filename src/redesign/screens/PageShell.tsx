@@ -99,10 +99,10 @@ export function PageShell({
         {children}
       </main>
 
-      {/* Bottom Affiliate banner — shown on all pages except AI chat */}
+      {/* Bottom Affiliate banner — custom per-page UI style */}
       {route !== 'ai' && (
         <div style={{ padding: isMobile ? '0 14px 18px' : '0 24px 24px', maxWidth: 1120, margin: '0 auto', width: '100%', boxSizing: 'border-box' as const }}>
-          <AffiliateBanner tk={tk} lang={lang} variant="hero" />
+          <AffiliateBanner tk={tk} lang={lang} variant="auto" route={route} />
         </div>
       )}
 
