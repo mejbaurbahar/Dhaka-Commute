@@ -131,50 +131,14 @@ export function AffiliateBanner({
 
           {/* Details */}
           <div style={{ flex: '1 1 200px', minWidth: 0 }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                background: 'rgba(0,240,255,0.12)',
-                border: '1px solid rgba(0,240,255,0.3)',
-                borderRadius: 999,
-                padding: '3px 10px',
-                marginBottom: 6,
-              }}
-            >
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: '50%',
-                  background: '#00f0ff',
-                  boxShadow: '0 0 8px #00f0ff',
-                  animation: 'kj-affiliate-pulse 1.5s ease-in-out infinite',
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: SANS,
-                  fontSize: 10,
-                  fontWeight: 800,
-                  letterSpacing: 1,
-                  color: '#00f0ff',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {T(lang, 'স্পনসরড ডিল · 10 Minute School', 'SPONSORED OFFER · 10 MINUTE SCHOOL')}
-              </span>
-            </div>
-
             <h3
               style={{
                 fontFamily: BEN,
                 fontWeight: 800,
-                fontSize: 17,
+                fontSize: 18,
                 color: '#ffffff',
                 lineHeight: 1.25,
-                margin: '0 0 4px 0',
+                margin: '0 0 6px 0',
               }}
             >
               {T(lang, 'ঘরে বসে Spoken English', 'Spoken English at Home')}
@@ -297,44 +261,12 @@ export function AffiliateBanner({
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 4,
-              background: 'rgba(0,240,255,0.12)',
-              border: '1px solid rgba(0,240,255,0.25)',
-              borderRadius: 999,
-              padding: '2px 7px',
-              marginBottom: 3,
-            }}
-          >
-            <span
-              style={{
-                width: 5,
-                height: 5,
-                borderRadius: '50%',
-                background: '#00f0ff',
-              }}
-            />
-            <span
-              style={{
-                fontFamily: SANS,
-                fontSize: 9,
-                fontWeight: 800,
-                color: '#00f0ff',
-                letterSpacing: 0.8,
-              }}
-            >
-              {T(lang, 'স্পনসরড', 'SPONSORED')}
-            </span>
-          </div>
-
-          <div
-            style={{
               fontFamily: BEN,
               fontWeight: 800,
-              fontSize: 14,
+              fontSize: 15,
               color: '#ffffff',
               lineHeight: 1.25,
+              marginBottom: 2,
             }}
           >
             {T(lang, 'ঘরে বসে Spoken English', 'Spoken English at Home')}

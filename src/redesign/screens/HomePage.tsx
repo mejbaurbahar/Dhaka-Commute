@@ -2161,10 +2161,7 @@ export function HomePage({
           </details>
         </div>
 
-        {/* ── Top Affiliate Banner (Hero) ── */}
-        <div style={section}>
-          <AffiliateBanner tk={tk} lang={lang} variant="hero" />
-        </div>
+
 
         {/* ── KoyJabo Deals banner ── */}
         <div style={section}>

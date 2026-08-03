@@ -92,12 +92,7 @@ export function PageShell({
         </div>
       )}
 
-      {/* Top Affiliate Banner — shown on pages except AI chat */}
-      {route !== 'ai' && (
-        <div style={{ padding: isMobile ? '12px 14px 0' : '16px 24px 0', maxWidth: 1120, margin: '0 auto', width: '100%', boxSizing: 'border-box' as const }}>
-          <AffiliateBanner tk={tk} lang={lang} variant="mid" />
-        </div>
-      )}
+
 
       {/* Scrollable main content — paddingBottom on mobile to clear fixed tab bar (67px) + anchor ad (50px) */}
       <main style={{ position: 'relative', zIndex: 1, paddingBottom: isMobile ? 130 : 0 }}>
