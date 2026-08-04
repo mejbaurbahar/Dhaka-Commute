@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getDtcaTrackerSnapshot, DtcaTrackerSnapshot } from '../services/dtcaTrackerService'
-import '../components/styles/DTCApanel.css'
+import './styles/DTCApanel.css'
 
 const OFFICIAL_URL = 'https://buskothay.com/dtca-bus-tracking/';
 

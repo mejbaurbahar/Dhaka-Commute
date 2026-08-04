@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bus, Zap, Bot, Sparkles, ArrowRight, Heart, Phone } from 'lucide-react';
+import DTCApanel from './DTCApanel';
 import { MiniVehicle, type VehicleKind } from './design/Vehicles3D';
 import SponsoredAdSlot from './SponsoredAdSlot';
 import { AdIntentRow, NativeAdSection } from './AdSurfaces';
@@ -211,6 +212,11 @@ const HomeRightPanel: React.FC<HomeRightPanelProps> = ({
 
         {/* Right column: AI card + Emergency + Ad */}
         <div className="flex flex-col gap-4">
+
+          {/* DTCA snapshot / quick tracker */}
+          <div>
+            <DTCApanel />
+          </div>
 
           {/* AI card */}
           <div
