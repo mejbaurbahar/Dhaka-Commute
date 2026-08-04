@@ -765,7 +765,7 @@ const findMetroRoute = (query: string, isBn: boolean): string => {
     : `🚇 **Metro Rail (MRT Line 6):** Runs from Uttara North to Motijheel.\n\n**Stations:** ${stationList}.\n**Timing:** 7:10 AM - 8:40 PM.`;
 };
 
-const findIntercityRoute = (query: string, fromContextDistrict?: string): string => {
+const findIntercityRoute = async (query: string, fromContextDistrict?: string): Promise<string> => {
   const lowerQuery = normalize(query);
   const isBn = /[\u0980-\u09FF]/.test(query);
 
@@ -789,8 +789,13 @@ const findIntercityRoute = (query: string, fromContextDistrict?: string): string
     const from = sorted[0];
     const to = sorted[1];
 
-    const routeData = getOfflineIntercityData(from, to, isBn ? 'bn' : 'en');
-    return routeData.result;
+    try {
+      const routeData = await getOfflineIntercityData(from, to, isBn ? 'bn' : 'en');
+      if (routeData && routeData.result) return routeData.result;
+    } catch (e) {
+      // ignore
+    }
+    return '';
   }
 
   // Handle single location mention with navigation intent
@@ -802,8 +807,13 @@ const findIntercityRoute = (query: string, fromContextDistrict?: string): string
       const from = (fromContextDistrict && fromContextDistrict !== to)
         ? fromContextDistrict
         : (to === "Dhaka" ? "Chattogram" : "Dhaka");
-      const routeData = getOfflineIntercityData(from, to, isBn ? 'bn' : 'en');
-      return routeData.result;
+      try {
+        const routeData = await getOfflineIntercityData(from, to, isBn ? 'bn' : 'en');
+        if (routeData && routeData.result) return routeData.result;
+      } catch (e) {
+        // ignore
+      }
+      return '';
     }
   }
 
@@ -1866,7 +1876,7 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
       // If classifyIntent found intercity locations (districts/cities), use intercity data.
       // Graph engine (Dijkstra) only handles local Dhaka routes — don't let it answer intercity.
       if (fromLoc && toLoc) {
-        const intercityResult = findIntercityRoute(query, _gpsDistrict);
+        const intercityResult = await findIntercityRoute(query, _gpsDistrict);
         if (intercityResult && intercityResult.length > 80) {
           return intercityResult;
         }
@@ -2101,7 +2111,7 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
     lowerQuery.includes("বাস");
 
   if (isIntercityQuery) {
-    const intercityRes = findIntercityRoute(query, _gpsDistrict);
+    const intercityRes = await findIntercityRoute(query, _gpsDistrict);
     if (intercityRes) responseParts.push(intercityRes);
   }
 

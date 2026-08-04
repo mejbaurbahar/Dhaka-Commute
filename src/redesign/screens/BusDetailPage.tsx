@@ -8,8 +8,9 @@ import { BUS_DATA, STATIONS } from '../../../constants';
 import BusRouteMap from '../../../components/BusRouteMap';
 import BusRating from '../../../components/BusRating';
 import BusPhotoGallery from '../../../components/BusPhotoGallery';
+import BusLiveTracking from '../../../components/BusLiveTracking';
 import EmergencyHelplineModal from '../../../components/EmergencyHelplineModal';
-import { getBusRatings, BusRatingSummary } from '../../../services/communityDataService';
+import { getBusRatings, BusRatingSummary, getBusLiveLocation, type BusLocationData } from '../../../services/communityDataService';
 import { earnCoins } from '../utils/koyCoinService';
 import type { UserLocation } from '../../../types';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
@@ -79,7 +80,10 @@ export function BusDetailPage(props: Props) {
   const [showRating, setShowRating] = useState(false);
   const [showPhotos, setShowPhotos] = useState(false);
   const [showHelpline, setShowHelpline] = useState(false);
+  const [showLiveTracking, setShowLiveTracking] = useState(false);
   const [ratingSummary, setRatingSummary] = useState<BusRatingSummary | null>(null);
+  const [liveLocationData, setLiveLocationData] = useState<BusLocationData | null>(null);
+  const [liveLocationLoading, setLiveLocationLoading] = useState(true);
 
   const realStops = useMemo(() => {
     const stopsInOrder = isRouteReversed ? [...bus.stops].reverse() : bus.stops;
@@ -112,6 +116,24 @@ export function BusDetailPage(props: Props) {
   }, [bus.id]);
 
   useEffect(() => {
+    let alive = true;
+    setLiveLocationLoading(true);
+    getBusLiveLocation(bus.id)
+      .then(data => {
+        if (alive) setLiveLocationData(data);
+      })
+      .catch(() => {
+        if (alive) setLiveLocationData(null);
+      })
+      .finally(() => {
+        if (alive) setLiveLocationLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [bus.id]);
+
+  useEffect(() => {
     if (!navigator.geolocation) return;
     if (localStorage.getItem('kj-location-consent') !== 'yes') return;
     const id = navigator.geolocation.watchPosition(
@@ -140,6 +162,22 @@ export function BusDetailPage(props: Props) {
         </div>
       </div>
           <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
+    </PageShell>
+  );
+
+  if (showLiveTracking) return (
+    <PageShell {...props} canBack>
+      <div style={{ padding:isMobile?'16px 12px 100px':'24px 40px 80px', maxWidth:980, margin:'0 auto' }}>
+        <div style={{ ...card(18), padding:0, overflow:'hidden', minHeight:isMobile?'calc(100vh - 140px)':'calc(100vh - 190px)', display:'flex' }}>
+          <BusLiveTracking
+            busId={bus.id}
+            busName={lang === 'bn' ? bus.bnName : bus.name}
+            stops={realStops.map(stop => ({ id: stop.id, name: lang === 'bn' ? stop.bn : stop.en }))}
+            onBack={() => setShowLiveTracking(false)}
+          />
+        </div>
+      </div>
+      <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
     </PageShell>
   );
 
@@ -213,6 +251,36 @@ export function BusDetailPage(props: Props) {
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div style={{ ...card(18),marginBottom:16 }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:10, marginBottom:12 }}>
+                <div>
+                  <div style={{ fontFamily:BEN,fontWeight:700,fontSize:15,color:tk.text }}>{T(lang,'লাইভ লোকেশন','Live location')}</div>
+                  <div style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint,marginTop:2 }}>
+                    {liveLocationLoading ? T(lang,'লোড হচ্ছে...','Loading...') : (liveLocationData?.reports?.length ? T(lang,'সর্বশেষ রিপোর্ট','Latest reported stop') : T(lang,'এখনও কোনো লাইভ রিপোর্ট নেই','No live reports yet'))}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowLiveTracking(true)}
+                  style={{ border:'none', borderRadius:999, padding:'8px 12px', background:tk.primary, color:'#fff', fontFamily:SANS, fontWeight:700, fontSize:12, cursor:'pointer' }}
+                >
+                  {T(lang,'দেখুন','View')}
+                </button>
+              </div>
+              {liveLocationLoading ? (
+                <div style={{ background:tk.panelMuted,borderRadius:12,padding:'10px 12px',color:tk.textFaint,fontFamily:SANS,fontSize:12 }}>{T(lang,'লাইভ অবস্থান লোড হচ্ছে...','Loading live location...')}</div>
+              ) : liveLocationData?.reports?.length ? (
+                <div style={{ background:tk.panelMuted,borderRadius:12,padding:'10px 12px',border:`1px solid ${tk.primary}22` }}>
+                  <div style={{ fontFamily:BEN,fontWeight:700,color:tk.text }}>{liveLocationData.reports[liveLocationData.reports.length - 1].stopName}</div>
+                  <div style={{ fontFamily:SANS,fontSize:12,color:tk.textDim,marginTop:6 }}>
+                    {liveLocationData.reports[liveLocationData.reports.length - 1].heading ? `${T(lang,'দিকে','toward')} ${liveLocationData.reports[liveLocationData.reports.length - 1].heading} · ` : ''}
+                    {new Date(liveLocationData.reports[liveLocationData.reports.length - 1].timestamp).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' })}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ background:tk.panelMuted,borderRadius:12,padding:'10px 12px',color:tk.textDim,fontFamily:SANS,fontSize:12 }}>{T(lang,'এই রুটে এখনো কেউ লাইভ অবস্থান শেয়ার করেনি।','No one has shared a live update for this route yet.')}</div>
+              )}
             </div>
 
             <div style={{ ...card(18),marginBottom:16 }}>

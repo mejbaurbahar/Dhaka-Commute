@@ -16,7 +16,6 @@ import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { trackBusSearch, trackRouteSearch, getUserHistory } from '../../../services/analyticsService';
 import { earnCoins } from '../utils/koyCoinService';
 import { getDtcaTrackerSnapshot } from '../../../services/dtcaTrackerService';
-import { useEffect } from 'react';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
