@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 
+export type AffiliateCourseId = 'spoken-english' | 'vocabulary' | 'deer-scooter' | 'oneplus-headphone' | 'riversong-watch';
+
 export interface CourseData {
-  id: 'spoken-english' | 'vocabulary' | 'deer-scooter';
+  id: AffiliateCourseId;
   titleBn: string;
   titleEn: string;
   subBn: string;
@@ -63,12 +65,42 @@ export const COURSES: CourseData[] = [
     btnTextBn: 'এখনই কিনুন',
     btnTextEn: 'Buy Now',
   },
+  {
+    id: 'oneplus-headphone',
+    titleBn: 'OnePlus Bullets Wireless Z2',
+    titleEn: 'OnePlus Bullets Wireless Z2',
+    subBn: 'Brand: OnePlus — Beyond Bassic Acoustic Red',
+    subEn: 'Brand: OnePlus — Beyond Bassic Acoustic Red',
+    url: 'https://rkmri.co/EeMNl2epReyl/',
+    localImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/OnePlus_Bullets_Wireless_Z2_In_Ear_Headp-OnePlus-c05a7-274115.jpg',
+    fallbackImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/OnePlus_Bullets_Wireless_Z2_In_Ear_Headp-OnePlus-c05a7-274115.jpg',
+    badge: 'NEW',
+    rating: '4.7 ★',
+    learners: 'ব্র্যান্ড ফেভারিট',
+    btnTextBn: 'এখনই কিনুন',
+    btnTextEn: 'Buy Now',
+  },
+  {
+    id: 'riversong-watch',
+    titleBn: 'RIVERSONG Motive 3 PRO SW46',
+    titleEn: 'RIVERSONG Motive 3 PRO SW46',
+    subBn: 'Brand: Riversong — Waterproof Smart Watch Black',
+    subEn: 'Brand: Riversong — Waterproof Smart Watch Black',
+    url: 'https://rkmri.co/lp0R2EESARoo/',
+    localImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/RIVERSONG_Motive_3_PRO_SW46_Waterproof_S-Riversong-eaa15-274341.png',
+    fallbackImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/RIVERSONG_Motive_3_PRO_SW46_Waterproof_S-Riversong-eaa15-274341.png',
+    badge: 'TRENDING',
+    rating: '4.8 ★',
+    learners: 'ওয়াটারপ্রুফ স্মার্টওয়াচ',
+    btnTextBn: 'এখনই কিনুন',
+    btnTextEn: 'Buy Now',
+  },
 ];
 
 export interface AffiliateBannerProps {
   tk: Tokens;
   lang: Lang;
-  course?: 'spoken-english' | 'vocabulary' | 'deer-scooter' | 'all';
+  course?: AffiliateCourseId | 'all';
   variant?: 'auto' | 'slider' | 'glass-stack' | 'spotlight' | 'strip' | 'grid' | 'hero' | 'mid' | 'compact';
   route?: string;
   compact?: boolean;
@@ -476,7 +508,17 @@ function SlimStrip({ tk, lang }: { tk: Tokens; lang: Lang }) {
           style={{ width: 44, height: 34, borderRadius: 6, objectFit: 'contain', background: '#fff', padding: 2, flexShrink: 0 }}
         />
         <div style={{ minWidth: 0 }}>
-          <div style={{ fontFamily: BEN, fontWeight: 800, fontSize: 13, color: '#fff', truncate: 'ellipsis' }}>
+          <div
+            style={{
+              fontFamily: BEN,
+              fontWeight: 800,
+              fontSize: 13,
+              color: '#fff',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {T(lang, course.titleBn, course.titleEn)}
           </div>
           <div style={{ fontFamily: BEN, fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
