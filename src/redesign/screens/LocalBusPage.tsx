@@ -14,7 +14,6 @@ import { BUS_DATA, STATIONS } from '../../../constants';
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { trackBusSearch, trackRouteSearch, getUserHistory } from '../../../services/analyticsService';
-import { getDtcaTrackerSnapshot } from '../../../services/dtcaTrackerService';
 import { enhancedBusSearch } from '../../../services/searchService';
 import { earnCoins } from '../utils/koyCoinService';
 
@@ -162,25 +161,6 @@ export function LocalBusPage(props: Props) {
   }, [searchQuery, fromInput, toInput, hasSearched]);
 
   const [mode, setMode] = useState<'buses'|'transit'>('buses');
-  const [dtcaSnapshot, setDtcaSnapshot] = useState<Awaited<ReturnType<typeof getDtcaTrackerSnapshot>> | null>(null);
-  const [dtcaRefreshing, setDtcaRefreshing] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    const load = async () => {
-      const snapshot = await getDtcaTrackerSnapshot();
-      if (active) setDtcaSnapshot(snapshot);
-    };
-    void load();
-    return () => { active = false; };
-  }, []);
-
-  const refreshDtca = useCallback(async () => {
-    setDtcaRefreshing(true);
-    const snapshot = await getDtcaTrackerSnapshot(true);
-    setDtcaSnapshot(snapshot);
-    setDtcaRefreshing(false);
-  }, []);
 
   type Leg = { kind:'walk'|'bus'|'metro'; label:string; from:string; to:string; min:number; col:string; detail?:string; };
   type Journey = { id:number; total:string; fare:string; from:string; to:string; legs:Leg[]; };
@@ -283,29 +263,15 @@ export function LocalBusPage(props: Props) {
           <div style={{ ...card(16), marginBottom:16, boxShadow:tk.shadow }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12, marginBottom:10 }}>
               <div>
-                <div style={{ fontFamily:SANS, fontSize:10, fontWeight:700, letterSpacing:1.2, color:tk.primary, textTransform:'uppercase' }}>{T(lang,'ঢাকা চাকা / DTCA','Dhaka Chaka / DTCA')}</div>
-                <div style={{ fontFamily:BEN, fontSize:15, fontWeight:700, color:tk.text }}>{T(lang,'লাইভ ট্র্যাকার শর্টকাট','Live tracker shortcut')}</div>
+                <div style={{ fontFamily:SANS, fontSize:10, fontWeight:700, letterSpacing:1.2, color:tk.primary, textTransform:'uppercase' }}>{T(lang,'লাইভ ট্র্যাকার','Live tracker')}</div>
+                <div style={{ fontFamily:BEN, fontSize:15, fontWeight:700, color:tk.text }}>{T(lang,'আফিশিয়াল লাইভ ভিউ','Official live view')}</div>
               </div>
-              <button onClick={refreshDtca} disabled={dtcaRefreshing} style={{ border:`1px solid ${tk.line}`, background:tk.panelMuted, color:tk.textDim, borderRadius:999, padding:'8px 12px', fontFamily:SANS, fontSize:12, fontWeight:700, cursor:'pointer' }}>
-                {dtcaRefreshing ? T(lang,'আপডেট হচ্ছে…','Refreshing…') : T(lang,'রিফ্রেশ','Refresh')}
-              </button>
+              <a href="https://buskothay.com/dtca-bus-tracking/" target="_blank" rel="noreferrer" style={{ background:`linear-gradient(135deg, ${tk.primary}, ${tk.primaryDeep})`, color:tk.primaryInk, borderRadius:999, padding:'8px 12px', fontFamily:SANS, fontSize:12, fontWeight:700, textDecoration:'none' }}>
+                {T(lang,'ওপেন করুন','Open')}
+              </a>
             </div>
             <div style={{ borderRadius:14, padding:14, background:tk.primarySoft, border:`1px solid ${tk.primary}22` }}>
-              <div style={{ fontFamily:SANS, fontSize:11, fontWeight:700, color:tk.primary, marginBottom:6 }}>{dtcaSnapshot?.title || T(lang,'DTCA Panel','DTCA Panel')}</div>
-              <div style={{ fontFamily:BEN, fontSize:14, color:tk.text, marginBottom:6 }}>{dtcaSnapshot?.summary || T(lang,'স্ক্র্যাপের মাধ্যমে সাম্প্রতিক স্ট্যাটাস দেখানো হচ্ছে।','A recent snapshot is shown here.')}</div>
-              {dtcaSnapshot?.busHints?.length ? (
-                <ul style={{ margin:0, paddingLeft:16, color:tk.textDim, fontFamily:SANS, fontSize:12, lineHeight:1.6 }}>
-                  {dtcaSnapshot.busHints.map(hint => <li key={hint}>{hint}</li>)}
-                </ul>
-              ) : null}
-              <div style={{ marginTop:10, display:'flex', gap:8, flexWrap:'wrap' }}>
-                <a href="https://buskothay.com/dtca-bus-tracking/" target="_blank" rel="noreferrer" style={{ background:`linear-gradient(135deg, ${tk.primary}, ${tk.primaryDeep})`, color:tk.primaryInk, borderRadius:999, padding:'8px 12px', fontFamily:SANS, fontSize:12, fontWeight:700, textDecoration:'none' }}>
-                  {T(lang,'অফিশিয়াল ট্র্যাকার খুলুন','Open official tracker')}
-                </a>
-                <span style={{ border:`1px solid ${tk.line}`, background:tk.panel, color:tk.textDim, borderRadius:999, padding:'8px 12px', fontFamily:SANS, fontSize:12, fontWeight:600 }}>
-                  {dtcaSnapshot?.status === 'ok' ? T(lang,'স্ন্যাপশট রেডি','Snapshot ready') : dtcaSnapshot?.status === 'offline' ? T(lang,'অফলাইন, আগের ডাটা দেখানো হচ্ছে','Offline, showing last saved snapshot') : T(lang,'স্ন্যাপশট মোড','Snapshot mode')}
-                </span>
-              </div>
+              <div style={{ fontFamily:SANS, fontSize:14, color:tk.text, marginBottom:6 }}>{T(lang,'সর্বশেষ লাইভ ম্যাপের জন্য অফিসিয়াল DTCA ট্র্যাকার খুলুন।','Open the official DTCA tracker for the latest live map.')}</div>
             </div>
           </div>
 

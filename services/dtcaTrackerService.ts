@@ -1,6 +1,8 @@
 const STORAGE_KEY = 'koyjabo_dtca_tracker_snapshot_v1';
 const REFRESH_MS = 5 * 60 * 1000;
 const TARGET_URL = 'https://buskothay.com/dtca-bus-tracking/';
+const DTCA_BACKEND = 'https://dtca-backend.bondstein.net/api/v1/passenger';
+const DTCA_API_TOKEN = import.meta.env.VITE_DTCA_API_TOKEN as string | undefined;
 
 export interface DtcaTrackerSnapshot {
   sourceUrl: string;
@@ -11,6 +13,48 @@ export interface DtcaTrackerSnapshot {
   summary: string;
   busHints: string[];
   snippet: string;
+}
+
+export interface DtcaStoppage {
+  id: string;
+  name: string;
+  routePlanId?: string;
+  [key: string]: unknown;
+}
+
+export interface DtcaVehicleLocationPath {
+  v_identifier: string;
+  time_inserted: string;
+  engine_status: boolean;
+  lat: number;
+  lng: number;
+  nearby_l_name: string;
+  landmark_distance: number;
+  speed_status: number;
+  device_status: string;
+  sub_ended_at: string;
+  [key: string]: unknown;
+}
+
+export interface DtcaVehicleLocation {
+  id: number;
+  v_username: string;
+  customer_name: string;
+  v_identifier: string;
+  landmark_distance: number;
+  time_inserted: string;
+  device_status: string;
+  v_group: string;
+  v_vrn: string;
+  path: DtcaVehicleLocationPath[];
+  last_engine_on: string;
+  last_engine_off: string;
+  vehicle_name: string | null;
+  vehicle_type: string;
+  popup_image: string | null;
+  marker_image: string | null;
+  bst_id: string;
+  [key: string]: unknown;
 }
 
 function formatLabel(ts: number): string {
@@ -61,6 +105,47 @@ async function fetchSnapshotFromWorker(): Promise<DtcaTrackerSnapshot | null> {
   if (!response.ok) return null;
   const payload = await response.json().catch(() => null);
   return normalizeSnapshot(payload as Partial<DtcaTrackerSnapshot> | null, 'ok');
+}
+
+async function fetchDtcaBackendJson<T>(path: string): Promise<T> {
+  const headers = new Headers({ Accept: 'application/json' });
+  if (DTCA_API_TOKEN) {
+    headers.set('Authorization', `Bearer ${DTCA_API_TOKEN}`);
+  }
+
+  const response = await fetch(`${DTCA_BACKEND}/${path}?_t=${Date.now()}`, {
+    method: 'GET',
+    headers,
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`DTCA backend request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+export interface DtcaStoppageListResponse {
+  code: number;
+  app_message: string;
+  user_message: string;
+  stoppages: DtcaStoppage[];
+}
+
+export async function getDtcaStoppageList(): Promise<DtcaStoppageListResponse> {
+  return fetchDtcaBackendJson<DtcaStoppageListResponse>('route-plans/stoppage-list');
+}
+
+export interface DtcaAllVehicleLocationResponse {
+  code: number;
+  app_message: string;
+  user_message: string;
+  vehicles: DtcaVehicleLocation[];
+}
+
+export async function getDtcaAllVehicleLocation(): Promise<DtcaAllVehicleLocationResponse> {
+  return fetchDtcaBackendJson<DtcaAllVehicleLocationResponse>('all-vehicle-location');
 }
 
 async function fetchSnapshotFromStaticFile(): Promise<DtcaTrackerSnapshot | null> {
