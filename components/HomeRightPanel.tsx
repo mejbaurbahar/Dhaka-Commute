@@ -213,6 +213,25 @@ const HomeRightPanel: React.FC<HomeRightPanelProps> = ({
         {/* Right column: AI card + Emergency + Ad */}
         <div className="flex flex-col gap-4">
 
+          {/* DTCA quick-launch card */}
+          <div className="dc-card rounded-[20px] p-4 border border-kj-line bg-kj-panel-muted">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div>
+                <p className="text-sm font-bold text-kj-text">{lbl('DTCA tracker', 'DTCA ট্র্যাকার')}</p>
+                <p className="text-[12px] text-kj-text-dim">{lbl('Live map shortcut', 'লাইভ ম্যাপ শর্টকাট')}</p>
+              </div>
+              <span className="text-lg">🚌</span>
+            </div>
+            <a
+              className="inline-flex items-center justify-center w-full rounded-xl bg-kj-primary text-white text-sm font-semibold py-2 hover:opacity-95 transition"
+              href="https://buskothay.com/dtca-bus-tracking/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {lbl('Open official live map', 'অফিশিয়াল লাইভ ম্যাপে যান')}
+            </a>
+          </div>
+
           {/* DTCA snapshot / quick tracker */}
           <div>
             <DTCApanel />
