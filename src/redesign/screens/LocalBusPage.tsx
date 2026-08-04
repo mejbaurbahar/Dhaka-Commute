@@ -14,8 +14,9 @@ import { BUS_DATA, STATIONS } from '../../../constants';
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { trackBusSearch, trackRouteSearch, getUserHistory } from '../../../services/analyticsService';
-import { earnCoins } from '../utils/koyCoinService';
 import { getDtcaTrackerSnapshot } from '../../../services/dtcaTrackerService';
+import { enhancedBusSearch } from '../../../services/searchService';
+import { earnCoins } from '../utils/koyCoinService';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -109,31 +110,54 @@ export function LocalBusPage(props: Props) {
     const qNorm = norm(query);
     return r.routeString.toLowerCase().includes(q) ||
       r.name.toLowerCase().includes(q) ||
-      r.bnName.includes(q) ||
+      (r.bnName?.toLowerCase() ?? '').includes(q) ||
       r.stops.some(s => s.toLowerCase().includes(qNorm) || s.toLowerCase().includes(q));
   };
 
   // Real bus route filtering — only active after search button click
   const filteredRoutes = useMemo(() => {
     if (!hasSearched) return BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10);
-    const q = searchQuery.trim().toLowerCase();
+    const q = searchQuery.trim();
     const f = fromInput.trim();
     const t = toInput.trim();
+
     if (q) {
+      const result = enhancedBusSearch(q);
+      if (result.buses.length > 0) {
+        return result.buses.filter(r => r.active !== false).slice(0, 20);
+      }
+      const lowered = q.toLowerCase();
       return BUS_DATA.filter(r =>
-        r.name.toLowerCase().includes(q) ||
-        r.bnName.toLowerCase().includes(q) ||
-        r.routeString.toLowerCase().includes(q) ||
-        r.type.toLowerCase().includes(q) ||
-        r.stops.some(s => s.toLowerCase().includes(norm(q)))
+        r.name.toLowerCase().includes(lowered) ||
+        (r.bnName?.toLowerCase() ?? '').includes(lowered) ||
+        r.routeString.toLowerCase().includes(lowered) ||
+        r.type.toLowerCase().includes(lowered) ||
+        r.stops.some(s => s.toLowerCase().includes(norm(lowered)))
       ).slice(0, 20);
     }
+
     if (f && t) {
+      const result = enhancedBusSearch(`${f} to ${t}`);
+      if (result.buses.length > 0) {
+        return result.buses.filter(r => r.active !== false).slice(0, 20);
+      }
       const results = BUS_DATA.filter(r => matchesStation(r, f) && matchesStation(r, t)).slice(0, 20);
       if (results.length) return results;
     }
-    if (f) return BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 15);
-    if (t) return BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 15);
+    if (f) {
+      const result = enhancedBusSearch(f);
+      if (result.buses.length > 0) {
+        return result.buses.filter(r => r.active !== false).slice(0, 15);
+      }
+      return BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 15);
+    }
+    if (t) {
+      const result = enhancedBusSearch(t);
+      if (result.buses.length > 0) {
+        return result.buses.filter(r => r.active !== false).slice(0, 15);
+      }
+      return BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 15);
+    }
     return BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10);
   }, [searchQuery, fromInput, toInput, hasSearched]);
 

@@ -11,6 +11,7 @@ import BusPhotoGallery from '../../../components/BusPhotoGallery';
 import BusLiveTracking from '../../../components/BusLiveTracking';
 import EmergencyHelplineModal from '../../../components/EmergencyHelplineModal';
 import { getBusRatings, BusRatingSummary, getBusLiveLocation, type BusLocationData } from '../../../services/communityDataService';
+import { resolveStationIds } from '../../../services/searchService';
 import { earnCoins } from '../utils/koyCoinService';
 import type { UserLocation } from '../../../types';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
@@ -36,14 +37,8 @@ function haversineKm(a: UserLocation, b: UserLocation) {
 
 function resolveStationId(value: string, fallback: string) {
   if (!value) return fallback;
-  const exact = STATIONS[value.toLowerCase()];
-  if (exact) return exact.id;
-  const normalized = value.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return Object.values(STATIONS).find(station =>
-    station.id.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized ||
-    station.name.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized ||
-    (station.bnName || '').toLowerCase().replace(/[^a-z0-9]/g, '') === normalized
-  )?.id || fallback;
+  const resolvedIds = resolveStationIds(value);
+  return resolvedIds.length > 0 ? resolvedIds[0] : fallback;
 }
 
 export function BusDetailPage(props: Props) {

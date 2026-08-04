@@ -7,6 +7,7 @@ import { BUS_DATA, STATIONS } from '../../../constants';
 import { trackBusSearch } from '../../../services/analyticsService';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
 import { Icon } from '../components/Icons';
+import { enhancedBusSearch } from '../../../services/searchService';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:Lang; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -77,13 +78,22 @@ export function RouteResultsV2Page(props: Props) {
 
     // Search/route filter
     if (searchQ) {
-      const q = searchQ.toLowerCase();
-      filtered = filtered.filter(r =>
-        r.name.toLowerCase().includes(q) || r.bnName.toLowerCase().includes(q) ||
-        r.routeString.toLowerCase().includes(q)
-      );
+      const searchResult = enhancedBusSearch(searchQ);
+      if (searchResult.buses.length > 0) {
+        const ids = new Set(searchResult.buses.map(b => b.id));
+        filtered = filtered.filter(r => ids.has(r.id));
+      } else {
+        filtered = [];
+      }
     } else if (fromQ || toQ) {
-      filtered = filtered.filter(r => busMatchesRoute(r, fromQ, toQ));
+      const combined = [fromQ, toQ].filter(Boolean).join(' to ');
+      const searchResult = enhancedBusSearch(combined);
+      if (searchResult.buses.length > 0) {
+        const ids = new Set(searchResult.buses.map(b => b.id));
+        filtered = filtered.filter(r => ids.has(r.id));
+      } else {
+        filtered = filtered.filter(r => busMatchesRoute(r, fromQ, toQ));
+      }
     }
 
     // Non-AC chip (from home)
