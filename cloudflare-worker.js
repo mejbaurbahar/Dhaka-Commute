@@ -579,6 +579,61 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       });
     }
 
+    // ── GET /dtca-snapshot — refresh a lightweight DTCA tracker snapshot ──
+    if (url.pathname === '/dtca-snapshot' || url.pathname === '/dtca-snapshot/') {
+      const trackerUrl = 'https://buskothay.com/dtca-bus-tracking/';
+      try {
+        const upstream = await fetch(trackerUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; KoyJabo/1.0; +https://koyjabo.com)' },
+          redirect: 'follow',
+        });
+        const html = await upstream.text();
+        const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+        const title = titleMatch?.[1]?.trim() || 'DTCA Panel';
+        const text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ' ').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, ' ');
+        const plain = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        const snippet = plain.slice(0, 240) || 'Tracker page reachable.';
+        const keywords = ['bus', 'route', 'live', 'track', 'location', 'dhaka', 'dtca']
+          .filter(keyword => plain.toLowerCase().includes(keyword));
+        const summary = keywords.length > 0
+          ? `The DTCA tracker page updated successfully. The latest snapshot contains ${keywords.slice(0, 4).join(', ')} signals.`
+          : 'The DTCA tracker page was reachable and a lightweight snapshot was generated.';
+        return new Response(JSON.stringify({
+          sourceUrl: trackerUrl,
+          title,
+          fetchedAt: Date.now(),
+          fetchedAtLabel: new Date().toLocaleString(),
+          status: upstream.ok ? 'ok' : 'unsupported',
+          summary,
+          busHints: [
+            'Open the official DTCA tracker for the latest live map',
+            'Use this snapshot as a quick shortcut while the source refreshes',
+          ],
+          snippet,
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+        });
+      } catch {
+        return new Response(JSON.stringify({
+          sourceUrl: trackerUrl,
+          title: 'DTCA Panel',
+          fetchedAt: Date.now(),
+          fetchedAtLabel: new Date().toLocaleString(),
+          status: 'offline',
+          summary: 'The DTCA tracker could not be reached right now, so the last saved snapshot is being reused.',
+          busHints: [
+            'Open the official DTCA tracker for the latest live map',
+            'The app will retry automatically on the next refresh',
+          ],
+          snippet: 'Unable to fetch tracker snapshot at the moment.',
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+        });
+      }
+    }
+
     // Only serve /gh path
     if (url.pathname !== '/gh' && url.pathname !== '/gh/') {
       return new Response('Not found', { status: 404 });

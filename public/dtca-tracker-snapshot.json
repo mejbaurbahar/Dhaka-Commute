@@ -1,0 +1,13 @@
+{
+  "sourceUrl": "https://buskothay.com/dtca-bus-tracking/",
+  "title": "DTCA Panel",
+  "fetchedAt": 1754304000000,
+  "fetchedAtLabel": "2025-08-04 • 00:00",
+  "status": "unsupported",
+  "summary": "The public DTCA tracker page is reachable, but it does not expose a public JSON feed or an iframe-safe live data endpoint. KoyJabo now keeps a refreshable snapshot and opens the official tracker for the latest live view.",
+  "busHints": [
+    "Open the official DTCA tracker for the latest live map",
+    "Use the app card as a quick shortcut to the official experience"
+  ],
+  "snippet": "Live bus data is not available through a public API from this source, so the app uses a snapshot fallback and direct-link access."
+}
