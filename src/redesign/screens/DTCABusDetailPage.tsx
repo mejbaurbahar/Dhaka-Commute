@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { KJ_TOKENS, T, SANS, BEN, N } from '../tokens';
@@ -41,8 +41,16 @@ function statusLabel(status: string, lang: 'bn' | 'en'): string {
   return status;
 }
 
+function distKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 export function DTCABusDetailPage(props: Props) {
-  const { theme, device, lang, params, onBack, canBack } = props;
+  const { theme, device, lang, params } = props;
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
 
@@ -53,6 +61,7 @@ export function DTCABusDetailPage(props: Props) {
   const [routeData, setRouteData] = useState<DtcaRouteDetailsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userLatLng, setUserLatLng] = useState<[number, number] | null>(null);
   const firstLoad = useRef(true);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -60,6 +69,7 @@ export function DTCABusDetailPage(props: Props) {
   const busMarkerRef = useRef<L.Marker | null>(null);
   const routePolylineRef = useRef<L.Polyline | null>(null);
   const userMarkerRef = useRef<L.Marker | null>(null);
+  const userToStopLineRef = useRef<L.Polyline | null>(null);
   const stopMarkersRef = useRef<L.CircleMarker[]>([]);
 
   const card = (p = 16): React.CSSProperties => ({
@@ -107,18 +117,20 @@ export function DTCABusDetailPage(props: Props) {
       busMarkerRef.current = null;
       routePolylineRef.current = null;
       userMarkerRef.current = null;
+      userToStopLineRef.current = null;
       stopMarkersRef.current = [];
     };
   }, []);
 
-  // Track user location on map
+  // Track user location on map + update state
   useEffect(() => {
     if (!navigator.geolocation) return;
     const watchId = navigator.geolocation.watchPosition(
       pos => {
         const map = mapRef.current;
-        if (!map) return;
         const latLng: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+        setUserLatLng(latLng);
+        if (!map) return;
         if (userMarkerRef.current) {
           userMarkerRef.current.setLatLng(latLng);
         } else {
@@ -144,7 +156,6 @@ export function DTCABusDetailPage(props: Props) {
     const map = mapRef.current;
     if (!map || !routeData) return;
 
-    // Polyline
     if (routePolylineRef.current) { map.removeLayer(routePolylineRef.current); routePolylineRef.current = null; }
     if (routeData.path?.length) {
       const coords: [number, number][] = routeData.path.map(p => [p.latitude, p.longitude]);
@@ -152,7 +163,6 @@ export function DTCABusDetailPage(props: Props) {
       if (!liveData) map.fitBounds(L.latLngBounds(coords), { padding: [40, 40] });
     }
 
-    // Stoppage markers
     stopMarkersRef.current.forEach(m => map.removeLayer(m));
     stopMarkersRef.current = [];
     (routeData.stoppages ?? []).forEach((stop, idx) => {
@@ -177,11 +187,14 @@ export function DTCABusDetailPage(props: Props) {
     });
   }, [routeData]);
 
-  // Update stoppage marker colors when live data changes (passed/next)
+  // Update stoppage marker colors + draw user→nearest stop line
   useEffect(() => {
-    if (!liveData || !routeData?.stoppages) return;
-    const passedIds = new Set(liveData.passedStoppageIds ?? []);
-    const nextId = liveData.nextStoppage?.id;
+    const map = mapRef.current;
+    if (!map || !routeData?.stoppages) return;
+
+    const passedIds = new Set(liveData?.passedStoppageIds ?? []);
+    const nextId = liveData?.nextStoppage?.id;
+
     (routeData.stoppages ?? []).forEach((stop, idx) => {
       const marker = stopMarkersRef.current[idx];
       if (!marker) return;
@@ -192,7 +205,36 @@ export function DTCABusDetailPage(props: Props) {
       const fillColor = isNext ? '#3b82f6' : isPassed ? '#9ca3af' : (isFirst || isLast ? '#006a4e' : '#10b981');
       marker.setStyle({ fillColor, radius: isNext ? 10 : (isFirst || isLast ? 9 : 6) });
     });
-  }, [liveData, routeData]);
+
+    // Draw dashed line from user to nearest stoppage
+    if (userLatLng) {
+      const stoppages = routeData.stoppages ?? [];
+      let nearestIdx = -1;
+      let nearestDist = Infinity;
+      stoppages.forEach((stop, idx) => {
+        if (!stop.latitude || !stop.longitude) return;
+        const d = distKm(userLatLng[0], userLatLng[1], stop.latitude, stop.longitude);
+        if (d < nearestDist) { nearestDist = d; nearestIdx = idx; }
+      });
+      if (nearestIdx >= 0) {
+        const stop = stoppages[nearestIdx];
+        const coords: [number, number][] = [userLatLng, [stop.latitude, stop.longitude]];
+        if (userToStopLineRef.current) {
+          (userToStopLineRef.current as L.Polyline).setLatLngs(coords);
+        } else {
+          userToStopLineRef.current = L.polyline(coords, {
+            color: '#3b82f6',
+            weight: 2,
+            opacity: 0.7,
+            dashArray: '6 6',
+          }).addTo(map);
+        }
+      }
+    } else if (userToStopLineRef.current) {
+      map.removeLayer(userToStopLineRef.current);
+      userToStopLineRef.current = null;
+    }
+  }, [liveData, routeData, userLatLng]);
 
   // Update bus marker on live data
   useEffect(() => {
@@ -226,21 +268,23 @@ export function DTCABusDetailPage(props: Props) {
   const etaMins = liveData?.estimatedArrivalMinutes;
   const remaining = liveData?.remainingStoppages ?? 0;
 
+  // Nearest stoppage to user (for journey progress highlight)
+  const nearestStopIdx = useMemo(() => {
+    if (!userLatLng || !stoppages.length) return -1;
+    let best = -1;
+    let bestDist = Infinity;
+    stoppages.forEach((stop, idx) => {
+      if (!stop.latitude || !stop.longitude) return;
+      const d = distKm(userLatLng[0], userLatLng[1], stop.latitude, stop.longitude);
+      if (d < bestDist) { bestDist = d; best = idx; }
+    });
+    return best;
+  }, [userLatLng, stoppages]);
+
   return (
     <PageShell {...props}>
       <div style={{ padding: isMobile ? '0 0 80px' : '0 0 48px' }}>
         <div style={{ padding: isMobile ? '0 16px' : '0 40px', paddingTop: 16 }}>
-
-          {/* Back button */}
-          <button
-            onClick={onBack}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'transparent', border: 'none', color: tk.primary, fontFamily: SANS, fontWeight: 700, fontSize: 13, cursor: 'pointer', padding: '0 0 14px', marginLeft: -4 }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-            {T(lang, 'ফিরে যান', 'Go back')}
-          </button>
 
           {loading && !liveData && (
             <div style={{ ...card(), display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -314,18 +358,21 @@ export function DTCABusDetailPage(props: Props) {
             {[
               { color: '#10b981', label: T(lang, 'বাস', 'Bus') },
               { color: '#3b82f6', label: T(lang, 'পরবর্তী স্টপ', 'Next stop') },
-              { color: '#006a4e', label: T(lang, 'প্রথম/শেষ স্টপ', 'First/last stop') },
+              { color: '#006a4e', label: T(lang, 'প্রথম/শেষ', 'First/last') },
               { color: '#9ca3af', label: T(lang, 'পার হয়েছে', 'Passed') },
-              { color: '#3b82f6', label: T(lang, 'আপনার অবস্থান', 'Your location'), dot: true },
+              { color: '#3b82f6', label: T(lang, 'আপনার অবস্থান', 'Your location'), ring: true },
             ].map((l, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                {l.dot
-                  ? <div style={{ width: 10, height: 10, borderRadius: '50%', background: l.color, border: '2px solid white', boxShadow: `0 0 0 3px ${l.color}44` }} />
-                  : <div style={{ width: 10, height: 10, borderRadius: '50%', background: l.color }} />
-                }
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: l.color, boxShadow: l.ring ? `0 0 0 3px ${l.color}44` : 'none' }} />
                 <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint }}>{l.label}</span>
               </div>
             ))}
+            {userLatLng && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <div style={{ width: 16, height: 1, background: '#3b82f6', borderTop: '2px dashed #3b82f6' }} />
+                <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint }}>{T(lang, 'আপনার কাছের স্টপ', 'Your nearest stop')}</span>
+              </div>
+            )}
           </div>
 
           {/* Journey progress */}
@@ -338,6 +385,7 @@ export function DTCABusDetailPage(props: Props) {
                 {stoppages.map((stop, idx) => {
                   const isPassed = passedIds.has(stop.id);
                   const isNext = stop.id === nextId;
+                  const isNearest = idx === nearestStopIdx;
                   const dotColor = isPassed ? '#9ca3af' : isNext ? '#3b82f6' : tk.line;
                   return (
                     <div key={stop.id ?? idx} style={{ display: 'flex', gap: 14 }}>
@@ -352,13 +400,18 @@ export function DTCABusDetailPage(props: Props) {
                         )}
                       </div>
                       <div style={{ flex: 1, paddingBottom: 12 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ fontFamily: BEN, fontWeight: isNext ? 700 : 500, fontSize: 13, color: isNext ? tk.primary : isPassed ? tk.textFaint : tk.text }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                          <span style={{ fontFamily: BEN, fontWeight: isNext || isNearest ? 700 : 500, fontSize: 13, color: isNext ? tk.primary : isPassed ? tk.textFaint : tk.text }}>
                             {stop.name}
                           </span>
                           {isNext && (
                             <span style={{ background: `${tk.primary}22`, color: tk.primary, borderRadius: 6, padding: '1px 7px', fontFamily: SANS, fontWeight: 700, fontSize: 10 }}>
                               {T(lang, 'পরবর্তী', 'Next')}
+                            </span>
+                          )}
+                          {isNearest && (
+                            <span style={{ background: '#3b82f622', color: '#3b82f6', borderRadius: 6, padding: '1px 7px', fontFamily: SANS, fontWeight: 700, fontSize: 10 }}>
+                              {T(lang, 'আপনার কাছে', 'Nearest')}
                             </span>
                           )}
                           {isPassed && (
