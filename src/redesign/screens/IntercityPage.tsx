@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang, N, Fare } from '../tokens';
 import { AdSlot, NativeAdCard } from '../components/AdSlot';
+import { trackIntercitySearch } from '../../../services/analyticsService';
 import { GovAdBanner } from '../components/GovAdBanner';
 import { GovServiceCards } from '../components/GovServiceCards';
 import { GovAdPoster } from '../components/GovAdPoster';
@@ -545,7 +546,7 @@ export function IntercityPage(props: Props) {
             return (
               <button
                 disabled={!canSearch}
-                onClick={() => { if (!canSearch) return; earnCoins(5,'Intercity search'); setHasSearched(true); document.getElementById('intercity-results')?.scrollIntoView({ behavior:'smooth', block:'start' }); }}
+                onClick={() => { if (!canSearch) return; earnCoins(5,'Intercity search'); trackIntercitySearch(from, to, activeChip); setHasSearched(true); document.getElementById('intercity-results')?.scrollIntoView({ behavior:'smooth', block:'start' }); }}
                 style={{
                   marginTop: 16, width: '100%',
                   background: canSearch ? `linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)` : tk.panelMuted,

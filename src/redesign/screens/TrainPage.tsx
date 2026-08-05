@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
+import { trackTrainSearch } from '../../../services/analyticsService';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
 import { GovAdBanner } from '../components/GovAdBanner';
@@ -585,7 +586,7 @@ export function TrainPage(props: Props) {
                           icon="🚆"
                         />
                       )}
-                    <div onClick={()=>onNav('train-detail',{trainId:t.source.id})} style={{ ...card(14), cursor:'pointer' }}>
+                    <div onClick={()=>{ trackTrainSearch(t.source.id, t.en, t.num, fromStation, toStation); onNav('train-detail',{trainId:t.source.id}); }} style={{ ...card(14), cursor:'pointer' }}>
                       <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:10 }}>
                         <div style={{ width:48, height:48, borderRadius:12, flexShrink:0, background:`linear-gradient(135deg,${t.col[0]},${t.col[1]})`, color:'#fff', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' }}>
                           <span style={{ fontFamily:SANS, fontWeight:800, fontSize:12 }}>{t.num}</span>

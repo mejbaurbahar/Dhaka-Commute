@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
+import { trackMetroSearch } from '../../../services/analyticsService';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
 import { GovAdBanner } from '../components/GovAdBanner';
@@ -218,7 +219,7 @@ export function MetroPage(props: Props) {
                   <div style={{ fontFamily:SANS, fontSize:10, fontWeight:700, opacity:0.8, letterSpacing:1 }}>{N(calcFare.stops, lang)} {T(lang,'স্টেশন','STOPS')}</div>
                 </div>
               ) : (
-                <button disabled={!(fareFrom && fareTo)} onClick={()=>{ if (fareFrom && fareTo) setHasSearched(true); }}
+                <button disabled={!(fareFrom && fareTo)} onClick={()=>{ if (fareFrom && fareTo) { trackMetroSearch(fareFrom, fareTo, calcFare?.fare ?? 0); setHasSearched(true); } }}
                   style={{ background: fareFrom && fareTo ? `linear-gradient(135deg,${tk.primary},${tk.primaryDeep})` : tk.panelMuted, border: fareFrom && fareTo ? 'none' : `1px solid ${tk.line}`, borderRadius:14, padding:'10px 18px', cursor: fareFrom && fareTo ? 'pointer' : 'not-allowed', minWidth:100, color: fareFrom && fareTo ? tk.primaryInk : tk.textFaint, fontFamily:SANS, fontSize:12, fontWeight:700, textAlign:'center', opacity: fareFrom && fareTo ? 1 : 0.6 }}>
                   {T(lang,'ভাড়া দেখুন','Check Fare')}
                 </button>

@@ -1,6 +1,7 @@
 import React, { useRef, useMemo, useState } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
+import { trackFlightSearch } from '../../../services/analyticsService';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
 import { GovAdBanner } from '../components/GovAdBanner';
@@ -168,7 +169,7 @@ export function FlightsPage(props: Props) {
             {(() => {
               const canSearch = !!(fromAirport.trim() || toAirport.trim());
               return (
-                <button disabled={!canSearch} onClick={()=>{ if (!canSearch) return; earnCoins(5, 'Flight search'); setHasSearched(true); document.getElementById('flights-results')?.scrollIntoView({ behavior:'smooth', block:'start' }); }} style={{ background: canSearch?'linear-gradient(135deg,#1e5aa0,#0a1d3a)':tk.panelMuted, color: canSearch?'#fff':tk.textFaint, border:0, borderRadius:14, padding:isMobile?'12px 16px':'10px 22px', fontFamily:SANS, fontWeight:700, fontSize:14, cursor: canSearch?'pointer':'not-allowed', display:'flex', alignItems:'center', justifyContent:'center', gap:8, minHeight:isMobile?48:'auto', boxShadow: canSearch?'0 8px 22px -10px #1e5aa0':'none', marginTop:10, opacity: canSearch?1:0.6 }}>
+                <button disabled={!canSearch} onClick={()=>{ if (!canSearch) return; earnCoins(5, 'Flight search'); trackFlightSearch(fromAirport, toAirport); setHasSearched(true); document.getElementById('flights-results')?.scrollIntoView({ behavior:'smooth', block:'start' }); }} style={{ background: canSearch?'linear-gradient(135deg,#1e5aa0,#0a1d3a)':tk.panelMuted, color: canSearch?'#fff':tk.textFaint, border:0, borderRadius:14, padding:isMobile?'12px 16px':'10px 22px', fontFamily:SANS, fontWeight:700, fontSize:14, cursor: canSearch?'pointer':'not-allowed', display:'flex', alignItems:'center', justifyContent:'center', gap:8, minHeight:isMobile?48:'auto', boxShadow: canSearch?'0 8px 22px -10px #1e5aa0':'none', marginTop:10, opacity: canSearch?1:0.6 }}>
                   <Icon.search s={16}/>{T(lang,'ফ্লাইট খুঁজুন','Find flights')}
                 </button>
               );
