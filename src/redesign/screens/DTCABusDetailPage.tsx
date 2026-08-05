@@ -27,7 +27,6 @@ interface Props {
 
 const DHAKA_CENTER: [number, number] = [23.8103, 90.4125];
 const POLL_MS = 10000;
-const OFFICIAL_URL = 'https://buskothay.com/single-dtca-bus-tracking?identifier=';
 
 function statusColor(status: string): string {
   if (status === 'moving') return '#10b981';
@@ -60,6 +59,7 @@ export function DTCABusDetailPage(props: Props) {
   const mapRef = useRef<L.Map | null>(null);
   const busMarkerRef = useRef<L.Marker | null>(null);
   const routePolylineRef = useRef<L.Polyline | null>(null);
+  const userMarkerRef = useRef<L.Marker | null>(null);
 
   const card = (p = 16): React.CSSProperties => ({
     background: tk.panel,
@@ -105,7 +105,36 @@ export function DTCABusDetailPage(props: Props) {
       mapRef.current = null;
       busMarkerRef.current = null;
       routePolylineRef.current = null;
+      userMarkerRef.current = null;
     };
+  }, []);
+
+  // Track user location on map
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    const watchId = navigator.geolocation.watchPosition(
+      pos => {
+        const map = mapRef.current;
+        if (!map) return;
+        const latLng: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+        if (userMarkerRef.current) {
+          userMarkerRef.current.setLatLng(latLng);
+        } else {
+          const icon = L.divIcon({
+            className: '',
+            html: `<div style="width:16px;height:16px;background:#3b82f6;border:3px solid white;border-radius:50%;box-shadow:0 0 0 6px rgba(59,130,246,.2);margin:-8px 0 0 -8px"></div>`,
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+          });
+          userMarkerRef.current = L.marker(latLng, { icon })
+            .bindTooltip(T(lang, 'আপনি এখানে', 'You are here'), { permanent: false })
+            .addTo(map);
+        }
+      },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 5000 },
+    );
+    return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
   // Draw route polyline when routeData loads
@@ -191,7 +220,9 @@ export function DTCABusDetailPage(props: Props) {
                 {routeName ? (
                   <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{routeName}</div>
                 ) : null}
-                <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>Dhaka Transport Coordination Authority</div>
+                <div style={{ fontFamily: BEN, fontSize: 11, color: tk.textFaint }}>
+                  {T(lang, 'ঢাকা পরিবহন সমন্বয় কর্তৃপক্ষ', 'Dhaka Transport Coordination Authority')}
+                </div>
               </div>
               {busStatus ? (
                 <div style={{ background: `${statusColor(busStatus)}22`, color: statusColor(busStatus), borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 11, flexShrink: 0 }}>
@@ -205,7 +236,7 @@ export function DTCABusDetailPage(props: Props) {
               {[
                 { label: T(lang, 'গতি', 'Speed'), value: `${N(speed, lang)} ${T(lang, 'কিমি/ঘ', 'km/h')}`, color: '#10b981' },
                 { label: T(lang, 'পরবর্তী স্টপ', 'Next stop'), value: nextStopName, color: tk.primary },
-                { label: T(lang, 'ETA', 'ETA'), value: etaMins != null ? `${N(etaMins, lang)} ${T(lang, 'মিনিট', 'min')}` : '—', color: '#f59e0b' },
+                { label: T(lang, 'ইটিএ', 'ETA'), value: etaMins != null ? `${N(etaMins, lang)} ${T(lang, 'মিনিট', 'min')}` : '—', color: '#f59e0b' },
                 { label: T(lang, 'স্টপ বাকি', 'Stops left'), value: `${N(remaining, lang)}`, color: tk.textDim },
               ].map((stat, i) => (
                 <div key={i} style={{ background: tk.panelMuted, borderRadius: 10, padding: '8px 6px', textAlign: 'center' }}>
@@ -227,13 +258,13 @@ export function DTCABusDetailPage(props: Props) {
           {stoppages.length > 0 && (
             <div style={card()}>
               <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 11, color: tk.textFaint, textTransform: 'uppercase', letterSpacing: 1.1, marginBottom: 12 }}>
-                {T(lang, 'যাত্রাপথ', 'Journey progress')}
+                {T(lang, 'যাত্রাপথ', 'Journey Progress')}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {stoppages.map((stop, idx) => {
                   const isPassed = passedIds.has(stop.id);
                   const isNext = stop.id === nextId;
-                  const dotColor = isPassed ? '#9ca3af' : isNext ? '#3b82f6' : '#d1d5db';
+                  const dotColor = isPassed ? '#9ca3af' : isNext ? '#3b82f6' : tk.line;
                   return (
                     <div key={stop.id ?? idx} style={{ display: 'flex', gap: 14 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 18, flexShrink: 0 }}>
@@ -256,7 +287,11 @@ export function DTCABusDetailPage(props: Props) {
                               {T(lang, 'পরবর্তী', 'Next')}
                             </span>
                           )}
-                          {isPassed && <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint }}>✓</span>}
+                          {isPassed && (
+                            <span style={{ background: '#9ca3af18', color: '#9ca3af', borderRadius: 6, padding: '1px 7px', fontFamily: SANS, fontWeight: 700, fontSize: 10 }}>
+                              {T(lang, 'পার হয়েছে', 'Passed')}
+                            </span>
+                          )}
                         </div>
                         {stop.scheduledArrivalTime ? (
                           <div style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint, marginTop: 1 }}>{stop.scheduledArrivalTime}</div>
@@ -268,16 +303,6 @@ export function DTCABusDetailPage(props: Props) {
               </div>
             </div>
           )}
-
-          {/* Official link */}
-          <a
-            href={`${OFFICIAL_URL}${encodeURIComponent(identifier)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'linear-gradient(135deg,#006a4e,#10b981)', color: '#fff', borderRadius: 12, padding: '12px 16px', fontFamily: SANS, fontWeight: 700, fontSize: 13, textDecoration: 'none', marginBottom: 16 }}
-          >
-            {T(lang, 'অফিসিয়াল ট্র্যাকারে দেখুন', 'View on official tracker')} ↗
-          </a>
 
         </div>
       </div>
