@@ -70,11 +70,19 @@ const SECTION_MAP: Record<string, string> = {
   ai: 'ai', favorites: 'saved', history: 'you', settings: 'you',
 };
 
-// Routes that show a back button (detail / leaf pages reached from search results)
+// Routes that show a back button when there is a previous page in the stack.
+// navTab() resets the stack so back never shows on tab-bar navigation — safe to list all non-home routes here.
 const SHOW_BACK_ROUTES = new Set([
+  // detail / leaf pages
   'bus-detail', 'train-detail', 'metro-detail', 'intercity-detail', 'vehicle',
   'rate-review', 'metro-token', 'metro-pass', 'blog-detail',
   'devices', 'results', 'install', 'flight-detail', 'dtca-bus-detail',
+  // transport search / hub pages
+  'bus-hub', 'metro-hub', 'train-hub', 'launch-hub', 'flights-hub', 'truck-hub',
+  'intercity', 'fare',
+  // utility / info pages
+  'favorites', 'history', 'ai', 'settings',
+  'why', 'about', 'blogs', 'qa', 'contact', 'release', 'privacy', 'terms', 'advertise',
 ]);
 
 const ROUTE_PATHS: Record<string, string> = {
