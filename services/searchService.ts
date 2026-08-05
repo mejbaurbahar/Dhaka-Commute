@@ -265,6 +265,33 @@ const LOCATION_ALIASES: Record<string, string[]> = {
 };
 
 /**
+ * Bus operator/brand groups — maps search terms to related bus IDs that should all appear together.
+ * Used when a user searches an operator name (e.g. "Dhakar Chaka") to surface all route variants.
+ */
+const BUS_GROUP_ALIASES: Record<string, string[]> = {
+    'dhakar chaka':  ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+    'dhaka chaka':   ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+    'ঢাকার চাকা':    ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+    'ঢাকা চাকা':     ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+    'gulshan chaka': ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+    'গুলশান চাকা':   ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+};
+
+function expandWithBusGroupAliases(query: string, currentBuses: BusRoute[]): BusRoute[] {
+    const qLower = query.toLowerCase().trim();
+    const matchedIds = new Set<string>();
+    for (const [alias, ids] of Object.entries(BUS_GROUP_ALIASES)) {
+        if (qLower.includes(alias) || alias.includes(qLower)) {
+            ids.forEach(id => matchedIds.add(id));
+        }
+    }
+    if (matchedIds.size === 0) return currentBuses;
+    const existing = new Set(currentBuses.map(b => b.id));
+    const extra = BUS_DATA.filter(b => matchedIds.has(b.id) && !existing.has(b.id));
+    return [...currentBuses, ...extra];
+}
+
+/**
  * Expand query with aliases
  */
 const expandWithAliases = (query: string): string[] => {
@@ -564,8 +591,9 @@ export const enhancedBusSearch = (query: string): SearchResult => {
     });
 
     if (busByName.length > 0) {
+        const buses = expandWithBusGroupAliases(queryTrimmed, busByName);
         return {
-            buses: busByName,
+            buses,
             matchType: 'bus_name',
             searchContext: `Bus matching "${query}"`
         };

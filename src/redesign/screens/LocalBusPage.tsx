@@ -155,6 +155,13 @@ export function LocalBusPage(props: Props) {
     return BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10);
   }, [searchQuery, fromInput, toInput, hasSearched]);
 
+  const DTCA_TERMS = ['dhakar chaka','dhaka chaka','chaka','ঢাকার চাকা','ঢাকা চাকা','gulshan chaka','গুলশান চাকা'];
+  const showInlineDtca = hasSearched && DTCA_TERMS.some(t =>
+    searchQuery.toLowerCase().includes(t) ||
+    fromInput.toLowerCase().includes(t) ||
+    toInput.toLowerCase().includes(t)
+  );
+
   const [mode, setMode] = useState<'buses'|'transit'>('buses');
 
   type Leg = { kind:'walk'|'bus'|'metro'; label:string; from:string; to:string; min:number; col:string; detail?:string; };
@@ -275,6 +282,15 @@ export function LocalBusPage(props: Props) {
             <div>
               {mode === 'buses' ? (
                 <>
+                  {showInlineDtca && (
+                    <div style={{ marginBottom: 14 }}>
+                      <DTCABusListSection
+                        tk={tk}
+                        lang={lang}
+                        onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
+                      />
+                    </div>
+                  )}
                   <SectionHeader tk={tk} lang={lang}
                     title={hasSearched
                       ? T(lang, `${N(filteredRoutes.length,lang)}টি রুট পাওয়া গেছে`, `${N(filteredRoutes.length,lang)} routes found`)

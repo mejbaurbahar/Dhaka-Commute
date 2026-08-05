@@ -11,10 +11,11 @@ import { enhancedBusSearch } from '../../../services/searchService';
 import { DTCABusListSection } from '../components/DTCABusListSection';
 
 const DTCA_STOPPAGES = ['agora','banani','dcc','gulshan 1','gulshan 2','gulshan1','gulshan2','nabisco mor','notun bazar','natun bazar','police plaza','shanta tower'];
+const DTCA_OPERATOR_TERMS = ['dhakar chaka','dhaka chaka','chaka','ঢাকার চাকা','ঢাকা চাকা','gulshan chaka','গুলশান চাকা'];
 function matchesDtcaRoute(q: string): boolean {
   if (!q) return false;
   const lq = q.toLowerCase().trim();
-  return DTCA_STOPPAGES.some(s => lq.includes(s));
+  return DTCA_STOPPAGES.some(s => lq.includes(s)) || DTCA_OPERATOR_TERMS.some(t => lq.includes(t));
 }
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:Lang; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
