@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'koyjabo_dtca_tracker_snapshot_v1';
+const DTCA_TOKEN_KEY = 'kj_dtca_token_v1';
 const REFRESH_MS = 5 * 60 * 1000;
 const TARGET_URL = 'https://buskothay.com/dtca-bus-tracking/';
 const DTCA_BACKEND = 'https://dtca-backend.bondstein.net/api/v1/passenger';
@@ -57,6 +58,167 @@ export interface DtcaVehicleLocation {
   [key: string]: unknown;
 }
 
+// ── Token management ────────────────────────────────────────────────────────
+
+function getStoredDtcaToken(): string | null {
+  try { return localStorage.getItem(DTCA_TOKEN_KEY); } catch { return null; }
+}
+
+export function setStoredDtcaToken(token: string): void {
+  try { localStorage.setItem(DTCA_TOKEN_KEY, token); } catch {}
+}
+
+function clearStoredDtcaToken(): void {
+  try { localStorage.removeItem(DTCA_TOKEN_KEY); } catch {}
+}
+
+export async function dtcaLogin(name: string, phoneNumber: string, cfToken: string): Promise<string> {
+  const response = await fetch(`${DTCA_BACKEND}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ name, phone_number: phoneNumber, cf_token: cfToken }),
+    cache: 'no-store',
+  });
+  if (!response.ok) throw new Error(`Login failed: ${response.status}`);
+  const data = await response.json() as { token: string };
+  setStoredDtcaToken(data.token);
+  vehicleCache = null;
+  return data.token;
+}
+
+// ── Core fetch ──────────────────────────────────────────────────────────────
+
+async function fetchDtcaBackendJson<T>(path: string): Promise<T> {
+  const token = getStoredDtcaToken() || DTCA_API_TOKEN;
+  const headers = new Headers({ Accept: 'application/json' });
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+
+  const response = await fetch(`${DTCA_BACKEND}/${path}`, {
+    method: 'GET',
+    headers,
+    cache: 'no-store',
+  });
+
+  if (response.status === 401) {
+    clearStoredDtcaToken();
+    const err = new Error('DTCA_AUTH_REQUIRED') as Error & { code: string };
+    err.code = 'DTCA_AUTH_REQUIRED';
+    throw err;
+  }
+
+  if (!response.ok) {
+    throw new Error(`DTCA backend request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+// ── Live location ────────────────────────────────────────────────────────────
+
+export interface DtcaLiveLocationData {
+  identifier: string;
+  latitude: number;
+  longitude: number;
+  heading: number;
+  speedKph: number;
+  lastUpdatedAt: string;
+  status: string;
+  passedStoppageIds: string[];
+  nextStoppage: { id: string; name: string; latitude: number; longitude: number } | null;
+  upcomingStoppages: Array<{ id: string; name: string }>;
+  remainingStoppages: number;
+  estimatedArrivalMinutes: number;
+  estimatedArrivalTime: string;
+  distanceToSelectedStoppageKm: number;
+}
+
+export interface DtcaLiveLocationResponse {
+  success: boolean;
+  data: DtcaLiveLocationData;
+}
+
+export async function getDtcaLiveLocation(identifier: string): Promise<DtcaLiveLocationResponse> {
+  return fetchDtcaBackendJson<DtcaLiveLocationResponse>(`route-plans/live-location?identifier=${encodeURIComponent(identifier)}`);
+}
+
+// ── Route details ─────────────────────────────────────────────────────────────
+
+export interface DtcaRouteStop {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  order: number;
+  scheduledArrivalTime: string;
+}
+
+export interface DtcaRouteDetailsData {
+  routeId: string;
+  routeName: string;
+  originName: string;
+  destinationName: string;
+  totalDistanceKm: number;
+  vehicle: {
+    identifier: string;
+    vehicleName: string | null;
+    vehicleNumber: string;
+    vehicleType: string;
+    operatorName: string | null;
+    driverName: string | null;
+    capacity: number | null;
+  };
+  stoppages: DtcaRouteStop[];
+  path: Array<{ latitude: number; longitude: number }>;
+}
+
+export interface DtcaRouteDetailsResponse {
+  success: boolean;
+  data: DtcaRouteDetailsData;
+}
+
+export async function getDtcaRouteDetails(identifier: string): Promise<DtcaRouteDetailsResponse> {
+  return fetchDtcaBackendJson<DtcaRouteDetailsResponse>(`route-plans/route-details?identifier=${encodeURIComponent(identifier)}`);
+}
+
+// ── Vehicle list (with cache) ─────────────────────────────────────────────────
+
+let vehicleCache: { data: DtcaAllVehicleLocationResponse; ts: number } | null = null;
+const VEHICLE_CACHE_MS = 5 * 60 * 1000;
+
+export interface DtcaAllVehicleLocationResponse {
+  code: number;
+  app_message: string;
+  user_message: string;
+  vehicles: DtcaVehicleLocation[];
+}
+
+export async function getDtcaAllVehicleLocation(): Promise<DtcaAllVehicleLocationResponse> {
+  return fetchDtcaBackendJson<DtcaAllVehicleLocationResponse>('all-vehicle-location');
+}
+
+export async function getDtcaAllVehicleLocationCached(): Promise<DtcaAllVehicleLocationResponse> {
+  if (vehicleCache && Date.now() - vehicleCache.ts < VEHICLE_CACHE_MS) return vehicleCache.data;
+  const data = await getDtcaAllVehicleLocation();
+  vehicleCache = { data, ts: Date.now() };
+  return data;
+}
+
+// ── Stoppage list ─────────────────────────────────────────────────────────────
+
+export interface DtcaStoppageListResponse {
+  code: number;
+  app_message: string;
+  user_message: string;
+  stoppages: DtcaStoppage[];
+}
+
+export async function getDtcaStoppageList(): Promise<DtcaStoppageListResponse> {
+  return fetchDtcaBackendJson<DtcaStoppageListResponse>('route-plans/stoppage-list');
+}
+
+// ── Snapshot (legacy/snapshot flow) ──────────────────────────────────────────
+
 function formatLabel(ts: number): string {
   const date = new Date(ts);
   return `${date.toLocaleDateString()} • ${date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
@@ -78,9 +240,7 @@ function writeStoredSnapshot(snapshot: DtcaTrackerSnapshot): void {
   try {
     if (typeof window === 'undefined' || !window.localStorage) return;
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
-  } catch {
-    // Ignore storage failures.
-  }
+  } catch {}
 }
 
 function normalizeSnapshot(payload: Partial<DtcaTrackerSnapshot> | null | undefined, fallbackStatus: DtcaTrackerSnapshot['status'] = 'unsupported'): DtcaTrackerSnapshot {
@@ -107,96 +267,6 @@ async function fetchSnapshotFromWorker(): Promise<DtcaTrackerSnapshot | null> {
   return normalizeSnapshot(payload as Partial<DtcaTrackerSnapshot> | null, 'ok');
 }
 
-async function fetchDtcaBackendJson<T>(path: string): Promise<T> {
-  const headers = new Headers({ Accept: 'application/json' });
-  if (DTCA_API_TOKEN) {
-    headers.set('Authorization', `Bearer ${DTCA_API_TOKEN}`);
-  }
-
-  const response = await fetch(`${DTCA_BACKEND}/${path}?_t=${Date.now()}`, {
-    method: 'GET',
-    headers,
-    cache: 'no-store',
-  });
-
-  if (!response.ok) {
-    throw new Error(`DTCA backend request failed: ${response.status}`);
-  }
-
-  return response.json() as Promise<T>;
-}
-
-export interface DtcaLiveLocationResponse {
-  code: number;
-  vehicle?: {
-    v_vrn?: string;
-    v_identifier?: string;
-    lat?: number;
-    lng?: number;
-    speed?: number;
-    speed_status?: number;
-    device_status?: string;
-    nearby_l_name?: string;
-    time_inserted?: string;
-    customer_name?: string;
-  };
-  route_plan?: {
-    id?: string;
-    name?: string;
-    from_stoppage_name?: string;
-    to_stoppage_name?: string;
-  };
-  next_stoppage?: {
-    name?: string;
-    eta_minutes?: number;
-    distance_km?: number;
-    distance?: number;
-  };
-  remaining_stoppages_count?: number;
-  stoppages?: Array<{
-    name?: string;
-    sequence?: number;
-    status?: string;
-  }>;
-  [key: string]: unknown;
-}
-
-export async function getDtcaLiveLocation(identifier: string): Promise<DtcaLiveLocationResponse> {
-  return fetchDtcaBackendJson<DtcaLiveLocationResponse>(`route-plans/live-location?identifier=${encodeURIComponent(identifier)}`);
-}
-
-let vehicleCache: { data: DtcaAllVehicleLocationResponse; ts: number } | null = null;
-const VEHICLE_CACHE_MS = 5 * 60 * 1000;
-
-export async function getDtcaAllVehicleLocationCached(): Promise<DtcaAllVehicleLocationResponse> {
-  if (vehicleCache && Date.now() - vehicleCache.ts < VEHICLE_CACHE_MS) return vehicleCache.data;
-  const data = await getDtcaAllVehicleLocation();
-  vehicleCache = { data, ts: Date.now() };
-  return data;
-}
-
-export interface DtcaStoppageListResponse {
-  code: number;
-  app_message: string;
-  user_message: string;
-  stoppages: DtcaStoppage[];
-}
-
-export async function getDtcaStoppageList(): Promise<DtcaStoppageListResponse> {
-  return fetchDtcaBackendJson<DtcaStoppageListResponse>('route-plans/stoppage-list');
-}
-
-export interface DtcaAllVehicleLocationResponse {
-  code: number;
-  app_message: string;
-  user_message: string;
-  vehicles: DtcaVehicleLocation[];
-}
-
-export async function getDtcaAllVehicleLocation(): Promise<DtcaAllVehicleLocationResponse> {
-  return fetchDtcaBackendJson<DtcaAllVehicleLocationResponse>('all-vehicle-location');
-}
-
 async function fetchSnapshotFromStaticFile(): Promise<DtcaTrackerSnapshot | null> {
   try {
     const response = await fetch(`/dtca-tracker-snapshot.json?_t=${Date.now()}`, { cache: 'no-store' });
@@ -220,9 +290,7 @@ export async function getDtcaTrackerSnapshot(forceRefresh = false): Promise<Dtca
       writeStoredSnapshot(workerSnapshot);
       return workerSnapshot;
     }
-  } catch {
-    // Fall through to static snapshot.
-  }
+  } catch {}
 
   try {
     const staticSnapshot = await fetchSnapshotFromStaticFile();
@@ -230,9 +298,7 @@ export async function getDtcaTrackerSnapshot(forceRefresh = false): Promise<Dtca
       writeStoredSnapshot(staticSnapshot);
       return staticSnapshot;
     }
-  } catch {
-    // Fall through to cached fallback.
-  }
+  } catch {}
 
   const fallback = normalizeSnapshot(cached, 'offline');
   fallback.summary = cached?.summary || 'The tracker snapshot could not be refreshed right now. The last saved snapshot remains available.';

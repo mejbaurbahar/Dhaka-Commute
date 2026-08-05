@@ -3,7 +3,12 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { KJ_TOKENS, T, SANS, BEN, N } from '../tokens';
 import { PageShell } from './PageShell';
-import { getDtcaLiveLocation, DtcaLiveLocationResponse } from '../../../services/dtcaTrackerService';
+import {
+  getDtcaLiveLocation,
+  getDtcaRouteDetails,
+  DtcaLiveLocationData,
+  DtcaRouteDetailsData,
+} from '../../../services/dtcaTrackerService';
 
 interface Props {
   theme: 'dark' | 'light';
@@ -21,32 +26,20 @@ interface Props {
 }
 
 const DHAKA_CENTER: [number, number] = [23.8103, 90.4125];
-const POLL_MS = 15000;
+const POLL_MS = 10000;
 const OFFICIAL_URL = 'https://buskothay.com/single-dtca-bus-tracking?identifier=';
 
-function statusColor(status?: string): string {
-  if (!status) return '#9ca3af';
-  const s = status.toLowerCase();
-  if (s.includes('moving') || s.includes('running')) return '#10b981';
-  if (s.includes('idle') || s.includes('stopped')) return '#f59e0b';
+function statusColor(status: string): string {
+  if (status === 'moving') return '#10b981';
+  if (status === 'idle') return '#f59e0b';
   return '#9ca3af';
 }
 
-function statusLabel(status: string | undefined, lang: 'bn' | 'en'): string {
-  if (!status) return T(lang, 'অজানা', 'Unknown');
-  const s = status.toLowerCase();
-  if (s.includes('moving') || s.includes('running')) return T(lang, 'চলছে', 'Moving');
-  if (s.includes('idle')) return T(lang, 'অপেক্ষায়', 'Idle');
-  if (s.includes('stopped')) return T(lang, 'থেমে আছে', 'Stopped');
+function statusLabel(status: string, lang: 'bn' | 'en'): string {
+  if (status === 'moving') return T(lang, 'চলছে', 'Moving');
+  if (status === 'engine_off') return T(lang, 'ইঞ্জিন বন্ধ', 'Engine Off');
+  if (status === 'idle') return T(lang, 'অপেক্ষায়', 'Idle');
   return status;
-}
-
-function stoppageStatusDot(status?: string): string {
-  if (!status) return '#9ca3af';
-  const s = status.toLowerCase();
-  if (s === 'passed') return '#10b981';
-  if (s === 'next') return '#3b82f6';
-  return '#d1d5db';
 }
 
 export function DTCABusDetailPage(props: Props) {
@@ -57,13 +50,16 @@ export function DTCABusDetailPage(props: Props) {
   const identifier = params?.identifier ?? '';
   const initialVrn = params?.vrn ?? '';
 
-  const [liveData, setLiveData] = useState<DtcaLiveLocationResponse | null>(null);
+  const [liveData, setLiveData] = useState<DtcaLiveLocationData | null>(null);
+  const [routeData, setRouteData] = useState<DtcaRouteDetailsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const firstLoad = useRef(true);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const busMarkerRef = useRef<L.Marker | null>(null);
+  const routePolylineRef = useRef<L.Polyline | null>(null);
 
   const card = (p = 16): React.CSSProperties => ({
     background: tk.panel,
@@ -73,53 +69,63 @@ export function DTCABusDetailPage(props: Props) {
     marginBottom: 14,
   });
 
-  const fetchData = async () => {
+  const fetchLive = async () => {
     if (!identifier) return;
     try {
-      const data = await getDtcaLiveLocation(identifier);
-      setLiveData(data);
+      const res = await getDtcaLiveLocation(identifier);
+      setLiveData(res.data);
       setError(null);
     } catch (err: any) {
-      setError(err?.message || 'Failed to load');
+      if (firstLoad.current) setError(err?.message || 'Failed to load');
     } finally {
-      setLoading(false);
+      if (firstLoad.current) { setLoading(false); firstLoad.current = false; }
     }
   };
 
   useEffect(() => {
-    void fetchData();
-    const timer = setInterval(() => { void fetchData(); }, POLL_MS);
+    if (!identifier) return;
+    void getDtcaRouteDetails(identifier)
+      .then(res => setRouteData(res.data))
+      .catch(() => {});
+    void fetchLive();
+    const timer = setInterval(() => { void fetchLive(); }, POLL_MS);
     return () => clearInterval(timer);
   }, [identifier]);
 
+  // Init Leaflet map
   useEffect(() => {
     if (!mapContainerRef.current) return;
-    const map = L.map(mapContainerRef.current, {
-      zoomControl: true,
-      attributionControl: false,
-    }).setView(DHAKA_CENTER, 14);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OSM',
-    }).addTo(map);
-
+    const map = L.map(mapContainerRef.current, { zoomControl: true, attributionControl: false })
+      .setView(DHAKA_CENTER, 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(map);
     mapRef.current = map;
     setTimeout(() => map.invalidateSize(), 300);
-
     return () => {
       map.remove();
       mapRef.current = null;
       busMarkerRef.current = null;
+      routePolylineRef.current = null;
     };
   }, []);
 
+  // Draw route polyline when routeData loads
   useEffect(() => {
     const map = mapRef.current;
-    const lat = liveData?.vehicle?.lat;
-    const lng = liveData?.vehicle?.lng;
-    if (!map || !lat || !lng) return;
+    if (!map || !routeData?.path?.length) return;
+    if (routePolylineRef.current) {
+      map.removeLayer(routePolylineRef.current);
+      routePolylineRef.current = null;
+    }
+    const coords: [number, number][] = routeData.path.map(p => [p.latitude, p.longitude]);
+    routePolylineRef.current = L.polyline(coords, { color: '#10b981', weight: 4, opacity: 0.7 }).addTo(map);
+    if (!liveData) map.fitBounds(L.latLngBounds(coords), { padding: [40, 40] });
+  }, [routeData]);
 
-    const latLng: [number, number] = [lat, lng];
+  // Update bus marker on live data
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !liveData?.latitude || !liveData?.longitude) return;
+    const latLng: [number, number] = [liveData.latitude, liveData.longitude];
     if (busMarkerRef.current) {
       busMarkerRef.current.setLatLng(latLng);
     } else {
@@ -132,23 +138,20 @@ export function DTCABusDetailPage(props: Props) {
         iconAnchor: [18, 18],
       });
       busMarkerRef.current = L.marker(latLng, { icon }).addTo(map);
-      map.setView(latLng, 15);
+      map.flyTo(latLng, 15, { duration: 1 });
     }
   }, [liveData]);
 
-  const vrn = liveData?.vehicle?.v_vrn || initialVrn || identifier;
-  const routeName = liveData?.route_plan?.name ?? '';
-  const fromStop = liveData?.route_plan?.from_stoppage_name ?? '';
-  const toStop = liveData?.route_plan?.to_stoppage_name ?? '';
-  const deviceStatus = liveData?.vehicle?.device_status;
-  const speed = liveData?.vehicle?.speed ?? liveData?.vehicle?.speed_status ?? 0;
-  const nearbyLoc = liveData?.vehicle?.nearby_l_name ?? '';
-  const nextStop = liveData?.next_stoppage?.name ?? '';
-  const etaMins = liveData?.next_stoppage?.eta_minutes;
-  const distKm = liveData?.next_stoppage?.distance_km ?? liveData?.next_stoppage?.distance;
-  const remaining = liveData?.remaining_stoppages_count;
-  const stoppages = liveData?.stoppages ?? [];
-  const customerName = liveData?.vehicle?.customer_name ?? 'Dhaka Transport Coordination Authority';
+  const vrn = routeData?.vehicle?.vehicleNumber || initialVrn || identifier;
+  const routeName = routeData?.routeName ?? '';
+  const stoppages = routeData?.stoppages ?? [];
+  const passedIds = new Set(liveData?.passedStoppageIds ?? []);
+  const nextId = liveData?.nextStoppage?.id;
+  const speed = liveData?.speedKph ?? 0;
+  const busStatus = liveData?.status ?? '';
+  const nextStopName = liveData?.nextStoppage?.name ?? T(lang, 'তথ্য নেই', 'N/A');
+  const etaMins = liveData?.estimatedArrivalMinutes;
+  const remaining = liveData?.remainingStoppages ?? 0;
 
   return (
     <PageShell {...props}>
@@ -157,7 +160,7 @@ export function DTCABusDetailPage(props: Props) {
 
           {loading && !liveData && (
             <div style={{ ...card(), display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: tk.line }} />
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: tk.line }} />
               <div style={{ flex: 1 }}>
                 <div style={{ height: 16, borderRadius: 8, background: tk.line, width: '55%', marginBottom: 8 }} />
                 <div style={{ height: 12, borderRadius: 6, background: tk.line, width: '40%' }} />
@@ -170,16 +173,10 @@ export function DTCABusDetailPage(props: Props) {
               <div style={{ fontFamily: SANS, fontSize: 13, color: '#ef4444', marginBottom: 10 }}>
                 {T(lang, 'লাইভ ডেটা লোড হয়নি', 'Live data could not be loaded')}
               </div>
-              <button
-                onClick={() => { setLoading(true); void fetchData(); }}
-                style={{ background: tk.primarySoft, color: tk.primary, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '6px 16px', fontFamily: SANS, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
-              >
-                {T(lang, 'আবার চেষ্টা', 'Retry')}
-              </button>
             </div>
           )}
 
-          {/* Header card */}
+          {/* Header */}
           <div style={card()}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
               <div style={{ width: 48, height: 48, borderRadius: 14, background: 'linear-gradient(135deg,#006a4e,#10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -190,30 +187,26 @@ export function DTCABusDetailPage(props: Props) {
                 </svg>
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 16, color: tk.text, marginBottom: 3 }}>
-                  {vrn}
-                </div>
+                <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 16, color: tk.text, marginBottom: 3 }}>{vrn}</div>
                 {routeName ? (
-                  <div style={{ fontFamily: BEN, fontSize: 13, color: tk.textDim, marginBottom: 4 }}>
-                    {routeName}{fromStop && toStop ? ` · ${fromStop} → ${toStop}` : ''}
-                  </div>
+                  <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{routeName}</div>
                 ) : null}
-                <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>{customerName}</div>
+                <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>Dhaka Transport Coordination Authority</div>
               </div>
-              {deviceStatus ? (
-                <div style={{ background: `${statusColor(deviceStatus)}22`, color: statusColor(deviceStatus), borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 11, flexShrink: 0 }}>
-                  {statusLabel(deviceStatus, lang)}
+              {busStatus ? (
+                <div style={{ background: `${statusColor(busStatus)}22`, color: statusColor(busStatus), borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 11, flexShrink: 0 }}>
+                  {statusLabel(busStatus, lang)}
                 </div>
               ) : null}
             </div>
 
-            {/* Stats row */}
+            {/* Stats */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginTop: 14 }}>
               {[
                 { label: T(lang, 'গতি', 'Speed'), value: `${N(speed, lang)} ${T(lang, 'কিমি/ঘ', 'km/h')}`, color: '#10b981' },
-                { label: T(lang, 'পরবর্তী স্টপ', 'Next stop'), value: nextStop || T(lang, '—', '—'), color: tk.primary },
-                { label: T(lang, 'ETA', 'ETA'), value: etaMins != null ? `${N(etaMins, lang)} ${T(lang, 'মিনিট', 'min')}` : T(lang, '—', '—'), color: '#f59e0b' },
-                { label: T(lang, 'দূরত্ব', 'Distance'), value: distKm != null ? `${N(distKm, lang)} ${T(lang, 'কিমি', 'km')}` : T(lang, '—', '—'), color: tk.textDim },
+                { label: T(lang, 'পরবর্তী স্টপ', 'Next stop'), value: nextStopName, color: tk.primary },
+                { label: T(lang, 'ETA', 'ETA'), value: etaMins != null ? `${N(etaMins, lang)} ${T(lang, 'মিনিট', 'min')}` : '—', color: '#f59e0b' },
+                { label: T(lang, 'স্টপ বাকি', 'Stops left'), value: `${N(remaining, lang)}`, color: tk.textDim },
               ].map((stat, i) => (
                 <div key={i} style={{ background: tk.panelMuted, borderRadius: 10, padding: '8px 6px', textAlign: 'center' }}>
                   <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 12, color: stat.color, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -223,21 +216,9 @@ export function DTCABusDetailPage(props: Props) {
                 </div>
               ))}
             </div>
-
-            {nearbyLoc ? (
-              <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint }}>📍</span>
-                <span style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim }}>{nearbyLoc}</span>
-                {remaining != null ? (
-                  <span style={{ marginLeft: 'auto', fontFamily: SANS, fontSize: 11, color: tk.primary, fontWeight: 700 }}>
-                    {N(remaining, lang)} {T(lang, 'স্টপ বাকি', 'stops left')}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
           </div>
 
-          {/* Leaflet Map */}
+          {/* Map */}
           <div style={{ ...card(0), overflow: 'hidden', height: 300 }}>
             <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
           </div>
@@ -245,21 +226,21 @@ export function DTCABusDetailPage(props: Props) {
           {/* Journey progress */}
           {stoppages.length > 0 && (
             <div style={card()}>
-              <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 12, color: tk.textFaint, textTransform: 'uppercase', letterSpacing: 1.1, marginBottom: 12 }}>
+              <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 11, color: tk.textFaint, textTransform: 'uppercase', letterSpacing: 1.1, marginBottom: 12 }}>
                 {T(lang, 'যাত্রাপথ', 'Journey progress')}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {stoppages.map((stop, idx) => {
-                  const isNext = stop.status?.toLowerCase() === 'next';
-                  const isPassed = stop.status?.toLowerCase() === 'passed';
-                  const dotColor = stoppageStatusDot(stop.status);
+                  const isPassed = passedIds.has(stop.id);
+                  const isNext = stop.id === nextId;
+                  const dotColor = isPassed ? '#9ca3af' : isNext ? '#3b82f6' : '#d1d5db';
                   return (
-                    <div key={idx} style={{ display: 'flex', gap: 14, paddingBottom: idx < stoppages.length - 1 ? 0 : 0 }}>
+                    <div key={stop.id ?? idx} style={{ display: 'flex', gap: 14 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 18, flexShrink: 0 }}>
                         <div style={{
                           width: 14, height: 14, borderRadius: 999, background: dotColor,
                           border: `2px solid ${tk.bg}`, flexShrink: 0, marginTop: 4,
-                          boxShadow: isNext ? `0 0 0 3px ${dotColor}44` : 'none',
+                          boxShadow: isNext ? `0 0 0 3px ${dotColor}55` : 'none',
                         }} />
                         {idx < stoppages.length - 1 && (
                           <div style={{ width: 2, flex: 1, background: `${dotColor}44`, minHeight: 16, marginTop: 2 }} />
@@ -268,17 +249,18 @@ export function DTCABusDetailPage(props: Props) {
                       <div style={{ flex: 1, paddingBottom: 12 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <span style={{ fontFamily: BEN, fontWeight: isNext ? 700 : 500, fontSize: 13, color: isNext ? tk.primary : isPassed ? tk.textFaint : tk.text }}>
-                            {stop.name ?? `Stop ${(stop.sequence ?? idx + 1)}`}
+                            {stop.name}
                           </span>
                           {isNext && (
                             <span style={{ background: `${tk.primary}22`, color: tk.primary, borderRadius: 6, padding: '1px 7px', fontFamily: SANS, fontWeight: 700, fontSize: 10 }}>
                               {T(lang, 'পরবর্তী', 'Next')}
                             </span>
                           )}
-                          {isPassed && (
-                            <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint }}>✓</span>
-                          )}
+                          {isPassed && <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint }}>✓</span>}
                         </div>
+                        {stop.scheduledArrivalTime ? (
+                          <div style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint, marginTop: 1 }}>{stop.scheduledArrivalTime}</div>
+                        ) : null}
                       </div>
                     </div>
                   );
@@ -287,17 +269,15 @@ export function DTCABusDetailPage(props: Props) {
             </div>
           )}
 
-          {/* Open official link */}
-          <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
-            <a
-              href={`${OFFICIAL_URL}${encodeURIComponent(identifier)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: `linear-gradient(135deg,#006a4e,#10b981)`, color: '#fff', borderRadius: 12, padding: '12px 16px', fontFamily: SANS, fontWeight: 700, fontSize: 13, textDecoration: 'none' }}
-            >
-              {T(lang, 'অফিসিয়াল ট্র্যাকারে দেখুন', 'View on official tracker')} ↗
-            </a>
-          </div>
+          {/* Official link */}
+          <a
+            href={`${OFFICIAL_URL}${encodeURIComponent(identifier)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'linear-gradient(135deg,#006a4e,#10b981)', color: '#fff', borderRadius: 12, padding: '12px 16px', fontFamily: SANS, fontWeight: 700, fontSize: 13, textDecoration: 'none', marginBottom: 16 }}
+          >
+            {T(lang, 'অফিসিয়াল ট্র্যাকারে দেখুন', 'View on official tracker')} ↗
+          </a>
 
         </div>
       </div>

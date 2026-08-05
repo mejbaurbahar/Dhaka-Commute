@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { T, SANS, BEN, N } from '../tokens';
-import { getDtcaAllVehicleLocationCached, DtcaVehicleLocation } from '../../../services/dtcaTrackerService';
+import { getDtcaAllVehicleLocationCached, dtcaLogin, DtcaVehicleLocation } from '../../../services/dtcaTrackerService';
+import { Turnstile } from './Turnstile';
 
 interface Props {
   tk: any;
   lang: 'bn' | 'en';
   onBusClick: (identifier: string, vrn: string) => void;
 }
+
+type AuthState = 'loading' | 'needs-login' | 'loaded' | 'error';
 
 function busStatusColor(path: DtcaVehicleLocation['path']): string {
   const p = path?.[0];
@@ -16,39 +19,64 @@ function busStatusColor(path: DtcaVehicleLocation['path']): string {
   return '#9ca3af';
 }
 
-function busSpeed(path: DtcaVehicleLocation['path']): number {
-  return path?.[0]?.speed_status ?? 0;
-}
-
-function busLocation(path: DtcaVehicleLocation['path']): string {
-  return path?.[0]?.nearby_l_name ?? '';
-}
-
 export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
   const [buses, setBuses] = useState<DtcaVehicleLocation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [authState, setAuthState] = useState<AuthState>('loading');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [cfToken, setCfToken] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   const load = useCallback(async () => {
-    setError(null);
-    setLoading(true);
+    setAuthState('loading');
     try {
       const res = await getDtcaAllVehicleLocationCached();
       setBuses((res.vehicles ?? []).slice(0, 10));
+      setAuthState('loaded');
     } catch (err: any) {
-      setError(err?.message || 'Failed to load');
-    } finally {
-      setLoading(false);
+      if (err?.code === 'DTCA_AUTH_REQUIRED') {
+        setAuthState('needs-login');
+      } else {
+        setAuthState('error');
+      }
     }
   }, []);
 
   useEffect(() => { void load(); }, [load]);
+
+  async function handleLogin() {
+    if (!name.trim() || !phone.trim() || !cfToken) return;
+    setLoginLoading(true);
+    setLoginError('');
+    try {
+      await dtcaLogin(name.trim(), phone.trim(), cfToken);
+      void load();
+    } catch {
+      setLoginError(T(lang, 'লগইন ব্যর্থ হয়েছে', 'Login failed. Check your details.'));
+    } finally {
+      setLoginLoading(false);
+    }
+  }
 
   const card: React.CSSProperties = {
     background: tk.panel,
     border: `1px solid ${tk.line}`,
     borderRadius: 16,
     padding: 16,
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    background: tk.inputBg,
+    border: `1px solid ${tk.line}`,
+    borderRadius: 10,
+    padding: '9px 12px',
+    fontFamily: SANS,
+    fontSize: 13,
+    color: tk.text,
+    outline: 'none',
+    boxSizing: 'border-box',
   };
 
   return (
@@ -63,7 +91,7 @@ export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
         </span>
       </div>
 
-      {loading && (
+      {authState === 'loading' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[0, 1, 2].map(i => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
@@ -78,7 +106,52 @@ export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
         </div>
       )}
 
-      {!loading && error && (
+      {authState === 'needs-login' && (
+        <div>
+          <div style={{ fontFamily: SANS, fontSize: 12, color: tk.textDim, marginBottom: 12 }}>
+            {T(lang, 'লাইভ বাস দেখতে লগইন করুন', 'Login to see live buses')}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <input
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder={T(lang, 'আপনার নাম', 'Your name')}
+              style={inputStyle}
+            />
+            <input
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+              placeholder="01XXXXXXXXX"
+              style={inputStyle}
+              type="tel"
+            />
+            <Turnstile theme={tk === undefined ? 'light' : 'light'} onVerify={t => setCfToken(t)} />
+            {loginError && (
+              <div style={{ fontFamily: SANS, fontSize: 11, color: '#ef4444' }}>{loginError}</div>
+            )}
+            <button
+              disabled={!name.trim() || !phone.trim() || !cfToken || loginLoading}
+              onClick={() => void handleLogin()}
+              style={{
+                background: (!name.trim() || !phone.trim() || !cfToken || loginLoading) ? tk.panelMuted : `linear-gradient(135deg,${tk.primary},${tk.primaryDeep})`,
+                color: (!name.trim() || !phone.trim() || !cfToken || loginLoading) ? tk.textFaint : tk.primaryInk,
+                border: 0,
+                borderRadius: 10,
+                padding: '10px 0',
+                fontFamily: SANS,
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: (!name.trim() || !phone.trim() || !cfToken || loginLoading) ? 'not-allowed' : 'pointer',
+                width: '100%',
+              }}
+            >
+              {loginLoading ? T(lang, 'লগইন হচ্ছে...', 'Logging in...') : T(lang, 'ট্র্যাকিং শুরু করুন', 'Start Tracking')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {authState === 'error' && (
         <div style={{ textAlign: 'center', padding: '8px 0' }}>
           <div style={{ fontFamily: SANS, fontSize: 12, color: '#ef4444', marginBottom: 8 }}>
             {T(lang, 'লোড করা সম্ভব হয়নি', 'Could not load buses')}
@@ -92,16 +165,16 @@ export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
         </div>
       )}
 
-      {!loading && !error && buses.length === 0 && (
+      {authState === 'loaded' && buses.length === 0 && (
         <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textFaint, padding: '8px 0', textAlign: 'center' }}>
           {T(lang, 'কোনো বাস পাওয়া যায়নি', 'No buses found')}
         </div>
       )}
 
-      {!loading && !error && buses.map((bus, i) => {
+      {authState === 'loaded' && buses.map((bus, i) => {
         const col = busStatusColor(bus.path);
-        const speed = busSpeed(bus.path);
-        const loc = busLocation(bus.path);
+        const speed = bus.path?.[0]?.speed_status ?? 0;
+        const loc = bus.path?.[0]?.nearby_l_name ?? '';
         return (
           <div
             key={bus.id ?? i}
@@ -126,7 +199,7 @@ export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
         );
       })}
 
-      {!loading && !error && buses.length > 0 && (
+      {authState === 'loaded' && buses.length > 0 && (
         <button
           onClick={() => void load()}
           style={{ marginTop: 10, width: '100%', background: 'transparent', border: `1px solid ${tk.line}`, borderRadius: 10, padding: 8, fontFamily: SANS, fontSize: 12, fontWeight: 700, color: tk.text, cursor: 'pointer' }}
