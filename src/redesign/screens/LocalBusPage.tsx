@@ -16,6 +16,7 @@ import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { trackBusSearch, trackRouteSearch, getUserHistory } from '../../../services/analyticsService';
 import { enhancedBusSearch } from '../../../services/searchService';
 import { earnCoins } from '../utils/koyCoinService';
+import { DTCABusListSection } from '../components/DTCABusListSection';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -26,12 +27,6 @@ function routeColor(type: string): string {
   return '#f59e0b';
 }
 
-const LIVE_BUSES = [
-  { b:'GL #6', t:'2 min', dist:'400 m', dir:'↗', col:'#10b981' },
-  { b:'BRTC Double', t:'5 min', dist:'900 m', dir:'↗', col:'#3b82f6' },
-  { b:'Hanif #11', t:'8 min', dist:'1.4 km', dir:'↗', col:'#ef4444' },
-  { b:'Projapoti', t:'12 min', dist:'2.1 km', dir:'↘', col:'#f59e0b' },
-];
 
 const OP_COLORS = ['#10b981','#3b82f6','#ef4444','#f59e0b','#7c3aed','#a855f7'];
 
@@ -379,24 +374,11 @@ export function LocalBusPage(props: Props) {
 
             {/* Sidebar */}
             <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-              <div style={card(16)}>
-                <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-                  <span style={{ width:10, height:10, borderRadius:999, background:tk.primary }} className="kj-anim-pulse"/>
-                  <span style={{ fontFamily:BEN, fontWeight:700, fontSize:14, color:tk.text, flex:1 }}>{T(lang,'কাছাকাছি বাস · লাইভ','Buses near you · live')}</span>
-                  <span style={{ fontFamily:SANS, fontSize:11, color:tk.textFaint, fontWeight:600 }}>{T(lang,'ফার্মগেট','Farmgate')}</span>
-                </div>
-                {LIVE_BUSES.map((b,i)=>(
-                  <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 0', borderTop:i?`1px dashed ${tk.line}`:'' }}>
-                    <div style={{ width:8, height:8, borderRadius:999, background:b.col, boxShadow:`0 0 0 4px ${b.col}22` }}/>
-                    <span style={{ fontFamily:SANS, fontWeight:700, fontSize:12, color:tk.text, flex:1 }}>{b.b}</span>
-                    <span style={{ fontFamily:SANS, fontSize:11, color:tk.textFaint }}>{b.dist} {b.dir}</span>
-                    <span style={{ fontFamily:SANS, fontWeight:700, fontSize:13, color:tk.primary, minWidth:50, textAlign:'right' }}>{b.t}</span>
-                  </div>
-                ))}
-                <button style={{ marginTop:8, width:'100%', background:'transparent', border:`1px solid ${tk.line}`, borderRadius:10, padding:8, fontFamily:SANS, fontSize:12, fontWeight:700, color:tk.text, cursor:'pointer' }}>
-                  {T(lang,'ম্যাপে সব দেখুন','View all on map')} →
-                </button>
-              </div>
+              <DTCABusListSection
+                tk={tk}
+                lang={lang}
+                onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
+              />
               <PromoBanner tk={tk} lang={lang} page="bus" onNav={onNav}/>
               <NativeAdCard
                 tk={tk}

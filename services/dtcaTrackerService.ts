@@ -126,6 +126,55 @@ async function fetchDtcaBackendJson<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+export interface DtcaLiveLocationResponse {
+  code: number;
+  vehicle?: {
+    v_vrn?: string;
+    v_identifier?: string;
+    lat?: number;
+    lng?: number;
+    speed?: number;
+    speed_status?: number;
+    device_status?: string;
+    nearby_l_name?: string;
+    time_inserted?: string;
+    customer_name?: string;
+  };
+  route_plan?: {
+    id?: string;
+    name?: string;
+    from_stoppage_name?: string;
+    to_stoppage_name?: string;
+  };
+  next_stoppage?: {
+    name?: string;
+    eta_minutes?: number;
+    distance_km?: number;
+    distance?: number;
+  };
+  remaining_stoppages_count?: number;
+  stoppages?: Array<{
+    name?: string;
+    sequence?: number;
+    status?: string;
+  }>;
+  [key: string]: unknown;
+}
+
+export async function getDtcaLiveLocation(identifier: string): Promise<DtcaLiveLocationResponse> {
+  return fetchDtcaBackendJson<DtcaLiveLocationResponse>(`route-plans/live-location?identifier=${encodeURIComponent(identifier)}`);
+}
+
+let vehicleCache: { data: DtcaAllVehicleLocationResponse; ts: number } | null = null;
+const VEHICLE_CACHE_MS = 5 * 60 * 1000;
+
+export async function getDtcaAllVehicleLocationCached(): Promise<DtcaAllVehicleLocationResponse> {
+  if (vehicleCache && Date.now() - vehicleCache.ts < VEHICLE_CACHE_MS) return vehicleCache.data;
+  const data = await getDtcaAllVehicleLocation();
+  vehicleCache = { data, ts: Date.now() };
+  return data;
+}
+
 export interface DtcaStoppageListResponse {
   code: number;
   app_message: string;
