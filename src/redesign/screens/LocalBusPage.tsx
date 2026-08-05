@@ -390,11 +390,13 @@ export function LocalBusPage(props: Props) {
 
             {/* Sidebar */}
             <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-              <DTCABusListSection
-                tk={tk}
-                lang={lang}
-                onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
-              />
+              {!showInlineDtca && (
+                <DTCABusListSection
+                  tk={tk}
+                  lang={lang}
+                  onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
+                />
+              )}
               <PromoBanner tk={tk} lang={lang} page="bus" onNav={onNav}/>
               <NativeAdCard
                 tk={tk}
