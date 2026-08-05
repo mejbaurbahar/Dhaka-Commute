@@ -262,21 +262,6 @@ export function LocalBusPage(props: Props) {
             ))}
           </div>
 
-          <div style={{ ...card(16), marginBottom:16, boxShadow:tk.shadow }}>
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12, marginBottom:10 }}>
-              <div>
-                <div style={{ fontFamily:SANS, fontSize:10, fontWeight:700, letterSpacing:1.2, color:tk.primary, textTransform:'uppercase' }}>{T(lang,'লাইভ ট্র্যাকার','Live tracker')}</div>
-                <div style={{ fontFamily:BEN, fontSize:15, fontWeight:700, color:tk.text }}>{T(lang,'আফিশিয়াল লাইভ ভিউ','Official live view')}</div>
-              </div>
-              <a href="https://buskothay.com/dtca-bus-tracking/" target="_blank" rel="noreferrer" style={{ background:`linear-gradient(135deg, ${tk.primary}, ${tk.primaryDeep})`, color:tk.primaryInk, borderRadius:999, padding:'8px 12px', fontFamily:SANS, fontSize:12, fontWeight:700, textDecoration:'none' }}>
-                {T(lang,'ওপেন করুন','Open')}
-              </a>
-            </div>
-            <div style={{ borderRadius:14, padding:14, background:tk.primarySoft, border:`1px solid ${tk.primary}22` }}>
-              <div style={{ fontFamily:SANS, fontSize:14, color:tk.text, marginBottom:6 }}>{T(lang,'সর্বশেষ লাইভ বাস ম্যাপ দেখতে অফিসিয়াল ট্র্যাকার খুলুন।','Open the official tracker for the latest live bus map.')}</div>
-            </div>
-          </div>
-
           <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'1.4fr 1fr', gap:isMobile?18:24 }}>
             {/* Main content — buses or transit */}
             <div>
