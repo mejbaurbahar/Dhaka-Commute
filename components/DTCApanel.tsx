@@ -80,7 +80,7 @@ export default function DTCApanel(): React.ReactElement {
   return (
     <div className="dtca-panel">
       <div className="dtca-header">
-        <h3>DTCA Tracker</h3>
+        <h3>Live Bus Tracker</h3>
         <div className="dtca-actions">
           <button onClick={() => void refresh(true)} disabled={loading}>Refresh snapshot</button>
           <button onClick={() => void refreshStoppages()} disabled={dataLoading === 'stoppages'}>Load stoppages</button>
@@ -124,7 +124,7 @@ export default function DTCApanel(): React.ReactElement {
 
           {(stoppages && stoppages.length > 0) ? (
             <div className="dtca-list">
-              <div className="dtca-list-title">DTCA stoppages</div>
+              <div className="dtca-list-title">Bus stoppages</div>
               <ul>
                 {stoppages.slice(0, 12).map((stop) => (
                   <li key={stop.id}>
@@ -139,7 +139,7 @@ export default function DTCApanel(): React.ReactElement {
 
           {(vehicles && vehicles.length > 0) ? (
             <div className="dtca-list">
-              <div className="dtca-list-title">DTCA vehicles</div>
+              <div className="dtca-list-title">Live buses</div>
               <ul>
                 {vehicles.slice(0, 12).map((vehicle) => (
                   <li key={vehicle.id}>

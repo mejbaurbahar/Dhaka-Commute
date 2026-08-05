@@ -217,7 +217,7 @@ const HomeRightPanel: React.FC<HomeRightPanelProps> = ({
           <div className="dc-card rounded-[20px] p-4 border border-kj-line bg-kj-panel-muted">
             <div className="flex items-center justify-between gap-3 mb-3">
               <div>
-                <p className="text-sm font-bold text-kj-text">{lbl('DTCA tracker', 'DTCA ট্র্যাকার')}</p>
+                <p className="text-sm font-bold text-kj-text">{lbl('Live Bus', 'লাইভ বাস')}</p>
                 <p className="text-[12px] text-kj-text-dim">{lbl('Live map shortcut', 'লাইভ ম্যাপ শর্টকাট')}</p>
               </div>
               <span className="text-lg">🚌</span>
