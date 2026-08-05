@@ -129,7 +129,7 @@ function detailPath(route: string, params: Record<string, string> = {}) {
     return `/intercity/${base}${qs}`;
   }
   if (route === 'vehicle') return `/launch/${slugify(params.id || params.name || 'detail')}${suffix}`;
-  if (route === 'dtca-bus-detail') return `/dtca/${encodeURIComponent(params.identifier || 'bus')}`;
+  if (route === 'dtca-bus-detail') return `/live-bus/${encodeURIComponent(params.identifier || 'bus')}`;
   if (route === 'flight-detail') {
     const base = (params.flightNo || params.code || 'flight').toLowerCase();
     const q = new URLSearchParams();
@@ -180,7 +180,7 @@ function entryFromLocation(): StackEntry {
   if (path.startsWith('/train/') && path !== '/train') return { route: 'train-detail', params: { ...params, trainId: path.split('/')[2] || '' } };
   if (path.startsWith('/intercity/') && path !== '/intercity') return { route: 'intercity-detail', params: { ...params, id: path.split('/')[2] || '' } };
   if (path.startsWith('/launch/') && path !== '/launch') return { route: 'vehicle', params: { ...params, id: path.split('/')[2] || '' } };
-  if (path.startsWith('/dtca/') && path !== '/dtca') return { route: 'dtca-bus-detail', params: { ...params, identifier: decodeURIComponent(path.split('/')[2] || '') } };
+  if ((path.startsWith('/live-bus/') || path.startsWith('/dtca/')) && path !== '/live-bus' && path !== '/dtca') return { route: 'dtca-bus-detail', params: { ...params, identifier: decodeURIComponent(path.split('/')[2] || '') } };
   if (path.startsWith('/air/') && path !== '/air') return { route: 'flight-detail', params: { ...params, code: (path.split('/')[2] || '').toUpperCase() } };
   if ((path.startsWith('/blog/') || path.startsWith('/blogs/')) && path !== '/blog' && path !== '/blogs') {
     return { route: 'blog-detail', params: { ...params, slug: path.split('/')[2] || '' } };

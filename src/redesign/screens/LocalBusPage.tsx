@@ -266,7 +266,7 @@ export function LocalBusPage(props: Props) {
               </a>
             </div>
             <div style={{ borderRadius:14, padding:14, background:tk.primarySoft, border:`1px solid ${tk.primary}22` }}>
-              <div style={{ fontFamily:SANS, fontSize:14, color:tk.text, marginBottom:6 }}>{T(lang,'সর্বশেষ লাইভ ম্যাপের জন্য অফিসিয়াল DTCA ট্র্যাকার খুলুন।','Open the official DTCA tracker for the latest live map.')}</div>
+              <div style={{ fontFamily:SANS, fontSize:14, color:tk.text, marginBottom:6 }}>{T(lang,'সর্বশেষ লাইভ বাস ম্যাপ দেখতে অফিসিয়াল ট্র্যাকার খুলুন।','Open the official tracker for the latest live bus map.')}</div>
             </div>
           </div>
 
