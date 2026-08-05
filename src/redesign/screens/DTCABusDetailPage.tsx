@@ -103,22 +103,30 @@ export function DTCABusDetailPage(props: Props) {
     return () => clearInterval(timer);
   }, [identifier]);
 
-  // Init Leaflet map
+  // Init Leaflet map — deferred 150ms so bus header card paints first (LCP)
   useEffect(() => {
     if (!mapContainerRef.current) return;
-    const map = L.map(mapContainerRef.current, { zoomControl: true, attributionControl: false })
-      .setView(DHAKA_CENTER, 14);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(map);
-    mapRef.current = map;
-    setTimeout(() => map.invalidateSize(), 300);
+    let cleanup: (() => void) | null = null;
+    const timer = setTimeout(() => {
+      if (!mapContainerRef.current) return;
+      const map = L.map(mapContainerRef.current, { zoomControl: true, attributionControl: false })
+        .setView(DHAKA_CENTER, 14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(map);
+      mapRef.current = map;
+      setTimeout(() => map.invalidateSize(), 300);
+      cleanup = () => {
+        map.remove();
+        mapRef.current = null;
+        busMarkerRef.current = null;
+        routePolylineRef.current = null;
+        userMarkerRef.current = null;
+        userToStopLineRef.current = null;
+        stopMarkersRef.current = [];
+      };
+    }, 150);
     return () => {
-      map.remove();
-      mapRef.current = null;
-      busMarkerRef.current = null;
-      routePolylineRef.current = null;
-      userMarkerRef.current = null;
-      userToStopLineRef.current = null;
-      stopMarkersRef.current = [];
+      clearTimeout(timer);
+      cleanup?.();
     };
   }, []);
 
@@ -320,7 +328,7 @@ export function DTCABusDetailPage(props: Props) {
                   <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim, marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{routeName}</div>
                 ) : null}
                 <div style={{ fontFamily: BEN, fontSize: 11, color: tk.textFaint }}>
-                  {T(lang, 'ঢাকা পরিবহন সমন্বয় কর্তৃপক্ষ', 'Dhaka Transport Coordination Authority')}
+                  {T(lang, 'ঢাকা সিটি বাস', 'Dhaka City Bus')}
                 </div>
               </div>
               {busStatus ? (
