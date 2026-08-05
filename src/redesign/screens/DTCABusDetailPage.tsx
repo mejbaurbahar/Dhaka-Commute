@@ -42,7 +42,7 @@ function statusLabel(status: string, lang: 'bn' | 'en'): string {
 }
 
 export function DTCABusDetailPage(props: Props) {
-  const { theme, device, lang, params } = props;
+  const { theme, device, lang, params, onBack, canBack } = props;
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
 
@@ -60,6 +60,7 @@ export function DTCABusDetailPage(props: Props) {
   const busMarkerRef = useRef<L.Marker | null>(null);
   const routePolylineRef = useRef<L.Polyline | null>(null);
   const userMarkerRef = useRef<L.Marker | null>(null);
+  const stopMarkersRef = useRef<L.CircleMarker[]>([]);
 
   const card = (p = 16): React.CSSProperties => ({
     background: tk.panel,
@@ -106,6 +107,7 @@ export function DTCABusDetailPage(props: Props) {
       busMarkerRef.current = null;
       routePolylineRef.current = null;
       userMarkerRef.current = null;
+      stopMarkersRef.current = [];
     };
   }, []);
 
@@ -137,18 +139,60 @@ export function DTCABusDetailPage(props: Props) {
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
-  // Draw route polyline when routeData loads
+  // Draw route polyline + stoppage markers when routeData loads
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !routeData?.path?.length) return;
-    if (routePolylineRef.current) {
-      map.removeLayer(routePolylineRef.current);
-      routePolylineRef.current = null;
+    if (!map || !routeData) return;
+
+    // Polyline
+    if (routePolylineRef.current) { map.removeLayer(routePolylineRef.current); routePolylineRef.current = null; }
+    if (routeData.path?.length) {
+      const coords: [number, number][] = routeData.path.map(p => [p.latitude, p.longitude]);
+      routePolylineRef.current = L.polyline(coords, { color: '#10b981', weight: 4, opacity: 0.7 }).addTo(map);
+      if (!liveData) map.fitBounds(L.latLngBounds(coords), { padding: [40, 40] });
     }
-    const coords: [number, number][] = routeData.path.map(p => [p.latitude, p.longitude]);
-    routePolylineRef.current = L.polyline(coords, { color: '#10b981', weight: 4, opacity: 0.7 }).addTo(map);
-    if (!liveData) map.fitBounds(L.latLngBounds(coords), { padding: [40, 40] });
+
+    // Stoppage markers
+    stopMarkersRef.current.forEach(m => map.removeLayer(m));
+    stopMarkersRef.current = [];
+    (routeData.stoppages ?? []).forEach((stop, idx) => {
+      if (!stop.latitude || !stop.longitude) return;
+      const isFirst = idx === 0;
+      const isLast = idx === (routeData.stoppages?.length ?? 0) - 1;
+      const fillColor = isFirst || isLast ? '#006a4e' : '#10b981';
+      const marker = L.circleMarker([stop.latitude, stop.longitude], {
+        radius: isFirst || isLast ? 9 : 6,
+        fillColor,
+        color: 'white',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 1,
+      });
+      const label = stop.scheduledArrivalTime
+        ? `<b>${stop.name}</b><br/>${stop.scheduledArrivalTime}`
+        : `<b>${stop.name}</b>`;
+      marker.bindTooltip(label, { permanent: false, direction: 'top', offset: [0, -8] });
+      marker.addTo(map);
+      stopMarkersRef.current.push(marker);
+    });
   }, [routeData]);
+
+  // Update stoppage marker colors when live data changes (passed/next)
+  useEffect(() => {
+    if (!liveData || !routeData?.stoppages) return;
+    const passedIds = new Set(liveData.passedStoppageIds ?? []);
+    const nextId = liveData.nextStoppage?.id;
+    (routeData.stoppages ?? []).forEach((stop, idx) => {
+      const marker = stopMarkersRef.current[idx];
+      if (!marker) return;
+      const isNext = stop.id === nextId;
+      const isPassed = passedIds.has(stop.id);
+      const isFirst = idx === 0;
+      const isLast = idx === (routeData.stoppages?.length ?? 0) - 1;
+      const fillColor = isNext ? '#3b82f6' : isPassed ? '#9ca3af' : (isFirst || isLast ? '#006a4e' : '#10b981');
+      marker.setStyle({ fillColor, radius: isNext ? 10 : (isFirst || isLast ? 9 : 6) });
+    });
+  }, [liveData, routeData]);
 
   // Update bus marker on live data
   useEffect(() => {
@@ -186,6 +230,17 @@ export function DTCABusDetailPage(props: Props) {
     <PageShell {...props}>
       <div style={{ padding: isMobile ? '0 0 80px' : '0 0 48px' }}>
         <div style={{ padding: isMobile ? '0 16px' : '0 40px', paddingTop: 16 }}>
+
+          {/* Back button */}
+          <button
+            onClick={onBack}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'transparent', border: 'none', color: tk.primary, fontFamily: SANS, fontWeight: 700, fontSize: 13, cursor: 'pointer', padding: '0 0 14px', marginLeft: -4 }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            {T(lang, 'ফিরে যান', 'Go back')}
+          </button>
 
           {loading && !liveData && (
             <div style={{ ...card(), display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -250,8 +305,27 @@ export function DTCABusDetailPage(props: Props) {
           </div>
 
           {/* Map */}
-          <div style={{ ...card(0), overflow: 'hidden', height: 300 }}>
+          <div style={{ ...card(0), overflow: 'hidden', height: 360 }}>
             <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
+          </div>
+
+          {/* Map legend */}
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 14, padding: '0 2px' }}>
+            {[
+              { color: '#10b981', label: T(lang, 'বাস', 'Bus') },
+              { color: '#3b82f6', label: T(lang, 'পরবর্তী স্টপ', 'Next stop') },
+              { color: '#006a4e', label: T(lang, 'প্রথম/শেষ স্টপ', 'First/last stop') },
+              { color: '#9ca3af', label: T(lang, 'পার হয়েছে', 'Passed') },
+              { color: '#3b82f6', label: T(lang, 'আপনার অবস্থান', 'Your location'), dot: true },
+            ].map((l, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                {l.dot
+                  ? <div style={{ width: 10, height: 10, borderRadius: '50%', background: l.color, border: '2px solid white', boxShadow: `0 0 0 3px ${l.color}44` }} />
+                  : <div style={{ width: 10, height: 10, borderRadius: '50%', background: l.color }} />
+                }
+                <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint }}>{l.label}</span>
+              </div>
+            ))}
           </div>
 
           {/* Journey progress */}
