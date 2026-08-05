@@ -22,6 +22,7 @@ import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { getFavoriteBusIds } from '../utils/favorites';
 import { getUserHistory } from '../../../services/analyticsService';
+import { enhancedBusSearch } from '../../../services/searchService';
 import { useAuth } from '../../contexts/AuthContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -197,6 +198,10 @@ function SearchPanel({
     if (!searchQ.trim()) return [];
     const q = searchQ.toLowerCase();
     if (activeMode === 'bus') {
+      const { buses } = enhancedBusSearch(searchQ.trim());
+      if (buses.length > 0) {
+        return buses.slice(0, 6).map(r => ({ id: r.id, label: r.name, sub: r.routeString }));
+      }
       return BUS_DATA
         .filter(r => r.name.toLowerCase().includes(q) || r.bnName.toLowerCase().includes(q) || r.routeString.toLowerCase().includes(q))
         .slice(0, 6)
