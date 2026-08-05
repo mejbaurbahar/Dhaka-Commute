@@ -7,6 +7,15 @@ import { BUS_DATA, STATIONS } from '../../../constants';
 import { trackBusSearch } from '../../../services/analyticsService';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
 import { Icon } from '../components/Icons';
+import { enhancedBusSearch } from '../../../services/searchService';
+import { DTCABusListSection } from '../components/DTCABusListSection';
+
+const DTCA_STOPPAGES = ['agora','banani','dcc','gulshan 1','gulshan 2','gulshan1','gulshan2','nabisco mor','notun bazar','natun bazar','police plaza','shanta tower'];
+function matchesDtcaRoute(q: string): boolean {
+  if (!q) return false;
+  const lq = q.toLowerCase().trim();
+  return DTCA_STOPPAGES.some(s => lq.includes(s));
+}
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:Lang; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -48,6 +57,7 @@ export function RouteResultsV2Page(props: Props) {
   const toQ = params?.to ?? '';
   const searchQ = params?.search ?? '';
   const sortParam = params?.sort ?? null;   // 'fastest'|'cheapest'|'non-ac'|'now'
+  const showDtca = matchesDtcaRoute(fromQ) || matchesDtcaRoute(toQ) || matchesDtcaRoute(searchQ);
 
   // ── Filter state ─────────────────────────────────────────────────────────────
   const [activeTOD, setActiveTOD] = useState<string | null>(null);
@@ -77,13 +87,22 @@ export function RouteResultsV2Page(props: Props) {
 
     // Search/route filter
     if (searchQ) {
-      const q = searchQ.toLowerCase();
-      filtered = filtered.filter(r =>
-        r.name.toLowerCase().includes(q) || r.bnName.toLowerCase().includes(q) ||
-        r.routeString.toLowerCase().includes(q)
-      );
+      const searchResult = enhancedBusSearch(searchQ);
+      if (searchResult.buses.length > 0) {
+        const ids = new Set(searchResult.buses.map(b => b.id));
+        filtered = filtered.filter(r => ids.has(r.id));
+      } else {
+        filtered = [];
+      }
     } else if (fromQ || toQ) {
-      filtered = filtered.filter(r => busMatchesRoute(r, fromQ, toQ));
+      const combined = [fromQ, toQ].filter(Boolean).join(' to ');
+      const searchResult = enhancedBusSearch(combined);
+      if (searchResult.buses.length > 0) {
+        const ids = new Set(searchResult.buses.map(b => b.id));
+        filtered = filtered.filter(r => ids.has(r.id));
+      } else {
+        filtered = filtered.filter(r => busMatchesRoute(r, fromQ, toQ));
+      }
     }
 
     // Non-AC chip (from home)
@@ -334,6 +353,16 @@ export function RouteResultsV2Page(props: Props) {
 
         {/* Results list */}
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+          {/* DTCA live buses — shown when search matches Dhaka local stoppage names */}
+          {showDtca && (
+            <DTCABusListSection
+              tk={tk}
+              lang={lang}
+              onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
+            />
+          )}
+
           {RESULTS.length === 0 && (
             <>
               <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '32px 24px', textAlign: 'center' }}>

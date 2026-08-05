@@ -238,6 +238,61 @@ function isRateLimited(ip, limit = 1800, windowMs = 60_000) {
   return entry.count > limit;
 }
 
+// ── DTCA proxy ─────────────────────────────────────────────────────────────
+const DTCA_API = 'https://dtca-backend.bondstein.net/api/v1/passenger';
+let _dtcaTokenOverride = null; // per-isolate live token (refreshed automatically)
+
+const DTCA_HEADERS = {
+  Accept: 'application/json',
+  Origin: 'https://buskothay.com',
+  Referer: 'https://buskothay.com/',
+};
+
+// Auto-login using stored credentials — no Turnstile needed from server-side
+async function dtcaAutoLogin(env) {
+  const phone = env.DTCA_PHONE || '';
+  const name = env.DTCA_NAME || 'KoyJabo';
+  if (!phone) return null;
+  try {
+    const res = await fetch(`${DTCA_API}/login`, {
+      method: 'POST',
+      headers: { ...DTCA_HEADERS, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone_number: phone }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.token || null;
+  } catch {
+    return null;
+  }
+}
+
+async function dtcaFetch(path, env) {
+  const token = _dtcaTokenOverride || env.DTCA_TOKEN || '';
+  if (!token && !env.DTCA_PHONE) throw new Error('DTCA credentials not configured');
+
+  // If no token at all, try login first
+  const activeToken = token || (await dtcaAutoLogin(env));
+  if (!activeToken) throw new Error('DTCA login failed — no token available');
+  if (!token) _dtcaTokenOverride = activeToken;
+
+  const res = await fetch(`${DTCA_API}/${path}`, {
+    headers: { ...DTCA_HEADERS, Authorization: `Bearer ${activeToken}` },
+  });
+
+  // On 401, auto-refresh and retry once
+  if (res.status === 401) {
+    const newToken = await dtcaAutoLogin(env);
+    if (!newToken) return res; // login also failed — return 401 as-is
+    _dtcaTokenOverride = newToken;
+    return fetch(`${DTCA_API}/${path}`, {
+      headers: { ...DTCA_HEADERS, Authorization: `Bearer ${newToken}` },
+    });
+  }
+
+  return res;
+}
+
 // ── ETag + SHA in-memory cache ────────────────────────────────────────────────
 // Per-isolate, fast. Also stores `sha` so writeDataFile can skip a redundant
 // GitHub API read-before-write call.
@@ -630,6 +685,47 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
         }), {
           status: 200,
           headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+        });
+      }
+    }
+
+    // ── /dtca — proxy to DTCA backend (server-to-server, no browser CORS) ───
+    if (url.pathname.startsWith('/dtca')) {
+      const sub = url.pathname.replace(/^\/dtca\/?/, '');
+      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+      if (isRateLimited(ip + ':dtca', 120, 60_000)) {
+        return new Response(JSON.stringify({ error: 'Rate limited' }), {
+          status: 429, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+        });
+      }
+
+      let dtcaPath;
+      if (sub === 'vehicles' || sub === 'vehicles/') {
+        dtcaPath = 'all-vehicle-location';
+      } else if (sub === 'route-details' || sub === 'route-details/') {
+        const id = url.searchParams.get('id') || '';
+        if (!id) return new Response(JSON.stringify({ error: 'Missing id' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+        dtcaPath = `route-plans/route-details?identifier=${encodeURIComponent(id)}`;
+      } else if (sub === 'live-location' || sub === 'live-location/') {
+        const id = url.searchParams.get('id') || '';
+        if (!id) return new Response(JSON.stringify({ error: 'Missing id' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+        dtcaPath = `route-plans/live-location?identifier=${encodeURIComponent(id)}`;
+      } else if (sub === 'stoppages' || sub === 'stoppages/') {
+        dtcaPath = 'route-plans/stoppage-list';
+      } else {
+        return new Response(JSON.stringify({ error: 'Unknown endpoint' }), { status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+      }
+
+      try {
+        const upstream = await dtcaFetch(dtcaPath, env);
+        const data = await upstream.json().catch(() => ({}));
+        return new Response(JSON.stringify(data), {
+          status: upstream.ok ? 200 : upstream.status,
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...corsHeaders(origin) },
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: 'DTCA proxy error', detail: String(e).slice(0, 100) }), {
+          status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
         });
       }
     }
@@ -1064,5 +1160,11 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       JSON.stringify({ error: 'Method not allowed' }),
       { status: 405, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
     );
+  },
+
+  // Cron trigger: refresh DTCA token every 6 hours so it never expires mid-session
+  async scheduled(_event, env, _ctx) {
+    const token = await dtcaAutoLogin(env);
+    if (token) _dtcaTokenOverride = token;
   },
 };

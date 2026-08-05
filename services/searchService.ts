@@ -17,6 +17,13 @@ const getStationsList = () => {
     return CACHED_STATIONS_LIST;
 };
 
+const normalizeSearchText = (value: string) => value.toLowerCase().replace(/[\s\-\._]+/g, ' ').trim();
+const textMatches = (value: string, query: string): boolean => {
+    const normalizedValue = normalizeSearchText(value);
+    const normalizedQuery = normalizeSearchText(query);
+    return normalizedValue.includes(normalizedQuery) || normalizedQuery.includes(normalizedValue);
+};
+
 
 export interface SearchSuggestion {
     type: 'bus' | 'station' | 'intercity';
@@ -235,6 +242,12 @@ const LOCATION_ALIASES: Record<string, string[]> = {
     'বিজয় সরণি': ['bijoy_sarani', 'farmgate', 'kawran_bazar'],
     'kawran bazar': ['kawran_bazar', 'farmgate', 'bijoy_sarani'],
     'কাওরান বাজার': ['kawran_bazar', 'farmgate', 'bijoy_sarani'],
+    'dhaka chaka': ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+    'ঢাকা চাকা': ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+    'dhakar chaka': ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+    'ঢাকার চাকা': ['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka'],
+    'gulshan chaka': ['gulshan_chaka', 'dhakar_chaka_1', 'dhakar_chaka_2'],
+    'গুলশান চাকা': ['gulshan_chaka', 'dhakar_chaka_1', 'dhakar_chaka_2'],
     'malibagh': ['malibagh', 'malibagh_railgate', 'mouchak', 'mogbazar'],
     'মালিবাগ': ['malibagh', 'malibagh_railgate', 'mouchak'],
     'mogbazar': ['mogbazar', 'malibagh', 'mouchak'],
@@ -274,6 +287,46 @@ const expandWithAliases = (query: string): string[] => {
     return expanded;
 };
 
+export const resolveStationIds = (query: string): string[] => {
+    if (!query || !query.trim()) return [];
+    const normalizedQuery = normalizeSearchText(query);
+    const stationIds = new Set<string>();
+
+    // Exact station ID or name match
+    getStationsList().forEach(station => {
+        const stationName = normalizeSearchText(station.name);
+        const stationBnName = normalizeSearchText(station.bnName ?? '');
+        const stationId = normalizeSearchText(station.id);
+
+        if (
+            stationName === normalizedQuery ||
+            stationBnName === normalizedQuery ||
+            stationId === normalizedQuery ||
+            stationName.includes(normalizedQuery) ||
+            normalizedQuery.includes(stationName) ||
+            stationBnName.includes(normalizedQuery) ||
+            normalizedQuery.includes(stationBnName)
+        ) {
+            stationIds.add(station.id);
+        }
+    });
+
+    // Alias expansions can add location variants that map back to station names
+    const expandedQueries = expandWithAliases(query);
+    expandedQueries.forEach(expanded => {
+        const normalizedExpanded = normalizeSearchText(expanded);
+        getStationsList().forEach(station => {
+            const stationName = normalizeSearchText(station.name);
+            const stationBnName = normalizeSearchText(station.bnName ?? '');
+            if (stationName === normalizedExpanded || stationBnName === normalizedExpanded) {
+                stationIds.add(station.id);
+            }
+        });
+    });
+
+    return Array.from(stationIds);
+};
+
 /**
  * Enhanced search that handles:
  * 1. Bus name/number search
@@ -305,25 +358,25 @@ export const enhancedBusSearch = (query: string): SearchResult => {
 
         // Find matching stations for "from" and "to" - trim station names for better matching
         const fromStations = getStationsList().filter(station => {
-            const stationName = station.name.trim().toLowerCase();
+            const stationName = station.name.trim();
 
             // Check against all expanded queries
             return expandedFromQueries.some(query => {
                 const queryLower = query.toLowerCase();
-                const englishMatch = stationName.includes(queryLower) || queryLower.includes(stationName);
-                const bengaliMatch = station.bnName?.includes(query);
+                const englishMatch = textMatches(stationName, queryLower);
+                const bengaliMatch = station.bnName ? textMatches(station.bnName, query) : false;
                 return englishMatch || bengaliMatch;
             });
         });
 
         const toStations = getStationsList().filter(station => {
-            const stationName = station.name.trim().toLowerCase();
+            const stationName = station.name.trim();
 
             // Check against all expanded queries
             return expandedToQueries.some(query => {
                 const queryLower = query.toLowerCase();
-                const englishMatch = stationName.includes(queryLower) || queryLower.includes(stationName);
-                const bengaliMatch = station.bnName?.includes(query);
+                const englishMatch = textMatches(stationName, queryLower);
+                const bengaliMatch = station.bnName ? textMatches(station.bnName, query) : false;
                 return englishMatch || bengaliMatch;
             });
         });
@@ -484,6 +537,8 @@ export const enhancedBusSearch = (query: string): SearchResult => {
         }
     }
 
+    const expandedQueries = expandWithAliases(queryTrimmed);
+
     // STEP 1: Search for bus by name/number/ID
     // STEP 1: Search for exact bus name matches first
     const exactNameMatch = BUS_DATA.filter(bus => 
@@ -501,9 +556,9 @@ export const enhancedBusSearch = (query: string): SearchResult => {
     }
 
     const busByName = BUS_DATA.filter(bus => {
-        const nameMatch = bus.name.toLowerCase().includes(lowerQuery);
-        const bnNameMatch = bus.bnName?.includes(queryTrimmed);
-        const routeMatch = bus.routeString?.toLowerCase().includes(lowerQuery);
+        const nameMatch = textMatches(bus.name, lowerQuery);
+        const bnNameMatch = bus.bnName ? textMatches(bus.bnName, queryTrimmed) : false;
+        const routeMatch = bus.routeString ? textMatches(bus.routeString, lowerQuery) : false;
 
         return nameMatch || bnNameMatch || routeMatch;
     });
@@ -516,12 +571,16 @@ export const enhancedBusSearch = (query: string): SearchResult => {
         };
     }
 
-    // STEP 2: Search for stations matching the query
+    // STEP 2: Search for stations matching the query and known aliases
     const matchingStations = getStationsList().filter(station => {
-        const englishMatch = station.name.toLowerCase().includes(lowerQuery);
-        const bengaliMatch = station.bnName?.includes(queryTrimmed);
+        const stationName = station.name.trim();
 
-        return englishMatch || bengaliMatch;
+        return expandedQueries.some(expanded => {
+            const qLower = expanded.toLowerCase();
+            const englishMatch = textMatches(stationName, qLower);
+            const bengaliMatch = station.bnName ? textMatches(station.bnName, expanded) : false;
+            return englishMatch || bengaliMatch;
+        });
     });
 
 
@@ -578,8 +637,8 @@ export const enhancedBusSearch = (query: string): SearchResult => {
 
     // STEP 3: Fuzzy search as fallback (search route descriptions, etc.)
     const fuzzyResults = BUS_DATA.filter(bus => {
-        const routeMatch = bus.routeString?.toLowerCase().includes(lowerQuery);
-        const typeMatch = bus.type?.toLowerCase().includes(lowerQuery);
+        const routeMatch = bus.routeString ? textMatches(bus.routeString, lowerQuery) : false;
+        const typeMatch = bus.type ? textMatches(bus.type, lowerQuery) : false;
 
         return routeMatch || typeMatch;
     });

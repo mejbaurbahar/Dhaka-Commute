@@ -9,6 +9,8 @@
 const PROXY = (import.meta.env.VITE_API_PROXY as string | undefined)
   || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
+import { BUS_DATA } from '../constants';
+
 // In-memory cache to avoid hammering the proxy with duplicate reads (e.g. 60 concurrent ratings fetches)
 const _cache = new Map<string, { data: unknown; expiresAt: number }>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
@@ -396,6 +398,55 @@ export interface BusLocationData {
 }
 
 export async function getBusLiveLocation(busId: string): Promise<BusLocationData | null> {
+  // Try DTCA live-location endpoint first (best-effort). If that fails, fall back to
+  // community-reported data stored in the repo.
+  try {
+    const bus = BUS_DATA.find(b => b.id === busId);
+    const candidates: string[] = [];
+    if (bus) {
+      if (bus.name) candidates.push(bus.name);
+      if ((bus as any).bnName) candidates.push((bus as any).bnName);
+      candidates.push(busId);
+      const digits = (bus.name || '').match(/\d+/g)?.join('');
+      if (digits) candidates.push(digits);
+    } else {
+      candidates.push(busId);
+    }
+
+    const tried = new Set<string>();
+    for (let candidate of candidates) {
+      if (!candidate) continue;
+      candidate = candidate.trim();
+      if (!candidate || tried.has(candidate)) continue;
+      tried.add(candidate);
+      const identifier = encodeURIComponent(candidate);
+      const url = `${PROXY}/dtca/live-location?id=${identifier}`;
+      try {
+        const resp = await fetch(url, { cache: 'no-store' });
+        if (!resp.ok) continue;
+        const payload = await resp.json().catch(() => null);
+        if (!payload) continue;
+
+        const lastUpdated = payload.lastUpdatedAt ? Date.parse(payload.lastUpdatedAt) : Date.now();
+        const report: BusLocationReport = {
+          userId: `dtca:${payload.identifier ?? candidate}`,
+          busId,
+          busName: payload.vehicleNumber || payload.v_vrn || bus?.name || candidate,
+          stopId: payload.nextStoppage?.id || payload.nextStoppage?.stoppageId || '',
+          stopName: payload.nextStoppage?.name || payload.nextStoppage || '',
+          timestamp: Number.isFinite(lastUpdated) ? lastUpdated : Date.now(),
+          heading: payload.heading ? String(payload.heading) : undefined,
+        };
+
+        return { busId, lastUpdated: report.timestamp, reports: [report] };
+      } catch (err) {
+        // ignore and try next candidate
+      }
+    }
+  } catch (err) {
+    // swallow any DTCA lookup errors and fall back to repo data
+  }
+
   const data = await repoGet<BusLocationData>(`data/bus-locations/${busId}.json`);
   if (!data) return null;
   const tenMinAgo = Date.now() - 10 * 60 * 1000;

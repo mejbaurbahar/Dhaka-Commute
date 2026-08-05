@@ -34,6 +34,11 @@ export function TrainDetailPage(props: Props) {
 
   const fromName = stationName(stops[0]?.city ?? train.from);
   const toName = stationName(stops[stops.length - 1]?.city ?? train.to);
+  const depTime = stops[0]?.departure ? fmtT(stops[0].departure) : train.dhakaDepart;
+  const arrTime = stops[stops.length-1]?.arrival ? fmtT(stops[stops.length-1].arrival) : train.destinationArrive;
+  const fromLabel = stops[0]?.label || stationName(train.from);
+  const toLabel = stops[stops.length-1]?.label || stationName(train.to);
+
   useDocumentTitle(`${train.name}: ${fromName} → ${toName}`);
   useEffect(() => {
     setCanonicalUrl(`/train/${train.id}`);
@@ -54,10 +59,6 @@ export function TrainDetailPage(props: Props) {
     train.fare.acBerth ? { l:'AC Berth', bn:'এসি বার্থ', c:'#7c3aed', f:Fare(train.fare.acBerth, lang) } : null,
   ].filter((x): x is {l:string;bn:string;c:string;f:string} => !!x);
 
-  const depTime = stops[0]?.departure ? fmtT(stops[0].departure) : train.dhakaDepart;
-  const arrTime = stops[stops.length-1]?.arrival ? fmtT(stops[stops.length-1].arrival) : train.destinationArrive;
-  const fromLabel = stops[0]?.label || stationName(train.from);
-  const toLabel = stops[stops.length-1]?.label || stationName(train.to);
 
   return (
     <PageShell {...props}>

@@ -44,6 +44,7 @@ const PrivacyPage = React.lazy(() => import('./screens/PrivacyPage').then(m => (
 const TermsPage = React.lazy(() => import('./screens/TermsPage').then(m => ({ default: m.TermsPage })));
 const InstallPage = React.lazy(() => import('./screens/InstallPage').then(m => ({ default: m.InstallPage })));
 const AdvertisePage = React.lazy(() => import('./screens/AdvertisePage').then(m => ({ default: m.AdvertisePage })));
+const DTCABusDetailPage = React.lazy(() => import('./screens/DTCABusDetailPage').then(m => ({ default: m.DTCABusDetailPage })));
 
 const LazyFallback = () => <div style={{ minHeight: '60vh' }} />;
 import { claimDailyBonus } from './utils/koyCoinService';
@@ -73,7 +74,7 @@ const SECTION_MAP: Record<string, string> = {
 const SHOW_BACK_ROUTES = new Set([
   'bus-detail', 'train-detail', 'metro-detail', 'intercity-detail', 'vehicle',
   'rate-review', 'metro-token', 'metro-pass', 'blog-detail',
-  'devices', 'results', 'install', 'flight-detail',
+  'devices', 'results', 'install', 'flight-detail', 'dtca-bus-detail',
 ]);
 
 const ROUTE_PATHS: Record<string, string> = {
@@ -128,6 +129,7 @@ function detailPath(route: string, params: Record<string, string> = {}) {
     return `/intercity/${base}${qs}`;
   }
   if (route === 'vehicle') return `/launch/${slugify(params.id || params.name || 'detail')}${suffix}`;
+  if (route === 'dtca-bus-detail') return `/live-bus/${encodeURIComponent(params.identifier || 'bus')}`;
   if (route === 'flight-detail') {
     const base = (params.flightNo || params.code || 'flight').toLowerCase();
     const q = new URLSearchParams();
@@ -140,7 +142,7 @@ function detailPath(route: string, params: Record<string, string> = {}) {
 }
 
 function pathForEntry(entry: StackEntry) {
-  if (['bus-detail', 'metro-detail', 'train-detail', 'intercity-detail', 'vehicle', 'flight-detail', 'blog-detail'].includes(entry.route)) {
+  if (['bus-detail', 'metro-detail', 'train-detail', 'intercity-detail', 'vehicle', 'flight-detail', 'blog-detail', 'dtca-bus-detail'].includes(entry.route)) {
     return detailPath(entry.route, entry.params || {});
   }
   if (entry.route === 'results') {
@@ -178,6 +180,7 @@ function entryFromLocation(): StackEntry {
   if (path.startsWith('/train/') && path !== '/train') return { route: 'train-detail', params: { ...params, trainId: path.split('/')[2] || '' } };
   if (path.startsWith('/intercity/') && path !== '/intercity') return { route: 'intercity-detail', params: { ...params, id: path.split('/')[2] || '' } };
   if (path.startsWith('/launch/') && path !== '/launch') return { route: 'vehicle', params: { ...params, id: path.split('/')[2] || '' } };
+  if ((path.startsWith('/live-bus/') || path.startsWith('/dtca/')) && path !== '/live-bus' && path !== '/dtca') return { route: 'dtca-bus-detail', params: { ...params, identifier: decodeURIComponent(path.split('/')[2] || '') } };
   if (path.startsWith('/air/') && path !== '/air') return { route: 'flight-detail', params: { ...params, code: (path.split('/')[2] || '').toUpperCase() } };
   if ((path.startsWith('/blog/') || path.startsWith('/blogs/')) && path !== '/blog' && path !== '/blogs') {
     return { route: 'blog-detail', params: { ...params, slug: path.split('/')[2] || '' } };
@@ -372,6 +375,7 @@ export function KoyJaboApp() {
       case 'fare': return <FareCalcPage {...p}/>;
       case 'intercity-detail': return <IntercityDetailPage {...p}/>;
       case 'bus-detail': return <BusDetailPage {...p}/>;
+      case 'dtca-bus-detail': return <DTCABusDetailPage {...p}/>;
       case 'metro-detail': return <MetroDetailPage {...p}/>;
       case 'train-detail': return <TrainDetailPage {...p}/>;
       case 'vehicle': return <VehicleDetailPage {...p}/>;

@@ -313,17 +313,26 @@ function buildCacheKey(loc1: string, loc2: string, intent: string): string {
 
 // ── Answer synthesiser ────────────────────────────────────────────────────────
 
-function synthesiseRouteAnswer(from: string, to: string): { en: string; bn: string } | null {
+async function synthesiseRouteAnswer(from: string, to: string): Promise<{ en: string; bn: string } | null> {
   const dist = estimateDistanceKm(from, to);
   if (!dist) return null;
 
   const options = buildRouteOptions(from, to);
   if (options.length === 0) return null;
 
-  // Try to get real intercity data too
-  const intercityEn = getOfflineIntercityData(from, to, 'en').result;
-  const intercityBn = getOfflineIntercityData(from, to, 'bn').result;
-  const hasRealData = intercityEn && !intercityEn.includes('No direct') && intercityEn.length > 100;
+  // Try to get real intercity data too (async)
+  let intercityEn: string | undefined;
+  let intercityBn: string | undefined;
+  try {
+    const rEn = await getOfflineIntercityData(from, to, 'en');
+    const rBn = await getOfflineIntercityData(from, to, 'bn');
+    intercityEn = rEn?.result;
+    intercityBn = rBn?.result;
+  } catch {
+    intercityEn = undefined;
+    intercityBn = undefined;
+  }
+  const hasRealData = !!(intercityEn && !intercityEn.includes('No direct') && intercityEn.length > 100);
 
   const modeLine = (lang: 'en' | 'bn') => options.map(o => {
     const emojiMap: Record<string, string> = { bus: '🚌', train: '🚂', flight: '✈️', launch: '🚢' };
@@ -337,8 +346,8 @@ function synthesiseRouteAnswer(from: string, to: string): { en: string; bn: stri
 
   if (hasRealData) {
     return {
-      en: intercityEn,
-      bn: intercityBn,
+      en: intercityEn ?? '',
+      bn: intercityBn ?? '',
     };
   }
 
@@ -352,7 +361,7 @@ function synthesiseRouteAnswer(from: string, to: string): { en: string; bn: stri
 
 const TRAIN_THRESHOLD = 3; // failures before synthesising
 
-function mineAndLearn(record: QueryRecord): void {
+async function mineAndLearn(record: QueryRecord): Promise<void> {
   if (record.locations.length < 2) return;
   const [loc1, loc2] = record.locations;
 
@@ -364,7 +373,7 @@ function mineAndLearn(record: QueryRecord): void {
   if (failCount < TRAIN_THRESHOLD) return;
 
   // Synthesise an answer
-  const answer = synthesiseRouteAnswer(loc1, loc2);
+  const answer = await synthesiseRouteAnswer(loc1, loc2);
   if (!answer) return;
 
   responseCache.set(key, answer, Math.min(0.5 + failCount * 0.1, 0.95), ['travelAI', 'intercityData'], failCount);

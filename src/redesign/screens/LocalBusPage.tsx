@@ -14,9 +14,9 @@ import { BUS_DATA, STATIONS } from '../../../constants';
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { trackBusSearch, trackRouteSearch, getUserHistory } from '../../../services/analyticsService';
+import { enhancedBusSearch } from '../../../services/searchService';
 import { earnCoins } from '../utils/koyCoinService';
-import { getDtcaTrackerSnapshot } from '../../../services/dtcaTrackerService';
-import { useEffect } from 'react';
+import { DTCABusListSection } from '../components/DTCABusListSection';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -27,12 +27,6 @@ function routeColor(type: string): string {
   return '#f59e0b';
 }
 
-const LIVE_BUSES = [
-  { b:'GL #6', t:'2 min', dist:'400 m', dir:'↗', col:'#10b981' },
-  { b:'BRTC Double', t:'5 min', dist:'900 m', dir:'↗', col:'#3b82f6' },
-  { b:'Hanif #11', t:'8 min', dist:'1.4 km', dir:'↗', col:'#ef4444' },
-  { b:'Projapoti', t:'12 min', dist:'2.1 km', dir:'↘', col:'#f59e0b' },
-];
 
 const OP_COLORS = ['#10b981','#3b82f6','#ef4444','#f59e0b','#7c3aed','#a855f7'];
 
@@ -110,54 +104,58 @@ export function LocalBusPage(props: Props) {
     const qNorm = norm(query);
     return r.routeString.toLowerCase().includes(q) ||
       r.name.toLowerCase().includes(q) ||
-      r.bnName.includes(q) ||
+      (r.bnName?.toLowerCase() ?? '').includes(q) ||
       r.stops.some(s => s.toLowerCase().includes(qNorm) || s.toLowerCase().includes(q));
   };
 
   // Real bus route filtering — only active after search button click
   const filteredRoutes = useMemo(() => {
     if (!hasSearched) return BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10);
-    const q = searchQuery.trim().toLowerCase();
+    const q = searchQuery.trim();
     const f = fromInput.trim();
     const t = toInput.trim();
+
     if (q) {
+      const result = enhancedBusSearch(q);
+      if (result.buses.length > 0) {
+        return result.buses.filter(r => r.active !== false).slice(0, 20);
+      }
+      const lowered = q.toLowerCase();
       return BUS_DATA.filter(r =>
-        r.name.toLowerCase().includes(q) ||
-        r.bnName.toLowerCase().includes(q) ||
-        r.routeString.toLowerCase().includes(q) ||
-        r.type.toLowerCase().includes(q) ||
-        r.stops.some(s => s.toLowerCase().includes(norm(q)))
+        r.name.toLowerCase().includes(lowered) ||
+        (r.bnName?.toLowerCase() ?? '').includes(lowered) ||
+        r.routeString.toLowerCase().includes(lowered) ||
+        r.type.toLowerCase().includes(lowered) ||
+        r.stops.some(s => s.toLowerCase().includes(norm(lowered)))
       ).slice(0, 20);
     }
+
     if (f && t) {
+      const result = enhancedBusSearch(`${f} to ${t}`);
+      if (result.buses.length > 0) {
+        return result.buses.filter(r => r.active !== false).slice(0, 20);
+      }
       const results = BUS_DATA.filter(r => matchesStation(r, f) && matchesStation(r, t)).slice(0, 20);
       if (results.length) return results;
     }
-    if (f) return BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 15);
-    if (t) return BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 15);
+    if (f) {
+      const result = enhancedBusSearch(f);
+      if (result.buses.length > 0) {
+        return result.buses.filter(r => r.active !== false).slice(0, 15);
+      }
+      return BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 15);
+    }
+    if (t) {
+      const result = enhancedBusSearch(t);
+      if (result.buses.length > 0) {
+        return result.buses.filter(r => r.active !== false).slice(0, 15);
+      }
+      return BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 15);
+    }
     return BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10);
   }, [searchQuery, fromInput, toInput, hasSearched]);
 
   const [mode, setMode] = useState<'buses'|'transit'>('buses');
-  const [dtcaSnapshot, setDtcaSnapshot] = useState<Awaited<ReturnType<typeof getDtcaTrackerSnapshot>> | null>(null);
-  const [dtcaRefreshing, setDtcaRefreshing] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    const load = async () => {
-      const snapshot = await getDtcaTrackerSnapshot();
-      if (active) setDtcaSnapshot(snapshot);
-    };
-    void load();
-    return () => { active = false; };
-  }, []);
-
-  const refreshDtca = useCallback(async () => {
-    setDtcaRefreshing(true);
-    const snapshot = await getDtcaTrackerSnapshot(true);
-    setDtcaSnapshot(snapshot);
-    setDtcaRefreshing(false);
-  }, []);
 
   type Leg = { kind:'walk'|'bus'|'metro'; label:string; from:string; to:string; min:number; col:string; detail?:string; };
   type Journey = { id:number; total:string; fare:string; from:string; to:string; legs:Leg[]; };
@@ -260,29 +258,15 @@ export function LocalBusPage(props: Props) {
           <div style={{ ...card(16), marginBottom:16, boxShadow:tk.shadow }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12, marginBottom:10 }}>
               <div>
-                <div style={{ fontFamily:SANS, fontSize:10, fontWeight:700, letterSpacing:1.2, color:tk.primary, textTransform:'uppercase' }}>{T(lang,'ঢাকা চাকা / DTCA','Dhaka Chaka / DTCA')}</div>
-                <div style={{ fontFamily:BEN, fontSize:15, fontWeight:700, color:tk.text }}>{T(lang,'লাইভ ট্র্যাকার শর্টকাট','Live tracker shortcut')}</div>
+                <div style={{ fontFamily:SANS, fontSize:10, fontWeight:700, letterSpacing:1.2, color:tk.primary, textTransform:'uppercase' }}>{T(lang,'লাইভ ট্র্যাকার','Live tracker')}</div>
+                <div style={{ fontFamily:BEN, fontSize:15, fontWeight:700, color:tk.text }}>{T(lang,'আফিশিয়াল লাইভ ভিউ','Official live view')}</div>
               </div>
-              <button onClick={refreshDtca} disabled={dtcaRefreshing} style={{ border:`1px solid ${tk.line}`, background:tk.panelMuted, color:tk.textDim, borderRadius:999, padding:'8px 12px', fontFamily:SANS, fontSize:12, fontWeight:700, cursor:'pointer' }}>
-                {dtcaRefreshing ? T(lang,'আপডেট হচ্ছে…','Refreshing…') : T(lang,'রিফ্রেশ','Refresh')}
-              </button>
+              <a href="https://buskothay.com/dtca-bus-tracking/" target="_blank" rel="noreferrer" style={{ background:`linear-gradient(135deg, ${tk.primary}, ${tk.primaryDeep})`, color:tk.primaryInk, borderRadius:999, padding:'8px 12px', fontFamily:SANS, fontSize:12, fontWeight:700, textDecoration:'none' }}>
+                {T(lang,'ওপেন করুন','Open')}
+              </a>
             </div>
             <div style={{ borderRadius:14, padding:14, background:tk.primarySoft, border:`1px solid ${tk.primary}22` }}>
-              <div style={{ fontFamily:SANS, fontSize:11, fontWeight:700, color:tk.primary, marginBottom:6 }}>{dtcaSnapshot?.title || T(lang,'DTCA Panel','DTCA Panel')}</div>
-              <div style={{ fontFamily:BEN, fontSize:14, color:tk.text, marginBottom:6 }}>{dtcaSnapshot?.summary || T(lang,'স্ক্র্যাপের মাধ্যমে সাম্প্রতিক স্ট্যাটাস দেখানো হচ্ছে।','A recent snapshot is shown here.')}</div>
-              {dtcaSnapshot?.busHints?.length ? (
-                <ul style={{ margin:0, paddingLeft:16, color:tk.textDim, fontFamily:SANS, fontSize:12, lineHeight:1.6 }}>
-                  {dtcaSnapshot.busHints.map(hint => <li key={hint}>{hint}</li>)}
-                </ul>
-              ) : null}
-              <div style={{ marginTop:10, display:'flex', gap:8, flexWrap:'wrap' }}>
-                <a href="https://buskothay.com/dtca-bus-tracking/" target="_blank" rel="noreferrer" style={{ background:`linear-gradient(135deg, ${tk.primary}, ${tk.primaryDeep})`, color:tk.primaryInk, borderRadius:999, padding:'8px 12px', fontFamily:SANS, fontSize:12, fontWeight:700, textDecoration:'none' }}>
-                  {T(lang,'অফিশিয়াল ট্র্যাকার খুলুন','Open official tracker')}
-                </a>
-                <span style={{ border:`1px solid ${tk.line}`, background:tk.panel, color:tk.textDim, borderRadius:999, padding:'8px 12px', fontFamily:SANS, fontSize:12, fontWeight:600 }}>
-                  {dtcaSnapshot?.status === 'ok' ? T(lang,'স্ন্যাপশট রেডি','Snapshot ready') : dtcaSnapshot?.status === 'offline' ? T(lang,'অফলাইন, আগের ডাটা দেখানো হচ্ছে','Offline, showing last saved snapshot') : T(lang,'স্ন্যাপশট মোড','Snapshot mode')}
-                </span>
-              </div>
+              <div style={{ fontFamily:SANS, fontSize:14, color:tk.text, marginBottom:6 }}>{T(lang,'সর্বশেষ লাইভ বাস ম্যাপ দেখতে অফিসিয়াল ট্র্যাকার খুলুন।','Open the official tracker for the latest live bus map.')}</div>
             </div>
           </div>
 
@@ -390,24 +374,11 @@ export function LocalBusPage(props: Props) {
 
             {/* Sidebar */}
             <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-              <div style={card(16)}>
-                <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-                  <span style={{ width:10, height:10, borderRadius:999, background:tk.primary }} className="kj-anim-pulse"/>
-                  <span style={{ fontFamily:BEN, fontWeight:700, fontSize:14, color:tk.text, flex:1 }}>{T(lang,'কাছাকাছি বাস · লাইভ','Buses near you · live')}</span>
-                  <span style={{ fontFamily:SANS, fontSize:11, color:tk.textFaint, fontWeight:600 }}>{T(lang,'ফার্মগেট','Farmgate')}</span>
-                </div>
-                {LIVE_BUSES.map((b,i)=>(
-                  <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 0', borderTop:i?`1px dashed ${tk.line}`:'' }}>
-                    <div style={{ width:8, height:8, borderRadius:999, background:b.col, boxShadow:`0 0 0 4px ${b.col}22` }}/>
-                    <span style={{ fontFamily:SANS, fontWeight:700, fontSize:12, color:tk.text, flex:1 }}>{b.b}</span>
-                    <span style={{ fontFamily:SANS, fontSize:11, color:tk.textFaint }}>{b.dist} {b.dir}</span>
-                    <span style={{ fontFamily:SANS, fontWeight:700, fontSize:13, color:tk.primary, minWidth:50, textAlign:'right' }}>{b.t}</span>
-                  </div>
-                ))}
-                <button style={{ marginTop:8, width:'100%', background:'transparent', border:`1px solid ${tk.line}`, borderRadius:10, padding:8, fontFamily:SANS, fontSize:12, fontWeight:700, color:tk.text, cursor:'pointer' }}>
-                  {T(lang,'ম্যাপে সব দেখুন','View all on map')} →
-                </button>
-              </div>
+              <DTCABusListSection
+                tk={tk}
+                lang={lang}
+                onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
+              />
               <PromoBanner tk={tk} lang={lang} page="bus" onNav={onNav}/>
               <NativeAdCard
                 tk={tk}

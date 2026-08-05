@@ -1,0 +1,20 @@
+.dtca-panel{border:1px solid #e6e6e6;padding:12px;border-radius:8px;background:#fff}
+.dtca-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.dtca-header h3{margin:0;font-size:1rem}
+.dtca-actions{display:flex;gap:8px}
+.dtca-actions button,.dtca-official{background:#0b5cff;color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;border:none;cursor:pointer;font-weight:600}
+.dtca-official{display:inline-flex;align-items:center}
+.dtca-loading{color:#666;margin:8px 0}
+.dtca-error{color:#b00020;margin:8px 0}
+.dtca-meta{margin-bottom:8px}
+.dtca-title{font-weight:700}
+.dtca-fetched{color:#666;font-size:0.9rem}
+.dtca-summary{margin-top:6px;color:#333}
+.dtca-snippet{margin-top:8px;border-top:1px dashed #eee;padding-top:8px}
+.dtca-hints-title{font-weight:700;margin-top:10px}
+.dtca-hints ul{list-style:none;padding:0;margin:6px 0}
+.dtca-hints li{display:flex;flex-direction:column;gap:6px;padding:6px 0;border-bottom:1px solid #fafafa}
+.hint-text{font-family:monospace;color:#0b5cff}
+.hint-lookup{width:110px;padding:6px;border-radius:6px;border:none;background:#06b6d4;color:white;cursor:pointer}
+.hint-result{background:#f7f7f8;padding:8px;border-radius:6px;margin:6px 0;white-space:pre-wrap}
+.dtca-empty{color:#666}

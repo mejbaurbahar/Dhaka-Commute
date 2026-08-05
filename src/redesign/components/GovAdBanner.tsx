@@ -53,7 +53,7 @@ function CarSVG() {
       <g filter="url(#car-drop)">
         <rect x="18" y="80" width="244" height="62" rx="14" fill="url(#car-body)" />
         <path d="M70 80 Q88 42 118 36 L200 36 Q230 42 244 80Z" fill="url(#car-body)" />
-        <path d="M80 78 Q94 50 118 44 L160 44 Q154 78Z" fill="url(#car-glass)" />
+        <path d="M80 78 Q94 50 118 44 L160 44 Q154 78 80 78Z" fill="url(#car-glass)" />
         <path d="M162 44 L200 44 Q210 50 222 78 L162 78Z" fill="url(#car-glass)" />
         <rect x="158" y="44" width="4" height="34" fill="rgba(100,116,139,0.3)" />
         <ellipse cx="258" cy="102" rx="9" ry="6" fill="#fef9c3" opacity="0.95" />

@@ -12,3 +12,6 @@ DATA_REPO = "koyjabo"
 
 [ai]
 binding = "AI"
+
+[triggers]
+crons = ["0 */6 * * *"]
