@@ -420,7 +420,7 @@ export async function getBusLiveLocation(busId: string): Promise<BusLocationData
       if (!candidate || tried.has(candidate)) continue;
       tried.add(candidate);
       const identifier = encodeURIComponent(candidate);
-      const url = `https://dtca-backend.bondstein.net/api/v1/passenger/route-plans/live-location?identifier=${identifier}`;
+      const url = `${PROXY}/dtca/live-location?id=${identifier}`;
       try {
         const resp = await fetch(url, { cache: 'no-store' });
         if (!resp.ok) continue;

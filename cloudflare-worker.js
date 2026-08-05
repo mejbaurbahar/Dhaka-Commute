@@ -238,6 +238,42 @@ function isRateLimited(ip, limit = 1800, windowMs = 60_000) {
   return entry.count > limit;
 }
 
+// ── DTCA per-isolate token cache ─────────────────────────────────────────────
+const DTCA_API = 'https://dtca-backend.bondstein.net/api/v1/passenger';
+let _dtcaToken = null;
+let _dtcaLoginPending = null;
+
+async function dtcaAutoLogin() {
+  if (_dtcaLoginPending) return _dtcaLoginPending;
+  _dtcaLoginPending = (async () => {
+    const res = await fetch(`${DTCA_API}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ name: 'KoyJabo', phone_number: '01700000001', cf_token: '1x00000000000000000000AA' }),
+    });
+    if (!res.ok) throw new Error(`DTCA login failed: ${res.status}`);
+    const data = await res.json();
+    _dtcaToken = data.token;
+    return _dtcaToken;
+  })().finally(() => { _dtcaLoginPending = null; });
+  return _dtcaLoginPending;
+}
+
+async function dtcaFetch(path) {
+  if (!_dtcaToken) await dtcaAutoLogin();
+  let res = await fetch(`${DTCA_API}/${path}`, {
+    headers: { Accept: 'application/json', Authorization: `Bearer ${_dtcaToken}` },
+  });
+  if (res.status === 401) {
+    _dtcaToken = null;
+    await dtcaAutoLogin();
+    res = await fetch(`${DTCA_API}/${path}`, {
+      headers: { Accept: 'application/json', Authorization: `Bearer ${_dtcaToken}` },
+    });
+  }
+  return res;
+}
+
 // ── ETag + SHA in-memory cache ────────────────────────────────────────────────
 // Per-isolate, fast. Also stores `sha` so writeDataFile can skip a redundant
 // GitHub API read-before-write call.
@@ -630,6 +666,47 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
         }), {
           status: 200,
           headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+        });
+      }
+    }
+
+    // ── /dtca — proxy to DTCA backend (server-to-server, no browser CORS) ───
+    if (url.pathname.startsWith('/dtca')) {
+      const sub = url.pathname.replace(/^\/dtca\/?/, '');
+      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+      if (isRateLimited(ip + ':dtca', 120, 60_000)) {
+        return new Response(JSON.stringify({ error: 'Rate limited' }), {
+          status: 429, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+        });
+      }
+
+      let dtcaPath;
+      if (sub === 'vehicles' || sub === 'vehicles/') {
+        dtcaPath = 'all-vehicle-location';
+      } else if (sub === 'route-details' || sub === 'route-details/') {
+        const id = url.searchParams.get('id') || '';
+        if (!id) return new Response(JSON.stringify({ error: 'Missing id' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+        dtcaPath = `route-plans/route-details?identifier=${encodeURIComponent(id)}`;
+      } else if (sub === 'live-location' || sub === 'live-location/') {
+        const id = url.searchParams.get('id') || '';
+        if (!id) return new Response(JSON.stringify({ error: 'Missing id' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+        dtcaPath = `route-plans/live-location?identifier=${encodeURIComponent(id)}`;
+      } else if (sub === 'stoppages' || sub === 'stoppages/') {
+        dtcaPath = 'route-plans/stoppage-list';
+      } else {
+        return new Response(JSON.stringify({ error: 'Unknown endpoint' }), { status: 404, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+      }
+
+      try {
+        const upstream = await dtcaFetch(dtcaPath);
+        const data = await upstream.json().catch(() => ({}));
+        return new Response(JSON.stringify(data), {
+          status: upstream.ok ? 200 : upstream.status,
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...corsHeaders(origin) },
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: 'DTCA proxy error', detail: String(e).slice(0, 100) }), {
+          status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
         });
       }
     }

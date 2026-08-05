@@ -40,7 +40,8 @@ export default function DTCApanel(): React.ReactElement {
     if (!id) return
     setLiveResults(prev => ({ ...prev, [id]: { loading: true } }))
     try {
-      const url = `https://dtca-backend.bondstein.net/api/v1/passenger/route-plans/live-location?identifier=${encodeURIComponent(id)}`
+      const proxyBase = (import.meta.env.VITE_API_PROXY as string | undefined)?.replace(/\/$/, '') || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
+      const url = `${proxyBase}/dtca/live-location?id=${encodeURIComponent(id)}`
       const resp = await fetch(url, { cache: 'no-store' })
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
       const payload = await resp.json().catch(() => null)

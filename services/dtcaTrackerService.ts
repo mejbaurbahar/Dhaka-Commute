@@ -2,8 +2,9 @@ const STORAGE_KEY = 'koyjabo_dtca_tracker_snapshot_v1';
 const DTCA_TOKEN_KEY = 'kj_dtca_token_v1';
 const REFRESH_MS = 5 * 60 * 1000;
 const TARGET_URL = 'https://buskothay.com/dtca-bus-tracking/';
-const DTCA_BACKEND = 'https://dtca-backend.bondstein.net/api/v1/passenger';
-const DTCA_API_TOKEN = import.meta.env.VITE_DTCA_API_TOKEN as string | undefined;
+// All DTCA calls go through the CF worker proxy to avoid browser CORS restrictions
+const DTCA_PROXY = (import.meta.env.VITE_API_PROXY as string | undefined)?.replace(/\/$/, '')
+  || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 export interface DtcaTrackerSnapshot {
   sourceUrl: string;
@@ -58,94 +59,21 @@ export interface DtcaVehicleLocation {
   [key: string]: unknown;
 }
 
-// ── Token management ────────────────────────────────────────────────────────
+// ── Core fetch — all DTCA calls go through CF Worker proxy ──────────────────
 
-function getStoredDtcaToken(): string | null {
-  try { return localStorage.getItem(DTCA_TOKEN_KEY); } catch { return null; }
-}
-
-function setStoredDtcaToken(token: string): void {
-  try { localStorage.setItem(DTCA_TOKEN_KEY, token); } catch {}
-}
-
-function clearStoredDtcaToken(): void {
-  try { localStorage.removeItem(DTCA_TOKEN_KEY); } catch {}
-}
-
-// Turnstile test token always passes any secret key — safe to use for silent auto-login
-const CF_TEST_TOKEN = '1x00000000000000000000AA';
-let _autoLoginPromise: Promise<string> | null = null;
-
-async function autoLogin(): Promise<string> {
-  if (_autoLoginPromise) return _autoLoginPromise;
-  _autoLoginPromise = (async () => {
-    const response = await fetch(`${DTCA_BACKEND}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ name: 'KoyJabo', phone_number: '01700000001', cf_token: CF_TEST_TOKEN }),
-      cache: 'no-store',
-    });
-    if (!response.ok) throw new Error(`Auto-login failed: ${response.status}`);
-    const data = await response.json() as { token: string };
-    setStoredDtcaToken(data.token);
-    vehicleCache = null;
-    return data.token;
-  })().finally(() => { _autoLoginPromise = null; });
-  return _autoLoginPromise;
-}
-
-// Kept for external callers that still use manual login flow
-export async function dtcaLogin(name: string, phoneNumber: string, cfToken: string): Promise<string> {
-  const response = await fetch(`${DTCA_BACKEND}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({ name, phone_number: phoneNumber, cf_token: cfToken }),
-    cache: 'no-store',
-  });
-  if (!response.ok) throw new Error(`Login failed: ${response.status}`);
-  const data = await response.json() as { token: string };
-  setStoredDtcaToken(data.token);
-  vehicleCache = null;
-  return data.token;
-}
-
-// ── Core fetch ──────────────────────────────────────────────────────────────
-
-async function fetchDtcaBackendJson<T>(path: string, retry = true): Promise<T> {
-  let token = getStoredDtcaToken() || DTCA_API_TOKEN;
-
-  // No token → auto-login first
-  if (!token) {
-    token = await autoLogin();
-  }
-
-  const headers = new Headers({ Accept: 'application/json' });
-  headers.set('Authorization', `Bearer ${token}`);
-
-  const response = await fetch(`${DTCA_BACKEND}/${path}`, {
+async function fetchDtcaProxy<T>(proxyPath: string): Promise<T> {
+  const response = await fetch(`${DTCA_PROXY}${proxyPath}`, {
     method: 'GET',
-    headers,
+    headers: { Accept: 'application/json' },
     cache: 'no-store',
   });
-
-  if (response.status === 401 && retry) {
-    clearStoredDtcaToken();
-    const freshToken = await autoLogin();
-    return fetchDtcaBackendWithToken<T>(path, freshToken);
-  }
-
-  if (!response.ok) {
-    throw new Error(`DTCA request failed: ${response.status}`);
-  }
-
+  if (!response.ok) throw new Error(`DTCA proxy request failed: ${response.status}`);
   return response.json() as Promise<T>;
 }
 
-async function fetchDtcaBackendWithToken<T>(path: string, token: string): Promise<T> {
-  const headers = new Headers({ Accept: 'application/json', Authorization: `Bearer ${token}` });
-  const response = await fetch(`${DTCA_BACKEND}/${path}`, { method: 'GET', headers, cache: 'no-store' });
-  if (!response.ok) throw new Error(`DTCA request failed: ${response.status}`);
-  return response.json() as Promise<T>;
+// No-op kept for any remaining callers
+export async function dtcaLogin(_name: string, _phone: string, _cf: string): Promise<string> {
+  return '';
 }
 
 // ── Live location ────────────────────────────────────────────────────────────
@@ -173,7 +101,7 @@ export interface DtcaLiveLocationResponse {
 }
 
 export async function getDtcaLiveLocation(identifier: string): Promise<DtcaLiveLocationResponse> {
-  return fetchDtcaBackendJson<DtcaLiveLocationResponse>(`route-plans/live-location?identifier=${encodeURIComponent(identifier)}`);
+  return fetchDtcaProxy<DtcaLiveLocationResponse>(`/dtca/live-location?id=${encodeURIComponent(identifier)}`);
 }
 
 // ── Route details ─────────────────────────────────────────────────────────────
@@ -213,7 +141,7 @@ export interface DtcaRouteDetailsResponse {
 }
 
 export async function getDtcaRouteDetails(identifier: string): Promise<DtcaRouteDetailsResponse> {
-  return fetchDtcaBackendJson<DtcaRouteDetailsResponse>(`route-plans/route-details?identifier=${encodeURIComponent(identifier)}`);
+  return fetchDtcaProxy<DtcaRouteDetailsResponse>(`/dtca/route-details?id=${encodeURIComponent(identifier)}`);
 }
 
 // ── Vehicle list (with cache) ─────────────────────────────────────────────────
@@ -229,7 +157,7 @@ export interface DtcaAllVehicleLocationResponse {
 }
 
 export async function getDtcaAllVehicleLocation(): Promise<DtcaAllVehicleLocationResponse> {
-  return fetchDtcaBackendJson<DtcaAllVehicleLocationResponse>('all-vehicle-location');
+  return fetchDtcaProxy<DtcaAllVehicleLocationResponse>('/dtca/vehicles');
 }
 
 export async function getDtcaAllVehicleLocationCached(): Promise<DtcaAllVehicleLocationResponse> {
@@ -249,7 +177,7 @@ export interface DtcaStoppageListResponse {
 }
 
 export async function getDtcaStoppageList(): Promise<DtcaStoppageListResponse> {
-  return fetchDtcaBackendJson<DtcaStoppageListResponse>('route-plans/stoppage-list');
+  return fetchDtcaProxy<DtcaStoppageListResponse>('/dtca/stoppages');
 }
 
 // ── Snapshot (legacy/snapshot flow) ──────────────────────────────────────────
