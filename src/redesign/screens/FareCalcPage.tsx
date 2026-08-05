@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { trackFareCalc } from '../../../services/analyticsService';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang } from '../tokens';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
@@ -67,6 +68,15 @@ export function FareCalcPage(props: Props) {
   const hasResult = fromIdx >= 0 && toIdx >= 0 && stationsApart > 0;
   const primaryFare = hasResult ? calcFare(mode, stationsApart) : 0;
   const studentFare = Math.round(primaryFare * 0.75);
+
+  const trackedRef = useRef('');
+  useEffect(() => {
+    if (!hasResult) return;
+    const key = `${from}|${to}|${mode}`;
+    if (trackedRef.current === key) return;
+    trackedRef.current = key;
+    trackFareCalc(from, to, mode, primaryFare);
+  }, [hasResult, from, to, mode, primaryFare]);
 
   const selectStyle: React.CSSProperties = {
     width: '100%',

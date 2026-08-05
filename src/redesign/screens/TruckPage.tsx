@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, N, Fare, Tokens } from '../tokens';
 import { PageShell } from './PageShell';
+import { trackTruckSearch } from '../../../services/analyticsService';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovAdBanner } from '../components/GovAdBanner';
 import { PromoBanner } from '../components/PromoBanner';
@@ -188,7 +189,7 @@ export function TruckPage(props: Props) {
                     disabled={!canSearch}
                     onClick={() => {
                       if (!canSearch) return;
-                      earnCoins(5, 'Truck search');
+                      earnCoins(5, 'Truck search'); trackTruckSearch(from, to);
                       document.getElementById('truck-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }}
                     style={{

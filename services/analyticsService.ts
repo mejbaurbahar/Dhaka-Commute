@@ -14,6 +14,11 @@ export interface UserHistory {
     routeSearches: RouteSearchRecord[];
     intercitySearches: IntercitySearchRecord[];
     trainSearches: TrainSearchRecord[];
+    metroSearches: MetroSearchRecord[];
+    flightSearches: FlightSearchRecord[];
+    launchSearches: LaunchSearchRecord[];
+    truckSearches: TruckSearchRecord[];
+    fareCalcSearches: FareCalcRecord[];
     mostUsedBuses: Record<string, number>; // busId -> count
     mostUsedRoutes: Record<string, number>; // "from-to" -> count
     mostUsedIntercity: Record<string, number>; // "from-to" -> count
@@ -57,6 +62,45 @@ export interface TrainSearchRecord {
     to: string;   // station name
     timestamp: number;
     date: string; // YYYY-MM-DD
+}
+
+export interface MetroSearchRecord {
+    from: string;
+    to: string;
+    fare: number;
+    timestamp: number;
+    date: string;
+}
+
+export interface FlightSearchRecord {
+    from: string;
+    to: string;
+    timestamp: number;
+    date: string;
+}
+
+export interface LaunchSearchRecord {
+    from: string;
+    to: string;
+    nameSearch: string;
+    timestamp: number;
+    date: string;
+}
+
+export interface TruckSearchRecord {
+    from: string;
+    to: string;
+    timestamp: number;
+    date: string;
+}
+
+export interface FareCalcRecord {
+    from: string;
+    to: string;
+    mode: string;
+    fare: number;
+    timestamp: number;
+    date: string;
 }
 
 export interface GlobalStats {
@@ -252,6 +296,7 @@ export const getUserHistory = (): UserHistory => {
         if (!stored) {
             return {
                 busSearches: [], routeSearches: [], intercitySearches: [], trainSearches: [],
+                metroSearches: [], flightSearches: [], launchSearches: [], truckSearches: [], fareCalcSearches: [],
                 mostUsedBuses: {}, mostUsedRoutes: {}, mostUsedIntercity: {}, mostUsedTrains: {},
                 todayBuses: [], todayRoutes: [], todayIntercity: [], todayTrains: [],
                 lastResetDate: getTodayDate(),
@@ -287,11 +332,17 @@ export const getUserHistory = (): UserHistory => {
         if (!history.todayTrains)       history.todayTrains = [];
         if (!history.communityFeatureUsage)   history.communityFeatureUsage = {};
         if (!history.communityFeatureHistory) history.communityFeatureHistory = [];
+        if (!history.metroSearches)    history.metroSearches = [];
+        if (!history.flightSearches)   history.flightSearches = [];
+        if (!history.launchSearches)   history.launchSearches = [];
+        if (!history.truckSearches)    history.truckSearches = [];
+        if (!history.fareCalcSearches) history.fareCalcSearches = [];
 
         return history;
     } catch {
         return {
             busSearches: [], routeSearches: [], intercitySearches: [], trainSearches: [],
+            metroSearches: [], flightSearches: [], launchSearches: [], truckSearches: [], fareCalcSearches: [],
             mostUsedBuses: {}, mostUsedRoutes: {}, mostUsedIntercity: {}, mostUsedTrains: {},
             todayBuses: [], todayRoutes: [], todayIntercity: [], todayTrains: [],
             lastResetDate: getTodayDate(),
@@ -315,6 +366,11 @@ const syncHistoryToGitHub = (history: UserHistory): void => {
             routeSearches:           (history.routeSearches || []).slice(-50),
             intercitySearches:       (history.intercitySearches || []).slice(-50),
             trainSearches:           (history.trainSearches || []).slice(-50),
+            metroSearches:           (history.metroSearches || []).slice(-50),
+            flightSearches:          (history.flightSearches || []).slice(-50),
+            launchSearches:          (history.launchSearches || []).slice(-50),
+            truckSearches:           (history.truckSearches || []).slice(-50),
+            fareCalcSearches:        (history.fareCalcSearches || []).slice(-50),
             mostUsedBuses:           history.mostUsedBuses || {},
             mostUsedRoutes:          history.mostUsedRoutes || {},
             mostUsedIntercity:       history.mostUsedIntercity || {},
@@ -426,6 +482,56 @@ export const trackFeatureUsage = (feature: string): void => {
     saveUserHistory(history);
 };
 
+export const trackMetroSearch = (from: string, to: string, fare: number): void => {
+    const history = getUserHistory();
+    const today = getTodayDate();
+    ga4('metro_search', { from_station: from, to_station: to });
+    history.metroSearches = history.metroSearches || [];
+    history.metroSearches.push({ from, to, fare, timestamp: Date.now(), date: today });
+    if (history.metroSearches.length > 100) history.metroSearches = history.metroSearches.slice(-100);
+    saveUserHistory(history);
+};
+
+export const trackFlightSearch = (from: string, to: string): void => {
+    const history = getUserHistory();
+    const today = getTodayDate();
+    ga4('flight_search', { from_airport: from, to_airport: to });
+    history.flightSearches = history.flightSearches || [];
+    history.flightSearches.push({ from, to, timestamp: Date.now(), date: today });
+    if (history.flightSearches.length > 100) history.flightSearches = history.flightSearches.slice(-100);
+    saveUserHistory(history);
+};
+
+export const trackLaunchSearch = (from: string, to: string, nameSearch: string): void => {
+    const history = getUserHistory();
+    const today = getTodayDate();
+    ga4('launch_search', { from_terminal: from, to_terminal: to });
+    history.launchSearches = history.launchSearches || [];
+    history.launchSearches.push({ from, to, nameSearch, timestamp: Date.now(), date: today });
+    if (history.launchSearches.length > 100) history.launchSearches = history.launchSearches.slice(-100);
+    saveUserHistory(history);
+};
+
+export const trackTruckSearch = (from: string, to: string): void => {
+    const history = getUserHistory();
+    const today = getTodayDate();
+    ga4('truck_search', { from_location: from, to_location: to });
+    history.truckSearches = history.truckSearches || [];
+    history.truckSearches.push({ from, to, timestamp: Date.now(), date: today });
+    if (history.truckSearches.length > 100) history.truckSearches = history.truckSearches.slice(-100);
+    saveUserHistory(history);
+};
+
+export const trackFareCalc = (from: string, to: string, mode: string, fare: number): void => {
+    const history = getUserHistory();
+    const today = getTodayDate();
+    ga4('fare_calc', { from_station: from, to_station: to, mode, fare });
+    history.fareCalcSearches = history.fareCalcSearches || [];
+    history.fareCalcSearches.push({ from, to, mode, fare, timestamp: Date.now(), date: today });
+    if (history.fareCalcSearches.length > 100) history.fareCalcSearches = history.fareCalcSearches.slice(-100);
+    saveUserHistory(history);
+};
+
 export const getMostUsedBuses = (limit: number = 5): Array<{ busId: string; count: number }> => {
     const history = getUserHistory();
     return Object.entries(history.mostUsedBuses || {})
@@ -456,6 +562,7 @@ export const getTodayRouteSearches = (): Array<{ from: string; to: string }> =>
 export const clearUserHistory = (): void => {
     const empty: UserHistory = {
         busSearches: [], routeSearches: [], intercitySearches: [], trainSearches: [],
+        metroSearches: [], flightSearches: [], launchSearches: [], truckSearches: [], fareCalcSearches: [],
         mostUsedBuses: {}, mostUsedRoutes: {}, mostUsedIntercity: {}, mostUsedTrains: {},
         todayBuses: [], todayRoutes: [], todayIntercity: [], todayTrains: [],
         lastResetDate: getTodayDate(),

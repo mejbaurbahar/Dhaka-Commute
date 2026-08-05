@@ -74,7 +74,47 @@ export function HistoryPage(props: ScreenProps) {
       timestamp: item.timestamp,
       color: '#34d399',
     }));
-    return [...bus, ...routes, ...intercity, ...trains].sort((a, b) => b.timestamp - a.timestamp);
+    const metro = (history.metroSearches || []).map(item => ({
+      id: `metro-${item.timestamp}-${item.from}-${item.to}`,
+      mode: lbl('Metro', 'মেট্রো'),
+      title: `${item.from} → ${item.to}`,
+      detail: `৳${item.fare}`,
+      timestamp: item.timestamp,
+      color: '#3b82f6',
+    }));
+    const flights = (history.flightSearches || []).map(item => ({
+      id: `flight-${item.timestamp}-${item.from}-${item.to}`,
+      mode: lbl('Flight', 'ফ্লাইট'),
+      title: `${item.from} → ${item.to}`,
+      detail: lbl('Flight search', 'ফ্লাইট সার্চ'),
+      timestamp: item.timestamp,
+      color: '#1e5aa0',
+    }));
+    const launches = (history.launchSearches || []).map(item => ({
+      id: `launch-${item.timestamp}-${item.from}-${item.to}`,
+      mode: lbl('Launch', 'লঞ্চ'),
+      title: item.from && item.to ? `${item.from} → ${item.to}` : item.nameSearch || lbl('Launch search', 'লঞ্চ সার্চ'),
+      detail: lbl('River route', 'নদীপথ'),
+      timestamp: item.timestamp,
+      color: '#0ea5e9',
+    }));
+    const trucks = (history.truckSearches || []).map(item => ({
+      id: `truck-${item.timestamp}-${item.from}-${item.to}`,
+      mode: lbl('Truck', 'ট্রাক'),
+      title: `${item.from} → ${item.to}`,
+      detail: lbl('Freight search', 'মালামাল পরিবহন'),
+      timestamp: item.timestamp,
+      color: '#ef4444',
+    }));
+    const fares = (history.fareCalcSearches || []).map(item => ({
+      id: `fare-${item.timestamp}-${item.from}-${item.to}`,
+      mode: lbl('Fare Calc', 'ভাড়া হিসাব'),
+      title: `${item.from} → ${item.to}`,
+      detail: `${item.mode} · ৳${item.fare}`,
+      timestamp: item.timestamp,
+      color: '#f59e0b',
+    }));
+    return [...bus, ...routes, ...intercity, ...trains, ...metro, ...flights, ...launches, ...trucks, ...fares].sort((a, b) => b.timestamp - a.timestamp);
   }, [history, lang, tk.primary, tk.amber]);
 
   const totalSearches = records.length;
