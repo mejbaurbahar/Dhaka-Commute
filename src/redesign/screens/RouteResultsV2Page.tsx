@@ -394,11 +394,11 @@ export function RouteResultsV2Page(props: Props) {
 
           {RESULTS.map((r, idx) => (
             <React.Fragment key={r.busId}>
-              {idx === 2 && (
+              {idx === 2 && !isMobile && (
                 <NativeAdCard
                   tk={tk}
                   lang={lang}
-                  kind={isMobile ? 'mob-banner' : 'leaderboard'}
+                  kind="leaderboard"
                   title={lbl('Related deals for this route', 'এই রুটের জন্য সংশ্লিষ্ট ডিল')}
                   icon="🎯"
                 />

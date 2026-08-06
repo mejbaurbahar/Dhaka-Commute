@@ -12,6 +12,45 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '2.1.0',
+    date: '2026-08-06',
+    type: 'minor',
+    features: [
+      'Dhakar Chaka search now shows all 3 variants: Dhakar Chaka (Gulshan), Dhakar Chaka (Banani), and Gulshan Chaka together',
+      'Searching "Dhakar Chaka" on Local Bus also shows ঢাকা চাকা live GPS buses (DTCA fleet)',
+      'Back button now appears on all transport search pages (local bus, train, metro, launch, flights, intercity) when navigating from another page',
+      'Bus detail page: Save / Rate / Start Navigation action bar moved to top of content on desktop — no more footer overlap',
+    ],
+    bnFeatures: [
+      '"ঢাকার চাকা" সার্চে এখন একসাথে তিনটি ভ্যারিয়েন্ট দেখায়: ঢাকার চাকা (গুলশান), ঢাকার চাকা (বনানী) ও গুলশান চাকা',
+      'লোকাল বাসে "ঢাকার চাকা" সার্চ করলে DTCA জিপিএস লাইভ বাস বিভাগও দেখায়',
+      'অন্য পেজ থেকে নেভিগেট করলে এখন সব পরিবহন সার্চ পেজে (লোকাল বাস, ট্রেন, মেট্রো, লঞ্চ, ফ্লাইট, আন্তঃজেলা) ব্যাক বাটন আসে',
+      'বাস ডিটেইল পেজে সেভ / রেট / নেভিগেট শুরু বাটন এখন ডেস্কটপে কন্টেন্টের উপরে — ফুটার ওভারল্যাপ ঠিক হয়েছে',
+    ],
+    fixes: [
+      'Fixed duplicate ঢাকা চাকা live section appearing side-by-side when searching Dhakar Chaka',
+      'Fixed mobile Start Navigation button sitting on top of the tab bar — now positioned above it',
+      'Fixed full-screen vignette popup showing on phone during navigation — disabled on mobile',
+      'Removed cluttered inline banner ads from mobile search results for smoother scrolling',
+      'Removed external buskothay live tracker card from Local Bus page',
+    ],
+    bnFixes: [
+      '"ঢাকার চাকা" সার্চে পাশাপাশি দুটো একই লাইভ বাস সেকশন দেখানো বন্ধ হয়েছে',
+      'মোবাইলে "নেভিগেট শুরু" বাটন ট্যাব বারের উপরে বসছিল — এখন আলাদাভাবে দেখায়',
+      'নেভিগেশনের সময় ফোনে ফুলস্ক্রিন পপআপ বিজ্ঞাপন বন্ধ — মোবাইলে আর আসবে না',
+      'মোবাইল সার্চ রেজাল্টে মাঝের ব্যানার বিজ্ঞাপন সরানো হয়েছে — স্ক্রোলিং এখন মসৃণ',
+      'লোকাল বাস পেজ থেকে বাইরের buskothay ট্র্যাকার কার্ড সরানো হয়েছে',
+    ],
+    improvements: [
+      'AdCluster count reduced from 3 to 1 on mobile for bus detail pages',
+      'PWA cache bumped to v95 — fresh assets served immediately',
+    ],
+    bnImprovements: [
+      'মোবাইলে বাস ডিটেইল পেজে AdCluster কাউন্ট ৩ থেকে ১-এ নামানো হয়েছে',
+      'PWA ক্যাশে v95-এ আপগ্রেড — নতুন পরিবর্তন সাথে সাথে লোড হবে',
+    ],
+  },
+  {
     version: '2.0.0',
     date: '2026-06-26',
     type: 'major',

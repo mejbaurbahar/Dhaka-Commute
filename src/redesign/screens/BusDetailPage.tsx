@@ -146,7 +146,7 @@ export function BusDetailPage(props: Props) {
           <BusRating busId={bus.id} busName={bus.name} onBack={() => { setShowRating(false); getBusRatings(bus.id).then(setRatingSummary).catch(() => setRatingSummary(null)); }} onSuccess={() => earnCoins(10, 'Bus review submitted')}/>
         </div>
       </div>
-          <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
+          <AdCluster tk={tk} lang={lang} count={isMobile?1:3} isMobile={isMobile}/>
     </PageShell>
   );
   if (showPhotos) return (
@@ -156,7 +156,7 @@ export function BusDetailPage(props: Props) {
           <BusPhotoGallery busId={bus.id} busName={bus.name} busBnName={bus.bnName} onBack={() => setShowPhotos(false)} onSuccess={() => earnCoins(8, 'Bus photo uploaded')}/>
         </div>
       </div>
-          <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
+          <AdCluster tk={tk} lang={lang} count={isMobile?1:3} isMobile={isMobile}/>
     </PageShell>
   );
 
@@ -172,7 +172,7 @@ export function BusDetailPage(props: Props) {
           />
         </div>
       </div>
-      <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
+      <AdCluster tk={tk} lang={lang} count={isMobile?1:3} isMobile={isMobile}/>
     </PageShell>
   );
 
@@ -200,7 +200,7 @@ export function BusDetailPage(props: Props) {
 
   return (
     <PageShell {...props}>
-      <div style={{ padding:isMobile?'16px 16px 100px':'28px 40px 80px', maxWidth:1180, margin:'0 auto' }}>
+      <div style={{ padding:isMobile?'16px 16px 260px':'28px 40px 80px', maxWidth:1180, margin:'0 auto' }}>
         <div style={{ height:isMobile?320:430,borderRadius:16,overflow:'hidden',position:'relative',marginBottom:18,background:'#0a1f14',border:`1px solid ${tk.line}` }}>
           <BusRouteMap
             route={bus}
@@ -374,7 +374,7 @@ export function BusDetailPage(props: Props) {
       </div>
 
       {isMobile && (
-        <div style={{ position:'fixed', bottom:68, left:0, right:0, background:tk.panel, backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)', borderTop:`1px solid ${tk.line}`, padding:'12px 16px', display:'flex', gap:10, zIndex:9100 }}>
+        <div style={{ position:'fixed', bottom:'calc(160px + env(safe-area-inset-bottom))', left:0, right:0, background:tk.panel, backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)', borderTop:`1px solid ${tk.line}`, padding:'12px 16px', display:'flex', gap:10, zIndex:9100 }}>
           <button onClick={()=>setFavoriteIds(toggleFavoriteBus(bus.id))} style={{ ...chipBtn(tk),borderRadius:12,padding:'10px 16px',color:isFavorite?tk.accent:tk.text }}>
             {isFavorite?'♥':'♡'} {T(lang,'সেভ','Save')}
           </button>
@@ -396,7 +396,7 @@ export function BusDetailPage(props: Props) {
           <div style={{ padding: isMobile ? '16px 16px 0' : '16px 40px 0' }}>
             <GovAdBanner lang={lang} height={isMobile ? 200 : 230} ids={['brta','mygov','railway']} />
           </div>
-          <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
+          <AdCluster tk={tk} lang={lang} count={isMobile?1:3} isMobile={isMobile}/>
     </PageShell>
   );
 }

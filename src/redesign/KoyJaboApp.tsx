@@ -537,7 +537,7 @@ export function KoyJaboApp() {
         </>
       )}
       {showAnchor && <AnchorAd key={top.route} tk={tk} lang={lang} onClose={() => setAnchorOn(false)} bottomOffset={isPhone ? 'calc(72px + env(safe-area-inset-bottom))' : '0px'}/>}
-      <VignetteAd tk={tk} lang={lang} open={vignette} onClose={() => setVignette(false)}/>
+      {!isPhone && <VignetteAd tk={tk} lang={lang} open={vignette} onClose={() => setVignette(false)}/>}
       {/* ── Update-available toast ── */}
       {updateReady && (
         <div style={{

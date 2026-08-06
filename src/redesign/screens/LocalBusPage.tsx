@@ -290,11 +290,11 @@ export function LocalBusPage(props: Props) {
                       const initials = r.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
                       return (
                         <React.Fragment key={r.id||i}>
-                          {i === 5 && (
+                          {i === 5 && !isMobile && (
                             <NativeAdCard
                               tk={tk}
                               lang={lang}
-                              kind={isMobile?'mob-banner':'leaderboard'}
+                              kind="leaderboard"
                               title={T(lang, 'এই রুটের জন্য অফার', 'Offers for this route')}
                               icon="🎯"
                             />
@@ -383,15 +383,17 @@ export function LocalBusPage(props: Props) {
                 />
               )}
               <PromoBanner tk={tk} lang={lang} page="bus" onNav={onNav}/>
-              <NativeAdCard
-                tk={tk}
-                lang={lang}
-                kind={isMobile?'mob-banner':'mid-rect'}
-                title={T(lang, 'ঢাকা যাত্রা অফার', 'Dhaka commute offers')}
-                subtitle={T(lang, 'রাইড ও পরিবহন ডিল', 'Ride & transit deals')}
-                icon="🛵"
-                compact
-              />
+              {!isMobile && (
+                <NativeAdCard
+                  tk={tk}
+                  lang={lang}
+                  kind="mid-rect"
+                  title={T(lang, 'ঢাকা যাত্রা অফার', 'Dhaka commute offers')}
+                  subtitle={T(lang, 'রাইড ও পরিবহন ডিল', 'Ride & transit deals')}
+                  icon="🛵"
+                  compact
+                />
+              )}
 
               <div style={card(14)}>
                 <div style={{ fontFamily:BEN, fontWeight:700, fontSize:13, color:tk.text, marginBottom:10 }}>
@@ -409,13 +411,15 @@ export function LocalBusPage(props: Props) {
             </div>
           </div>
 
-          <NativeAdCard
-            tk={tk}
-            lang={lang}
-            kind={isMobile?'mob-banner':'leaderboard'}
-            title={T(lang, 'আরও ঢাকা যাত্রা টিপস', 'More Dhaka commute tips')}
-            icon="🚏"
-          />
+          {!isMobile && (
+            <NativeAdCard
+              tk={tk}
+              lang={lang}
+              kind="leaderboard"
+              title={T(lang, 'আরও ঢাকা যাত্রা টিপস', 'More Dhaka commute tips')}
+              icon="🚏"
+            />
+          )}
         </div>
       </div>
           <div style={{ padding: isMobile ? '16px 16px 0' : '16px 40px 0' }}>
