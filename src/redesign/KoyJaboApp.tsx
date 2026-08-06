@@ -255,6 +255,52 @@ export function KoyJaboApp() {
     return () => clearTimeout(vignetteTimer.current);
   }, []);
 
+  // On mobile: add a dismiss button above any auto-injected AdSense unit (Google Auto Ads)
+  // that is NOT inside one of our managed NativeAdCard wrappers [data-kj-ad].
+  useEffect(() => {
+    if (window.innerWidth >= 1024) return;
+    const tagged = new WeakSet<Element>();
+
+    const process = (ins: Element) => {
+      if (tagged.has(ins) || ins.closest('[data-kj-ad]')) return;
+      tagged.add(ins);
+
+      const poll = setInterval(() => {
+        const status = ins.getAttribute('data-adsbygoogle-status');
+        if (status !== 'done' && status !== 'filled') return;
+        clearInterval(poll);
+        const iframe = ins.querySelector('iframe');
+        if (!iframe || !iframe.src || iframe.src.startsWith('about:')) return;
+
+        const parent = ins.parentElement;
+        if (!parent || parent.getAttribute('data-kj-auto-dismiss') === '1') return;
+        parent.setAttribute('data-kj-auto-dismiss', '1');
+
+        const bar = document.createElement('div');
+        bar.style.cssText = 'display:flex;justify-content:flex-end;padding:2px 4px;';
+        const btn = document.createElement('button');
+        btn.textContent = '✕';
+        btn.setAttribute('aria-label', 'Close');
+        btn.style.cssText = [
+          'background:rgba(0,0,0,0.1)', 'color:#666', 'border:1px solid rgba(0,0,0,0.15)',
+          'border-radius:999px', 'width:24px', 'height:24px', 'font-size:12px',
+          'cursor:pointer', 'display:flex', 'align-items:center', 'justify-content:center',
+          'padding:0', 'line-height:1',
+        ].join(';');
+        btn.onclick = () => { parent.style.display = 'none'; };
+        bar.appendChild(btn);
+        parent.insertBefore(bar, ins);
+      }, 800);
+
+      setTimeout(() => clearInterval(poll), 20000);
+    };
+
+    document.querySelectorAll('ins.adsbygoogle').forEach(process);
+    const obs = new MutationObserver(() => document.querySelectorAll('ins.adsbygoogle').forEach(process));
+    obs.observe(document.body, { childList: true, subtree: true });
+    return () => obs.disconnect();
+  }, []);
+
   // Track vw for rail ads
   useEffect(() => {
     const onResize = () => setVw(window.innerWidth);

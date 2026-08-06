@@ -268,9 +268,10 @@ export function NativeAdCard({
 }) {
   const { w, h, format, slot, layout } = DIMS[kind];
   const [filled, setFilled] = useState<boolean | null>(null);
+  const [dismissed, setDismissed] = useState(false);
   const font = lang === 'bn' ? BEN : SANS;
 
-  if (filled === false) return null;
+  if (filled === false || dismissed) return null;
 
   const padY = compact ? 10 : 14;
   const padX = compact ? 12 : 16;
@@ -279,6 +280,7 @@ export function NativeAdCard({
 
   return (
     <div
+      data-kj-ad="1"
       style={{
         background: isFilled ? tk.panel : detecting ? (tk.panelMuted || 'rgba(128,128,128,0.06)') : 'transparent',
         border: isFilled ? `1px solid ${tk.line}` : detecting ? `1px solid ${tk.line}40` : 'none',
@@ -333,7 +335,7 @@ export function NativeAdCard({
               {icon}
             </span>
           )}
-          <div style={{ minWidth: 0 }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
             <div
               style={{
                 fontFamily: font,
@@ -363,6 +365,15 @@ export function NativeAdCard({
               </div>
             )}
           </div>
+          {isFilled && (
+            <button
+              onClick={() => setDismissed(true)}
+              aria-label="Close ad"
+              style={{ background: 'none', border: `1px solid ${tk.line}`, borderRadius: 999, color: tk.textFaint, cursor: 'pointer', fontSize: 13, width: 26, height: 26, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+            >
+              ✕
+            </button>
+          )}
         </div>
       )}
 
