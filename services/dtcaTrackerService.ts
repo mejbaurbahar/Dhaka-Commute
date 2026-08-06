@@ -60,15 +60,30 @@ export interface DtcaVehicleLocation {
 }
 
 // ── Core fetch — all DTCA calls go through CF Worker proxy ──────────────────
+// Falls back to legacy /dtca/ path if /bus/ is blocked (CORS or 404) — bridges
+// the gap between the new frontend paths and the old deployed worker.
 
 async function fetchDtcaProxy<T>(proxyPath: string): Promise<T> {
-  const response = await fetch(`${DTCA_PROXY}${proxyPath}`, {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
-    cache: 'no-store',
-  });
-  if (!response.ok) throw new Error(`DTCA proxy request failed: ${response.status}`);
-  return response.json() as Promise<T>;
+  const legacyPath = proxyPath
+    .replace(/^\/bus\//, '/dtca/')
+    .replace(/^\/bus-snapshot\b/, '/dtca-snapshot');
+
+  const tryFetch = async (path: string): Promise<T> => {
+    const response = await fetch(`${DTCA_PROXY}${path}`, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      cache: 'no-store',
+    });
+    if (!response.ok) throw new Error(`DTCA proxy request failed: ${response.status}`);
+    return response.json() as Promise<T>;
+  };
+
+  try {
+    return await tryFetch(proxyPath);
+  } catch {
+    if (legacyPath !== proxyPath) return tryFetch(legacyPath);
+    throw new Error('DTCA proxy unavailable');
+  }
 }
 
 // No-op kept for any remaining callers
@@ -271,11 +286,13 @@ function normalizeSnapshot(payload: Partial<DtcaTrackerSnapshot> | null | undefi
 async function fetchSnapshotFromWorker(): Promise<DtcaTrackerSnapshot | null> {
   const proxy = (import.meta.env.VITE_API_PROXY as string | undefined)?.replace(/\/$/, '');
   if (!proxy) return null;
-  const url = `${proxy}/bus-snapshot?_t=${Date.now()}`;
-  const response = await fetch(url, { cache: 'no-store' });
-  if (!response.ok) return null;
-  const payload = await response.json().catch(() => null);
-  return normalizeSnapshot(payload as Partial<DtcaTrackerSnapshot> | null, 'ok');
+  const tryUrl = async (path: string) => {
+    const response = await fetch(`${proxy}${path}`, { cache: 'no-store' });
+    if (!response.ok) return null;
+    const payload = await response.json().catch(() => null);
+    return normalizeSnapshot(payload as Partial<DtcaTrackerSnapshot> | null, 'ok');
+  };
+  return (await tryUrl(`/bus-snapshot?_t=${Date.now()}`)) ?? tryUrl(`/dtca-snapshot?_t=${Date.now()}`);
 }
 
 async function fetchSnapshotFromStaticFile(): Promise<DtcaTrackerSnapshot | null> {

@@ -634,8 +634,9 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       });
     }
 
-    // ── GET /bus-snapshot — refresh a lightweight DTCA tracker snapshot ──
-    if (url.pathname === '/bus-snapshot' || url.pathname === '/bus-snapshot/') {
+    // ── GET /bus-snapshot (alias: /dtca-snapshot) ────────────────────────────
+    if (url.pathname === '/bus-snapshot' || url.pathname === '/bus-snapshot/' ||
+        url.pathname === '/dtca-snapshot' || url.pathname === '/dtca-snapshot/') {
       const trackerUrl = 'https://buskothay.com/dtca-bus-tracking/';
       try {
         const upstream = await fetch(trackerUrl, {
@@ -689,9 +690,9 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       }
     }
 
-    // ── /bus — proxy to DTCA backend (server-to-server, no browser CORS) ───
-    if (url.pathname.startsWith('/bus')) {
-      const sub = url.pathname.replace(/^\/bus\/?/, '');
+    // ── /bus (alias: /dtca) — proxy to DTCA backend ─────────────────────────
+    if (url.pathname.startsWith('/bus') || url.pathname.startsWith('/dtca')) {
+      const sub = url.pathname.replace(/^\/(bus|dtca)\/?/, '');
       const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
       if (isRateLimited(ip + ':dtca', 120, 60_000)) {
         return new Response(JSON.stringify({ error: 'Rate limited' }), {
@@ -735,7 +736,10 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
 
     // Only serve /gh path
     if (url.pathname !== '/gh' && url.pathname !== '/gh/') {
-      return new Response('Not found', { status: 404 });
+      return new Response(JSON.stringify({ error: 'Not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+      });
     }
 
     // Block requests not from our domain (in production)
