@@ -17,13 +17,13 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     type: 'minor',
     features: [
       'Dhakar Chaka search now shows all 3 variants: Dhakar Chaka (Gulshan), Dhakar Chaka (Banani), and Gulshan Chaka together',
-      'Searching "Dhakar Chaka" on Local Bus also shows ঢাকা চাকা live GPS buses (DTCA fleet)',
+      'Searching "Dhakar Chaka" on Local Bus also shows ঢাকা চাকা live GPS buses',
       'Back button now appears on all transport search pages (local bus, train, metro, launch, flights, intercity) when navigating from another page',
       'Bus detail page: Save / Rate / Start Navigation action bar moved to top of content on desktop — no more footer overlap',
     ],
     bnFeatures: [
       '"ঢাকার চাকা" সার্চে এখন একসাথে তিনটি ভ্যারিয়েন্ট দেখায়: ঢাকার চাকা (গুলশান), ঢাকার চাকা (বনানী) ও গুলশান চাকা',
-      'লোকাল বাসে "ঢাকার চাকা" সার্চ করলে DTCA জিপিএস লাইভ বাস বিভাগও দেখায়',
+      'লোকাল বাসে "ঢাকার চাকা" সার্চ করলে লাইভ বাস বিভাগও দেখায়',
       'অন্য পেজ থেকে নেভিগেট করলে এখন সব পরিবহন সার্চ পেজে (লোকাল বাস, ট্রেন, মেট্রো, লঞ্চ, ফ্লাইট, আন্তঃজেলা) ব্যাক বাটন আসে',
       'বাস ডিটেইল পেজে সেভ / রেট / নেভিগেট শুরু বাটন এখন ডেস্কটপে কন্টেন্টের উপরে — ফুটার ওভারল্যাপ ঠিক হয়েছে',
     ],
