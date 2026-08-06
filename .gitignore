@@ -91,9 +91,11 @@ testSim.ts
 tmp_runs.json
 *_snippet_persist
 
-# Old deployment config files (Netlify/Render not in use)
-netlify.toml
+# Old deployment config files (Render not in use)
 render.yaml
+
+# Netlify CLI local state
+.netlify/
 
 # Data export dumps
 dhaka_transport_data_export.json
