@@ -10,6 +10,8 @@ import {
   DtcaRouteDetailsData,
 } from '../../../services/dtcaTrackerService';
 
+type LiveSource = 'live' | 'vehicle-list' | null;
+
 interface Props {
   theme: 'dark' | 'light';
   device: 'desktop' | 'mobile';
@@ -61,6 +63,8 @@ export function DTCABusDetailPage(props: Props) {
   const [routeData, setRouteData] = useState<DtcaRouteDetailsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [liveUnavailable, setLiveUnavailable] = useState(false);
+  const [liveSource, setLiveSource] = useState<LiveSource>(null);
   const [userLatLng, setUserLatLng] = useState<[number, number] | null>(null);
   const firstLoad = useRef(true);
 
@@ -84,7 +88,15 @@ export function DTCABusDetailPage(props: Props) {
     if (!identifier) return;
     try {
       const res = await getDtcaLiveLocation(identifier);
-      setLiveData(res.data);
+      if (res.success && res.data) {
+        setLiveData(res.data);
+        setLiveSource(res.source ?? 'live');
+        setLiveUnavailable(false);
+      } else {
+        setLiveData(null);
+        setLiveSource(null);
+        setLiveUnavailable(true);
+      }
       setError(null);
     } catch (err: any) {
       if (firstLoad.current) setError(err?.message || 'Failed to load');
@@ -312,6 +324,18 @@ export function DTCABusDetailPage(props: Props) {
             </div>
           )}
 
+          {liveUnavailable && !liveData && !error && (
+            <div style={{ ...card(), textAlign: 'center', padding: 14 }}>
+              <div style={{ fontSize: 22, marginBottom: 6 }}>🚌</div>
+              <div style={{ fontFamily: SANS, fontSize: 13, color: tk.textDim, marginBottom: 4 }}>
+                {T(lang, 'এই মুহূর্তে লাইভ অবস্থান পাওয়া যাচ্ছে না', 'Live location not available right now')}
+              </div>
+              <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>
+                {T(lang, 'বাসটি অফলাইন বা পার্ক করা থাকতে পারে', 'Bus may be offline or parked')}
+              </div>
+            </div>
+          )}
+
           {/* Header */}
           <div style={card()}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
@@ -331,11 +355,23 @@ export function DTCABusDetailPage(props: Props) {
                   {T(lang, 'ঢাকা সিটি বাস', 'Dhaka City Bus')}
                 </div>
               </div>
-              {busStatus ? (
-                <div style={{ background: `${statusColor(busStatus)}22`, color: statusColor(busStatus), borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 11, flexShrink: 0 }}>
-                  {statusLabel(busStatus, lang)}
-                </div>
-              ) : null}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
+                {busStatus ? (
+                  <div style={{ background: `${statusColor(busStatus)}22`, color: statusColor(busStatus), borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 11 }}>
+                    {statusLabel(busStatus, lang)}
+                  </div>
+                ) : null}
+                {liveSource === 'live' && (
+                  <div style={{ background: '#10b98122', color: '#10b981', borderRadius: 6, padding: '2px 8px', fontFamily: SANS, fontWeight: 700, fontSize: 10 }}>
+                    ● {T(lang, 'লাইভ', 'LIVE')}
+                  </div>
+                )}
+                {liveSource === 'vehicle-list' && (
+                  <div style={{ background: '#f59e0b22', color: '#f59e0b', borderRadius: 6, padding: '2px 8px', fontFamily: SANS, fontWeight: 700, fontSize: 10 }}>
+                    ⚡ {T(lang, 'লোকেশন ট্র্যাক', 'GPS Track')}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Stats */}

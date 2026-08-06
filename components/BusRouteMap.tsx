@@ -531,7 +531,14 @@ const BusRouteMap: React.FC<BusRouteMapProps> = ({
   }, [isTraffic, isOnline, mapReady]);
 
   return (
-    <div className="kj-map relative z-0 isolate w-full rounded-b-2xl overflow-hidden bg-kj-chip-bg" style={{ height }}>
+    <div className="kj-map relative z-0 isolate w-full rounded-b-2xl overflow-hidden" style={{ height, background: '#0f2318' }}>
+      {/* Dark skeleton while Leaflet initialises — hides the white flash */}
+      {!mapReady && (
+        <div className="absolute inset-0 z-[600] flex flex-col items-center justify-center gap-2 pointer-events-none" style={{ background: '#0f2318' }}>
+          <div className="w-10 h-10 rounded-full border-2 border-kj-primary/40 border-t-kj-primary animate-spin" />
+          <span className="text-kj-text-dim text-xs">Loading map…</span>
+        </div>
+      )}
       <div className="w-full h-full relative">
         <div ref={mapRef} className="w-full h-full" /></div>
 

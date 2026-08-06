@@ -634,8 +634,8 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       });
     }
 
-    // ── GET /dtca-snapshot — refresh a lightweight DTCA tracker snapshot ──
-    if (url.pathname === '/dtca-snapshot' || url.pathname === '/dtca-snapshot/') {
+    // ── GET /bus-snapshot — refresh a lightweight DTCA tracker snapshot ──
+    if (url.pathname === '/bus-snapshot' || url.pathname === '/bus-snapshot/') {
       const trackerUrl = 'https://buskothay.com/dtca-bus-tracking/';
       try {
         const upstream = await fetch(trackerUrl, {
@@ -689,9 +689,9 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       }
     }
 
-    // ── /dtca — proxy to DTCA backend (server-to-server, no browser CORS) ───
-    if (url.pathname.startsWith('/dtca')) {
-      const sub = url.pathname.replace(/^\/dtca\/?/, '');
+    // ── /bus — proxy to DTCA backend (server-to-server, no browser CORS) ───
+    if (url.pathname.startsWith('/bus')) {
+      const sub = url.pathname.replace(/^\/bus\/?/, '');
       const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
       if (isRateLimited(ip + ':dtca', 120, 60_000)) {
         return new Response(JSON.stringify({ error: 'Rate limited' }), {
@@ -719,8 +719,11 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       try {
         const upstream = await dtcaFetch(dtcaPath, env);
         const data = await upstream.json().catch(() => ({}));
+        // live-location 404 = no active location right now (bus parked/offline) — not a server error
+        const isLiveLoc = sub === 'live-location' || sub === 'live-location/';
+        const status = (isLiveLoc && upstream.status === 404) ? 200 : (upstream.ok ? 200 : upstream.status);
         return new Response(JSON.stringify(data), {
-          status: upstream.ok ? 200 : upstream.status,
+          status,
           headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...corsHeaders(origin) },
         });
       } catch (e) {

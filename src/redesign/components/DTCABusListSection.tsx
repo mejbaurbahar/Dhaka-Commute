@@ -33,7 +33,11 @@ export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+    const interval = setInterval(() => { void load(); }, 30_000);
+    return () => clearInterval(interval);
+  }, [load]);
 
   const card: React.CSSProperties = {
     background: tk.panel,

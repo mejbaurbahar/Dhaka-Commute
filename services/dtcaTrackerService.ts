@@ -98,10 +98,58 @@ export interface DtcaLiveLocationData {
 export interface DtcaLiveLocationResponse {
   success: boolean;
   data: DtcaLiveLocationData;
+  /** 'live' = direct route-plan data; 'vehicle-list' = fallback from all-vehicles endpoint */
+  source?: 'live' | 'vehicle-list';
 }
 
 export async function getDtcaLiveLocation(identifier: string): Promise<DtcaLiveLocationResponse> {
-  return fetchDtcaProxy<DtcaLiveLocationResponse>(`/dtca/live-location?id=${encodeURIComponent(identifier)}`);
+  // Primary: direct live-location endpoint
+  try {
+    const res = await fetchDtcaProxy<DtcaLiveLocationResponse>(`/bus/live-location?id=${encodeURIComponent(identifier)}`);
+    if (res.success && res.data?.latitude && res.data?.longitude) {
+      return { ...res, source: 'live' };
+    }
+  } catch { /* fall through to vehicle-list fallback */ }
+
+  // Fallback: all-vehicle-location list (has lat/lng in path[])
+  // Uses 30s cache so live tracking stays reasonably fresh
+  try {
+    const allRes = await getDtcaAllVehicleLocationCached();
+    const vehicle = (allRes.vehicles ?? []).find(v =>
+      v.v_identifier === identifier ||
+      String(v.id) === identifier ||
+      v.bst_id === identifier
+    );
+    if (vehicle) {
+      const p = vehicle.path?.[0];
+      if (p?.lat && p?.lng) {
+        return {
+          success: true,
+          source: 'vehicle-list',
+          data: {
+            identifier: vehicle.v_identifier,
+            latitude: p.lat,
+            longitude: p.lng,
+            heading: 0,
+            speedKph: p.speed_status ?? 0,
+            lastUpdatedAt: p.time_inserted ?? vehicle.time_inserted ?? '',
+            status: p.engine_status
+              ? (p.speed_status > 0 ? 'moving' : 'idle')
+              : 'engine_off',
+            passedStoppageIds: [],
+            nextStoppage: null,
+            upcomingStoppages: [],
+            remainingStoppages: 0,
+            estimatedArrivalMinutes: 0,
+            estimatedArrivalTime: '',
+            distanceToSelectedStoppageKm: 0,
+          },
+        };
+      }
+    }
+  } catch { /* ignore fallback errors */ }
+
+  return { success: false, data: null as any };
 }
 
 // ── Route details ─────────────────────────────────────────────────────────────
@@ -141,13 +189,13 @@ export interface DtcaRouteDetailsResponse {
 }
 
 export async function getDtcaRouteDetails(identifier: string): Promise<DtcaRouteDetailsResponse> {
-  return fetchDtcaProxy<DtcaRouteDetailsResponse>(`/dtca/route-details?id=${encodeURIComponent(identifier)}`);
+  return fetchDtcaProxy<DtcaRouteDetailsResponse>(`/bus/route-details?id=${encodeURIComponent(identifier)}`);
 }
 
 // ── Vehicle list (with cache) ─────────────────────────────────────────────────
 
 let vehicleCache: { data: DtcaAllVehicleLocationResponse; ts: number } | null = null;
-const VEHICLE_CACHE_MS = 5 * 60 * 1000;
+const VEHICLE_CACHE_MS = 30 * 1000; // 30s — short enough for live tracking fallback
 
 export interface DtcaAllVehicleLocationResponse {
   code: number;
@@ -157,7 +205,7 @@ export interface DtcaAllVehicleLocationResponse {
 }
 
 export async function getDtcaAllVehicleLocation(): Promise<DtcaAllVehicleLocationResponse> {
-  return fetchDtcaProxy<DtcaAllVehicleLocationResponse>('/dtca/vehicles');
+  return fetchDtcaProxy<DtcaAllVehicleLocationResponse>('/bus/vehicles');
 }
 
 export async function getDtcaAllVehicleLocationCached(): Promise<DtcaAllVehicleLocationResponse> {
@@ -177,7 +225,7 @@ export interface DtcaStoppageListResponse {
 }
 
 export async function getDtcaStoppageList(): Promise<DtcaStoppageListResponse> {
-  return fetchDtcaProxy<DtcaStoppageListResponse>('/dtca/stoppages');
+  return fetchDtcaProxy<DtcaStoppageListResponse>('/bus/stoppages');
 }
 
 // ── Snapshot (legacy/snapshot flow) ──────────────────────────────────────────
@@ -223,7 +271,7 @@ function normalizeSnapshot(payload: Partial<DtcaTrackerSnapshot> | null | undefi
 async function fetchSnapshotFromWorker(): Promise<DtcaTrackerSnapshot | null> {
   const proxy = (import.meta.env.VITE_API_PROXY as string | undefined)?.replace(/\/$/, '');
   if (!proxy) return null;
-  const url = `${proxy}/dtca-snapshot?_t=${Date.now()}`;
+  const url = `${proxy}/bus-snapshot?_t=${Date.now()}`;
   const response = await fetch(url, { cache: 'no-store' });
   if (!response.ok) return null;
   const payload = await response.json().catch(() => null);

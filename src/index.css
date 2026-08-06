@@ -1101,6 +1101,8 @@ footer {
 }
 .leaflet-control-zoom { margin-bottom: 4px !important; }
 .leaflet-bottom.leaflet-right { bottom: 4px !important; }
+/* Dark background while OSM tiles load — prevents white flash */
+.kj-map .leaflet-container { background: #0f2318 !important; }
 
 /* --- MAP ANIMATIONS --- */
 @keyframes flow {
