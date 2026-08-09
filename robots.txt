@@ -1,13 +1,9 @@
 # KoyJabo (কই যাবো) — Bangladesh transport guide
-# robots.txt — clean, AI-friendly, audit-compliant
-# Last updated: 2026-06-26
+# robots.txt — RFC-9309 compliant
+# Last updated: 2026-08-09
 
 # ─── Sitemaps ──────────────────────────────────────────────────────────────
 Sitemap: https://koyjabo.com/sitemap.xml
-
-# LLM / AI discovery
-LLM-Data: https://koyjabo.com/llm-data.json
-LLM-Index: https://koyjabo.com/llms.txt
 
 # ─── Default: allow everything to all bots ─────────────────────────────────
 User-agent: *
@@ -45,8 +41,10 @@ Allow: /
 User-agent: AdsBot-Google-Mobile
 Allow: /
 
-# ─── AI / LLM crawlers (explicit Allow, no Disallow) ───────────────────────
-# These must NOT be blocked — they power AI search and chat discovery
+# ─── AI / LLM crawlers — Allowed ───────────────────────────────────────────
+# Note: Cloudflare may prepend additional directives at CDN level.
+# If AI crawlers appear blocked, check Cloudflare Dashboard → AI Crawler Blocking.
+
 User-agent: GPTBot
 Allow: /
 
