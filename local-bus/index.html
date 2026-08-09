@@ -728,7 +728,7 @@
     @keyframes kjLoadBar { 0% { transform: translateX(-120%); } 100% { transform: translateX(330%); } }
     @keyframes kjWheel { from { transform: rotate(0); } to { transform: rotate(360deg); } }
   </style>
-    <script type="module" crossorigin src="/assets/index-DOl-KUNJ.js"></script>
+    <script type="module" crossorigin src="/assets/index-DMM6w1hy.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/leaflet-wymbuFIN.js">
     <link rel="modulepreload" crossorigin href="/assets/react-xKrIHwnk.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-Dh4DHJYO.js">
@@ -916,26 +916,11 @@
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
   <!-- Google AdSense — loaded after app to avoid blocking LCP -->
+  <!-- Auto Ads are enabled via the google-adsense-account meta tag (see <head>).
+       Do NOT push enable_page_level_ads here — the meta tag + adsbygoogle.js
+       handle it internally. A second push throws TagError and breaks all ads. -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8425219156685369"
     crossorigin="anonymous"></script>
-  <script>
-    // Enable Auto Ads — lets AdSense place additional ads beyond manual slots,
-    // boosting ads-per-impression and coverage. Harmless if dashboard has Auto
-    // Ads disabled.
-    // When adsbygoogle.js processes the google-adsense-account meta tag it may
-    // internally enable page-level ads. If our explicit push arrives after that,
-    // it throws TagError: "Only one enable_page_level_ads allowed per page"
-    // which breaks all ad serving. try/catch keeps ads alive on either path.
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-8425219156685369",
-        enable_page_level_ads: true,
-        overlays: { bottom: false }
-      });
-    } catch (e) {
-      // harmless — auto ads already enabled by meta tag or prior push
-    }
-  </script>
 
   <!-- Daamdekhi AEO Tag — tracks AI crawler visits, LLM citations, and assistant referrals -->
   <!-- Site ID: MVZPpZlR | https://aeo.daamdekhi.com -->
