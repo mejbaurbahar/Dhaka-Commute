@@ -388,7 +388,7 @@ function GlassStack({ tk, lang }: { tk: Tokens; lang: Lang }) {
             >
               {course.badge} · {course.rating}
             </span>
-            <h4
+            <div
               style={{
                 fontFamily: BEN,
                 fontWeight: 800,
@@ -398,7 +398,7 @@ function GlassStack({ tk, lang }: { tk: Tokens; lang: Lang }) {
               }}
             >
               {T(lang, course.titleBn, course.titleEn)}
-            </h4>
+            </div>
             <p
               style={{
                 fontFamily: BEN,

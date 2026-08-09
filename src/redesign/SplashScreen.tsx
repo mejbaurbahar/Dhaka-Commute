@@ -53,7 +53,7 @@ export function SplashScreen() {
         </div>
         <div style={{
           fontFamily: "'Inter', sans-serif", fontSize: 11,
-          color: '#6b7a91', marginTop: 14,
+          color: '#8b98b0', marginTop: 14,
         }}>Loading your routes…</div>
       </div>
     </div>

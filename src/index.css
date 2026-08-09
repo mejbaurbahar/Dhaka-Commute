@@ -14,7 +14,7 @@
   --kj-line: rgba(56, 89, 122, 0.18);
   --kj-text: #0a1626;
   --kj-text-dim: #4a607a;
-  --kj-text-faint: #7e93ab;
+  --kj-text-faint: #64748b;
   --kj-chip-bg: rgba(56, 100, 160, 0.08);
   --kj-chip-text: #1e3a5f;
   --kj-input-bg: rgba(255, 255, 255, 0.75);
@@ -45,7 +45,7 @@
   --kj-line: rgba(0, 245, 255, 0.14);
   --kj-text: #e0f7ff;
   --kj-text-dim: #8da4c4;
-  --kj-text-faint: #5a7090;
+  --kj-text-faint: #89a4c2;
   --kj-chip-bg: rgba(0, 245, 255, 0.08);
   --kj-chip-text: #bde6ff;
   --kj-input-bg: rgba(5, 12, 24, 0.7);
@@ -209,7 +209,7 @@ body {
 .kj-splash-tag {
   font-family: 'Inter', 'Hind Siliguri', system-ui, sans-serif;
   font-size: 11px;
-  color: #6b7a91;
+  color: #8b98b0;
   margin-top: 14px;
 }
 

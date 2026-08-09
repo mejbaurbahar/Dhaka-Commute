@@ -566,7 +566,7 @@ export function KoyJaboApp() {
           onNav={navTab}
         />
       )}
-      {stage}
+      <main>{stage}</main>
       {aiFab}
       {/* Desktop view toggle removed — mobile users always get mobile layout */}
       <NavDrawer
