@@ -296,7 +296,7 @@ const BANNERS: Record<string, BannerCfg> = {
   railway: {
     id: 'railway',
     gradA: '#06082e', gradB: '#1e1b4b', gradC: '#1e3a8a',
-    accent: '#60a5fa', accentText: '#1e3a8a',
+    accent: '#60a5fa', accentText: '#172d6b' // 5.09:1 on #60a5fa,
     icon: '🚂',
     nameEn: 'Bangladesh Railway', nameBn: 'বাংলাদেশ রেলওয়ে',
     tagEn: 'Train Tickets & Schedules', tagBn: 'ট্রেন টিকিট ও সময়সূচি',
@@ -324,7 +324,7 @@ const BANNERS: Record<string, BannerCfg> = {
   biwtc: {
     id: 'biwtc',
     gradA: '#031220', gradB: '#0c4a6e', gradC: '#075985',
-    accent: '#38bdf8', accentText: '#0c4a6e',
+    accent: '#38bdf8', accentText: '#0b4058' // 5.19:1 on #38bdf8,
     icon: '⛴️',
     nameEn: 'BIWTC', nameBn: 'BIWTC',
     tagEn: 'Inland Water Transport Corp.', tagBn: 'অভ্যন্তরীণ নৌ-পরিবহন',
