@@ -29,6 +29,9 @@ export interface LocationResult {
 }
 
 const PRIVATE_LOCATION_DATA_PATH = 'data/transport/bd-locations.json';
+// Dataset split into two files so each stays <1 MiB (GitHub contents API omits
+// content for larger blobs, which forces the slow git-blobs path on every cold fetch).
+const PRIVATE_LOCATION_DATA_PATH_2 = 'data/transport/bd-locations-2.json';
 const USE_PRIVATE_LOCATION_DATA = Boolean(import.meta.env.VITE_API_PROXY);
 
 const CATEGORY_LABELS: Record<string, { en: string; bn: string }> = {
@@ -64,7 +67,12 @@ async function loadLocations(): Promise<CompactLocation[]> {
     let data: CompactLocation[] | null = null;
 
     if (USE_PRIVATE_LOCATION_DATA) {
-      data = await loadPrivateData<CompactLocation[]>(PRIVATE_LOCATION_DATA_PATH, 'bd-locations');
+      // Keys bumped to -v1: pre-split caches held the full old dataset and must not be reused.
+      const [part1, part2] = await Promise.all([
+        loadPrivateData<CompactLocation[]>(PRIVATE_LOCATION_DATA_PATH, 'bd-locations-v1'),
+        loadPrivateData<CompactLocation[]>(PRIVATE_LOCATION_DATA_PATH_2, 'bd-locations-2-v1'),
+      ]);
+      data = (part1 && part2) ? [...part1, ...part2] : null;
     }
 
     if (!data) {

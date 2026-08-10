@@ -41,6 +41,10 @@ function resolveStationId(value: string, fallback: string) {
   return resolvedIds.length > 0 ? resolvedIds[0] : fallback;
 }
 
+// Bus ids use underscores (e.g. '13_no') but public URLs use dash slugs (e.g. /bus/13-no/).
+// Canonical must match the real URL to avoid duplicate-content signals.
+const busUrlSlug = (id: string) => id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
 export function BusDetailPage(props: Props) {
   const { theme, device, lang, params } = props;
   const tk = KJ_TOKENS[theme];
@@ -56,7 +60,7 @@ export function BusDetailPage(props: Props) {
   const endName = STATIONS[bus.stops[bus.stops.length - 1]]?.name ?? bus.stops[bus.stops.length - 1];
   useDocumentTitle(`${bus.name}: ${startName} ⇄ ${endName}`);
   useEffect(() => {
-    setCanonicalUrl(`/bus/${busId}`);
+    setCanonicalUrl(`/bus/${busUrlSlug(busId)}`);
     const midStops = bus.stops.slice(1, -1).slice(0, 3).map(sid => STATIONS[sid]?.name ?? sid.replace(/_/g, ' ')).join(', ');
     const desc = `${bus.name} Dhaka bus route: ${startName} to ${endName}${midStops ? ` via ${midStops}` : ''}. Stops, fares & route map. Free KoyJabo guide.`;
     setMetaTag('description', desc);
@@ -232,7 +236,7 @@ export function BusDetailPage(props: Props) {
               <div style={{ display:'flex',alignItems:'center',gap:12,marginBottom:14 }}>
                 <div style={{ width:44,height:44,borderRadius:12,background:`linear-gradient(135deg,${colPair[0]},${colPair[1]})`,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:SANS,fontWeight:800,fontSize:15 }}>{badge}</div>
                 <div style={{ flex:1 }}>
-                  <div style={{ fontFamily:BEN,fontWeight:700,fontSize:16,color:tk.text }}>{lang==='bn'?bus.bnName:bus.name}</div>
+                  <h1 style={{ fontFamily:BEN,fontWeight:700,fontSize:16,color:tk.text,margin:0 }}>{lang==='bn'?bus.bnName:bus.name}</h1>
                   <div style={{ display:'flex',alignItems:'center',gap:6,marginTop:2,flexWrap:'wrap' }}>
                     {ratingSummary && ratingSummary.count > 0 ? (
                       <>

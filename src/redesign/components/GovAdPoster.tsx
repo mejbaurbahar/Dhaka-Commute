@@ -23,7 +23,7 @@ interface ServiceDef {
 const SERVICES: Record<string, ServiceDef> = {
   brta: {
     id: 'brta', icon: '🚗',
-    color: '#059669', colorText: '#fff',
+    color: '#047857', colorText: '#fff', // 700 shade — 5.48:1 on white text
     nameEn: 'BRTA', nameBn: 'BRTA',
     tagEn: 'Road Transport Authority', tagBn: 'সড়ক পরিবহন কর্তৃপক্ষ',
     featuresEn: ['Driving license check', 'Vehicle registration', 'Fitness certificate'],
@@ -45,7 +45,7 @@ const SERVICES: Record<string, ServiceDef> = {
   },
   dmtcl: {
     id: 'dmtcl', icon: '🚇',
-    color: '#0891b2', colorText: '#fff',
+    color: '#0e7490', colorText: '#fff', // 700 shade — 5.36:1 on white text
     nameEn: 'DMTCL Metro Rail', nameBn: 'ঢাকা মেট্রোরেল',
     tagEn: 'Dhaka Mass Transit Co. Ltd.', tagBn: 'ঢাকা ম্যাস ট্রানজিট',
     featuresEn: ['MRT Line-6 info & fares', 'Station guide & map', 'Rapid Pass smart card'],
@@ -153,7 +153,7 @@ const SERVICES: Record<string, ServiceDef> = {
   },
   btcl: {
     id: 'btcl', icon: '📞',
-    color: '#0891b2', colorText: '#fff',
+    color: '#0e7490', colorText: '#fff', // 700 shade — 5.36:1 on white text
     nameEn: 'BTCL', nameBn: 'বিটিসিএল',
     tagEn: 'Bangladesh Telecom Co. Ltd.', tagBn: 'বাংলাদেশ টেলিযোগাযোগ',
     featuresEn: ['Landline bill payment', 'Broadband internet', 'PSTN directory'],

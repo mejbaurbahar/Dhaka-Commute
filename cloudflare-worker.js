@@ -360,9 +360,25 @@ async function ghFetch(token, owner, repo, path, ctx) {
   if (!res.ok) return { status: res.status, decoded: null };
 
   const data = await res.json();
-  if (!data.content) return { status: 404, decoded: null };
+  let rawContent = data.content;
+  let sha = data.sha;
 
-  const clean = data.content.replace(/\n/g, '');
+  // The contents API omits `content` for blobs >1 MiB (only metadata returned).
+  // Fetch the blob directly by sha — needed for large datasets (e.g. bd-locations.json).
+  if (!rawContent && data.sha) {
+    const blobRes = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/git/blobs/${data.sha}`,
+      { headers }
+    );
+    if (blobRes.ok) {
+      const blob = await blobRes.json();
+      rawContent = blob.content;
+      sha = blob.sha;
+    }
+  }
+  if (!rawContent) return { status: 404, decoded: null };
+
+  const clean = rawContent.replace(/\n/g, '');
   const bytes = Uint8Array.from(atob(clean), c => c.charCodeAt(0));
   const text  = new TextDecoder().decode(bytes);
   let decoded;
@@ -373,7 +389,7 @@ async function ghFetch(token, owner, repo, path, ctx) {
   if (isCacheable(path)) {
     if (etag) {
       // Store sha alongside so writeDataFile can skip a second GitHub fetch
-      etagCache.set(memKey, { etag, decoded, sha: data.sha, cachedAt: Date.now() });
+      etagCache.set(memKey, { etag, decoded, sha, cachedAt: Date.now() });
     }
     if (ctx) {
       ctx.waitUntil(_storeCfCache(owner, repo, path, decoded));

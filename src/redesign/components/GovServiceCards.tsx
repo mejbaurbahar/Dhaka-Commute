@@ -44,8 +44,8 @@ const GOV_CARDS: GovCard[] = [
       { labelBn: 'সময়সূচি', labelEn: 'Schedule', url: 'https://railway.gov.bd/pages/train_schedule.php' },
       { labelBn: 'রেলওয়ে ওয়েবসাইট', labelEn: 'Railway website', url: 'https://railway.gov.bd' },
     ],
-    color: '#16a34a',
-    bgColor: 'rgba(22,163,74,0.1)',
+    color: '#15803d', // 700 shade — white text on chip needs ≥4.5:1 (5.02:1)
+    bgColor: 'rgba(21,128,61,0.1)',
   },
   {
     icon: '🏛️',
@@ -59,8 +59,8 @@ const GOV_CARDS: GovCard[] = [
       { labelBn: 'সেবা খুঁজুন', labelEn: 'Find services', url: 'https://www.mygov.bd' },
       { labelBn: 'আবেদনের অবস্থা', labelEn: 'Application status', url: 'https://www.mygov.bd/en/application-status' },
     ],
-    color: '#059669',
-    bgColor: 'rgba(5,150,105,0.1)',
+    color: '#047857', // 700 shade — white text on chip needs ≥4.5:1 (5.48:1)
+    bgColor: 'rgba(4,120,87,0.1)',
   },
   {
     icon: '✈️',
@@ -89,8 +89,8 @@ const GOV_CARDS: GovCard[] = [
       { labelBn: 'সময়সূচি', labelEn: 'Schedule', url: 'https://biwtc.gov.bd' },
       { labelBn: 'BIWTC ওয়েবসাইট', labelEn: 'BIWTC website', url: 'https://biwtc.gov.bd' },
     ],
-    color: '#0891b2',
-    bgColor: 'rgba(8,145,178,0.1)',
+    color: '#0e7490', // 700 shade — white text on chip needs ≥4.5:1 (5.36:1)
+    bgColor: 'rgba(14,116,144,0.1)',
   },
 ];
 

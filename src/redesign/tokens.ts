@@ -9,7 +9,7 @@ export const KJ_TOKENS = {
     line: 'rgba(56,89,122,0.18)',
     text: '#0a1626',
     textDim: '#4a607a',
-    textFaint: '#64748b',
+    textFaint: '#55617a', // darkened from #64748b — ≥4.5:1 on panelMuted/pageBg (a11y)
     chipBg: 'rgba(56,100,160,0.08)',
     chipText: '#1e3a5f',
     inputBg: 'rgba(255,255,255,0.65)',

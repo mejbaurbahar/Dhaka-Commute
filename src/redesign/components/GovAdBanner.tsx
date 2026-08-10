@@ -649,7 +649,7 @@ export function GovAdBanner({
 
       {/* Dot nav */}
       {cfgs.length > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, marginTop: 10 }}>
           {cfgs.map((c, i) => (
             <button
               key={c.id}
@@ -657,8 +657,11 @@ export function GovAdBanner({
               onClick={() => { clearInterval(timerRef.current); goTo(i); }}
               style={{
                 width: 7, height: 7,
-                borderRadius: '50%', border: 'none', padding: 0, cursor: 'pointer',
+                borderRadius: '50%', border: 'none', padding: 9, cursor: 'pointer',
+                // backgroundClip keeps the visible dot 7px while padding expands
+                // the hit area to 25px (WCAG 2.5.5 minimum target size).
                 background: i === active ? cfg.accent : 'rgba(128,128,128,0.32)',
+                backgroundClip: 'content-box',
                 transform: i === active ? 'scale(1.25)' : 'scale(1)',
                 transition: 'background 0.35s ease, transform 0.35s ease',
                 flexShrink: 0,
