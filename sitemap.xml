@@ -3111,7 +3111,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- From→To Bus Answers (47) -->
+  <!-- From→To Bus Answers (48) -->
   <url>
     <loc>https://koyjabo.com/bus/gulistan-to-dhanmondi/</loc>
     <lastmod>2026-08-10</lastmod>
@@ -3393,6 +3393,26 @@
     <lastmod>2026-08-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/gulistan-to-airport/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Interchange Routes (2) -->
+  <url>
+    <loc>https://koyjabo.com/bus/badda-to-dhanmondi-via-mohakhali/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/gazipur-to-dhanmondi-via-airport/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
 
 </urlset>
