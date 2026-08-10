@@ -39,7 +39,7 @@ export function TrainDetailPage(props: Props) {
   const fromLabel = stops[0]?.label || stationName(train.from);
   const toLabel = stops[stops.length-1]?.label || stationName(train.to);
 
-  useDocumentTitle(`${train.name}: ${fromName} → ${toName}`);
+  useDocumentTitle(`${train.name} (${train.number}) Train: ${fromName} → ${toName} Schedule & Fare`);
   useEffect(() => {
     setCanonicalUrl(`/train/${train.id}`);
     const minFareVal = train.fare.shuvan || train.fare.shuvanChair || '';

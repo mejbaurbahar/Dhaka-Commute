@@ -7,7 +7,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { BUS_PAIRS, pairPath } from './bus-pairs.mjs';
+import { BUS_PAIRS, INTERCHANGE_PAIRS, pairPath, interchangePath } from './bus-pairs.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
@@ -128,6 +128,10 @@ const fromToPages = BUS_PAIRS.map(pair =>
   urlEntry(pageUrl(pairPath(pair)), TODAY, 'weekly', '0.8')
 );
 
+const interchangePages = INTERCHANGE_PAIRS.map(pair =>
+  urlEntry(pageUrl(interchangePath(pair)), TODAY, 'weekly', '0.7')
+);
+
 const xml = [
   '<?xml version="1.0" encoding="UTF-8"?>',
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -146,6 +150,9 @@ const xml = [
   '',
   `  <!-- From→To Bus Answers (${fromToPages.length}) -->`,
   ...fromToPages,
+  '',
+  `  <!-- Interchange Routes (${interchangePages.length}) -->`,
+  ...interchangePages,
   '',
   '</urlset>',
 ].join('\n');

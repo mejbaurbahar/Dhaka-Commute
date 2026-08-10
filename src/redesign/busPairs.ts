@@ -58,12 +58,34 @@ export const BUS_PAIRS: BusPair[] = [
   { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'khilgaon', toEn: 'Khilgaon', toBn: 'খিলগাঁও' },
   { from: 'farmgate', fromEn: 'Farmgate', fromBn: 'ফার্মগেট', to: 'banani', toEn: 'Banani', toBn: 'বনানী' },
   { from: 'jatrabari', fromEn: 'Jatrabari', fromBn: 'যাত্রাবাড়ী', to: 'sayedabad', toEn: 'Sayedabad', toBn: 'সায়দাবাদ' },
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'airport', toEn: 'Airport', toBn: 'এয়ারপোর্ট' },
+];
+
+// Pairs with NO direct bus: answer via a two-leg ride with an interchange stop.
+// `via` is a stop-id prefix; legs: from→via and via→to.
+export interface InterchangePair extends BusPair {
+  via: string;
+  viaEn: string;
+  viaBn: string;
+}
+
+export const INTERCHANGE_PAIRS: InterchangePair[] = [
+  { from: 'badda', fromEn: 'Badda', fromBn: 'বাড্ডা', to: 'dhanmondi', toEn: 'Dhanmondi', toBn: 'ধানমন্ডি', via: 'mohakhali', viaEn: 'Mohakhali', viaBn: 'মহাখালী' },
+  { from: 'gazipur', fromEn: 'Gazipur', fromBn: 'গাজীপুর', to: 'dhanmondi', toEn: 'Dhanmondi', toBn: 'ধানমন্ডি', via: 'airport', viaEn: 'Airport', viaBn: 'এয়ারপোর্ট' },
 ];
 
 export function pairPath(pair: BusPair): string {
   return `/bus/${pair.from}-to-${pair.to}/`;
 }
 
+export function interchangePath(pair: InterchangePair): string {
+  return `/bus/${pair.from}-to-${pair.to}-via-${pair.via}/`;
+}
+
 export function findPair(from: string, to: string): BusPair | null {
   return BUS_PAIRS.find(p => p.from === from && p.to === to) ?? null;
+}
+
+export function findInterchange(from: string, to: string): InterchangePair | null {
+  return INTERCHANGE_PAIRS.find(p => p.from === from && p.to === to) ?? null;
 }

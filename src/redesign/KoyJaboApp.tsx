@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { KJ_TOKENS, Theme, Lang, Device } from './tokens';
 import { injectGlobalStyles } from './globalStyles';
-import { findPair } from './busPairs';
+import { findPair, findInterchange } from './busPairs';
 import { SplashScreen } from './SplashScreen';
 import { LocationConsentModal } from './components/LocationConsentModal';
 
@@ -128,7 +128,7 @@ function detailPath(route: string, params: Record<string, string> = {}) {
   const suffix = query.toString() ? `?${query.toString()}` : '';
   if (route === 'blog-detail') return `/blog/${params.slug || 'post'}`;
   if (route === 'bus-detail') return `/bus/${busSlug(params.busId)}${suffix}`;
-  if (route === 'from-to-bus') return `/bus/${params.from}-to-${params.to}/`;
+  if (route === 'from-to-bus') return params.via ? `/bus/${params.from}-to-${params.to}-via-${params.via}/` : `/bus/${params.from}-to-${params.to}/`;
   if (route === 'metro-detail') return `/metro/${slugify(params.stationId || params.id || 'detail')}${suffix}`;
   if (route === 'train-detail') return `/train/${slugify(params.trainId || params.id || 'detail')}${suffix}`;
   if (route === 'intercity-detail') {
@@ -183,6 +183,11 @@ function entryFromLocation(): StackEntry {
   const params = Object.fromEntries(search.entries()) as Record<string, string>;
   if (path.startsWith('/bus/')) {
     const slug = path.split('/')[2] || '';
+    // Interchange pages: /bus/badda-to-dhanmondi-via-mohakhali/
+    const viaMatch = slug.match(/^([a-z0-9_]+)-to-([a-z0-9_]+)-via-([a-z0-9_]+)$/);
+    if (viaMatch && findInterchange(viaMatch[1], viaMatch[2])) {
+      return { route: 'from-to-bus', params: { ...params, from: viaMatch[1], to: viaMatch[2], via: viaMatch[3] } };
+    }
     // From→to answer pages: /bus/gulistan-to-dhanmondi/
     const fromTo = slug.match(/^([a-z0-9_]+)-to-([a-z0-9_]+)$/);
     if (fromTo && findPair(fromTo[1], fromTo[2])) {

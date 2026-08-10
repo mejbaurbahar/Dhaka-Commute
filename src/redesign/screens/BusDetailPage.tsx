@@ -58,7 +58,7 @@ export function BusDetailPage(props: Props) {
 
   const startName = STATIONS[bus.stops[0]]?.name ?? bus.stops[0];
   const endName = STATIONS[bus.stops[bus.stops.length - 1]]?.name ?? bus.stops[bus.stops.length - 1];
-  useDocumentTitle(`${bus.name}: ${startName} ⇄ ${endName}`);
+  useDocumentTitle(`${bus.name} Bus: ${startName} ⇄ ${endName} Route & Fare`);
   useEffect(() => {
     setCanonicalUrl(`/bus/${busUrlSlug(busId)}`);
     const midStops = bus.stops.slice(1, -1).slice(0, 3).map(sid => STATIONS[sid]?.name ?? sid.replace(/_/g, ' ')).join(', ');

@@ -55,6 +55,14 @@ export const BUS_PAIRS = [
   { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'khilgaon', toEn: 'Khilgaon', toBn: 'খিলগাঁও' },
   { from: 'farmgate', fromEn: 'Farmgate', fromBn: 'ফার্মগেট', to: 'banani', toEn: 'Banani', toBn: 'বনানী' },
   { from: 'jatrabari', fromEn: 'Jatrabari', fromBn: 'যাত্রাবাড়ী', to: 'sayedabad', toEn: 'Sayedabad', toBn: 'সায়দাবাদ' },
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'airport', toEn: 'Airport', toBn: 'এয়ারপোর্ট' },
+];
+
+// Pairs with NO direct bus: answer via a two-leg ride with an interchange stop.
+// `via` is a stop-id prefix; legs: from→via and via→to.
+export const INTERCHANGE_PAIRS = [
+  { from: 'badda', fromEn: 'Badda', fromBn: 'বাড্ডা', to: 'dhanmondi', toEn: 'Dhanmondi', toBn: 'ধানমন্ডি', via: 'mohakhali', viaEn: 'Mohakhali', viaBn: 'মহাখালী' },
+  { from: 'gazipur', fromEn: 'Gazipur', fromBn: 'গাজীপুর', to: 'dhanmondi', toEn: 'Dhanmondi', toBn: 'ধানমন্ডি', via: 'airport', viaEn: 'Airport', viaBn: 'এয়ারপোর্ট' },
 ];
 
 /** Match buses whose stop list contains both prefixes (any order). */
@@ -70,4 +78,9 @@ export function matchBusPairs(routes) {
 /** Canonical URL path for a pair. */
 export function pairPath(pair) {
   return `/bus/${pair.from}-to-${pair.to}/`;
+}
+
+/** Canonical URL path for an interchange pair. */
+export function interchangePath(pair) {
+  return `/bus/${pair.from}-to-${pair.to}-via-${pair.via}/`;
 }

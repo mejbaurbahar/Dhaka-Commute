@@ -3,7 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { BUS_PAIRS, pairPath } from './bus-pairs.mjs';
+import { BUS_PAIRS, INTERCHANGE_PAIRS, pairPath, interchangePath } from './bus-pairs.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
@@ -151,6 +151,20 @@ function extractBlogPosts() {
     publishDate: dates[index] || new Date().toISOString().slice(0, 10),
     category: categories[index] || 'Guide',
   }));
+}
+
+function extractStationNames() {
+  const content = fs.readFileSync(path.join(root, 'constants.ts'), 'utf8');
+  const start = content.indexOf('export const STATIONS');
+  if (start === -1) return {};
+  const section = content.slice(start);
+  const nextExport = section.indexOf('\nexport const ', 10);
+  const bounded = nextExport !== -1 ? section.slice(0, nextExport) : section;
+  const names = {};
+  const objectRe = /'([^']+)':\s*\{\s*id:\s*'[^']+'\s*,\s*name:\s*'([^']+)'/g;
+  let match;
+  while ((match = objectRe.exec(bounded)) !== null) names[match[1]] = match[2];
+  return names;
 }
 
 function extractBusRoutes() {
@@ -430,16 +444,21 @@ for (const post of extractBlogPosts()) {
   }));
 }
 
+const stationNames = extractStationNames();
 for (const route of extractBusRoutes()) {
+  const startName = stationNames[route.stops[0]] ?? route.stops[0] ?? '';
+  const endName = stationNames[route.stops[route.stops.length - 1]] ?? route.stops[route.stops.length - 1] ?? '';
+  const routeLabel = startName && endName ? `${startName} ⇄ ${endName}` : route.name;
+  const approxFare = route.name ? (route.name.includes('AC') || route.name.toLowerCase().includes('ac') ? 60 : 30) : 30;
   pages.push(renderPage({
     path: `/bus/${route.slug}`,
-    title: `${route.name} Bus Route - ${route.bnName}`,
-    description: `${route.name} bus route in Dhaka. See stops, fare guidance and route details in Bengali and English on KoyJabo.`,
-    keywords: [`${route.name} bus route`, `${route.bnName} বাস রুট`, 'dhaka bus route', 'ঢাকা বাস রুট'],
+    title: `${route.name} Bus: ${routeLabel} Route & Fare`,
+    description: `${route.name} bus route ${routeLabel ? `from ${startName} to ${endName}` : ''}. See stops, approx fare ৳${approxFare}, route map and live location in Bengali and English on KoyJabo.`,
+    keywords: [`${route.name} bus route`, `${route.bnName} বাস রুট`, `${startName} to ${endName} bus`, 'dhaka bus route', 'ঢাকা বাস রুট'],
     bodyHtml: `
       <article>
         <h1>${escapeHtml(route.name)} Bus Route - ${escapeHtml(route.bnName)}</h1>
-        <p>${escapeHtml(route.name)} is a Dhaka local bus route listed on KoyJabo with route details, stops and fare guidance.</p>
+        <p>${escapeHtml(route.name)} is a Dhaka bus route listed on KoyJabo with route details, stops and fare guidance.</p>
       </article>
     `,
     schema: {
@@ -459,22 +478,24 @@ for (const route of extractBusRoutes()) {
       {
         '@type': 'Question',
         name: `What is the fare of the ${route.name} bus?`,
-        acceptedAnswer: { '@type': 'Answer', text: `The ${route.name} bus fare is distance-based. Use the KoyJabo fare calculator to find the exact fare between any two stops.` },
+        acceptedAnswer: { '@type': 'Answer', text: `The ${route.name} bus fare is distance-based (approx ৳${approxFare} full route). Use the KoyJabo fare calculator to find the exact fare between any two stops.` },
       },
     ],
   }));
 }
 
 for (const train of extractTrainRoutes()) {
+  const fromLabel = train.from.charAt(0).toUpperCase() + train.from.slice(1);
+  const toLabel = train.to.charAt(0).toUpperCase() + train.to.slice(1);
   pages.push(renderPage({
     path: `/train/${train.slug}`,
-    title: `${train.name} Train Schedule, Fare & Route - ${train.bnName}`,
-    description: `${train.name} (${train.number}) train route from ${train.from} to ${train.to}. See schedule, off day ${train.offDay}, duration ${train.duration} and fare guidance.`,
+    title: `${train.name} (${train.number}) Train: ${fromLabel} → ${toLabel} Schedule & Fare`,
+    description: `${train.name} (${train.number}) train from ${fromLabel} to ${toLabel}. Schedule, off day ${train.offDay}, duration ${train.duration} and fare from ৳${train.shuvanFare}.`,
     keywords: [`${train.name} train schedule`, `${train.name} train fare`, `${train.bnName} ট্রেন`, 'Bangladesh train schedule'],
     bodyHtml: `
       <article>
         <h1>${escapeHtml(train.name)} Train Schedule - ${escapeHtml(train.bnName)}</h1>
-        <p>${escapeHtml(train.name)} (${escapeHtml(train.number)}) runs from ${escapeHtml(train.from)} to ${escapeHtml(train.to)}. Duration: ${escapeHtml(train.duration)}. Off day: ${escapeHtml(train.offDay)}.</p>
+        <p>${escapeHtml(train.name)} (${escapeHtml(train.number)}) runs from ${escapeHtml(fromLabel)} to ${escapeHtml(toLabel)}. Duration: ${escapeHtml(train.duration)}. Off day: ${escapeHtml(train.offDay)}.</p>
       </article>
     `,
     schema: {
@@ -556,6 +577,56 @@ for (const { pair, buses } of BUS_PAIRS.map(p => ({
         '@type': 'Question',
         name: `How many buses run from ${fromName.en} to ${toName.en}?`,
         acceptedAnswer: { '@type': 'Answer', text: `${buses.length} bus${buses.length === 1 ? '' : 'es'} cover the ${fromName.en} to ${toName.en} route on KoyJabo. See the full list above with stops and schedules.` },
+      },
+    ],
+  }));
+}
+
+// Interchange pages: no direct bus between pair → answer with a two-leg ride
+// (from→via, then via→to). e.g. /bus/badda-to-dhanmondi-via-mohakhali/
+for (const pair of INTERCHANGE_PAIRS) {
+  const viaBuses = allRoutes.filter(r =>
+    r.stops.some(s => s.startsWith(pair.from)) && r.stops.some(s => s.startsWith(pair.via))
+  );
+  const toBuses = allRoutes.filter(r =>
+    r.stops.some(s => s.startsWith(pair.via)) && r.stops.some(s => s.startsWith(pair.to))
+  );
+  const viaList = viaBuses.map(r => r.name).slice(0, 12).join(', ');
+  const toList = toBuses.map(r => r.name).slice(0, 12).join(', ');
+  pages.push(renderPage({
+    path: interchangePath(pair),
+    title: `How to Go from ${pair.fromEn} to ${pair.toEn} by Bus? Change at ${pair.viaEn}`,
+    description: `No direct bus from ${pair.fromEn} to ${pair.toEn}. Take ${viaBuses.length} bus${viaBuses.length === 1 ? '' : 'es'} to ${pair.viaEn}, then ${toBuses.length} bus${toBuses.length === 1 ? '' : 'es'} to ${pair.toEn}. Step-by-step guide on KoyJabo.`,
+    keywords: [`${pair.fromEn} to ${pair.toEn} bus`, `${pair.fromBn} থেকে ${pair.toBn} বাস`, 'bus change dhaka', 'ঢাকায় বাস বদল'],
+    bodyHtml: `
+      <article>
+        <h1>How to Go from ${escapeHtml(pair.fromEn)} to ${escapeHtml(pair.toEn)} by Bus?</h1>
+        <p>There is no direct bus from ${escapeHtml(pair.fromEn)} to ${escapeHtml(pair.toEn)}. Take a ${escapeHtml(pair.fromEn)} bus to ${escapeHtml(pair.viaEn)} (${viaBuses.length} bus${viaBuses.length === 1 ? '' : 'es'} serve this leg: ${escapeHtml(viaList)}), then change to a ${escapeHtml(pair.viaEn)} bus to ${escapeHtml(pair.toEn)} (${toBuses.length} bus${toBuses.length === 1 ? '' : 'es'}: ${escapeHtml(toList)}).</p>
+      </article>
+    `,
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: `Bus from ${pair.fromEn} to ${pair.toEn} via ${pair.viaEn}`,
+      url: `${baseUrl}${interchangePath(pair)}`,
+      description: `No direct bus from ${pair.fromEn} to ${pair.toEn} — change at ${pair.viaEn}.`,
+      about: { '@type': 'BusTrip', name: `${pair.fromEn} to ${pair.toEn} bus route` },
+    },
+    faq: [
+      {
+        '@type': 'Question',
+        name: `Is there a direct bus from ${pair.fromEn} to ${pair.toEn}?`,
+        acceptedAnswer: { '@type': 'Answer', text: `No direct bus runs from ${pair.fromEn} to ${pair.toEn}. The fastest way is to take a ${pair.fromEn} bus to ${pair.viaEn} and change there for a ${pair.toEn} bus.` },
+      },
+      {
+        '@type': 'Question',
+        name: `How do I go from ${pair.fromEn} to ${pair.toEn} by bus?`,
+        acceptedAnswer: { '@type': 'Answer', text: `Take any of ${viaBuses.length} buses from ${pair.fromEn} to ${pair.viaEn} (${viaList}), get off at ${pair.viaEn}, then take one of ${toBuses.length} buses to ${pair.toEn} (${toList}).` },
+      },
+      {
+        '@type': 'Question',
+        name: `How much is the bus fare from ${pair.fromEn} to ${pair.toEn}?`,
+        acceptedAnswer: { '@type': 'Answer', text: `The fare is the sum of two legs: ${pair.fromEn}→${pair.viaEn} plus ${pair.viaEn}→${pair.toEn}, typically ৳20–৳60 in total. Use the KoyJabo fare calculator for the exact amount.` },
       },
     ],
   }));
