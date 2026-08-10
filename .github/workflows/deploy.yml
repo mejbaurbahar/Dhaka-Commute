@@ -104,6 +104,7 @@ jobs:
           cp "$GITHUB_WORKSPACE/.github/deploy-assets/pages.yml" .github/workflows/pages.yml
 
       - name: Commit and push to gh-pages
+        id: commit
         env:
           DATA_GITHUB_TOKEN: ${{ secrets.DATA_GITHUB_TOKEN }}
         run: |
@@ -124,10 +125,26 @@ jobs:
 
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           git commit -m "deploy: $(date -u '+%Y-%m-%d %H:%M UTC') | core@${SHORT_SHA}"
-          
+
           # Use force push to ensure history matches and increase buffer for large assets
           git config http.postBuffer 524288000
           git push origin HEAD:gh-pages --force
+
+          echo "deployed=true" >> "$GITHUB_OUTPUT"
+
+      # CF edge caches HTML (60s TTL) and old hashed assets for up to 4h — a
+      # fresh deploy deletes old assets, so purge immediately or users hit
+      # stale HTML pointing at 404 chunks. Least-privilege token: Cache Purge
+      # only, koyjabo.com zone (zone id 1876cbbe1271cb37b9a1b401e6e4ef18).
+      - name: Purge Cloudflare cache
+        if: steps.commit.outputs.deployed == 'true'
+        run: |
+          curl -sS -X POST \
+            "https://api.cloudflare.com/client/v4/zones/1876cbbe1271cb37b9a1b401e6e4ef18/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CF_CACHE_PURGE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}'
+          echo "Cloudflare cache purged"
 
       - name: Deploy summary
         if: success()
