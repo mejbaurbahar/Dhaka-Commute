@@ -1,0 +1,43 @@
+/** From→to bus answer pairs (mirror of scripts/bus-pairs.mjs, mined from GSC queries). */
+
+export interface BusPair {
+  from: string;
+  fromEn: string;
+  fromBn: string;
+  to: string;
+  toEn: string;
+  toBn: string;
+}
+
+export const BUS_PAIRS: BusPair[] = [
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'dhanmondi', toEn: 'Dhanmondi', toBn: 'ধানমন্ডি' },
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'savar', toEn: 'Savar', toBn: 'সাভার' },
+  { from: 'mohammadpur', fromEn: 'Mohammadpur', fromBn: 'মোহাম্মদপুর', to: 'gulistan', toEn: 'Gulistan', toBn: 'গুলিস্তান' },
+  { from: 'mirpur10', fromEn: 'Mirpur 10', fromBn: 'মিরপুর ১০', to: 'jatrabari', toEn: 'Jatrabari', toBn: 'যাত্রাবাড়ী' },
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'mohakhali', toEn: 'Mohakhali', toBn: 'মহাখালী' },
+  { from: 'jatrabari', fromEn: 'Jatrabari', fromBn: 'যাত্রাবাড়ী', to: 'banani', toEn: 'Banani', toBn: 'বনানী' },
+  { from: 'mohakhali', fromEn: 'Mohakhali', fromBn: 'মহাখালী', to: 'dhanmondi', toEn: 'Dhanmondi', toBn: 'ধানমন্ডি' },
+  { from: 'gazipur', fromEn: 'Gazipur', fromBn: 'গাজীপুর', to: 'shahbag', toEn: 'Shahbag', toBn: 'শাহবাগ' },
+  { from: 'kamalapur', fromEn: 'Kamalapur', fromBn: 'কমলাপুর', to: 'mohammadpur', toEn: 'Mohammadpur', toBn: 'মোহাম্মদপুর' },
+  { from: 'mohakhali', fromEn: 'Mohakhali', fromBn: 'মহাখালী', to: 'jatrabari', toEn: 'Jatrabari', toBn: 'যাত্রাবাড়ী' },
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'agargaon', toEn: 'Agargaon', toBn: 'আগারগাঁও' },
+  { from: 'gabtoli', fromEn: 'Gabtoli', fromBn: 'গাবতলী', to: 'gulistan', toEn: 'Gulistan', toBn: 'গুলিস্তান' },
+  { from: 'jatrabari', fromEn: 'Jatrabari', fromBn: 'যাত্রাবাড়ী', to: 'motijheel', toEn: 'Motijheel', toBn: 'মতিঝিল' },
+  { from: 'mohakhali', fromEn: 'Mohakhali', fromBn: 'মহাখালী', to: 'khilgaon', toEn: 'Khilgaon', toBn: 'খিলগাঁও' },
+  { from: 'mirpur10', fromEn: 'Mirpur 10', fromBn: 'মিরপুর ১০', to: 'khilgaon', toEn: 'Khilgaon', toBn: 'খিলগাঁও' },
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'mirpur10', toEn: 'Mirpur 10', toBn: 'মিরপুর ১০' },
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'mirpur1', toEn: 'Mirpur 1', toBn: 'মিরপুর ১' },
+  { from: 'keraniganj', fromEn: 'Keraniganj', fromBn: 'কেরানীগঞ্জ', to: 'gulistan', toEn: 'Gulistan', toBn: 'গুলিস্তান' },
+  { from: 'mirpur', fromEn: 'Mirpur', fromBn: 'মিরপুর', to: 'mohakhali', toEn: 'Mohakhali', toBn: 'মহাখালী' },
+  { from: 'kamalapur', fromEn: 'Kamalapur', fromBn: 'কমলাপুর', to: 'dhanmondi', toEn: 'Dhanmondi', toBn: 'ধানমন্ডি' },
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'shyamoli', toEn: 'Shyamoli', toBn: 'শ্যামলী' },
+  { from: 'gulistan', fromEn: 'Gulistan', fromBn: 'গুলিস্তান', to: 'mawa', toEn: 'Mawa', toBn: 'মাওয়া' },
+];
+
+export function pairPath(pair: BusPair): string {
+  return `/bus/${pair.from}-to-${pair.to}/`;
+}
+
+export function findPair(from: string, to: string): BusPair | null {
+  return BUS_PAIRS.find(p => p.from === from && p.to === to) ?? null;
+}

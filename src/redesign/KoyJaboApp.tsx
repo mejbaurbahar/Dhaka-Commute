@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { KJ_TOKENS, Theme, Lang, Device } from './tokens';
 import { injectGlobalStyles } from './globalStyles';
+import { findPair } from './busPairs';
 import { SplashScreen } from './SplashScreen';
 import { LocationConsentModal } from './components/LocationConsentModal';
 
@@ -22,6 +23,7 @@ const RouteResultsV2Page = React.lazy(() => import('./screens/RouteResultsV2Page
 const FareCalcPage = React.lazy(() => import('./screens/FareCalcPage').then(m => ({ default: m.FareCalcPage })));
 const IntercityDetailPage = React.lazy(() => import('./screens/IntercityDetailPage').then(m => ({ default: m.IntercityDetailPage })));
 const BusDetailPage = React.lazy(() => import('./screens/BusDetailPage').then(m => ({ default: m.BusDetailPage })));
+const FromToBusPage = React.lazy(() => import('./screens/FromToBusPage').then(m => ({ default: m.FromToBusPage })));
 const MetroDetailPage = React.lazy(() => import('./screens/MetroDetailPage').then(m => ({ default: m.MetroDetailPage })));
 const TrainDetailPage = React.lazy(() => import('./screens/TrainDetailPage').then(m => ({ default: m.TrainDetailPage })));
 const VehicleDetailPage = React.lazy(() => import('./screens/VehicleDetailPage').then(m => ({ default: m.VehicleDetailPage })));
@@ -74,7 +76,7 @@ const SECTION_MAP: Record<string, string> = {
 // navTab() resets the stack so back never shows on tab-bar navigation — safe to list all non-home routes here.
 const SHOW_BACK_ROUTES = new Set([
   // detail / leaf pages
-  'bus-detail', 'train-detail', 'metro-detail', 'intercity-detail', 'vehicle',
+  'bus-detail', 'from-to-bus', 'train-detail', 'metro-detail', 'intercity-detail', 'vehicle',
   'rate-review', 'metro-token', 'metro-pass', 'blog-detail',
   'devices', 'results', 'install', 'flight-detail', 'dtca-bus-detail',
   // transport search / hub pages
@@ -126,6 +128,7 @@ function detailPath(route: string, params: Record<string, string> = {}) {
   const suffix = query.toString() ? `?${query.toString()}` : '';
   if (route === 'blog-detail') return `/blog/${params.slug || 'post'}`;
   if (route === 'bus-detail') return `/bus/${busSlug(params.busId)}${suffix}`;
+  if (route === 'from-to-bus') return `/bus/${params.from}-to-${params.to}/`;
   if (route === 'metro-detail') return `/metro/${slugify(params.stationId || params.id || 'detail')}${suffix}`;
   if (route === 'train-detail') return `/train/${slugify(params.trainId || params.id || 'detail')}${suffix}`;
   if (route === 'intercity-detail') {
@@ -150,7 +153,7 @@ function detailPath(route: string, params: Record<string, string> = {}) {
 }
 
 function pathForEntry(entry: StackEntry) {
-  if (['bus-detail', 'metro-detail', 'train-detail', 'intercity-detail', 'vehicle', 'flight-detail', 'blog-detail', 'dtca-bus-detail'].includes(entry.route)) {
+  if (['bus-detail', 'from-to-bus', 'metro-detail', 'train-detail', 'intercity-detail', 'vehicle', 'flight-detail', 'blog-detail', 'dtca-bus-detail'].includes(entry.route)) {
     return detailPath(entry.route, entry.params || {});
   }
   if (entry.route === 'results') {
@@ -180,6 +183,11 @@ function entryFromLocation(): StackEntry {
   const params = Object.fromEntries(search.entries()) as Record<string, string>;
   if (path.startsWith('/bus/')) {
     const slug = path.split('/')[2] || '';
+    // From→to answer pages: /bus/gulistan-to-dhanmondi/
+    const fromTo = slug.match(/^([a-z0-9_]+)-to-([a-z0-9_]+)$/);
+    if (fromTo && findPair(fromTo[1], fromTo[2])) {
+      return { route: 'from-to-bus', params: { ...params, from: fromTo[1], to: fromTo[2] } };
+    }
     const bus = BUS_DATA.find(item => slugify(item.name) === slug || slugify(item.id) === slug);
     return { route: 'bus-detail', params: { ...params, busId: bus?.id || slug } };
   }
@@ -429,6 +437,7 @@ export function KoyJaboApp() {
       case 'fare': return <FareCalcPage {...p}/>;
       case 'intercity-detail': return <IntercityDetailPage {...p}/>;
       case 'bus-detail': return <BusDetailPage {...p}/>;
+      case 'from-to-bus': return <FromToBusPage {...p}/>;
       case 'dtca-bus-detail': return <DTCABusDetailPage {...p}/>;
       case 'metro-detail': return <MetroDetailPage {...p}/>;
       case 'train-detail': return <TrainDetailPage {...p}/>;

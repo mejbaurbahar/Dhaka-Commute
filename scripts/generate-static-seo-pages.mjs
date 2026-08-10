@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { BUS_PAIRS, pairPath } from './bus-pairs.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
@@ -160,13 +161,14 @@ function extractBusRoutes() {
   const nextExport = section.indexOf('\nexport const ', 10);
   const bounded = nextExport !== -1 ? section.slice(0, nextExport) : section;
   const routes = [];
-  const objectRe = /id:\s*'([^']+)'[\s\S]*?name:\s*'([^']+)'[\s\S]*?bnName:\s*'([^']+)'/g;
+  const objectRe = /id:\s*'([^']+)'[\s\S]*?name:\s*'([^']+)'[\s\S]*?bnName:\s*'([^']+)'[\s\S]*?stops:\s*\[([^\]]*)\]/g;
   let match;
   while ((match = objectRe.exec(bounded)) !== null) {
     routes.push({
       id: match[1],
       name: match[2],
       bnName: match[3],
+      stops: match[4].split(',').map(s => s.trim().replace(/^'|'$/g, '')).filter(Boolean),
       slug: slugify(match[2] || match[1]),
     });
   }
@@ -503,6 +505,57 @@ for (const train of extractTrainRoutes()) {
         '@type': 'Question',
         name: `Which stations does the ${train.name} train stop at?`,
         acceptedAnswer: { '@type': 'Answer', text: `The ${train.name} train runs from ${train.from} to ${train.to}. See the complete stop list and timings on KoyJabo.` },
+      },
+    ],
+  }));
+}
+
+// From→to bus answer pages (mined from Google Search Console queries):
+// /bus/gulistan-to-dhanmondi/ — "which bus goes from X to Y" / "X থেকে Y বাস"
+const allRoutes = extractBusRoutes();
+for (const { pair, buses } of BUS_PAIRS.map(p => ({
+  pair: p,
+  buses: allRoutes.filter(r =>
+    r.stops.some(s => s.startsWith(p.from)) && r.stops.some(s => s.startsWith(p.to))
+  ),
+}))) {
+  const fromName = { en: pair.fromEn, bn: pair.fromBn };
+  const toName = { en: pair.toEn, bn: pair.toBn };
+  const busList = buses.map(r => `${r.name} (${r.bnName})`).join(', ');
+  pages.push(renderPage({
+    path: pairPath(pair),
+    title: `Which Bus Goes from ${fromName.en} to ${toName.en} in Dhaka? (${buses.length} Buses)`,
+    description: `Which bus goes from ${fromName.en} to ${toName.en} in Dhaka? ${buses.length} bus${buses.length === 1 ? '' : 'es'} cover this route. See the full bus list, stops, fares and live location on KoyJabo.`,
+    keywords: [`${fromName.en} to ${toName.en} bus`, `${fromName.bn} থেকে ${toName.bn} বাস`, 'dhaka bus route', 'ঢাকা বাস রুট'],
+    bodyHtml: `
+      <article>
+        <h1>Which Bus Goes from ${escapeHtml(fromName.en)} to ${escapeHtml(toName.en)} in Dhaka?</h1>
+        <p>${buses.length} bus${buses.length === 1 ? '' : 'es'} on KoyJabo cover the ${escapeHtml(fromName.en)} to ${escapeHtml(toName.en)} route in Dhaka: ${escapeHtml(busList)}. Open any bus to see its full stop list, fare guidance and live location.</p>
+      </article>
+    `,
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: `Bus from ${fromName.en} to ${toName.en} in Dhaka`,
+      url: `${baseUrl}${pairPath(pair)}`,
+      description: `Which bus goes from ${fromName.en} to ${toName.en} in Dhaka? ${buses.length} buses cover this route.`,
+      about: { '@type': 'BusTrip', name: `${fromName.en} to ${toName.en} bus route` },
+    },
+    faq: [
+      {
+        '@type': 'Question',
+        name: `Which bus goes from ${fromName.en} to ${toName.en} in Dhaka?`,
+        acceptedAnswer: { '@type': 'Answer', text: `${buses.length} bus${buses.length === 1 ? '' : 'es'} on KoyJabo cover the ${fromName.en} to ${toName.en} route: ${busList}. Tap any bus for its full stop list, fare and live location.` },
+      },
+      {
+        '@type': 'Question',
+        name: `How much is the bus fare from ${fromName.en} to ${toName.en}?`,
+        acceptedAnswer: { '@type': 'Answer', text: `The bus fare from ${fromName.en} to ${toName.en} is distance-based (typically ৳10–৳40 depending on bus type and distance). Use the KoyJabo fare calculator for the exact amount.` },
+      },
+      {
+        '@type': 'Question',
+        name: `How many buses run from ${fromName.en} to ${toName.en}?`,
+        acceptedAnswer: { '@type': 'Answer', text: `${buses.length} bus${buses.length === 1 ? '' : 'es'} cover the ${fromName.en} to ${toName.en} route on KoyJabo. See the full list above with stops and schedules.` },
       },
     ],
   }));
