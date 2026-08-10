@@ -84,6 +84,31 @@ function canonicalPath(pathname) {
   return pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
 }
 
+// Legacy URLs (id-form: underscore bus slugs, train ids with -NN number) no longer have
+// static pages — the SPA switched to name-derived dash slugs. Serve meta-refresh redirect
+// pages so GH Pages returns 200 and Google follows to the canonical URL.
+function renderRedirectPage(fromPath, toPath) {
+  const url = `${baseUrl}${canonicalPath(toPath)}`;
+  const outDir = path.join(dist, fromPath.replace(/^\/+/, ''), 'index.html');
+  fs.mkdirSync(path.dirname(outDir), { recursive: true });
+  const html = `<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<title>Redirecting…</title>
+<meta name="robots" content="noindex" />
+<meta name="description" content="Redirecting to ${escapeHtml(url)}" />
+<link rel="canonical" href="${escapeHtml(url)}" />
+<meta http-equiv="refresh" content="0; url=${escapeHtml(url)}" />
+</head>
+<body>
+<script>location.replace(${JSON.stringify(url)});</script>
+<p>Redirecting to <a href="${escapeHtml(url)}">${escapeHtml(url)}</a></p>
+</body>
+</html>`;
+  fs.writeFileSync(outDir, html, 'utf8');
+}
+
 function renderPage({ path: pagePath, title, description, keywords = [], bodyHtml, schema }) {
   const url = `${baseUrl}${canonicalPath(pagePath)}`;
   const fullTitle = title.includes('KoyJabo') || title.includes('কই যাবো') ? title : `${title} | KoyJabo`;
@@ -451,6 +476,15 @@ for (const train of extractTrainRoutes()) {
       },
     },
   }));
+}
+
+// Legacy id-form URLs → redirect to current dash-slug pages (recovers old Google index
+// entries and external links: e.g. /bus/trust_1/ → /bus/trust-1/).
+for (const route of extractBusRoutes()) {
+  if (route.id !== route.slug) renderRedirectPage(`/bus/${route.id}`, `/bus/${route.slug}`);
+}
+for (const train of extractTrainRoutes()) {
+  if (train.id !== train.slug) renderRedirectPage(`/train/${train.id}`, `/train/${train.slug}`);
 }
 
 console.log(`Generated ${pages.length} static SEO pages in dist`);
