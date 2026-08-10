@@ -15,7 +15,7 @@ import { resolveStationIds } from '../../../services/searchService';
 import { earnCoins } from '../utils/koyCoinService';
 import type { UserLocation } from '../../../types';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
-import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag } from '../utils/useDocumentTitle';
+import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag, setJsonLd } from '../utils/useDocumentTitle';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -67,6 +67,28 @@ export function BusDetailPage(props: Props) {
     setPropertyMetaTag('og:description', desc);
     setPropertyMetaTag('og:title', `${bus.name}: ${startName} ⇄ ${endName} | কই যাবো`);
     setPropertyMetaTag('og:image', 'https://koyjabo.com/og-image.png');
+    const approxFare = bus.type === 'AC' ? 60 : bus.type === 'Double-Decker' ? 50 : 30;
+    setJsonLd('faq', {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: `What is the route of the ${bus.name} bus in Dhaka?`,
+          acceptedAnswer: { '@type': 'Answer', text: `The ${bus.name} bus runs from ${startName} to ${endName}${midStops ? ` via ${midStops}` : ''}. See the full stop list and route map on KoyJabo.` },
+        },
+        {
+          '@type': 'Question',
+          name: `What is the fare of the ${bus.name} bus?`,
+          acceptedAnswer: { '@type': 'Answer', text: `The ${bus.name} bus fare is distance-based; the approximate full-route fare is ৳${approxFare}. Use the fare calculator on KoyJabo for an exact segment fare.` },
+        },
+        {
+          '@type': 'Question',
+          name: `How do I go from ${startName} to ${endName} by bus?`,
+          acceptedAnswer: { '@type': 'Answer', text: `Take the ${bus.name} bus from ${startName}. See live bus location, stops and the route map on the KoyJabo ${bus.name} page.` },
+        },
+      ],
+    });
   }, [busId, bus.name, bus.stops, startName, endName]);
 
   // Detect if user's from→to direction is reverse of the bus route order

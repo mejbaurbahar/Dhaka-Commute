@@ -4,7 +4,7 @@ import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { Pill } from '../components/Pill';
 import { BD_TRAIN_ROUTES, TRAIN_STATIONS } from '../../../data/bangladeshTrainData';
-import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag } from '../utils/useDocumentTitle';
+import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag, setJsonLd } from '../utils/useDocumentTitle';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -49,7 +49,28 @@ export function TrainDetailPage(props: Props) {
     setPropertyMetaTag('og:description', desc);
     setPropertyMetaTag('og:title', `${train.name}: ${fromName} → ${toName} Train | কই যাবো`);
     setPropertyMetaTag('og:image', 'https://koyjabo.com/og-image.png');
-  }, [train.id, train.name, fromName, toName, depTime, arrTime, train.fare.shuvan, train.fare.shuvanChair]);
+    setJsonLd('faq', {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: `What is the schedule of the ${train.name} train?`,
+          acceptedAnswer: { '@type': 'Answer', text: `The ${train.name} train departs ${fromName} at ${depTime} and arrives ${toName} at ${arrTime}. Off day: ${train.offDay}. See the full station-by-station schedule on KoyJabo.` },
+        },
+        {
+          '@type': 'Question',
+          name: `What is the fare of the ${train.name} train?`,
+          acceptedAnswer: { '@type': 'Answer', text: `${train.name} fares start from ৳${train.fare.shuvan || train.fare.shuvanChair || '—'} (Shuvan) with Shuvan Chair, Snigdha and berth classes available. Compare all class fares on KoyJabo.` },
+        },
+        {
+          '@type': 'Question',
+          name: `Which stations does the ${train.name} train stop at?`,
+          acceptedAnswer: { '@type': 'Answer', text: `The ${train.name} train runs from ${fromName} to ${toName} stopping at ${stops.length} stations. See the complete stop list and timings on KoyJabo.` },
+        },
+      ],
+    });
+  }, [train.id, train.name, fromName, toName, depTime, arrTime, train.fare.shuvan, train.fare.shuvanChair, stops.length]);
 
   const coaches = [
     { l:'Shuvan', bn:'শোভন', c:'#6b7280', f:Fare(train.fare.shuvan, lang) },

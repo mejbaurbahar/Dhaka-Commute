@@ -109,7 +109,7 @@ function renderRedirectPage(fromPath, toPath) {
   fs.writeFileSync(outDir, html, 'utf8');
 }
 
-function renderPage({ path: pagePath, title, description, keywords = [], bodyHtml, schema }) {
+function renderPage({ path: pagePath, title, description, keywords = [], bodyHtml, schema, faq }) {
   const url = `${baseUrl}${canonicalPath(pagePath)}`;
   const fullTitle = title.includes('KoyJabo') || title.includes('কই যাবো') ? title : `${title} | KoyJabo`;
   let html = template;
@@ -124,7 +124,7 @@ function renderPage({ path: pagePath, title, description, keywords = [], bodyHtm
   html = replaceProperty(html, 'og:description', description);
   html = replaceProperty(html, 'og:url', url);
   html = replaceLink(html, 'canonical', url);
-  html = html.replace('</head>', `  ${jsonLdScript('route', schema)}\n</head>`);
+  html = html.replace('</head>', `  ${jsonLdScript('route', schema)}${faq ? `\n  ${jsonLdScript('faq', { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq })}` : ''}\n</head>`);
   html = html.replace('<div id="root"></div>', `<main class="kj-static-seo" style="position:absolute;left:-9999px;top:0;width:1px;overflow:hidden" aria-hidden="true">${bodyHtml}</main>\n  <div id="root"></div>`);
 
   const outDir = path.join(dist, pagePath.replace(/^\/+/, ''), 'index.html');
@@ -181,7 +181,7 @@ function extractTrainRoutes() {
   const nextExport = section.indexOf('\nexport ', 10);
   const bounded = nextExport !== -1 ? section.slice(0, nextExport) : section;
   const routes = [];
-  const objectRe = /id:\s*'([^']+)'[\s\S]*?name:\s*'([^']+)'[\s\S]*?bnName:\s*'([^']+)'[\s\S]*?number:\s*'([^']+)'[\s\S]*?from:\s*'([^']+)'[\s\S]*?to:\s*'([^']+)'[\s\S]*?offDay:\s*'([^']+)'[\s\S]*?totalDuration:\s*'([^']+)'/g;
+  const objectRe = /id:\s*'([^']+)'[\s\S]*?name:\s*'([^']+)'[\s\S]*?bnName:\s*'([^']+)'[\s\S]*?number:\s*'([^']+)'[\s\S]*?from:\s*'([^']+)'[\s\S]*?to:\s*'([^']+)'[\s\S]*?offDay:\s*'([^']+)'[\s\S]*?totalDuration:\s*'([^']+)'[\s\S]*?fare:\{shuvan:(\d+)/g;
   let match;
   while ((match = objectRe.exec(bounded)) !== null) {
     routes.push({
@@ -193,6 +193,7 @@ function extractTrainRoutes() {
       to: match[6],
       offDay: match[7],
       duration: match[8],
+      shuvanFare: match[9],
       slug: slugify(match[2] || match[1]),
     });
   }
@@ -447,6 +448,18 @@ for (const route of extractBusRoutes()) {
       description: `${route.name} bus route in Dhaka.`,
       about: { '@type': 'BusTrip', name: `${route.name} Bus Route` },
     },
+    faq: [
+      {
+        '@type': 'Question',
+        name: `What is the route of the ${route.name} bus in Dhaka?`,
+        acceptedAnswer: { '@type': 'Answer', text: `The ${route.name} bus route is listed on KoyJabo with its full stop list, route map and fare guidance for Dhaka.` },
+      },
+      {
+        '@type': 'Question',
+        name: `What is the fare of the ${route.name} bus?`,
+        acceptedAnswer: { '@type': 'Answer', text: `The ${route.name} bus fare is distance-based. Use the KoyJabo fare calculator to find the exact fare between any two stops.` },
+      },
+    ],
   }));
 }
 
@@ -475,6 +488,23 @@ for (const train of extractTrainRoutes()) {
         arrivalStation: { '@type': 'TrainStation', name: train.to },
       },
     },
+    faq: [
+      {
+        '@type': 'Question',
+        name: `What is the schedule of the ${train.name} train?`,
+        acceptedAnswer: { '@type': 'Answer', text: `The ${train.name} (${train.number}) train runs from ${train.from} to ${train.to}. Off day: ${train.offDay}. Duration: ${train.duration}. See the station-by-station schedule on KoyJabo.` },
+      },
+      {
+        '@type': 'Question',
+        name: `What is the fare of the ${train.name} train?`,
+        acceptedAnswer: { '@type': 'Answer', text: `The ${train.name} train has Shovan, Shovan Chair, Snigdha and berth classes with fares starting from ৳${train.shuvanFare}. Compare all class fares on KoyJabo.` },
+      },
+      {
+        '@type': 'Question',
+        name: `Which stations does the ${train.name} train stop at?`,
+        acceptedAnswer: { '@type': 'Answer', text: `The ${train.name} train runs from ${train.from} to ${train.to}. See the complete stop list and timings on KoyJabo.` },
+      },
+    ],
   }));
 }
 
