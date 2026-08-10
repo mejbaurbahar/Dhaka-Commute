@@ -450,6 +450,9 @@ for (const route of extractBusRoutes()) {
   const endName = stationNames[route.stops[route.stops.length - 1]] ?? route.stops[route.stops.length - 1] ?? '';
   const routeLabel = startName && endName ? `${startName} ⇄ ${endName}` : route.name;
   const approxFare = route.name ? (route.name.includes('AC') || route.name.toLowerCase().includes('ac') ? 60 : 30) : 30;
+  const stopListHtml = route.stops
+    .map((stopId) => `<li>${escapeHtml(stationNames[stopId] ?? stopId)}</li>`)
+    .join('');
   pages.push(renderPage({
     path: `/bus/${route.slug}`,
     title: `${route.name} Bus: ${routeLabel} Route & Fare`,
@@ -458,7 +461,17 @@ for (const route of extractBusRoutes()) {
     bodyHtml: `
       <article>
         <h1>${escapeHtml(route.name)} Bus Route - ${escapeHtml(route.bnName)}</h1>
-        <p>${escapeHtml(route.name)} is a Dhaka bus route listed on KoyJabo with route details, stops and fare guidance.</p>
+        <p>${escapeHtml(route.name)} (${escapeHtml(route.bnName)}) is a Dhaka local bus route listed on KoyJabo with route details, stops and fare guidance.${routeLabel ? ` The route runs from ${escapeHtml(startName)} to ${escapeHtml(endName)}.` : ''} Riders can search the route in Bengali or English and see the live bus location on the full page.</p>
+        <h2>Stops on the ${escapeHtml(route.name)} route</h2>
+        <p>The ${escapeHtml(route.name)} bus passes through ${route.stops.length} stops in Dhaka. Full stop list in order:</p>
+        <ol>
+          ${stopListHtml}
+        </ol>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8425219156685369" data-ad-slot="9568870428" data-ad-format="fluid" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <h2>Fare and travel tips for ${escapeHtml(route.name)}</h2>
+        <p>The ${escapeHtml(route.name)} bus fare is distance-based, roughly ৳${approxFare} for the full route. The exact fare between any two stops depends on distance — use the KoyJabo fare calculator to check.</p>
+        <p>Dhaka buses are busiest during office peak hours (8:00-10:00 AM and 5:00-8:00 PM). For a faster trip, travel outside peak hours and board near the start of the route, where seats are still available. The live location and route map for ${escapeHtml(route.name)} are available on KoyJabo.</p>
       </article>
     `,
     schema: {
@@ -552,6 +565,17 @@ for (const { pair, buses } of BUS_PAIRS.map(p => ({
       <article>
         <h1>Which Bus Goes from ${escapeHtml(fromName.en)} to ${escapeHtml(toName.en)} in Dhaka?</h1>
         <p>${buses.length} bus${buses.length === 1 ? '' : 'es'} on KoyJabo cover the ${escapeHtml(fromName.en)} to ${escapeHtml(toName.en)} route in Dhaka: ${escapeHtml(busList)}. Open any bus to see its full stop list, fare guidance and live location.</p>
+        ${buses.length > 0 ? `
+        <h2>Buses from ${escapeHtml(fromName.en)} to ${escapeHtml(toName.en)}</h2>
+        <p>The easiest way to travel from ${escapeHtml(fromName.en)} to ${escapeHtml(toName.en)} is one of the ${buses.length} bus${buses.length === 1 ? '' : 'es'} below. Each route lists its stops in order and an approximate fare so you can plan the trip:</p>
+        <ul>
+          ${buses.map(r => `<li>${escapeHtml(r.name)} (${escapeHtml(r.bnName)})</li>`).join('')}
+        </ul>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8425219156685369" data-ad-slot="9568870428" data-ad-format="fluid" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <h2>How to get from ${escapeHtml(fromName.en)} to ${escapeHtml(toName.en)}</h2>
+        <p>Board the bus at the ${escapeHtml(fromName.en)} stop and get off at the ${escapeHtml(toName.en)} stop. Travel during off-peak hours (before 8 AM or after 8 PM) for a less crowded ride. Bus fares are distance-based, so the trip between these two stops costs less than a full-route fare. You can also see the live location of each bus on its KoyJabo route page.</p>
+        ` : ''}
       </article>
     `,
     schema: {
