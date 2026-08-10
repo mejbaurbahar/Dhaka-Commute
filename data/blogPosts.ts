@@ -5365,5 +5365,153 @@ If you're visiting Bangladesh as an American-born Bangladeshi (ABD) for the firs
 
 [KoyJabo.com](https://koyjabo.com) দিয়ে বাংলাদেশের সব পরিবহন তথ্য পান — বিনামূল্যে, অফলাইনে।
 `
+	},
+	{
+		id: 'dhaka-bus-ticket-price-online-booking-2026',
+		slug: 'dhaka-bus-ticket-price-online-booking-2026',
+		title: 'Dhaka Bus Ticket Price & Online Booking Guide 2026 — Local & Intercity',
+		bnTitle: 'ঢাকা বাস টিকিটের দাম ও অনলাইন বুকিং গাইড ২০২৬ — লোকাল ও আন্তঃজেলা',
+		excerpt: 'How much is a bus ticket in Bangladesh? Full 2026 guide to Dhaka local bus ticket prices (৳10–60) and intercity bus ticket fares from Dhaka to every major district — plus how to book bus tickets online with Shohoz and other platforms.',
+		bnExcerpt: 'বাংলাদেশে বাস টিকিটের দাম কত? ঢাকার লোকাল বাস টিকিট (৳১০–৬০) ও ঢাকা থেকে সব প্রধান জেলার আন্তঃজেলা বাস টিকিট ভাড়ার সম্পূর্ণ ২০২৬ গাইড — সাথে Shohoz-সহ অনলাইনে বাস টিকিট বুক করার নিয়ম।',
+		coverImage: '',
+		author: 'KoyJabo Team',
+		publishDate: '2026-08-10',
+		readTime: '8 min read',
+		keywords: [
+			'bus ticket', 'bus ticket price', 'bus ticket booking', 'online bus ticket',
+			'Dhaka bus ticket', 'intercity bus ticket Bangladesh', 'bus fare Bangladesh 2026',
+			'বাস টিকিট', 'বাস টিকিটের দাম', 'অনলাইন বাস টিকিট', 'ঢাকা বাস ভাড়া',
+			'Shohoz bus ticket', 'how to book bus ticket online', 'Dhaka to Chattogram bus ticket price',
+			'Dhaka to Sylhet bus ticket price', 'ঢাকা থেকে চট্টগ্রাম বাস টিকিট',
+		],
+		category: 'Guide',
+		content: `
+Looking for **bus ticket** prices and booking options in Bangladesh in 2026? Whether you need a short-hop ticket on a Dhaka local bus or a long-distance intercity coach ticket, this guide covers current fares and every way to book — online, by phone and at the counter.
+
+---
+
+## 🚌 Dhaka local bus ticket prices
+
+Dhaka city buses do **not** need advance booking — you buy the ticket from the conductor on board or pay directly while boarding. Local bus tickets cost roughly:
+
+| Ticket type | Price |
+|---|---|
+| Short trip (1–4 km, e.g. Banani → Gulshan) | ৳10–15 |
+| Medium trip (4–8 km, e.g. Gulshan → Farmgate) | ৳15–25 |
+| Long trip (8+ km, e.g. Uttara → Motijheel) | ৳25–40 |
+| Minibus / AC coaches within Dhaka | ৳30–60 |
+| Student fare (with student card) | ~50% off on BRTC buses |
+
+Fares are distance-based — the KoyJabo fare calculator shows the exact amount between any two stops of 200+ Dhaka routes.
+
+---
+
+## 🛣️ Intercity bus ticket prices from Dhaka (2026)
+
+Intercity buses leave Dhaka from **Mohakhali, Sayedabad, Gabtoli and Kalyanpur** terminals. Current one-way ticket prices from Dhaka:
+
+| Destination | Non-AC | AC / Premium |
+|---|---|---|
+| Chattogram | ৳680–700 | ৳1,050–2,050 |
+| Sylhet | ৳680–740 | ৳900–1,500 |
+| Cox's Bazar | ৳1,000–1,100 | ৳1,400–2,900 |
+| Rajshahi | ৳730 | ৳850–1,300 |
+| Khulna | ৳600–690 | ৳850–1,250 |
+| Rangpur | ৳750–880 | ৳1,000–1,700 |
+| Bogura | ৳480–580 | ৳800–1,600 |
+| Pabna | ৳500–700 | ৳700–900 |
+| Tangail | ৳201 | ৳500 |
+| Narsingdi | ৳134 | ৳350 |
+| Narayanganj | ৳55–80 | — |
+
+Popular operators on these routes include **Hanif, Shohagh, Shyamoli, Green Line, Soudia, Ena, Nabil and BRTC**. AC coaches offer chair, business and sleeper classes — sleeper berths cost the most and sell out fastest.
+
+---
+
+## 💻 How to book bus tickets online
+
+You can book most intercity bus tickets online in Bangladesh:
+
+1. **Shohoz (shohoz.com)** — the largest bus ticket platform in Bangladesh. Search your route, pick a seat on the bus diagram, pay with **bKash, Nagad, Rocket or cards**, and get an SMS + e-ticket.
+2. **Operator websites & counters** — Hanif, Shohagh and others sell directly at their Mohakhali/Sayedabad counters and via their own apps.
+3. **BRTC and govt routes** — some routes (e.g. Dhaka–Chattogram BRTC) also sell at ticket booths in the terminal.
+4. **KoyJabo (koyjabo.com)** — free route, stop and fare lookup for 200+ Dhaka buses and all intercity routes, so you know exactly which bus and fare to ask for before booking.
+
+---
+
+## 📅 Bus ticket booking tips
+
+- **Book 1–3 days ahead** for weekend travel; during **Eid**, book 7–10 days early — tickets vanish within hours.
+- **Choose the right terminal** — buses for the north and west leave from Gabtoli/Mohakhali; Chattogram, Sylhet and Cox's Bazar routes from Sayedabad/Mohakhali.
+- **Compare AC classes** — "Business" (semi-sleeper) is the best value on long routes; sleeper berths are worth it for overnight trips.
+- **Keep your SMS/e-ticket** — conductors check the ticket on boarding; screenshots also work.
+- **Cancellation** — most online tickets are refundable up to 4 hours before departure (fee applies).
+
+For live bus schedules, stops and exact fares, check [KoyJabo](https://koyjabo.com) — free and works offline.
+`,
+		bnContent: `
+বাংলাদেশে **বাস টিকিট** কিনতে হলে কত খরচ হবে, আর কীভাবে বুক করবেন — ২০২৬ সালের সম্পূর্ণ গাইড। ঢাকার লোকাল বাসের স্বল্প দূরত্বের টিকিট হোক বা আন্তঃজেলা কোচের টিকিট, এই লেখায় বর্তমান ভাড়া এবং বুকিংয়ের সব উপায় পাবেন — অনলাইন, ফোন এবং কাউন্টারে।
+
+---
+
+## 🚌 ঢাকার লোকাল বাস টিকিটের দাম
+
+ঢাকার সিটি বাসে **আগে থেকে বুকিং লাগে না** — বাসে উঠে কন্ডাক্টরের কাছ থেকে টিকিট কিনুন বা ভাড়া বুঝিয়ে দিন। লোকাল বাস টিকিটের আনুমানিক দাম:
+
+| টিকিটের ধরন | দাম |
+|---|---|
+| স্বল্প দূরত্ব (১–৪ কিমি, যেমন বনানী → গুলশান) | ৳১০–১৫ |
+| মাঝারি দূরত্ব (৪–৮ কিমি, যেমন গুলশান → ফার্মগেট) | ৳১৫–২৫ |
+| দীর্ঘ দূরত্ব (৮+ কিমি, যেমন উত্তরা → মতিঝিল) | ৳২৫–৪০ |
+| মিনিবাস / ঢাকার ভেতরে AC কোচ | ৳৩০–৬০ |
+| শিক্ষার্থী ভাড়া (ছাত্র কার্ড সহ) | BRTC বাসে ~৫০% ছাড় |
+
+ভাড়া দূরত্বভিত্তিক — দুই স্টপের মাঝে সঠিক ভাড়া দেখতে KoyJabo-র ভাড়া ক্যালকুলেটর ব্যবহার করুন (২০০+ ঢাকা রুট)।
+
+---
+
+## 🛣️ ঢাকা থেকে আন্তঃজেলা বাস টিকিটের দাম (২০২৬)
+
+আন্তঃজেলা বাস ছাড়ে ঢাকার **মোহাখালী, সায়েদাবাদ, গাবতলী ও কল্যাণপুর** টার্মিনাল থেকে। ঢাকা থেকে বর্তমান একমুখী বাস টিকিটের দাম:
+
+| গন্তব্য | নন-AC | AC / প্রিমিয়াম |
+|---|---|---|
+| চট্টগ্রাম | ৳৬৮০–৭০০ | ৳১,০৫০–২,০৫০ |
+| সিলেট | ৳৬৮০–৭৪০ | ৳৯০০–১,৫০০ |
+| কক্সবাজার | ৳১,০০০–১,১০০ | ৳১,৪০০–২,৯০০ |
+| রাজশাহী | ৳৭৩০ | ৳৮৫০–১,৩০০ |
+| খুলনা | ৳৬০০–৬৯০ | ৳৮৫০–১,২৫০ |
+| রংপুর | ৳৭৫০–৮৮০ | ৳১,০০০–১,৭০০ |
+| বগুড়া | ৳৪৮০–৫৮০ | ৳৮০০–১,৬০০ |
+| পাবনা | ৳৫০০–৭০০ | ৳৭০০–৯০০ |
+| টাঙ্গাইল | ৳২০১ | ৳৫০০ |
+| নরসিংদী | ৳১৩৪ | ৳৩৫০ |
+| নারায়ণগঞ্জ | ৳৫৫–৮০ | — |
+
+এই রুটে জনপ্রিয় অপারেটর: **হানিফ, শোহাগ, শ্যামলী, গ্রীন লাইন, সৌদিয়া, এনা, নাবিল ও বিআরটিসি**। AC কোচে চেয়ার, বিজনেস ও স্লিপার ক্লাস থাকে — স্লিপার বার্থ সবচেয়ে দামি ও দ্রুততম সোল্ড আউট।
+
+---
+
+## 💻 অনলাইনে বাস টিকিট বুক করার নিয়ম
+
+বাংলাদেশে বেশিরভাগ আন্তঃজেলা বাস টিকিট অনলাইনে বুক করা যায়:
+
+1. **Shohoz (shohoz.com)** — বাংলাদেশের সবচেয়ে বড় বাস টিকিট প্ল্যাটফর্ম। রুট খুঁজুন, বাসের আসন ডায়াগ্রামে সিট বাছুন, **বিকাশ, নগদ, রকেট বা কার্ডে** পেমেন্ট করুন — SMS ও ই-টিকিট পাবেন।
+2. **অপারেটরের ওয়েবসাইট ও কাউন্টার** — হানিফ, শোহাগসহ বড় অপারেটররা মোহাখালী/সায়েদাবাদ কাউন্টার ও নিজেদের অ্যাপে সরাসরি টিকিট বিক্রি করে।
+3. **বিআরটিসি ও সরকারি রুট** — কিছু রুটে (যেমন ঢাকা–চট্টগ্রাম বিআরটিসি) টার্মিনালের টিকিট বুথেও টিকিট পাওয়া যায়।
+4. **KoyJabo (koyjabo.com)** — ২০০+ ঢাকা বাস ও সব আন্তঃজেলা রুটের বিনামূল্যে রুট, স্টপ ও ভাড়ার তথ্য — বুকিংয়ের আগে কোন বাসে চড়বেন তা আগে জেনে নিন।
+
+---
+
+## 📅 বাস টিকিট বুকিং টিপস
+
+- **উইকেন্ড ট্র্যাভেলে ১–৩ দিন আগে** বুক করুন; **ঈদে** ৭–১০ দিন আগে — টিকিট কয়েক ঘণ্টায় শেষ হয়ে যায়।
+- **সঠিক টার্মিনাল বাছুন** — উত্তর ও পশ্চিমের বাস গাবতলী/মোহাখালী থেকে; চট্টগ্রাম, সিলেট ও কক্সবাজার রুট সায়েদাবাদ/মোহাখালী থেকে।
+- **AC ক্লাস মেলান** — দীর্ঘ রুটে "বিজনেস" (সেমি-স্লিপার) সবচেয়ে মূল্যবান; রাতের যাত্রায় স্লিপার বার্থ ভালো।
+- **SMS/ই-টিকিট সংরক্ষণ করুন** — ওঠার সময় কন্ডাক্টর টিকিট দেখে নেন; স্ক্রিনশটও চলে।
+- **বাতিল নিয়ম** — বেশিরভাগ অনলাইন টিকিট ছাড়ার ৪ ঘণ্টা আগে পর্যন্ত রিফান্ডযোগ্য (জরিমানা সহ)।
+
+লাইভ বাস শিডিউল, স্টপ ও সঠিক ভাড়ার জন্য [KoyJabo](https://koyjabo.com) দেখুন — বিনামূল্যে, অফলাইনে কাজ করে।
+`
 	}
 ];

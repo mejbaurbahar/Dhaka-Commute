@@ -143,6 +143,10 @@ function extractBlogPosts() {
   const excerpts = values('excerpt');
   const dates = values('publishDate');
   const categories = values('category');
+  // Post bodies are backtick template literals — capture the text between
+  // `content:` and the next field, then trim the surrounding backticks.
+  const bodyRe = /content:\s*`([\s\S]*?)`\s*,\s*\n\s*bnContent:/g;
+  const bodies = [...content.matchAll(bodyRe)].map(m => m[1]);
   return slugs.map((slug, index) => ({
     id: ids[index] || slug,
     slug,
@@ -150,7 +154,56 @@ function extractBlogPosts() {
     excerpt: excerpts[index] || 'KoyJabo Bangladesh transport and travel guide.',
     publishDate: dates[index] || new Date().toISOString().slice(0, 10),
     category: categories[index] || 'Guide',
+    content: bodies[index] || '',
   }));
+}
+
+// Minimal markdown → HTML for static blog pages (headings, tables, lists,
+// blockquotes, bold, links). Just enough for crawlable, content-rich pages.
+function renderMarkdown(md) {
+  const inline = (text) => text
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+  const blocks = [];
+  let list = null;
+  let table = null;
+  const pushList = () => {
+    if (list) { blocks.push(`<ul>\n${list.map(li => `  <li>${inline(li)}</li>`).join('\n')}\n</ul>`); list = null; }
+  };
+  const pushTable = () => {
+    if (!table) return;
+    const [headerRow, ...bodyRows] = table;
+    const cells = (row) => row.map(c => `<td>${inline(c)}</td>`).join('');
+    const headHtml = headerRow ? `<thead><tr>${headerRow.map(c => `<th>${inline(c)}</th>`).join('')}</tr></thead>` : '';
+    const bodyHtml = bodyRows.length ? `<tbody>${bodyRows.map(r => `<tr>${cells(r)}</tr>`).join('')}</tbody>` : '';
+    blocks.push(`<table>${headHtml}${bodyHtml}</table>`);
+    table = null;
+  };
+  for (const rawLine of md.split('\n')) {
+    const line = rawLine.trimEnd();
+    if (!line.trim()) { pushList(); pushTable(); continue; }
+    if (line.startsWith('|') && line.endsWith('|')) {
+      pushList();
+      const cells = line.split('|').slice(1, -1).map(c => c.trim());
+      if (cells.every(c => /^:?-{3,}:?$/.test(c))) continue; // separator row
+      table = table || [];
+      table.push(cells);
+      continue;
+    }
+    pushTable();
+    if (line.startsWith('## ')) { pushList(); blocks.push(`<h2>${inline(line.slice(3))}</h2>`); continue; }
+    if (line.startsWith('### ')) { pushList(); blocks.push(`<h3>${inline(line.slice(4))}</h3>`); continue; }
+    if (line.startsWith('- ')) { list = list || []; list.push(line.slice(2)); continue; }
+    if (line.startsWith('> ')) { pushList(); blocks.push(`<blockquote>${inline(line.slice(2))}</blockquote>`); continue; }
+    if (/^\s*---+/.test(line)) { pushList(); blocks.push('<hr />'); continue; }
+    if (/^\d+\.\s/.test(line)) { list = list || []; list.push(line.replace(/^\d+\.\s/, '')); continue; }
+    pushList();
+    blocks.push(`<p>${inline(line)}</p>`);
+  }
+  pushList();
+  pushTable();
+  return blocks.join('\n');
 }
 
 function extractStationNames() {
@@ -420,6 +473,19 @@ pages.push(renderPage({
 }));
 
 for (const post of extractBlogPosts()) {
+  // Full post body when available (substantial content), excerpt-only fallback.
+  const bodyParts = [];
+  if (post.content.length > 400) {
+    const lines = post.content.split('\n');
+    const splitAt = Math.ceil(lines.length / 2);
+    bodyParts.push(renderMarkdown(lines.slice(0, splitAt).join('\n')));
+    bodyParts.push(
+      '<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8425219156685369" data-ad-slot="9568870428" data-ad-format="fluid" data-full-width-responsive="true"></ins>\n        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>'
+    );
+    bodyParts.push(renderMarkdown(lines.slice(splitAt).join('\n')));
+  } else {
+    bodyParts.push(`<p>${escapeHtml(post.excerpt)}</p>`);
+  }
   pages.push(renderPage({
     path: `/blog/${post.slug}`,
     title: post.title,
@@ -428,7 +494,7 @@ for (const post of extractBlogPosts()) {
     bodyHtml: `
       <article>
         <h1>${escapeHtml(post.title)}</h1>
-        <p>${escapeHtml(post.excerpt)}</p>
+        ${bodyParts.join('\n        ')}
       </article>
     `,
     schema: {
