@@ -14,6 +14,9 @@ export function LocationConsentModal({ tk, lang, open, onAllow, onDeny, onNav }:
   if (!open) return null;
   const isBn = lang === 'bn';
   const font = isBn ? BEN : SANS;
+  // Darker than tk.textDim/textFaint — modal card composites to ≈#cfd0d0, tokens fail 4.5:1 there
+  const textDimModal = '#3d5268'; // 5.21:1 on #cfd0d0
+  const textFaintModal = '#4a5a75'; // 4.51:1 on #cfd0d0
 
   return (
     <div style={{
@@ -41,7 +44,7 @@ export function LocationConsentModal({ tk, lang, open, onAllow, onDeny, onNav }:
             <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 17, color: tk.text }}>
               {T(lang, 'আপনার অবস্থান ব্যবহার করি?', 'Use your location?')}
             </div>
-            <div style={{ fontFamily: SANS, fontSize: 12, color: tk.textFaint, marginTop: 2 }}>KoyJabo</div>
+            <div style={{ fontFamily: SANS, fontSize: 12, color: textFaintModal, marginTop: 2 }}>KoyJabo</div>
           </div>
         </div>
 
@@ -54,7 +57,7 @@ export function LocationConsentModal({ tk, lang, open, onAllow, onDeny, onNav }:
           ].map((item, i) => (
             <div key={i} style={{ display:'flex', gap: 10, alignItems:'flex-start' }}>
               <span style={{ fontSize: 15, flexShrink: 0 }}>{item.icon}</span>
-              <span style={{ fontFamily: font, fontSize: 13, color: tk.textDim, lineHeight: 1.5 }}>
+              <span style={{ fontFamily: font, fontSize: 13, color: textDimModal, lineHeight: 1.5 }}>
                 {T(lang, item.bn, item.en)}
               </span>
             </div>
@@ -64,7 +67,7 @@ export function LocationConsentModal({ tk, lang, open, onAllow, onDeny, onNav }:
         {/* T&C note */}
         <div style={{
           background: tk.panelMuted, borderRadius: 10, padding: '10px 12px',
-          fontFamily: SANS, fontSize: 11, color: tk.textFaint, lineHeight: 1.6,
+          fontFamily: SANS, fontSize: 11, color: textFaintModal, lineHeight: 1.6,
           marginBottom: 20,
         }}>
           {T(lang,
@@ -91,7 +94,7 @@ export function LocationConsentModal({ tk, lang, open, onAllow, onDeny, onNav }:
             {T(lang, '📍 অবস্থান অনুমতি দিন', '📍 Allow Location')}
           </button>
           <button onClick={onDeny} style={{
-            background: 'transparent', color: tk.textFaint,
+            background: 'transparent', color: textFaintModal,
             border: `1px solid ${tk.line}`, borderRadius: 12, padding: '12px', width: '100%',
             fontFamily: font, fontSize: 13, cursor: 'pointer',
           }}>
@@ -99,7 +102,7 @@ export function LocationConsentModal({ tk, lang, open, onAllow, onDeny, onNav }:
           </button>
         </div>
 
-        <div style={{ textAlign:'center', marginTop: 12, fontFamily: SANS, fontSize: 10, color: tk.textFaint }}>
+        <div style={{ textAlign:'center', marginTop: 12, fontFamily: SANS, fontSize: 10, color: textFaintModal }}>
           {T(lang, 'সেটিংস থেকে যেকোনো সময় পরিবর্তন করা যাবে', 'Change anytime from Settings')}
         </div>
       </div>

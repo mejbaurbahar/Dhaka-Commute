@@ -498,7 +498,7 @@ function SearchPanel({
             fontFamily: lang === 'bn' ? BEN : SANS,
             fontSize: 11,
             fontWeight: 600,
-            color: '#22c55e',
+            color: '#15803d', // green-700 — 5.02:1 on panel (was #22c55e @ 2.13:1)
             whiteSpace: 'nowrap',
             flexShrink: 0,
           }}
@@ -508,7 +508,7 @@ function SearchPanel({
               width: 7,
               height: 7,
               borderRadius: '50%',
-              background: '#22c55e',
+              background: '#22c55e', // pulse dot stays bright — decorative, not text
               animation: 'kjpulse 2s ease-in-out infinite',
               display: 'inline-block',
             }}

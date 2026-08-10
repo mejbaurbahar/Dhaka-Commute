@@ -114,7 +114,7 @@ export function TopBar({
             gap: 8,
             flexShrink: 0,
           }}
-          aria-label="KoyJabo Home"
+          aria-label="কই যাবো"
         >
           <Logo tk={tk} size={isMobile ? 32 : 36} />
           {!isMobile && (

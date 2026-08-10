@@ -656,10 +656,10 @@ export function GovAdBanner({
               aria-label={`Show ${c.nameEn}`}
               onClick={() => { clearInterval(timerRef.current); goTo(i); }}
               style={{
-                width: 7, height: 7,
+                width: 24, height: 24,
                 borderRadius: '50%', border: 'none', padding: 9, cursor: 'pointer',
-                // backgroundClip keeps the visible dot 7px while padding expands
-                // the hit area to 25px (WCAG 2.5.5 minimum target size).
+                // Hit area is a full 24px (WCAG 2.5.5) regardless of box-sizing;
+                // backgroundClip keeps the visible dot ~6px in the content box.
                 background: i === active ? cfg.accent : 'rgba(128,128,128,0.32)',
                 backgroundClip: 'content-box',
                 transform: i === active ? 'scale(1.25)' : 'scale(1)',
