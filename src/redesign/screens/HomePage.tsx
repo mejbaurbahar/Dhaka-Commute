@@ -94,6 +94,13 @@ function SearchPanel({
   const [searchFocus, setSearchFocus] = useState(false);
   const [sortPref, setSortPref] = useState<'now'|'fastest'|'cheapest'|'non-ac'|null>(null);
   const [sameLocError, setSameLocError] = useState(false);
+  // Debounce universal search input — enhancedBusSearch is full-text over all routes;
+  // running it per keystroke blocks the main thread (worst INP contributor on mobile).
+  const [debouncedQ, setDebouncedQ] = useState('');
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQ(searchQ), 200);
+    return () => clearTimeout(t);
+  }, [searchQ]);
   const fromRef = useRef<HTMLDivElement>(null);
   const toRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -193,12 +200,12 @@ function SearchPanel({
     onNav(modeRoute(), params);
   };
 
-  // Search results for the universal search
+  // Search results for the universal search (computed on debounced query)
   const searchResults: Suggestion[] = useMemo(() => {
-    if (!searchQ.trim()) return [];
-    const q = searchQ.toLowerCase();
+    if (!debouncedQ.trim()) return [];
+    const q = debouncedQ.toLowerCase();
     if (activeMode === 'bus') {
-      const { buses } = enhancedBusSearch(searchQ.trim());
+      const { buses } = enhancedBusSearch(debouncedQ.trim());
       if (buses.length > 0) {
         return buses.slice(0, 6).map(r => ({ id: r.id, label: r.name, sub: r.routeString }));
       }
@@ -209,13 +216,13 @@ function SearchPanel({
     }
     if (activeMode === 'train') {
       const trains = BD_TRAIN_ROUTES
-        .filter(r => r.name.toLowerCase().includes(q) || r.bnName.includes(searchQ) || r.number.includes(q))
+        .filter(r => r.name.toLowerCase().includes(q) || r.bnName.includes(debouncedQ) || r.number.includes(q))
         .slice(0, 5)
         .map(r => ({ id: r.id, label: `${r.name} (${r.number})`, sub: r.bnName }));
-      return [...trains, ...filterModeOptions(searchQ, 'from')].slice(0, 15);
+      return [...trains, ...filterModeOptions(debouncedQ, 'from')].slice(0, 15);
     }
-    return filterModeOptions(searchQ, 'from');
-  }, [activeMode, searchQ, fromSuggestionsHook]);
+    return filterModeOptions(debouncedQ, 'from');
+  }, [activeMode, debouncedQ, fromSuggestionsHook]);
 
   const changeMode = (mode: SearchModeId) => {
     setActiveMode(mode);
