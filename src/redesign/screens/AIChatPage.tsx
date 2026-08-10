@@ -452,7 +452,8 @@ export function AIChatPage(props: Props) {
             </div>
           )}
 
-          {/* Input bar */}
+          {/* Input bar — sticky on mobile so it always floats above the page
+              scroll (page scrolls 60+px on small screens; input must stay visible) */}
           <div style={{
             flexShrink:0,
             padding: isMobile ? '10px 12px' : '14px 20px',
@@ -460,6 +461,7 @@ export function AIChatPage(props: Props) {
             borderTop:`1px solid ${tk.line}`,
             background:tk.panel,
             display:'flex',gap:8,alignItems:'center',
+            ...(isMobile ? { position:'sticky', bottom:0, zIndex:5, boxShadow:'0 -10px 24px rgba(0,0,0,0.10)' } : {}),
           }}>
             <div style={{ flex:1,display:'flex',alignItems:'center',background:tk.inputBg,border:`1.5px solid ${tk.line}`,borderRadius:999,padding:'0 16px',gap:8,transition:'border-color 0.2s' }}>
               <span style={{ fontSize:16,flexShrink:0 }}>🔍</span>
