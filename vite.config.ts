@@ -16,6 +16,20 @@ const intercityRedirectPlugin = {
   },
 };
 
+// Plugin: strip web-only ad scripts (AdSense loader, FundingChoices, Daamdekhi)
+// from index.html during Android builds — the app monetizes via AdMob instead.
+const stripWebAdsPlugin = (enabled: boolean) => ({
+  name: 'strip-web-ads',
+  transformIndexHtml(html: string) {
+    if (!enabled) return html;
+    return html
+      .replace(/\{\s*src:\s*'https:\/\/fundingchoicesmessages\.google\.com\/[^{}]*\},?\s*/g, '')
+      .replace(/\{\s*src:\s*'https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js\?[^{}]*\},?\s*/g, '')
+      .replace(/\{\s*src:\s*'https:\/\/shop\.daamdekhi\.com\/aeo\/tag\.js'[\s\S]*?\}\s*\},?\s*/g, '')
+      .replace(/<img src="https:\/\/shop\.daamdekhi\.com[^>]*>\s*/g, '');
+  },
+});
+
 
 
 export default defineConfig(({ mode }) => {
@@ -64,6 +78,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       intercityRedirectPlugin,
+      stripWebAdsPlugin(env.VITE_PLATFORM === 'android'),
 
       viteStaticCopy({
         targets: [
@@ -145,6 +160,10 @@ export default defineConfig(({ mode }) => {
             'intercity/leaflet-*.js',
             'intercity/vendor-*.js',
             'intercity/workbox-window*.js',
+            // Bus photos have Bengali filenames — Capacitor's Android asset server 404s
+            // non-ASCII paths (seen in app logs). Runtime CacheFirst route handles them
+            // on first view instead; also keeps the precache manifest smaller.
+            'buses-image/**',
           ],
           navigateFallback: 'index.html',  // Enable automatic fallback to index.html for SPA offline support
           // Only deny actual static file paths — NOT the /intercity page itself (must fall through to index.html)
@@ -467,6 +486,10 @@ export default defineConfig(({ mode }) => {
         },
     },
     define: {
+      // Build-time platform flag — 'web' (default) ships AdSense, 'android' ships AdMob.
+      // Replaced with a boolean literal so rollup folds it and tree-shakes the
+      // unused ad branch out of the bundle per build.
+      '__KJ_NATIVE__': env.VITE_PLATFORM === 'android',
       // Build-time version string — used by main.tsx to detect new deploys
       // without requiring a hard refresh from users.
       '__KJ_BUILD_VERSION__': JSON.stringify(process.env.BUILD_VERSION || `${Date.now()}`),

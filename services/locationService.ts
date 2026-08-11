@@ -1,5 +1,7 @@
 import { UserLocation, Station } from '../types';
 import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
+import { isNativePlatform } from '../src/utils/platformDetect';
+import { getNativeLocation } from '../src/services/nativeLocationService';
 
 // IP-based geolocation fallback for when browser GPS is unavailable or denied
 export const getLocationByIP = async (): Promise<UserLocation | null> => {
@@ -23,6 +25,26 @@ export const getLocationByIP = async (): Promise<UserLocation | null> => {
 
 export const getCurrentLocation = (): Promise<UserLocation> => {
   return new Promise((resolve, reject) => {
+    // Native (Android app): Capacitor geolocation first — native permission dialog
+    // and better accuracy. Falls back to the browser API.
+    if (isNativePlatform()) {
+      getNativeLocation()
+        .then((loc) => {
+          if (loc) { resolve(loc); return; }
+          browserGeolocation(resolve, reject);
+        })
+        .catch(() => browserGeolocation(resolve, reject));
+      return;
+    }
+    browserGeolocation(resolve, reject);
+  });
+};
+
+// Browser geolocation with retry logic (used on web, or as native fallback)
+const browserGeolocation = (
+  resolve: (loc: UserLocation) => void,
+  reject: (err: unknown) => void
+): void => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
       reject(new Error("Geolocation is not supported by your browser"));
       return;
@@ -89,7 +111,6 @@ export const getCurrentLocation = (): Promise<UserLocation> => {
         maximumAge: 30000         // Accept results from last 30s
       }
     );
-  });
 };
 
 // Calculate Haversine distance in meters

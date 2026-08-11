@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Lang, Theme, KJ_TOKENS, BEN, SANS, T } from '../tokens';
 
+// Build-time platform check — Vite statically replaces this with a literal.
+const NATIVE_BUILD = import.meta.env.VITE_PLATFORM === 'android';
+
 interface Props {
   lang: Lang;
   theme: Theme;
@@ -10,6 +13,11 @@ export function AdBlockGate({ lang, theme }: Props) {
   const tk = KJ_TOKENS[theme];
   const [blocked, setBlocked] = useState(false);
   const [checking, setChecking] = useState(true);
+  // Dismissible — a locked full-screen wall risks AdSense policy issues and
+  // blocks legit users from transport info (emergency use case).
+  const [dismissed, setDismissed] = useState(
+    () => localStorage.getItem('koyjabo_adblock_dismissed') === '1'
+  );
 
   const checkAdBlock = useCallback(() => {
     setChecking(true);
@@ -49,9 +57,14 @@ export function AdBlockGate({ lang, theme }: Props) {
     };
   }, [blocked]);
 
+  if (dismissed) return null;
+
+  // Native (Android): no adblockers exist in a Capacitor WebView — never gate.
+  // Expression ternary so the bait-check JSX (contains "adsbygoogle" bait class)
+  // is tree-shaken out of the app build entirely.
   if (!blocked) return null;
 
-  return (
+  return NATIVE_BUILD ? null : (
     <div
       role="dialog"
       aria-modal="true"
@@ -73,6 +86,7 @@ export function AdBlockGate({ lang, theme }: Props) {
         style={{
           width: '100%',
           maxWidth: 440,
+          position: 'relative',
           borderRadius: 22,
           border: `1px solid ${tk.line}`,
           background: tk.panel,
@@ -108,6 +122,26 @@ export function AdBlockGate({ lang, theme }: Props) {
             'Ads help keep KoyJabo free. Please turn off your ad blocker for this site, then check again.'
           )}
         </p>
+        <button
+          onClick={() => {
+            localStorage.setItem('koyjabo_adblock_dismissed', '1');
+            setDismissed(true);
+          }}
+          aria-label={T(lang, 'বন্ধ করুন', 'Dismiss')}
+          style={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            border: 0,
+            background: 'transparent',
+            color: tk.textDim,
+            fontSize: 18,
+            cursor: 'pointer',
+            padding: 4,
+          }}
+        >
+          ✕
+        </button>
         <button
           onClick={checkAdBlock}
           disabled={checking}

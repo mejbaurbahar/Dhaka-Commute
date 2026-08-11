@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import AdSenseAd from './AdSenseAd';
+import PlatformAd from '../src/ads/PlatformAd';
 
 interface SponsoredAdSlotProps {
   language: 'en' | 'bn';
@@ -70,12 +70,7 @@ const SponsoredAdSlot: React.FC<SponsoredAdSlotProps> = ({
           className="kj-ad-shell relative w-full overflow-hidden"
           style={{ height: adHeight, minHeight: adHeight, maxHeight: adHeight, contain: 'strict' }}
         >
-          <AdSenseAd
-            adSlot="auto"
-            adFormat={isLeaderboard ? 'horizontal' : 'rectangle'}
-            responsive={isLeaderboard}
-            className="relative z-10 w-full max-w-full"
-          />
+          <PlatformAd placement={isLeaderboard ? 'leaderboard' : 'mid-rect'} />
         </div>
       </div>
     </div>

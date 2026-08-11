@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 interface AdSenseAdProps {
   adSlot: string;
-  adFormat?: 'auto' | 'fluid' | 'rectangle' | 'horizontal' | 'vertical';
+  adFormat?: 'auto' | 'fluid' | 'rectangle' | 'horizontal' | 'vertical' | 'autorelaxed';
   className?: string;
   responsive?: boolean;
   layoutKey?: string;
@@ -14,7 +14,7 @@ interface AdSenseAdProps {
 const isValidSlot = (slot: string) => slot === 'auto' || /^\d{9,11}$/.test(slot);
 const DEFAULT_SLOT = '7294303750';
 
-const AdSenseAd: React.FC<AdSenseAdProps> = React.memo(({
+const AdSenseAd: React.FC<AdSenseAdProps> = /* @__PURE__ */ React.memo(({
   adSlot,
   adFormat = 'auto',
   className = '',

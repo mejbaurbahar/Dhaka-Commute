@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Bot, Search, X } from 'lucide-react';
-import AdSenseAd from './AdSenseAd';
+import PlatformAd from '../src/ads/PlatformAd';
+
+// Build-time platform check — Vite statically replaces this with a literal.
+const NATIVE_BUILD = import.meta.env.VITE_PLATFORM === 'android';
 
 type Language = 'en' | 'bn';
 
@@ -125,7 +128,7 @@ export const SideRailAd: React.FC<{ language: Language; side: 'left' | 'right' }
     className={`kj-side-rail-ad fixed top-1/2 z-[80] hidden h-[600px] w-[160px] -translate-y-1/2 flex-col items-center justify-center gap-3 rounded-[14px] border border-dashed border-kj-line bg-kj-panel-muted p-3 text-center 2xl:flex ${side === 'left' ? 'left-3' : 'right-3'}`}
   >
     <AdLabel language={language} />
-    <AdSenseAd adSlot="auto" adFormat="vertical" responsive={false} style={{ width: 136, height: 520, maxHeight: 520 }} />
+    <PlatformAd placement="mid-rect" style={{ width: 136, height: 520, maxHeight: 520 }} />
     <span className="text-[10px] text-kj-text-faint">160 x 600</span>
   </aside>
 );
@@ -151,6 +154,8 @@ export const VignetteAd: React.FC<{ language: Language; open: boolean; onClose: 
     return () => clearInterval(timer);
   }, [open]);
 
+  // Native (Android): no full-screen overlays — Play policy forbids launch interstitials.
+  if (NATIVE_BUILD) return null;
   if (!open) return null;
   const canClose = count === 0;
 

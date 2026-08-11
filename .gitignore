@@ -48,6 +48,8 @@ scroll-screenshots/
 !public/*.png
 !public/buses-image/*.png
 !public/images/**/*.png
+!resources/
+!resources/*.png
 !intercity/public/*.png
 !intercity-route-finder/public/*.png
 
@@ -100,6 +102,11 @@ render.yaml
 # Data export dumps
 dhaka_transport_data_export.json
 
+# Android signing — never commit keystores or passwords
+*.keystore
+*.jks
+android/keystore.properties
+
 # Ad network documentation
 EZOIC_*.md
 
@@ -120,3 +127,5 @@ data/avatars/
 data/results/
 data/advanced-qa.raw.json
 .aider*
+# Session browser-automation artifacts — never commit
+tool-results/

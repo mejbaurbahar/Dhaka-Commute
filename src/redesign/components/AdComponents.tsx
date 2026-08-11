@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
+import PlatformAd, { AdPlacement } from '../../ads/PlatformAd';
+
+// Build-time platform check — Vite statically replaces this with a literal.
+const NATIVE_BUILD = import.meta.env.VITE_PLATFORM === 'android';
 
 // immediate=true: skip IntersectionObserver and push on first RAF — used by
 // AnchorAd so it wins the slot-3797668998 race against inline banner placements.
-function AdsenseUnit({ slot, format = 'auto', layout, onFillResult, immediate = false }: { slot: string; format?: string; layout?: string; onFillResult?: (filled: boolean) => void; immediate?: boolean }) {
+function AdsenseUnitWeb({ slot, format = 'auto', layout, onFillResult, immediate = false }: { slot: string; format?: string; layout?: string; onFillResult?: (filled: boolean) => void; immediate?: boolean }) {
   const insRef = useRef<HTMLElement>(null);
   const pushed = useRef(false);
   const timer = useRef<number>(0);
@@ -101,6 +105,16 @@ function AdsenseUnit({ slot, format = 'auto', layout, onFillResult, immediate = 
   );
 }
 
+// Native (Android): AdMob banner — one per app, first mounted wins.
+// Expression ternary so rollup folds it and drops the web branch in the app build.
+function AdsenseUnit({ placement, slot, format = 'auto', layout, onFillResult, immediate = false }: { placement: AdPlacement; slot: string; format?: string; layout?: string; onFillResult?: (filled: boolean) => void; immediate?: boolean }) {
+  return NATIVE_BUILD ? (
+    <PlatformAd placement={placement} onFilled={onFillResult} />
+  ) : (
+    <AdsenseUnitWeb slot={slot} format={format} layout={layout} onFillResult={onFillResult} immediate={immediate} />
+  );
+}
+
 // ── SideRailAd: fixed skyscraper (desktop ≥1500px gutters)
 export function SideRailAd({ tk, lang, side }: { tk: Tokens; lang: Lang; side: 'left' | 'right' }) {
   const [filled, setFilled] = useState<boolean | null>(null);
@@ -121,7 +135,7 @@ export function SideRailAd({ tk, lang, side }: { tk: Tokens; lang: Lang; side: '
       display: 'flex', flexDirection: 'column', alignItems: 'stretch',
       justifyContent: 'flex-start', padding: 8, overflow: 'hidden',
     }}>
-      <AdsenseUnit slot="3797668998" onFillResult={setFilled}/>
+      <AdsenseUnit placement="mid-rect" slot="3797668998" onFillResult={setFilled}/>
     </div>
   );
 }
@@ -159,7 +173,7 @@ export function AnchorAd({ tk, lang, onClose, bottomOffset = '0px' }: { tk: Toke
       pointerEvents: isFilled ? 'auto' : 'none',
     }}>
       <div style={{ flex: 1, minHeight: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <AdsenseUnit slot="3797668998" format="horizontal" onFillResult={setFilled} immediate={true}/>
+        <AdsenseUnit placement="anchor" slot="3797668998" format="horizontal" onFillResult={setFilled} immediate={true}/>
       </div>
       {isFilled && <button onClick={onClose} style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, color: tk.textFaint, cursor: 'pointer', fontSize: 16, width: 32, height: 32, lineHeight: 1 }}>×</button>}
     </div>
@@ -182,6 +196,8 @@ export function VignetteAd({ tk, lang, open, onClose }: { tk: Tokens; lang: Lang
     if (filled === false) onClose();
   }, [filled]);
 
+  // Native: no full-screen interstitial (Play policy — no interstitials on launch).
+  if (NATIVE_BUILD) return null;
   if (!open || filled === false) return null;
 
   return (
@@ -197,7 +213,7 @@ export function VignetteAd({ tk, lang, open, onClose }: { tk: Tokens; lang: Lang
       </button>
       <div style={{ width: 'min(420px,100%)', minHeight: filled === true ? 360 : 0, maxHeight: '76vh', borderRadius: 18, overflow: 'hidden', background: tk.bg, border: `1px solid ${tk.line}`, boxShadow: tk.shadowLg, display: 'flex', flexDirection: 'column' }}>
         <div style={{ minHeight: filled === true ? 300 : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 12 }}>
-          <AdsenseUnit slot="9568870428" format="fluid" layout="in-article" onFillResult={setFilled}/>
+          <AdsenseUnit placement="in-article" slot="9568870428" format="fluid" layout="in-article" onFillResult={setFilled}/>
         </div>
       </div>
     </div>
@@ -226,7 +242,7 @@ export function AdIntentRow({ tk, lang }: { tk: Tokens; lang: Lang }) {
         <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }} onClick={() => setDialogOpen(false)}>
           <div style={{ background: tk.bg, border: `1px solid ${tk.line}`, borderRadius: 20, padding: 24, maxWidth: 360, width: '100%' }} onClick={e => e.stopPropagation()}>
             <div style={{ minHeight: 250, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-              <AdsenseUnit slot="3797668998"/>
+              <AdsenseUnit placement="mid-rect" slot="3797668998"/>
             </div>
             <button onClick={() => setDialogOpen(false)} style={{ background: tk.primary, color: tk.primaryInk, border: 0, borderRadius: 12, padding: '10px 20px', fontFamily: SANS, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
               {T(lang, 'বন্ধ করুন', 'Close')}
@@ -257,7 +273,7 @@ export function NativeAdSection({ tk, lang, isMobile }: { tk: Tokens; lang: Lang
           borderRadius: 14, overflow: 'hidden', marginBottom: filled === true ? 16 : 0,
           minHeight: filled === true ? (isMobile ? 120 : 100) : 0,
         }}>
-          <AdsenseUnit slot="2707948607" format="autorelaxed" onFillResult={setFilled}/>
+          <AdsenseUnit placement="multiplex" slot="2707948607" format="autorelaxed" onFillResult={setFilled}/>
         </div>
       )}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>

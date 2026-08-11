@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Tokens, Lang, SANS, BEN } from '../tokens';
+import PlatformAd from '../../ads/PlatformAd';
+
+// Build-time platform check — Vite statically replaces this with a literal.
+const NATIVE_BUILD = import.meta.env.VITE_PLATFORM === 'android';
 
 type AdKind = 'leaderboard' | 'mid-rect' | 'mob-banner' | 'anchor' | 'in-article' | 'multiplex';
 
@@ -16,7 +20,7 @@ const DIMS: Record<AdKind, { w: number; h: number; format: string; slot: string;
   multiplex:    { w: 728, h: 280, format: 'autorelaxed', slot: '2707948607' },
 };
 
-function RealAd({
+function RealAdWeb({
   format,
   slot,
   layout,
@@ -132,6 +136,28 @@ function RealAd({
   );
 }
 
+// Native (Android): AdMob banner — one per app, first mounted wins.
+// Expression ternary so rollup folds it and drops the web branch in the app build.
+function RealAd({
+  kind,
+  format,
+  slot,
+  layout,
+  onFillResult,
+}: {
+  kind: AdKind;
+  format: string;
+  slot: string;
+  layout?: string;
+  onFillResult: (filled: boolean) => void;
+}) {
+  return NATIVE_BUILD ? (
+    <PlatformAd placement={kind} onFilled={onFillResult} />
+  ) : (
+    <RealAdWeb format={format} slot={slot} layout={layout} onFillResult={onFillResult} />
+  );
+}
+
 export function AdSlot({
   tk,
   lang,
@@ -184,7 +210,7 @@ export function AdSlot({
           }}
         />
       )}
-      <RealAd format={format} slot={slot} layout={layout} onFillResult={setFilled} />
+      <RealAd kind={kind} format={format} slot={slot} layout={layout} onFillResult={setFilled} />
       <style>{`@keyframes kj-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
     </div>
   );
@@ -390,7 +416,7 @@ export function NativeAdCard({
         }}
       >
         <div style={{ width: '100%', maxWidth: w }}>
-          <RealAd format={format} slot={slot} layout={layout} onFillResult={setFilled} />
+          <RealAd kind={kind} format={format} slot={slot} layout={layout} onFillResult={setFilled} />
         </div>
       </div>
     </div>

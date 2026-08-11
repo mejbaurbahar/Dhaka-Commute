@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import AdSenseAd from './AdSenseAd';
+import PlatformAd from '../src/ads/PlatformAd';
 
 interface FloatingAdBannerProps {
   bottomOffset?: number;
@@ -81,10 +81,8 @@ const FloatingAdBanner: React.FC<FloatingAdBannerProps> = ({ bottomOffset = 0 })
           style={{ height: FLOAT_AD_HEIGHT, maxHeight: FLOAT_AD_HEIGHT, overflow: 'hidden' }}
         >
           <div className="w-full max-w-[728px]" style={{ height: FLOAT_AD_HEIGHT, overflow: 'hidden' }}>
-            <AdSenseAd
-              adSlot="auto"
-              adFormat="horizontal"
-              responsive={true}
+            <PlatformAd
+              placement="leaderboard"
               style={{ height: FLOAT_AD_HEIGHT, maxHeight: FLOAT_AD_HEIGHT, overflow: 'hidden' }}
             />
           </div>
