@@ -3,13 +3,6 @@ import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
 import { PageShell, PageShellProps } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 
-const TEAM = [
-  { role: 'Developer', roleBn: 'ডেভেলপার', initials: 'MB', color: '#3b82f6', desc: 'Full-stack, PWA architecture', descBn: 'ফুল-স্ট্যাক, PWA আর্কিটেকচার' },
-  { role: 'Designer', roleBn: 'ডিজাইনার', initials: 'RK', color: '#a855f7', desc: 'UI/UX, branding', descBn: 'ইউআই/ইউএক্স, ব্র্যান্ডিং' },
-  { role: 'Data', roleBn: 'ডেটা', initials: 'SA', color: '#10b981', desc: 'Route data, schedules', descBn: 'রুট ডেটা, সময়সূচি' },
-  { role: 'Community', roleBn: 'কমিউনিটি', initials: 'FH', color: '#f59e0b', desc: 'User research, QA', descBn: 'ব্যবহারকারী গবেষণা, QA' },
-];
-
 const STATS = [
   { valueEn: '2 years', valueBn: '২ বছর', labelEn: 'Building', labelBn: 'নির্মাণকাল' },
   { valueEn: '50K', valueBn: '৫০ হাজার', labelEn: 'Users', labelBn: 'ব্যবহারকারী' },
@@ -190,83 +183,6 @@ export function AboutPage(props: PageShellProps) {
                 }}
               >
                 {f.desc}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Team */}
-        <h2
-          style={{
-            fontFamily: BEN,
-            fontSize: 18,
-            fontWeight: 700,
-            color: tk.text,
-            margin: '0 0 16px',
-          }}
-        >
-          {lbl('Our Team', 'আমাদের দল')}
-        </h2>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
-            gap: 14,
-            marginBottom: 32,
-          }}
-        >
-          {TEAM.map((m) => (
-            <div
-              key={m.role}
-              style={{
-                background: tk.panel,
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: `1px solid ${tk.line}`,
-                borderRadius: 14,
-                padding: '20px 16px',
-                textAlign: 'center',
-              }}
-            >
-              <div
-                style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: 999,
-                  background: `linear-gradient(135deg, ${m.color}cc, ${m.color}66)`,
-                  border: `2px solid ${m.color}55`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 12px',
-                  fontFamily: SANS,
-                  fontWeight: 700,
-                  fontSize: 16,
-                  color: '#fff',
-                }}
-              >
-                {m.initials}
-              </div>
-              <div
-                style={{
-                  fontFamily: lang === 'bn' ? BEN : SANS,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: tk.text,
-                  marginBottom: 4,
-                }}
-              >
-                {lbl(m.role, m.roleBn)}
-              </div>
-              <div
-                style={{
-                  fontFamily: lang === 'bn' ? BEN : SANS,
-                  fontSize: 11,
-                  color: tk.textFaint,
-                  lineHeight: 1.5,
-                }}
-              >
-                {lbl(m.desc, m.descBn)}
               </div>
             </div>
           ))}
