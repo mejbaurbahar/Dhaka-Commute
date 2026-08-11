@@ -79,17 +79,19 @@ function ScrollArrow({
         transform: 'translateY(-50%)',
         [dir]: 0,
         zIndex: 10,
-        width: 36,
-        height: 36,
+        width: 26,
+        height: 26,
         borderRadius: '50%',
-        border: `1.5px solid ${tk.primary}66`,
+        border: `1px solid ${tk.primary}66`,
         background: tk.panel,
-        boxShadow: `0 2px 12px rgba(0,0,0,0.35), 0 0 0 2px ${tk.primary}22`,
+        boxShadow: `0 2px 8px rgba(0,0,0,0.3), 0 0 0 1.5px ${tk.primary}22`,
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: 16,
+        fontSize: 13,
+        lineHeight: 1,
+        padding: 0,
         color: tk.primary,
         fontWeight: 800,
         transition: 'opacity 0.2s',
@@ -109,8 +111,8 @@ if (typeof document !== 'undefined') {
     s.id = id;
     s.textContent = `
       @keyframes kj-arrow-pulse {
-        0%,100% { box-shadow: 0 2px 12px rgba(0,0,0,0.35), 0 0 0 2px rgba(16,185,129,0.13); transform: translateY(-50%) scale(1); }
-        50% { box-shadow: 0 2px 16px rgba(0,0,0,0.45), 0 0 0 5px rgba(16,185,129,0.22); transform: translateY(-50%) scale(1.08); }
+        0%,100% { box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 1.5px rgba(16,185,129,0.13); transform: translateY(-50%) scale(1); }
+        50% { box-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 0 0 3px rgba(16,185,129,0.2); transform: translateY(-50%) scale(1.05); }
       }
     `;
     document.head.appendChild(s);
