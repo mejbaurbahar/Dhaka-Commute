@@ -320,7 +320,9 @@ export function AIChatPage(props: Props) {
       try {
         response = await askGitHubModels(userText, chatHistory);
       } catch {
-        response = await askGeminiRoute(queryForOffline, undefined, chatHistory, 'Mejbaur');
+        // Greet by the logged-in user's real name — never a hardcoded one
+        const chatUserName = chatUser?.displayName || chatUser?.username || undefined;
+        response = await askGeminiRoute(queryForOffline, undefined, chatHistory, chatUserName);
         // Prepend "Your current location" when GPS was injected and area not already in response
         if (!hasFrom && area && response && !response.includes(area)) {
           const prefix = lang === 'bn'
