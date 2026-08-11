@@ -117,7 +117,19 @@ export function TermsPage(props: Props) {
       ],
     },
     {
-      h: lbl('10. Limitation of liability', '১০. দায়বদ্ধতা সীমাবদ্ধতা'),
+      h: lbl('10. Push notifications', '১০. পুশ নোটিফিকেশন'),
+      body: lbl(
+        'Push notifications are a free, optional convenience. They are ON by default — your browser asks once on your first visit — and you may turn them off at any time via Settings → Notifications or your browser site settings.',
+        'পুশ নোটিফিকেশন একটি ফ্রি, ঐচ্ছিক সুবিধা। ডিফল্টভাবে চালু — প্রথম ভিজিটে ব্রাউজার একবার জিজ্ঞেস করে — এবং আপনি যেকোনো সময় Settings → নোটিফিকেশন বা ব্রাউজার সাইট সেটিংস থেকে বন্ধ করতে পারেন।',
+      ),
+      bullets: [
+        lbl('We send only transport-related reminders: saved-route checks, next-morning commute info, and occasional service updates. We never send advertising through notifications.', 'আমরা শুধু পরিবহন-সংক্রান্ত রিমাইন্ডার পাঠাই: সেভড রুট চেক, পরদিন সকালের কমিউট তথ্য, ও মাঝে মাঝে সেবা আপডেট। নোটিফিকেশনের মাধ্যমে কোনো বিজ্ঞাপন পাঠাই না।'),
+        lbl('Delivery depends on your browser and operating system. Delayed or missed notifications are possible and are not our liability.', 'ডেলিভারি আপনার ব্রাউজার ও অপারেটিং সিস্টেমের উপর নির্ভর করে। দেরি হওয়া বা মিস হওয়া নোটিফিকেশন সম্ভব এবং তার জন্য আমরা দায়ী নই।'),
+        lbl('Keeping notifications on means you consent to receiving them. Turning them off does not affect any other feature.', 'নোটিফিকেশন চালু রাখা মানে সেগুলো পাওয়ার সম্মতি। বন্ধ করলে অন্য কোনো ফিচারে প্রভাব পড়ে না।'),
+      ],
+    },
+    {
+      h: lbl('11. Limitation of liability', '১১. দায়বদ্ধতা সীমাবদ্ধতা'),
       body: lbl('To the maximum extent permitted by law, KoyJabo and Mejbaur Bahar Fagun are NOT liable for:', 'আইনি অনুমতির সর্বোচ্চ সীমায়, কই যাবো ও Mejbaur Bahar Fagun দায়ী নন:'),
       bullets: [
         lbl('Indirect, incidental, or consequential damages from using the service.', 'সেবা ব্যবহারের পরোক্ষ, আনুষঙ্গিক, বা পরিণতিগত ক্ষতির জন্য।'),
@@ -128,27 +140,27 @@ export function TermsPage(props: Props) {
       ],
     },
     {
-      h: lbl('11. Indemnification', '১১. ক্ষতিপূরণ'),
+      h: lbl('12. Indemnification', '১২. ক্ষতিপূরণ'),
       body: lbl('You agree to indemnify and hold harmless KoyJabo, its operators, and contributors from any claim, loss, or liability arising from your violation of these terms, your misuse of the service, or your infringement of any third-party right.', 'কই যাবো, এর অপারেটর, ও অবদানকারীদের আপনার শর্ত লঙ্ঘন, সেবার অপব্যবহার, বা তৃতীয়-পক্ষ অধিকারের লঙ্ঘন থেকে উদ্ভূত যেকোনো দাবি, ক্ষতি, বা দায় থেকে ক্ষতিপূরণ ও অক্ষত রাখতে সম্মত হন।'),
     },
     {
-      h: lbl('12. Governing law', '১২. প্রযোজ্য আইন'),
+      h: lbl('13. Governing law', '১৩. প্রযোজ্য আইন'),
       body: lbl('These terms are governed by the laws of the People\'s Republic of Bangladesh. Disputes shall be resolved in the courts of Dhaka, Bangladesh. International users agree to this jurisdiction for any dispute related to KoyJabo.', 'এই শর্তাবলি বাংলাদেশ গণপ্রজাতন্ত্রের আইন দ্বারা পরিচালিত। বিতর্ক ঢাকা, বাংলাদেশের আদালতে সমাধান হবে। আন্তর্জাতিক ব্যবহারকারীরা কই যাবো সম্পর্কিত যেকোনো বিতর্কের জন্য এই এখতিয়ারে সম্মত হন।'),
     },
     {
-      h: lbl('13. Termination', '১৩. সমাপ্তি'),
+      h: lbl('14. Termination', '১৪. সমাপ্তি'),
       body: lbl('We may suspend or terminate your access at any time, with or without notice, for breach of these terms. You may stop using KoyJabo at any time by closing your browser or deleting the PWA. Sections on Liability, IP, and Governing Law survive termination.', 'শর্ত লঙ্ঘনের জন্য আমরা যেকোনো সময়, নোটিশসহ বা ছাড়া, আপনার অ্যাক্সেস স্থগিত বা সমাপ্ত করতে পারি। আপনি যেকোনো সময় ব্রাউজার বন্ধ বা PWA মুছে ফেলে কই যাবো ব্যবহার বন্ধ করতে পারেন। দায়বদ্ধতা, IP, ও প্রযোজ্য আইন বিভাগ সমাপ্তির পরও কার্যকর থাকে।'),
     },
     {
-      h: lbl('14. Changes to terms', '১৪. শর্তাবলিতে পরিবর্তন'),
+      h: lbl('15. Changes to terms', '১৫. শর্তাবলিতে পরিবর্তন'),
       body: lbl('We may update these terms periodically. The "Updated" date at the top reflects the latest revision. Material changes will be announced via in-app banner. Continued use after changes constitutes acceptance of the new terms.', 'আমরা সময়ে সময়ে এই শর্তাবলি আপডেট করতে পারি। উপরের "Updated" তারিখ সর্বশেষ সংশোধন প্রতিফলিত করে। বড় পরিবর্তন ইন-অ্যাপ ব্যানারের মাধ্যমে ঘোষণা হবে। পরিবর্তনের পরে ব্যবহার চালিয়ে গেলে নতুন শর্ত গ্রহণ করা হয়।'),
     },
     {
-      h: lbl('15. Severability', '১৫. বিচ্ছিন্নযোগ্যতা'),
+      h: lbl('16. Severability', '১৬. বিচ্ছিন্নযোগ্যতা'),
       body: lbl('If any provision of these terms is held to be unenforceable or invalid, the remaining provisions shall continue in full force and effect.', 'এই শর্তাবলির কোনো বিধান অপ্রয়োগযোগ্য বা অবৈধ ঘোষিত হলে, বাকি বিধানগুলি পূর্ণ শক্তি ও প্রভাবে অব্যাহত থাকবে।'),
     },
     {
-      h: lbl('16. Contact', '১৬. যোগাযোগ'),
+      h: lbl('17. Contact', '১৭. যোগাযোগ'),
       body: lbl('Questions about these terms?', 'এই শর্তাবলি সম্পর্কে প্রশ্ন?'),
       bullets: [
         'Email: koyjabo.bd@gmail.com',
@@ -162,7 +174,7 @@ export function TermsPage(props: Props) {
     <PageShell {...props}>
       <div style={{ padding:isMobile?'16px 16px 48px':'28px 40px 48px', maxWidth:760, margin:'0 auto' }}>
         <div style={{ fontFamily:SANS,fontSize:11,fontWeight:700,color:tk.textFaint,letterSpacing:1.4,textTransform:'uppercase',marginBottom:8 }}>
-          {T(lang,'আপডেট: ২৬ জুন ২০২৬','Updated: June 26, 2026')}
+          {T(lang,'আপডেট: ১১ আগস্ট ২০২৬','Updated: August 11, 2026')}
         </div>
         <h1 style={{ fontFamily:BEN,fontWeight:700,fontSize:isMobile?22:28,color:tk.text,marginBottom:8 }}>{T(lang,'সেবার শর্তাবলি','Terms of Service')}</h1>
         <p style={{ fontFamily:BEN,fontSize:14,color:tk.textDim,lineHeight:1.7,marginBottom:20 }}>

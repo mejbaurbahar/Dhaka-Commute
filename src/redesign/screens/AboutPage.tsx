@@ -112,6 +112,89 @@ export function AboutPage(props: PageShellProps) {
           </p>
         </div>
 
+        {/* Features */}
+        <h2
+          style={{
+            fontFamily: BEN,
+            fontSize: 18,
+            fontWeight: 700,
+            color: tk.text,
+            margin: '0 0 16px',
+          }}
+        >
+          {lbl('Features', 'বৈশিষ্ট্য')}
+        </h2>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: 14,
+            marginBottom: 32,
+          }}
+        >
+          {[
+            {
+              icon: '🔔',
+              title: lbl('Push notifications', 'পুশ নোটিফিকেশন'),
+              desc: lbl(
+                'Free route reminders: saved-route checks and next-morning commute alerts, in your language. ON by default — turn off anytime in Settings.',
+                'ফ্রি রুট রিমাইন্ডার: সেভড রুট চেক ও পরদিন সকালের কমিউট অ্যালার্ট, আপনার ভাষায়। ডিফল্টভাবে চালু — Settings থেকে যেকোনো সময় বন্ধ করুন।',
+              ),
+            },
+            {
+              icon: '📱',
+              title: lbl('Works offline', 'অফলাইনে চলে'),
+              desc: lbl(
+                'Installable PWA — works without internet, with cached routes and fares across all 64 districts.',
+                'ইনস্টলযোগ্য PWA — ইন্টারনেট ছাড়াই চলে, ৬৪ জেলার ক্যাশড রুট ও ভাড়াসহ।',
+              ),
+            },
+            {
+              icon: '🤖',
+              title: lbl('AI Assistant', 'AI সহায়ক'),
+              desc: lbl(
+                '24/7 travel help in Bangla and English — routes, fares, schedules, and answers to your transport questions.',
+                '২৪/৭ ভ্রমণ সহায়তা বাংলা ও ইংরেজিতে — রুট, ভাড়া, সময়সূচি ও পরিবহন প্রশ্নের উত্তর।',
+              ),
+            },
+          ].map((f) => (
+            <div
+              key={f.title}
+              style={{
+                background: tk.panel,
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: `1px solid ${tk.line}`,
+                borderRadius: 14,
+                padding: '20px 16px',
+              }}
+            >
+              <div style={{ fontSize: 24, marginBottom: 8 }}>{f.icon}</div>
+              <div
+                style={{
+                  fontFamily: lang === 'bn' ? BEN : SANS,
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: tk.text,
+                  marginBottom: 6,
+                }}
+              >
+                {f.title}
+              </div>
+              <div
+                style={{
+                  fontFamily: lang === 'bn' ? BEN : SANS,
+                  fontSize: 12,
+                  color: tk.textDim,
+                  lineHeight: 1.6,
+                }}
+              >
+                {f.desc}
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Team */}
         <h2
           style={{

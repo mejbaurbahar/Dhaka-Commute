@@ -55,7 +55,20 @@ export function PrivacyPage(props: Props) {
       ],
     },
     {
-      h: lbl('4. Third-party services', '৪. তৃতীয় পক্ষের পরিষেবা'),
+      h: lbl('4. Push notifications', '৪. পুশ নোটিফিকেশন'),
+      body: lbl(
+        'KoyJabo can send push notifications (browser notifications) so you never miss a saved-route check or commute reminder. Push is ON by default: on your first visit your browser asks once — allow and we can notify you; deny and we never ask again.',
+        'কই যাবো পুশ নোটিফিকেশন (ব্রাউজার নোটিফিকেশন) পাঠাতে পারে, যাতে আপনি সেভড রুট চেক বা কমিউট রিমাইন্ডার কখনো মিস না করেন। পুশ ডিফল্টভাবে চালু: প্রথম ভিজিটে ব্রাউজার একবার জিজ্ঞেস করে — অনুমতি দিলে আমরা নোটিফাই করতে পারি; না দিলে আর কখনো জিজ্ঞেস করি না।',
+      ),
+      bullets: [
+        lbl('What we send: your device push endpoint + language preference, the reminder type (e.g. "saved route check") and its scheduled time. We never read or collect any other browser content.', 'কী পাঠাই: ডিভাইসের push endpoint + ভাষা পছন্দ, রিমাইন্ডারের ধরন (যেমন "সেভড রুট চেক") ও নির্ধারিত সময়। ব্রাউজারের অন্য কোনো কনটেন্ট আমরা পড়ি না বা সংগ্রহ করি না।'),
+        lbl('Where it is stored: reminders are kept on Cloudflare KV only until they fire (or you turn push off) — then they are deleted.', 'কোথায় সংরক্ষণ: রিমাইন্ডার শুধু পাঠানো পর্যন্ত (বা পুশ বন্ধ করা পর্যন্ত) Cloudflare KV-তে থাকে — তারপর মুছে যায়।'),
+        lbl('What you receive: saved-route reminders, next-morning commute info, and rare service updates — never advertising or spam.', 'কী পাবেন: সেভড রুট রিমাইন্ডার, পরদিন সকালের কমিউট তথ্য, ও মাঝে মাঝে সেবা আপডেট — কোনো বিজ্ঞাপন বা স্প্যাম নয়।'),
+        lbl('Turn it off anytime: Settings → Notifications toggle, or your browser site settings. This does not affect any other feature.', 'যেকোনো সময় বন্ধ করুন: Settings → নোটিফিকেশন টগল, বা ব্রাউজার সাইট সেটিংস। এতে অন্য কোনো ফিচারে প্রভাব পড়ে না।'),
+      ],
+    },
+    {
+      h: lbl('5. Third-party services', '৫. তৃতীয় পক্ষের পরিষেবা'),
       body: lbl('We integrate carefully chosen third-party services. Each has its own privacy policy linked below.', 'আমরা সাবধানে বাছাই করা তৃতীয়-পক্ষ পরিষেবা ব্যবহার করি। প্রত্যেকের নিজস্ব গোপনীয়তা নীতি নিচে লিংক করা।'),
       bullets: [
         'Google Analytics 4 — anonymized traffic analysis · policies.google.com/privacy',
@@ -67,7 +80,7 @@ export function PrivacyPage(props: Props) {
       ],
     },
     {
-      h: lbl('5. Your rights', '৫. আপনার অধিকার'),
+      h: lbl('6. Your rights', '৬. আপনার অধিকার'),
       body: lbl('Following GDPR-style principles, you have the following rights regardless of where you live:', 'GDPR-ধাঁচের নীতি অনুসরণ করে, আপনি যেখানেই থাকুন এই অধিকারগুলি আছে:'),
       bullets: [
         lbl('Right to access: ask what data we have about you.', 'অ্যাক্সেসের অধিকার: আমরা আপনার সম্পর্কে কী ডেটা রাখি জানতে চাইতে পারেন।'),
@@ -79,7 +92,7 @@ export function PrivacyPage(props: Props) {
       ],
     },
     {
-      h: lbl('6. Data retention', '৬. ডেটা সংরক্ষণ'),
+      h: lbl('7. Data retention', '৭. ডেটা সংরক্ষণ'),
       body: lbl('We keep data only as long as needed:', 'আমরা শুধু প্রয়োজনীয় সময় পর্যন্ত ডেটা রাখি:'),
       bullets: [
         lbl('Search history: locally only — never sent to our servers.', 'সার্চ হিস্টরি: শুধু লোকাল — আমাদের সার্ভারে পাঠানো হয় না।'),
@@ -89,7 +102,7 @@ export function PrivacyPage(props: Props) {
       ],
     },
     {
-      h: lbl('7. Security', '৭. নিরাপত্তা'),
+      h: lbl('8. Security', '৮. নিরাপত্তা'),
       body: lbl('We protect your data with industry-standard measures:', 'আমরা শিল্প-মান ব্যবস্থা দিয়ে আপনার ডেটা রক্ষা করি:'),
       bullets: [
         lbl('All traffic over HTTPS (TLS 1.3) — no plaintext.', 'সব ট্রাফিক HTTPS-এ (TLS 1.3) — কোনো প্লেইনটেক্সট নেই।'),
@@ -100,23 +113,23 @@ export function PrivacyPage(props: Props) {
       ],
     },
     {
-      h: lbl('8. Children', '৮. শিশুদের গোপনীয়তা'),
+      h: lbl('9. Children', '৯. শিশুদের গোপনীয়তা'),
       body: lbl('KoyJabo is rated General. We do not knowingly collect data from children under 13. If you are a parent and believe your child has provided us data, email koyjabo.bd@gmail.com and we will delete it promptly.', 'কই যাবো জেনারেল রেটেড। আমরা জেনেশুনে ১৩ বছরের কম বয়সী শিশুদের কাছ থেকে ডেটা সংগ্রহ করি না। অভিভাবক হিসাবে আপনার সন্তান ডেটা দিয়েছে মনে করলে koyjabo.bd@gmail.com-এ ইমেইল করুন, দ্রুত মুছে ফেলব।'),
     },
     {
-      h: lbl('9. International transfers', '৯. আন্তর্জাতিক স্থানান্তর'),
+      h: lbl('10. International transfers', '১০. আন্তর্জাতিক স্থানান্তর'),
       body: lbl('Our servers run on Cloudflare\'s global network. Your data may be processed in any Cloudflare data center, including the EU, US, and Asia. Cloudflare maintains GDPR-compliant data processing agreements.', 'আমাদের সার্ভার Cloudflare-এর বিশ্বব্যাপী নেটওয়ার্কে চলে। আপনার ডেটা EU, US, এশিয়াসহ যেকোনো Cloudflare ডেটা সেন্টারে প্রসেস হতে পারে। Cloudflare GDPR-অনুগত ডেটা প্রসেসিং চুক্তি বজায় রাখে।'),
     },
     {
-      h: lbl('10. Truck & freight bookings', '১০. ট্রাক ও পণ্য বুকিং'),
+      h: lbl('11. Truck & freight bookings', '১১. ট্রাক ও পণ্য বুকিং'),
       body: lbl('When you tap "Get Quote" on the Truck & Freight page, we calculate fares locally on your device. We do not transmit your pickup/drop locations or load details to our servers or to third-party logistics providers. Actual booking happens via the partner\'s phone hotline shown on screen.', '"ট্রাক ও পণ্য" পেজে "কোট নিন" চাপলে আমরা ভাড়া আপনার ডিভাইসেই গণনা করি। আপনার পিকআপ/ড্রপ লোকেশন বা লোড বিবরণ আমাদের সার্ভার বা তৃতীয়-পক্ষ লজিস্টিক্স প্রোভাইডারের কাছে পাঠানো হয় না। আসল বুকিং স্ক্রিনে দেখানো পার্টনার ফোন হটলাইনের মাধ্যমে হয়।'),
     },
     {
-      h: lbl('11. Changes to this policy', '১১. এই নীতিতে পরিবর্তন'),
+      h: lbl('12. Changes to this policy', '১২. এই নীতিতে পরিবর্তন'),
       body: lbl('We will update this policy as needed and post the new date at the top. Material changes (those that affect your rights) will be announced via in-app banner and email if you have an account. Continued use after a policy update means acceptance of the new terms.', 'প্রয়োজনে আমরা এই নীতি আপডেট করব এবং উপরে নতুন তারিখ পোস্ট করব। বড় পরিবর্তন (যা আপনার অধিকারে প্রভাব ফেলে) ইন-অ্যাপ ব্যানার ও অ্যাকাউন্ট থাকলে ইমেইলে ঘোষণা হবে। আপডেটের পরেও ব্যবহার চালিয়ে গেলে নতুন শর্তে সম্মতি ধরা হবে।'),
     },
     {
-      h: lbl('12. Contact', '১২. যোগাযোগ'),
+      h: lbl('13. Contact', '১৩. যোগাযোগ'),
       body: lbl('Privacy questions or requests:', 'গোপনীয়তা সংক্রান্ত প্রশ্ন বা অনুরোধ:'),
       bullets: [
         'Email: koyjabo.bd@gmail.com',
@@ -130,7 +143,7 @@ export function PrivacyPage(props: Props) {
     <PageShell {...props}>
       <div style={{ padding:isMobile?'16px 16px 48px':'28px 40px 48px', maxWidth:760, margin:'0 auto' }}>
         <div style={{ fontFamily:SANS,fontSize:11,fontWeight:700,color:tk.textFaint,letterSpacing:1.4,textTransform:'uppercase',marginBottom:8 }}>
-          {T(lang,'আপডেট: ২৬ জুন ২০২৬','Updated: June 26, 2026')}
+          {T(lang,'আপডেট: ১১ আগস্ট ২০২৬','Updated: August 11, 2026')}
         </div>
         <h1 style={{ fontFamily:BEN,fontWeight:700,fontSize:isMobile?22:28,color:tk.text,marginBottom:8 }}>{T(lang,'গোপনীয়তা নীতি','Privacy Policy')}</h1>
         <p style={{ fontFamily:BEN,fontSize:14,color:tk.textDim,lineHeight:1.7,marginBottom:20 }}>
