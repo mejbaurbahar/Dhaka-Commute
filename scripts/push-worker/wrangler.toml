@@ -1,0 +1,24 @@
+# KoyJabo push delivery worker — Cloudflare configuration.
+#
+# Deploy steps (full details in README.md):
+#   1. wrangler kv namespace create PUSH_SUBS   → paste id below
+#   2. wrangler secret put VAPID_PRIVATE_KEY    → value from .env (VITE_VAPID_PRIVATE_KEY)
+#   3. wrangler deploy
+#   4. Set VITE_PUSH_API_URL in .env to the printed workers.dev URL
+
+name = "koyjabo-push"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+[[kv_namespaces]]
+binding = "PUSH_SUBS"
+id = "58f1e22a70c74490a732c7d6ec7ab1d4"
+
+[triggers]
+crons = ["*/10 * * * *"]
+
+[vars]
+# Public VAPID key (safe to commit — it is public by design).
+VAPID_PUBLIC_KEY = "BPWRfKooYJr8MkcJaOFw2PF3g5OBlikB5uZCcEiS1kGbhOXKTiG-_0rTau28lT2K0tluU4eQ6NByPsnT00sSEV8"
+# Contact for the push service (RFC 8030 requires a contact in the JWT).
+VAPID_SUBJECT = "mailto:koyjabo.bd@gmail.com"

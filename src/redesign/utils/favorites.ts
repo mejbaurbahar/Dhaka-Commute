@@ -1,3 +1,5 @@
+import { inHours, trackPushEvent, cancelPushEvent } from '../../services/pushService';
+
 export const BUS_FAVORITES_KEY = 'koyjabo_favorite_buses';
 
 export function getFavoriteBusIds(): string[] {
@@ -19,9 +21,16 @@ export function setFavoriteBusIds(ids: string[]): void {
   }
 }
 
-export function toggleFavoriteBus(busId: string): string[] {
+export function toggleFavoriteBus(busId: string, name?: string): string[] {
   const current = getFavoriteBusIds();
   const next = current.includes(busId) ? current.filter(id => id !== busId) : [...current, busId];
   setFavoriteBusIds(next);
+  // Push reminder: "you saved X — don't forget" (+48h), cancelled on unfavorite.
+  const added = next.includes(busId) && !current.includes(busId);
+  if (added) {
+    trackPushEvent('save', { name: name ?? '' }, inHours(48));
+  } else {
+    cancelPushEvent('save');
+  }
   return next;
 }

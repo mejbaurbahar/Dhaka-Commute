@@ -5,6 +5,7 @@ import { GovAdBanner } from '../components/GovAdBanner';
 import { PageShell } from './PageShell';
 import { BUS_DATA, STATIONS } from '../../../constants';
 import { trackBusSearch } from '../../../services/analyticsService';
+import { inHours, nextMorning, trackPushEvent } from '../../services/pushService';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
 import { Icon } from '../components/Icons';
 import { enhancedBusSearch } from '../../../services/searchService';
@@ -73,6 +74,18 @@ export function RouteResultsV2Page(props: Props) {
   const [nonAcOnly, setNonAcOnly] = useState(sortParam === 'non-ac');
   const [favoriteIds, setFavoriteIds] = useState<string[]>(() => getFavoriteBusIds());
   const [filterOpen, setFilterOpen] = useState(false); // mobile filter panel
+
+  // Push reminders for this search: "check your results" (+1h) and
+  // "yesterday you searched — what today?" (next morning). Replaced by
+  // each new search; cancelled when the user opens a result/detail.
+  React.useEffect(() => {
+    if (!fromQ && !toQ && !searchQ) return;
+    const url =
+      `/search?from=${encodeURIComponent(fromQ)}&to=${encodeURIComponent(toQ)}` +
+      (searchQ ? `&search=${encodeURIComponent(searchQ)}` : '');
+    trackPushEvent('search-check', { url, from: fromQ, to: toQ }, inHours(1));
+    trackPushEvent('search-tomorrow', { url, from: fromQ, to: toQ }, nextMorning());
+  }, [fromQ, toQ, searchQ]);
 
   // ── TOD hours mapping ─────────────────────────────────────────────────────────
   const todHours: Record<string, [number, number]> = {
@@ -456,7 +469,7 @@ export function RouteResultsV2Page(props: Props) {
                           {r.stops.length > 0 && <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>{r.stops.length} {lbl('stops', 'স্টপ')}</span>}
                         </div>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <button onClick={() => setFavoriteIds(toggleFavoriteBus(r.busId))}
+                          <button onClick={() => setFavoriteIds(toggleFavoriteBus(r.busId, r.name))}
                             style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: favoriteIds.includes(r.busId) ? tk.accent : tk.textFaint }}>
                             {favoriteIds.includes(r.busId) ? '♥' : '♡'}
                           </button>

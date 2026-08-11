@@ -70,6 +70,7 @@ import AntiScraping from '../components/AntiScraping';
 import { ToastProvider } from '../contexts/ToastContext';
 import { LanguageProvider } from '../contexts/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { initPush } from './services/pushService';
 import { killConsoleInProd, installAntiDevtools } from './utils/security';
 killConsoleInProd();
 installAntiDevtools();
@@ -149,6 +150,10 @@ async function registerPWAWorker() {
 }
 
 void registerPWAWorker();
+
+// Push notifications: sync subscription + install-reminder lifecycle.
+// No-op unless VITE_PUSH_API_URL is configured (see scripts/push-worker/README.md).
+void initPush();
 
 // Backup: if the SW controller changes (new SW took over), reload immediately.
 // This catches the case where skipWaiting activates a new SW mid-session.

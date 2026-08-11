@@ -164,6 +164,9 @@ export default defineConfig(({ mode }) => {
             // non-ASCII paths (seen in app logs). Runtime CacheFirst route handles them
             // on first view instead; also keeps the precache manifest smaller.
             'buses-image/**',
+            // Push service worker — subpath-scoped (/push/), registered directly
+            // by pushService.ts. Never precache it (separate registration).
+            'push/push-sw.js',
           ],
           navigateFallback: 'index.html',  // Enable automatic fallback to index.html for SPA offline support
           // Only deny actual static file paths — NOT the /intercity page itself (must fall through to index.html)
@@ -175,7 +178,7 @@ export default defineConfig(({ mode }) => {
           skipWaiting: true,
           clientsClaim: true,
           // Cache versioning for proper updates
-          cacheId: 'dhaka-commute-v95',
+          cacheId: 'dhaka-commute-v96',
           maximumFileSizeToCacheInBytes: 10485760, // 10 MB
 
           runtimeCaching: [

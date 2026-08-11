@@ -5,6 +5,7 @@ import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { Icon } from '../components/Icons';
+import { disablePush, enablePush, pushEnabled, pushSupported } from '../../services/pushService';
 
 interface ScreenProps {
   theme: 'dark' | 'light';
@@ -35,6 +36,18 @@ export function SettingsPage(props: ScreenProps) {
   const font = lang === 'bn' ? BEN : SANS;
 
   const [notifs, setNotifs] = useState({ reminders: true, alerts: true, news: false, email: false });
+  const [pushOn, setPushOn] = useState<boolean>(() => pushEnabled());
+  const pushAvailable = pushSupported();
+
+  async function handlePushToggle() {
+    if (pushOn) {
+      await disablePush();
+      setPushOn(false);
+    } else {
+      const ok = await enablePush();
+      setPushOn(ok);
+    }
+  }
   const [privacy, setPrivacy] = useState({
     stats: true,
     location: localStorage.getItem('kj-location-consent') === 'yes',
@@ -91,6 +104,7 @@ export function SettingsPage(props: ScreenProps) {
     {
       title: lbl('Notifications', 'নোটিফিকেশন'),
       items: [
+        ...(pushAvailable ? [{ icon: '🔔', label: lbl('Push notifications', 'পুশ নোটিফিকেশন'), sub: pushOn ? lbl('On – install/search/save reminders', 'চালু – ইনস্টল/সার্চ/সেভ রিমাইন্ডার') : lbl('Off – never miss a reminder', 'বন্ধ – রিমাইন্ডার পেতে চালু করুন'), right: <Toggle on={pushOn} onChange={handlePushToggle} tk={tk} />, onClick: undefined }] : []),
         { icon: '⏰', label: lbl('Trip reminders', 'ট্রিপ রিমাইন্ডার'), right: <Toggle on={notifs.reminders} onChange={() => setNotifs(p => ({ ...p, reminders: !p.reminders }))} tk={tk} />, onClick: undefined },
         { icon: '🚨', label: lbl('Service alerts', 'সেবা সতর্কতা'), right: <Toggle on={notifs.alerts} onChange={() => setNotifs(p => ({ ...p, alerts: !p.alerts }))} tk={tk} />, onClick: undefined },
         { icon: '📰', label: lbl('News & updates', 'সংবাদ ও আপডেট'), right: <Toggle on={notifs.news} onChange={() => setNotifs(p => ({ ...p, news: !p.news }))} tk={tk} />, onClick: undefined },

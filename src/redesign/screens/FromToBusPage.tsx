@@ -5,6 +5,7 @@ import { AdSlot } from '../components/AdSlot';
 import { BUS_DATA, STATIONS } from '../../../constants';
 import { BUS_PAIRS, findPair, pairPath, findInterchange, interchangePath } from '../busPairs';
 import { trackBusSearch } from '../../../services/analyticsService';
+import { cancelPushEvent } from '../../services/pushService';
 import { setCanonicalUrl, setMetaTag, setPropertyMetaTag, setJsonLd, useDocumentTitle } from '../utils/useDocumentTitle';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
@@ -125,7 +126,7 @@ export function FromToBusPage(props: Props) {
         {list.map(bus => {
           const approxFare = bus.type === 'AC' ? 60 : bus.type === 'Double-Decker' ? 50 : 30;
           return (
-            <button key={bus.id} onClick={() => { trackBusSearch(bus.id, bus.name); onNav('bus-detail', { busId: bus.id, from: srcId, to: dstId }); }}
+            <button key={bus.id} onClick={() => { trackBusSearch(bus.id, bus.name); cancelPushEvent('search-check'); cancelPushEvent('search-tomorrow'); onNav('bus-detail', { busId: bus.id, from: srcId, to: dstId }); }}
               style={{ ...card(14), display: 'block', width: '100%', textAlign: 'left', cursor: 'pointer', marginBottom: 10, color: tk.text }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                 <span style={{ fontWeight: 800, fontFamily: lang === 'bn' ? BEN : SANS }}>
@@ -280,7 +281,7 @@ export function FromToBusPage(props: Props) {
             const endName = stopDisplay(bus.stops[bus.stops.length - 1]);
             const approxFare = bus.type === 'AC' ? 60 : bus.type === 'Double-Decker' ? 50 : 30;
             return (
-              <button key={bus.id} onClick={() => { trackBusSearch(bus.id, bus.name); onNav('bus-detail', { busId: bus.id, from: pair.from, to: pair.to }); }}
+              <button key={bus.id} onClick={() => { trackBusSearch(bus.id, bus.name); cancelPushEvent('search-check'); cancelPushEvent('search-tomorrow'); onNav('bus-detail', { busId: bus.id, from: pair.from, to: pair.to }); }}
                 style={{ ...card(14), display: 'block', width: '100%', textAlign: 'left', cursor: 'pointer', marginBottom: 10, color: tk.text }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                   <span style={{ fontWeight: 800, fontFamily: lang === 'bn' ? BEN : SANS }}>
