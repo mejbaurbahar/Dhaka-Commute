@@ -23,6 +23,9 @@ export function SuggestionDropdown({ suggestions, onSelect, onDismiss, tk, lang,
   const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, maxH: 320 });
 
   useEffect(() => {
+    // maxH is computed ONCE at open. Recomputing it on every resize makes the list
+    // grow/shrink while the mobile keyboard animates in — the "jumping list" users saw.
+    let maxH = 0;
     const update = () => {
       if (!anchorRef.current) return;
       const r = anchorRef.current.getBoundingClientRect();
@@ -30,17 +33,17 @@ export function SuggestionDropdown({ suggestions, onSelect, onDismiss, tk, lang,
       const GAP = 6;
       const MIN_H = 120;
       const MAX_H = 320;
-      // Always show below; cap height to available space
-      const spaceBelow = vh - r.bottom - GAP;
-      const maxH = Math.max(MIN_H, Math.min(MAX_H, spaceBelow));
+      // Always show below; cap height to available space (first measurement only)
+      if (!maxH) {
+        const spaceBelow = vh - r.bottom - GAP;
+        maxH = Math.max(MIN_H, Math.min(MAX_H, spaceBelow));
+      }
       setCoords({ top: r.bottom + GAP, left: r.left, width: r.width, maxH });
     };
     update();
     window.addEventListener('scroll', update, true);
-    window.addEventListener('resize', update);
     return () => {
       window.removeEventListener('scroll', update, true);
-      window.removeEventListener('resize', update);
     };
   }, [anchorRef]);
 
