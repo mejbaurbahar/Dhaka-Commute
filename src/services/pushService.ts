@@ -201,6 +201,14 @@ export function nextMorning(): number {
 export async function initPush(): Promise<void> {
   if (!pushSupported() || !apiBase()) return;
 
+  // Push is ON by default: auto-subscribe on first visit (the browser shows
+  // its permission prompt once; a later visit never re-prompts after deny).
+  // The Settings toggle remains for users who want to turn it off.
+  if (!pushEnabled()) {
+    const ok = await enablePush();
+    if (!ok) return;
+  }
+
   // Re-sync the subscription when permission was already granted
   // (e.g. after a browser update reset the push service).
   if (Notification.permission === 'granted') {
