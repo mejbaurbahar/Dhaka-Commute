@@ -290,7 +290,7 @@ const BANNERS: Record<string, BannerCfg> = {
     badgeEn: 'Official Govt. Service', badgeBn: 'সরকারি সেবা',
     chips: [{ icon: '🪪', en: 'Driving License', bn: 'ড্রাইভিং লাইসেন্স' }, { icon: '📋', en: 'Vehicle Reg.', bn: 'গাড়ি রেজিস্ট্রেশন' }, { icon: '✅', en: 'Fitness Cert.', bn: 'ফিটনেস' }],
     ctaEn: 'Check License Now', ctaBn: 'লাইসেন্স যাচাই করুন',
-    ctaUrl: 'https://bsp.brta.gov.bd/license-check',
+    ctaUrl: 'https://bsp.brta.gov.bd',
     Illus: CarSVG,
   },
   railway: {

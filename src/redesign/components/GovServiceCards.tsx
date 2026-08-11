@@ -24,8 +24,8 @@ const GOV_CARDS: GovCard[] = [
     descBn: 'লাইসেন্স, গাড়ির রেজিস্ট্রেশন ও ফিটনেস সার্টিফিকেট চেক করুন।',
     descEn: 'Check driving license, vehicle registration & fitness certificate.',
     links: [
-      { labelBn: 'লাইসেন্স যাচাই', labelEn: 'License check', url: 'https://bsp.brta.gov.bd/license-check' },
-      { labelBn: 'গাড়ি যাচাই', labelEn: 'Vehicle check', url: 'https://bsp.brta.gov.bd/vehicle-check' },
+      { labelBn: 'লাইসেন্স যাচাই', labelEn: 'License check', url: 'https://bsp.brta.gov.bd' },
+      { labelBn: 'গাড়ি যাচাই', labelEn: 'Vehicle check', url: 'https://bsp.brta.gov.bd' },
       { labelBn: 'BRTA ওয়েবসাইট', labelEn: 'BRTA website', url: 'https://brta.gov.bd' },
     ],
     color: '#2563eb',
@@ -41,7 +41,7 @@ const GOV_CARDS: GovCard[] = [
     descEn: 'Buy train tickets online and view schedules.',
     links: [
       { labelBn: 'টিকিট কিনুন', labelEn: 'Buy tickets', url: 'https://eticket.railway.gov.bd' },
-      { labelBn: 'সময়সূচি', labelEn: 'Schedule', url: 'https://railway.gov.bd/pages/train_schedule.php' },
+      { labelBn: 'সময়সূচি', labelEn: 'Schedule', url: 'https://railway.gov.bd' },
       { labelBn: 'রেলওয়ে ওয়েবসাইট', labelEn: 'Railway website', url: 'https://railway.gov.bd' },
     ],
     color: '#15803d', // 700 shade — white text on chip needs ≥4.5:1 (5.02:1)

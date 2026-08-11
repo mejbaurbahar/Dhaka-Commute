@@ -29,8 +29,8 @@ const SERVICES: Record<string, ServiceDef> = {
     featuresEn: ['Driving license check', 'Vehicle registration', 'Fitness certificate'],
     featuresBn: ['ড্রাইভিং লাইসেন্স যাচাই', 'গাড়ির রেজিস্ট্রেশন', 'ফিটনেস সার্টিফিকেট'],
     ctaEn: 'Check License', ctaBn: 'লাইসেন্স যাচাই',
-    ctaUrl: 'https://bsp.brta.gov.bd/license-check',
-    secondUrl: 'https://bsp.brta.gov.bd/vehicle-check', secondEn: 'Vehicle Check', secondBn: 'গাড়ি যাচাই',
+    ctaUrl: 'https://bsp.brta.gov.bd',
+    secondUrl: 'https://bsp.brta.gov.bd', secondEn: 'Vehicle Check', secondBn: 'গাড়ি যাচাই',
   },
   railway: {
     id: 'railway', icon: '🚂',
@@ -41,7 +41,7 @@ const SERVICES: Record<string, ServiceDef> = {
     featuresBn: ['অনলাইন টিকিট বুকিং', 'লাইভ ট্রেনের সময়সূচি', 'PNR স্ট্যাটাস — ৪৪০+ স্টেশন'],
     ctaEn: 'Book Tickets', ctaBn: 'টিকিট বুক করুন',
     ctaUrl: 'https://eticket.railway.gov.bd',
-    secondUrl: 'https://railway.gov.bd/pages/train_schedule.php', secondEn: 'Schedule', secondBn: 'সময়সূচি',
+    secondUrl: 'https://railway.gov.bd', secondEn: 'Schedule', secondBn: 'সময়সূচি',
   },
   dmtcl: {
     id: 'dmtcl', icon: '🚇',
@@ -52,7 +52,7 @@ const SERVICES: Record<string, ServiceDef> = {
     featuresBn: ['MRT লাইন-৬ তথ্য ও ভাড়া', 'স্টেশন গাইড ও ম্যাপ', 'র‍্যাপিড পাস স্মার্ট কার্ড'],
     ctaEn: 'DMTCL Portal', ctaBn: 'DMTCL পোর্টাল',
     ctaUrl: 'https://dmtcl.gov.bd',
-    secondUrl: 'https://dmtcl.gov.bd/rapidpass', secondEn: 'Rapid Pass', secondBn: 'র‍্যাপিড পাস',
+    secondUrl: 'https://www.rapidpass.com.bd', secondEn: 'Rapid Pass', secondBn: 'র‍্যাপিড পাস',
   },
   biwtc: {
     id: 'biwtc', icon: '⛴️',
