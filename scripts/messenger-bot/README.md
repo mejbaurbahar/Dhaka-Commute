@@ -6,9 +6,14 @@ Free Messenger bot **plus automatic Facebook page posting** for the KoyJabo Face
 
 **Messenger bot**
 - Auto-replies to every message on the page — instant, 24/7, in Bangla + English
-- Keyword answers: bus routes, metro, fares, hours, trains, launches, app install, advertising
+- Keyword answers (Bangla + English + romanized Bangla): bus routes, metro, fares (vara/vora/koto vara), routes (kivabe jabo/kothay), trains, flights (air/plane), launches, hours, app install, advertising
 - Quick-reply buttons (Routes / Metro / Fares / Hours) on greeting & fallback
 - Handles the Messenger webhook verification handshake
+
+**Comment auto-replies**
+- Every comment on the page's posts gets a public Bangla reply automatically
+- Reply is smart — same topic detection as Messenger (train comment → train info + koyjabo.com link)
+- Skips the page's own replies (no loops)
 
 **Auto-poster** (scheduled every 3h)
 - Reads the newest blog post from `https://koyjabo.com/blog/feed.xml`
@@ -49,7 +54,11 @@ Note the deployed URL: `https://koyjabo-messenger-bot.<your-subdomain>.workers.d
 2. Callback URL: `https://koyjabo-messenger-bot.<your-subdomain>.workers.dev/webhook`
 3. Verify token: the same random string you set with `wrangler secret put VERIFY_TOKEN`
 4. Click **Verify and save**
-5. Under **Webhook fields**: subscribe to `messages` and `messaging_postbacks`
+5. Under **Webhook fields**: subscribe to `messages`, `messaging_postbacks` and `feed` (feed = comment auto-replies)
+
+### 5. Comment auto-replies — one warning
+
+Business Suite's own "Comment to message" automation is keyword-based (only some comments trigger). This worker replies to **every** comment. If both are on, keyword comments get two public replies — so once the worker is deployed, turn the Suite automation off (Business Suite → Inbox → Automations → Comment to message → toggle off).
 
 ### 4. Test
 
@@ -95,7 +104,11 @@ Note the deployed URL: `https://koyjabo-messenger-bot.<your-subdomain>.workers.d
 2. Callback URL: `https://koyjabo-messenger-bot.<your-subdomain>.workers.dev/webhook`
 3. Verify token: the same random string you set with `wrangler secret put VERIFY_TOKEN`
 4. Click **Verify and save**
-5. Under **Webhook fields**: subscribe to `messages` and `messaging_postbacks`
+5. Under **Webhook fields**: subscribe to `messages`, `messaging_postbacks` and `feed` (feed = comment auto-replies)
+
+### 5. Comment auto-replies — one warning
+
+Business Suite's own "Comment to message" automation is keyword-based (only some comments trigger). This worker replies to **every** comment. If both are on, keyword comments get two public replies — so once the worker is deployed, turn the Suite automation off (Business Suite → Inbox → Automations → Comment to message → toggle off).
 
 ### 4. Test
 

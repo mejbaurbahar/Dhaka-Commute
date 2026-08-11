@@ -10,16 +10,19 @@
  *
  * Then in Meta Developer app: Messenger product → Webhook → callback URL
  *   https://koyjabo-messenger-bot.<your-subdomain>.workers.dev/webhook
- *   Verify token = the VERIFY_TOKEN you set. Subscribe to `messages` + `messaging_postbacks`.
+ *   Verify token = the VERIFY_TOKEN you set. Subscribe to `messages`,
+ *   `messaging_postbacks` (Messenger) and `feed` (comment auto-replies).
  *
- * Keywords match Bangla + English. No API keys in code — all via secrets.
+ * Keywords match Bangla + English + romanized Bangla (vara, kivabe jabo...).
+ * Scheduled cron (wrangler.toml) auto-posts newest blog article to the page.
+ * No API keys in code — all via secrets.
  */
 
 const APP_URL = 'https://koyjabo.com';
 
 const GREETING = [
   '👋 Hello! Welcome to KoyJabo — Bangladesh\'s free transport guide.',
-  '👋 আসসালামু আলাইকুম! কোয়জাবোতে স্বাগতম — বাংলাদেশের ফ্রি ট্রান্সপোর্ট গাইড।',
+  '👋 আসসালামু আলাইকুম! কই যাবোতে স্বাগতম — বাংলাদেশের ফ্রি ট্রান্সপোর্ট গাইড।',
   '',
   'Ask me about:',
   '🚌 Bus routes  •  🚇 Metro  •  🚆 Train  •  🚢 Launch  •  💰 Fares  •  🕐 Hours',
@@ -60,7 +63,7 @@ function detect(text) {
       ].join('\n'),
     };
   }
-  if (has(t, 'fare', 'ভাড়া', 'ভারা', 'টাকা', 'price', 'কত')) {
+  if (has(t, 'fare', 'ভাড়া', 'ভারা', 'টাকা', 'price', 'কত', 'koto', 'vara', 'vora', 'ticket', 'টিকিট', 'money')) {
     return {
       reply: [
         '💰 Dhaka bus fares: minimum ৳10 (5km), up to ৳60+ for long routes.',
@@ -75,7 +78,7 @@ function detect(text) {
       ].join('\n'),
     };
   }
-  if (has(t, 'route', 'রুট', 'বাস', 'bus', 'যাব', 'কোন বাস', 'how do i', 'কোনটা')) {
+  if (has(t, 'route', 'রুট', 'বাস', 'bus', 'যাব', 'যাবো', 'কোন বাস', 'how do i', 'কোনটা', 'kivabe', 'kivhabe', 'ki vabe', 'kothay', 'যাওয়া যায়')) {
     return {
       reply: [
         '🚌 450+ bus routes — search your route in the app:',
@@ -100,6 +103,15 @@ function detect(text) {
         '🚆 Train schedules (all routes) → ' + APP_URL + '/train',
         '',
         '🚆 ট্রেনের সময়সূচি (সব রুট) → ' + APP_URL + '/train',
+      ].join('\n'),
+    };
+  }
+  if (has(t, 'air', 'plane', 'flight', 'বিমান', 'ফ্লাইট', 'fly')) {
+    return {
+      reply: [
+        '✈️ Domestic flights & air travel → ' + APP_URL + '/air',
+        '',
+        '✈️ দেশীয় ফ্লাইট ও আকাশপথে যাতায়াত → ' + APP_URL + '/air',
       ].join('\n'),
     };
   }
@@ -128,7 +140,7 @@ function detect(text) {
         '📱 KoyJabo is free — works on any phone browser (PWA):',
         APP_URL,
         '',
-        '📱 কোয়জাবো সম্পূর্ণ ফ্রি — যেকোনো ফোনের ব্রাউজারে চলে:',
+        '📱 কই যাবো সম্পূর্ণ ফ্রি — যেকোনো ফোনের ব্রাউজারে চলে:',
         APP_URL,
       ].join('\n'),
     };
@@ -139,7 +151,7 @@ function detect(text) {
         '📢 Advertise with KoyJabo — reach thousands of Dhaka commuters daily.',
         'Contact → ' + APP_URL + '/advertise',
         '',
-        '📢 কোয়জাবোতে বিজ্ঞাপন দিন — প্রতিদিন হাজারো ঢাকাবাসী দেখে।',
+        '📢 কই যাবোতে বিজ্ঞাপন দিন — প্রতিদিন হাজারো ঢাকাবাসী দেখে।',
         'যোগাযোগ → ' + APP_URL + '/advertise',
       ].join('\n'),
     };
@@ -268,6 +280,33 @@ async function scheduled(event, env) {
   if (ok) await env.POSTED.put('last_link', post.link);
 }
 
+// ─────────────────────────────────────────────────────────────
+// Comment auto-reply: every comment on page posts gets a public
+// Bangla reply (feed webhook → detect() → POST /{comment_id}/replies).
+// ─────────────────────────────────────────────────────────────
+
+const COMMENT_FALLBACK =
+  '🤖 উত্তর পেতে ওয়েবসাইটে দেখুন → ' + APP_URL +
+  '\n\n🤖 Find your answer at → ' + APP_URL;
+
+async function handleComment(env, value) {
+  if (value.item !== 'comment') return;
+  if (String(value.from && value.from.id) === String(env.FB_PAGE_ID)) return; // our own reply — skip
+  const text = value.message || '';
+  const { reply, quick } = detect(text);
+  const message = quick ? COMMENT_FALLBACK : reply;
+  const res = await fetch(
+    `https://graph.facebook.com/v21.0/${value.comment_id}/replies`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, access_token: env.PAGE_ACCESS_TOKEN }),
+    }
+  );
+  if (!res.ok) console.error('comment reply failed', res.status, await res.text());
+  console.log('comment replied:', value.comment_id);
+}
+
 export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(scheduled(event, env));
@@ -290,12 +329,16 @@ export default {
       const body = await request.json();
       if (body.object === 'page') {
         const entries = body.entry || [];
-        await Promise.all(entries.flatMap((entry) =>
-          (entry.messaging || []).map(async (event) => {
+        await Promise.all(entries.map(async (entry) => {
+          const messaging = entry.messaging || [];
+          await Promise.all(messaging.map(async (event) => {
             if (event.message) await handleMessage(env, event);
             if (event.postback) await handlePostback(env, event);
-          })
-        ));
+          }));
+          for (const ch of entry.changes || []) {
+            if (ch.field === 'feed' && ch.value) await handleComment(env, ch.value);
+          }
+        }));
       }
       return new Response('EVENT_RECEIVED', { status: 200 });
     }
