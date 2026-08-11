@@ -260,31 +260,88 @@ export function IntercityPage(props: Props) {
     jhalkathi: 'jhalkathi', jhalokati: 'jhalkathi',
   };
 
-  // Loose text match: also tries first significant word
+  // ── Bangla → English search normalization ─────────────────────────────────────
+  // The app defaults to Bangla, but route/operator data is stored in English.
+  // Without this, typing "ঢাকা" or "হানিফ" finds nothing. Alias map covers the
+  // searchable universe (districts, divisions, cities, terminals, operators);
+  // a letter map is the fallback for anything unlisted.
+  const BN_ALIASES: Record<string, string> = {
+    // Divisions & districts
+    'ঢাকা':'dhaka', 'গাজীপুর':'gazipur', 'নারায়ণগঞ্জ':'narayanganj', 'নরসিংদী':'narsingdi',
+    'টাঙ্গাইল':'tangail', 'মানিকগঞ্জ':'manikganj', 'মুন্সিগঞ্জ':'munshiganj', 'কিশোরগঞ্জ':'kishoreganj',
+    'মাদারীপুর':'madaripur', 'গোপালগঞ্জ':'gopalganj', 'শরীয়তপুর':'shariatpur', 'রাজবাড়ী':'rajbari',
+    'ফরিদপুর':'faridpur', 'চট্টগ্রাম':'chattogram chittagong ctg', 'কক্সবাজার':'coxsbazar cox bazar',
+    'কুমিল্লা':'comilla cumilla', 'ব্রাহ্মণবাড়িয়া':'brahmanbaria', 'রাঙ্গামাটি':'rangamati',
+    'খাগড়াছড়ি':'khagrachhari', 'বান্দরবান':'bandarban', 'নোয়াখালী':'noakhali',
+    'লক্ষ্মীপুর':'laxmipur', 'ফেনী':'feni', 'চাঁদপুর':'chandpur', 'সিলেট':'sylhet',
+    'মৌলভীবাজার':'moulvibazar sreemangal srimangal', 'হবিগঞ্জ':'habiganj', 'সুনামগঞ্জ':'sunamganj',
+    'রাজশাহী':'rajshahi', 'নাটোর':'natore', 'নওগাঁ':'naogaon', 'চাঁপাইনবাবগঞ্জ':'chapainawabganj',
+    'পাবনা':'pabna', 'সিরাজগঞ্জ':'sirajganj', 'বগুড়া':'bogra bogura', 'জয়পুরহাট':'joypurhat',
+    'খুলনা':'khulna', 'বাগেরহাট':'bagerhat', 'সাতক্ষীরা':'satkhira', 'যশোর':'jessore jashore',
+    'ঝিনাইদহ':'jhenaidah', 'মাগুরা':'magura', 'নড়াইল':'narail', 'কুষ্টিয়া':'kushtia',
+    'চুয়াডাঙ্গা':'chuadanga', 'মেহেরপুর':'meherpur', 'বরিশাল':'barishal barisal',
+    'পটুয়াখালী':'patuakhali kuakata', 'ভোলা':'bhola', 'বরগুনা':'barguna', 'পিরোজপুর':'pirojpur',
+    'ঝালকাঠি':'jhalokathi', 'রংপুর':'rangpur', 'দিনাজপুর':'dinajpur', 'গাইবান্ধা':'gaibandha',
+    'কুড়িগ্রাম':'kurigram', 'লালমনিরহাট':'lalmonirhat', 'নীলফামারী':'nilphamari',
+    'পঞ্চগড়':'panchagarh', 'ঠাকুরগাঁও':'thakurgaon', 'ময়মনসিংহ':'mymensingh',
+    'জামালপুর':'jamalpur', 'নেত্রকোণা':'netrokona', 'শেরপুর':'sherpur',
+    // Cities, terminals & tourist spots
+    'কমলাপুর':'kamalapur', 'গাবতলী':'gabtoli', 'সদরঘাট':'sadarghat', 'হেমায়েতপুর':'hemayetpur',
+    'বিমানবন্দর':'airport hsia hazrat shahjalal', 'টেকনাফ':'teknaf', 'সেন্টমার্টিন':'saint martin',
+    'সুন্দরবন':'sundarbans', 'সাজেক':'sajek', 'জাফলং':'jaflong', 'রাতারগুল':'ratargul',
+    'শ্রীমঙ্গল':'srimangal sreemangal', 'নীলগিরি':'nilgiri', 'কাপ্তাই':'kaptai', 'মংলা':'mongla',
+    'কুয়াকাটা':'kuakata patuakhali', 'চৌমুহনী':'chaumuhani', 'পাকশী':'paksey', 'বেনাপোল':'benapole',
+    'মোড়েলগঞ্জ':'morrelganj', 'হাতিয়া':'hatiya',
+    // Operators
+    'গ্রীন লাইন':'green line', 'গ্রিন লাইন':'green line', 'হানিফ':'hanif', 'শ্যামলী':'shyamoli',
+    'সোহাগ':'sohag', 'এনা':'ena', 'সাকুরা':'sakura', 'নাবিল':'nabil', 'এস আর':'sr',
+    'সৌখিন':'soukhin', 'রংধনু':'rongdhonu', 'বাংলা স্টার':'bangla star', 'লাবিবা':'labiba',
+    'প্রবাতি':'provati banasree', 'বন্ধন':'bandhan', 'উৎসব':'utsab', 'শীতল':'shital',
+    'মেঘালয়':'meghalaya', 'বাদশা':'badsha', 'গাজীপুর পরিবহন':'gazipur paribahan',
+    'কোড':'code', 'পাঠাও':'pathao', 'রয়্যাল কোচ':'royal coach',
+  };
+  const BN_LETTERS: Record<string, string> = {
+    'ক':'k','খ':'kh','গ':'g','ঘ':'gh','ঙ':'ng','চ':'ch','ছ':'chh','জ':'j','ঝ':'jh','ঞ':'n',
+    'ট':'t','ঠ':'th','ড':'d','ঢ':'dh','ণ':'n','ত':'t','থ':'th','দ':'d','ধ':'dh','ন':'n',
+    'প':'p','ফ':'ph','ব':'b','ভ':'bh','ম':'m','য':'j','র':'r','ল':'l','শ':'sh','ষ':'sh',
+    'স':'s','হ':'h','য়':'y','ড়':'r','ঢ়':'rh','ৎ':'t',
+    'অ':'a','আ':'a','ই':'i','ঈ':'i','উ':'u','ঊ':'u','ঋ':'ri','এ':'e','ঐ':'oi','ও':'o','ঔ':'ou',
+    'া':'a','ি':'i','ী':'i','ু':'u','ূ':'u','ৃ':'ri','ে':'e','ৈ':'oi','ো':'o','ৌ':'ou',
+    'ং':'ng','ঃ':'h','্':'','ঁ':'',
+  };
+  // Bangla → English (alias first, then phonetic letter fallback)
+  const normalize = (q: string) => {
+    const l = q.toLowerCase().trim();
+    if (!l || !/[ঀ-৿]/.test(l)) return l;
+    if (BN_ALIASES[l]) return BN_ALIASES[l];
+    return l.split('').map(c => BN_LETTERS[c] ?? c).join('').replace(/[\s_]+/g, ' ');
+  };
+
+  // Loose text match: exact substring, then any normalized word (≥2 chars)
   const loosematch = (text: string, q: string) => {
     if (!q.trim()) return true;
     const t = text.toLowerCase();
-    const l = q.toLowerCase().trim();
+    const l = normalize(q);
     if (t.includes(l)) return true;
-    const word = l.split(/\s+/).find(w => w.length >= 4);
-    return word ? t.includes(word) : false;
+    const words = l.split(/[\s,]+/).filter(w => w.length >= 2);
+    return words.some(w => t.includes(w));
   };
 
   // Resolve user input to station IDs (array for OR matching)
   const resolveStations = (q: string): string[] => {
-    const l = q.toLowerCase().trim();
+    const l = normalize(q);
     return CITY_TO_STATION[l] || CITY_TO_STATION[l.split(/\s+/)[0]] || [];
   };
 
   // Resolve user input to IATA code
   const resolveIATA = (q: string): string | null => {
-    const l = q.toLowerCase().trim();
+    const l = normalize(q);
     return CITY_TO_IATA[l] || CITY_TO_IATA[l.split(/\s+/)[0]] || null;
   };
 
   // Resolve user input to terminal ID
   const resolveTerminal = (q: string): string | null => {
-    const l = q.toLowerCase().trim();
+    const l = normalize(q);
     return CITY_TO_TERMINAL[l] || CITY_TO_TERMINAL[l.split(/\s+/)[0]] || null;
   };
 
