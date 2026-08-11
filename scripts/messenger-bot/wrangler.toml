@@ -1,0 +1,21 @@
+# KoyJabo Messenger bot + auto-poster — Cloudflare Worker config.
+# Secrets (VERIFY_TOKEN, PAGE_ACCESS_TOKEN) are set via `wrangler secret put`,
+# never in this file.
+
+name = "koyjabo-messenger-bot"
+main = "worker.js"
+compatibility_date = "2026-08-11"
+
+# Cron: check for new blog posts every 3 hours (off-minute to spread load)
+[triggers]
+crons = ["23 */3 * * *"]
+
+# Public value — Koy Jabo Facebook page ID (not a secret)
+[vars]
+FB_PAGE_ID = "857945850742920"
+
+# Dedupe store for auto-poster. Create once, then paste the id:
+#   wrangler kv namespace create POSTED
+[[kv_namespaces]]
+binding = "POSTED"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

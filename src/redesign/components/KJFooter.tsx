@@ -45,6 +45,7 @@ const COLS = [
 
 const SOCIAL = [
   { label: 'f', title: 'Facebook', href: 'https://www.facebook.com/koyjabo/' },
+  { label: 'ig', title: 'Instagram', href: 'https://www.instagram.com/fagun018/' },
   { label: 'in', title: 'LinkedIn', href: 'https://www.linkedin.com/company/koy-jabo/' },
 ];
 
