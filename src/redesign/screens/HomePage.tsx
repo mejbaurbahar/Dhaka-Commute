@@ -9,6 +9,7 @@ import { GovAdPoster } from '../components/GovAdPoster';
 import { PromoBanner } from '../components/PromoBanner';
 import { Icon } from '../components/Icons';
 import { Pill } from '../components/Pill';
+import { LocationChip } from '../components/LocationChip';
 import { Bus3D, MiniVehicle, TravelHeroScene } from '../components/Vehicles3D';
 import { KJFooter as KJFooterComponent } from '../components/KJFooter';
 import { AffiliateBanner } from '../components/AffiliateBanner';
@@ -1739,9 +1740,9 @@ function AdIntentRow({ tk, lang }: { tk: Tokens; lang: Lang }) {
 // ─── GovQuickLinks — Style B: flat horizontal strip, totally different from banner/cards ──
 
 const QUICK_LINKS = [
-  { icon: '🚗', color: '#059669', en: 'BRTA License',    bn: 'লাইসেন্স যাচাই',  url: 'https://bsp.brta.gov.bd/license-check' },
+  { icon: '🚗', color: '#059669', en: 'BRTA License',    bn: 'লাইসেন্স যাচাই',  url: 'https://bsp.brta.gov.bd' },
   { icon: '🚂', color: '#2563eb', en: 'Train Ticket',    bn: 'ট্রেন টিকিট',      url: 'https://eticket.railway.gov.bd' },
-  { icon: '🚇', color: '#0891b2', en: 'Rapid Pass',      bn: 'র‍্যাপিড পাস',      url: 'https://dmtcl.gov.bd/rapidpass' },
+  { icon: '🚇', color: '#0891b2', en: 'Rapid Pass',      bn: 'র‍্যাপিড পাস',      url: 'https://www.rapidpass.com.bd' },
   { icon: '🪪', color: '#7c3aed', en: 'NID Verify',      bn: 'NID যাচাই',        url: 'https://services.nidw.gov.bd' },
   { icon: '🛂', color: '#1d4ed8', en: 'e-Passport',      bn: 'ই-পাসপোর্ট',       url: 'https://www.epassport.gov.bd' },
   { icon: '🏛️', color: '#047857', en: 'MyGov',           bn: 'মাইগভ',            url: 'https://www.mygov.bd' },
@@ -2050,13 +2051,8 @@ export function HomePage({
             {/* Left: greeting + SearchPanel */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0, alignSelf: 'start' }}>
               <div>
-                {/* Location bar */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: SANS, fontSize: 11, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: tk.textFaint }}>
-                    <span style={{ width: 6, height: 6, borderRadius: 999, background: tk.accent, animation: 'kjpulse 1.5s ease-in-out infinite', display: 'inline-block' }}/>
-                    {T(lang, 'লাইভ আবহাওয়া ও ট্রাফিক চালু নেই', 'Live weather and traffic unavailable')}
-                  </span>
-                </div>
+                {/* Location bar — real area when enabled, enable-button otherwise */}
+                <LocationChip tk={tk} lang={lang} />
                 <h1
                   style={{
                     margin: '0 0 8px',
