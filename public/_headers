@@ -55,15 +55,19 @@
   Cache-Control: no-cache, no-store, must-revalidate
   Content-Type: application/xml; charset=utf-8
 
-# Security headers
+# Security headers.
+# NOTE: no Content-Security-Policy here — the strict meta tag in index.html is the
+# single source of truth. GH Pages' header application cache is stale-prone and the
+# browser enforces the INTERSECTION of header + meta CSP, so a stale header
+# (e.g. without connect.facebook.net) silently blocks features. Keeping CSP only in
+# the meta tag eliminates that failure mode. Keep the two in sync when editing.
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(self), microphone=(), camera=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://www.google.com https://adservice.google.com https://aistudiocdn.com https://shop.daamdekhi.com https://cdn.tailwindcss.com https://apis.google.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: ; connect-src 'self' https: ; frame-src https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://*.firebaseapp.com https://apis.google.com https://accounts.google.com https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self';
-  
+
 # Preconnect hints for faster loading
 /*
   Link: <https://fonts.googleapis.com>; rel=preconnect; crossorigin
