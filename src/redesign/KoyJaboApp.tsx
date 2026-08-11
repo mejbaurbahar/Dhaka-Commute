@@ -507,8 +507,9 @@ export function KoyJaboApp() {
     <div style={{
       position: 'fixed', right: 16,
       bottom: isPhone
-        ? (anchorOn ? 'calc(144px + env(safe-area-inset-bottom))' : 'calc(92px + env(safe-area-inset-bottom))')
-        : (anchorOn ? 'calc(96px + env(safe-area-inset-bottom))' : 24),
+        // 192px = 72px tab bar + 120px max anchor height — FAB always clears a filled anchor
+        ? (anchorOn ? 'calc(192px + env(safe-area-inset-bottom))' : 'calc(92px + env(safe-area-inset-bottom))')
+        : (anchorOn ? 'calc(132px + env(safe-area-inset-bottom))' : 24),
       zIndex: 9200, pointerEvents: 'auto',
     }}>
       <AIFab tk={tk} lang={lang} onNav={() => nav('ai')}/>
