@@ -392,7 +392,7 @@ export function IntercityDetailPage(props: Props) {
   const fareNonAC = params?.costNonAC || '৳680';
   const fareAC = params?.costAC && params.costAC !== '-' ? params.costAC : null;
   const counterLocation = params?.counter || 'Sayedabad / Arambagh';
-  const contactNumber = params?.contact || '16557';
+  const contactNumber = params?.contact || '';
   const fromCity = params?.from || 'Dhaka';
   const toCity = params?.to || params?.district || 'Destination';
 
@@ -833,7 +833,7 @@ export function IntercityDetailPage(props: Props) {
               </div>
               {[
                 { icon: '🏢', label: displayCounters },
-                { icon: '📞', label: displayContact },
+                ...(displayContact ? [{ icon: '📞', label: displayContact }] : []),
               ].map((item) => (
                 <div key={item.label} style={{
                   display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,

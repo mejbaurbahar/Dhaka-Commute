@@ -9,6 +9,7 @@ import { PromoBanner } from '../components/PromoBanner';
 import { PageShell } from './PageShell';
 import { Plane3D } from '../components/Vehicles3D';
 import { INTERCITY_BUS_ROUTES, BUS_OPERATORS, MAJOR_TRANSPORT_HUBS } from '../../../data/intercityData';
+import { BUS_OPERATOR_DETAILS } from '../../../data/intercityOperatorData';
 import { LOCATIONS_DATA } from '../../../intercity/constants';
 import { BD_TRAIN_ROUTES } from '../../../data/bangladeshTrainData';
 import { DOMESTIC_ROUTES, AIRPORTS_DATA } from '../../../data/bangladeshFlightData';
@@ -632,6 +633,10 @@ export function IntercityPage(props: Props) {
             for (const r of filteredResults as any[]) {
               for (const opName of r.busOperators) {
                 const opDetails = BUS_OPERATORS.find((b) => b.name.toLowerCase().includes(opName.toLowerCase()) || opName.toLowerCase().includes(b.name.split(' ')[0].toLowerCase()));
+                const opFull = BUS_OPERATOR_DETAILS.find((b) => b.name.toLowerCase().includes(opName.toLowerCase()) || opName.toLowerCase().includes(b.name.split(' ')[0].toLowerCase()));
+                // Real per-operator number first; district-generic 16557 only when the
+                // district's main operator actually is Shohagh (16557 is Shohagh's hotline).
+                const contact = opDetails?.contactNumber?.split(',')[0] || opFull?.phone?.[0] || '';
                 operatorCards.push({
                   opName,
                   route: r.route,
@@ -639,7 +644,7 @@ export function IntercityPage(props: Props) {
                   division: r.division,
                   costNonAC: r.costNonAC,
                   costAC: r.costAC,
-                  contact: opDetails?.contactNumber || r.mainContactNumber || '',
+                  contact,
                 });
               }
             }
