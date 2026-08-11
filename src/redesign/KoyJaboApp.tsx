@@ -605,7 +605,8 @@ export function KoyJaboApp() {
           <SideRailAd tk={tk} lang={lang} side="right"/>
         </>
       )}
-      {showAnchor && <AnchorAd key={top.route} tk={tk} lang={lang} onClose={() => setAnchorOn(false)} bottomOffset={isPhone ? 'calc(72px + env(safe-area-inset-bottom))' : '0px'}/>}
+      {/* No anchor ad on the AI chat page — it covers the sticky input bar */}
+      {showAnchor && top.route !== 'ai' && <AnchorAd key={top.route} tk={tk} lang={lang} onClose={() => setAnchorOn(false)} bottomOffset={isPhone ? 'calc(72px + env(safe-area-inset-bottom))' : '0px'}/>}
       {!isPhone && <VignetteAd tk={tk} lang={lang} open={vignette} onClose={() => setVignette(false)}/>}
       {/* ── Update-available toast ── */}
       {updateReady && (

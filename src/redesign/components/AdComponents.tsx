@@ -166,6 +166,9 @@ export function AnchorAd({ tk, lang, onClose, bottomOffset = '0px' }: { tk: Toke
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: isFilled ? '8px 16px' : 0,
       minHeight: 64,
+      // Anchor ads must stay a slim strip — cap height so an oversized creative
+      // never hijacks half the screen (seen with a ~390px-tall unit on the AI page).
+      maxHeight: 120, overflow: 'hidden',
       backdropFilter: isFilled ? 'blur(12px)' : 'none',
       // On mobile the ad is already above safe-area zone — no extra inset needed
       paddingBottom: isFilled ? (isAboveTabBar ? '8px' : 'calc(8px + env(safe-area-inset-bottom))') : 0,

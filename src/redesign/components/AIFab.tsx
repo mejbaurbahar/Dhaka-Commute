@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 
 const FAB_STYLES = `
+/* Positioned by the fixed wrapper in KoyJaboApp (anchor-ad aware bottom) */
+.kj-ai-fab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 @keyframes kjAiFloat {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-6px); }
@@ -44,17 +50,7 @@ export function AIFab({ tk, lang, onNav }: AIFabProps) {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        right: 20,
-        bottom: 90,
-        zIndex: 9998,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-      }}
-    >
+    <div className="kj-ai-fab">
       {/* Hover label */}
       <div
         style={{
