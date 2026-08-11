@@ -304,7 +304,7 @@ export function AdvertisePage(props: PageShellProps) {
             }}
           >
             <a
-              href="mailto:mejbaur@markopolo.ai?subject=Advertise%20on%20KoyJabo"
+              href="mailto:koyjabo.bd@gmail.com?subject=Advertise%20on%20KoyJabo"
               style={{
                 background: GREEN,
                 color: '#fff',
@@ -320,26 +320,6 @@ export function AdvertisePage(props: PageShellProps) {
               }}
             >
               {lbl('Email Us', 'ইমেইল করুন')}
-            </a>
-            <a
-              href="https://wa.me/8801XXXXXXXXX?text=I%20want%20to%20advertise%20on%20KoyJabo"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                background: '#25d366',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 12,
-                padding: '13px 28px',
-                fontFamily: lang === 'bn' ? BEN : SANS,
-                fontWeight: 700,
-                fontSize: 14,
-                cursor: 'pointer',
-                textDecoration: 'none',
-                display: 'inline-block',
-              }}
-            >
-              {lbl('WhatsApp', 'হোয়াটসঅ্যাপ')}
             </a>
           </div>
         </div>
