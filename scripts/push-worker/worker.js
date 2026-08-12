@@ -353,6 +353,10 @@ async function deliverFcm(token, event) {
     message: {
       token,
       notification: { title, body },
+      // Android: white KoyJabo logo as the tray icon + brand accent color.
+      android: {
+        notification: { icon: 'kj_push_icon', color: '#00c2ff', title, body },
+      },
       data: { url: url || '/', type: event.type },
     },
   };

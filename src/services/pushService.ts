@@ -162,7 +162,8 @@ async function enableNativePush(): Promise<boolean> {
               title: notification.title || 'কই যাবো',
               body: notification.body || '',
               data: notification.data || {},
-              smallIcon: 'ic_stat_icon_config_sample',
+              smallIcon: 'kj_push_icon',
+              iconColor: '#00c2ff',
             }],
           });
         } catch { /* silent */ }
