@@ -282,10 +282,10 @@ async function dtcaFetch(path, env) {
     headers: { ...DTCA_HEADERS, Authorization: `Bearer ${activeToken}` },
   });
 
-  // On 401, auto-refresh and retry once
-  if (res.status === 401) {
+  // On 401/421 (stale or rejected token), auto-refresh and retry once
+  if (res.status === 401 || res.status === 421) {
     const newToken = await dtcaAutoLogin(env);
-    if (!newToken) return res; // login also failed — return 401 as-is
+    if (!newToken) return res; // login also failed — return the error as-is
     _dtcaTokenOverride = newToken;
     return fetch(`${DTCA_API}/${path}`, {
       headers: { ...DTCA_HEADERS, Authorization: `Bearer ${newToken}` },
@@ -293,6 +293,69 @@ async function dtcaFetch(path, env) {
   }
 
   return res;
+}
+
+// ── DTCA response decryption ──────────────────────────────────────────────────
+// Backend encrypts every data payload with the client's RSA public key
+// (RSA-OAEP-wrapped AES-GCM). We logged in with our own keypair, so decrypt
+// server-side and serve plaintext JSON to the app.
+let _dtcaKeyCache = null; // imported CryptoKey, per-isolate
+
+function b64ToBytes(b64) {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+
+async function dtcaPrivateKey(env) {
+  if (_dtcaKeyCache) return _dtcaKeyCache;
+  const pem = env.DTCA_PRIVATE_KEY || '';
+  if (!pem) return null;
+  const der = pem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\n|\r/g, '');
+  try {
+    _dtcaKeyCache = await crypto.subtle.importKey(
+      'pkcs8', b64ToBytes(der),
+      { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['decrypt']
+    );
+  } catch {
+    return null;
+  }
+  return _dtcaKeyCache;
+}
+
+// Decrypt one `{encrypted_key, iv, tag, data}` block → parsed JSON
+async function dtcaDecryptBlock(block, env) {
+  const priv = await dtcaPrivateKey(env);
+  if (!priv) return block; // no key configured — pass through untouched
+  try {
+    const aesKeyRaw = await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, priv, b64ToBytes(block.encrypted_key));
+    const aesKey = await crypto.subtle.importKey('raw', aesKeyRaw, { name: 'AES-GCM' }, false, ['decrypt']);
+    const data = b64ToBytes(block.data);
+    const tag = b64ToBytes(block.tag);
+    const cipher = new Uint8Array(data.length + tag.length);
+    cipher.set(data);
+    cipher.set(tag, data.length);
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBytes(block.iv), tagLength: 128 }, aesKey, cipher);
+    return JSON.parse(new TextDecoder().decode(plain));
+  } catch {
+    return block; // decrypt failed — return raw so callers see the original
+  }
+}
+
+// Recursively decrypt encrypted blocks in a response (vehicles / data / stoppages…)
+async function dtcaDecryptPayload(value, env) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
+  if (typeof value.encrypted_key === 'string' && typeof value.data === 'string') {
+    return dtcaDecryptBlock(value, env);
+  }
+  const out = {};
+  for (const [k, v] of Object.entries(value)) {
+    out[k] = (typeof v === 'object' && v !== null && (k === 'vehicles' || k === 'data' || k === 'stoppages'))
+      ? await dtcaDecryptPayload(v, env)
+      : v;
+  }
+  return out;
 }
 
 // ── ETag + SHA in-memory cache ────────────────────────────────────────────────
@@ -804,10 +867,14 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       try {
         const upstream = await dtcaFetch(dtcaPath, env);
         const data = await upstream.json().catch(() => ({}));
+        // Data payloads arrive RSA/AES encrypted — decrypt server-side before serving
+        const plain = (upstream.ok && data && typeof data === 'object')
+          ? await dtcaDecryptPayload(data, env)
+          : data;
         // live-location 404 = no active location right now (bus parked/offline) — not a server error
         const isLiveLoc = sub === 'live-location' || sub === 'live-location/';
         const status = (isLiveLoc && upstream.status === 404) ? 200 : (upstream.ok ? 200 : upstream.status);
-        return new Response(JSON.stringify(data), {
+        return new Response(JSON.stringify(plain), {
           status,
           headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...corsHeaders(origin) },
         });

@@ -5,7 +5,7 @@ import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { Icon } from '../components/Icons';
-import { disablePush, enablePush, pushEnabled, pushSupported } from '../../services/pushService';
+import { enablePush, pushEnabled, pushSupported } from '../../services/pushService';
 
 interface ScreenProps {
   theme: 'dark' | 'light';
@@ -40,13 +40,9 @@ export function SettingsPage(props: ScreenProps) {
   const pushAvailable = pushSupported();
 
   async function handlePushToggle() {
-    if (pushOn) {
-      await disablePush();
-      setPushOn(false);
-    } else {
-      const ok = await enablePush();
-      setPushOn(ok);
-    }
+    if (pushOn) return; // turning OFF is disabled for now — push stays on
+    const ok = await enablePush();
+    setPushOn(ok);
   }
   const [privacy, setPrivacy] = useState({
     stats: true,

@@ -11,6 +11,8 @@
  * quiet until the admin completes the deploy steps in scripts/push-worker/README.md.
  */
 
+import { isNativePlatform } from '../utils/platformDetect';
+
 const VAPID_PUBLIC_KEY =
   'BPWRfKooYJr8MkcJaOFw2PF3g5OBlikB5uZCcEiS1kGbhOXKTiG-_0rTau28lT2K0tluU4eQ6NByPsnT00sSEV8';
 const PUSH_SW_URL = '/push/push-sw.js';
@@ -23,7 +25,9 @@ const KEY_INSTALL_SCHEDULED = 'koyjabo_install_reminder_scheduled';
 
 export type PushEventType = 'install' | 'search-check' | 'search-tomorrow' | 'save' | 'dormant';
 
+/** Web push needs SW + PushManager; the Android app uses native FCM (Capacitor). */
 export function pushSupported(): boolean {
+  if (isNativePlatform()) return true;
   try {
     return (
       typeof window !== 'undefined' &&
@@ -36,11 +40,12 @@ export function pushSupported(): boolean {
   }
 }
 
+/** Push is ON by default; only an explicit user opt-out stores '0'. */
 export function pushEnabled(): boolean {
   try {
-    return localStorage.getItem(KEY_ENABLED) === '1';
+    return localStorage.getItem(KEY_ENABLED) !== '0';
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -121,9 +126,44 @@ function subKeys(sub: PushSubscription): Record<string, string> | null {
   return json?.keys ?? null;
 }
 
+let nativeListeners = false;
+
+/** Native (app) branch: Capacitor PushNotifications → FCM token → worker. */
+async function enableNativePush(): Promise<boolean> {
+  try {
+    const { PushNotifications } = await import('@capacitor/push-notifications');
+    const perm = await PushNotifications.checkPermissions();
+    if (perm.receive !== 'granted') {
+      const req = await PushNotifications.requestPermissions();
+      if (req.receive !== 'granted') return false;
+    }
+    await PushNotifications.register();
+    if (!nativeListeners) {
+      nativeListeners = true;
+      PushNotifications.addListener('registration', (data) => {
+        const token = data.value;
+        if (!token) return;
+        try {
+          localStorage.setItem(KEY_ENABLED, '1');
+          localStorage.setItem(KEY_ENDPOINT, token);
+        } catch { /* private mode */ }
+        post('/api/subscribe', { endpoint: token, lang: currentLang() });
+      });
+      PushNotifications.addListener('registrationError', () => { /* silent */ });
+    }
+    const existing = localStorage.getItem(KEY_ENDPOINT);
+    if (existing) post('/api/subscribe', { endpoint: existing, lang: currentLang() });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Ask permission + subscribe + tell the worker. Returns true when subscribed. */
 export async function enablePush(): Promise<boolean> {
-  if (!pushSupported() || !apiBase()) return false;
+  if (!apiBase()) return false;
+  if (isNativePlatform()) return enableNativePush();
+  if (!pushSupported()) return false;
   let perm = Notification.permission;
   if (perm !== 'granted') {
     perm = await Notification.requestPermission();
@@ -137,6 +177,10 @@ export async function enablePush(): Promise<boolean> {
 }
 
 export async function disablePush(): Promise<void> {
+  if (isNativePlatform()) {
+    const token = localStorage.getItem(KEY_ENDPOINT);
+    if (token && apiBase()) post('/api/unsubscribe', { endpoint: token });
+  }
   try {
     localStorage.removeItem(KEY_ENABLED);
     localStorage.removeItem(KEY_ENDPOINT);
@@ -144,6 +188,7 @@ export async function disablePush(): Promise<void> {
   } catch {
     /* private mode */
   }
+  if (isNativePlatform()) return;
   if (!pushSupported() || !apiBase()) return;
   const reg = await getPushRegistration();
   if (!reg) return;
@@ -199,7 +244,29 @@ export function nextMorning(): number {
  * (the visitor is clearly using the app).
  */
 export async function initPush(): Promise<void> {
-  if (!pushSupported() || !apiBase()) return;
+  if (!apiBase()) return;
+
+  // Android app: native FCM — register once, then schedule reminders.
+  if (isNativePlatform()) {
+    if (pushEnabled()) {
+      await enablePush();
+      const firstVisit = localStorage.getItem(KEY_FIRST_VISIT);
+      if (!firstVisit) {
+        localStorage.setItem(KEY_FIRST_VISIT, String(Date.now()));
+        if (!localStorage.getItem(KEY_INSTALL_SCHEDULED)) {
+          localStorage.setItem(KEY_INSTALL_SCHEDULED, '1');
+          trackPushEvent('install', {}, inHours(24));
+        }
+      } else if (localStorage.getItem(KEY_INSTALL_SCHEDULED)) {
+        localStorage.removeItem(KEY_INSTALL_SCHEDULED);
+        cancelPushEvent('install');
+      }
+      trackPushEvent('dormant', {}, inHours(48));
+    }
+    return;
+  }
+
+  if (!pushSupported()) return;
 
   // Push is ON by default: auto-subscribe on first visit (the browser shows
   // its permission prompt once; a later visit never re-prompts after deny).

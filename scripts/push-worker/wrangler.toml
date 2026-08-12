@@ -22,3 +22,5 @@ crons = ["*/10 * * * *"]
 VAPID_PUBLIC_KEY = "BPWRfKooYJr8MkcJaOFw2PF3g5OBlikB5uZCcEiS1kGbhOXKTiG-_0rTau28lT2K0tluU4eQ6NByPsnT00sSEV8"
 # Contact for the push service (RFC 8030 requires a contact in the JWT).
 VAPID_SUBJECT = "mailto:koyjabo.bd@gmail.com"
+# Firebase project for FCM v1 (Android app) delivery.
+FCM_PROJECT_ID = "faguntesting-d5864"

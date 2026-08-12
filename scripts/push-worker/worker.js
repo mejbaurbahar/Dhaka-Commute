@@ -1,8 +1,9 @@
 /**
- * KoyJabo push delivery worker (Cloudflare) — free web push, no Firebase.
+ * KoyJabo push delivery worker (Cloudflare) — web push (VAPID) + Android FCM v1.
  *
  * API (CORS, no auth — the endpoint itself is the secret capability):
- *   POST /api/subscribe   { endpoint, keys:{p256dh,auth}, lang }
+ *   POST /api/subscribe   { endpoint, keys:{p256dh,auth}, lang }   (endpoint
+ *                         without https:// = FCM device token → kind 'fcm')
  *   POST /api/unsubscribe { endpoint }
  *   POST /api/event       { endpoint, type, fireAt, data, lang }   types: install | search-check | search-tomorrow | save | dormant
  *   POST /api/cancel      { endpoint, type }
@@ -15,8 +16,10 @@
  * all via WebCrypto — no npm dependencies.
  *
  * Secrets (wrangler secret put): VAPID_PRIVATE_KEY (raw base64url d, from
- * scripts/generate-vapid-keys.mjs / .env), VAPID_SUBJECT (mailto:).
- * Vars (wrangler.toml): VAPID_PUBLIC_KEY (uncompressed point), VAPID_SUBJECT.
+ * scripts/generate-vapid-keys.mjs / .env), VAPID_SUBJECT (mailto:),
+ * FCM_SERVICE_ACCOUNT (Firebase service-account JSON, for Android app pushes).
+ * Vars (wrangler.toml): VAPID_PUBLIC_KEY (uncompressed point), VAPID_SUBJECT,
+ * FCM_PROJECT_ID.
  */
 
 const SUB_PREFIX = 'sub:';
@@ -248,6 +251,10 @@ function notificationFor(sub, event) {
 }
 
 async function deliver(sub, event) {
+  // Android app subscriptions are FCM device tokens (no https:// endpoint).
+  if (sub.kind === 'fcm' || !/^https:\/\//.test(sub.endpoint)) {
+    return deliverFcm(sub.endpoint, event);
+  }
   const endpoint = sub.endpoint;
   const jwt = await vapidJwt(new URL(endpoint).origin);
   const payload = JSON.stringify(notificationFor(sub, event));
@@ -265,6 +272,84 @@ async function deliver(sub, event) {
     },
     body,
   });
+  return resp.status;
+}
+
+// ── FCM (Android app) ─────────────────────────────────────────────
+// Service-account JWT → OAuth2 token → FCM v1 API. No npm deps.
+// Secrets: FCM_SERVICE_ACCOUNT (JSON), var: FCM_PROJECT_ID.
+
+let _fcmTokenCache = null; // { accessToken, expiresAt }
+
+function b64urlFromBytes(bytes) {
+  return urlB64Encode(bytes);
+}
+
+async function fcmAccessToken() {
+  const cached = _fcmTokenCache;
+  if (cached && Date.now() < cached.expiresAt - 60_000) return cached.accessToken;
+  const saRaw = CFG.FCM_SERVICE_ACCOUNT;
+  if (!saRaw) return null;
+  let sa;
+  try { sa = JSON.parse(saRaw); } catch { return null; }
+  const der = sa.private_key
+    .replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\n|\r/g, '');
+  const key = await crypto.subtle.importKey(
+    'pkcs8', urlB64Decode(der),
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']
+  );
+  const now = Math.floor(Date.now() / 1000);
+  const header = b64urlFromBytes(enc.encode(JSON.stringify({ alg: 'RS256', typ: 'JWT' })));
+  const payload = b64urlFromBytes(enc.encode(JSON.stringify({
+    iss: sa.client_email,
+    scope: 'https://www.googleapis.com/auth/firebase.messaging',
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: now,
+    exp: now + 3600,
+  })));
+  const input = enc.encode(`${header}.${payload}`);
+  const sig = new Uint8Array(await crypto.subtle.sign({ name: 'RSASSA-PKCS1-v1_5' }, key, input));
+  const jwt = `${header}.${payload}.${b64urlFromBytes(sig)}`;
+  const resp = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${encodeURIComponent(jwt)}`,
+  });
+  const data = await json(resp);
+  if (!data.access_token) return null;
+  _fcmTokenCache = {
+    accessToken: data.access_token,
+    expiresAt: Date.now() + (data.expires_in || 3600) * 1000,
+  };
+  return data.access_token;
+}
+
+async function deliverFcm(token, event) {
+  let accessToken = await fcmAccessToken();
+  if (!accessToken) return 0;
+  const { title, body, url } = notificationFor({ lang: event.lang || 'bn' }, event);
+  const message = {
+    message: {
+      token,
+      notification: { title, body },
+      data: { url: url || '/', type: event.type },
+    },
+  };
+  const projectId = CFG.FCM_PROJECT_ID || 'koyjabo';
+  const send = () =>
+    fetch(`https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify(message),
+    });
+  let resp = await send();
+  if (resp.status === 401) {
+    _fcmTokenCache = null; // token expired — refresh once and retry
+    accessToken = await fcmAccessToken();
+    if (!accessToken) return 401;
+    resp = await send();
+  }
+  // 404 = device token invalid → cron drops the subscription.
   return resp.status;
 }
 
@@ -286,17 +371,19 @@ async function saveSub(sub) {
 // ── handlers ──────────────────────────────────────────────────────
 
 async function handleSubscribe(body) {
-  if (!body || typeof body.endpoint !== 'string' || !/^https:\/\//.test(body.endpoint)) {
+  if (!body || typeof body.endpoint !== 'string' || body.endpoint.length < 8) {
     return Response.json({ ok: false, error: 'bad endpoint' }, { status: 400 });
   }
+  const isWeb = /^https:\/\//.test(body.endpoint);
   const keys = body.keys || {};
-  if (typeof keys.p256dh !== 'string' || typeof keys.auth !== 'string') {
+  if (isWeb && (typeof keys.p256dh !== 'string' || typeof keys.auth !== 'string')) {
     return Response.json({ ok: false, error: 'missing keys' }, { status: 400 });
   }
   let existing = await loadSub(body.endpoint);
   const sub = {
     endpoint: body.endpoint,
-    keys: { p256dh: keys.p256dh, auth: keys.auth },
+    kind: isWeb ? 'web' : 'fcm',
+    keys: isWeb ? { p256dh: keys.p256dh, auth: keys.auth } : {},
     lang: body.lang === 'bn' ? 'bn' : 'en',
     events: existing ? existing.events || [] : [],
     updatedAt: Date.now(),
