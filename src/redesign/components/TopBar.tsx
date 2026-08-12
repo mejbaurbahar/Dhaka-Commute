@@ -116,7 +116,7 @@ export function TopBar({
           }}
           aria-label="কই যাবো"
         >
-          <Logo tk={tk} size={isMobile ? 32 : 36} />
+          <Logo tk={tk} size={isMobile ? 42 : 48} />
           {!isMobile && (
             <span
               style={{
