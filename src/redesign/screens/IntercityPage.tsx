@@ -7,6 +7,7 @@ import { GovServiceCards } from '../components/GovServiceCards';
 import { GovAdPoster } from '../components/GovAdPoster';
 import { PromoBanner } from '../components/PromoBanner';
 import { PageShell } from './PageShell';
+import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 import { Plane3D } from '../components/Vehicles3D';
 import { INTERCITY_BUS_ROUTES, BUS_OPERATORS, MAJOR_TRANSPORT_HUBS } from '../../../data/intercityData';
 import { BUS_OPERATOR_DETAILS } from '../../../data/intercityOperatorData';
@@ -70,6 +71,9 @@ const ALL_INTERCITY_LOCATIONS = [...INTERCITY_BUS_ROUTES, ...MAJOR_TRANSPORT_HUB
 
 export function IntercityPage(props: Props) {
   const { theme, device, lang, onNav, params } = props;
+  useDocumentTitle(lang === 'bn' ? 'আন্তঃজেলা বাস, ট্রেন, ফ্লাইট ও লঞ্চ' : 'Intercity Bus, Train, Flight & Launch BD');
+  setMetaTag('description', lang === 'bn' ? '৬৪ জেলায় বাস, ট্রেন, ফ্লাইট ও লঞ্চ রুট ও ভাড়া — এক জায়গায়।' : 'Bus, train, flight and launch routes to all 64 districts — fares included.');
+  setCanonicalUrl('/intercity');
   const isMobile = device === 'mobile';
   const tk: Tokens = KJ_TOKENS[theme];
   const [activeChip, setActiveChip] = useState(params?.mode === 'flights' ? 'Flight' : 'Bus');

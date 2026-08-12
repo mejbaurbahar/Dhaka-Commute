@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn, N } from '../tokens';
 import { PageShell } from './PageShell';
+import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovAdBanner } from '../components/GovAdBanner';
 import { GovServiceCards } from '../components/GovServiceCards';
@@ -69,6 +70,9 @@ function buildTopOperators(): Array<{ l: string; n: string; c: string; busId: st
 
 export function LocalBusPage(props: Props) {
   const { theme, device, lang, onNav } = props;
+  useDocumentTitle(lang === 'bn' ? 'ঢাকা লোকাল বাস রুট ও ভাড়া ২০২৬' : 'Dhaka Local Bus Routes & Fares 2026');
+  setMetaTag('description', lang === 'bn' ? 'ঢাকার ২০০+ লোকাল বাসের রুট, স্টপ ও ভাড়া খুঁজুন বাংলা ও ইংরেজিতে — ফ্রি, অফলাইনে চলে।' : 'Find 200+ Dhaka local bus routes, stops and fares in English or বাংলা. Free and works offline.');
+  setCanonicalUrl('/local-bus');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (p=16): React.CSSProperties => ({ background:tk.panel, border:`1px solid ${tk.line}`, borderRadius:16, padding:p });

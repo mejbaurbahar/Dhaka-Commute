@@ -5,6 +5,7 @@ import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
 import { GovAdBanner } from '../components/GovAdBanner';
 import { PageShell } from './PageShell';
+import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:Lang; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -55,6 +56,9 @@ function calcTime(mode: Mode, stationsApart: number): string {
 
 export function FareCalcPage(props: Props) {
   const { theme, device, lang, onNav } = props;
+  useDocumentTitle(lang === 'bn' ? 'বাস ভাড়া ক্যালকুলেটর — বাংলাদেশ' : 'Bus Fare Calculator Bangladesh');
+  setMetaTag('description', lang === 'bn' ? 'BRTA নিয়ম অনুযায়ী বাস ও মেট্রো ভাড়া হিসাব করুন।' : 'Calculate bus and metro fares by official BRTA rates.');
+  setCanonicalUrl('/fare');
   const isMobile = device === 'mobile';
   const tk: Tokens = KJ_TOKENS[theme];
   const [from, setFrom] = useState('');

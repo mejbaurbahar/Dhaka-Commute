@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
+import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 import { trackMetroSearch } from '../../../services/analyticsService';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
@@ -46,6 +47,9 @@ function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: numb
 
 export function MetroPage(props: Props) {
   const { theme, device, lang, onNav } = props;
+  useDocumentTitle(lang === 'bn' ? 'ঢাকা মেট্রো রেল MRT-6 ভাড়া ও সময়সূচী' : 'Dhaka Metro Rail MRT-6 Fares & Schedule');
+  setMetaTag('description', lang === 'bn' ? 'MRT-6 এর ১৭টি স্টেশন, ভাড়া (৳২০–১০০) ও পূর্ণ সময়সূচী বাংলায়।' : 'All 17 MRT-6 stations, fares (৳20–100) and full schedule for Dhaka Metro Rail.');
+  setCanonicalUrl('/metro');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (p=16): React.CSSProperties => ({ background:tk.panel, border:`1px solid ${tk.line}`, borderRadius:16, padding:p });

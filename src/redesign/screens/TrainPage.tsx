@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
+import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 import { trackTrainSearch } from '../../../services/analyticsService';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
@@ -73,6 +74,9 @@ const MAJOR_STATIONS = Object.values(TRAIN_STATIONS).slice(0, 12);
 
 export function TrainPage(props: Props) {
   const { theme, device, lang, onNav, params } = props;
+  useDocumentTitle(lang === 'bn' ? 'বাংলাদেশ ট্রেনের সময়সূচী ও ভাড়া ২০২৬' : 'Bangladesh Train Schedule & Fares 2026');
+  setMetaTag('description', lang === 'bn' ? 'সব আন্তঃনগর ট্রেনের সময়সূচী, ভাড়া ও টিকেট তথ্য — বাংলায়।' : 'Every intercity train schedule, fare and ticket info for Bangladesh Railway.');
+  setCanonicalUrl('/train');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (p=16): React.CSSProperties => ({ background:tk.panel, border:`1px solid ${tk.line}`, borderRadius:16, padding:p });

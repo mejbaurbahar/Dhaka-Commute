@@ -1,6 +1,7 @@
 import React, { useRef, useMemo, useState } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
+import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 import { trackFlightSearch } from '../../../services/analyticsService';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
@@ -33,6 +34,9 @@ const CABINS = [
 
 export function FlightsPage(props: Props) {
   const { theme, device, lang, onNav, params } = props;
+  useDocumentTitle(lang === 'bn' ? 'বাংলাদেশ অভ্যন্তরীণ ফ্লাইট রুট ও ভাড়া' : 'Bangladesh Domestic Flight Routes & Fares');
+  setMetaTag('description', lang === 'bn' ? 'ঢাকা থেকে সব জেলায় ফ্লাইট রুট, এয়ারলাইন ও ভাড়া।' : 'Flights from Dhaka to every region — airlines, routes and fares.');
+  setCanonicalUrl('/flights');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (p=16): React.CSSProperties => ({ background:tk.panel, border:`1px solid ${tk.line}`, borderRadius:16, padding:p });

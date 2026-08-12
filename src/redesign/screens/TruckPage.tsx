@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, N, Fare, Tokens } from '../tokens';
 import { PageShell } from './PageShell';
+import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 import { trackTruckSearch } from '../../../services/analyticsService';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovAdBanner } from '../components/GovAdBanner';
@@ -57,6 +58,9 @@ const SIZE_FILTERS: { id: 'all' | TruckSize; en: string; bn: string; emoji: stri
 
 export function TruckPage(props: Props) {
   const { theme, device, lang, onNav, params } = props;
+  useDocumentTitle(lang === 'bn' ? 'ট্রাক ভাড়া ও মালবাহী — বাংলাদেশ' : 'Truck & Freight Rates Bangladesh');
+  setMetaTag('description', lang === 'bn' ? 'বাংলাদেশে মালবাহী ট্রাক ভাড়া, রুট ও বুকিং তথ্য।' : 'Freight truck rates, routes and booking info across Bangladesh.');
+  setCanonicalUrl('/truck');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (p = 16): React.CSSProperties => ({

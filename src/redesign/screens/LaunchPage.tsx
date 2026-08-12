@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
+import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 import { trackLaunchSearch } from '../../../services/analyticsService';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
@@ -35,6 +36,9 @@ const CABINS = [
 
 export function LaunchPage(props: Props) {
   const { theme, device, lang, onNav, params } = props;
+  useDocumentTitle(lang === 'bn' ? 'লঞ্চ ও নৌপথ রুট — সদরঘাট' : 'Bangladesh Launch & Ferry Routes');
+  setMetaTag('description', lang === 'bn' ? 'সদরঘাট থেকে সব লঞ্চ রুট, ভাড়া ও সময়সূচী — বরিশাল, ভোলা, খুলনা ও আরও।' : 'All launch and ferry routes from Dhaka Sadarghat — Barisal, Bhola, Khulna and more.');
+  setCanonicalUrl('/launch');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (p=16): React.CSSProperties => ({ background:tk.panel, border:`1px solid ${tk.line}`, borderRadius:16, padding:p });

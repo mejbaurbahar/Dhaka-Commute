@@ -69,7 +69,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 {
                     emoji: '👤',
                     label: lbl('Profile', 'প্রোফাইল'),
-                    sub: lbl('Mejbaur Bahar Fagun · mejbaur@markopolo.ai', 'মেজবাউর বাহার ফাগুন · +880 17XX-XXXXXX'),
+                    sub: lbl('Mejbaur Bahar Fagun · koyjabo.bd@gmail.com', 'মেজবাউর বাহার ফাগুন · koyjabo.bd@gmail.com'),
                     action: onProfileClick,
                     right: { kind: 'arrow' },
                 },

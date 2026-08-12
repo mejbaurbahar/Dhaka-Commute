@@ -91,7 +91,7 @@ export function EditProfilePage(props: Props) {
           {/* Email — read-only */}
           <div>
             <label style={{ fontFamily:SANS,fontSize:11,fontWeight:700,color:tk.textFaint,textTransform:'uppercase',letterSpacing:1,display:'block',marginBottom:6 }}>Email</label>
-            <input value={user?.email || 'mejbaur@markopolo.ai'} readOnly style={readOnlyStyle}/>
+            <input value={user?.email || 'koyjabo.bd@gmail.com'} readOnly style={readOnlyStyle}/>
           </div>
 
           {/* Bio */}

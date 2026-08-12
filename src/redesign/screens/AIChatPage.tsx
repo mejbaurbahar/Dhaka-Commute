@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { STATIONS } from '../../../constants';
 import { KJ_TOKENS, T, SANS, BEN, chipBtn } from '../tokens';
 import { PageShell } from './PageShell';
+import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 
 import { Icon } from '../components/Icons';
 import { askGeminiRoute, ChatMessage } from '../../../services/geminiService';
@@ -175,6 +176,9 @@ function nearestArea(lat: number, lng: number): string {
 
 export function AIChatPage(props: Props) {
   const { theme, device, lang } = props;
+  useDocumentTitle(lang === 'bn' ? 'কই যাবো AI — যাতায়াত সহায়ক চ্যাট' : 'KoyJabo AI — Transport Chat Assistant');
+  setMetaTag('description', lang === 'bn' ? 'বাংলা বা ইংরেজিতে রুট, ভাড়া ও যাতায়াত প্রশ্নের জবাব দেয় কই যাবো AI।' : 'Ask KoyJabo AI about routes, fares and travel in English or Bengali.');
+  setCanonicalUrl('/ai');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const [input, setInput] = useState('');
