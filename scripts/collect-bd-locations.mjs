@@ -34,7 +34,7 @@ function overpassPost(ql) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Content-Length': Buffer.byteLength(body),
-        'User-Agent': 'KoyJabo-BD-Collector/1.0 (bangladesh transport app; mejbaur@markopolo.ai)',
+        'User-Agent': 'KoyJabo-BD-Collector/1.0 (bangladesh transport app; koyjabo.bd@gmail.com)',
       },
     };
     const req = https.request(options, (res) => {
