@@ -30,6 +30,8 @@ const ALLOWED_ORIGINS = [
   'https://dev.koyjabo.com',
   'http://localhost:5173',
   'http://localhost:3000',
+  // Capacitor Android WebView origin — the app fetches the proxy from here.
+  'https://localhost',
 ];
 
 const ALLOWED_ACTIONS = new Set([

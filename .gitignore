@@ -129,3 +129,4 @@ data/advanced-qa.raw.json
 .aider*
 # Session browser-automation artifacts — never commit
 tool-results/
+.wrangler/
