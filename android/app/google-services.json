@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "53533704224",
+    "project_id": "faguntesting-d5864",
+    "storage_bucket": "faguntesting-d5864.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53533704224:android:a8e9b072423ac8535ebc45",
+        "android_client_info": {
+          "package_name": "com.koyjabo.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "53533704224-o2je8t905ob7leu918dijhoknumbe6ig.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDz-Ek_NXcYZ2T6eCLv4MSO2nt8sbWnCJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "53533704224-o2je8t905ob7leu918dijhoknumbe6ig.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
