@@ -149,6 +149,24 @@ async function enableNativePush(): Promise<boolean> {
         post('/api/subscribe', { endpoint: token, lang: currentLang() });
       });
       PushNotifications.addListener('registrationError', () => { /* silent */ });
+      // FCM only auto-displays notifications when the app is in the BACKGROUND.
+      // Foreground messages arrive here — show them as a local notification so
+      // the user sees pushes while using the app too.
+      PushNotifications.addListener('pushNotificationReceived', async (notification) => {
+        try {
+          const { LocalNotifications } = await import('@capacitor/local-notifications');
+          await LocalNotifications.requestPermissions();
+          await LocalNotifications.schedule({
+            notifications: [{
+              id: Math.abs((notification.data?.eventCreatedAt || Date.now()) % 2_000_000_000) || 1,
+              title: notification.title || 'কই যাবো',
+              body: notification.body || '',
+              data: notification.data || {},
+              smallIcon: 'ic_stat_icon_config_sample',
+            }],
+          });
+        } catch { /* silent */ }
+      });
     }
     // Listener must attach BEFORE register — the plugin can emit the token
     // immediately on register (cold start), so a listener added after would
