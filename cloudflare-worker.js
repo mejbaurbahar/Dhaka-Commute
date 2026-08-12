@@ -244,7 +244,12 @@ function isRateLimited(ip, limit = 1800, windowMs = 60_000) {
 }
 
 // ── DTCA proxy ─────────────────────────────────────────────────────────────
-const DTCA_API = 'https://dtca-backend.bondstein.net/api/v1/passenger';
+// Upstream serves a certificate for apiv4.singularitybd.co only — the
+// bondstein.net hostname is missing from the SAN, so Cloudflare's TLS
+// validation rejects every https fetch (526). The API is still live over
+// plain http, and this fetch is server-side only: clients always reach us
+// over https, so there is no cleartext exposure to end users.
+const DTCA_API = 'http://dtca-backend.bondstein.net/api/v1/passenger';
 let _dtcaTokenOverride = null; // per-isolate live token (refreshed automatically)
 
 const DTCA_HEADERS = {
