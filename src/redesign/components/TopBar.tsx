@@ -84,6 +84,9 @@ export function TopBar({
         left: 0,
         right: 0,
         zIndex: 200,
+        // Edge-to-edge Android: status bar (clock/battery) overlays the WebView —
+        // pad the top bar down so content never hides under it.
+        paddingTop: 'env(safe-area-inset-top)',
         background: tk.panel,
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',

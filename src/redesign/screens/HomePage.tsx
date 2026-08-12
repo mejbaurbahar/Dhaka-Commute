@@ -2032,11 +2032,11 @@ export function HomePage({
       <div className="kj-future-bg" />
 
       {/* TopBar rendered in KoyJaboApp (outside .kj-screen transform) */}
-      {/* Spacer for fixed TopBar */}
-      <div style={{ height: isMobile ? 52 : 60, flexShrink: 0 }}/>
+      {/* Spacer for fixed TopBar (grows with status-bar inset on edge-to-edge Android) */}
+      <div style={{ height: isMobile ? 'calc(52px + env(safe-area-inset-top))' : 60, flexShrink: 0 }}/>
 
-      {/* Scrollable content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 28, paddingBottom: isMobile ? 80 : 32, paddingTop: 24, position: 'relative', zIndex: 1 }}>
+      {/* Scrollable content — bottom padding clears tab bar (67px) + anchor ad (50px) + system gesture bar */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 28, paddingBottom: isMobile ? 'calc(80px + env(safe-area-inset-bottom))' : 32, paddingTop: 24, position: 'relative', zIndex: 1 }}>
 
         {/* ── HERO ── */}
         <div style={section}>

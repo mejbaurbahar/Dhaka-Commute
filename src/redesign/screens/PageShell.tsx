@@ -67,8 +67,8 @@ export function PageShell({
         }}
       />
 
-      {/* Single spacer to offset the fixed TopBar */}
-      <div style={{ height: isMobile ? 52 : 60, flexShrink: 0 }}/>
+      {/* Single spacer to offset the fixed TopBar (grows with status-bar inset on edge-to-edge Android) */}
+      <div style={{ height: isMobile ? 'calc(52px + env(safe-area-inset-top))' : 60, flexShrink: 0 }}/>
 
       {/* Back bar — shown on detail/inner pages when user can go back */}
       {canBack && (
@@ -76,7 +76,7 @@ export function PageShell({
           display: 'flex', alignItems: 'center', gap: 10,
           padding: '10px 16px', background: tk.bg,
           borderBottom: `1px solid ${tk.line}`,
-          position: 'sticky', top: isMobile ? 52 : 60, zIndex: 10,
+          position: 'sticky', top: isMobile ? 'calc(52px + env(safe-area-inset-top))' : 60, zIndex: 10,
         }}>
           <button onClick={onBack} style={{
             width: 36, height: 36, borderRadius: 10,
@@ -94,8 +94,8 @@ export function PageShell({
 
 
 
-      {/* Scrollable main content — paddingBottom on mobile to clear fixed tab bar (67px) + anchor ad (50px) */}
-      <main style={{ position: 'relative', zIndex: 1, paddingBottom: isMobile ? 130 : 0 }}>
+      {/* Scrollable main content — paddingBottom on mobile to clear fixed tab bar (67px) + anchor ad (50px) + system gesture bar */}
+      <main style={{ position: 'relative', zIndex: 1, paddingBottom: isMobile ? 'calc(130px + env(safe-area-inset-bottom))' : 0 }}>
         {children}
       </main>
 

@@ -29,7 +29,9 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav }: MobileTabBarProps
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
         borderTop: `1px solid ${tk.line}`,
-        padding: '8px 10px 14px',
+        // Edge-to-edge Android: system gesture bar overlays the bottom —
+        // extend the padding so tab labels never sit under it.
+        padding: '8px 10px calc(14px + env(safe-area-inset-bottom))',
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
         width: '100%',
