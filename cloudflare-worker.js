@@ -125,6 +125,8 @@ async function _hmacSha256Hex(secret, message) {
 
 async function issueSessionToken(userId, jwtSecret) {
   if (!jwtSecret) return '';
+  // Same format verifySessionToken enforces — never mint an unverifiable token.
+  if (!/^[\w-]{6,64}$/.test(String(userId || ''))) return '';
   const expiry = Date.now() + SESSION_TTL_MS;
   const sig = await _hmacSha256Hex(jwtSecret, `${userId}.${expiry}`);
   return `${userId}.${expiry}.${sig}`;
@@ -150,8 +152,9 @@ async function verifySessionToken(token, jwtSecret) {
 // ── Turnstile verification helper ────────────────────────────────────────────
 async function verifyTurnstile(token, ip, secret) {
   if (!token || !secret) return false;
-  // Cloudflare test key pair: dummy token always passes with test secret
-  if (token === 'XXXX.DUMMY.TOKEN.XXXX') secret = '1x0000000000000000000000000000000AA';
+  // NOTE: Cloudflare ships a public test keypair (dummy token + test secret)
+  // that ALWAYS passes siteverify. It must never be honored in production —
+  // hardcoding the test secret here would let anyone bypass every auth gate.
   try {
     const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -895,12 +898,11 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       });
     }
 
-    // Block requests not from our domain (in production)
-    const isLocalDev = origin.startsWith('http://localhost');
-    const isOurSite = origin.startsWith('https://koyjabo.com') ||
-                      origin.startsWith('https://www.koyjabo.com') ||
-                      origin.startsWith('https://dev.koyjabo.com');
-    if (!isLocalDev && !isOurSite && origin !== '') {
+    // Block requests not from our domain (in production). Exact match against
+    // the same allowlist used for CORS — a startsWith check would let
+    // https://koyjabo.com.evil.com pass the gate while CORS still rejects it.
+    const isAllowedOrigin = ALLOWED_ORIGINS.includes(origin);
+    if (!isAllowedOrigin && origin !== '') {
       return new Response('Forbidden', { status: 403, headers: corsHeaders(origin) });
     }
 
@@ -956,12 +958,30 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
 
       // Block reads of sensitive paths (user records, password reset blobs,
       // auth metadata). These must go through dedicated POST actions that
-      // strip bcryptHash + verify intent.
-      if (r === 'd' && isReadDenied(p)) {
+      // strip bcryptHash + verify intent. Enforced for BOTH repo branches —
+      // the r=a fallback must not bypass the deny list.
+      if (isReadDenied(p)) {
         return new Response(
           JSON.stringify({ error: 'Forbidden path' }),
           { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
         );
+      }
+
+      // User-bound data (history/devices/reminders/avatars/chat sessions) is
+      // private — reads require the matching session token, same as writes.
+      // Without a token the file is treated as missing (404 null) so the
+      // response reveals nothing about whether a userId exists.
+      const userRule = WRITE_PATH_RULES.find((rule) => rule.userBound && rule.re.test(p));
+      let sessionUserIdForRead = null;
+      if (userRule) {
+        const m = p.match(userRule.re);
+        sessionUserIdForRead = await verifySessionToken(url.searchParams.get('t') || '', env.JWT_SECRET || '');
+        if (!sessionUserIdForRead || m[1] !== sessionUserIdForRead) {
+          return new Response('null', {
+            status: 404,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
+          });
+        }
       }
 
       // Primary fetch with 3-layer caching (CF cache → ETag → GitHub API)
@@ -991,7 +1011,7 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
         );
       }
 
-      const isUserData = p.startsWith('data/users/') || p.startsWith('data/results/');
+      const isUserData = p.startsWith('data/users/') || p.startsWith('data/results/') || !!userRule;
 
       // Inject a fresh session token into successful workflow result reads so
       // newly-signed-up users get a session immediately without a second

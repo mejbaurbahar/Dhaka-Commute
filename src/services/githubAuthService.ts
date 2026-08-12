@@ -83,7 +83,12 @@ async function getClientIP(): Promise<string> {
 const inFlight = new Map<string, Promise<unknown>>();
 
 async function fetchRepo<T = unknown>(repo: 'd' | 'a', path: string): Promise<T | null> {
-  const url = `${PROXY}/gh?r=${repo}&p=${encodeURIComponent(path)}`;
+  // User-bound data is private — the worker requires the session token on
+  // reads too (returns 404 null without it, so the app must send it when the
+  // user is logged in).
+  const isUserBound = /^data\/(history|devices|reminders|avatars|chat)\//.test(path);
+  const sessionToken = isUserBound ? getSessionToken() : '';
+  const url = `${PROXY}/gh?r=${repo}&p=${encodeURIComponent(path)}${sessionToken ? `&t=${encodeURIComponent(sessionToken)}` : ''}`;
   let res: Response;
   let attempt = 0;
   while (true) {

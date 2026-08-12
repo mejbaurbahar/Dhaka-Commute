@@ -137,7 +137,6 @@ async function enableNativePush(): Promise<boolean> {
       const req = await PushNotifications.requestPermissions();
       if (req.receive !== 'granted') return false;
     }
-    await PushNotifications.register();
     if (!nativeListeners) {
       nativeListeners = true;
       PushNotifications.addListener('registration', (data) => {
@@ -151,6 +150,10 @@ async function enableNativePush(): Promise<boolean> {
       });
       PushNotifications.addListener('registrationError', () => { /* silent */ });
     }
+    // Listener must attach BEFORE register — the plugin can emit the token
+    // immediately on register (cold start), so a listener added after would
+    // miss it and the device would never be subscribed.
+    await PushNotifications.register();
     const existing = localStorage.getItem(KEY_ENDPOINT);
     if (existing) post('/api/subscribe', { endpoint: existing, lang: currentLang() });
     return true;

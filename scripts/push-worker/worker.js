@@ -239,6 +239,27 @@ async function encryptPayload(plaintext, subPubRaw, authRaw) {
 
 // ── notifications ─────────────────────────────────────────────────
 
+// Allowed click-through hosts for notification URLs. Event data is
+// client-controlled — without this allowlist a leaked subscription could be
+// used to push phishing links (the notification body's URL comes from d.url).
+const URL_HOST_ALLOWLIST = new Set([
+  'koyjabo.com',
+  'www.koyjabo.com',
+  'dev.koyjabo.com',
+  'localhost',
+]);
+
+function safeUrl(raw) {
+  if (typeof raw !== 'string' || raw.length > 512) return '/';
+  if (raw.startsWith('/')) return raw; // relative — same-origin only
+  try {
+    const u = new URL(raw);
+    return URL_HOST_ALLOWLIST.has(u.host) ? u.href : '/';
+  } catch {
+    return '/';
+  }
+}
+
 function notificationFor(sub, event) {
   const lang = sub.lang === 'bn' ? 'bn' : 'en';
   const spec = NOTIFICATIONS[event.type] || NOTIFICATIONS.install;
@@ -246,7 +267,7 @@ function notificationFor(sub, event) {
   return {
     title: n.title,
     body: typeof n.body === 'function' ? n.body(event.data) : n.body,
-    url: typeof n.url === 'function' ? n.url(event.data) : n.url,
+    url: safeUrl(typeof n.url === 'function' ? n.url(event.data) : n.url),
   };
 }
 
@@ -371,13 +392,16 @@ async function saveSub(sub) {
 // ── handlers ──────────────────────────────────────────────────────
 
 async function handleSubscribe(body) {
-  if (!body || typeof body.endpoint !== 'string' || body.endpoint.length < 8) {
+  if (!body || typeof body.endpoint !== 'string' || body.endpoint.length < 8 || body.endpoint.length > 2048) {
     return Response.json({ ok: false, error: 'bad endpoint' }, { status: 400 });
   }
   const isWeb = /^https:\/\//.test(body.endpoint);
   const keys = body.keys || {};
   if (isWeb && (typeof keys.p256dh !== 'string' || typeof keys.auth !== 'string')) {
     return Response.json({ ok: false, error: 'missing keys' }, { status: 400 });
+  }
+  if (isWeb && (keys.p256dh.length > 512 || keys.auth.length > 512)) {
+    return Response.json({ ok: false, error: 'keys too large' }, { status: 400 });
   }
   let existing = await loadSub(body.endpoint);
   const sub = {
@@ -393,19 +417,26 @@ async function handleSubscribe(body) {
 }
 
 async function handleEvent(body) {
-  if (!body || typeof body.endpoint !== 'string' || !TYPES.includes(body.type)) {
+  if (!body || typeof body.endpoint !== 'string' || body.endpoint.length > 2048 || !TYPES.includes(body.type)) {
     return Response.json({ ok: false, error: 'bad event' }, { status: 400 });
   }
   const sub = await loadSub(body.endpoint);
   if (!sub) return Response.json({ ok: false, error: 'not subscribed' }, { status: 404 });
-  const fireAt = typeof body.fireAt === 'number' ? body.fireAt : Date.now();
+  // NaN guard: typeof NaN === 'number', and NaN comparisons are all false, so
+  // a NaN fireAt used to slip through and bloat KV forever (never fires, and
+  // the sub is never evicted because events is non-empty).
+  let fireAt = typeof body.fireAt === 'number' && Number.isFinite(body.fireAt) ? body.fireAt : Date.now();
   const now = Date.now();
   if (fireAt > now + 90 * DAY || fireAt < now - HOUR) {
     return Response.json({ ok: false, error: 'fireAt out of range' }, { status: 400 });
   }
+  let data = body.data;
+  if (data === null || data === undefined) data = {};
+  if (typeof data !== 'object' || Array.isArray(data)) return Response.json({ ok: false, error: 'bad data' }, { status: 400 });
+  if (JSON.stringify(data).length > 4096) return Response.json({ ok: false, error: 'data too large' }, { status: 400 });
   sub.events = [
     ...sub.events.filter((e) => e.type !== body.type),
-    { type: body.type, fireAt, data: body.data || {}, createdAt: now },
+    { type: body.type, fireAt, data, createdAt: now },
   ].slice(-MAX_EVENTS);
   if (body.lang === 'bn' || body.lang === 'en') sub.lang = body.lang;
   sub.updatedAt = now;
@@ -414,7 +445,7 @@ async function handleEvent(body) {
 }
 
 async function handleCancel(body) {
-  if (!body || typeof body.endpoint !== 'string' || !TYPES.includes(body.type)) {
+  if (!body || typeof body.endpoint !== 'string' || body.endpoint.length > 2048 || !TYPES.includes(body.type)) {
     return Response.json({ ok: false, error: 'bad cancel' }, { status: 400 });
   }
   const sub = await loadSub(body.endpoint);
@@ -426,7 +457,7 @@ async function handleCancel(body) {
 }
 
 async function handleUnsubscribe(body) {
-  if (!body || typeof body.endpoint !== 'string') {
+  if (!body || typeof body.endpoint !== 'string' || body.endpoint.length > 2048) {
     return Response.json({ ok: false, error: 'bad unsubscribe' }, { status: 400 });
   }
   await CFG.PUSH_SUBS.delete(subKey(body.endpoint));
@@ -436,16 +467,28 @@ async function handleUnsubscribe(body) {
 // ── cron delivery ─────────────────────────────────────────────────
 
 async function handleScheduled() {
-  const list = await CFG.PUSH_SUBS.list({ prefix: SUB_PREFIX });
   const now = Date.now();
-  for (const { name } of list.keys) {
+  // KV list() defaults to 1000 keys per page — iterate with the cursor or any
+  // subscription past the first page is silently never delivered.
+  let cursor = undefined;
+  do {
+    const list = await CFG.PUSH_SUBS.list({ prefix: SUB_PREFIX, cursor });
+    for (const { name } of list.keys) {
+      await processSub(name, now);
+    }
+    cursor = list.cursor;
+  } while (cursor);
+  return new Response('ok');
+}
+
+async function processSub(name, now) {
     let sub;
     try {
       sub = await CFG.PUSH_SUBS.get(name, 'json');
     } catch {
-      continue;
+      return;
     }
-    if (!sub) continue;
+    if (!sub) return;
 
     const due = (sub.events || []).filter((e) => e.fireAt <= now).sort((a, b) => a.fireAt - b.fireAt);
     if (!due.length) {
@@ -453,7 +496,7 @@ async function handleScheduled() {
       if (sub.events && sub.events.length === 0 && now - (sub.updatedAt || 0) > 30 * DAY) {
         await CFG.PUSH_SUBS.delete(name);
       }
-      continue;
+      return;
     }
 
     const event = due[0];
@@ -467,7 +510,7 @@ async function handleScheduled() {
     if (status === 404 || status === 410) {
       // Subscription no longer valid — drop the whole sub.
       await CFG.PUSH_SUBS.delete(name);
-      continue;
+      return;
     }
     if (status >= 200 && status < 300) {
       const nudges = (event.data && event.data.nudges) || 0;
@@ -484,11 +527,33 @@ async function handleScheduled() {
       await saveSub(sub);
     }
     // Any other status: keep the event, retry next tick.
-  }
-  return new Response('ok');
 }
 
 // ── router ────────────────────────────────────────────────────────
+
+const ORIGIN_ALLOWLIST = new Set([
+  'https://koyjabo.com',
+  'https://www.koyjabo.com',
+  'https://dev.koyjabo.com',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://localhost', // Capacitor Android WebView origin
+]);
+
+// KV-backed per-IP limiter — global across isolates (the in-memory maps in
+// other workers reset per isolate; KV counter + short TTL is coarse but real).
+const RATE_LIMIT_PER_MINUTE = 120;
+
+async function rateLimited(request) {
+  const ip = request.headers.get('CF-Connecting-IP') || '';
+  if (!ip) return false;
+  const minute = Math.floor(Date.now() / 60_000);
+  const key = `rl:${ip}:${minute}`;
+  const cur = Number((await CFG.PUSH_SUBS.get(key)) || 0);
+  if (cur >= RATE_LIMIT_PER_MINUTE) return true;
+  await CFG.PUSH_SUBS.put(key, String(cur + 1), { expirationTtl: 120 });
+  return false;
+}
 
 export default {
   async fetch(request, env, ctx) {
@@ -502,6 +567,19 @@ export default {
     }
     if (request.method !== 'POST') {
       return cors(Response.json({ ok: false, error: 'method not allowed' }, { status: 405 }));
+    }
+    // Origin gate: only the app + site may talk to this worker. Exact match —
+    // a startsWith check would let koyjabo.com.evil.com through.
+    const origin = request.headers.get('Origin') || '';
+    if (origin !== '' && !ORIGIN_ALLOWLIST.has(origin)) {
+      return cors(Response.json({ ok: false, error: 'forbidden' }, { status: 403 }));
+    }
+    if (await rateLimited(request)) {
+      return cors(Response.json({ ok: false, error: 'rate limited' }, { status: 429 }));
+    }
+    const contentLength = Number(request.headers.get('Content-Length') || 0);
+    if (contentLength > 65536) {
+      return cors(Response.json({ ok: false, error: 'body too large' }, { status: 413 }));
     }
     const body = await json(request);
     try {

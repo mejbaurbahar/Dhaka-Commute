@@ -89,9 +89,14 @@ async function repoGet<T>(path: string): Promise<T | null> {
 
   await _acquire();
   try {
-    const res = await fetch(`${PROXY}/gh?r=d&p=${encodeURIComponent(path)}&_t=${Date.now()}`, {
-      cache: 'no-store'
-    });
+    // User-bound paths are session-gated on the worker — send the token when
+    // logged in, or the read comes back as missing.
+    const isUserBound = /^data\/(history|devices|reminders|avatars|chat)\//.test(path);
+    const sessionToken = isUserBound ? _sessionToken() : '';
+    const res = await fetch(
+      `${PROXY}/gh?r=d&p=${encodeURIComponent(path)}&_t=${Date.now()}${sessionToken ? `&t=${encodeURIComponent(sessionToken)}` : ''}`,
+      { cache: 'no-store' }
+    );
     if (res.status === 404) {
       const fallback = readCommunityCache<T>(path);
       _cache.set(path, { data: fallback, expiresAt: Date.now() + CACHE_TTL });
