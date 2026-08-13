@@ -242,6 +242,37 @@ function extractBusRoutes() {
   return routes;
 }
 
+function extractIntercityOperators() {
+  const content = fs.readFileSync(path.join(root, 'data', 'intercityOperatorData.ts'), 'utf8');
+  const start = content.indexOf('export const BUS_OPERATOR_DETAILS');
+  if (start === -1) return [];
+  const section = content.slice(start);
+  const ops = [];
+  // Same anchor as generate-sitemap.mjs — top-level operators only (id, name,
+  // bnName, shortName sequence; route/stop objects don't carry all four).
+  const opRe = /id:\s*'([^']+)'\s*,\s*name:\s*'([^']+)'\s*,\s*bnName:\s*'([^']+)'\s*,\s*shortName:\s*'([^']+)'/g;
+  let m;
+  while ((m = opRe.exec(section)) !== null) {
+    const nextOp = opRe.lastIndex; // advance manually below
+    const bodyEnd = section.indexOf('\n  {', nextOp);
+    const body = bodyEnd === -1 ? section.slice(nextOp) : section.slice(nextOp, bodyEnd);
+    const routes = [];
+    const routeRe = /from:\s*'([^']+)'\s*,\s*to:\s*'([^']+)'\s*,\s*fromBn:\s*'[^']+'\s*,\s*toBn:\s*'[^']+'\s*,\s*dhakaCounters:\s*\[([^\]]*)\][\s\S]*?distanceKm:\s*(\d+)[\s\S]*?durationHrs:\s*'([^']+)'[\s\S]*?fareNonAC:\s*'([^']+)'(?:\s*,\s*fareAC:\s*'([^']+)')?\s*,\s*departureTimes:\s*\[([^\]]*)\]/g;
+    let r;
+    while ((r = routeRe.exec(body)) !== null) {
+      routes.push({
+        from: r[1], to: r[2],
+        counters: r[3].split(',').map(s => s.trim().replace(/^'|'$/g, '')).filter(Boolean),
+        distanceKm: Number(r[4]), duration: r[5],
+        fareNonAC: r[6], fareAC: r[7] || '',
+        departures: r[8].split(',').map(s => s.trim().replace(/^'|'$/g, '')).filter(Boolean),
+      });
+    }
+    ops.push({ id: m[1], name: m[2], bnName: m[3], shortName: m[4], slug: slugify(m[2] || m[1]), routes });
+  }
+  return ops;
+}
+
 function extractTrainRoutes() {
   const content = fs.readFileSync(path.join(root, 'data', 'bangladeshTrainData.ts'), 'utf8');
   const start = content.indexOf('export const BD_TRAIN_ROUTES');
@@ -607,6 +638,41 @@ for (const train of extractTrainRoutes()) {
         acceptedAnswer: { '@type': 'Answer', text: `The ${train.name} train runs from ${train.from} to ${train.to}. See the complete stop list and timings on KoyJabo.` },
       },
     ],
+  }));
+}
+
+for (const op of extractIntercityOperators()) {
+  const routeListHtml = op.routes.length
+    ? `<h2>Routes of ${escapeHtml(op.name)} from Dhaka</h2><ul>${op.routes.map(r => {
+        const times = r.departures.length ? ` — departs ${escapeHtml(r.departures.join(', '))}` : '';
+        const fare = `${escapeHtml(r.fareNonAC)}${r.fareAC ? ` / AC ${escapeHtml(r.fareAC)}` : ''}`;
+        return `<li><strong>${escapeHtml(r.from)} → ${escapeHtml(r.to)}</strong> — ${escapeHtml(r.duration)}, ${fare}${times}</li>`;
+      }).join('')}</ul>`
+    : '';
+  pages.push(renderPage({
+    path: `/intercity/${op.slug}`,
+    title: `${op.name} Intercity Bus: Routes, Fares & Schedule`,
+    description: `${op.name} (${op.bnName}) intercity bus from Dhaka. Routes${op.routes.length ? ` to ${[...new Set(op.routes.map(r => r.to))].slice(0, 3).join(', ')}` : ''}, fares from ${op.routes[0]?.fareNonAC ?? ''} and departure times on KoyJabo.`,
+    keywords: [`${op.name} bus`, `${op.bnName} বাস`, `${op.name} Dhaka to ${op.routes[0]?.to ?? ''} bus`, 'Bangladesh intercity bus', 'intercity bus schedule'],
+    bodyHtml: `
+      <article>
+        <h1>${escapeHtml(op.name)} Intercity Bus - ${escapeHtml(op.bnName)}</h1>
+        <p>${escapeHtml(op.name)} (${escapeHtml(op.bnName)}) is an intercity bus operator running services from Dhaka across Bangladesh. KoyJabo lists the operator's routes, fares, departure times and boarding counters.</p>
+        ${routeListHtml}
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8425219156685369" data-ad-slot="9568870428" data-ad-format="fluid" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <h2>Boarding counters for ${escapeHtml(op.name)}</h2>
+        <p>Pick up ${escapeHtml(op.name)} buses at the operator's Dhaka counters. Fares are per person, one-way; AC services cost more than non-AC. Use KoyJabo to compare intercity operators before booking.</p>
+      </article>
+    `,
+    schema: {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: `${op.name} Intercity Bus`,
+      url: `${baseUrl}/intercity/${op.slug}/`,
+      description: `${op.name} intercity bus routes and fares.`,
+      about: { '@type': 'BusTrip', name: `${op.name} Intercity Bus` },
+    },
   }));
 }
 
