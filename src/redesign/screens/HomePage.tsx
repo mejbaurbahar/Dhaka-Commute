@@ -397,6 +397,7 @@ function SearchPanel({
               order: 2,
             }}
             aria-label="Swap"
+            onClick={() => { setFrom(to); setTo(from); setSameLocError(false); }}
           >
             <Icon.swap s={16} />
           </button>
@@ -533,7 +534,7 @@ function SearchPanel({
 interface TileData {
   grad: string;
   label: { bn: string; en: string };
-  sub: string;
+  sub: { bn: string; en: string };
   badge?: { bn: string; en: string };
   route: string;
   mode: SearchModeId;
@@ -541,14 +542,14 @@ interface TileData {
 }
 
 const TILES: TileData[] = [
-  { grad: 'linear-gradient(135deg, #10b981, #006a4e)', label: { bn: 'লোকাল বাস', en: 'Local bus' }, sub: T('en', '২০০+ রুট', '200+ routes'), badge: { bn: 'জনপ্রিয়', en: 'Popular' }, route: 'bus-hub', mode: 'bus', vehicleKind: 'bus' },
-  { grad: 'linear-gradient(135deg, #3b82f6, #1e3a8a)', label: { bn: 'মেট্রো রেল', en: 'Metro Rail' }, sub: 'MRT-6 · 15 stations', route: 'metro-hub', mode: 'metro', vehicleKind: 'train' },
-  { grad: 'linear-gradient(135deg, #8b5cf6, #5b21b6)', label: { bn: 'ট্রেন', en: 'Train' }, sub: 'BD Railway · all routes', route: 'train-hub', mode: 'train', vehicleKind: 'train' },
-  { grad: 'linear-gradient(135deg, #f59e0b, #b45309)', label: { bn: 'আন্তঃজেলা', en: 'Intercity' }, sub: '64 districts · bus/train/flight', route: 'intercity', mode: 'intercity', vehicleKind: 'plane' },
-  { grad: 'linear-gradient(135deg, #0ea5e9, #075985)', label: { bn: 'লঞ্চ ও স্টিমার', en: 'Launch & Steamer' }, sub: 'Sadarghat → Barisal', route: 'launch-hub', mode: 'launch', vehicleKind: 'launch' },
-  { grad: 'linear-gradient(135deg, #8b5cf6, #5b21b6)', label: { bn: 'অভ্যন্তরীণ ফ্লাইট', en: 'Flights' }, sub: '4 airlines · 8 airports', badge: { bn: 'নতুন', en: 'New' }, route: 'flights-hub', mode: 'flights', vehicleKind: 'plane' },
-  { grad: 'linear-gradient(135deg, #ef4444, #7f1d1d)', label: { bn: 'ট্রাক ও পণ্য', en: 'Truck & Freight' }, sub: '64 districts · 16 vehicle types', badge: { bn: 'নতুন', en: 'New' }, route: 'truck-hub', mode: 'truck', vehicleKind: 'truck' },
-  { grad: 'linear-gradient(135deg, #ef4444, #b91c1c)', label: { bn: 'AI সহায়ক', en: 'AI Assistant' }, sub: 'Ask in Bangla', badge: { bn: 'নতুন', en: 'New' }, route: 'ai', mode: 'bus', vehicleKind: 'chatbot' },
+  { grad: 'linear-gradient(135deg, #10b981, #006a4e)', label: { bn: 'লোকাল বাস', en: 'Local bus' }, sub: { bn: '২০০+ রুট', en: '200+ routes' }, badge: { bn: 'জনপ্রিয়', en: 'Popular' }, route: 'bus-hub', mode: 'bus', vehicleKind: 'bus' },
+  { grad: 'linear-gradient(135deg, #3b82f6, #1e3a8a)', label: { bn: 'মেট্রো রেল', en: 'Metro Rail' }, sub: { bn: 'এমআরটি-৬ · ১৫ স্টেশন', en: 'MRT-6 · 15 stations' }, route: 'metro-hub', mode: 'metro', vehicleKind: 'train' },
+  { grad: 'linear-gradient(135deg, #8b5cf6, #5b21b6)', label: { bn: 'ট্রেন', en: 'Train' }, sub: { bn: 'বাংলাদেশ রেলওয়ে · সব রুট', en: 'BD Railway · all routes' }, route: 'train-hub', mode: 'train', vehicleKind: 'train' },
+  { grad: 'linear-gradient(135deg, #f59e0b, #b45309)', label: { bn: 'আন্তঃজেলা', en: 'Intercity' }, sub: { bn: '৬৪ জেলা · বাস/ট্রেন/ফ্লাইট', en: '64 districts · bus/train/flight' }, route: 'intercity', mode: 'intercity', vehicleKind: 'plane' },
+  { grad: 'linear-gradient(135deg, #0ea5e9, #075985)', label: { bn: 'লঞ্চ ও স্টিমার', en: 'Launch & Steamer' }, sub: { bn: 'সদরঘাট → বরিশাল', en: 'Sadarghat → Barisal' }, route: 'launch-hub', mode: 'launch', vehicleKind: 'launch' },
+  { grad: 'linear-gradient(135deg, #8b5cf6, #5b21b6)', label: { bn: 'অভ্যন্তরীণ ফ্লাইট', en: 'Flights' }, sub: { bn: '৪ এয়ারলাইন · ৮ বিমানবন্দর', en: '4 airlines · 8 airports' }, badge: { bn: 'নতুন', en: 'New' }, route: 'flights-hub', mode: 'flights', vehicleKind: 'plane' },
+  { grad: 'linear-gradient(135deg, #ef4444, #7f1d1d)', label: { bn: 'ট্রাক ও পণ্য', en: 'Truck & Freight' }, sub: { bn: '৬৪ জেলা · ১৬ ধরনের গাড়ি', en: '64 districts · 16 vehicle types' }, badge: { bn: 'নতুন', en: 'New' }, route: 'truck-hub', mode: 'truck', vehicleKind: 'truck' },
+  { grad: 'linear-gradient(135deg, #ef4444, #b91c1c)', label: { bn: 'AI সহায়ক', en: 'AI Assistant' }, sub: { bn: 'বাংলায় জিজ্ঞেস করুন', en: 'Ask in Bangla' }, badge: { bn: 'নতুন', en: 'New' }, route: 'ai', mode: 'bus', vehicleKind: 'chatbot' },
 ];
 
 function ModeTile({
@@ -676,7 +677,7 @@ function ModeTile({
             lineHeight: 1.3,
           }}
         >
-          {tile.sub}
+          {T(lang, tile.sub.bn, tile.sub.en)}
         </div>
       </div>
 
@@ -1170,7 +1171,7 @@ function MetroLiveStrip({ tk, lang, isMobile }: { tk: Tokens; lang: Lang; isMobi
             <div>
               <div style={{ display:'flex', alignItems:'center', gap:6 }}>
                 <span style={{ width:7, height:7, borderRadius:'50%', background:'#22c55e', animation:'kjpulse 1.5s ease-in-out infinite', display:'inline-block' }}/>
-                <span style={{ fontFamily:SANS, fontSize:12, fontWeight:600, color:'#93c5fd' }}>{T(lang,'লাইভ · এমআরটি লাইন ৬','Live · MRT Line 6')}</span>
+                <span style={{ fontFamily:SANS, fontSize:12, fontWeight:600, color:'#93c5fd' }}>{T(lang,'শিডিউল · এমআরটি লাইন ৬','Schedule · MRT Line 6')}</span>
               </div>
               <div style={{ fontFamily:lang==='bn'?BEN:SANS, fontSize:11, color:'rgba(255,255,255,0.5)', marginTop:1 }}>
                 {T(lang,'উত্তরা উত্তর → মতিঝিল','Uttara North → Motijheel')}
@@ -1446,7 +1447,7 @@ const AI_CHIPS = [
   'Sadarghat launch times',
 ];
 
-function AICard({ tk, lang, onNav }: { tk: Tokens; lang: Lang; onNav: (r: string) => void }) {
+function AICard({ tk, lang, onNav }: { tk: Tokens; lang: Lang; onNav: (r: string, p?: Record<string, string>) => void }) {
   return (
     <div
       onClick={() => onNav('ai')}
@@ -1529,21 +1530,25 @@ function AICard({ tk, lang, onNav }: { tk: Tokens; lang: Lang; onNav: (r: string
       {/* Suggestion chips */}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12, position: 'relative', zIndex: 1 }}>
         {AI_CHIPS.map((c) => (
-          <span
+          <button
             key={c}
+            onClick={(e) => { e.stopPropagation(); onNav('ai', { q: c }); }}
             style={{
               background: 'rgba(255,255,255,0.14)',
               border: '1px solid rgba(255,255,255,0.22)',
               borderRadius: 999,
-              padding: '5px 11px',
+              padding: '6px 12px',
               fontFamily: SANS,
               fontSize: 11,
               color: 'rgba(255,255,255,0.9)',
               cursor: 'pointer',
+              transition: 'background 0.15s',
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.24)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.14)')}
           >
             {c}
-          </span>
+          </button>
         ))}
       </div>
 
@@ -1678,13 +1683,13 @@ function EmergencyGrid({ tk, lang }: { tk: Tokens; lang: Lang }) {
 
 // ─── AdIntentRow (sponsored chips) ───────────────────────────────────────────
 
-function AdIntentRow({ tk, lang }: { tk: Tokens; lang: Lang }) {
+function AdIntentRow({ tk, lang, onNav }: { tk: Tokens; lang: Lang; onNav: (r: string, p?: Record<string, string>) => void }) {
   const chips = [
-    T(lang, 'এয়ারপোর্ট থেকে বাস', 'Bus from Airport'),
-    T(lang, 'মতিঝিল রুট', 'Motijheel routes'),
-    T(lang, 'ঢাকা-চট্টগ্রাম', 'Dhaka-Chittagong'),
-    T(lang, 'গুলশান → বনানী', 'Gulshan → Banani'),
-    T(lang, 'কক্সবাজার বাস', 'Cox\'s Bazar bus'),
+    { l: T(lang, 'এয়ারপোর্ট থেকে বাস', 'Bus from Airport'), search: 'Airport to Farmgate' },
+    { l: T(lang, 'মতিঝিল রুট', 'Motijheel routes'), search: 'Motijheel' },
+    { l: T(lang, 'ঢাকা-চট্টগ্রাম', 'Dhaka-Chittagong'), search: 'Dhaka to Chattogram' },
+    { l: T(lang, 'গুলশান → বনানী', 'Gulshan → Banani'), search: 'Gulshan to Banani' },
+    { l: T(lang, 'কক্সবাজার বাস', 'Cox\'s Bazar bus'), search: "Cox's Bazar" },
   ];
 
   return (
@@ -1714,6 +1719,7 @@ function AdIntentRow({ tk, lang }: { tk: Tokens; lang: Lang }) {
       {chips.map((c, i) => (
         <button
           key={i}
+          onClick={() => onNav('bus-hub', { search: c.search })}
           style={{
             background: tk.panelMuted,
             border: `1px solid ${tk.line}`,
@@ -1726,9 +1732,12 @@ function AdIntentRow({ tk, lang }: { tk: Tokens; lang: Lang }) {
             cursor: 'pointer',
             whiteSpace: 'nowrap',
             flexShrink: 0,
+            transition: 'background 0.15s, color 0.15s',
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = tk.primarySoft; e.currentTarget.style.color = tk.primary; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = tk.panelMuted; e.currentTarget.style.color = tk.textDim; }}
         >
-          {c}
+          {c.l}
         </button>
       ))}
     </div>
@@ -2212,7 +2221,7 @@ export function HomePage({
 
         {/* ── AdIntentRow ── */}
         <div style={section}>
-          <AdIntentRow tk={tk} lang={lang} />
+          <AdIntentRow tk={tk} lang={lang} onNav={onNav} />
         </div>
 
         {/* ── KoyJaboStory ── */}
@@ -2230,7 +2239,7 @@ export function HomePage({
           <SectionHeader
             tk={tk}
             lang={lang}
-            title={T(lang, 'মেট্রো লাইভ', 'Metro Live')}
+            title={T(lang, 'মেট্রো শিডিউল', 'Metro Schedule')}
             action={T(lang, 'সব স্টেশন', 'All stations')}
             onAction={() => onNav('metro-hub')}
           />

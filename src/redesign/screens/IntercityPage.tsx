@@ -792,7 +792,7 @@ export function IntercityPage(props: Props) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 10 }}>
             {BUS_OPERATORS.slice(0, 8).map((op) => (
-              <button key={op.name} onClick={() => onNav('intercity-detail')} style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 14, padding: '12px 10px', textAlign: 'center', cursor: 'pointer' }}>
+              <button key={op.name} onClick={() => onNav('intercity-detail', { operator: op.name, route: op.primaryRoute })} style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 14, padding: '12px 10px', textAlign: 'center', cursor: 'pointer' }}>
                 <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 700, color: tk.text, marginBottom: 4 }}>{op.name.split(' ')[0]}</div>
                 <div style={{ fontFamily: SANS, fontSize: 10, color: tk.textDim, lineHeight: 1.3 }}>{op.primaryRoute.slice(0, 20)}</div>
               </button>

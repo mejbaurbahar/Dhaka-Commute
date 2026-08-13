@@ -81,7 +81,7 @@ export function RouteResultsV2Page(props: Props) {
   React.useEffect(() => {
     if (!fromQ && !toQ && !searchQ) return;
     const url =
-      `/search?from=${encodeURIComponent(fromQ)}&to=${encodeURIComponent(toQ)}` +
+      `/local-bus/results?from=${encodeURIComponent(fromQ)}&to=${encodeURIComponent(toQ)}` +
       (searchQ ? `&search=${encodeURIComponent(searchQ)}` : '');
     trackPushEvent('search-check', { url, from: fromQ, to: toQ }, inHours(1));
     trackPushEvent('search-tomorrow', { url, from: fromQ, to: toQ }, nextMorning());

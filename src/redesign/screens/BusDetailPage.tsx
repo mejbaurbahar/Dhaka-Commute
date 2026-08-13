@@ -246,7 +246,16 @@ export function BusDetailPage(props: Props) {
             <button onClick={() => setShowRating(true)} style={{ ...chipBtn(tk), borderRadius:12, padding:'10px 16px' }}>
               ★ {T(lang,'রেট','Rate')}
             </button>
-            <button style={{ flex:1, background:tk.primary, color:tk.primaryInk, border:0, borderRadius:12, padding:'12px 20px', fontFamily:SANS, fontWeight:700, fontSize:14, cursor:'pointer' }}>
+            <button
+              style={{ flex:1, background:tk.primary, color:tk.primaryInk, border:0, borderRadius:12, padding:'12px 20px', fontFamily:SANS, fontWeight:700, fontSize:14, cursor:'pointer' }}
+              onClick={() => {
+                const s0 = STATIONS[bus.stops[0]];
+                const sN = STATIONS[bus.stops[bus.stops.length - 1]];
+                const q = encodeURIComponent(`${bus.name}: ${bus.routeString}`);
+                if (s0?.lat && sN?.lat) window.open(`https://www.google.com/maps/dir/${s0.lat},${s0.lng}/${sN.lat},${sN.lng}/`, '_blank', 'noopener');
+                else window.open(`https://www.google.com/maps/search/${q}`, '_blank', 'noopener');
+              }}
+            >
               {T(lang,'নেভিগেট শুরু','Start navigation')}
             </button>
           </div>

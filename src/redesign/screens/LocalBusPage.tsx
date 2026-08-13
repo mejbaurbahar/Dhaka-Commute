@@ -84,6 +84,9 @@ export function LocalBusPage(props: Props) {
   const [hasSearched, setHasSearched] = useState(!!(props.params?.from || props.params?.to || props.params?.search));
   const [fromFocus, setFromFocus] = useState(false);
   const [toFocus, setToFocus] = useState(false);
+  const [searchAttr, setSearchAttr] = useState<'name' | 'route' | 'type'>('name');
+  const [quickFastest, setQuickFastest] = useState(false);
+  const [quickAC, setQuickAC] = useState(false);
   const fromRef = useRef<HTMLDivElement>(null);
   const toRef = useRef<HTMLDivElement>(null);
 
@@ -114,50 +117,64 @@ export function LocalBusPage(props: Props) {
 
   // Real bus route filtering — only active after search button click
   const filteredRoutes = useMemo(() => {
-    if (!hasSearched) return BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10);
+    // Quick filters/sort applied to whatever list is produced below
+    const applyQuick = (list: typeof BUS_DATA) => {
+      let out = [...list];
+      if (quickAC) out = out.filter(r => r.type === 'AC');
+      if (quickFastest) out = out.sort((a, b) => a.stops.length - b.stops.length);
+      return out;
+    };
+
+    if (!hasSearched) return applyQuick(BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10));
     const q = searchQuery.trim();
     const f = fromInput.trim();
     const t = toInput.trim();
 
     if (q) {
+      if (searchAttr === 'route') {
+        return applyQuick(BUS_DATA.filter(r => r.routeString.toLowerCase().includes(q.toLowerCase())).slice(0, 20));
+      }
+      if (searchAttr === 'type') {
+        return applyQuick(BUS_DATA.filter(r => r.type.toLowerCase().includes(q.toLowerCase())).slice(0, 20));
+      }
       const result = enhancedBusSearch(q);
       if (result.buses.length > 0) {
-        return result.buses.filter(r => r.active !== false).slice(0, 20);
+        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 20));
       }
       const lowered = q.toLowerCase();
-      return BUS_DATA.filter(r =>
+      return applyQuick(BUS_DATA.filter(r =>
         r.name.toLowerCase().includes(lowered) ||
         (r.bnName?.toLowerCase() ?? '').includes(lowered) ||
         r.routeString.toLowerCase().includes(lowered) ||
         r.type.toLowerCase().includes(lowered) ||
         r.stops.some(s => s.toLowerCase().includes(norm(lowered)))
-      ).slice(0, 20);
+      ).slice(0, 20));
     }
 
     if (f && t) {
       const result = enhancedBusSearch(`${f} to ${t}`);
       if (result.buses.length > 0) {
-        return result.buses.filter(r => r.active !== false).slice(0, 20);
+        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 20));
       }
       const results = BUS_DATA.filter(r => matchesStation(r, f) && matchesStation(r, t)).slice(0, 20);
-      if (results.length) return results;
+      if (results.length) return applyQuick(results);
     }
     if (f) {
       const result = enhancedBusSearch(f);
       if (result.buses.length > 0) {
-        return result.buses.filter(r => r.active !== false).slice(0, 15);
+        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 15));
       }
-      return BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 15);
+      return applyQuick(BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 15));
     }
     if (t) {
       const result = enhancedBusSearch(t);
       if (result.buses.length > 0) {
-        return result.buses.filter(r => r.active !== false).slice(0, 15);
+        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 15));
       }
-      return BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 15);
+      return applyQuick(BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 15));
     }
-    return BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10);
-  }, [searchQuery, fromInput, toInput, hasSearched]);
+    return applyQuick(BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10));
+  }, [searchQuery, fromInput, toInput, hasSearched, searchAttr, quickFastest, quickAC]);
 
   const DTCA_TERMS = ['dhakar chaka','dhaka chaka','chaka','ঢাকার চাকা','ঢাকা চাকা','gulshan chaka','গুলশান চাকা'];
   const showInlineDtca = hasSearched && DTCA_TERMS.some(t =>
@@ -218,8 +235,8 @@ export function LocalBusPage(props: Props) {
               <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder={T(lang,'যেমন: গ্রীন লাইন, রাইদা ৭, BRTC দোতলা, রুট ৬...','e.g. Green Line, Raida #7, BRTC Double, Route 6...')} style={{ flex:1, background:'transparent', border:'none', outline:'none', fontFamily:BEN, fontSize:14, color:tk.text }}/>
             </div>
             <div style={{ display:'flex', gap:6, marginBottom:12 }}>
-              {[{l:T(lang,'নাম','Name'),on:true},{l:T(lang,'রুট','Route')},{l:T(lang,'অপারেটর','Operator')}].map((c,i)=>(
-                <button key={i} style={{ ...chipBtn(tk), background:c.on?tk.primarySoft:tk.panelMuted, color:c.on?tk.primary:tk.textDim, borderColor:c.on?tk.primary:tk.line, fontWeight:c.on?700:500 }}>{c.l}</button>
+              {([{id:'name' as const,l:T(lang,'নাম','Name')},{id:'route' as const,l:T(lang,'রুট','Route')},{id:'type' as const,l:T(lang,'টাইপ','Type')}]).map((c)=>(
+                <button key={c.id} onClick={()=>setSearchAttr(c.id)} style={{ ...chipBtn(tk), background:searchAttr===c.id?tk.primarySoft:tk.panelMuted, color:searchAttr===c.id?tk.primary:tk.textDim, borderColor:searchAttr===c.id?tk.primary:tk.line, fontWeight:searchAttr===c.id?700:500 }}>{c.l}</button>
               ))}
             </div>
             <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'1fr 1fr auto', gap:10 }}>
@@ -251,9 +268,21 @@ export function LocalBusPage(props: Props) {
               })()}
             </div>
             <div style={{ display:'flex', gap:6, marginTop:12, flexWrap:'wrap' }}>
-              {[{l:'⚡ '+T(lang,'দ্রুততম','Fastest'),on:true},{l:'৳ '+T(lang,'সস্তা','Cheapest')},{l:'❄️ AC'},{l:'🚻 '+T(lang,'টয়লেট','Toilet')},{l:'👥 '+T(lang,'কম ভিড়','Less crowd')}].map((c,i)=>(
-                <button key={i} style={{ ...chipBtn(tk), background:c.on?tk.text:tk.panelMuted, color:c.on?tk.bg:tk.text, borderColor:c.on?tk.text:tk.line, fontWeight:c.on?700:500 }}>{c.l}</button>
-              ))}
+              {[
+                { id: 'fastest' as const, l: '⚡ ' + T(lang, 'দ্রুততম', 'Fastest') },
+                { id: 'ac' as const, l: '❄️ AC' },
+              ].map((c) => {
+                const on = c.id === 'fastest' ? quickFastest : quickAC;
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => { if (c.id === 'fastest') setQuickFastest(v => !v); else setQuickAC(v => !v); }}
+                    style={{ ...chipBtn(tk), background: on ? tk.text : tk.panelMuted, color: on ? tk.bg : tk.text, borderColor: on ? tk.text : tk.line, fontWeight: on ? 700 : 500 }}
+                  >
+                    {c.l}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

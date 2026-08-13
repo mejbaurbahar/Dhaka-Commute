@@ -54,9 +54,9 @@ export function MetroPage(props: Props) {
   const isMobile = device === 'mobile';
   const card = (p=16): React.CSSProperties => ({ background:tk.panel, border:`1px solid ${tk.line}`, borderRadius:16, padding:p });
 
-  const [fareFrom, setFareFrom] = useState('');
-  const [fareTo, setFareTo] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
+  const [fareFrom, setFareFrom] = useState(props.params?.from ?? '');
+  const [fareTo, setFareTo] = useState(props.params?.to ?? '');
+  const [hasSearched, setHasSearched] = useState(!!(props.params?.from || props.params?.to));
   const [fromFocus, setFromFocus] = useState(false);
   const [toFocus, setToFocus] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -126,7 +126,7 @@ export function MetroPage(props: Props) {
           <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'1.4fr 1fr', gap:14, marginBottom:18 }}>
             <div style={{ background:'linear-gradient(135deg,#00130e,#00543c)', borderRadius:18, padding:20, color:'#fff', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', right:-40, top:-40, width:160, height:160, borderRadius:999, background:'rgba(16,185,129,0.25)' }} className="kj-anim-pulse"/>
-              <div style={{ fontFamily:SANS, fontSize:11, fontWeight:700, letterSpacing:1.4, color:'rgba(255,255,255,0.7)', textTransform:'uppercase', marginBottom:8 }}>{T(lang,'পরবর্তী ট্রেন','Next train')} · {nearestName}</div>
+              <div style={{ fontFamily:SANS, fontSize:11, fontWeight:700, letterSpacing:1.4, color:'rgba(255,255,255,0.7)', textTransform:'uppercase', marginBottom:8 }}>{T(lang,'পরবর্তী ট্রেন (সম্ভাব্য)','Next train (approx)')} · {nearestName}</div>
               <div style={{ fontFamily:SANS, fontWeight:800, fontSize:isMobile?48:56, color:'#fff', letterSpacing:-2, lineHeight:1 }}>{N('2:15', lang)}</div>
               <div style={{ fontFamily:BEN, fontSize:13, color:'rgba(255,255,255,0.7)', marginTop:6 }}>{T(lang,'উত্তরা উত্তর → মতিঝিল','Uttara North → Motijheel')}</div>
               <div style={{ display:'flex', gap:12, marginTop:14 }}>

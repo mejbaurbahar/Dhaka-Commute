@@ -183,6 +183,13 @@ export function AIChatPage(props: Props) {
   const isMobile = device === 'mobile';
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Msg[]>(INIT_MESSAGES);
+  const firstQ = props.params?.q;
+  useEffect(() => {
+    if (!firstQ) return;
+    setInput(firstQ);
+    send(firstQ);
+    window.history.replaceState({}, '', '/ai');
+  }, [firstQ]);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const userAreaRef = useRef<string>('');
@@ -263,9 +270,10 @@ export function AIChatPage(props: Props) {
     if (sessionId === id) { setSessionId(null); setMessages(INIT_MESSAGES); }
   }
 
-  async function send() {
-    if (!input.trim() || isLoading) return;
-    const userText = input.trim();
+  async function send(prefill?: string) {
+    const text = prefill ?? input;
+    if (!text.trim() || isLoading) return;
+    const userText = text.trim();
     const userMsg = { id: Date.now(), isUser:true, text:userText };
     setMessages(m => [...m, userMsg]);
     const nextSessionId = saveChatMessage({ role: 'user', text: userText, timestamp: Date.now() } as any, sessionId);
@@ -477,7 +485,7 @@ export function AIChatPage(props: Props) {
                 style={{ flex:1,background:'transparent',border:'none',padding: isMobile ? '14px 0' : '12px 0',fontFamily:BEN,fontSize: isMobile ? 16 : 14,color:tk.text,outline:'none',minWidth:0 }}
               />
             </div>
-            <button onClick={send} disabled={isLoading} style={{ width: isMobile ? 46 : 48,height: isMobile ? 46 : 48,borderRadius:999,background:isLoading?tk.panelMuted:`linear-gradient(135deg,${tk.primary},${tk.accent})`,color:'#fff',border:0,cursor:isLoading?'not-allowed':'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:isLoading?'none':`0 4px 14px ${tk.primary}55`,transition:'all 0.2s' }}>
+            <button onClick={() => send()} disabled={isLoading} style={{ width: isMobile ? 46 : 48,height: isMobile ? 46 : 48,borderRadius:999,background:isLoading?tk.panelMuted:`linear-gradient(135deg,${tk.primary},${tk.accent})`,color:'#fff',border:0,cursor:isLoading?'not-allowed':'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:isLoading?'none':`0 4px 14px ${tk.primary}55`,transition:'all 0.2s' }}>
               <Icon.arrowR s={18}/>
             </button>
           </div>

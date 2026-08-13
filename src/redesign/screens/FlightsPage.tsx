@@ -46,6 +46,8 @@ export function FlightsPage(props: Props) {
   const [hasSearched, setHasSearched] = useState(!!(params?.from || params?.to || params?.search));
   const [fromFocus, setFromFocus] = useState(false);
   const [toFocus, setToFocus] = useState(false);
+  const [trip, setTrip] = useState<'oneway' | 'roundtrip'>('oneway');
+  const [pax, setPax] = useState(1);
   const fromRef = useRef<HTMLDivElement>(null);
   const toRef = useRef<HTMLDivElement>(null);
 
@@ -116,9 +118,10 @@ export function FlightsPage(props: Props) {
           {/* Search */}
           <div style={{ ...card(16), marginBottom:18 }}>
             <div style={{ display:'flex', gap:6, marginBottom:12, flexWrap:'wrap' }}>
-              {[{l:'↔ '+T(lang,'ওয়ান ওয়ে','One way'),on:true},{l:'⇄ '+T(lang,'রাউন্ড ট্রিপ','Round trip')},{l:'👥 '+T(lang,'১ যাত্রী','1 passenger')},{l:'💺 '+T(lang,'ইকোনমি','Economy')}].map((c,i)=>(
-                <button key={i} style={{ ...chipBtn(tk), background:c.on?tk.text:tk.panelMuted, color:c.on?tk.bg:tk.text, borderColor:c.on?tk.text:tk.line, fontWeight:c.on?700:500 }}>{c.l}</button>
-              ))}
+              <button onClick={()=>setTrip('oneway')} style={{ ...chipBtn(tk), background:trip==='oneway'?tk.text:tk.panelMuted, color:trip==='oneway'?tk.bg:tk.text, borderColor:trip==='oneway'?tk.text:tk.line, fontWeight:trip==='oneway'?700:500 }}>↔ {T(lang,'ওয়ান ওয়ে','One way')}</button>
+              <button onClick={()=>setTrip('roundtrip')} style={{ ...chipBtn(tk), background:trip==='roundtrip'?tk.text:tk.panelMuted, color:trip==='roundtrip'?tk.bg:tk.text, borderColor:trip==='roundtrip'?tk.text:tk.line, fontWeight:trip==='roundtrip'?700:500 }}>⇄ {T(lang,'রাউন্ড ট্রিপ','Round trip')}</button>
+              <button onClick={()=>setPax(p=>p>=9?1:p+1)} style={{ ...chipBtn(tk), background:tk.panelMuted, color:tk.text, borderColor:tk.line, fontWeight:500 }}>👥 {N(pax, lang)} {T(lang,'যাত্রী','passenger')}</button>
+              <button onClick={()=>setTrip('oneway')} style={{ ...chipBtn(tk), background:tk.panelMuted, color:tk.text, borderColor:tk.line, fontWeight:500 }}>💺 {T(lang,'ইকোনমি','Economy')}</button>
             </div>
             <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'1fr 1fr auto', gap:10 }}>
               {/* From */}
