@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Camera, Trash2, Train, ChevronLeft, ChevronRight, X, Upload } from 'lucide-react';
-import { getTrainPhotos, deleteTrainPhoto, TrainPhoto, getAuthUser } from '../services/communityDataService';
+import { getTrainPhotos, deleteTrainPhoto, TrainPhoto, getCommunityUser } from '../services/communityDataService';
 import { trackFeatureUsage } from '../services/analyticsService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
@@ -32,7 +32,7 @@ function PhotoSkeleton() {
 }
 
 export default function TrainPhotoGallery({ trainId, trainName, onBack }: Props) {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   const { t, formatNumber, language } = useLanguage();
   const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
   const [photos, setPhotos] = useState<TrainPhoto[]>([]);
@@ -154,15 +154,6 @@ export default function TrainPhotoGallery({ trainId, trainName, onBack }: Props)
             </div>
           </>
         )}
-
-        {/* Upload zone placeholder */}
-        <div className="dc-card p-4 border-2 border-dashed border-kj-line flex flex-col items-center gap-2 text-center">
-          <div className="w-10 h-10 rounded-xl bg-kj-chip-bg flex items-center justify-center">
-            <Upload className="w-5 h-5 text-kj-text-faint" />
-          </div>
-          <p className="text-sm font-semibold text-kj-text-dim">{lbl('Upload your photo', 'ছবি আপলোড করুন')}</p>
-          <p className="text-xs text-kj-text-faint">{lbl('Sign in to contribute train photos', 'ট্রেনের ছবি যোগ করতে সাইন ইন করুন')}</p>
-        </div>
 
         <div className="h-4" />
       </div>

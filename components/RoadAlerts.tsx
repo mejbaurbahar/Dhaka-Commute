@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, AlertTriangle, Clock, ChevronDown, ChevronUp, Plus, ExternalLink, Map, Flag } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
-import { submitTrafficReport, getTodayTrafficReports, upvoteTrafficReport, TrafficReport, getAuthUser } from '../services/communityDataService';
+import { submitTrafficReport, getTodayTrafficReports, upvoteTrafficReport, TrafficReport, getCommunityUser } from '../services/communityDataService';
 import { trackFeatureUsage } from '../services/analyticsService';
 import SponsoredAdSlot from './SponsoredAdSlot';
 
@@ -80,7 +80,7 @@ export default function RoadAlerts({ onBack }: Props) {
   const { t, language } = useLanguage();
   const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
   const { showToast } = useToast();
-  const user = getAuthUser();
+  const user = getCommunityUser();
   const [reports, setReports] = useState<TrafficReport[]>([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);

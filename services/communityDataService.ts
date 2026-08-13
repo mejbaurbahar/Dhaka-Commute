@@ -10,6 +10,7 @@ const PROXY = (import.meta.env.VITE_API_PROXY as string | undefined)
   || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 import { BUS_DATA } from '../constants';
+import { getDeviceId } from './busLiveService';
 
 // In-memory cache to avoid hammering the proxy with duplicate reads (e.g. 60 concurrent ratings fetches)
 const _cache = new Map<string, { data: unknown; expiresAt: number }>();
@@ -51,6 +52,20 @@ export function getAuthUser(): { id: string; displayName: string; username: stri
     if (!s) return null;
     const u = JSON.parse(s)?.user;
     return u?.id ? { id: u.id, displayName: u.displayName ?? '', username: u.username ?? '', avatarUrl: u.avatarUrl ?? undefined, email: u.email ?? undefined } : null;
+  } catch { return null; }
+}
+
+/**
+ * getCommunityUser — identity for community features. Returns the signed-in
+ * account when present, otherwise a stable anonymous per-device identity
+ * (same device id as live bus sharing). No account = no gate.
+ */
+export function getCommunityUser(): { id: string; displayName: string; username: string; avatarUrl?: string; email?: string } | null {
+  const auth = getAuthUser();
+  if (auth) return auth;
+  try {
+    const deviceId = getDeviceId();
+    return { id: deviceId, displayName: 'Passenger', username: 'anonymous', email: undefined };
   } catch { return null; }
 }
 
@@ -131,6 +146,7 @@ function _sessionToken(): string {
 
 async function repoDelete(path: string, message?: string): Promise<boolean> {
   const user = getAuthUser();
+  const deviceId = getDeviceId();
   try {
     const res = await fetch(`${PROXY}/gh`, {
       method: 'POST',
@@ -139,8 +155,9 @@ async function repoDelete(path: string, message?: string): Promise<boolean> {
       body: JSON.stringify({
         requestId: crypto.randomUUID(),
         action: 'delete-data',
-        userId: user?.id || 'anonymous',
+        userId: user?.id || deviceId,
         sessionToken: _sessionToken(),
+        deviceId,
         data: JSON.stringify({ path, message: message || `delete: ${path}` }),
       }),
     });
@@ -151,8 +168,9 @@ async function repoDelete(path: string, message?: string): Promise<boolean> {
   } catch { return false; }
 }
 
-async function repoPut(path: string, content: unknown, message?: string): Promise<boolean> {
+async function repoPut(path: string, content: unknown, message?: string, cfToken?: string): Promise<boolean> {
   const user = getAuthUser();
+  const deviceId = getDeviceId();
   try {
     const res = await fetch(`${PROXY}/gh`, {
       method: 'POST',
@@ -161,8 +179,10 @@ async function repoPut(path: string, content: unknown, message?: string): Promis
       body: JSON.stringify({
         requestId: crypto.randomUUID(),
         action: 'save-data',
-        userId: user?.id || 'anonymous',
+        userId: user?.id || deviceId,
         sessionToken: _sessionToken(),
+        deviceId,
+        ...(cfToken ? { cfToken } : {}),
         data: JSON.stringify({ path, content, message: message || `community: ${path}` }),
       }),
     });
@@ -171,13 +191,13 @@ async function repoPut(path: string, content: unknown, message?: string): Promis
   } catch { return false; }
 }
 
-async function repoPutOrQueue(path: string, content: unknown, message: string): Promise<boolean> {
+async function repoPutOrQueue(path: string, content: unknown, message: string, cfToken?: string): Promise<boolean> {
   writeCommunityCache(path, content);
   if (typeof navigator !== 'undefined' && !navigator.onLine) {
     queueCommunityPut(path, content, message);
     return true;
   }
-  const ok = await repoPut(path, content, message);
+  const ok = await repoPut(path, content, message, cfToken);
   if (!ok) queueCommunityPut(path, content, message);
   return true;
 }
@@ -226,7 +246,7 @@ export async function getBusRatings(busId: string): Promise<BusRatingSummary | n
 }
 
 export async function submitBusRating(busId: string, stars: number, comment: string): Promise<boolean> {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   if (!user) return false;
   const normalizedComment = (comment ?? '').trim();
   // Keep comment optional while ensuring persistence never rejects empty payloads.
@@ -240,7 +260,7 @@ export async function submitBusRating(busId: string, stars: number, comment: str
 }
 
 export async function deleteBusRating(busId: string): Promise<boolean> {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   if (!user) return false;
   const existing = await getBusRatings(busId);
   if (!existing) return false;
@@ -299,7 +319,7 @@ export async function getTrainRatings(trainId: string): Promise<TrainRatingSumma
 }
 
 export async function submitTrainRating(trainId: string, trainName: string, stars: number, comment: string): Promise<boolean> {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   if (!user) return false;
   const normalizedComment = (comment ?? '').trim();
   // Keep comment optional while ensuring persistence never rejects empty payloads.
@@ -317,7 +337,7 @@ export async function submitTrainRating(trainId: string, trainName: string, star
 }
 
 export async function deleteTrainRating(trainId: string): Promise<boolean> {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   if (!user) return false;
   const existing = await getTrainRatings(trainId);
   if (!existing) return false;
@@ -380,7 +400,7 @@ export async function submitTrafficReport(
   busId?: string,
   busName?: string,
 ): Promise<boolean> {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   if (!user) return false;
   const existing = await repoGet<DailyTrafficReports>(`data/traffic/${today()}.json`) || { date: today(), reports: [] };
   const report: TrafficReport = {
@@ -395,7 +415,7 @@ export async function submitTrafficReport(
 }
 
 export async function upvoteTrafficReport(reportId: string): Promise<boolean> {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   if (!user) return false;
   const existing = await repoGet<DailyTrafficReports>(`data/traffic/${today()}.json`);
   if (!existing) return false;
@@ -483,7 +503,7 @@ export async function getBusLiveLocation(busId: string): Promise<BusLocationData
 export async function reportBusLocation(
   busId: string, busName: string, stopId: string, stopName: string, heading?: string,
 ): Promise<boolean> {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   if (!user) return false;
   const existing = await repoGet<BusLocationData>(`data/bus-locations/${busId}.json`) || { busId, lastUpdated: 0, reports: [] };
   const tenMinAgo = Date.now() - 10 * 60 * 1000;
@@ -560,18 +580,18 @@ export async function getBusPhotos(busId: string): Promise<BusPhoto[]> {
   return data?.photos ?? [];
 }
 
-export async function submitBusPhoto(busId: string, busName: string, caption: string, dataUrl: string): Promise<boolean> {
-  const user = getAuthUser();
+export async function submitBusPhoto(busId: string, busName: string, caption: string, dataUrl: string, cfToken?: string): Promise<boolean> {
+  const user = getCommunityUser();
   if (!user) return false;
   const existing = await repoGet<BusPhotoCollection>(`data/photos/${busId}.json`) || { busId, photos: [] };
   const photo: BusPhoto = { id: crypto.randomUUID(), userId: user.id, displayName: user.displayName, busId, busName, caption, dataUrl, timestamp: Date.now() };
   existing.photos.unshift(photo);
   if (existing.photos.length > 50) existing.photos = existing.photos.slice(0, 50);
-  return repoPutOrQueue(`data/photos/${busId}.json`, existing, `photo: ${busName}`);
+  return repoPutOrQueue(`data/photos/${busId}.json`, existing, `photo: ${busName}`, cfToken);
 }
 
 export async function deleteBusPhoto(busId: string, photoId: string): Promise<boolean> {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   if (!user) return false;
   const existing = await repoGet<BusPhotoCollection>(`data/photos/${busId}.json`);
   if (!existing) return false;
@@ -619,18 +639,18 @@ export async function getTrainPhotos(trainId: string): Promise<TrainPhoto[]> {
   return data?.photos ?? [];
 }
 
-export async function submitTrainPhoto(trainId: string, trainName: string, caption: string, dataUrl: string): Promise<boolean> {
-  const user = getAuthUser();
+export async function submitTrainPhoto(trainId: string, trainName: string, caption: string, dataUrl: string, cfToken?: string): Promise<boolean> {
+  const user = getCommunityUser();
   if (!user) return false;
   const existing = await repoGet<TrainPhotoCollection>(`data/train-photos/${trainId}.json`) || { trainId, photos: [] };
   const photo: TrainPhoto = { id: crypto.randomUUID(), userId: user.id, displayName: user.displayName, trainId, trainName, caption, dataUrl, timestamp: Date.now() };
   existing.photos.unshift(photo);
   if (existing.photos.length > 50) existing.photos = existing.photos.slice(0, 50);
-  return repoPutOrQueue(`data/train-photos/${trainId}.json`, existing, `train-photo: ${trainName}`);
+  return repoPutOrQueue(`data/train-photos/${trainId}.json`, existing, `train-photo: ${trainName}`, cfToken);
 }
 
 export async function deleteTrainPhoto(trainId: string, photoId: string): Promise<boolean> {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   if (!user) return false;
   const existing = await repoGet<TrainPhotoCollection>(`data/train-photos/${trainId}.json`);
   if (!existing) return false;

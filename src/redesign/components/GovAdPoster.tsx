@@ -4,6 +4,7 @@
  */
 import React, { useRef, useState } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
+import { useInViewOnce } from '../utils/useInViewOnce';
 
 // ── Service definitions ────────────────────────────────────────────────────
 
@@ -327,6 +328,161 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
             {isBn ? d.secondBn : d.secondEn}
           </a>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ── GovServiceCarousel — devxhub-style animated horizontal carousel ────────
+// Cards stagger in when the section scrolls into view (IntersectionObserver),
+// then the row swipes/drags horizontally with scroll-snap + arrow buttons.
+
+function useDragScroll<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null);
+  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false });
+  return {
+    ref,
+    onPointerDown: (e: React.PointerEvent) => {
+      const el = ref.current;
+      if (!el) return;
+      drag.current = { down: true, startX: e.clientX, startLeft: el.scrollLeft, moved: false };
+    },
+    onPointerMove: (e: React.PointerEvent) => {
+      const el = ref.current;
+      if (!el || !drag.current.down) return;
+      const dx = e.clientX - drag.current.startX;
+      if (Math.abs(dx) > 4) drag.current.moved = true;
+      el.scrollLeft = drag.current.startLeft - dx;
+    },
+    onPointerUp: () => { drag.current.down = false; },
+    onPointerCancel: () => { drag.current.down = false; },
+    wasDrag: () => drag.current.moved,
+  };
+}
+
+export function GovServiceCarousel({
+  tk,
+  lang,
+  ids = POSTER_IDS_ALL,
+  label = true,
+}: {
+  tk: Tokens;
+  lang: Lang;
+  ids?: string[];
+  label?: boolean;
+}) {
+  const defs = ids.map(id => SERVICES[id]).filter(Boolean);
+  if (!defs.length) return null;
+
+  const isBn = lang === 'bn';
+  const font = isBn ? BEN : SANS;
+  const [secRef, inView] = useInViewOnce<HTMLDivElement>();
+  const { ref: rowRef, onPointerDown, onPointerMove, onPointerUp, onPointerCancel, wasDrag } = useDragScroll<HTMLDivElement>();
+  const [suppressClick, setSuppressClick] = useState(false);
+
+  const scrollByCards = (dir: 1 | -1) => {
+    const el = rowRef.current;
+    if (!el) return;
+    const card = el.querySelector('[data-gov-card]') as HTMLElement | null;
+    const w = card ? card.offsetWidth + 12 : 272;
+    el.scrollBy({ left: dir * w, behavior: 'smooth' });
+  };
+
+  // entrance style for each card — staggered fade + rise once in view
+  const entrance = (i: number): React.CSSProperties => ({
+    opacity: inView ? 1 : 0,
+    transform: inView ? 'translateY(0)' : 'translateY(26px)',
+    transition: 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1)',
+    transitionDelay: `${Math.min(i, 10) * 70}ms`,
+  });
+
+  const arrowBtn: React.CSSProperties = {
+    width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+    background: tk.panelMuted, border: `1px solid ${tk.line}`,
+    color: tk.text, cursor: 'pointer', fontSize: 16, lineHeight: 1,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+  };
+
+  return (
+    <div style={{ width: '100%', boxSizing: 'border-box' }} ref={secRef}>
+      {label && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <div style={{ width: 3, height: 20, borderRadius: 2, background: tk.primary, flexShrink: 0 }} />
+          <span style={{
+            fontFamily: font, fontSize: 13, fontWeight: 700,
+            color: tk.text, letterSpacing: -0.2,
+          }}>
+            {T(lang, 'সরকারি সেবা', 'Government Services')}
+          </span>
+          <div style={{
+            marginLeft: 4,
+            background: tk.primarySoft,
+            borderRadius: 999, padding: '2px 10px',
+            fontFamily: SANS, fontSize: 9.5, fontWeight: 700,
+            color: tk.primary, letterSpacing: 0.3,
+          }}>
+            {T(lang, 'অফিসিয়াল', 'Official')}
+          </div>
+          <div style={{ flex: 1 }} />
+          <button onClick={() => scrollByCards(-1)} style={arrowBtn} aria-label={T(lang, 'আগের সেবা', 'Previous service')}>‹</button>
+          <button onClick={() => scrollByCards(1)} style={arrowBtn} aria-label={T(lang, 'পরের সেবা', 'Next service')}>›</button>
+        </div>
+      )}
+
+      <div style={{ position: 'relative' }}>
+        {/* edge fades */}
+        <div style={{
+          position: 'absolute', top: 0, bottom: 0, left: 0, width: 18, zIndex: 2,
+          pointerEvents: 'none',
+          background: `linear-gradient(to right, ${tk.pageBg}, transparent)`,
+        }} />
+        <div style={{
+          position: 'absolute', top: 0, bottom: 0, right: 0, width: 18, zIndex: 2,
+          pointerEvents: 'none',
+          background: `linear-gradient(to left, ${tk.pageBg}, transparent)`,
+        }} />
+
+        <div
+          ref={rowRef}
+          onClickCapture={(e) => {
+            if (suppressClick) {
+              e.preventDefault();
+              e.stopPropagation();
+              setSuppressClick(false);
+            }
+          }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={(e) => {
+            onPointerUp();
+            if (wasDrag()) {
+              setSuppressClick(true);
+              e.preventDefault();
+            }
+          }}
+          onPointerCancel={onPointerCancel}
+          style={{
+            display: 'flex', gap: 12, overflowX: 'auto',
+            scrollSnapType: 'x mandatory',
+            touchAction: 'pan-y',
+            cursor: 'grab',
+            padding: '4px 2px 10px',
+            scrollbarWidth: 'none',
+            WebkitOverflowScrolling: 'touch',
+          } as React.CSSProperties}
+        >
+          {defs.map((d, i) => (
+            <div key={d.id} data-gov-card style={{
+              flexShrink: 0,
+              width: 272,
+              maxWidth: '78vw',
+              scrollSnapAlign: 'start',
+              ...entrance(i),
+            }}>
+              <ServiceCard d={d} lang={lang} tk={tk} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

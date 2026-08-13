@@ -5,7 +5,7 @@ import { MobileTabBar } from '../components/MobileTabBar';
 import { AdSlot, NativeAdCard } from '../components/AdSlot';
 import { GovServiceCards } from '../components/GovServiceCards';
 import { GovAdBanner } from '../components/GovAdBanner';
-import { GovAdPoster } from '../components/GovAdPoster';
+import { GovAdPoster, GovServiceCarousel } from '../components/GovAdPoster';
 import { PromoBanner } from '../components/PromoBanner';
 import { Icon } from '../components/Icons';
 import { Pill } from '../components/Pill';
@@ -2103,22 +2103,22 @@ export function HomePage({
               <div>
                 {/* Location bar — real area when enabled, enable-button otherwise */}
                 <LocationChip tk={tk} lang={lang} />
-                {/* Account entry — sign-in / profile chip */}
-                <button
-                  onClick={() => onNav(authUser ? 'profile' : 'signin')}
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 8,
-                    background: authUser ? `${tk.accent}12` : `${tk.primary}14`,
-                    border: `1px solid ${authUser ? `${tk.accent}44` : `${tk.primaryDeep}55`}`,
-                    borderRadius: 999, padding: '5px 12px', cursor: 'pointer',
-                    fontFamily: lang === 'bn' ? 'inherit' : SANS, fontSize: 12, fontWeight: 600,
-                    color: authUser ? tk.accent : tk.primaryDeep, marginBottom: 10,
-                  }}
-                >
-                  {authUser
-                    ? `${firstName ? `👤 ${firstName}` : '👤 প্রোফাইল'}`
-                    : T(lang, '🔑 সাইন ইন করুন', '🔑 Sign in')}
-                </button>
+                {/* Account entry — profile chip, only when signed in */}
+                {authUser && (
+                  <button
+                    onClick={() => onNav('profile')}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      background: `${tk.accent}12`,
+                      border: `1px solid ${tk.accent}44`,
+                      borderRadius: 999, padding: '5px 12px', cursor: 'pointer',
+                      fontFamily: lang === 'bn' ? 'inherit' : SANS, fontSize: 12, fontWeight: 600,
+                      color: tk.accent, marginBottom: 10,
+                    }}
+                  >
+                    {firstName ? `👤 ${firstName}` : '👤 প্রোফাইল'}
+                  </button>
+                )}
                 <h1
                   style={{
                     margin: '0 0 8px',
@@ -2308,13 +2308,12 @@ export function HomePage({
           <AffiliateBanner tk={tk} lang={lang} variant="slider" />
         </div>
 
-        {/* ── Government service poster ads ── */}
+        {/* ── Government service poster ads — animated carousel (devxhub-style) ── */}
         <div style={section}>
-          <GovAdPoster
+          <GovServiceCarousel
             tk={tk}
             lang={lang}
             ids={['brta', 'railway', 'dmtcl', 'mygov', 'biwtc', 'biman', 'nid', 'passport', 'land', 'dghs', 'bpsc', 'nbr', 'btcl']}
-            columns={isMobile ? 1 : 2}
           />
         </div>
 

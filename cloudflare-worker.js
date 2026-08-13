@@ -201,7 +201,11 @@ async function verifyFirebaseIdToken(idToken) {
 }
 
 // ── Write path validation ────────────────────────────────────────────────────
-function validateWritePath(path, sessionUserId) {
+function isValidDeviceId(v) {
+  return typeof v === 'string' && /^[A-Za-z0-9_-]{4,64}$/.test(v);
+}
+
+function validateWritePath(path, sessionUserId, anonDeviceId) {
   if (typeof path !== 'string' || !path.startsWith('data/')) {
     return { ok: false, status: 400, message: 'Invalid path' };
   }
@@ -218,8 +222,12 @@ function validateWritePath(path, sessionUserId) {
       if (!sessionUserId) return { ok: false, status: 401, message: 'Session required' };
       if (m[1] !== sessionUserId) return { ok: false, status: 403, message: 'Session/path mismatch' };
     }
-    if (rule.sessionRequired && !sessionUserId) {
-      return { ok: false, status: 401, message: 'Session required' };
+    // Community paths: signed-in session OR anonymous device identity.
+    // Anonymous is device-gated so one device can't impersonate another —
+    // same deviceId scheme as the live-bus worker; Turnstile still applies
+    // where flagged (photos).
+    if (rule.sessionRequired && !sessionUserId && !isValidDeviceId(anonDeviceId)) {
+      return { ok: false, status: 401, message: 'Session or device identity required' };
     }
     return { ok: true, rule };
   }
@@ -1308,7 +1316,7 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
             { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
           );
         }
-        const check = validateWritePath(path, sessionUserId);
+        const check = validateWritePath(path, sessionUserId, body.deviceId);
         if (!check.ok) {
           return new Response(
             JSON.stringify({ error: check.message }),
@@ -1348,7 +1356,7 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
         let payload = {};
         try { payload = JSON.parse(body.data || '{}'); } catch { /* ignore */ }
         const { path, message } = payload;
-        const check = validateWritePath(path, sessionUserId);
+        const check = validateWritePath(path, sessionUserId, body.deviceId);
         if (!check.ok) {
           return new Response(
             JSON.stringify({ error: check.message }),

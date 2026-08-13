@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Star, Train } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
-import { getAuthUser, getTrainRatings, submitTrainRating, deleteTrainRating, TrainRatingSummary } from '../services/communityDataService';
+import { getCommunityUser, getTrainRatings, submitTrainRating, deleteTrainRating, TrainRatingSummary } from '../services/communityDataService';
 import { trackFeatureUsage } from '../services/analyticsService';
 
 interface Props {
@@ -76,7 +76,7 @@ function RatingSkeleton() {
 }
 
 export default function TrainRating({ trainId, trainName, onBack }: Props) {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   const { t, language, formatNumber } = useLanguage();
   const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
   const [summary, setSummary] = useState<TrainRatingSummary | null>(null);
@@ -173,15 +173,13 @@ export default function TrainRating({ trainId, trainName, onBack }: Props) {
         <span className="font-bengali font-bold text-base text-kj-text flex-1">
           {lbl('Rate & Review', 'রেট ও রিভিউ')}
         </span>
-        {user && (
-          <button
+        <button
             onClick={handleOpenForm}
             className="px-3 py-1.5 rounded-xl text-xs font-bold font-bengali text-kj-primary-ink active:scale-95 transition-all"
             style={{ background: 'linear-gradient(135deg, var(--kj-primary), var(--kj-primary-deep))', boxShadow: '0 4px 12px -4px var(--kj-primary)' }}
           >
             {myRating ? lbl('Edit rating', 'রেটিং সম্পাদনা') : lbl('Rate now', 'রেট করুন')}
           </button>
-        )}
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain touch-pan-y pb-8" style={{ WebkitOverflowScrolling: 'touch' }}>
@@ -383,15 +381,13 @@ export default function TrainRating({ trainId, trainName, onBack }: Props) {
                 </div>
                 <p className="font-bengali font-bold text-kj-text">{t('community.noRatingsYet')}</p>
                 <p className="text-sm text-kj-text-faint font-bengali">{t('community.beFirstToRate')}</p>
-                {user && (
-                  <button
+                <button
                     onClick={handleOpenForm}
                     className="mt-1 px-5 py-2.5 rounded-xl text-sm font-bold font-bengali text-kj-primary-ink active:scale-95 transition-all"
                     style={{ background: 'linear-gradient(135deg, var(--kj-primary), var(--kj-primary-deep))', boxShadow: '0 4px 12px -4px var(--kj-primary)' }}
                   >
                     {lbl('Rate now', 'রেট করুন')}
                   </button>
-                )}
               </div>
             )}
 

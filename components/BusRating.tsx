@@ -1,7 +1,7 @@
 import SponsoredAdSlot from './SponsoredAdSlot';
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Star } from 'lucide-react';
-import { getBusRatings, submitBusRating, deleteBusRating, toggleRatingUpvote, BusRatingSummary, getAuthUser } from '../services/communityDataService';
+import { getBusRatings, submitBusRating, deleteBusRating, toggleRatingUpvote, BusRatingSummary, getCommunityUser } from '../services/communityDataService';
 import { trackFeatureUsage } from '../services/analyticsService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
@@ -77,7 +77,7 @@ function RatingSkeleton() {
 }
 
 export default function BusRating({ busId, busName, onBack, onSuccess }: Props) {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   const { t, language, formatNumber } = useLanguage();
   const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
   const [summary, setSummary] = useState<BusRatingSummary | null>(null);
@@ -451,7 +451,7 @@ export default function BusRating({ busId, busName, onBack, onSuccess }: Props) 
                   <button
                     className={`text-[11px] font-semibold font-bengali transition-colors ${r.upvotes?.includes(user?.id ?? '') ? 'text-kj-primary' : 'text-kj-text-faint hover:text-kj-primary'}`}
                     onClick={async () => {
-                      if (!user) { showToast(t('community.signInRequired') || 'Sign in required', 'error'); return; }
+                      if (!user) return; // storage unavailable — no identity, skip silently
                       const updated = await toggleRatingUpvote(busId, r.timestamp);
                       if (updated) {
                         setSummary(s => s ? { ...s, ratings: s.ratings.map(x => x.timestamp === r.timestamp ? updated : x) } : s);

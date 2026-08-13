@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Camera, X, Upload, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getBusPhotos, submitBusPhoto, deleteBusPhoto, BusPhoto, getAuthUser } from '../services/communityDataService';
+import { getBusPhotos, submitBusPhoto, deleteBusPhoto, BusPhoto, getCommunityUser } from '../services/communityDataService';
 import { trackFeatureUsage } from '../services/analyticsService';
 import { getBusImagePath } from '../utils/busImageMapper';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
+import { Turnstile } from '../src/redesign/components/Turnstile';
 
 interface Props {
   busId: string;
@@ -70,13 +71,14 @@ function PhotoSkeleton() {
 }
 
 export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onSuccess }: Props) {
-  const user = getAuthUser();
+  const user = getCommunityUser();
   const { t, formatNumber, language } = useLanguage();
   const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
   const [photos, setPhotos] = useState<BusPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [caption, setCaption] = useState('');
+  const [cfToken, setCfToken] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [compressing, setCompressing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -135,13 +137,14 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
     e.preventDefault();
     if (!previewUrl) return;
     setSubmitting(true);
-    const ok = await submitBusPhoto(busId, busName, caption, previewUrl);
+    const ok = await submitBusPhoto(busId, busName, caption, previewUrl, cfToken);
     if (ok) {
       const fresh = await getBusPhotos(busId);
       setPhotos(fresh);
       setShowForm(false);
       setCaption('');
       setPreviewUrl(null);
+      setCfToken('');
       showToast(t('community.photoUploaded') || 'Photo uploaded!', 'success');
       onSuccess?.();
     } else {
@@ -193,15 +196,13 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
               {formatNumber(photos.length)} {lbl('photos', 'ছবি')}
             </p>
           </div>
-          {user && (
-            <button
+          <button
               onClick={() => setShowForm(!showForm)}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-white text-xs font-bold shrink-0 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 active:scale-95 transition-all shadow"
             >
               <Camera className="w-3.5 h-3.5" />
               {lbl('Add Photo', 'ছবি যোগ করুন')}
             </button>
-          )}
         </div>
 
         {/* Official bus image */}
@@ -253,8 +254,16 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
             <input value={caption} onChange={e => setCaption(e.target.value.slice(0, 200))}
               placeholder={t('community.photoCaptionOptional')} maxLength={200}
               className="w-full bg-kj-chip-bg border border-kj-line rounded-xl px-3 py-2.5 text-sm text-kj-text placeholder:text-kj-text-faint" />
+            {!user && (
+              <>
+                <Turnstile theme="dark" onVerify={setCfToken} onExpire={() => setCfToken('')} />
+                <p className="text-[11px] text-kj-text-faint text-center -mt-1">
+                  {lbl('Human verification required for photo upload', 'ছবি আপলোডের জন্য হিউম্যান ভেরিফিকেশন প্রয়োজন')}
+                </p>
+              </>
+            )}
             <div className="flex gap-2">
-              <button type="submit" disabled={!previewUrl || submitting || compressing}
+              <button type="submit" disabled={!previewUrl || submitting || compressing || (!user && !cfToken)}
                 className="flex-1 py-2.5 bg-gradient-to-r from-pink-500 to-rose-600 disabled:opacity-50 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all">
                 {submitting ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t('community.submitting')}</> : t('community.submit')}
               </button>
@@ -273,7 +282,7 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
               {formatNumber(photos.length)} {lbl('uploaded photos', 'আপলোড করা ছবি')}
             </p>
           </div>
-          {user && !showForm && (
+          {!showForm && (
             <button
               onClick={() => setShowForm(true)}
               className="px-3 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pink-500 to-rose-600 active:scale-95 transition-all"
@@ -295,17 +304,15 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
                 </div>
                 <p className="text-kj-text-dim font-semibold">{t('community.noPhotosYet')}</p>
                 <p className="text-sm text-kj-text-faint mt-1">{t('community.beFirstToUpload')}</p>
-                {user && (
-                  <button onClick={() => setShowForm(true)}
-                    className="mt-4 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white text-sm font-bold rounded-xl active:scale-95 transition-all">
-                    {lbl('Add Photo', 'ছবি যোগ করুন')}
-                  </button>
-                )}
+                <button onClick={() => setShowForm(true)}
+                  className="mt-4 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white text-sm font-bold rounded-xl active:scale-95 transition-all">
+                  {lbl('Add Photo', 'ছবি যোগ করুন')}
+                </button>
               </div>
             )}
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {user && !showForm && photos.length > 0 && (
+              {!showForm && photos.length > 0 && (
                 <button
                   type="button"
                   onClick={() => setShowForm(true)}
@@ -338,17 +345,6 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
               ))}
             </div>
           </>
-        )}
-
-        {/* Upload zone for unauthenticated — shown as placeholder */}
-        {!user && (
-          <div className="dc-card p-4 border-2 border-dashed border-kj-line flex flex-col items-center gap-2 text-center">
-            <div className="w-10 h-10 rounded-xl bg-kj-chip-bg flex items-center justify-center">
-              <Upload className="w-5 h-5 text-kj-text-faint" />
-            </div>
-            <p className="text-sm font-semibold text-kj-text-dim">{lbl('Upload your photo', 'ছবি আপলোড করুন')}</p>
-            <p className="text-xs text-kj-text-faint">{lbl('Sign in to contribute photos', 'ছবি যোগ করতে সাইন ইন করুন')}</p>
-          </div>
         )}
 
         <div className="h-4" />
