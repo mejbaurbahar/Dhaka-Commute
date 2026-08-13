@@ -1,0 +1,7 @@
+name = "koyjabo-bus-live"
+main = "worker.js"
+compatibility_date = "2025-04-01"
+
+[[kv_namespaces]]
+binding = "BUS_LIVE"
+id = "6840772259044af69ec99c4966283dbc"
