@@ -34,7 +34,7 @@ const config: CapacitorConfig = {
       splashImmersive: true,
     },
     AdMob: {
-      appId: 'ca-app-pub-9650038259132247~6362427006',
+      appId: 'ca-app-pub-8425219156685369~9332750440',
     },
   },
 };

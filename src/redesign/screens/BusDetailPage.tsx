@@ -101,6 +101,16 @@ export function BusDetailPage(props: Props) {
   const [showRating, setShowRating] = useState(false);
   const [showPhotos, setShowPhotos] = useState(false);
   const [showHelpline, setShowHelpline] = useState(false);
+
+  // Rating / photo views swap the page content in place — reset scroll so the
+  // user lands at the top instead of keeping the detail page's scroll position.
+  useEffect(() => {
+    if (showRating || showPhotos) {
+      const sc = document.querySelector('[data-app-scroller]') as HTMLElement | null;
+      if (sc) sc.scrollTop = 0;
+      window.scrollTo(0, 0);
+    }
+  }, [showRating, showPhotos]);
   const [showLiveTracking, setShowLiveTracking] = useState(false);
   const [ratingSummary, setRatingSummary] = useState<BusRatingSummary | null>(null);
   const [liveLocationData, setLiveLocationData] = useState<BusLocationData | null>(null);

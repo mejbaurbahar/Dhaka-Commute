@@ -383,6 +383,17 @@ export function IntercityDetailPage(props: Props) {
   const [showPhotos, setShowPhotos] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [ratingSummary, setRatingSummary] = useState<BusRatingSummary | null>(null);
+
+  // Rating / photo views swap the page content in place — reset scroll so the
+  // user lands at the top instead of keeping the detail page's scroll position.
+  React.useEffect(() => {
+    if (showRating || showPhotos) {
+      const sc = document.querySelector('[data-app-scroller]') as HTMLElement | null;
+      if (sc) sc.scrollTop = 0;
+      window.scrollTo(0, 0);
+    }
+  }, [showRating, showPhotos]);
+
   const lbl = (en: string, bn: string) => T(lang, bn, en);
 
   // Use passed operator data or fall back to defaults

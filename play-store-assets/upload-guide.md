@@ -106,9 +106,9 @@ Do this while review of the listing runs:
 
 ## Step 7 — Link AdMob
 
-1. AdMob console → **Apps → Koy Jabo - Bangladesh Transport** (ID `6362427006`)
-2. After the app is live, use **Link to Play Store** (or Play Console → Monetize → "App set up" → confirm the AdMob app ID `ca-app-pub-9650038259132247~6362427006`)
-3. Ad units are already in the APK (banner `8457393290`). Once linked and serving, real fill starts.
+1. AdMob console → **Apps → Koy Jabo - Bangladesh Transport** (ID `9332750440`)
+2. After the app is live, use **Link to Play Store** (or Play Console → Monetize → "App set up" → confirm the AdMob app ID `ca-app-pub-8425219156685369~9332750440`)
+3. Ad units are already in the APK (banner `6384977308`). Once linked and serving, real fill starts.
 
 ## Common rejection pitfalls to avoid
 

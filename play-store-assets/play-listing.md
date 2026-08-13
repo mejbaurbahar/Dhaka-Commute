@@ -106,4 +106,4 @@ Available in Bangla and English. Built for Bangladesh.
 - [ ] Feature graphic `play-store-assets/feature-graphic.png` (1024x500)
 - [ ] AAB: `android/app/build/outputs/bundle/release/app-release.aab` (signed, versionCode 1)
 - [ ] Store listing: `play-store-assets/play-listing.md` (this file)
-- [ ] Link AdMob app ID in Play Console (Consent → "App set up"): AdMob app ID `ca-app-pub-9650038259132247~6362427006` auto-links when the app is published — confirm it matches the AdMob app "Koy Jabo - Bangladesh Transport" (6362427006)
+- [ ] Link AdMob app ID in Play Console (Consent → "App set up"): AdMob app ID `ca-app-pub-8425219156685369~9332750440` auto-links when the app is published — confirm it matches the AdMob app "Koy Jabo - Bangladesh Transport" (6362427006)
