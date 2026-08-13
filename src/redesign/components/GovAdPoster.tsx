@@ -441,13 +441,13 @@ const GOV_SLIDER_CSS = `
 .kj-gov-slider .project-card[data-active] .desc,
 .kj-gov-slider .project-card[data-active] .details-btn { display: block; }
 .kj-gov-slider .project-card[data-active] .thumb { display: flex; align-items: center; justify-content: center; }
-.kj-gov-slider .dots { display: flex; gap: .5rem; justify-content: center; padding: 20px 0; }
+.kj-gov-slider .dots { display: flex; gap: .4rem; justify-content: center; padding: 16px 0; }
 .kj-gov-slider .dot {
-  width: 13px; height: 13px; border-radius: 50%;
+  width: 7px; height: 7px; min-width: 0; min-height: 0; border-radius: 50%;
   background: var(--kj-dot); border: none; cursor: pointer; padding: 0;
   transition: background .3s, transform .3s;
 }
-.kj-gov-slider .dot.active { background: var(--kj-accent); transform: scale(1.2); }
+.kj-gov-slider .dot.active { background: var(--kj-accent); transform: scale(1.3); }
 
 @media (max-width: 767px) {
   .kj-gov-slider { --closed: 100%; --open: 100%; --gap: .8rem; }
