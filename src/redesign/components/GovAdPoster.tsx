@@ -2,9 +2,8 @@
  * GovAdPoster — native-feeling government service hub.
  * Looks like a built-in koyjabo.com feature, not an ad.
  */
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
-import { useInViewOnce } from '../utils/useInViewOnce';
 
 // ── Service definitions ────────────────────────────────────────────────────
 
@@ -333,32 +332,170 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
   );
 }
 
-// ── GovServiceCarousel — devxhub-style animated horizontal carousel ────────
-// Cards stagger in when the section scrolls into view (IntersectionObserver),
-// then the row swipes/drags horizontally with scroll-snap + arrow buttons.
+// ── GovServiceCarousel — codepen myRBYmd replica (accordion slider) ─────────
+// Desktop: horizontal snap track; cards 5rem → 30rem on activate with
+// translateY(-6px) + shadow; title vertical-rl closed → big horizontal active;
+// thumb/desc/Details revealed on active; dot nav. Mobile: vertical column,
+// 80px → 300px, full-width controls, dots hidden. Interactions: click, hover
+// (hover-capable only), prev/next buttons, keyboard arrows, touch swipe,
+// resize re-center. "Same to same" as the codepen animation.
 
-function useDragScroll<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
-  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false });
-  return {
-    ref,
-    onPointerDown: (e: React.PointerEvent) => {
-      const el = ref.current;
-      if (!el) return;
-      drag.current = { down: true, startX: e.clientX, startLeft: el.scrollLeft, moved: false };
-    },
-    onPointerMove: (e: React.PointerEvent) => {
-      const el = ref.current;
-      if (!el || !drag.current.down) return;
-      const dx = e.clientX - drag.current.startX;
-      if (Math.abs(dx) > 4) drag.current.moved = true;
-      el.scrollLeft = drag.current.startLeft - dx;
-    },
-    onPointerUp: () => { drag.current.down = false; },
-    onPointerCancel: () => { drag.current.down = false; },
-    wasDrag: () => drag.current.moved,
-  };
+function isDarkToken(bg: string): boolean {
+  const m = bg.match(/[0-9a-f]{6}/i);
+  if (!m) return true;
+  const v = parseInt(m[0], 16);
+  const r = (v >> 16) & 255, g = (v >> 8) & 255, b = v & 255;
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b < 128;
 }
+
+const GOV_SLIDER_CSS = `
+/* exact codepen myRBYmd structure — 13 cards, so --closed 4rem so the
+   closed row fits (pen's 5rem × 5 cards). Scroller = .slider (overflow hidden
+   still scrolls programmatically); track overflow visible. */
+.kj-gov-slider { --gap: 1.25rem; --speed: 0.55s cubic-bezier(.25,.46,.45,.94); --closed: 4rem; --open: 30rem; }
+.kj-gov-slider .head {
+  max-width: 1400px; margin: 0 auto; padding: 30px 20px 24px;
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem;
+}
+.kj-gov-slider .head h2 {
+  margin: 0; font: 400 1.5rem/1.2 inherit; color: var(--kj-head);
+}
+@media (min-width: 1024px) {
+  .kj-gov-slider .head h2 { font-size: 2.25rem; }
+}
+.kj-gov-slider .controls { display: flex; gap: .5rem; flex-shrink: 0; }
+.kj-gov-slider .nav-btn {
+  width: 2.5rem; height: 2.5rem; border: none; border-radius: 50%;
+  background: var(--kj-btn-bg); color: var(--kj-btn-fg);
+  font-size: 1.5rem; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .3s;
+}
+.kj-gov-slider .nav-btn:hover { background: var(--kj-accent); }
+.kj-gov-slider .nav-btn:disabled { opacity: .3; cursor: default; }
+.kj-gov-slider .slider {
+  position: relative; max-width: 1400px; margin: 0 auto;
+  overflow: hidden; scroll-snap-type: x mandatory;
+}
+.kj-gov-slider .track {
+  display: flex; gap: var(--gap);
+  align-items: flex-start; justify-content: flex-start;
+  scroll-behavior: smooth; padding-bottom: 40px;
+}
+.kj-gov-slider .track::-webkit-scrollbar { display: none; }
+.kj-gov-slider .project-card {
+  position: relative; flex: 0 0 var(--closed); height: 26rem;
+  border-radius: 1rem; overflow: hidden; cursor: pointer;
+  scroll-snap-align: center;
+  transition: flex-basis var(--speed), transform var(--speed);
+}
+.kj-gov-slider .project-card[data-active] {
+  flex-basis: var(--open); transform: translateY(-6px);
+  box-shadow: rgba(0,0,0,.45) 0 18px 55px;
+}
+.kj-gov-slider .art {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  filter: brightness(.75) saturate(75%);
+  transition: filter .3s, transform var(--speed);
+}
+.kj-gov-slider .project-card:hover .art { filter: brightness(.9) saturate(100%); transform: scale(1.06); }
+.kj-gov-slider .art-mark {
+  position: absolute; right: -8px; bottom: -24px; font-size: 150px; line-height: 1;
+  opacity: .16; transform: rotate(-12deg); pointer-events: none;
+}
+.kj-gov-slider .content {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: .7rem; padding: 0;
+  background: linear-gradient(transparent 40%, rgba(0,0,0,.85) 100%);
+  z-index: 2;
+}
+.kj-gov-slider .title {
+  color: #fff; font-weight: 700; font-size: 1.35rem; line-height: 1.15;
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  white-space: nowrap; margin: 0;
+}
+.kj-gov-slider .thumb, .kj-gov-slider .desc, .kj-gov-slider .details-btn { display: none; }
+.kj-gov-slider .project-card[data-active] .content {
+  flex-direction: row; align-items: center; padding: 1.2rem 2rem; gap: 1.1rem;
+}
+.kj-gov-slider .project-card[data-active] .title {
+  writing-mode: horizontal-tb; transform: none; font-size: 2.4rem;
+}
+.kj-gov-slider .thumb {
+  width: 133px; height: 269px; border-radius: .45rem;
+  object-fit: cover; box-shadow: rgba(0,0,0,.4) 0 4px 10px;
+  flex-shrink: 0;
+}
+.kj-gov-slider .desc {
+  color: #ddd; font-size: 1rem; line-height: 1.4; max-width: 16rem;
+}
+.kj-gov-slider .details-btn {
+  padding: .55rem 1.3rem; border: none; border-radius: 9999px;
+  background: var(--kj-accent); color: #fff;
+  font-size: .9rem; font-weight: 600; cursor: pointer;
+  text-decoration: none; font-family: inherit;
+}
+.kj-gov-slider .details-btn:hover { filter: brightness(1.15); }
+.kj-gov-slider .project-card[data-active] .thumb,
+.kj-gov-slider .project-card[data-active] .desc,
+.kj-gov-slider .project-card[data-active] .details-btn { display: block; }
+.kj-gov-slider .project-card[data-active] .thumb { display: flex; align-items: center; justify-content: center; }
+.kj-gov-slider .dots { display: flex; gap: .5rem; justify-content: center; padding: 20px 0; }
+.kj-gov-slider .dot {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--kj-dot); border: none; cursor: pointer; padding: 0;
+  transition: background .3s, transform .3s;
+}
+.kj-gov-slider .dot.active { background: var(--kj-accent); transform: scale(1.2); }
+
+@media (max-width: 767px) {
+  .kj-gov-slider { --closed: 100%; --open: 100%; --gap: .8rem; }
+  .kj-gov-slider .head {
+    padding: 30px 15px 20px; flex-direction: column; align-items: flex-start; gap: 1rem;
+  }
+  .kj-gov-slider .slider { padding: 0 15px; scroll-snap-type: y mandatory; }
+  .kj-gov-slider .track {
+    flex-direction: column; scroll-snap-type: y mandatory;
+    gap: .8rem; padding-bottom: 20px;
+  }
+  .kj-gov-slider .project-card {
+    height: auto; min-height: 80px; flex: 0 0 auto; width: 100%;
+    scroll-snap-align: start;
+  }
+  .kj-gov-slider .project-card[data-active] {
+    min-height: 300px; transform: none;
+    box-shadow: rgba(0,0,0,.3) 0 8px 25px;
+  }
+  .kj-gov-slider .content {
+    flex-direction: row; justify-content: flex-start;
+    padding: 1rem; align-items: center; gap: 1rem;
+  }
+  .kj-gov-slider .title {
+    writing-mode: horizontal-tb; transform: none;
+    font-size: 1.2rem; margin-right: auto;
+  }
+  .kj-gov-slider .thumb, .kj-gov-slider .desc, .kj-gov-slider .details-btn { display: none; }
+  .kj-gov-slider .project-card[data-active] .content { align-items: flex-start; padding: 1.5rem; }
+  .kj-gov-slider .project-card[data-active] .title {
+    font-size: 1.8rem; margin-bottom: 1rem; margin-top: 2rem;
+  }
+  .kj-gov-slider .project-card[data-active] .thumb {
+    width: 200px; height: 267px; border-radius: .35rem; margin-bottom: 1rem;
+  }
+  .kj-gov-slider .project-card[data-active] .desc {
+    font-size: .95rem; max-width: 100%; margin-bottom: 1rem;
+  }
+  .kj-gov-slider .project-card[data-active] .details-btn {
+    align-self: center; width: 100%; text-align: center; padding: .7rem;
+  }
+  .kj-gov-slider .dots { display: none; }
+  .kj-gov-slider .controls {
+    width: 100%; justify-content: space-between; padding: 0 15px 20px;
+  }
+  .kj-gov-slider .nav-btn { position: static; transform: none; }
+}
+`;
 
 export function GovServiceCarousel({
   tk,
@@ -376,113 +513,170 @@ export function GovServiceCarousel({
 
   const isBn = lang === 'bn';
   const font = isBn ? BEN : SANS;
-  const [secRef, inView] = useInViewOnce<HTMLDivElement>();
-  const { ref: rowRef, onPointerDown, onPointerMove, onPointerUp, onPointerCancel, wasDrag } = useDragScroll<HTMLDivElement>();
-  const [suppressClick, setSuppressClick] = useState(false);
+  const dark = isDarkToken(tk.bg);
+  const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches;
 
-  const scrollByCards = (dir: 1 | -1) => {
-    const el = rowRef.current;
-    if (!el) return;
-    const card = el.querySelector('[data-gov-card]') as HTMLElement | null;
-    const w = card ? card.offsetWidth + 12 : 272;
-    el.scrollBy({ left: dir * w, behavior: 'smooth' });
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const currentRef = useRef(0);
+  const [current, setCurrent] = useState(0);
+
+  const isMobile = () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
+
+  // scroll the active card to the center of the slider (like the codepen)
+  const center = useCallback((i: number) => {
+    const wrap = wrapRef.current;
+    const card = trackRef.current?.children[i] as HTMLElement | undefined;
+    if (!wrap || !card) return;
+    const mobile = isMobile();
+    const opt: ScrollToOptions = { behavior: 'smooth' };
+    if (mobile) opt.top = card.offsetTop - wrap.clientHeight / 2 + card.offsetHeight / 2;
+    else opt.left = card.offsetLeft - wrap.clientWidth / 2 + card.offsetWidth / 2;
+    wrap.scrollTo(opt);
+  }, []);
+
+  // currentRef mirrors state so rapid clicks/keypresses never use a stale index
+  const activate = useCallback((i: number) => {
+    if (i === currentRef.current) return;
+    currentRef.current = i;
+    setCurrent(i);
+    center(i);
+  }, [center]);
+
+  const go = (step: number) => {
+    const next = currentRef.current + step;
+    if (next >= 0 && next < defs.length) activate(next);
   };
 
-  // entrance style for each card — staggered fade + rise once in view
-  const entrance = (i: number): React.CSSProperties => ({
-    opacity: inView ? 1 : 0,
-    transform: inView ? 'translateY(0)' : 'translateY(26px)',
-    transition: 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1)',
-    transitionDelay: `${Math.min(i, 10) * 70}ms`,
+  // center the first card once layout is ready
+  useEffect(() => {
+    const t = setTimeout(() => center(0), 150);
+    return () => clearTimeout(t);
+  }, [center]);
+
+  // keyboard arrows (desktop only)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (isMobile()) return;
+      if (e.key === 'ArrowLeft') go(-1);
+      else if (e.key === 'ArrowRight') go(1);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   });
 
-  const arrowBtn: React.CSSProperties = {
-    width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
-    background: tk.panelMuted, border: `1px solid ${tk.line}`,
-    color: tk.text, cursor: 'pointer', fontSize: 16, lineHeight: 1,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
+  // re-center on resize
+  useEffect(() => {
+    const onResize = () => center(current);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [current, center]);
+
+  // touch swipe: vertical on mobile, horizontal on desktop
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const s = touchStart.current;
+    touchStart.current = null;
+    if (!s || !e.changedTouches.length) return;
+    const dx = e.changedTouches[0].clientX - s.x;
+    const dy = e.changedTouches[0].clientY - s.y;
+    const mobile = isMobile();
+    if ((mobile && Math.abs(dy) > 60) || (!mobile && Math.abs(dx) > 60)) {
+      go(Math.sign(mobile ? dy : -dx));
+    }
   };
 
+  const vars = {
+    '--kj-accent': tk.primary,
+    '--kj-head': tk.text,
+    '--kj-dot': dark ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.35)',
+    '--kj-btn-bg': dark ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.08)',
+    '--kj-btn-fg': dark ? '#fff' : '#222',
+  } as React.CSSProperties;
+
   return (
-    <div style={{ width: '100%', boxSizing: 'border-box' }} ref={secRef}>
-      {label && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+    <div className="kj-gov-slider" style={{ width: '100%', boxSizing: 'border-box', ...vars }}>
+      <style>{GOV_SLIDER_CSS}</style>
+
+      <div className="head">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
           <div style={{ width: 3, height: 20, borderRadius: 2, background: tk.primary, flexShrink: 0 }} />
-          <span style={{
-            fontFamily: font, fontSize: 13, fontWeight: 700,
-            color: tk.text, letterSpacing: -0.2,
-          }}>
-            {T(lang, 'সরকারি সেবা', 'Government Services')}
-          </span>
+          <h2 style={{ fontFamily: font, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {label ? T(lang, 'সরকারি সেবা', 'Government Services') : T(lang, 'সেবা', 'Services')}
+          </h2>
           <div style={{
-            marginLeft: 4,
-            background: tk.primarySoft,
-            borderRadius: 999, padding: '2px 10px',
+            background: tk.primarySoft, borderRadius: 999, padding: '2px 10px',
             fontFamily: SANS, fontSize: 9.5, fontWeight: 700,
-            color: tk.primary, letterSpacing: 0.3,
+            color: tk.primary, letterSpacing: 0.3, flexShrink: 0,
           }}>
             {T(lang, 'অফিসিয়াল', 'Official')}
           </div>
-          <div style={{ flex: 1 }} />
-          <button onClick={() => scrollByCards(-1)} style={arrowBtn} aria-label={T(lang, 'আগের সেবা', 'Previous service')}>‹</button>
-          <button onClick={() => scrollByCards(1)} style={arrowBtn} aria-label={T(lang, 'পরের সেবা', 'Next service')}>›</button>
         </div>
-      )}
+        <div className="controls">
+          <button className="nav-btn" disabled={current === 0} onClick={() => go(-1)} aria-label={T(lang, 'আগের সেবা', 'Previous service')}>‹</button>
+          <button className="nav-btn" disabled={current === defs.length - 1} onClick={() => go(1)} aria-label={T(lang, 'পরের সেবা', 'Next service')}>›</button>
+        </div>
+      </div>
 
-      <div style={{ position: 'relative' }}>
-        {/* edge fades */}
-        <div style={{
-          position: 'absolute', top: 0, bottom: 0, left: 0, width: 18, zIndex: 2,
-          pointerEvents: 'none',
-          background: `linear-gradient(to right, ${tk.pageBg}, transparent)`,
-        }} />
-        <div style={{
-          position: 'absolute', top: 0, bottom: 0, right: 0, width: 18, zIndex: 2,
-          pointerEvents: 'none',
-          background: `linear-gradient(to left, ${tk.pageBg}, transparent)`,
-        }} />
-
+      <div className="slider" ref={wrapRef}>
         <div
-          ref={rowRef}
-          onClickCapture={(e) => {
-            if (suppressClick) {
-              e.preventDefault();
-              e.stopPropagation();
-              setSuppressClick(false);
-            }
-          }}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={(e) => {
-            onPointerUp();
-            if (wasDrag()) {
-              setSuppressClick(true);
-              e.preventDefault();
-            }
-          }}
-          onPointerCancel={onPointerCancel}
-          style={{
-            display: 'flex', gap: 12, overflowX: 'auto',
-            scrollSnapType: 'x mandatory',
-            touchAction: 'pan-y',
-            cursor: 'grab',
-            padding: '4px 2px 10px',
-            scrollbarWidth: 'none',
-            WebkitOverflowScrolling: 'touch',
-          } as React.CSSProperties}
+          className="track"
+          ref={trackRef}
+          onTouchStart={e => { touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }}
+          onTouchEnd={onTouchEnd}
         >
-          {defs.map((d, i) => (
-            <div key={d.id} data-gov-card style={{
-              flexShrink: 0,
-              width: 272,
-              maxWidth: '78vw',
-              scrollSnapAlign: 'start',
-              ...entrance(i),
-            }}>
-              <ServiceCard d={d} lang={lang} tk={tk} />
-            </div>
-          ))}
+          {defs.map((d, i) => {
+            const c = d.color;
+            const art = `radial-gradient(120% 90% at 85% 10%, ${c}59 0%, transparent 55%), linear-gradient(165deg, ${c}ad 0%, ${c}40 50%, #0b1322 100%)`;
+            const thumbBg = `linear-gradient(160deg, ${c}dd 0%, ${c}55 100%)`;
+            const descText = isBn
+              ? `${d.tagBn} · ${d.featuresBn.slice(0, 2).join(' · ')}`
+              : `${d.tagEn} · ${d.featuresEn.slice(0, 2).join(' · ')}`;
+            const name = isBn ? d.nameBn : d.nameEn;
+            const cta = isBn ? d.ctaBn : d.ctaEn;
+            return (
+              <div
+                key={d.id}
+                className="project-card"
+                data-active={i === current ? '' : undefined}
+                onMouseEnter={canHover ? () => activate(i) : undefined}
+                onClick={() => activate(i)}
+              >
+                <div className="art" style={{ background: art }}>
+                  <div className="art-mark">{d.icon}</div>
+                </div>
+                <div className="content">
+                  <div className="thumb" style={{ background: thumbBg, fontSize: 56 }}>
+                    {d.icon}
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <h3 className="title">{name}</h3>
+                    <p className="desc">{descText}</p>
+                    <a
+                      className="details-btn"
+                      href={d.ctaUrl}
+                      target={d.ctaUrl.startsWith('tel:') ? '_self' : '_blank'}
+                      rel="noopener noreferrer"
+                    >
+                      {cta} <span style={{ fontSize: 13, opacity: 0.85 }}>→</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
+      </div>
+
+      <div className="dots">
+        {defs.map((d, i) => (
+          <button
+            key={d.id}
+            className={'dot' + (i === current ? ' active' : '')}
+            onClick={() => activate(i)}
+            aria-label={T(lang, 'সেবা', 'Service') + ' ' + (i + 1)}
+          />
+        ))}
       </div>
     </div>
   );
