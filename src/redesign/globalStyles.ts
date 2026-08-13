@@ -135,11 +135,20 @@ export function injectGlobalStyles() {
     .kj-photo:hover .kj-photo-del, .kj-photo:focus-within .kj-photo-del { opacity: 1; pointer-events: auto; }
     @media (hover: none) { .kj-photo-del { opacity: 1; pointer-events: auto; } }
 
-    [style*="border-radius: 16px"], [style*="border-radius: 18px"],
-    [style*="border-radius: 20px"], [style*="border-radius: 22px"],
-    [style*="border-radius: 24px"] {
+    /* React serializes inline styles without spaces: border-radius:16px */
+    [style*="border-radius: 16px"], [style*="border-radius:16px"],
+    [style*="border-radius: 18px"], [style*="border-radius:18px"],
+    [style*="border-radius: 20px"], [style*="border-radius:20px"],
+    [style*="border-radius: 22px"], [style*="border-radius:22px"],
+    [style*="border-radius: 24px"], [style*="border-radius:24px"] {
       backdrop-filter: blur(16px) saturate(135%);
       -webkit-backdrop-filter: blur(16px) saturate(135%);
+    }
+
+    /* Card hover lift — opt-in via .kj-card-hov (desktop only) */
+    .kj-card-hov { transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+    @media (hover: hover) {
+      .kj-card-hov:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,0,0,0.18); }
     }
 
     /* kj-screen clips horizontal overflow — scroller is the true scroll boundary */

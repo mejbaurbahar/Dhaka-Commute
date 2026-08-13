@@ -321,8 +321,8 @@ export function RouteResultsV2Page(props: Props) {
             <div style={{ background: tk.inputBg, border: `1px solid ${tk.line}`, borderRadius: 10, padding: '8px 12px', fontFamily: SANS, fontSize: 14, fontWeight: 600, color: tk.text, minWidth: 120 }}>
               {toQ || lbl('Any destination', 'যেকোনো')}
             </div>
-            <button onClick={() => onNav('bus-hub', { from: toQ, to: fromQ })}
-              style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '8px 10px', cursor: 'pointer', fontFamily: SANS, fontSize: 14, color: tk.primary }}>⇄</button>
+            <button onClick={() => onNav('bus-hub', { from: toQ, to: fromQ })} aria-label={lbl('Swap origin and destination', 'যাত্রা শুরু ও গন্তব্য অদলবদল')}
+              style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '8px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Icon.swap s={16} /></button>
           </div>
 
           {/* Stat chips */}

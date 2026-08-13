@@ -316,7 +316,11 @@ export function LocalBusPage(props: Props) {
                     action={T(lang,'সব দেখুন','See all')}/>
                   <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
                     {filteredRoutes.length === 0 && (
-                      <div style={{ fontFamily:BEN, fontSize:13, color:tk.textFaint, padding:'12px 0', textAlign:'center' }}>{T(lang,'কোনো রুট পাওয়া যায়নি','No routes found')}</div>
+                      <div style={{ background:tk.panel, border:`1px dashed ${tk.line}`, borderRadius:16, padding:'28px 16px', textAlign:'center' }}>
+                        <div style={{ fontSize:28, marginBottom:8 }}>🚌</div>
+                        <div style={{ fontFamily:BEN, fontSize:14, fontWeight:600, color:tk.text, marginBottom:4 }}>{T(lang,'কোনো রুট পাওয়া যায়নি','No routes found')}</div>
+                        <div style={{ fontFamily:SANS, fontSize:12, color:tk.textFaint }}>{T(lang,'অন্য নাম বা রুট দিয়ে খুঁজে দেখুন','Try a different name or route')}</div>
+                      </div>
                     )}
                     {filteredRoutes.map((r,i)=>{
                       const col = routeColor(r.type);
@@ -332,7 +336,7 @@ export function LocalBusPage(props: Props) {
                               icon="🎯"
                             />
                           )}
-                          <div onClick={()=>{ trackBusSearch(r.id, r.name); onNav('bus-detail', { busId: r.id, from: fromInput, to: toInput }); }} style={{ ...card(14), display:'flex', alignItems:'center', gap:12, cursor:'pointer' }}>
+                          <div onClick={()=>{ trackBusSearch(r.id, r.name); onNav('bus-detail', { busId: r.id, from: fromInput, to: toInput }); }} className="kj-card-hov" style={{ ...card(14), display:'flex', alignItems:'center', gap:12, cursor:'pointer' }}>
                             <div style={{ width:44, height:44, borderRadius:12, flexShrink:0, background:`linear-gradient(135deg,${col}cc,${col})`, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:SANS, fontWeight:800, fontSize:13 }}>{initials}</div>
                             <div style={{ flex:1, minWidth:0 }}>
                               <div style={{ display:'flex', alignItems:'center', gap:6, flexWrap:'wrap' }}>
@@ -358,7 +362,7 @@ export function LocalBusPage(props: Props) {
                   <SectionHeader tk={tk} lang={lang} title={T(lang,'ট্রানজিট রুট · মাল্টি-লেগ যাত্রা','Transit routes · multi-leg journey')} action=""/>
                   <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
                     {TRANSIT_ROUTES.map(journey=>(
-                      <div key={journey.id} style={{ ...card(16), cursor:'pointer' }} onClick={()=>{ earnCoins(5, 'Transit search'); onNav('results', { from: fromInput||journey.from, to: toInput||journey.to }); }}>
+                      <div key={journey.id} className="kj-card-hov" style={{ ...card(16), cursor:'pointer' }} onClick={()=>{ earnCoins(5, 'Transit search'); onNav('results', { from: fromInput||journey.from, to: toInput||journey.to }); }}>
                         {/* Journey header */}
                         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
                           <div>

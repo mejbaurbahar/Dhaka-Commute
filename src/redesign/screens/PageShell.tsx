@@ -95,7 +95,7 @@ export function PageShell({
 
 
       {/* Scrollable main content — paddingBottom on mobile to clear fixed tab bar (67px) + anchor ad (50px) + system gesture bar */}
-      <main style={{ position: 'relative', zIndex: 1, paddingBottom: isMobile ? 'calc(130px + env(safe-area-inset-bottom))' : 0 }}>
+      <main style={{ position: 'relative', zIndex: 1, paddingBottom: isMobile ? 'calc(200px + env(safe-area-inset-bottom))' : 0 }}>
         {children}
       </main>
 

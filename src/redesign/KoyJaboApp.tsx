@@ -10,6 +10,7 @@ const NATIVE_BUILD = import.meta.env.VITE_PLATFORM === 'android';
 
 // HomePage is eager — it's always the landing screen
 import { HomePage } from './screens/HomePage';
+import { PageSkeleton } from './screens/PageSkeleton';
 // System state pages are eager — needed for error boundaries and 404 handling
 import { ErrorPage404, ErrorPage500, OfflinePage, MaintenancePage } from './screens/SystemStatesPage';
 
@@ -494,9 +495,11 @@ export function KoyJaboApp() {
 
   const screenContent = (
     <div key={screenKey} className={`kj-screen kj-${dir}`} style={{ minHeight: '100%' }}>
-      <Suspense fallback={<LazyFallback />}>
-        {renderScreen(top.route, top.params)}
-      </Suspense>
+      {showSkeleton
+        ? <PageSkeleton tk={tk} lang={lang} isMobile={isPhone} />
+        : <Suspense fallback={<LazyFallback />}>
+            {renderScreen(top.route, top.params)}
+          </Suspense>}
     </div>
   );
 
@@ -546,7 +549,7 @@ export function KoyJaboApp() {
   } else {
     stage = (
       <div ref={scrollerRef} data-app-scroller="true" style={{
-        width: '100%', height: '100vh',
+        width: '100%', height: '100dvh',
         overflowX: forceDesktop ? 'auto' : 'hidden',
         overflowY: 'auto',
         background: tk.bg, position: 'relative',
@@ -612,7 +615,7 @@ export function KoyJaboApp() {
       {/* ── Update-available toast ── */}
       {updateReady && (
         <div style={{
-          position: 'fixed', bottom: isPhone ? 76 : 24, left: '50%',
+          position: 'fixed', bottom: isPhone ? 'calc(200px + env(safe-area-inset-bottom))' : 24, left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 9999,
           display: 'flex', alignItems: 'center', gap: 12,

@@ -168,7 +168,7 @@ export function BusDetailPage(props: Props) {
   if (showRating) return (
     <PageShell {...props} canBack>
       <div style={{ padding:isMobile?'16px 12px 100px':'24px 40px 80px', maxWidth:920, margin:'0 auto' }}>
-        <div style={{ ...card(18), padding:0, overflow:'hidden', minHeight:isMobile?'calc(100vh - 150px)':'calc(100vh - 190px)', display:'flex' }}>
+        <div style={{ ...card(18), padding:0, overflow:'hidden', minHeight:isMobile?'calc(100dvh - 150px)':'calc(100dvh - 190px)', display:'flex' }}>
           <BusRating busId={bus.id} busName={bus.name} onBack={() => { setShowRating(false); getBusRatings(bus.id).then(setRatingSummary).catch(() => setRatingSummary(null)); }} onSuccess={() => earnCoins(10, 'Bus review submitted')}/>
         </div>
       </div>
@@ -189,7 +189,7 @@ export function BusDetailPage(props: Props) {
   if (showLiveTracking) return (
     <PageShell {...props} canBack>
       <div style={{ padding:isMobile?'16px 12px 100px':'24px 40px 80px', maxWidth:980, margin:'0 auto' }}>
-        <div style={{ ...card(18), padding:0, overflow:'hidden', minHeight:isMobile?'calc(100vh - 140px)':'calc(100vh - 190px)', display:'flex' }}>
+        <div style={{ ...card(18), padding:0, overflow:'hidden', minHeight:isMobile?'calc(100dvh - 140px)':'calc(100dvh - 190px)', display:'flex' }}>
           <BusLiveTracking
             busId={bus.id}
             busName={lang === 'bn' ? bus.bnName : bus.name}

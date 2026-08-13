@@ -6,14 +6,14 @@ import { Icon } from './Icons';
 type Device = 'auto' | 'mobile' | 'desktop';
 
 const NAV_ITEMS = [
-  { bn: 'হোম', en: 'Home', route: 'home', ic: '🏠' },
-  { bn: 'লোকাল বাস', en: 'Local Bus', route: 'bus-hub', ic: '🚌' },
-  { bn: 'মেট্রো', en: 'Metro', route: 'metro-hub', ic: '🚇' },
-  { bn: 'ট্রেন', en: 'Train', route: 'train-hub', ic: '🚆' },
-  { bn: 'আন্তঃজেলা', en: 'Intercity', route: 'intercity', ic: '🧭' },
-  { bn: 'লঞ্চ', en: 'Launch', route: 'launch-hub', ic: '⛴️' },
-  { bn: 'ফ্লাইট', en: 'Flights', route: 'flights-hub', ic: '✈️' },
-  { bn: 'ট্রাক', en: 'Truck', route: 'truck-hub', ic: '🚛' },
+  { bn: 'হোম', en: 'Home', route: 'home', ic: 'home' },
+  { bn: 'লোকাল বাস', en: 'Local Bus', route: 'bus-hub', ic: 'bus' },
+  { bn: 'মেট্রো', en: 'Metro', route: 'metro-hub', ic: 'metro' },
+  { bn: 'ট্রেন', en: 'Train', route: 'train-hub', ic: 'train' },
+  { bn: 'আন্তঃজেলা', en: 'Intercity', route: 'intercity', ic: 'compass' },
+  { bn: 'লঞ্চ', en: 'Launch', route: 'launch-hub', ic: 'boat' },
+  { bn: 'ফ্লাইট', en: 'Flights', route: 'flights-hub', ic: 'plane' },
+  { bn: 'ট্রাক', en: 'Truck', route: 'truck-hub', ic: 'truck' },
 ] as const;
 
 interface TopBarProps {
@@ -66,8 +66,8 @@ export function TopBar({
     background: tk.panelMuted,
     border: `1px solid ${tk.line}`,
     borderRadius: 999,
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -117,7 +117,7 @@ export function TopBar({
             gap: 8,
             flexShrink: 0,
           }}
-          aria-label="কই যাবো"
+          aria-label={T(lang, 'কই যাবো', 'Koy Jabo')}
         >
           <Logo tk={tk} size={isMobile ? 42 : 48} />
           {!isMobile && (
@@ -172,7 +172,7 @@ export function TopBar({
                     transition: 'all 0.15s',
                   }}
                 >
-                  <span style={{ fontSize: 14 }}>{item.ic}</span>
+                  {(() => { const I = Icon[item.ic]; return <I s={14} />; })()}
                   {T(lang, item.bn, item.en)}
                 </button>
               );

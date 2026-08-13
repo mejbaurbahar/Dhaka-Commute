@@ -45,10 +45,10 @@ export function ProfilePage(props: ScreenProps) {
   const history = getUserHistory();
   const favoriteCount = getFavoriteBusIds().length;
   const recentRecords = [
-    ...(history.routeSearches || []).map(item => ({ type: lbl('Route search', 'রুট সার্চ'), title: `${item.from || lbl('Any', 'যেকোনো')} → ${item.to || lbl('Any', 'যেকোনো')}`, time: item.timestamp })),
-    ...(history.busSearches || []).map(item => ({ type: lbl('Bus opened', 'বাস দেখা'), title: item.busName, time: item.timestamp })),
-    ...(history.trainSearches || []).map(item => ({ type: lbl('Train search', 'ট্রেন সার্চ'), title: `${item.trainName} · ${item.from} → ${item.to}`, time: item.timestamp })),
-    ...(history.intercitySearches || []).map(item => ({ type: lbl('Intercity search', 'আন্তঃজেলা সার্চ'), title: `${item.from} → ${item.to}`, time: item.timestamp })),
+    ...(history.routeSearches || []).map(item => ({ key: 'route' as const, type: lbl('Route search', 'রুট সার্চ'), title: `${item.from || lbl('Any', 'যেকোনো')} → ${item.to || lbl('Any', 'যেকোনো')}`, time: item.timestamp })),
+    ...(history.busSearches || []).map(item => ({ key: 'bus' as const, type: lbl('Bus opened', 'বাস দেখা'), title: item.busName, time: item.timestamp })),
+    ...(history.trainSearches || []).map(item => ({ key: 'train' as const, type: lbl('Train search', 'ট্রেন সার্চ'), title: `${item.trainName} · ${item.from} → ${item.to}`, time: item.timestamp })),
+    ...(history.intercitySearches || []).map(item => ({ key: 'intercity' as const, type: lbl('Intercity search', 'আন্তঃজেলা সার্চ'), title: `${item.from} → ${item.to}`, time: item.timestamp })),
   ].sort((a, b) => b.time - a.time).slice(0, 5);
 
   const card: React.CSSProperties = { background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, overflow: 'hidden' };
@@ -124,7 +124,7 @@ export function ProfilePage(props: ScreenProps) {
               {recentRecords.length > 0 ? recentRecords.map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', borderTop: i ? `1px solid ${tk.line}` : '' }}>
                   <div style={{ width: 42, height: 42, borderRadius: 10, background: tk.panelMuted, border: `1px solid ${tk.line}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <span style={{ fontFamily: SANS, fontSize: 16, fontWeight: 800, color: tk.text, lineHeight: 1 }}>•</span>
+                    {item.key === 'route' ? <Icon.swap s={18} /> : item.key === 'bus' ? <Icon.bus s={18} /> : item.key === 'train' ? <Icon.train s={18} /> : <Icon.compass s={18} />}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: font, fontWeight: 600, fontSize: 14, color: tk.text }}>{item.title}</div>

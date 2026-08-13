@@ -460,7 +460,7 @@ export function IntercityDetailPage(props: Props) {
         <div style={{
           background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 18,
           padding: 0, overflow: 'hidden',
-          minHeight: isMobile ? 'calc(100vh - 150px)' : 'calc(100vh - 190px)',
+          minHeight: isMobile ? 'calc(100dvh - 150px)' : 'calc(100dvh - 190px)',
           display: 'flex',
         }}>
           <BusRating

@@ -383,8 +383,8 @@ function SearchPanel({
         {!isMobile && (
           <button
             style={{
-              width: 36,
-              height: 36,
+              width: 40,
+              height: 40,
               borderRadius: 999,
               background: tk.primarySoft,
               border: `1px solid ${tk.primary}`,
@@ -396,7 +396,7 @@ function SearchPanel({
               flexShrink: 0,
               order: 2,
             }}
-            aria-label="Swap"
+            aria-label={T(lang, 'অদলবদল', 'Swap')}
             onClick={() => { setFrom(to); setTo(from); setSameLocError(false); }}
           >
             <Icon.swap s={16} />
@@ -1810,20 +1810,20 @@ function GovQuickLinks({ lang, tk, isMobile }: { lang: Lang; tk: Tokens; isMobil
       <div style={{ position: 'relative' }}>
         {isMobile && <>
           {/* Left arrow */}
-          <button onClick={() => scroll('l')} aria-label="scroll left" style={{
+          <button onClick={() => scroll('l')} aria-label={T(lang, 'বামে স্ক্রল', 'Scroll left')} style={{
             position: 'absolute', left: -10, top: '50%', transform: 'translateY(-60%)',
-            zIndex: 2, width: 28, height: 28, borderRadius: '50%',
+            zIndex: 2, width: 40, height: 40, borderRadius: '50%',
             background: tk.panelSolid, border: `1px solid ${tk.line}`,
             boxShadow: tk.shadow, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', fontSize: 13, color: tk.textDim, padding: 0,
+            cursor: 'pointer', fontSize: 16, color: tk.textDim, padding: 0,
           }}>‹</button>
           {/* Right arrow + nudge hint */}
-          <button onClick={() => scroll('r')} aria-label="scroll right" className="gql-scroll-hint" style={{
+          <button onClick={() => scroll('r')} aria-label={T(lang, 'ডানে স্ক্রল', 'Scroll right')} className="gql-scroll-hint" style={{
             position: 'absolute', right: -10, top: '50%', transform: 'translateY(-60%)',
-            zIndex: 2, width: 28, height: 28, borderRadius: '50%',
+            zIndex: 2, width: 40, height: 40, borderRadius: '50%',
             background: tk.primary, border: 'none',
             boxShadow: `0 2px 8px ${tk.primary}55`, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', fontSize: 13, color: tk.primaryInk, padding: 0, fontWeight: 700,
+            cursor: 'pointer', fontSize: 16, color: tk.primaryInk, padding: 0, fontWeight: 700,
           }}>›</button>
         </>}
 
@@ -2045,7 +2045,7 @@ export function HomePage({
       <div style={{ height: isMobile ? 'calc(52px + env(safe-area-inset-top))' : 60, flexShrink: 0 }}/>
 
       {/* Scrollable content — bottom padding clears tab bar (67px) + anchor ad (50px) + system gesture bar */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 28, paddingBottom: isMobile ? 'calc(80px + env(safe-area-inset-bottom))' : 32, paddingTop: 24, position: 'relative', zIndex: 1 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 28, paddingBottom: isMobile ? 'calc(200px + env(safe-area-inset-bottom))' : 32, paddingTop: 24, position: 'relative', zIndex: 1 }}>
 
         {/* ── HERO ── */}
         <div style={section}>

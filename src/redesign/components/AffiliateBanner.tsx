@@ -117,12 +117,12 @@ function AffiliateSlider({ tk, lang }: { tk: Tokens; lang: Lang }) {
   const [hovered, setHovered] = useState(false);
   const [imgSrcs, setImgSrcs] = useState<string[]>(COURSES.map((c) => c.localImg));
 
-  // Auto-advance every 1 second
+  // Auto-advance every 4 seconds (paused on hover)
   useEffect(() => {
     if (hovered) return;
     const timer = setInterval(() => {
       setSliding(true);
-    }, 1000);
+    }, 4000);
     return () => clearInterval(timer);
   }, [hovered]);
 
@@ -310,19 +310,36 @@ function AffiliateSlider({ tk, lang }: { tk: Tokens; lang: Lang }) {
           paddingBottom: 12,
         }}
       >
-        {COURSES.map((_, i) => (
-          <span
+        {COURSES.map((c, i) => (
+          <button
             key={i}
+            type="button"
+            aria-label={T(lang, c.titleBn, c.titleEn)}
+            aria-current={i === current}
             onClick={() => goTo(i)}
             style={{
-              width: i === current ? 22 : 7,
-              height: 7,
-              borderRadius: 999,
-              background: i === current ? '#00f0ff' : 'rgba(255,255,255,0.3)',
+              width: 24,
+              height: 24,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'none',
+              border: 'none',
               cursor: 'pointer',
-              transition: 'all 0.3s ease',
+              padding: 0,
             }}
-          />
+          >
+            <span
+              style={{
+                width: i === current ? 22 : 7,
+                height: 7,
+                borderRadius: 999,
+                background: i === current ? '#00f0ff' : 'rgba(255,255,255,0.3)',
+                transition: 'all 0.3s ease',
+                display: 'block',
+              }}
+            />
+          </button>
         ))}
       </div>
     </div>

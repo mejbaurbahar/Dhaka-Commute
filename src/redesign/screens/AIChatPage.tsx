@@ -426,6 +426,7 @@ export function AIChatPage(props: Props) {
 
         {/* ── Main chat column ── */}
         <div style={{ flex:1,display:'flex',flexDirection:'column',minHeight:0,background:`linear-gradient(180deg,${tk.bg} 0%,${tk.panelSolid ?? tk.panel} 100%)` }}>
+          <div style={{ display:'flex',flexDirection:'column',minHeight:0,maxWidth:isMobile?'100%':900,width:'100%',margin:'0 auto',flex:1 }}>
 
           {/* Desktop chat header bar */}
           {!isMobile && (
@@ -485,10 +486,11 @@ export function AIChatPage(props: Props) {
                 style={{ flex:1,background:'transparent',border:'none',padding: isMobile ? '14px 0' : '12px 0',fontFamily:BEN,fontSize: isMobile ? 16 : 14,color:tk.text,outline:'none',minWidth:0 }}
               />
             </div>
-            <button onClick={() => send()} disabled={isLoading} style={{ width: isMobile ? 46 : 48,height: isMobile ? 46 : 48,borderRadius:999,background:isLoading?tk.panelMuted:`linear-gradient(135deg,${tk.primary},${tk.accent})`,color:'#fff',border:0,cursor:isLoading?'not-allowed':'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:isLoading?'none':`0 4px 14px ${tk.primary}55`,transition:'all 0.2s' }}>
+            <button onClick={() => send()} disabled={isLoading} aria-label={T(lang,'পাঠান','Send message')} style={{ width: isMobile ? 46 : 48,height: isMobile ? 46 : 48,borderRadius:999,background:isLoading?tk.panelMuted:`linear-gradient(135deg,${tk.primary},${tk.accent})`,color:'#fff',border:0,cursor:isLoading?'not-allowed':'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:isLoading?'none':`0 4px 14px ${tk.primary}55`,transition:'all 0.2s' }}>
               <Icon.arrowR s={18}/>
             </button>
           </div>
+        </div>
         </div>
       </div>
     </PageShell>
