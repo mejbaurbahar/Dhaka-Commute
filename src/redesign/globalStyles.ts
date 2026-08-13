@@ -56,6 +56,7 @@ export function injectGlobalStyles() {
     @keyframes kjStoryIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
     @keyframes kjModalIn { from { opacity: 0; transform: translateY(14px) scale(0.985); } to { opacity: 1; transform: none; } }
     @keyframes kjFadeIn  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes kjSheetUp { from { transform: translateY(100%); } to { transform: none; } }
     .kj-story-scene { animation: kjStoryIn .5s cubic-bezier(.2,.7,.25,1) both; }
     @keyframes kjMapPulse { 0% { box-shadow: 0 0 0 0 rgba(37,99,235,.5); } 70% { box-shadow: 0 0 0 14px rgba(37,99,235,0); } 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); } }
 

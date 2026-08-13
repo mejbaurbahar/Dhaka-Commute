@@ -59,51 +59,43 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
     </div>
   );
 
-  if (isMobile) {
-    // Full-screen overlay — keyboard-friendly (visual viewport resizes the fixed layer)
-    return (
-      <div
-        role="dialog" aria-modal="true" aria-label={T(lang, 'কই যাবো AI চ্যাট', 'KoyJabo AI chat')}
-        style={{
-          position: 'fixed', inset: 0, zIndex: 9500,
-          background: tk.bg, display: 'flex', flexDirection: 'column',
-          animation: 'kjModalIn 0.22s ease-out',
-        }}
-      >
-        {header}
-        <AIChatBody tk={tk} lang={lang} isMobile chat={chat} autoFocusInput />
-      </div>
-    );
-  }
-
-  // Desktop — centered dialog over dimmed backdrop
+  // 60% of screen height, blurred backdrop, rounded card.
+  // Mobile: bottom sheet. Desktop: centered.
+  const cardHeight = '60dvh';
   return (
     <div
       role="dialog" aria-modal="true" aria-label={T(lang, 'কই যাবো AI চ্যাট', 'KoyJabo AI chat')}
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 9500,
-        background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 24, animation: 'kjFadeIn 0.18s ease-out',
+        background: 'rgba(0,0,0,0.5)',
+        backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+        display: 'flex',
+        alignItems: isMobile ? 'flex-end' : 'center',
+        justifyContent: 'center',
+        padding: isMobile ? 0 : 24,
+        animation: 'kjFadeIn 0.18s ease-out',
       }}
     >
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          width: 'min(560px, calc(100vw - 48px))',
-          height: 'min(640px, calc(100dvh - 96px))',
+          width: isMobile ? '100%' : 'min(560px, calc(100vw - 48px))',
+          height: cardHeight,
+          maxWidth: '100%',
           background: tk.bg,
-          border: `1px solid ${tk.line}`,
-          borderRadius: 20,
+          border: isMobile ? 0 : `1px solid ${tk.line}`,
+          borderRadius: isMobile ? '24px 24px 0 0' : 20,
           boxShadow: `0 32px 90px -20px rgba(0,0,0,0.6), 0 0 0 1px ${tk.primary}22`,
           overflow: 'hidden',
           display: 'flex', flexDirection: 'column',
-          animation: 'kjModalIn 0.22s ease-out',
+          animation: isMobile ? 'kjSheetUp 0.28s cubic-bezier(0.16, 1, 0.3, 1)' : 'kjModalIn 0.22s ease-out',
+          paddingBottom: isMobile ? 'env(safe-area-inset-bottom, 0px)' : 0,
+          boxSizing: 'border-box',
         }}
       >
         {header}
-        <AIChatBody tk={tk} lang={lang} isMobile={false} chat={chat} autoFocusInput />
+        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} autoFocusInput />
       </div>
     </div>
   );
