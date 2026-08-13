@@ -16,6 +16,8 @@ import {
   subscribe,
   setSharingCallbacks,
   getNearestStopName,
+  isBusNumberValid,
+  normalizeBusNumber,
   SharingState,
 } from '../../../services/busLiveService';
 
@@ -117,11 +119,20 @@ export function BusLiveMapPage(props: Props) {
 
   const onStartSharing = async () => {
     setShareError(null);
+    const num = normalizeBusNumber(busNumberInput);
+    if (!num) {
+      setShareError(T(lang, 'বাস নম্বর লিখুন — এটা আবশ্যক', 'Enter your bus number — it is required'));
+      return;
+    }
+    if (!isBusNumberValid(num)) {
+      setShareError(T(lang, 'ভুল বাস নম্বর — ইংরেজি অক্ষর/সংখ্যায় লিখুন, যেমন: DA M 12-2467', 'Invalid bus number — use English letters/digits, e.g. DA M 12-2467'));
+      return;
+    }
     if (!navigator.geolocation) {
       setShareError(T(lang, 'এই ডিভাইসে GPS নেই', 'This device has no GPS'));
       return;
     }
-    const ok = await startSharing({ busId, busNumber: busNumberInput, destStopId });
+    const ok = await startSharing({ busId, busNumber: num, destStopId });
     if (!ok) setShareError(T(lang, 'GPS চালু করুন এবং আবার চেষ্টা করুন', 'Enable GPS and try again'));
   };
 
@@ -197,8 +208,8 @@ export function BusLiveMapPage(props: Props) {
             <input
               list="kj-bus-numbers"
               value={busNumberInput}
-              onChange={e => setBusNumberInput(e.target.value)}
-              placeholder={T(lang, 'বাস নম্বর (ঐচ্ছিক) — যেমন: DA M 12-2467', 'Bus number (optional) — e.g. DA M 12-2467')}
+              onChange={e => { setBusNumberInput(e.target.value); setShareError(null); }}
+              placeholder={T(lang, 'বাস নম্বর (আবশ্যক) — যেমন: DA M 12-2467', 'Bus number (required) — e.g. DA M 12-2467')}
               style={inputStyle}
             />
             {knownNumbers.length > 0 && (
@@ -206,6 +217,9 @@ export function BusLiveMapPage(props: Props) {
                 {knownNumbers.map(n => <option key={n} value={n} />)}
               </datalist>
             )}
+            <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textFaint, marginBottom: 10 }}>
+              {T(lang, 'তালিকায় আপনার নম্বর নেই? নিজের নম্বর লিখে শেয়ার করুন — সবাই দেখতে পাবে।', 'Not on the list? Type your own number to share it — everyone will see it.')}
+            </div>
             {shareError && <div style={{ fontFamily: BEN, fontSize: 12, color: '#ef4444', marginBottom: 10 }}>{shareError}</div>}
             <button onClick={onStartSharing} style={btn(tk.primary, '#fff')}>
               {T(lang, 'শেয়ার করা শুরু করুন', 'Start sharing')}
