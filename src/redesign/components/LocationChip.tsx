@@ -71,10 +71,10 @@ export function LocationChip({ tk, lang }: { tk: Tokens; lang: Lang }) {
         disabled={locating}
         style={{
           display: 'inline-flex', alignItems: 'center', gap: 6,
-          background: `${tk.primary}14`, border: `1px solid ${tk.primary}44`,
+          background: `${tk.primary}14`, border: `1px solid ${tk.primaryDeep}55`,
           borderRadius: 999, padding: '5px 12px', cursor: 'pointer',
           fontFamily: lang === 'bn' ? 'inherit' : SANS, fontSize: 12, fontWeight: 600,
-          color: tk.primary,
+          color: tk.primaryDeep,
         }}
       >
         {locating ? T(lang, 'অবস্থান খোঁজা হচ্ছে…', 'Locating…') : T(lang, '📍 অবস্থান চালু করুন', '📍 Enable location')}
