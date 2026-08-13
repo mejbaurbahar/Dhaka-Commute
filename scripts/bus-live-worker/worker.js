@@ -49,7 +49,9 @@ function normalizeBusNumber(raw) {
 }
 
 function isBusNumberValid(v) {
-  return /^[A-Z0-9][A-Z0-9 ._-]{3,19}$/.test(v);
+  // BD plate: optional district (DA/DHA/CHA…) + series letter + class digits + 2-4-digit number.
+  // e.g. "DA M 12-0080", "M 12-2467", "12-2467". Trailing junk like "DA M 12-0080NHB HB" fails.
+  return /^([A-Z]{1,5} )?([A-Z] )?\d{1,2}[- ]\d{2,4}$/.test(v);
 }
 
 function isBusIdValid(v) {

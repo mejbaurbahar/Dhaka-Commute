@@ -100,7 +100,9 @@ export function normalizeBusNumber(raw: string): string {
 }
 
 export function isBusNumberValid(raw: string): boolean {
-  return /^[A-Z0-9][A-Z0-9 ._-]{3,19}$/.test(normalizeBusNumber(raw));
+  // BD plate: optional district (DA/DHA/CHA…) + series letter + class digits + 2-4-digit number.
+  // e.g. "DA M 12-0080", "M 12-2467", "12-2467". Trailing junk like "DA M 12-0080NHB HB" fails.
+  return /^([A-Z]{1,5} )?([A-Z] )?\d{1,2}[- ]\d{2,4}$/.test(normalizeBusNumber(raw));
 }
 
 function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number): number {
