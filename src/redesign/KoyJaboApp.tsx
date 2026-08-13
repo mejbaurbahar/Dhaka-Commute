@@ -57,6 +57,7 @@ import { claimDailyBonus } from './utils/koyCoinService';
 import { NavDrawer } from './components/NavDrawer';
 // FloatingControls removed per user request
 import { AIFab } from './components/AIFab';
+import { AIChatModal } from './components/AIChatModal';
 import { TopBar } from './components/TopBar';
 import { MobileTabBar } from './components/MobileTabBar';
 import { SideRailAd, AnchorAd, VignetteAd } from './components/AdComponents';
@@ -236,6 +237,8 @@ export function KoyJaboApp() {
   const [anchorOn, setAnchorOn] = useState(true);
   const [vw, setVw] = useState(window.innerWidth);
   const [showConsentModal, setShowConsentModal] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false); // global AI chat popup
+  const [aiQ, setAiQ] = useState<string | undefined>(); // prefill question for the popup
   const scrollerRef = useRef<HTMLDivElement>(null);
   const vignetteTimer = useRef<number>(0);
   const adNavRef = useRef(false);
@@ -367,6 +370,8 @@ export function KoyJaboApp() {
   const resolvedDevice: 'desktop' | 'mobile' = (vw < 1024 && !forceDesktop) ? 'mobile' : 'desktop';
 
   const nav = useCallback((route: Route, params?: Record<string, string>) => {
+    // AI chat opens as a popup from any page — only direct /ai URLs load the full page
+    if (route === 'ai') { setAiQ(params?.q); setAiOpen(true); return; }
     const entry = { route, params };
     setDir('fwd');
     setShowSkeleton(true);
@@ -381,6 +386,7 @@ export function KoyJaboApp() {
   }, [pushUrl]);
 
   const navTab = useCallback((route: Route) => {
+    if (route === 'ai') { setAiOpen(true); return; } // AI tab = popup, not a page
     const entry = { route };
     setDir('fwd');
     pushUrl(entry);
@@ -400,6 +406,7 @@ export function KoyJaboApp() {
   // Keyboard back
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (aiOpen) return; // AI modal handles Escape itself
       if ((e.key === 'Escape' || e.key === 'Backspace') &&
         !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName) &&
         !(e.target as HTMLElement).isContentEditable) {
@@ -517,7 +524,7 @@ export function KoyJaboApp() {
         : (anchorOn ? 'calc(132px + env(safe-area-inset-bottom))' : 24),
       zIndex: 9200, pointerEvents: 'auto',
     }}>
-      <AIFab tk={tk} lang={lang} onNav={() => nav('ai')}/>
+      <AIFab tk={tk} lang={lang} onNav={() => setAiOpen(true)}/>
     </div>
   ) : null;
 
@@ -597,6 +604,7 @@ export function KoyJaboApp() {
       )}
       <main>{stage}</main>
       {aiFab}
+      {aiOpen && <AIChatModal theme={theme} lang={lang} isMobile={isPhone} initialQ={aiQ} onClose={() => setAiOpen(false)} />}
       {/* Desktop view toggle removed — mobile users always get mobile layout */}
       <NavDrawer
         open={menuOpen} theme={theme} lang={lang}
