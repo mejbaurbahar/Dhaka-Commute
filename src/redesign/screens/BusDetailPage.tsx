@@ -226,7 +226,7 @@ export function BusDetailPage(props: Props) {
 
   return (
     <PageShell {...props}>
-      <div style={{ padding:isMobile?'16px 16px 260px':'28px 40px 80px', maxWidth:1180, margin:'0 auto' }}>
+      <div style={{ padding:isMobile?'16px 16px 24px':'28px 40px 80px', maxWidth:1180, margin:'0 auto' }}>
         <div style={{ height:isMobile?320:430,borderRadius:16,overflow:'hidden',position:'relative',marginBottom:18,background:'#0a1f14',border:`1px solid ${tk.line}` }}>
           <BusRouteMap
             route={bus}
@@ -398,20 +398,6 @@ export function BusDetailPage(props: Props) {
           </div>
         </div>
       </div>
-
-      {isMobile && (
-        <div style={{ position:'fixed', bottom:'calc(160px + env(safe-area-inset-bottom))', left:0, right:0, background:tk.panel, backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)', borderTop:`1px solid ${tk.line}`, padding:'12px 16px', display:'flex', gap:10, zIndex:9100 }}>
-          <button onClick={()=>setFavoriteIds(toggleFavoriteBus(bus.id, bus.name))} style={{ ...chipBtn(tk),borderRadius:12,padding:'10px 16px',color:isFavorite?tk.accent:tk.text }}>
-            {isFavorite?'♥':'♡'} {T(lang,'সেভ','Save')}
-          </button>
-          <button onClick={()=>setShowRating(true)} style={{ ...chipBtn(tk),borderRadius:12,padding:'10px 16px' }}>
-            ★ {T(lang,'রেট','Rate')}
-          </button>
-          <button style={{ flex:1,background:tk.primary,color:tk.primaryInk,border:0,borderRadius:12,padding:'12px 20px',fontFamily:SANS,fontWeight:700,fontSize:14,cursor:'pointer' }}>
-            {T(lang,'নেভিগেট শুরু','Start navigation')}
-          </button>
-        </div>
-      )}
 
       <EmergencyHelplineModal
         isOpen={showHelpline}
