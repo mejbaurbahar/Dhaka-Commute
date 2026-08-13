@@ -51,6 +51,7 @@ const TermsPage = React.lazy(() => import('./screens/TermsPage').then(m => ({ de
 const InstallPage = React.lazy(() => import('./screens/InstallPage').then(m => ({ default: m.InstallPage })));
 const AdvertisePage = React.lazy(() => import('./screens/AdvertisePage').then(m => ({ default: m.AdvertisePage })));
 const DTCABusDetailPage = React.lazy(() => import('./screens/DTCABusDetailPage').then(m => ({ default: m.DTCABusDetailPage })));
+const BusLiveMapPage = React.lazy(() => import('./screens/BusLiveMapPage').then(m => ({ default: m.BusLiveMapPage })));
 const SignInPage = React.lazy(() => import('./screens/SignInPage').then(m => ({ default: m.SignInPage })));
 const SignUpPage = React.lazy(() => import('./screens/SignUpPage').then(m => ({ default: m.SignUpPage })));
 const ProfilePage = React.lazy(() => import('./screens/ProfilePage').then(m => ({ default: m.ProfilePage })));
@@ -89,7 +90,7 @@ const SHOW_BACK_ROUTES = new Set([
   // detail / leaf pages
   'bus-detail', 'from-to-bus', 'train-detail', 'metro-detail', 'intercity-detail', 'vehicle',
   'rate-review', 'metro-token', 'metro-pass', 'blog-detail',
-  'devices', 'results', 'install', 'flight-detail', 'dtca-bus-detail',
+  'devices', 'results', 'install', 'flight-detail', 'dtca-bus-detail', 'bus-live-map',
   // transport search / hub pages
   'bus-hub', 'metro-hub', 'train-hub', 'launch-hub', 'flights-hub', 'truck-hub',
   'intercity', 'fare',
@@ -150,6 +151,7 @@ function detailPath(route: string, params: Record<string, string> = {}) {
   const suffix = query.toString() ? `?${query.toString()}` : '';
   if (route === 'blog-detail') return `/blog/${params.slug || 'post'}`;
   if (route === 'bus-detail') return `/bus/${busSlug(params.busId)}${suffix}`;
+  if (route === 'bus-live-map') return `/bus/${busSlug(params.busId)}/live${suffix}`;
   if (route === 'from-to-bus') return params.via ? `/bus/${params.from}-to-${params.to}-via-${params.via}/` : `/bus/${params.from}-to-${params.to}/`;
   if (route === 'metro-detail') return `/metro/${slugify(params.stationId || params.id || 'detail')}${suffix}`;
   if (route === 'train-detail') return `/train/${slugify(params.trainId || params.id || 'detail')}${suffix}`;
@@ -175,7 +177,7 @@ function detailPath(route: string, params: Record<string, string> = {}) {
 }
 
 function pathForEntry(entry: StackEntry) {
-  if (['bus-detail', 'from-to-bus', 'metro-detail', 'train-detail', 'intercity-detail', 'vehicle', 'flight-detail', 'blog-detail', 'dtca-bus-detail'].includes(entry.route)) {
+  if (['bus-detail', 'bus-live-map', 'from-to-bus', 'metro-detail', 'train-detail', 'intercity-detail', 'vehicle', 'flight-detail', 'blog-detail', 'dtca-bus-detail'].includes(entry.route)) {
     return detailPath(entry.route, entry.params || {});
   }
   if (entry.route === 'results') {
@@ -214,6 +216,11 @@ function entryFromLocation(): StackEntry {
     const fromTo = slug.match(/^([a-z0-9_]+)-to-([a-z0-9_]+)$/);
     if (fromTo && findPair(fromTo[1], fromTo[2])) {
       return { route: 'from-to-bus', params: { ...params, from: fromTo[1], to: fromTo[2] } };
+    }
+    // Live bus map: /bus/agradut/live
+    if (path.split('/')[3] === 'live') {
+      const bus = BUS_DATA.find(item => slugify(item.name) === slug || slugify(item.id) === slug);
+      return { route: 'bus-live-map', params: { ...params, busId: bus?.id || slug } };
     }
     const bus = BUS_DATA.find(item => slugify(item.name) === slug || slugify(item.id) === slug)
       // legacy unstripped slugs (pre-sitemap-alignment deep links)
@@ -483,6 +490,7 @@ export function KoyJaboApp() {
       case 'fare': return <FareCalcPage {...p}/>;
       case 'intercity-detail': return <IntercityDetailPage {...p}/>;
       case 'bus-detail': return <BusDetailPage {...p}/>;
+      case 'bus-live-map': return <BusLiveMapPage {...p}/>;
       case 'from-to-bus': return <FromToBusPage {...p}/>;
       case 'dtca-bus-detail': return <DTCABusDetailPage {...p}/>;
       case 'metro-detail': return <MetroDetailPage {...p}/>;
