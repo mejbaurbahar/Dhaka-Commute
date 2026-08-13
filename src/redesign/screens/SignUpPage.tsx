@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdCluster } from '../components/AdSlot';
@@ -12,6 +14,7 @@ interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en
 
 export function SignUpPage(props: Props) {
   const { theme, device, lang, onNav } = props;
+  useDocumentTitle(lang === 'bn' ? 'সাইন আপ' : 'Sign Up');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const { login } = useAuth();

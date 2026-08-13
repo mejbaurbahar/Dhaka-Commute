@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { KJ_TOKENS, T, SANS, BEN, N } from '../tokens';
@@ -53,6 +55,7 @@ function distKm(lat1: number, lon1: number, lat2: number, lon2: number): number 
 
 export function DTCABusDetailPage(props: Props) {
   const { theme, device, lang, params } = props;
+  useDocumentTitle(lang === 'bn' ? 'লাইভ বাস ট্র্যাকিং' : 'Live Bus Tracking');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
 

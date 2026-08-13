@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { STATIONS } from '../../../constants';
 import { KJ_TOKENS, T, SANS, BEN, Tokens } from '../tokens';
 import { PageShell } from './PageShell';
@@ -30,6 +32,7 @@ function Toggle({ on, onChange, tk }: { on: boolean; onChange: () => void; tk: T
 
 export function SettingsPage(props: ScreenProps) {
   const { theme, device, lang, onNav, onTheme, onLang } = props;
+  useDocumentTitle(lang === 'bn' ? 'সেটিংস' : 'Settings');
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

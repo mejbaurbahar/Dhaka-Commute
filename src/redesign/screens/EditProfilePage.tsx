@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { useAuth } from '../../contexts/AuthContext';
@@ -8,6 +10,7 @@ interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en
 
 export function EditProfilePage(props: Props) {
   const { theme, device, lang, onBack } = props;
+  useDocumentTitle(lang === 'bn' ? 'প্রোফাইল সম্পাদনা' : 'Edit Profile');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const { user } = useAuth();

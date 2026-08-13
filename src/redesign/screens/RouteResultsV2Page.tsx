@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang } from '../tokens';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovAdBanner } from '../components/GovAdBanner';
@@ -51,6 +53,7 @@ const TOP_OPERATORS = (() => {
 
 export function RouteResultsV2Page(props: Props) {
   const { theme, device, lang, onNav, params } = props;
+  useDocumentTitle(lang === 'bn' ? 'রুট ফলাফল' : 'Route Results');
   const isMobile = device === 'mobile';
   const tk: Tokens = KJ_TOKENS[theme];
   const lbl = (en: string, bn: string) => T(lang, bn, en);

@@ -1,4 +1,6 @@
 import React from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, Tokens } from '../tokens';
 import { PageShell, PageShellProps } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
@@ -31,6 +33,7 @@ const STATS = [
 
 export function AdvertisePage(props: PageShellProps) {
   const { theme, lang, device } = props;
+  useDocumentTitle(lang === 'bn' ? 'অ্যাডভার্টাইজ' : 'Advertise with KoyJabo');
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
@@ -58,6 +60,7 @@ const HISTOGRAM = [
 
 export function MetroDetailPage(props: ScreenProps) {
   const { theme, device, lang, onNav } = props;
+  useDocumentTitle(lang === 'bn' ? 'মেট্রো স্টেশন' : 'Metro Station');
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

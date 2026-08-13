@@ -1,4 +1,6 @@
 import React from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
@@ -13,6 +15,7 @@ interface Section {
 
 export function TermsPage(props: Props) {
   const { theme, device, lang } = props;
+  useDocumentTitle(lang === 'bn' ? 'সেবার শর্তাবলী' : 'Terms of Service');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });

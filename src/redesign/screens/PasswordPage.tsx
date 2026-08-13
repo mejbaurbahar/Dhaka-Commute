@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdCluster } from '../components/AdSlot';
@@ -15,6 +17,7 @@ function EyeIcon({ open }: { open: boolean }) {
 
 export function PasswordPage(props: Props) {
   const { theme, device, lang } = props;
+  useDocumentTitle(lang === 'bn' ? 'পাসওয়ার্ড পরিবর্তন' : 'Change Password');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const { user: authUser } = useAuth();

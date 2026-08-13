@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, Theme, Lang } from '../tokens';
 
 interface SystemProps { theme: Theme; lang: Lang; onHome?: () => void; }

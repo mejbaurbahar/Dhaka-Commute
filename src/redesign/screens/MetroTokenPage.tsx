@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
@@ -10,6 +12,7 @@ const FARES = [20,30,40,50,60,70,80,80,90,90,90,100,100,100,100,100];
 
 export function MetroTokenPage(props: Props) {
   const { theme, device, lang } = props;
+  useDocumentTitle(lang === 'bn' ? 'মেট্রো টোকেন' : 'Metro Token');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });

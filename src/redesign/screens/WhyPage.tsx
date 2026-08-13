@@ -1,4 +1,6 @@
 import React from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
 import { PageShell, PageShellProps } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
@@ -51,6 +53,7 @@ const STATS = [
 
 export function WhyPage(props: PageShellProps) {
   const { theme, lang, device } = props;
+  useDocumentTitle(lang === 'bn' ? 'কেন কই যাবো' : 'Why KoyJabo');
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

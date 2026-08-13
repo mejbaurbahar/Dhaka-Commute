@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
@@ -9,6 +11,7 @@ const PROXY = 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 export function ContactPage(props: Props) {
   const { theme, device, lang } = props;
+  useDocumentTitle(lang === 'bn' ? 'যোগাযোগ' : 'Contact Us');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });

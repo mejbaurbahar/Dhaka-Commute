@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, N } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
@@ -43,6 +45,7 @@ function fmtDate(ts: number): string {
 
 export function KoyCoinsPage(props: Props) {
   const { theme, device, lang } = props;
+  useDocumentTitle(lang === 'bn' ? 'কই কয়েন' : 'Koy Coins');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
 

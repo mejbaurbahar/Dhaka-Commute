@@ -83,9 +83,16 @@ export function interchangePath(pair: InterchangePair): string {
 }
 
 export function findPair(from: string, to: string): BusPair | null {
-  return BUS_PAIRS.find(p => p.from === from && p.to === to) ?? null;
+  const p = BUS_PAIRS.find(p => p.from === from && p.to === to) ?? BUS_PAIRS.find(p => p.from === to && p.to === from) ?? null;
+  if (!p || (p.from === from && p.to === to)) return p;
+  // URL asked for the reverse direction (e.g. /bus/mirpur10-to-gulistan/ while the
+  // pair is stored gulistan→mirpur10). Mirror the pair so downstream code always
+  // sees from→to exactly as requested — display AND bus filtering.
+  return { from, fromEn: p.toEn, fromBn: p.toBn, to, toEn: p.fromEn, toBn: p.fromBn };
 }
 
 export function findInterchange(from: string, to: string): InterchangePair | null {
-  return INTERCHANGE_PAIRS.find(p => p.from === from && p.to === to) ?? null;
+  const p = INTERCHANGE_PAIRS.find(p => p.from === from && p.to === to) ?? INTERCHANGE_PAIRS.find(p => p.from === to && p.to === from) ?? null;
+  if (!p || (p.from === from && p.to === to)) return p;
+  return { from, fromEn: p.toEn, fromBn: p.toBn, to, toEn: p.fromEn, toBn: p.fromBn, via: p.via, viaEn: p.viaEn, viaBn: p.viaBn };
 }

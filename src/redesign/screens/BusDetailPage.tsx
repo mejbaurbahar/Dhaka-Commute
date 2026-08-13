@@ -52,15 +52,16 @@ export function BusDetailPage(props: Props) {
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });
 
   const busId = params?.busId ?? '';
-  const bus = BUS_DATA.find(b => b.id === busId) ?? BUS_DATA[0];
-  const fromId = resolveStationId(params?.from ?? '', bus.stops[0]);
-  const toId = resolveStationId(params?.to ?? '', bus.stops[bus.stops.length - 1]);
+  const bus = BUS_DATA.find(b => b.id === busId) ?? null;
+  const fromId = resolveStationId(params?.from ?? '', bus?.stops[0] ?? '');
+  const toId = resolveStationId(params?.to ?? '', bus?.stops[bus.stops.length - 1] ?? '');
 
-  const startName = STATIONS[bus.stops[0]]?.name ?? bus.stops[0];
-  const endName = STATIONS[bus.stops[bus.stops.length - 1]]?.name ?? bus.stops[bus.stops.length - 1];
-  useDocumentTitle(`${bus.name} Bus: ${startName} ⇄ ${endName} Route & Fare`);
+  const startName = bus ? (STATIONS[bus.stops[0]]?.name ?? bus.stops[0]) : '';
+  const endName = bus ? (STATIONS[bus.stops[bus.stops.length - 1]]?.name ?? bus.stops[bus.stops.length - 1]) : '';
+  useDocumentTitle(bus ? `${bus.name} Bus: ${startName} ⇄ ${endName} Route & Fare` : 'Bus Not Found — কই যাবো');
   useEffect(() => {
     setCanonicalUrl(`/bus/${busUrlSlug(busId)}`);
+    if (!bus) return;
     const midStops = bus.stops.slice(1, -1).slice(0, 3).map(sid => STATIONS[sid]?.name ?? sid.replace(/_/g, ' ')).join(', ');
     const desc = `${bus.name} Dhaka bus route: ${startName} to ${endName}${midStops ? ` via ${midStops}` : ''}. Stops, fares & route map. Free KoyJabo guide.`;
     setMetaTag('description', desc);
@@ -89,12 +90,12 @@ export function BusDetailPage(props: Props) {
         },
       ],
     });
-  }, [busId, bus.name, bus.stops, startName, endName]);
+  }, [busId, bus]);
 
   // Detect if user's from→to direction is reverse of the bus route order
   // e.g. bus goes Gabtoli(0)→Gulshan(5), user searched Gulshan→Gabtoli → isReversed=true
-  const fromIdx = bus.stops.indexOf(fromId);
-  const toIdx = bus.stops.indexOf(toId);
+  const fromIdx = bus ? bus.stops.indexOf(fromId) : -1;
+  const toIdx = bus ? bus.stops.indexOf(toId) : -1;
   const isRouteReversed = fromIdx > toIdx && fromIdx !== -1 && toIdx !== -1;
   const [favoriteIds, setFavoriteIds] = useState<string[]>(() => getFavoriteBusIds());
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
@@ -117,6 +118,7 @@ export function BusDetailPage(props: Props) {
   const [liveLocationLoading, setLiveLocationLoading] = useState(true);
 
   const realStops = useMemo(() => {
+    if (!bus) return [];
     const stopsInOrder = isRouteReversed ? [...bus.stops].reverse() : bus.stops;
     return stopsInOrder.map((sid, i) => {
       const st = STATIONS[sid];
@@ -143,10 +145,12 @@ export function BusDetailPage(props: Props) {
   }, [realStops, userLocation]);
 
   useEffect(() => {
+    if (!bus) return;
     getBusRatings(bus.id).then(setRatingSummary).catch(() => setRatingSummary(null));
-  }, [bus.id]);
+  }, [bus]);
 
   useEffect(() => {
+    if (!bus) return;
     let alive = true;
     setLiveLocationLoading(true);
     getBusLiveLocation(bus.id)
@@ -162,7 +166,7 @@ export function BusDetailPage(props: Props) {
     return () => {
       alive = false;
     };
-  }, [bus.id]);
+  }, [bus]);
 
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -174,6 +178,26 @@ export function BusDetailPage(props: Props) {
     );
     return () => navigator.geolocation.clearWatch(id);
   }, []);
+
+  if (!bus) return (
+    <PageShell {...props} canBack>
+      <div style={{ padding: isMobile ? '40px 20px' : '64px 24px', maxWidth: 640, margin: '0 auto', textAlign: 'center' as const }}>
+        <div style={{ width: 72, height: 72, borderRadius: 20, margin: '0 auto 20px', background: tk.panelMuted, border: `1px solid ${tk.line}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34 }}>🚌</div>
+        <h1 style={{ fontFamily: BEN, fontSize: 22, fontWeight: 700, color: tk.text, margin: '0 0 10px' }}>{T(lang, 'বাস খুঁজে পাওয়া যায়নি', 'Bus not found')}</h1>
+        <p style={{ fontFamily: SANS, fontSize: 14, color: tk.textFaint, lineHeight: 1.7, margin: '0 0 24px' }}>
+          {T(lang, 'আপনি যে বাসটি খুঁজছেন সেটি খুঁজে পাওয়া যায়নি। অন্য রুট চেষ্টা করুন বা সব বাস দেখুন।', 'The bus you are looking for could not be found. Try another route or browse all Dhaka buses.')}
+        </p>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button onClick={() => props.onNav('bus-hub')} style={{ ...chipBtn(tk), background: tk.primary, color: tk.primaryInk, border: 'none', padding: '12px 22px', borderRadius: 12, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+            {T(lang, 'সব লোকাল বাস দেখুন', 'Browse Local Buses')}
+          </button>
+          <button onClick={() => props.onNav('home')} style={{ ...chipBtn(tk), background: 'transparent', color: tk.text, border: `1px solid ${tk.line}`, padding: '12px 22px', borderRadius: 12, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
+            {T(lang, 'হোমে ফিরুন', 'Back to Home')}
+          </button>
+        </div>
+      </div>
+    </PageShell>
+  );
 
   if (showRating) return (
     <PageShell {...props} canBack>

@@ -1,4 +1,6 @@
 import React, { useMemo } from 'react';
+
+import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, Tokens } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
@@ -31,6 +33,7 @@ function formatDate(timestamp: number, lang: 'bn' | 'en') {
 
 export function HistoryPage(props: ScreenProps) {
   const { theme, device, lang } = props;
+  useDocumentTitle(lang === 'bn' ? 'সার্চ ইতিহাস' : 'Search History');
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

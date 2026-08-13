@@ -88,7 +88,7 @@ const SHOW_BACK_ROUTES = new Set([
   'intercity', 'fare',
   // utility / info pages
   'favorites', 'history', 'ai', 'settings',
-  'why', 'about', 'blogs', 'qa', 'contact', 'release', 'privacy', 'terms', 'advertise',
+  'why', 'about', 'blogs', 'qa', 'faq', 'contact', 'release', 'privacy', 'terms', 'advertise',
 ]);
 
 const ROUTE_PATHS: Record<string, string> = {
@@ -109,6 +109,7 @@ const ROUTE_PATHS: Record<string, string> = {
   about: '/about',
   blogs: '/blog',
   qa: '/qa',
+  faq: '/faq',
   contact: '/contact',
   release: '/release',
   privacy: '/privacy',
@@ -476,7 +477,8 @@ export function KoyJaboApp() {
       case 'about': return <AboutPage {...p}/>;
       case 'blogs': return <BlogsPage {...p}/>;
       case 'blog-detail': return <BlogDetailPage {...p}/>;
-      case 'qa': return <QAPage {...p}/>;
+      case 'qa':
+      case 'faq': return <QAPage {...p}/>;
       case 'contact': return <ContactPage {...p}/>;
       case 'release': return <ReleasePage {...p}/>;
       case 'privacy': return <PrivacyPage {...p}/>;
