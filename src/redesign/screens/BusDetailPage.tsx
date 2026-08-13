@@ -8,9 +8,8 @@ import { BUS_DATA, STATIONS } from '../../../constants';
 import BusRouteMap from '../../../components/BusRouteMap';
 import BusRating from '../../../components/BusRating';
 import BusPhotoGallery from '../../../components/BusPhotoGallery';
-import BusLiveTracking from '../../../components/BusLiveTracking';
 import EmergencyHelplineModal from '../../../components/EmergencyHelplineModal';
-import { getBusRatings, BusRatingSummary, getBusLiveLocation, type BusLocationData } from '../../../services/communityDataService';
+import { getBusRatings, BusRatingSummary } from '../../../services/communityDataService';
 import { getBuses as getCommunityBuses, getSharingState, getNearestStopName, type CommunityBus } from '../../../services/busLiveService';
 import { resolveStationIds } from '../../../services/searchService';
 import { earnCoins } from '../utils/koyCoinService';
@@ -114,10 +113,7 @@ export function BusDetailPage(props: Props) {
       window.scrollTo(0, 0);
     }
   }, [showRating, showPhotos]);
-  const [showLiveTracking, setShowLiveTracking] = useState(false);
   const [ratingSummary, setRatingSummary] = useState<BusRatingSummary | null>(null);
-  const [liveLocationData, setLiveLocationData] = useState<BusLocationData | null>(null);
-  const [liveLocationLoading, setLiveLocationLoading] = useState(true);
   const [communityBuses, setCommunityBuses] = useState<CommunityBus[]>([]);
 
   const realStops = useMemo(() => {
@@ -150,25 +146,6 @@ export function BusDetailPage(props: Props) {
   useEffect(() => {
     if (!bus) return;
     getBusRatings(bus.id).then(setRatingSummary).catch(() => setRatingSummary(null));
-  }, [bus]);
-
-  useEffect(() => {
-    if (!bus) return;
-    let alive = true;
-    setLiveLocationLoading(true);
-    getBusLiveLocation(bus.id)
-      .then(data => {
-        if (alive) setLiveLocationData(data);
-      })
-      .catch(() => {
-        if (alive) setLiveLocationData(null);
-      })
-      .finally(() => {
-        if (alive) setLiveLocationLoading(false);
-      });
-    return () => {
-      alive = false;
-    };
   }, [bus]);
 
   // Community live buses on this route (koyjabo-bus-live worker) — 30s poll
@@ -229,22 +206,6 @@ export function BusDetailPage(props: Props) {
         </div>
       </div>
           <AdCluster tk={tk} lang={lang} count={isMobile?1:3} isMobile={isMobile}/>
-    </PageShell>
-  );
-
-  if (showLiveTracking) return (
-    <PageShell {...props} canBack>
-      <div style={{ padding:isMobile?'16px 12px 100px':'24px 40px 80px', maxWidth:980, margin:'0 auto' }}>
-        <div style={{ ...card(18), padding:0, overflow:'hidden', minHeight:isMobile?'calc(100dvh - 140px)':'calc(100dvh - 190px)', display:'flex' }}>
-          <BusLiveTracking
-            busId={bus.id}
-            busName={lang === 'bn' ? bus.bnName : bus.name}
-            stops={realStops.map(stop => ({ id: stop.id, name: lang === 'bn' ? stop.bn : stop.en }))}
-            onBack={() => setShowLiveTracking(false)}
-          />
-        </div>
-      </div>
-      <AdCluster tk={tk} lang={lang} count={isMobile?1:3} isMobile={isMobile}/>
     </PageShell>
   );
 
@@ -329,36 +290,6 @@ export function BusDetailPage(props: Props) {
                   </div>
                 ))}
               </div>
-            </div>
-
-            <div style={{ ...card(18),marginBottom:16 }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:10, marginBottom:12 }}>
-                <div>
-                  <div style={{ fontFamily:BEN,fontWeight:700,fontSize:15,color:tk.text }}>{T(lang,'লাইভ লোকেশন','Live location')}</div>
-                  <div style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint,marginTop:2 }}>
-                    {liveLocationLoading ? T(lang,'লোড হচ্ছে...','Loading...') : (liveLocationData?.reports?.length ? T(lang,'সর্বশেষ রিপোর্ট','Latest reported stop') : T(lang,'এখনও কোনো লাইভ রিপোর্ট নেই','No live reports yet'))}
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowLiveTracking(true)}
-                  style={{ border:'none', borderRadius:999, padding:'8px 12px', background:tk.primary, color:'#fff', fontFamily:SANS, fontWeight:700, fontSize:12, cursor:'pointer' }}
-                >
-                  {T(lang,'দেখুন','View')}
-                </button>
-              </div>
-              {liveLocationLoading ? (
-                <div style={{ background:tk.panelMuted,borderRadius:12,padding:'10px 12px',color:tk.textFaint,fontFamily:SANS,fontSize:12 }}>{T(lang,'লাইভ অবস্থান লোড হচ্ছে...','Loading live location...')}</div>
-              ) : liveLocationData?.reports?.length ? (
-                <div style={{ background:tk.panelMuted,borderRadius:12,padding:'10px 12px',border:`1px solid ${tk.primary}22` }}>
-                  <div style={{ fontFamily:BEN,fontWeight:700,color:tk.text }}>{liveLocationData.reports[liveLocationData.reports.length - 1].stopName}</div>
-                  <div style={{ fontFamily:SANS,fontSize:12,color:tk.textDim,marginTop:6 }}>
-                    {liveLocationData.reports[liveLocationData.reports.length - 1].heading ? `${T(lang,'দিকে','toward')} ${liveLocationData.reports[liveLocationData.reports.length - 1].heading} · ` : ''}
-                    {new Date(liveLocationData.reports[liveLocationData.reports.length - 1].timestamp).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' })}
-                  </div>
-                </div>
-              ) : (
-                <div style={{ background:tk.panelMuted,borderRadius:12,padding:'10px 12px',color:tk.textDim,fontFamily:SANS,fontSize:12 }}>{T(lang,'এই রুটে এখনো কেউ লাইভ অবস্থান শেয়ার করেনি।','No one has shared a live update for this route yet.')}</div>
-              )}
             </div>
 
             <div style={{ ...card(18),marginBottom:16 }}>
@@ -501,6 +432,7 @@ export function BusDetailPage(props: Props) {
                     <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 15, color: tk.text }}>
                       {b.busNumber || bus.name}
                       {b.busNumber && <span style={{ fontSize: 12, color: tk.textDim, marginLeft: 6 }}>{b.busNumber}</span>}
+                      {!b.busNumber && <span style={{ fontSize: 12, color: tk.textFaint, marginLeft: 6 }}>{T(lang, 'নম্বর নেই', 'no number')}</span>}
                       {isOwn && <span style={{ fontSize: 11, color: '#3b82f6', marginLeft: 6 }}>{T(lang, 'আপনার বাস', 'Your bus')}</span>}
                     </div>
                     <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim }}>
