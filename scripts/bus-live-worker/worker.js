@@ -104,11 +104,16 @@ function parseLiveKey(key, busId) {
   return { busNumber: rest.slice(0, idx), deviceId: rest.slice(idx + 1) };
 }
 
+// Registry writes are throttled to once per busNumber per 60 s (in-memory
+// seen-set) — keeps daily KV write quota from being burned by 10 s checkins.
+const registrySeen = new Map(); // busNumber → last write ts
 async function updateRegistry(env, entry) {
+  const now = Date.now();
+  if (registrySeen.has(entry.busNumber) && now - registrySeen.get(entry.busNumber) < 60_000) return;
+  registrySeen.set(entry.busNumber, now);
   const name = `reg:bus:${entry.busNumber}`;
   try {
     const cur = await env.BUS_LIVE.get(name, 'json').catch(() => null);
-    const now = Date.now();
     await env.BUS_LIVE.put(
       name,
       JSON.stringify({
@@ -126,14 +131,24 @@ async function updateRegistry(env, entry) {
   }
 }
 
-async function rateLimited(request, env) {
+// In-memory rate limiter (per-isolate Map). KV free tier = 1,000 writes/day;
+// a KV counter per request would burn the whole quota on GET polls alone.
+// Approximate across isolates — acceptable for this scale.
+const rateBuckets = new Map(); // "ip:minute" → count
+function rateLimited(request) {
   const ip = request.headers.get('CF-Connecting-IP') || '';
   if (!ip) return false;
   const minute = Math.floor(Date.now() / 60_000);
-  const key = `rl:${ip}:${minute}`;
-  const cur = Number((await env.BUS_LIVE.get(key)) || 0);
+  const key = `${ip}:${minute}`;
+  const cur = rateBuckets.get(key) || 0;
   if (cur >= RATE_LIMIT_PER_MINUTE) return true;
-  await env.BUS_LIVE.put(key, String(cur + 1), { expirationTtl: 120 });
+  rateBuckets.set(key, cur + 1);
+  if (rateBuckets.size > 10_000) {
+    // prune entries older than 2 minutes
+    for (const [k] of rateBuckets) {
+      if (Number(k.split(':').pop()) < minute - 2) rateBuckets.delete(k);
+    }
+  }
   return false;
 }
 
@@ -263,7 +278,7 @@ export default {
     if (origin !== '' && !ORIGIN_ALLOWLIST.has(origin)) {
       return cors(Response.json({ ok: false, error: 'forbidden' }, { status: 403 }));
     }
-    if (await rateLimited(request, env)) {
+    if (rateLimited(request)) {
       return cors(Response.json({ ok: false, error: 'rate limited' }, { status: 429 }));
     }
 
