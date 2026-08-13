@@ -95,7 +95,8 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
         }}
       >
         {header}
-        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} autoFocusInput />
+        {/* No autoFocus — let the user see the modal first, then tap the input */}
+        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} />
       </div>
     </div>
   );

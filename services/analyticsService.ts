@@ -183,7 +183,11 @@ const PROXY = (import.meta.env.VITE_API_PROXY as string | undefined)
 const STATS_PATH = 'data/stats/global.json';
 
 // ── Date helper ───────────────────────────────────────────────────────────────
-const getTodayDate = (): string => new Date().toISOString().split('T')[0];
+// Local date, not UTC — at 00:00–06:00 Dhaka time (UTC+6) the UTC date is still yesterday
+const getTodayDate = (): string => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
 
 // ── Visitor ID ────────────────────────────────────────────────────────────────
 const getVisitorId = (): string => {
@@ -423,7 +427,7 @@ export const trackBusSearch = (busId: string, busName: string): void => {
 export const trackRouteSearch = (from: string, to: string): void => {
     const history = getUserHistory();
     const today = getTodayDate();
-    const routeKey = `${from}-${to}`;
+    const routeKey = `${from}${ROUTE_KEY_SEP}${to}`;
     ga4('route_search', { from_location: from, to_location: to });
     history.routeSearches.push({ from, to, timestamp: Date.now(), date: today });
     history.mostUsedRoutes[routeKey] = (history.mostUsedRoutes[routeKey] || 0) + 1;
@@ -435,7 +439,7 @@ export const trackRouteSearch = (from: string, to: string): void => {
 export const trackIntercitySearch = (from: string, to: string, transportType: string): void => {
     const history = getUserHistory();
     const today = getTodayDate();
-    const routeKey = `${from}-${to}`;
+    const routeKey = `${from}${ROUTE_KEY_SEP}${to}`;
     history.intercitySearches = history.intercitySearches || [];
     ga4('intercity_search', { from_location: from, to_location: to, transport_type: transportType });
     history.intercitySearches.push({ from, to, transportType, timestamp: Date.now(), date: today });
@@ -544,7 +548,7 @@ export const getMostUsedRoutes = (limit: number = 5): Array<{ from: string; to: 
     const history = getUserHistory();
     return Object.entries(history.mostUsedRoutes || {})
         .map(([routeKey, count]) => {
-            const [from, to] = routeKey.split('-');
+            const { from, to } = splitRouteKey(routeKey);
             return { from, to, count };
         })
         .sort((a, b) => b.count - a.count)
@@ -553,11 +557,20 @@ export const getMostUsedRoutes = (limit: number = 5): Array<{ from: string; to: 
 
 export const getTodayBusSearches = (): string[] => getUserHistory().todayBuses;
 
+// Route keys: "␟" separates from/to so stop names with hyphens (e.g. "Mirpur-10")
+// don't break parsing. Legacy '-' keys are still read for old stored history.
+export const ROUTE_KEY_SEP = '␟';
+export const splitRouteKey = (routeKey: string): { from: string; to: string } => {
+    if (routeKey.includes(ROUTE_KEY_SEP)) {
+        const i = routeKey.indexOf(ROUTE_KEY_SEP);
+        return { from: routeKey.slice(0, i), to: routeKey.slice(i + ROUTE_KEY_SEP.length) };
+    }
+    const i = routeKey.indexOf('-');
+    return i < 0 ? { from: routeKey, to: '' } : { from: routeKey.slice(0, i), to: routeKey.slice(i + 1) };
+};
+
 export const getTodayRouteSearches = (): Array<{ from: string; to: string }> =>
-    getUserHistory().todayRoutes.map(routeKey => {
-        const [from, to] = routeKey.split('-');
-        return { from, to };
-    });
+    getUserHistory().todayRoutes.map(splitRouteKey);
 
 export const clearUserHistory = (): void => {
     const empty: UserHistory = {

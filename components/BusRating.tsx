@@ -1,7 +1,7 @@
 import SponsoredAdSlot from './SponsoredAdSlot';
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Star } from 'lucide-react';
-import { getBusRatings, submitBusRating, deleteBusRating, BusRatingSummary, getAuthUser } from '../services/communityDataService';
+import { getBusRatings, submitBusRating, deleteBusRating, toggleRatingUpvote, BusRatingSummary, getAuthUser } from '../services/communityDataService';
 import { trackFeatureUsage } from '../services/analyticsService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
@@ -448,8 +448,19 @@ export default function BusRating({ busId, busName, onBack, onSuccess }: Props) 
                   <p className="text-sm text-kj-text-dim mt-2.5 pl-10 font-bengali leading-relaxed">{r.comment.trim()}</p>
                 )}
                 <div className="flex items-center gap-2 mt-3 pl-10">
-                  <button className="text-[11px] text-kj-text-faint hover:text-kj-primary font-semibold font-bengali transition-colors">
-                    {lbl('👍 Helpful', '👍 সহায়ক')}
+                  <button
+                    className={`text-[11px] font-semibold font-bengali transition-colors ${r.upvotes?.includes(user?.id ?? '') ? 'text-kj-primary' : 'text-kj-text-faint hover:text-kj-primary'}`}
+                    onClick={async () => {
+                      if (!user) { showToast(t('community.signInRequired') || 'Sign in required', 'error'); return; }
+                      const updated = await toggleRatingUpvote(busId, r.timestamp);
+                      if (updated) {
+                        setSummary(s => s ? { ...s, ratings: s.ratings.map(x => x.timestamp === r.timestamp ? updated : x) } : s);
+                      } else {
+                        showToast(t('community.submitError') || 'Failed to save. Try again.', 'error');
+                      }
+                    }}
+                  >
+                    {lbl('👍 Helpful', '👍 সহায়ক')}{r.upvotes?.length ? ` (${r.upvotes.length})` : ''}
                   </button>
                 </div>
               </div>

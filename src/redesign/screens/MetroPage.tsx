@@ -16,7 +16,9 @@ import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
 // MRT-6 stations in order with fare from Uttara North
-const MRT6_LINE = METRO_LINES['mrt_6'];
+// NOTE: the constant is keyed 'mrt6' — 'mrt_6' silently fell back to the
+// hardcoded table below and made the calculator contradict the fare map.
+const MRT6_LINE = METRO_LINES['mrt6'];
 const STATIONS = MRT6_LINE
   ? MRT6_LINE.stations.map((id, i) => {
       const s = METRO_STATIONS[id];
@@ -57,6 +59,28 @@ export function MetroPage(props: Props) {
   const [fareFrom, setFareFrom] = useState(props.params?.from ?? '');
   const [fareTo, setFareTo] = useState(props.params?.to ?? '');
   const [hasSearched, setHasSearched] = useState(!!(props.params?.from || props.params?.to));
+
+  // Home-search passes a single "A থেকে B" / "A to B" string in params.search —
+  // split it into from/to so the metro-mode search isn't discarded.
+  useEffect(() => {
+    const p = props.params;
+    if ((p?.from || p?.to) || !p?.search) return;
+    const m = p.search.trim().match(/^(.+?)\s*(?:থেকে|to|→|->)\s*(.+)$/i);
+    if (!m) return;
+    // Resolve free-typed names (en/bn, exact then prefix) to exact en station names
+    const resolve = (q: string): string => {
+      const lq = q.trim().toLowerCase();
+      if (!lq) return q.trim();
+      const st = STATIONS.find(s => s.en.toLowerCase() === lq) ||
+        STATIONS.find(s => s.bn.toLowerCase() === lq) ||
+        STATIONS.find(s => s.en.toLowerCase().startsWith(lq)) ||
+        STATIONS.find(s => s.bn.toLowerCase().startsWith(lq));
+      return st?.en ?? q.trim();
+    };
+    setFareFrom(resolve(m[1]));
+    setFareTo(resolve(m[2]));
+    setHasSearched(true);
+  }, [props.params]);
   const [fromFocus, setFromFocus] = useState(false);
   const [toFocus, setToFocus] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -104,7 +128,9 @@ export function MetroPage(props: Props) {
     const ti = STATIONS.findIndex(s => s.en.toLowerCase() === fareTo.toLowerCase());
     if (fi < 0 || ti < 0 || fi === ti) return null;
     const diff = Math.abs(fi - ti);
-    const fare = Math.min(20 + Math.floor(diff / 2) * 10, 100);
+    // Fare = the farther station's fare from Uttara North (matches the fare
+    // map; the old step-formula understated 8 of 17 stations).
+    const fare = Math.max(STATIONS[fi].fare, STATIONS[ti].fare);
     return { fare, stops: diff };
   }, [fareFrom, fareTo]);
 

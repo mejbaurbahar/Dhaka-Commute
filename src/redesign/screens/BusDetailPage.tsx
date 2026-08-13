@@ -43,7 +43,8 @@ function resolveStationId(value: string, fallback: string) {
 
 // Bus ids use underscores (e.g. '13_no') but public URLs use dash slugs (e.g. /bus/13-no/).
 // Canonical must match the real URL to avoid duplicate-content signals.
-const busUrlSlug = (id: string) => id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// Must mirror KoyJaboApp slugify: strip "paribahan", match sitemap/static SEO pages.
+const slugify = (v: string) => v.toLowerCase().trim().replace(/paribahan/g, '').replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export function BusDetailPage(props: Props) {
   const { theme, device, lang, params } = props;
@@ -60,7 +61,7 @@ export function BusDetailPage(props: Props) {
   const endName = bus ? (STATIONS[bus.stops[bus.stops.length - 1]]?.name ?? bus.stops[bus.stops.length - 1]) : '';
   useDocumentTitle(bus ? `${bus.name} Bus: ${startName} ⇄ ${endName} Route & Fare` : 'Bus Not Found — কই যাবো');
   useEffect(() => {
-    setCanonicalUrl(`/bus/${busUrlSlug(busId)}`);
+    setCanonicalUrl(`/bus/${slugify(bus?.name || busId)}`);
     if (!bus) return;
     const midStops = bus.stops.slice(1, -1).slice(0, 3).map(sid => STATIONS[sid]?.name ?? sid.replace(/_/g, ' ')).join(', ');
     const desc = `${bus.name} Dhaka bus route: ${startName} to ${endName}${midStops ? ` via ${midStops}` : ''}. Stops, fares & route map. Free KoyJabo guide.`;

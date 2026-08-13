@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang } from '../tokens';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { PageShell } from './PageShell';
-import { findOperator, findRoutesByFromTo } from '../../../data/intercityOperatorData';
+import { findOperator, findRoutesByFromTo, BUS_OPERATOR_DETAILS } from '../../../data/intercityOperatorData';
 import BusRating from '../../../components/BusRating';
 import BusPhotoGallery from '../../../components/BusPhotoGallery';
 import { getBusRatings, BusRatingSummary } from '../../../services/communityDataService';
@@ -23,6 +23,10 @@ const TABS: { id: TabId; en: string; bn: string }[] = [
 ];
 
 type StopEntry = { name: string; nameBn: string; time: string; kind: 'boarding' | 'stop' | 'rest' | 'destination' };
+
+// Mirror KoyJaboApp slugify — deep links arrive as /intercity/<operator-slug>
+const slugify = (v: string) => v.toLowerCase().trim().replace(/paribahan/g, '').replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const findOperatorBySlug = (slug: string) => BUS_OPERATOR_DETAILS.find(op => slugify(op.name) === slug || slugify(op.shortName) === slug);
 
 // Build stop list from route params
 function buildStops(route: string, counter: string, from: string, to: string): StopEntry[] {
@@ -396,8 +400,8 @@ export function IntercityDetailPage(props: Props) {
 
   const lbl = (en: string, bn: string) => T(lang, bn, en);
 
-  // Use passed operator data or fall back to defaults
-  const operatorName = params?.operator || 'Green Line Paribahan';
+  // Use passed operator data, else resolve from deep-link slug, else fall back
+  const operatorName = params?.operator || findOperatorBySlug(params?.id || '')?.name || 'Green Line Paribahan';
   const operatorInitials = operatorName.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
   const routeText = params?.route || 'Dhaka ⇄ Cox\'s Bazar';
   const fareNonAC = params?.costNonAC || '৳680';
@@ -409,8 +413,12 @@ export function IntercityDetailPage(props: Props) {
 
   useDocumentTitle(`${operatorName}: ${fromCity} → ${toCity}`);
   useEffect(() => {
-    const slug = (operatorName + '-' + fromCity + '-' + toCity).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    setCanonicalUrl(`/intercity/${slug}`);
+    // Canonical must match the real URL: /intercity/<operator-slug>?from=..&to=..
+    const q = new URLSearchParams();
+    if (fromCity) q.set('from', fromCity);
+    if (toCity) q.set('to', toCity);
+    const qs = q.toString();
+    setCanonicalUrl(`/intercity/${slugify(operatorName)}${qs ? '?' + qs : ''}`);
     const desc = `${operatorName} bus ${fromCity} to ${toCity}. Non-AC ${fareNonAC}${fareAC ? ', AC ' + fareAC : ''}. Counter: ${counterLocation}. Schedule & booking via KoyJabo.`;
     setMetaTag('description', desc);
     setPropertyMetaTag('og:description', desc);

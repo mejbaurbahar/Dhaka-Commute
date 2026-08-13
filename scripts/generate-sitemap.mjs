@@ -62,6 +62,19 @@ function extractTrainSlugs() {
   return [...slugs];
 }
 
+function extractOperatorSlugs() {
+  // Intercity detail pages: /intercity/<name-slug> (canonical built from op.name).
+  // Only top-level operator objects (they carry a shortName field) — stop names
+  // also match `name: '...'`, so anchor on the id→name→bnName→shortName sequence.
+  const content = fs.readFileSync(path.join(root, 'data', 'intercityOperatorData.ts'), 'utf8');
+  const slugs = new Set();
+  for (const m of content.matchAll(/id:\s*'[^']+'\s*,\s*name:\s*'([^']+)'\s*,\s*bnName:\s*'[^']+'\s*,\s*shortName:\s*'[^']+'/g)) {
+    const slug = slugify(m[1]);
+    if (slug) slugs.add(slug);
+  }
+  return [...slugs];
+}
+
 function extractBlogSlugs() {
   const content = fs.readFileSync(path.join(root, 'data', 'blogPosts.ts'), 'utf8');
   const slugs = [];
@@ -86,21 +99,36 @@ function pageUrl(pathname) {
 
 const busSlugs = extractBusSlugs();
 const trainSlugs = extractTrainSlugs();
+const operatorSlugs = extractOperatorSlugs();
 const blogEntries = extractBlogSlugs();
 
-console.log(`Extracted ${busSlugs.length} bus slugs, ${trainSlugs.length} train slugs, ${blogEntries.length} blog entries`);
+console.log(`Extracted ${busSlugs.length} bus slugs, ${trainSlugs.length} train slugs, ${operatorSlugs.length} operator slugs, ${blogEntries.length} blog entries`);
+
+// Truthful lastmod: a file's mtime is when its content last changed, not "today"
+function fileLastmod(file) {
+  try {
+    const st = fs.statSync(path.join(root, file));
+    return st.mtime.toISOString().split('T')[0];
+  } catch {
+    return TODAY;
+  }
+}
 
 const staticPages = [
   urlEntry(pageUrl('/'), TODAY, 'daily', '1.0'),
   urlEntry(pageUrl('/intercity'), TODAY, 'daily', '0.9'),
   urlEntry(pageUrl('/ai'), TODAY, 'weekly', '0.8'),
   urlEntry(pageUrl('/blog'), TODAY, 'daily', '0.8'),
+  urlEntry(pageUrl('/why'), TODAY, 'monthly', '0.6'),
   urlEntry(pageUrl('/about'), TODAY, 'monthly', '0.7'),
+  urlEntry(pageUrl('/qa'), TODAY, 'monthly', '0.6'),
   urlEntry(pageUrl('/faq'), TODAY, 'monthly', '0.7'),
+  urlEntry(pageUrl('/daily-journey'), TODAY, 'weekly', '0.6'),
+  urlEntry(pageUrl('/release'), TODAY, 'monthly', '0.4'),
   urlEntry(pageUrl('/privacy'), TODAY, 'monthly', '0.5'),
   urlEntry(pageUrl('/terms'), TODAY, 'monthly', '0.5'),
   urlEntry(pageUrl('/contact'), TODAY, 'monthly', '0.5'),
-  urlEntry(pageUrl('/for-ai'), TODAY, 'monthly', '0.6'),
+  urlEntry(pageUrl('/install'), TODAY, 'monthly', '0.4'),
   urlEntry(pageUrl('/history'), TODAY, 'monthly', '0.4'),
   urlEntry(pageUrl('/train'), TODAY, 'weekly', '0.8'),
   urlEntry(pageUrl('/local-bus'), TODAY, 'weekly', '0.8'),
@@ -117,11 +145,15 @@ const blogPages = blogEntries.map(({ slug, date }) =>
 );
 
 const busPages = busSlugs.map(slug =>
-  urlEntry(pageUrl(`/bus/${slug}`), TODAY, 'monthly', '0.7')
+  urlEntry(pageUrl(`/bus/${slug}`), fileLastmod('constants.ts'), 'monthly', '0.7')
 );
 
 const trainPages = trainSlugs.map(slug =>
-  urlEntry(pageUrl(`/train/${slug}`), TODAY, 'monthly', '0.7')
+  urlEntry(pageUrl(`/train/${slug}`), fileLastmod('data/bangladeshTrainData.ts'), 'monthly', '0.7')
+);
+
+const operatorPages = operatorSlugs.map(slug =>
+  urlEntry(pageUrl(`/intercity/${slug}`), fileLastmod('data/intercityOperatorData.ts'), 'monthly', '0.7')
 );
 
 const fromToPages = BUS_PAIRS.map(pair =>
@@ -148,6 +180,9 @@ const xml = [
   `  <!-- Train Routes (${trainPages.length}) -->`,
   ...trainPages,
   '',
+  `  <!-- Intercity Operators (${operatorPages.length}) -->`,
+  ...operatorPages,
+  '',
   `  <!-- From→To Bus Answers (${fromToPages.length}) -->`,
   ...fromToPages,
   '',
@@ -159,7 +194,7 @@ const xml = [
 
 const out = path.join(root, 'public', 'sitemap.xml');
 fs.writeFileSync(out, xml, 'utf8');
-console.log(`✅ sitemap.xml written — ${staticPages.length} static, ${blogPages.length} blog, ${busPages.length} bus, ${trainPages.length} train entries`);
+console.log(`✅ sitemap.xml written — ${staticPages.length} static, ${blogPages.length} blog, ${busPages.length} bus, ${trainPages.length} train, ${operatorPages.length} operator entries`);
 
 // Generate /version.json — used by main.tsx to detect new deploys and
 // silently reload long-lived tabs (no manual hard-refresh needed).

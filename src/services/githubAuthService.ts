@@ -139,6 +139,7 @@ async function triggerWorkflow(
     data:         inputs.data         || '{}',
   };
   if (inputs.cfToken) body.cfToken = inputs.cfToken;
+  if (inputs.idToken) body.idToken = inputs.idToken;
   const sessionToken = getSessionToken();
   if (sessionToken) body.sessionToken = sessionToken;
   let res: Response;
@@ -496,7 +497,8 @@ export function getAuthErrorKey(message: string): string | null {
 
 /**
  * GOOGLE LOGIN / SIGNUP — fires Firebase OAuth popup, then asks the worker
- * whether the email is already registered. The worker performs the index +
+ * whether the email is already registered. The worker verifies the Firebase
+ * ID token against Google (email ownership), then performs the index +
  * user-record lookup server-side and only returns public fields + a session
  * token. The user index and bcryptHash never reach the browser.
  *
@@ -545,6 +547,9 @@ export async function loginWithGoogle(cfToken = ''): Promise<{
   const normalizedEmail = firebaseUser.email.toLowerCase().trim();
   const emailHash       = await sha256(normalizedEmail);
   const googlePhotoUrl  = firebaseUser.photoURL ?? undefined;
+  // Proof of email ownership: worker verifies this against Google before
+  // ever issuing a session token for the account.
+  const idToken = await firebaseUser.getIdToken();
 
   // Fast path: existing user. Worker does the lookup so the user index +
   // bcryptHash never reach the browser.
@@ -558,6 +563,7 @@ export async function loginWithGoogle(cfToken = ''): Promise<{
         requestId: crypto.randomUUID(),
         action: 'auth-google-lookup',
         emailHash,
+        idToken,
         cfToken,
       }),
     });
@@ -587,6 +593,7 @@ export async function loginWithGoogle(cfToken = ''): Promise<{
   // New user: trigger signup workflow (30-90 s)
   const signupResult = await triggerAndWait('google-signup', {
     email: normalizedEmail,
+    idToken,
     data: JSON.stringify({
       displayName:    firebaseUser.displayName || 'Google User',
       googlePhotoUrl: googlePhotoUrl || '',

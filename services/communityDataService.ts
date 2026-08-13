@@ -211,6 +211,7 @@ export interface BusRating {
   stars: number;       // 1–5
   comment: string;
   timestamp: number;
+  upvotes?: string[];  // userId[] who marked this review helpful
 }
 
 export interface BusRatingSummary {
@@ -251,6 +252,26 @@ export async function deleteBusRating(busId: string): Promise<boolean> {
     { busId, average: Math.round(average * 10) / 10, count: ratings.length, ratings },
     `rating-delete: ${busId}`
   );
+}
+
+/** Toggle "Helpful" upvote on a review. Returns updated rating (or null). */
+export async function toggleRatingUpvote(busId: string, ratingTimestamp: number): Promise<BusRating | null> {
+  const user = getAuthUser();
+  if (!user) return null;
+  const existing = await getBusRatings(busId);
+  if (!existing) return null;
+  const target = existing.ratings.find(r => r.timestamp === ratingTimestamp);
+  if (!target) return null;
+  const upvotes = target.upvotes ?? [];
+  const next = upvotes.includes(user.id) ? upvotes.filter(id => id !== user.id) : [...upvotes, user.id];
+  const updated = { ...target, upvotes: next };
+  const ratings = existing.ratings.map(r => (r.timestamp === ratingTimestamp ? updated : r));
+  const ok = await repoPutOrQueue(
+    `data/ratings/${busId}.json`,
+    { ...existing, ratings },
+    `upvote: ${busId}`
+  );
+  return ok ? updated : null;
 }
 
 // ── Train Ratings ─────────────────────────────────────────────────────────────

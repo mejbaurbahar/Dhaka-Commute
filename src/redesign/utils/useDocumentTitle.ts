@@ -9,6 +9,10 @@ export function useDocumentTitle(title: string | null | undefined) {
     if (document.title !== next) document.title = next;
     return () => {
       if (document.title !== HOME_TITLE) document.title = HOME_TITLE;
+      // Reset page-level canonical so a page without its own canonical
+      // never inherits the previous page's link (stale duplicate signals).
+      const link = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+      if (link && link.href !== BASE_URL + '/') link.href = BASE_URL + '/';
     };
   }, [title]);
 }

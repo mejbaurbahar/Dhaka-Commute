@@ -21,7 +21,7 @@ export const TRANSFER_POINTS: Record<string, TransferPoint> = {
         lng: 90.4264,
         modes: ['bus', 'metro', 'railway'],
         nearbyStations: ['kamalapur', 'malibagh', 'rajarbagh'],
-        metroStations: ['kamalapur'],
+        metroStations: ['motijheel'],
         railwayStations: ['kamalapur']
     },
     'motijheel': {
@@ -32,7 +32,7 @@ export const TRANSFER_POINTS: Record<string, TransferPoint> = {
         lng: 90.4176,
         modes: ['bus', 'metro'],
         nearbyStations: ['motijheel', 'shapla_chattar', 'paltan'],
-        metroStations: ['secretariat', 'dhaka_university']
+        metroStations: ['bangladesh_secretariat', 'dhaka_university']
     },
     'farmgate': {
         id: 'farmgate',
@@ -100,7 +100,7 @@ export const TRANSFER_POINTS: Record<string, TransferPoint> = {
         lng: 90.4126,
         modes: ['bus', 'metro'],
         nearbyStations: ['gulistan', 'paltan', 'bangabhaban'],
-        metroStations: ['dhaka_university', 'secretariat']
+        metroStations: ['dhaka_university', 'bangladesh_secretariat']
     },
     'shahbagh': {
         id: 'shahbagh',

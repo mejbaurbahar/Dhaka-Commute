@@ -132,11 +132,11 @@ export const DOMESTIC_ROUTES: DomesticRoute[] = [
   { id:'bg474', from:'BZL', to:'DAC', airline:'BG', flightNo:'BG474', dep:'18:10', arr:'19:00', dur:'0h 50m', daysOp:'Daily', fareEco:4571, fareBiz:8000, aircraft:'Dash 8-400' },
 
   // ── DAC ↔ RJH (Dhaka ↔ Rajshahi) — Shohoz: US-Bangla ONLY ──────────────────
-  { id:'bs161', from:'DAC', to:'RJH', airline:'BS', flightNo:'BS161', dep:'07:15', arr:'08:05', dur:'0h 50m', daysOp:'Daily', fareEco:5608, aircraft:'ATR 72-600' },
-  { id:'bs165', from:'DAC', to:'RJH', airline:'BS', flightNo:'BS165', dep:'17:20', arr:'18:10', dur:'0h 50m', daysOp:'Daily', fareEco:5561, aircraft:'ATR 72-600' },
+  { id:'bs167', from:'DAC', to:'RJH', airline:'BS', flightNo:'BS167', dep:'07:15', arr:'08:05', dur:'0h 50m', daysOp:'Daily', fareEco:5608, aircraft:'ATR 72-600' },
+  { id:'bs168', from:'DAC', to:'RJH', airline:'BS', flightNo:'BS168', dep:'17:20', arr:'18:10', dur:'0h 50m', daysOp:'Daily', fareEco:5561, aircraft:'ATR 72-600' },
   // Return RJH→DAC
-  { id:'bs162', from:'RJH', to:'DAC', airline:'BS', flightNo:'BS162', dep:'08:35', arr:'09:25', dur:'0h 50m', daysOp:'Daily', fareEco:5608, aircraft:'ATR 72-600' },
-  { id:'bs166', from:'RJH', to:'DAC', airline:'BS', flightNo:'BS166', dep:'18:40', arr:'19:30', dur:'0h 50m', daysOp:'Daily', fareEco:5561, aircraft:'ATR 72-600' },
+  { id:'bs169', from:'RJH', to:'DAC', airline:'BS', flightNo:'BS169', dep:'08:35', arr:'09:25', dur:'0h 50m', daysOp:'Daily', fareEco:5608, aircraft:'ATR 72-600' },
+  { id:'bs170', from:'RJH', to:'DAC', airline:'BS', flightNo:'BS170', dep:'18:40', arr:'19:30', dur:'0h 50m', daysOp:'Daily', fareEco:5561, aircraft:'ATR 72-600' },
 
   // ── CGP ↔ CXB (Chittagong ↔ Cox's Bazar) ─────────────────────────────────
   { id:'bs701', from:'CGP', to:'CXB', airline:'BS', flightNo:'BS701', dep:'09:00', arr:'09:30', dur:'0h 30m', daysOp:'Daily', fareEco:2499, aircraft:'ATR 72-600' },

@@ -51,13 +51,19 @@ const TermsPage = React.lazy(() => import('./screens/TermsPage').then(m => ({ de
 const InstallPage = React.lazy(() => import('./screens/InstallPage').then(m => ({ default: m.InstallPage })));
 const AdvertisePage = React.lazy(() => import('./screens/AdvertisePage').then(m => ({ default: m.AdvertisePage })));
 const DTCABusDetailPage = React.lazy(() => import('./screens/DTCABusDetailPage').then(m => ({ default: m.DTCABusDetailPage })));
+const SignInPage = React.lazy(() => import('./screens/SignInPage').then(m => ({ default: m.SignInPage })));
+const SignUpPage = React.lazy(() => import('./screens/SignUpPage').then(m => ({ default: m.SignUpPage })));
+const ProfilePage = React.lazy(() => import('./screens/ProfilePage').then(m => ({ default: m.ProfilePage })));
+const EditProfilePage = React.lazy(() => import('./screens/EditProfilePage').then(m => ({ default: m.EditProfilePage })));
+const ForgotPasswordPage = React.lazy(() => import('./screens/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
+const PasswordPage = React.lazy(() => import('./screens/PasswordPage').then(m => ({ default: m.PasswordPage })));
 
 const LazyFallback = () => <div style={{ minHeight: '60vh' }} />;
 import { claimDailyBonus } from './utils/koyCoinService';
 import { NavDrawer } from './components/NavDrawer';
 // FloatingControls removed per user request
 import { AIFab } from './components/AIFab';
-import { AIChatModal } from './components/AIChatModal';
+const AIChatModal = React.lazy(() => import('./components/AIChatModal').then(m => ({ default: m.AIChatModal })));
 import { TopBar } from './components/TopBar';
 import { MobileTabBar } from './components/MobileTabBar';
 import { SideRailAd, AnchorAd, VignetteAd } from './components/AdComponents';
@@ -118,9 +124,19 @@ const ROUTE_PATHS: Record<string, string> = {
   install: '/install',
   advertise: '/advertise',
   'daily-journey': '/daily-journey',
+  profile: '/profile',
+  'edit-profile': '/edit-profile',
+  password: '/password',
+  signin: '/signin',
+  signup: '/signup',
+  'forgot-password': '/forgot-password',
 };
 
-const slugify = (value: string) => value.toLowerCase().trim().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// Must mirror scripts/generate-sitemap.mjs slugify() exactly — it strips
+// "paribahan" (Active Paribahan → /bus/active/). The old unstripped variant
+// is kept only for resolving legacy deep links.
+const slugify = (value: string) => value.toLowerCase().trim().replace(/paribahan/g, '').replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const slugifyKeepParibahan = (value: string) => value.toLowerCase().trim().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 function busSlug(busId?: string) {
   const bus = BUS_DATA.find(item => item.id === busId);
@@ -199,7 +215,9 @@ function entryFromLocation(): StackEntry {
     if (fromTo && findPair(fromTo[1], fromTo[2])) {
       return { route: 'from-to-bus', params: { ...params, from: fromTo[1], to: fromTo[2] } };
     }
-    const bus = BUS_DATA.find(item => slugify(item.name) === slug || slugify(item.id) === slug);
+    const bus = BUS_DATA.find(item => slugify(item.name) === slug || slugify(item.id) === slug)
+      // legacy unstripped slugs (pre-sitemap-alignment deep links)
+      ?? BUS_DATA.find(item => slugifyKeepParibahan(item.name) === slug);
     return { route: 'bus-detail', params: { ...params, busId: bus?.id || slug } };
   }
   if (path.startsWith('/local-bus/results')) return { route: 'results', params };
@@ -228,6 +246,8 @@ export function KoyJaboApp() {
   const [lang, setLang] = useState<Lang>(getInitialLang);
   const [forceDesktop, setForceDesktop] = useState(false); // phone user can request desktop view
   const [stack, setStack] = useState<StackEntry[]>(() => [entryFromLocation()]);
+  const stackRef = useRef(stack);
+  stackRef.current = stack;
   const [menuOpen, setMenuOpen] = useState(false);
   const [dir, setDir] = useState<'fwd' | 'back'>('fwd');
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -373,6 +393,9 @@ export function KoyJaboApp() {
     // AI chat opens as a popup from any page — only direct /ai URLs load the full page
     if (route === 'ai') { setAiQ(params?.q); setAiOpen(true); return; }
     const entry = { route, params };
+    // Double-tap guard — ignore a nav to the page already on top of the stack
+    const top = stackRef.current[stackRef.current.length - 1];
+    if (top && top.route === route && JSON.stringify(top.params ?? {}) === JSON.stringify(params ?? {})) return;
     setDir('fwd');
     setShowSkeleton(true);
     pushUrl(entry);
@@ -473,13 +496,12 @@ export function KoyJaboApp() {
       case 'history': return <HistoryPage {...p}/>;
       case 'settings': return <SettingsPage {...p}/>;
       case 'devices': return <DevicesPage {...p}/>;
-      case 'profile':
-      case 'edit-profile':
-      case 'password':
-      case 'signin':
-      case 'signup':
-      case 'forgot-password':
-      case 'reset-password': return <HomePage {...p}/>;
+      case 'profile': return <ProfilePage {...p}/>;
+      case 'edit-profile': return <EditProfilePage {...p}/>;
+      case 'password': return <PasswordPage {...p}/>;
+      case 'signin': return <SignInPage {...p}/>;
+      case 'signup': return <SignUpPage {...p}/>;
+      case 'forgot-password': return <ForgotPasswordPage {...p}/>;
       case 'why': return <WhyPage {...p}/>;
       case 'about': return <AboutPage {...p}/>;
       case 'blogs': return <BlogsPage {...p}/>;
@@ -604,7 +626,7 @@ export function KoyJaboApp() {
       )}
       <main>{stage}</main>
       {aiFab}
-      {aiOpen && <AIChatModal theme={theme} lang={lang} isMobile={isPhone} initialQ={aiQ} onClose={() => setAiOpen(false)} />}
+      {aiOpen && <Suspense fallback={<LazyFallback />}><AIChatModal theme={theme} lang={lang} isMobile={isPhone} initialQ={aiQ} onClose={() => setAiOpen(false)} /></Suspense>}
       {/* Desktop view toggle removed — mobile users always get mobile layout */}
       <NavDrawer
         open={menuOpen} theme={theme} lang={lang}

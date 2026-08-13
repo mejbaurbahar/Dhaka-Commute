@@ -104,7 +104,9 @@ export default function DTCApanel(): React.ReactElement {
           </div>
 
           {snapshot.snippet ? (
-            <div className="dtca-snippet" dangerouslySetInnerHTML={{ __html: snapshot.snippet }} />
+            /* Escaped text, never innerHTML: the worker's tag-strip leaves
+               HTML entities that innerHTML would decode back into elements. */
+            <div className="dtca-snippet">{snapshot.snippet}</div>
           ) : null}
 
           {snapshot.busHints && snapshot.busHints.length > 0 ? (

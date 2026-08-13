@@ -66,8 +66,18 @@ export function FlightsPage(props: Props) {
   const fromSuggestions = useMemo(() => filterAirports(fromAirport), [fromAirport]);
   const toSuggestions = useMemo(() => filterAirports(toAirport), [toAirport]);
 
-  // Extract IATA code from display string like "DAC · Dhaka"
-  const extractIATA = (s: string) => s.match(/^([A-Z]{3})/)?.[1] ?? s.toUpperCase().slice(0,3);
+  // Extract IATA code from display string like "DAC · Dhaka", or resolve a
+  // typed city name ("Dhaka", "সিলেট") against the real airport list instead
+  // of blindly taking the first 3 letters ("DHA" is not a code).
+  const extractIATA = (s: string) => {
+    const code = s.match(/^([A-Z]{3})/)?.[1];
+    if (code) return code;
+    const q = s.toLowerCase();
+    const found = AIRPORTS_DATA.find(a =>
+      a.en.toLowerCase().includes(q) || a.bn.includes(s.trim())
+    );
+    return found ? found.iata : s.toUpperCase().slice(0, 3);
+  };
   const fromIATA = fromAirport ? extractIATA(fromAirport) : 'DAC';
   const toIATA = toAirport ? extractIATA(toAirport) : 'CXB';
 
@@ -213,13 +223,13 @@ export function FlightsPage(props: Props) {
                       </div>
                     </div>
                     <div style={{ display:'flex', alignItems:'center', gap:10, paddingTop:10, borderTop:`1px dashed ${tk.line}` }}>
-                      <div><div style={{ fontFamily:SANS, fontWeight:700, fontSize:15, color:tk.text }}>{N(a.dep, lang)}</div><div style={{ fontFamily:SANS, fontSize:10, color:tk.textFaint }}>DAC</div></div>
+                      <div><div style={{ fontFamily:SANS, fontWeight:700, fontSize:15, color:tk.text }}>{N(a.dep, lang)}</div><div style={{ fontFamily:SANS, fontSize:10, color:tk.textFaint }}>{fromIATA}</div></div>
                       <div style={{ flex:1, position:'relative', height:14 }}>
                         <div style={{ position:'absolute', top:'50%', left:0, right:0, height:1.5, background:tk.line }}/>
                         <span style={{ position:'absolute', left:'50%', top:-3, transform:'translateX(-50%)', fontSize:12 }}>✈️</span>
                         <span style={{ position:'absolute', left:'50%', bottom:-12, transform:'translateX(-50%)', fontFamily:SANS, fontSize:9, fontWeight:700, color:tk.textFaint, whiteSpace:'nowrap' }}>{a.dur} · {a.stop}</span>
                       </div>
-                      <div style={{ textAlign:'right' }}><div style={{ fontFamily:SANS, fontWeight:700, fontSize:15, color:tk.text }}>{N(a.arr, lang)}</div><div style={{ fontFamily:SANS, fontSize:10, color:tk.textFaint }}>CXB</div></div>
+                      <div style={{ textAlign:'right' }}><div style={{ fontFamily:SANS, fontWeight:700, fontSize:15, color:tk.text }}>{N(a.arr, lang)}</div><div style={{ fontFamily:SANS, fontSize:10, color:tk.textFaint }}>{toIATA}</div></div>
                       <button style={{ ...chipBtn(tk), padding:'7px 12px', fontSize:11, fontWeight:700, background:a.col[1], color:'#fff', borderColor:a.col[1], marginLeft:6 }}>{T(lang,'বিস্তারিত','Details')} →</button>
                     </div>
                   </div>

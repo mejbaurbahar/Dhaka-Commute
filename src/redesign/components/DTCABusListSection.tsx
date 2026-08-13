@@ -35,7 +35,8 @@ export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
 
   useEffect(() => {
     void load();
-    const interval = setInterval(() => { void load(); }, 30_000);
+    // Skip polls while the tab is hidden (background tabs waste requests/CPU)
+    const interval = setInterval(() => { if (document.visibilityState === 'visible') void load(); }, 30_000);
     return () => clearInterval(interval);
   }, [load]);
 

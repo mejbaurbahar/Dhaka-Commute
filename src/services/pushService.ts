@@ -164,7 +164,7 @@ async function enableNativePush(): Promise<boolean> {
               data: notification.data || {},
               smallIcon: 'kj_push_icon',
               iconColor: '#00c2ff',
-            }],
+            } as unknown as import('@capacitor/local-notifications').LocalNotificationSchema],
           });
         } catch { /* silent */ }
       });

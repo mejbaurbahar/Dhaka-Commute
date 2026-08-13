@@ -152,10 +152,9 @@ export function LocalBusPage(props: Props) {
     }
 
     if (f && t) {
-      const result = enhancedBusSearch(`${f} to ${t}`);
-      if (result.buses.length > 0) {
-        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 20));
-      }
+      // Strict two-stop match only — operator alias search (enhancedBusSearch)
+      // would match e.g. "gulshan" against the "gulshan chaka" alias and list
+      // Dhakar Chaka buses that don't serve the requested destination.
       const results = BUS_DATA.filter(r => matchesStation(r, f) && matchesStation(r, t)).slice(0, 20);
       if (results.length) return applyQuick(results);
     }

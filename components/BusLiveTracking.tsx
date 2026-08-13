@@ -55,11 +55,15 @@ export default function BusLiveTracking({ busId, busName, stops = [], onBack }: 
     const sName = stopId ? (stops.find(s => s.id === stopId)?.name ?? stopName) : stopName;
     if (!sName.trim()) return;
     setSubmitting(true);
-    await reportBusLocation(busId, busName, stopId || crypto.randomUUID(), sName, heading || undefined);
+    const ok = await reportBusLocation(busId, busName, stopId || crypto.randomUUID(), sName, heading || undefined);
+    setSubmitting(false);
+    if (!ok) {
+      showToast(t('community.signInRequired'), 'error');
+      return;
+    }
     await load();
     setShowForm(false);
     setStopId(''); setStopName(''); setHeading('');
-    setSubmitting(false);
     showToast(t('community.locationReported'), 'success');
   };
 

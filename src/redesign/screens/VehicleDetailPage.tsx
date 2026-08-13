@@ -37,10 +37,10 @@ export function VehicleDetailPage(props: Props) {
     arr: params.arr || '6:00 AM',
     dur: params.dur || '10h',
     stats: [
-      ['৳'+(params.deck||'300'),'deck'],
-      ['৳'+(params.cabin||'1200'),'cabin'],
+      ['৳'+(params.deck||'300'),T(lang,'ডেক','deck')],
+      ['৳'+(params.cabin||'1200'),T(lang,'কেবিন','cabin')],
       ['৳'+(params.vip||'4000'),'VIP'],
-      [(params.rating||'4.1')+'★','rating'],
+      [(params.rating||'4.1')+'★',T(lang,'রেটিং','rating')],
     ] as [string,string][],
   } : null;
 
@@ -218,7 +218,7 @@ export function VehicleDetailPage(props: Props) {
 
           {!isMobile && (
             <div style={{ display:'flex',flexDirection:'column',gap:14 }}>
-              <div style={{ ...card(16),background:m.hero.split(',')[0].replace('linear-gradient(135deg','linear-gradient(135deg,#0a0a1a'),color:'#fff',border:'none' }}>
+              <div style={{ ...card(16),background:'#0a0a1a',color:'#fff',border:'none' }}>
                 <div style={{ fontFamily:BEN,fontWeight:700,fontSize:15,marginBottom:12 }}>{T(lang,'টিকেট কোথায় পাবেন','Where to buy')}</div>
                 {buyAt[kind].map((b,i)=>(
                   <div key={i} style={{ display:'flex',alignItems:'center',gap:10,padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,0.12)' }}>

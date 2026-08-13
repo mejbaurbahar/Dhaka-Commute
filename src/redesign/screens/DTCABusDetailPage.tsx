@@ -114,7 +114,8 @@ export function DTCABusDetailPage(props: Props) {
       .then(res => setRouteData(res.data))
       .catch(() => {});
     void fetchLive();
-    const timer = setInterval(() => { void fetchLive(); }, POLL_MS);
+    // Skip polls while the tab is hidden — background tabs waste API calls
+    const timer = setInterval(() => { if (document.visibilityState === 'visible') void fetchLive(); }, POLL_MS);
     return () => clearInterval(timer);
   }, [identifier]);
 

@@ -165,7 +165,8 @@ export function RouteResultsV2Page(props: Props) {
     if (sortMode === 'cheapest') {
       filtered = [...filtered].sort((a, b) => getFare(a) - getFare(b));
     } else if (sortMode === 'fastest') {
-      filtered = [...filtered].sort((a, b) => (b.stops.length) - (a.stops.length));
+      // Fewer stops = faster. Was inverted (most stops ranked "fastest").
+      filtered = [...filtered].sort((a, b) => (a.stops.length) - (b.stops.length));
     }
 
     return filtered.slice(0, 30).map((r) => {

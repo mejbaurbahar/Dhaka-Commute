@@ -47,8 +47,8 @@ export function FromToBusPage(props: Props) {
   const isInterchange = Boolean(interchange) && buses.length === 0;
 
   useDocumentTitle(lang === 'bn'
-    ? `${fromName.bn} থেকে ${toName.bn} বাস — ${isInterchange ? `${viaName.bn} এ বাস বদল | ` : ''}কই যাবো`
-    : `${fromName.en} to ${toName.en} bus — ${isInterchange ? `change at ${viaName.en} | ` : ''}which bus goes there | KoyJabo`);
+    ? `${fromName.bn} থেকে ${toName.bn} বাস${isInterchange ? ` — ${viaName.bn} এ বাস বদল` : ''}`
+    : `${fromName.en} to ${toName.en} bus${isInterchange ? ` — change at ${viaName.en}` : ''} — which bus goes there`);
 
   useEffect(() => {
     if (isInterchange && interchange) {

@@ -63,15 +63,17 @@ const WRITE_PATH_RULES = [
   { re: /^data\/avatars\/([\w-]+)\.json$/,            userBound: true },
   { re: /^data\/reminders\/([\w-]+)\.json$/,          userBound: true },
   { re: /^data\/chat\/([\w-]+)\/sessions\.json$/,     userBound: true },
-  // Community writes — no userId binding, gated by rate limit + Turnstile when sensitive
-  { re: /^data\/ratings\/[\w-]+\.json$/,              userBound: false },
-  { re: /^data\/photos\/[\w-]+\.json$/,               userBound: false, turnstile: true },
-  { re: /^data\/train-ratings\/[\w-]+\.json$/,        userBound: false },
-  { re: /^data\/train-photos\/[\w-]+\.json$/,         userBound: false, turnstile: true },
-  { re: /^data\/traffic\/\d{4}-\d{2}-\d{2}\.json$/,   userBound: false },
-  { re: /^data\/bus-locations\/[\w-]+\.json$/,        userBound: false },
-  { re: /^data\/feedback\/\d{4}-\d{2}-\d{2}\.json$/,  userBound: false },
-  { re: /^data\/learning\/queries\/\d{4}-\d{2}-\d{2}\.json$/, userBound: false },
+  // Community writes — any signed-in user may write (session required so a
+  // botnet can't wipe/spoof ratings, traffic, or live bus reports without
+  // credentials); Turnstile still applies where flagged.
+  { re: /^data\/ratings\/[\w-]+\.json$/,              sessionRequired: true },
+  { re: /^data\/photos\/[\w-]+\.json$/,               sessionRequired: true, turnstile: true },
+  { re: /^data\/train-ratings\/[\w-]+\.json$/,        sessionRequired: true },
+  { re: /^data\/train-photos\/[\w-]+\.json$/,         sessionRequired: true, turnstile: true },
+  { re: /^data\/traffic\/\d{4}-\d{2}-\d{2}\.json$/,   sessionRequired: true },
+  { re: /^data\/bus-locations\/[\w-]+\.json$/,        sessionRequired: true },
+  { re: /^data\/feedback\/\d{4}-\d{2}-\d{2}\.json$/,  sessionRequired: true },
+  { re: /^data\/learning\/queries\/\d{4}-\d{2}-\d{2}\.json$/, sessionRequired: true },
   // anonymous chat backup (no auth)
   { re: /^data\/chat\/anonymous\/sessions\.json$/,    userBound: false },
 ];
@@ -150,6 +152,10 @@ async function verifySessionToken(token, jwtSecret) {
 }
 
 // ── Turnstile verification helper ────────────────────────────────────────────
+// Must check data.hostname: the sitekey is public, so without a hostname
+// check an attacker can embed the widget on their own page and mint valid
+// tokens that pass every auth gate here.
+const TURNSTILE_ALLOWED_HOSTS = new Set(['koyjabo.com', 'dev.koyjabo.com', 'localhost', '127.0.0.1']);
 async function verifyTurnstile(token, ip, secret) {
   if (!token || !secret) return false;
   // NOTE: Cloudflare ships a public test keypair (dummy token + test secret)
@@ -162,8 +168,36 @@ async function verifyTurnstile(token, ip, secret) {
       body: `secret=${encodeURIComponent(secret)}&response=${encodeURIComponent(token)}&remoteip=${encodeURIComponent(ip || '')}`,
     });
     const data = await res.json().catch(() => ({}));
-    return data.success === true;
+    if (data.success !== true) return false;
+    const hostname = String(data.hostname || '').toLowerCase();
+    return TURNSTILE_ALLOWED_HOSTS.has(hostname);
   } catch { return false; }
+}
+
+// ── Firebase ID-token verification (server-side) ─────────────────────────────
+// auth-google-lookup previously minted a session token for ANY known email
+// hash — no proof of email ownership — full private-data theft. The worker
+// now verifies the caller's Firebase ID token against Google's public
+// tokeninfo endpoint (no API key needed) and only proceeds when Google
+// confirms the email is verified and it hashes to the requested emailHash.
+async function _sha256Hex(input) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyFirebaseIdToken(idToken) {
+  if (!idToken || typeof idToken !== 'string' || idToken.length > 4096) return null;
+  try {
+    const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const verified = data.email_verified === true || data.email_verified === 'true';
+    if (!verified || !data.email) return null;
+    if (!/^https:\/\/securetoken\.google\.com\//.test(String(data.iss || ''))) return null;
+    return { email: String(data.email).toLowerCase().trim() };
+  } catch { return null; }
 }
 
 // ── Write path validation ────────────────────────────────────────────────────
@@ -183,6 +217,9 @@ function validateWritePath(path, sessionUserId) {
     if (rule.userBound) {
       if (!sessionUserId) return { ok: false, status: 401, message: 'Session required' };
       if (m[1] !== sessionUserId) return { ok: false, status: 403, message: 'Session/path mismatch' };
+    }
+    if (rule.sessionRequired && !sessionUserId) {
+      return { ok: false, status: 401, message: 'Session required' };
     }
     return { ok: true, rule };
   }
@@ -244,12 +281,11 @@ function isRateLimited(ip, limit = 1800, windowMs = 60_000) {
 }
 
 // ── DTCA proxy ─────────────────────────────────────────────────────────────
-// Upstream serves a certificate for apiv4.singularitybd.co only — the
-// bondstein.net hostname is missing from the SAN, so Cloudflare's TLS
-// validation rejects every https fetch (526). The API is still live over
-// plain http, and this fetch is server-side only: clients always reach us
-// over https, so there is no cleartext exposure to end users.
-const DTCA_API = 'http://dtca-backend.bondstein.net/api/v1/passenger';
+// https only: plain http 301-redirects to https, and fetch() converts
+// POST→GET on 301, silently breaking the login flow (auto-login returned
+// null → every /bus/vehicles call 401'd). Cert is a valid Let's Encrypt
+// SAN for dtca-backend.bondstein.net.
+const DTCA_API = 'https://dtca-backend.bondstein.net/api/v1/passenger';
 let _dtcaTokenOverride = null; // per-isolate live token (refreshed automatically)
 
 const DTCA_HEADERS = {
@@ -801,6 +837,13 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
     // ── GET /bus-snapshot (alias: /dtca-snapshot) ────────────────────────────
     if (url.pathname === '/bus-snapshot' || url.pathname === '/bus-snapshot/' ||
         url.pathname === '/dtca-snapshot' || url.pathname === '/dtca-snapshot/') {
+      const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+      if (isRateLimited(`${ip}:snap`, 10, 60_000)) {
+        return new Response(
+          JSON.stringify({ error: 'Too many requests' }),
+          { status: 429, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+        );
+      }
       const trackerUrl = 'https://buskothay.com/dtca-bus-tracking/';
       try {
         const upstream = await fetch(trackerUrl, {
@@ -812,7 +855,11 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
         const title = titleMatch?.[1]?.trim() || 'DTCA Panel';
         const text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ' ').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, ' ');
         const plain = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-        const snippet = plain.slice(0, 240) || 'Tracker page reachable.';
+        // Decode HTML entities into plain text — the client renders this as
+        // escaped text (never innerHTML), so literal chars are safe here.
+        let snippet = plain.slice(0, 240) || 'Tracker page reachable.';
+        snippet = snippet.replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
+          .replace(/&quot;/gi, '"').replace(/&#0*39;|&apos;/gi, "'").replace(/&amp;/gi, '&');
         const keywords = ['bus', 'route', 'live', 'track', 'location', 'dhaka', 'dtca']
           .filter(keyword => plain.toLowerCase().includes(keyword));
         const summary = keywords.length > 0
@@ -1098,6 +1145,17 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
             { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
           );
         }
+        // Google-account actions must prove email ownership with a Firebase
+        // ID token — prevents minting/spamming arbitrary-email accounts.
+        if (body.action === 'google-signup') {
+          const verified = await verifyFirebaseIdToken(String(body.idToken || ''));
+          if (!verified || verified.email !== String(body.email || '').toLowerCase().trim()) {
+            return new Response(
+              JSON.stringify({ error: 'Identity verification failed. Please sign in again.' }),
+              { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+            );
+          }
+        }
       }
 
       if (!/^[0-9a-f-]{36}$/.test(body.requestId)) {
@@ -1161,14 +1219,22 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
       }
 
       // ── auth-google-lookup — find an existing Google user without leaking
-      // bcryptHash or arbitrary fields. Caller must have already verified the
-      // Firebase ID-token client-side (this just maps email → userId).
+      // bcryptHash or arbitrary fields. The worker verifies the caller's
+      // Firebase ID token against Google (email ownership) before mapping
+      // email → userId — a bare emailHash is never trusted.
       if (body.action === 'auth-google-lookup') {
         const emailHash = String(body.emailHash || '').trim();
         if (!/^[a-f0-9]{64}$/.test(emailHash)) {
           return new Response(
             JSON.stringify({ error: 'Bad request' }),
             { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+          );
+        }
+        const verified = await verifyFirebaseIdToken(String(body.idToken || ''));
+        if (!verified || (await _sha256Hex(verified.email)) !== emailHash) {
+          return new Response(
+            JSON.stringify({ error: 'Identity verification failed. Please sign in again.' }),
+            { status: 403, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...corsHeaders(origin) } }
           );
         }
         const indexResult = await ghFetch(TOKEN, DATA_OWNER, DATA_REPO, 'data/users/index.json', ctx);

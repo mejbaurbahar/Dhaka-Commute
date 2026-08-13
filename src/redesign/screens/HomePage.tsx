@@ -15,6 +15,7 @@ import { KJFooter as KJFooterComponent } from '../components/KJFooter';
 import { AffiliateBanner } from '../components/AffiliateBanner';
 import { NativeAdSection as NativeAdSectionReal } from '../components/AdComponents';
 import { STATIONS, BUS_DATA, METRO_STATIONS as REAL_METRO_STATIONS } from '../../../constants';
+import { setCanonicalUrl, setMetaTag, setPropertyMetaTag } from '../utils/useDocumentTitle';
 import { BD_TRAIN_ROUTES, TRAIN_STATIONS } from '../../../data/bangladeshTrainData';
 import { INTERCITY_BUS_ROUTES, MAJOR_TRANSPORT_HUBS } from '../../../data/intercityData';
 import { AIRPORTS_DATA } from '../../../data/bangladeshFlightData';
@@ -22,7 +23,7 @@ import { LAUNCH_TERMINALS as LAUNCH_TERMINALS_DATA } from '../../../data/banglad
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { getFavoriteBusIds } from '../utils/favorites';
-import { getUserHistory } from '../../../services/analyticsService';
+import { getUserHistory, splitRouteKey } from '../../../services/analyticsService';
 import { enhancedBusSearch } from '../../../services/searchService';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -1129,6 +1130,7 @@ function MetroLiveStrip({ tk, lang, isMobile }: { tk: Tokens; lang: Lang; isMobi
   const [trainIdx, setTrainIdx] = useState(4); // starts at Mirpur 10
   const [countdown, setCountdown] = useState(2);
   const [atStation, setAtStation] = useState(true);
+  const departTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     // countdown ticks every second
@@ -1137,7 +1139,7 @@ function MetroLiveStrip({ tk, lang, isMobile }: { tk: Tokens; lang: Lang; isMobi
         if (c <= 1) {
           // train departs, animate to next station
           setAtStation(false);
-          setTimeout(() => {
+          departTimer.current = setTimeout(() => {
             setTrainIdx(idx => (idx + 1) % TOTAL);
             setAtStation(true);
           }, 1200);
@@ -1146,7 +1148,10 @@ function MetroLiveStrip({ tk, lang, isMobile }: { tk: Tokens; lang: Lang; isMobi
         return c - 1;
       });
     }, 1000);
-    return () => clearInterval(cd);
+    return () => {
+      clearInterval(cd);
+      if (departTimer.current) clearTimeout(departTimer.current);
+    };
   }, []);
 
   const trainPct = (trainIdx / (TOTAL - 1)) * 100;
@@ -1181,7 +1186,7 @@ function MetroLiveStrip({ tk, lang, isMobile }: { tk: Tokens; lang: Lang; isMobi
           <div style={{ textAlign:'right', minWidth:72 }}>
             <div style={{ fontFamily:SANS, fontSize:11, color:'rgba(255,255,255,0.4)' }}>{T(lang,'পরের ট্রেন','Next train')}</div>
             <div style={{ fontFamily:SANS, fontSize:22, fontWeight:800, color:'#60a5fa', fontVariantNumeric:'tabular-nums', letterSpacing:'-0.5px' }}>
-              {N(countdown, lang)} <span style={{ fontSize:14 }}>{T(lang,'মিনিট','min')}</span>
+              {N(countdown, lang)} <span style={{ fontSize:14 }}>{T(lang,'সেকেন্ড','sec')}</span>
             </div>
           </div>
         </div>
@@ -1279,7 +1284,7 @@ function SavedRoutes({ tk, lang, isMobile, onNav }: { tk: Tokens; lang: Lang; is
   const topRoutes = Object.entries(history.mostUsedRoutes || {})
     .sort((a, b) => b[1] - a[1])
     .slice(0, 4)
-    .map(([key]) => { const [from, to] = key.split('-'); return { from, to }; });
+    .map(([key]) => splitRouteKey(key));
 
   const isEmpty = favBuses.length === 0 && topRoutes.length === 0;
 
@@ -1933,7 +1938,16 @@ function SectionHeader({
 
 // ─── PWA Offline Card ─────────────────────────────────────────────────────────
 
-function OfflinePWACard({ tk, lang }: { tk: Tokens; lang: Lang }) {
+function OfflinePWACard({ tk, lang, onNav, installPromptRef }: { tk: Tokens; lang: Lang; onNav: (r: string, params?: Record<string, string>) => void; installPromptRef: React.RefObject<{ prompt(): void } | null> }) {
+  const tryInstall = () => {
+    const evt = installPromptRef.current;
+    if (evt) {
+      evt.prompt();
+      installPromptRef.current = null;
+    } else {
+      onNav('install');
+    }
+  };
   return (
     <div
       style={{
@@ -1971,6 +1985,7 @@ function OfflinePWACard({ tk, lang }: { tk: Tokens; lang: Lang }) {
         </div>
       </div>
       <button
+        onClick={tryInstall}
         style={{
           background: tk.primary,
           color: tk.primaryInk,
@@ -2014,6 +2029,32 @@ export function HomePage({
   const { user: authUser } = useAuth();
   const firstName = authUser?.displayName?.split(' ')[0] || authUser?.username || null;
   const [homeSearchMode, setHomeSearchMode] = useState<SearchModeId>('bus');
+  const installPromptRef = useRef<{ prompt(): void } | null>(null);
+
+  useEffect(() => {
+    const onInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      const withPrompt = e as unknown as { prompt?: () => void };
+      if (withPrompt.prompt) installPromptRef.current = { prompt: () => withPrompt.prompt!() };
+    };
+    window.addEventListener('beforeinstallprompt', onInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', onInstallPrompt);
+  }, []);
+
+  useEffect(() => {
+    const isDailyJourney = route === 'daily-journey';
+    setCanonicalUrl(isDailyJourney ? '/daily-journey' : '/');
+    if (isDailyJourney) {
+      document.title = 'Daily Journey — Dhaka Commute Planner | কই যাবো';
+      setMetaTag('description', 'Plan your daily journey in Dhaka — bus routes, metro, train & launch schedules. Free KoyJabo guide.');
+    } else {
+      document.title = 'Dhaka Bus Route Finder - ঢাকা বাস রুট | KoyJabo';
+      setMetaTag('description', 'KoyJabo — Dhaka bus route, metro, train, launch & intercity guide. Find bus routes, fares, live DTCA buses and metro fares — free. কই যাবো?');
+    }
+    setPropertyMetaTag('og:title', isDailyJourney ? 'Daily Journey — Dhaka Commute Planner | কই যাবো' : 'KoyJabo — Where do you go? Dhaka transit guide | কই যাবো');
+    setPropertyMetaTag('og:description', 'Dhaka bus routes, metro, train, launch & intercity transport guide. Free.');
+    setPropertyMetaTag('og:image', 'https://koyjabo.com/og-image.png');
+  }, [route]);
 
   const section: React.CSSProperties = {
     padding: isMobile ? '0 16px' : '0 40px',
@@ -2062,6 +2103,22 @@ export function HomePage({
               <div>
                 {/* Location bar — real area when enabled, enable-button otherwise */}
                 <LocationChip tk={tk} lang={lang} />
+                {/* Account entry — sign-in / profile chip */}
+                <button
+                  onClick={() => onNav(authUser ? 'profile' : 'signin')}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 8,
+                    background: authUser ? `${tk.accent}12` : `${tk.primary}14`,
+                    border: `1px solid ${authUser ? `${tk.accent}44` : `${tk.primaryDeep}55`}`,
+                    borderRadius: 999, padding: '5px 12px', cursor: 'pointer',
+                    fontFamily: lang === 'bn' ? 'inherit' : SANS, fontSize: 12, fontWeight: 600,
+                    color: authUser ? tk.accent : tk.primaryDeep, marginBottom: 10,
+                  }}
+                >
+                  {authUser
+                    ? `${firstName ? `👤 ${firstName}` : '👤 প্রোফাইল'}`
+                    : T(lang, '🔑 সাইন ইন করুন', '🔑 Sign in')}
+                </button>
                 <h1
                   style={{
                     margin: '0 0 8px',
@@ -2111,7 +2168,7 @@ export function HomePage({
             {!isMobile && (
               <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12, alignSelf: 'start' }}>
                 <TravelHeroScene tk={tk} height={280} />
-                <OfflinePWACard tk={tk} lang={lang} />
+                <OfflinePWACard tk={tk} lang={lang} onNav={onNav} installPromptRef={installPromptRef} />
                 <GovAdPoster
                   tk={tk}
                   lang={lang}

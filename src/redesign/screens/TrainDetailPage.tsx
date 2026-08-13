@@ -8,6 +8,7 @@ import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag, setJ
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
+const slugify = (v: string) => v.toLowerCase().trim().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const stationName = (id: string) => TRAIN_STATIONS[id]?.name ?? id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 const stationBnName = (id: string) => TRAIN_STATIONS[id]?.bnName ?? stationName(id);
 
@@ -29,7 +30,35 @@ export function TrainDetailPage(props: Props) {
   const isMobile = device === 'mobile';
   const card = (r=16): React.CSSProperties => ({ background:tk.panel, border:`1px solid ${tk.line}`, borderRadius:r, padding:16 });
 
-  const train = BD_TRAIN_ROUTES.find(t => t.id === params?.trainId) ?? BD_TRAIN_ROUTES[0];
+  // URL is /train/<name-slug> — match by slug or id, never fall back to the
+  // first train (that silently showed Kanchon Intercity on every train URL).
+  const train = params?.trainId
+    ? BD_TRAIN_ROUTES.find(t =>
+        t.id === params.trainId ||
+        slugify(t.name) === params.trainId ||
+        slugify(String(t.number)) === params.trainId
+      )
+    : undefined;
+
+  if (!train) {
+    return (
+      <PageShell {...props}>
+        <div style={{ padding:isMobile?'24px 16px':'48px 40px', maxWidth:700, margin:'0 auto', textAlign:'center' }}>
+          <div style={{ fontSize:44, marginBottom:12 }}>🚆</div>
+          <h2 style={{ fontFamily:BEN, fontWeight:700, fontSize:isMobile?20:24, margin:0 }}>
+            {T(lang, 'এই ট্রেনটি পাওয়া যায়নি', 'This train was not found')}
+          </h2>
+          <p style={{ fontFamily:SANS, fontSize:13, opacity:0.7, marginTop:8, marginBottom:20 }}>
+            {T(lang, 'লিংকটি ভুল বা পুরনো হতে পারে।', 'The link may be wrong or outdated.')}
+          </p>
+          <button onClick={() => props.onNav('train-hub')} style={{ fontFamily:SANS, fontWeight:700, fontSize:13, padding:'10px 22px', borderRadius:999, background:tk.primary, color:'#fff', border:'none', cursor:'pointer' }}>
+            {T(lang, 'সব ট্রেন দেখুন', 'See all trains')}
+          </button>
+        </div>
+      </PageShell>
+    );
+  }
+
   const stops = train.routeStops;
 
   const fromName = stationName(stops[0]?.city ?? train.from);
@@ -41,7 +70,7 @@ export function TrainDetailPage(props: Props) {
 
   useDocumentTitle(`${train.name} (${train.number}) Train: ${fromName} → ${toName} Schedule & Fare`);
   useEffect(() => {
-    setCanonicalUrl(`/train/${train.id}`);
+    setCanonicalUrl(`/train/${slugify(train.name)}`);
     const minFareVal = train.fare.shuvan || train.fare.shuvanChair || '';
     const minFare = minFareVal ? ` from ৳${minFareVal}` : '';
     const desc = `${train.name}: ${fromName} to ${toName}. Departs ${depTime}, arrives ${arrTime}. Fares${minFare}. Stops, schedule & booking guide on KoyJabo.`;

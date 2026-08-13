@@ -352,8 +352,8 @@ function buildGraph(): { graph: AdjacencyList; nodes: NodeMap } {
   const METRO_ORDER = [
     'uttara_north', 'uttara_center', 'uttara_south', 'pallabi',
     'mirpur_11', 'mirpur_10', 'kazipara', 'shewrapara', 'agargaon',
-    'bijoy_sarani', 'farmgate', 'kawran_bazar', 'shahbag',
-    'dhaka_university', 'secretariat', 'motijheel',
+    'bijoy_sarani', 'farmgate', 'karwan_bazar', 'shahbagh',
+    'dhaka_university', 'bangladesh_secretariat', 'motijheel',
   ];
   // Also try keys that match common METRO_STATIONS keys
   const metroKeys = Object.keys(METRO_STATIONS);
@@ -583,14 +583,33 @@ function mergeSteps(steps: PathStep[]): PathStep[] {
       prev.toName = step.toName;
       prev.toBnName = step.toBnName;
       prev.timeMin += step.timeMin;
-      prev.costBDT += step.costBDT;
+      if (prev.mode === 'bus') {
+        // Recompute bus fare from total distance instead of stacking per-segment minimums
+        const totalKm = (prev.timeMin / 60) * BUS_AVG_KMH;
+        prev.costBDT = Math.max(BUS_MIN_FARE, Math.ceil(totalKm * BUS_FARE_PER_KM));
+      } else {
+        prev.costBDT += step.costBDT;
+      }
       if (prev.mode === 'walk') {
         const t = Math.round(prev.timeMin);
         prev.instruction = `🚶 Walk ${t} min from ${prev.fromName} to ${prev.toName}`;
         prev.instructionBn = `🚶 ${prev.fromBnName} থেকে ${prev.toBnName} পর্যন্ত হেঁটে যান (${t} মিনিট)`;
       } else {
         prev.instruction = prev.instruction.replace(/→.*/, `→ ${step.toName}`);
-        prev.instructionBn = prev.instructionBn.replace(/→.*/, `→ ${step.toBnName}`);
+        // Bengali instructions use "থেকে", not → — rebuild the destination fresh
+        const r = prev.routeBnName ?? prev.routeName;
+        if (prev.mode === 'metro') {
+          prev.instructionBn = `🚇 MRT-6 মেট্রোরেলে **${prev.fromBnName}** থেকে **${step.toBnName}** (৳${prev.costBDT})`;
+        } else if (prev.mode === 'launch') {
+          prev.instructionBn = `⛴️ **${r}** লঞ্চে ${prev.fromBnName} থেকে ${step.toBnName}`;
+        } else if (prev.mode === 'flight') {
+          prev.instructionBn = `✈️ **${r}** ফ্লাইটে ${prev.fromBnName} থেকে ${step.toBnName} (৳${prev.costBDT})`;
+        } else {
+          // bus / train
+          const emoji = prev.mode === 'train' ? '🚂' : '🚌';
+          const verb = prev.mode === 'train' ? 'ট্রেনে' : 'বাসে';
+          prev.instructionBn = `${emoji} **${r}** ${verb} ${prev.fromBnName} থেকে ${step.toBnName}`;
+        }
       }
       segCounts[segCounts.length - 1]++;
     } else {
@@ -720,16 +739,18 @@ function findAllDirectBuses(fromId: string, toId: string): GraphRoute[] {
     const endIdx   = Math.max(fromIdx, toIdx);
 
     let totalTime = 0;
-    let totalCost = 0;
+    let totalDist = 0;
     for (let i = startIdx; i < endIdx; i++) {
       const a  = nodes.get(bus.stops[i]);
       const b2 = nodes.get(bus.stops[i + 1]);
       if (!a || !b2) continue;
       const distKm = haversineM(a.lat, a.lng, b2.lat, b2.lng) / 1000;
       totalTime += (distKm / BUS_AVG_KMH) * 60;
-      totalCost += Math.max(BUS_MIN_FARE, Math.ceil(distKm * BUS_FARE_PER_KM));
+      totalDist += distKm;
     }
     if (totalTime === 0) continue;
+    // Fare from total distance — stacking per-segment minimums inflates the real fare
+    const totalCost = Math.max(BUS_MIN_FARE, Math.ceil(totalDist * BUS_FARE_PER_KM));
 
     const fromNode = nodes.get(fromId);
     const toNode   = nodes.get(toId);

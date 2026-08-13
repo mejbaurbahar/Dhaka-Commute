@@ -508,14 +508,14 @@
         { "@type": "ListItem", "position": 2, "name": "Metro Rail MRT-6 Fares & Schedule", "url": "https://koyjabo.com/metro" },
         { "@type": "ListItem", "position": 3, "name": "Bangladesh Train Routes", "url": "https://koyjabo.com/train" },
         { "@type": "ListItem", "position": 4, "name": "Intercity Bus, Flight & Launch", "url": "https://koyjabo.com/intercity" },
-        { "@type": "ListItem", "position": 5, "name": "Fare Calculator", "url": "https://koyjabo.com/commute-cost" },
+        { "@type": "ListItem", "position": 5, "name": "Fare Calculator", "url": "https://koyjabo.com/fare" },
         { "@type": "ListItem", "position": 6, "name": "AI Travel Assistant", "url": "https://koyjabo.com/ai" },
         { "@type": "ListItem", "position": 7, "name": "Emergency Helplines (80+)", "url": "https://koyjabo.com/" }
       ]
     }
   </script>
 
-  <!-- GEO Task 5: hasCredential for E-E-A-T signals + complete Organization fields -->
+  <!-- Organization schema: truthful E-E-A-T signals only (no fabricated credentials) -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -542,12 +542,6 @@
         "@type": "Person",
         "name": "Mejbaur Bahar Fagun",
         "url": "https://linkedin.com/in/mejbaur"
-      },
-      "hasCredential": {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Open Source Public Transport Data",
-        "credentialCategory": "Community Verified",
-        "recognizedBy": { "@type": "Organization", "name": "BRTA – Bangladesh Road Transport Authority" }
       },
       "knowsAbout": ["Bangladesh transport", "Dhaka bus routes", "MRT-6 Metro Rail", "Bangladesh Railway", "BIWTC ferry routes"],
       "sameAs": [

@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { STATIONS } from '../../../constants';
+import { STATIONS, BUS_DATA } from '../../../constants';
 import { T } from '../tokens';
 import { askGeminiRoute, ChatMessage } from '../../../services/geminiService';
 import { askGitHubModels } from '../../../services/githubModelsService';
@@ -9,6 +9,36 @@ import { getAuthUser } from '../../../services/communityDataService';
 export type Msg = { id: number; isUser: boolean; text: string; rich?: string };
 export const INIT_MESSAGES: Msg[] = [{ id: 1, isUser: false, text: 'hello', rich: 'greeting' }];
 export type RecentSession = { id: string; title: string };
+
+/**
+ * Grounding: find the real buses from KoyJabo's dataset that match the
+ * user's question, so the model answers from actual data instead of
+ * inventing routes. Returns up to 6 matching buses (name + real route),
+ * or '' when nothing matches well enough to inject.
+ */
+function buildRealDataContext(userText: string): string {
+  const tokens = (userText.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu) || []).filter(t => !['কি', 'কী', 'the', 'and', 'for', 'from', 'how', 'bus'].includes(t));
+  if (tokens.length === 0) return '';
+  const matches: { bus: typeof BUS_DATA[0]; score: number }[] = [];
+  for (const bus of BUS_DATA) {
+    if (bus.active === false) continue;
+    let score = 0;
+    const name = (bus.name + ' ' + (bus.bnName || '')).toLowerCase();
+    const route = bus.routeString.toLowerCase();
+    for (const tok of tokens) {
+      if (name.includes(tok)) score += 3;
+      else if (route.includes(tok)) score += 2;
+      else if (bus.stops.some(s => s.toLowerCase().includes(tok))) score += 1;
+    }
+    if (score >= 3) matches.push({ bus, score });
+  }
+  matches.sort((a, b) => b.score - a.score);
+  const picked = matches.slice(0, 6);
+  if (picked.length < 2) return '';
+  return picked
+    .map(m => `- ${m.bus.name}${m.bus.bnName ? ` (${m.bus.bnName})` : ''}: ${m.bus.routeString}${m.bus.type ? ` • ${m.bus.type}` : ''}`)
+    .join('\n');
+}
 
 // Find nearest station name from GPS coords using all known STATIONS
 export function nearestArea(lat: number, lng: number): string {
@@ -39,6 +69,9 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
   const [messages, setMessages] = useState<Msg[]>(INIT_MESSAGES);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  // Sync guard — state isLoading updates async, so rapid double-sends would
+  // both pass the check and split one conversation into two sessions.
+  const sendingRef = useRef(false);
   const userAreaRef = useRef<string>('');
   const chatUser = getAuthUser();
   const userAvatarUrl = chatUser?.avatarUrl;
@@ -122,7 +155,8 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
 
   const send = useCallback(async (prefill?: string) => {
     const text = prefill ?? input;
-    if (!text.trim() || isLoading) return;
+    if (!text.trim() || isLoading || sendingRef.current) return;
+    sendingRef.current = true;
     const userText = text.trim();
     const userMsg = { id: Date.now(), isUser: true, text: userText };
     setMessages(m => [...m, userMsg]);
@@ -176,9 +210,16 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
         queryForOffline = userText;
       }
 
+      // Ground the answer in KoyJabo's real dataset — never let the model
+      // invent routes/fares. Injected as authoritative context.
+      const realData = buildRealDataContext(userText);
+      const groundedMessage = realData
+        ? `${userText}\n\n[REAL BUS DATA from koyjabo.com — authoritative. Answer ONLY from this list and the data in your instructions; never invent a bus, stop, or fare not listed here. If nothing in this list matches, say you're not sure.]\n${realData}`
+        : userText;
+
       let response: string;
       try {
-        response = await askGitHubModels(userText, chatHistory);
+        response = await askGitHubModels(groundedMessage, chatHistory);
       } catch {
         // Greet by the logged-in user's real name — never a hardcoded one
         const chatUserName = chatUser?.displayName || chatUser?.username || undefined;
@@ -196,6 +237,7 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
     } catch {
       setMessages(m => [...m, { id: Date.now() + 1, isUser: false, text: T(lang, 'দুঃখিত, একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'Sorry, something went wrong. Please try again.') }]);
     } finally {
+      sendingRef.current = false;
       setIsLoading(false);
     }
   }, [input, isLoading, messages, sessionId, lang, chatUser]);

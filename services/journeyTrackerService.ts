@@ -74,8 +74,9 @@ function calculateDistance(
  * Get today's date in YYYY-MM-DD format
  */
 function getTodayDateString(): string {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
+    // Local date, not UTC — at 00:00–06:00 Dhaka time (UTC+6) the UTC date is still yesterday
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 /**

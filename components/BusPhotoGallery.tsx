@@ -23,29 +23,35 @@ function timeAgo(ts: number, t: (key: string, params?: Record<string, string | n
 }
 
 async function compressImage(file: File, maxKB = 280): Promise<string> {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
+    reader.onerror = () => reject(new Error('read-failed'));
     reader.onload = e => {
       const img = new Image();
+      img.onerror = () => reject(new Error('decode-failed'));
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let { width, height } = img;
-        const maxDim = 800;
-        if (width > maxDim || height > maxDim) {
-          const ratio = Math.min(maxDim / width, maxDim / height);
-          width = Math.round(width * ratio);
-          height = Math.round(height * ratio);
+        try {
+          const canvas = document.createElement('canvas');
+          let { width, height } = img;
+          const maxDim = 800;
+          if (width > maxDim || height > maxDim) {
+            const ratio = Math.min(maxDim / width, maxDim / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
+          let quality = 0.85;
+          let dataUrl = canvas.toDataURL('image/jpeg', quality);
+          while (dataUrl.length > maxKB * 1024 * 1.37 && quality > 0.3) {
+            quality -= 0.1;
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+          }
+          resolve(dataUrl);
+        } catch {
+          reject(new Error('compress-failed'));
         }
-        canvas.width = width;
-        canvas.height = height;
-        canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
-        let quality = 0.85;
-        let dataUrl = canvas.toDataURL('image/jpeg', quality);
-        while (dataUrl.length > maxKB * 1024 * 1.37 && quality > 0.3) {
-          quality -= 0.1;
-          dataUrl = canvas.toDataURL('image/jpeg', quality);
-        }
-        resolve(dataUrl);
       };
       img.src = e.target!.result as string;
     };
@@ -116,8 +122,12 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
       return;
     }
     setCompressing(true);
-    const compressed = await compressImage(file);
-    setPreviewUrl(compressed);
+    try {
+      const compressed = await compressImage(file);
+      setPreviewUrl(compressed);
+    } catch {
+      showToast('Could not read this image. Try another photo.', 'error');
+    }
     setCompressing(false);
   };
 

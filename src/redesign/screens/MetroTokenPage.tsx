@@ -18,7 +18,7 @@ export function MetroTokenPage(props: Props) {
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
-  const fare = from && to ? (() => { const a=STATIONS.indexOf(from),b=STATIONS.indexOf(to); return a>=0&&b>=0 ? FARES[Math.abs(a-b)-1]||100 : null; })() : null;
+  const fare = from && to ? (() => { const a=STATIONS.indexOf(from),b=STATIONS.indexOf(to); if (a<0||b<0) return null; if (a===b) return 0; return FARES[Math.abs(a-b)-1]||100; })() : null;
 
   return (
     <PageShell {...props}>
