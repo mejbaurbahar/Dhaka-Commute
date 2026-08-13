@@ -274,23 +274,11 @@ export function BusDetailPage(props: Props) {
 
         {!isMobile && (
           <div style={{ display:'flex', gap:10, marginBottom:20 }}>
-            <button onClick={() => setFavoriteIds(toggleFavoriteBus(bus.id, bus.name))} style={{ ...chipBtn(tk), borderRadius:12, padding:'10px 16px', color:isFavorite?tk.accent:tk.text }}>
+            <button onClick={() => setFavoriteIds(toggleFavoriteBus(bus.id, bus.name))} style={{ ...chipBtn(tk), borderRadius:12, padding:'10px 16px', color:isFavorite?tk.accent:tk.text, flex:1, justifyContent:'center' }}>
               {isFavorite?'♥':'♡'} {T(lang,'সেভ','Save')}
             </button>
-            <button onClick={() => setShowRating(true)} style={{ ...chipBtn(tk), borderRadius:12, padding:'10px 16px' }}>
+            <button onClick={() => setShowRating(true)} style={{ ...chipBtn(tk), borderRadius:12, padding:'10px 16px', flex:1, justifyContent:'center' }}>
               ★ {T(lang,'রেট','Rate')}
-            </button>
-            <button
-              style={{ flex:1, background:tk.primary, color:tk.primaryInk, border:0, borderRadius:12, padding:'12px 20px', fontFamily:SANS, fontWeight:700, fontSize:14, cursor:'pointer' }}
-              onClick={() => {
-                const s0 = STATIONS[bus.stops[0]];
-                const sN = STATIONS[bus.stops[bus.stops.length - 1]];
-                const q = encodeURIComponent(`${bus.name}: ${bus.routeString}`);
-                if (s0?.lat && sN?.lat) window.open(`https://www.google.com/maps/dir/${s0.lat},${s0.lng}/${sN.lat},${sN.lng}/`, '_blank', 'noopener');
-                else window.open(`https://www.google.com/maps/search/${q}`, '_blank', 'noopener');
-              }}
-            >
-              {T(lang,'নেভিগেট শুরু','Start navigation')}
             </button>
           </div>
         )}
@@ -366,21 +354,31 @@ export function BusDetailPage(props: Props) {
               {realStops.map((s,i)=>{
                 const isNearest = nearest?.index === i;
                 const showHelp = isNearest && nearest.distance <= 1.5;
+                const isEnd = s.isFrom || s.isTo || isNearest;
+                const dotColor = isNearest ? '#38bdf8' : s.isFrom ? tk.primary : tk.accent;
                 return (
-                  <div key={s.id} style={{ display:'flex',gap:14,paddingBottom:i<realStops.length-1?12:0,position:'relative' }}>
-                    <div style={{ width:20,flexShrink:0,position:'relative',display:'flex',justifyContent:'center' }}>
-                      {i<realStops.length-1 && <div style={{ position:'absolute',top:16,bottom:-4,width:2,background:tk.primary,opacity:0.3 }}/>}
-                      <div style={{ width:s.isFrom||s.isTo||isNearest?18:12,height:s.isFrom||s.isTo||isNearest?18:12,borderRadius:999,marginTop:4,background:isNearest?'#38bdf8':s.isFrom?tk.primary:s.isTo?tk.accent:tk.panel,border:`2px solid ${isNearest?'#38bdf8':s.isFrom?tk.primary:s.isTo?tk.accent:tk.primary}` }}/>
+                  <div key={s.id} style={{ display:'flex',gap:14,paddingBottom:i<realStops.length-1?14:0,position:'relative',animation:'kjStopIn 0.4s ease-out both',animationDelay:`${Math.min(i*45,900)}ms` }}>
+                    {/* rail with flowing light */}
+                    <div style={{ width:22,flexShrink:0,position:'relative',display:'flex',justifyContent:'center' }}>
+                      {i<realStops.length-1 && (
+                        <div style={{ position:'absolute',top:18,bottom:-6,width:3,borderRadius:3,background:tk.primary,opacity:0.14,overflow:'hidden' }}>
+                          <div style={{ position:'absolute',left:0,right:0,height:'45%',background:`linear-gradient(180deg,transparent,${tk.primary}cc,transparent)`,animation:'kjLineFlow 1.6s linear infinite' }}/>
+                        </div>
+                      )}
+                      <div style={{ position:'relative',marginTop:2 }}>
+                        {isEnd && <div style={{ position:'absolute',inset:-7,borderRadius:999,background:dotColor,opacity:0.35,animation:'kjPulseRing 2s ease-out infinite' }}/>}
+                        <div style={{ width:isEnd?16:11,height:isEnd?16:11,borderRadius:999,border:`2.5px solid ${dotColor}`,background:isNearest?'#0ea5e9':s.isFrom?tk.primary:s.isTo?tk.accent:tk.panel,boxShadow:isEnd?`0 0 12px ${dotColor}66`:undefined,position:'relative',zIndex:1 }}/>
+                      </div>
                     </div>
                     <div style={{ flex:1,display:'flex',alignItems:'center',justifyContent:'space-between',gap:10 }}>
                       <div style={{ display:'flex',alignItems:'center',gap:6,flexWrap:'wrap' }}>
-                        <span style={{ fontFamily:BEN,fontWeight:s.isFrom||s.isTo?700:500,fontSize:14,color:tk.text }}>{lang==='bn'?s.bn:s.en}</span>
+                        <span style={{ fontFamily:BEN,fontWeight:isEnd?700:500,fontSize:14,color:tk.text }}>{lang==='bn'?s.bn:s.en}</span>
                         {s.isFrom && <Pill tk={tk} tone="primary">{T(lang,'বোর্ডিং','Boarding')}</Pill>}
                         {s.isTo && <Pill tk={tk} tone="accent">{T(lang,'গন্তব্য','Destination')}</Pill>}
                         {isNearest && <Pill tk={tk} tone="mute">{T(lang,'আপনি এখানে','You are here')}</Pill>}
                       </div>
                       {showHelp && (
-                        <button onClick={() => setShowHelpline(true)} style={{ background:tk.accentSoft,border:`1px solid ${tk.accent}55`,borderRadius:999,padding:'6px 10px',fontFamily:BEN,fontWeight:700,fontSize:12,color:tk.accent,cursor:'pointer',whiteSpace:'nowrap' }}>
+                        <button onClick={() => setShowHelpline(true)} style={{ background:tk.accentSoft,border:`1px solid ${tk.accent}55`,borderRadius:999,padding:'6px 10px',fontFamily:BEN,fontWeight:700,fontSize:12,color:tk.accent,cursor:'pointer',whiteSpace:'nowrap',flexShrink:0 }}>
                           {T(lang,'হেল্পলাইন','Help line')}
                         </button>
                       )}
