@@ -464,7 +464,7 @@ const GOV_SLIDER_CSS = `
     scroll-snap-align: start;
   }
   .kj-gov-slider .project-card[data-active] {
-    min-height: 300px; transform: none;
+    min-height: 500px; transform: none;
     box-shadow: rgba(0,0,0,.3) 0 8px 25px;
   }
   .kj-gov-slider .content {
@@ -476,12 +476,14 @@ const GOV_SLIDER_CSS = `
     font-size: 1.2rem; margin-right: auto;
   }
   .kj-gov-slider .thumb, .kj-gov-slider .desc, .kj-gov-slider .details-btn { display: none; }
-  .kj-gov-slider .project-card[data-active] .content { align-items: flex-start; padding: 1.5rem; }
+  .kj-gov-slider .project-card[data-active] .content {
+    flex-direction: column; align-items: flex-start; padding: 1.5rem;
+  }
   .kj-gov-slider .project-card[data-active] .title {
-    font-size: 1.8rem; margin-bottom: 1rem; margin-top: 2rem;
+    font-size: 1.6rem; margin: 0 0 .6rem;
   }
   .kj-gov-slider .project-card[data-active] .thumb {
-    width: 200px; height: 267px; border-radius: .35rem; margin-bottom: 1rem;
+    width: 160px; height: 214px; border-radius: .35rem; margin-bottom: 1rem;
   }
   .kj-gov-slider .project-card[data-active] .desc {
     font-size: .95rem; max-width: 100%; margin-bottom: 1rem;

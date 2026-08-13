@@ -6,7 +6,6 @@ import { GovAdBanner } from '../components/GovAdBanner';
 import { LiveBusMap } from '../components/LiveBusMap';
 import { Pill } from '../components/Pill';
 import { BUS_DATA, STATIONS } from '../../../constants';
-import BusRouteMap from '../../../components/BusRouteMap';
 import BusRating from '../../../components/BusRating';
 import BusPhotoGallery from '../../../components/BusPhotoGallery';
 import EmergencyHelplineModal from '../../../components/EmergencyHelplineModal';
@@ -246,14 +245,21 @@ export function BusDetailPage(props: Props) {
   return (
     <PageShell {...props}>
       <div style={{ padding:isMobile?'16px 16px 24px':'28px 40px 80px', maxWidth:1180, margin:'0 auto' }}>
+        {/* Single live map — route + all live buses on this route (no second map) */}
         <div style={{ height:isMobile?320:430,borderRadius:16,overflow:'hidden',position:'relative',marginBottom:18,background:'#0a1f14',border:`1px solid ${tk.line}` }}>
-          <BusRouteMap
-            route={bus}
-            userLocation={userLocation}
-            highlightStartId={fromId}
-            highlightEndId={toId}
-            isReversed={isRouteReversed}
-            height="100%"
+          <LiveBusMap
+            tk={tk}
+            lang={lang}
+            isMobile={isMobile}
+            height={isMobile ? 320 : 430}
+            routeStops={realStops
+              .filter(s => typeof s.lat === 'number' && typeof s.lng === 'number')
+              .map(s => ({ lat: s.lat as number, lng: s.lng as number, name: s.en, bnName: s.bn }))}
+            stopIds={bus.stops}
+            buses={communityBuses}
+            selectedNumber={selectedLiveBus}
+            sharingBusNumber={getSharingState()?.busNumber ?? null}
+            onMarkerClick={setSelectedLiveBus}
           />
         </div>
 
@@ -416,22 +422,6 @@ export function BusDetailPage(props: Props) {
               {T(lang, 'আমি এই বাসে আছি', "I'm on this bus")}
             </button>
           </div>
-
-          {/* Live map — all buses on this route, click marker for details */}
-          <LiveBusMap
-            tk={tk}
-            lang={lang}
-            isMobile={isMobile}
-            height={isMobile ? 300 : 380}
-            routeStops={realStops
-              .filter(s => typeof s.lat === 'number' && typeof s.lng === 'number')
-              .map(s => ({ lat: s.lat as number, lng: s.lng as number, name: s.en, bnName: s.bn }))}
-            stopIds={bus.stops}
-            buses={communityBuses}
-            selectedNumber={selectedLiveBus}
-            sharingBusNumber={getSharingState()?.busNumber ?? null}
-            onMarkerClick={setSelectedLiveBus}
-          />
 
           {communityBuses.length === 0 ? (
             <div style={{ background: tk.panelMuted, borderRadius: 12, padding: '14px 16px', marginTop: 10 }}>

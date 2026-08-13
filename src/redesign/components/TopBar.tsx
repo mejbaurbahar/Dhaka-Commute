@@ -120,20 +120,19 @@ export function TopBar({
           aria-label={T(lang, 'কই যাবো', 'Koy Jabo')}
         >
           <Logo tk={tk} size={isMobile ? 42 : 48} />
-          {!isMobile && (
-            <span
-              style={{
-                fontFamily: BEN,
-                fontWeight: 800,
-                fontSize: 18,
-                letterSpacing: lang === 'bn' ? -0.5 : 0,
-              }}
-            >
-              {/* Bangladesh-flag colors: red কই + green যাবো */}
-              <span style={{ color: '#F42A41' }}>কই</span>
-              <span style={{ color: '#00A86B' }}> যাবো</span>
-            </span>
-          )}
+          <span
+            style={{
+              fontFamily: BEN,
+              fontWeight: 800,
+              fontSize: isMobile ? 15 : 18,
+              letterSpacing: lang === 'bn' ? -0.5 : 0,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {/* Bangladesh-flag colors: red কই + green যাবো */}
+            <span style={{ color: '#F42A41' }}>কই</span>
+            <span style={{ color: '#00A86B' }}> যাবো</span>
+          </span>
         </button>
 
         {/* Desktop nav — pushed to right side with marginLeft: auto */}
