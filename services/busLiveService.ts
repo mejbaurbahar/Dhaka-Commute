@@ -155,6 +155,7 @@ export async function getBusNumbers(busId: string): Promise<BusNumberEntry[]> {
 
 /** Remember a bus number for this route (pre-fill suggestions). */
 export async function registerBusNumber(busId: string, busNumber: string, operatorName?: string): Promise<boolean> {
+  if (!normalizeBusNumber(busNumber)) return false;
   return post('/api/register-bus', {
     busId,
     busNumber: normalizeBusNumber(busNumber),

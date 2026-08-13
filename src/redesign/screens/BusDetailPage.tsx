@@ -462,16 +462,10 @@ export function BusDetailPage(props: Props) {
                   {communityBuses.length > 0 && <span style={{ fontFamily: SANS, fontSize: 12, color: '#10b981' }}> ({N(communityBuses.length, lang)})</span>}
                 </div>
                 <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginTop: 2 }}>
-                  {T(lang, 'যাত্রীরা নিজেদের বাস নম্বর শেয়ার করছে', 'Passengers sharing their bus numbers')}
+                  {T(lang, 'যাত্রীরা নিজেদের বাস শেয়ার করছে', 'Passengers sharing their buses')}
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => props.onNav('bus-live-map', { busId: bus.id })}
-              style={{ border: 'none', borderRadius: 999, padding: '9px 14px', background: tk.primary, color: '#fff', fontFamily: SANS, fontWeight: 700, fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}
-            >
-              {T(lang, 'মানচিত্র দেখুন', 'Open map')}
-            </button>
           </div>
 
           {communityBuses.length === 0 ? (
@@ -485,12 +479,6 @@ export function BusDetailPage(props: Props) {
                   style={{ ...chipBtn(tk), borderRadius: 12, padding: '10px 16px', flex: 1, minWidth: 160, justifyContent: 'center', background: tk.primary, color: '#fff' }}
                 >
                   {T(lang, 'আমি এই বাসে আছি', "I'm on this bus")}
-                </button>
-                <button
-                  onClick={() => props.onNav('bus-live-map', { busId: bus.id })}
-                  style={{ ...chipBtn(tk), borderRadius: 12, padding: '10px 16px', flex: 1, minWidth: 160, justifyContent: 'center' }}
-                >
-                  {T(lang, 'বাস নম্বর যোগ করুন', 'Add your bus number')}
                 </button>
               </div>
             </div>
@@ -511,7 +499,8 @@ export function BusDetailPage(props: Props) {
                   <span style={{ width: 10, height: 10, borderRadius: '50%', background: statusColor, flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 15, color: tk.text }}>
-                      {b.busNumber}
+                      {b.busNumber || bus.name}
+                      {b.busNumber && <span style={{ fontSize: 12, color: tk.textDim, marginLeft: 6 }}>{b.busNumber}</span>}
                       {isOwn && <span style={{ fontSize: 11, color: '#3b82f6', marginLeft: 6 }}>{T(lang, 'আপনার বাস', 'Your bus')}</span>}
                     </div>
                     <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim }}>
