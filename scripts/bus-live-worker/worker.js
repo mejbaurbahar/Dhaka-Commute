@@ -66,7 +66,7 @@ function numIn(v, min, max) {
 
 function validateCheckin(b) {
   const busNumber = normalizeBusNumber(b.busNumber);
-  if (!isBusNumberValid(busNumber)) return { error: 'bad busNumber' };
+  if (busNumber && !isBusNumberValid(busNumber)) return { error: 'bad busNumber' };
   if (!isBusIdValid(b.busId)) return { error: 'bad busId' };
   if (!isDeviceIdValid(b.deviceId)) return { error: 'bad deviceId' };
   if (!numIn(b.lat, -90, 90) || !numIn(b.lng, -180, 180)) return { error: 'bad coords' };
@@ -80,7 +80,7 @@ function validateCheckin(b) {
 
 function validateRegistry(b) {
   const busNumber = normalizeBusNumber(b.busNumber);
-  if (!isBusNumberValid(busNumber)) return { error: 'bad busNumber' };
+  if (busNumber && !isBusNumberValid(busNumber)) return { error: 'bad busNumber' };
   if (!isBusIdValid(b.busId)) return { error: 'bad busId' };
   const operatorName = String(b.operatorName || '').trim().slice(0, 60);
   return { ok: true, v: { busNumber, busId: b.busId, operatorName } };
@@ -92,9 +92,11 @@ function liveKey(busId, busNumber, deviceId) {
   return `live:${busId}:${busNumber}:${deviceId}`;
 }
 
-// key = live:${busId}:${busNumber}:${deviceId}; busNumber can't contain ':' (regex)
+// key = live:${busId}:${busNumber}:${deviceId}; busNumber can't contain ':' (regex).
+// Empty busNumber → live:${busId}::${deviceId} → busNumber ''.
 function parseLiveKey(key, busId) {
   const rest = key.slice(`live:${busId}:`.length);
+  if (rest.startsWith(':')) return { busNumber: '', deviceId: rest.slice(1) };
   const idx = rest.lastIndexOf(':');
   if (idx <= 0) return null;
   return { busNumber: rest.slice(0, idx), deviceId: rest.slice(idx + 1) };
@@ -217,15 +219,18 @@ async function handleCheckin(env, body) {
     }),
     { expirationTtl: LIVE_TTL_S }
   );
-  await updateRegistry(env, { busNumber: v.busNumber, busId: v.busId, operatorName: v.operatorName });
+  if (v.busNumber) {
+    await updateRegistry(env, { busNumber: v.busNumber, busId: v.busId, operatorName: v.operatorName });
+  }
   return Response.json({ ok: true, ts: now });
 }
 
 async function handleLeave(env, body) {
-  if (!isBusIdValid(body.busId) || !isBusNumberValid(normalizeBusNumber(body.busNumber)) || !isDeviceIdValid(body.deviceId)) {
+  const busNumber = normalizeBusNumber(body.busNumber);
+  if (!isBusIdValid(body.busId) || (busNumber && !isBusNumberValid(busNumber)) || !isDeviceIdValid(body.deviceId)) {
     return Response.json({ ok: false, error: 'bad params' }, { status: 400 });
   }
-  const name = liveKey(body.busId, normalizeBusNumber(body.busNumber), body.deviceId);
+  const name = liveKey(body.busId, busNumber, body.deviceId);
   await env.BUS_LIVE.delete(name);
   return Response.json({ ok: true });
 }

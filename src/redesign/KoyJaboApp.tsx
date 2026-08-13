@@ -425,13 +425,19 @@ export function KoyJaboApp() {
   }, [pushUrl]);
 
   const back = useCallback(() => {
-    if (stack.length <= 1) return;
+    if (stack.length <= 1) {
+      // Direct URL entry (e.g. /bus/agradut/live) — no stack to pop. Go back
+      // in browser history, or home if there's nowhere to go.
+      if (window.history.length > 1) window.history.back();
+      else nav('home');
+      return;
+    }
     const previous = stack[stack.length - 2];
     setDir('back');
     setStack(s => s.slice(0, -1));
     pushUrl(previous);
     if (scrollerRef.current) scrollerRef.current.scrollTop = 0;
-  }, [stack, pushUrl]);
+  }, [stack, pushUrl, nav]);
 
   // Keyboard back
   useEffect(() => {
@@ -448,7 +454,8 @@ export function KoyJaboApp() {
   }, [canBack, back]);
 
   // Back button only on detail/leaf pages, not on hub/main pages
-  const showBack = canBack && SHOW_BACK_ROUTES.has(top.route);
+  // bus-live-map always gets a back button — users often land on it directly via URL.
+  const showBack = SHOW_BACK_ROUTES.has(top.route) && (canBack || top.route === 'bus-live-map');
 
   const toggleLang = useCallback(() => {
     setLang(l => {

@@ -16,8 +16,6 @@ import {
   setDestinationStop,
   subscribe,
   setSharingCallbacks,
-  normalizeBusNumber,
-  isBusNumberValid,
   getNearestStopName,
   SharingState,
 } from '../../../services/busLiveService';
@@ -74,8 +72,6 @@ export function BusLiveMapPage(props: Props) {
 
   const [buses, setBuses] = useState<CommunityBus[]>([]);
   const [sharing, setSharing] = useState<SharingState | null>(getSharingState());
-  const [busNumberInput, setBusNumberInput] = useState(prefillNumber);
-  const [operatorInput, setOperatorInput] = useState('');
   const [shareError, setShareError] = useState<string | null>(null);
   const [approachBanner, setApproachBanner] = useState<string | null>(null);
   const [leaveSuggestion, setLeaveSuggestion] = useState(false);
@@ -206,7 +202,7 @@ export function BusLiveMapPage(props: Props) {
         className: '',
         html: busIconHtml(statusColor(b.status), b.busNumber === sharing?.busNumber),
       });
-      const label = `<b>${b.busNumber}</b>${b.contributors > 1 ? ` &nbsp;👥 ${b.contributors}` : ''}`;
+      const label = `<b>${b.busNumber || bus?.name || busId}</b>${b.contributors > 1 ? ` &nbsp;👥 ${b.contributors}` : ''}`;
       L.marker([b.lat, b.lng], { icon })
         .bindTooltip(label, { permanent: false, direction: 'top', offset: [0, -10] })
         .addTo(layer);
@@ -216,16 +212,11 @@ export function BusLiveMapPage(props: Props) {
 
   const onStartSharing = async () => {
     setShareError(null);
-    const bn = normalizeBusNumber(busNumberInput);
-    if (!isBusNumberValid(bn)) {
-      setShareError(T(lang, 'সঠিক বাস নম্বর দিন (যেমন: DA M 12-2467)', 'Enter a valid bus number (e.g. DA M 12-2467)'));
-      return;
-    }
     if (!navigator.geolocation) {
       setShareError(T(lang, 'এই ডিভাইসে GPS নেই', 'This device has no GPS'));
       return;
     }
-    const ok = await startSharing({ busId, busNumber: bn, operatorName: operatorInput || undefined, destStopId: null });
+    const ok = await startSharing({ busId, busNumber: prefillNumber || '', destStopId: null });
     if (!ok) setShareError(T(lang, 'GPS চালু করুন এবং আবার চেষ্টা করুন', 'Enable GPS and try again'));
   };
 
@@ -291,7 +282,8 @@ export function BusLiveMapPage(props: Props) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
               <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981', animation: 'kjPulse 1.6s infinite' }} />
               <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 16, color: tk.text }}>
-                {T(lang, 'Sharing:', 'শেয়ার হচ্ছে:')} {sharing.busNumber}
+                {T(lang, 'Sharing:', 'শেয়ার হচ্ছে:')} {bus?.name || sharing.busNumber || busId}
+                {sharing.busNumber && <span style={{ fontSize: 12, color: tk.textDim, marginLeft: 6 }}>{sharing.busNumber}</span>}
               </div>
             </div>
             <select
@@ -316,21 +308,8 @@ export function BusLiveMapPage(props: Props) {
               {T(lang, 'আপনি কি এই বাসে আছেন?', 'Are you on this bus?')}
             </div>
             <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim, marginBottom: 12 }}>
-              {T(lang, 'বাস নম্বর শেয়ার করুন — সবাই রুটের প্রতিটি বাস লাইভ দেখতে পারবে। পরিচয় গোপন থাকে।', 'Share your bus number — everyone sees every bus on this route live. Your identity stays private.')}
+              {T(lang, 'শেয়ার করুন — সবাই এই বাসটি মানচিত্রে লাইভ দেখতে পারবে। পরিচয় গোপন থাকে।', 'Share — everyone sees this bus live on the map. Your identity stays private.')}
             </div>
-            <input
-              placeholder="DA M 12-2467"
-              value={busNumberInput}
-              onChange={e => setBusNumberInput(e.target.value)}
-              style={inputStyle}
-              autoCapitalize="characters"
-            />
-            <input
-              placeholder={T(lang, 'পরিবহন নাম (ঐচ্ছিক)', 'Operator name (optional)')}
-              value={operatorInput}
-              onChange={e => setOperatorInput(e.target.value)}
-              style={inputStyle}
-            />
             {shareError && <div style={{ fontFamily: BEN, fontSize: 12, color: '#ef4444', marginBottom: 10 }}>{shareError}</div>}
             <button onClick={onStartSharing} style={btn(tk.primary, '#fff')}>
               {T(lang, 'শেয়ার করা শুরু করুন', 'Start sharing')}
@@ -353,7 +332,7 @@ export function BusLiveMapPage(props: Props) {
           </div>
           {buses.length === 0 ? (
             <div style={{ fontFamily: BEN, fontSize: 13, color: tk.textDim, padding: '8px 0' }}>
-              {T(lang, 'এই মুহূর্তে কেউ বাস শেয়ার করছে না। প্রথম ব্যক্তি হয়ে আপনার বাস নম্বর যোগ করুন।', 'Nobody is sharing a bus right now. Be the first to add your bus number.')}
+              {T(lang, 'এই মুহূর্তে কেউ বাস শেয়ার করছে না। প্রথম ব্যক্তি হয়ে বাস শেয়ার করুন।', 'Nobody is sharing a bus right now. Be the first to share.')}
             </div>
           ) : (
             buses.map(b => {
@@ -376,7 +355,8 @@ export function BusLiveMapPage(props: Props) {
                   <span style={{ width: 10, height: 10, borderRadius: '50%', background: statusColor(b.status), flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 15, color: tk.text }}>
-                      {b.busNumber}
+                      {b.busNumber || bus?.name || busId}
+                      {b.busNumber && <span style={{ fontSize: 12, color: tk.textDim, marginLeft: 6 }}>{b.busNumber}</span>}
                       {isOwn && <span style={{ fontSize: 11, color: '#3b82f6', marginLeft: 6 }}>{T(lang, 'আপনার বাস', 'Your bus')}</span>}
                     </div>
                     <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim }}>
