@@ -3,6 +3,7 @@ import { KJ_TOKENS, T, SANS, BEN, chipBtn, N, Fare } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovAdBanner } from '../components/GovAdBanner';
+import { LiveBusMap } from '../components/LiveBusMap';
 import { Pill } from '../components/Pill';
 import { BUS_DATA, STATIONS } from '../../../constants';
 import BusRouteMap from '../../../components/BusRouteMap';
@@ -18,6 +19,8 @@ import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
 import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag, setJsonLd } from '../utils/useDocumentTitle';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
+
+const LIVE_LIST_INITIAL = 6;
 
 const TYPE_COLOR: Record<string, [string,string]> = {
   'AC': ['#006a4e','#10b981'], 'Local': ['#1e3a8a','#3b82f6'],
@@ -115,6 +118,8 @@ export function BusDetailPage(props: Props) {
   }, [showRating, showPhotos]);
   const [ratingSummary, setRatingSummary] = useState<BusRatingSummary | null>(null);
   const [communityBuses, setCommunityBuses] = useState<CommunityBus[]>([]);
+  const [selectedLiveBus, setSelectedLiveBus] = useState<string | null>(null);
+  const [showAllLive, setShowAllLive] = useState(false);
 
   const realStops = useMemo(() => {
     if (!bus) return [];
@@ -230,6 +235,13 @@ export function BusDetailPage(props: Props) {
   })();
   const isFavorite = favoriteIds.includes(bus.id);
   const nearestStopName = nearest ? realStops[nearest.index]?.en : undefined;
+  // Live list: first N, or all when expanded; selected bus always pinned on top
+  const liveBusList = (() => {
+    const list = showAllLive ? communityBuses : communityBuses.slice(0, LIVE_LIST_INITIAL);
+    const sel = communityBuses.find(b => b.busNumber === selectedLiveBus);
+    if (sel && !list.some(b => b.busNumber === selectedLiveBus)) return [sel, ...list];
+    return list;
+  })();
 
   return (
     <PageShell {...props}>
@@ -397,10 +409,32 @@ export function BusDetailPage(props: Props) {
                 </div>
               </div>
             </div>
+            <button
+              onClick={() => props.onNav('bus-live-map', { busId: bus.id, share: '1' })}
+              style={{ ...chipBtn(tk), borderRadius: 12, padding: '10px 16px', flexShrink: 0, background: tk.primary, color: '#fff' }}
+            >
+              {T(lang, 'আমি এই বাসে আছি', "I'm on this bus")}
+            </button>
           </div>
 
+          {/* Live map — all buses on this route, click marker for details */}
+          <LiveBusMap
+            tk={tk}
+            lang={lang}
+            isMobile={isMobile}
+            height={isMobile ? 300 : 380}
+            routeStops={realStops
+              .filter(s => typeof s.lat === 'number' && typeof s.lng === 'number')
+              .map(s => ({ lat: s.lat as number, lng: s.lng as number, name: s.en, bnName: s.bn }))}
+            stopIds={bus.stops}
+            buses={communityBuses}
+            selectedNumber={selectedLiveBus}
+            sharingBusNumber={getSharingState()?.busNumber ?? null}
+            onMarkerClick={setSelectedLiveBus}
+          />
+
           {communityBuses.length === 0 ? (
-            <div style={{ background: tk.panelMuted, borderRadius: 12, padding: '14px 16px', marginBottom: 10 }}>
+            <div style={{ background: tk.panelMuted, borderRadius: 12, padding: '14px 16px', marginTop: 10 }}>
               <div style={{ fontFamily: BEN, fontSize: 13, color: tk.textDim, marginBottom: 10 }}>
                 {T(lang, 'এই মুহূর্তে কেউ বাস শেয়ার করছে না। আপনি প্রথম ব্যক্তি হোন!', 'Nobody is sharing a bus right now. Be the first!')}
               </div>
@@ -414,42 +448,53 @@ export function BusDetailPage(props: Props) {
               </div>
             </div>
           ) : (
-            communityBuses.map(b => {
-              const nearestId = getNearestStopName(b.lat, b.lng, bus.stops);
-              const nearest = STATIONS[nearestId];
-              const isOwn = getSharingState()?.busNumber === b.busNumber;
-              const statusColor = b.status === 'moving' ? '#10b981' : b.status === 'idle' ? '#f59e0b' : '#9ca3af';
-              const agoSec = Math.max(0, Math.floor((Date.now() - b.updatedAt) / 1000));
-              const ago = agoSec < 60 ? `${agoSec}s` : `${Math.floor(agoSec / 60)}m`;
-              return (
-                <div
-                  key={b.busNumber}
-                  onClick={() => props.onNav('bus-live-map', { busId: bus.id, share: '1', busNumber: b.busNumber })}
-                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 4px', borderBottom: '1px solid ' + tk.line, cursor: 'pointer' }}
+            <div style={{ marginTop: 12 }}>
+              {liveBusList.map(b => {
+                const nearestId = getNearestStopName(b.lat, b.lng, bus.stops);
+                const nearest = STATIONS[nearestId];
+                const isOwn = getSharingState()?.busNumber === b.busNumber;
+                const isSel = b.busNumber !== '' && b.busNumber === selectedLiveBus;
+                const statusColor = b.status === 'moving' ? '#10b981' : b.status === 'idle' ? '#f59e0b' : '#9ca3af';
+                const agoSec = Math.max(0, Math.floor((Date.now() - b.updatedAt) / 1000));
+                const ago = agoSec < 60 ? `${agoSec}s` : `${Math.floor(agoSec / 60)}m`;
+                return (
+                  <div
+                    key={b.busNumber || `${b.lat}-${b.lng}`}
+                    onClick={() => { if (b.busNumber) setSelectedLiveBus(b.busNumber); }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 4px', borderBottom: '1px solid ' + tk.line, cursor: 'pointer', background: isSel ? 'rgba(59,130,246,.12)' : 'transparent', borderRadius: 10 }}
+                  >
+                    <span style={{ width: 10, height: 10, borderRadius: '50%', background: statusColor, flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 15, color: tk.text }}>
+                        {b.busNumber || bus.name}
+                        {b.busNumber && <span style={{ fontSize: 12, color: tk.textDim, marginLeft: 6 }}>{b.busNumber}</span>}
+                        {!b.busNumber && <span style={{ fontSize: 12, color: tk.textFaint, marginLeft: 6 }}>{T(lang, 'নম্বর নেই', 'no number')}</span>}
+                        {isOwn && <span style={{ fontSize: 11, color: '#3b82f6', marginLeft: 6 }}>{T(lang, 'আপনার বাস', 'Your bus')}</span>}
+                      </div>
+                      <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim }}>
+                        {nearest ? (lang === 'bn' ? nearest.bnName : nearest.name) : ''} · {b.status === 'moving' ? T(lang, 'চলছে', 'Moving') : b.status === 'idle' ? T(lang, 'অপেক্ষায়', 'Idle') : T(lang, 'পুরনো ডেটা', 'Stale')}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontFamily: SANS, fontSize: 12, color: tk.textDim }}>
+                        {b.contributors > 1 ? `👥 ${N(b.contributors, lang)} · ` : ''}{ago}
+                      </div>
+                      <div style={{ fontFamily: SANS, fontSize: 12, color: tk.textFaint }}>
+                        {b.speed > 1 ? `${Math.round(b.speed * 3.6)} km/h` : '0 km/h'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              {!showAllLive && communityBuses.length > LIVE_LIST_INITIAL && (
+                <button
+                  onClick={() => setShowAllLive(true)}
+                  style={{ width: '100%', marginTop: 10, padding: '10px', fontFamily: SANS, fontWeight: 700, fontSize: 14, color: tk.primary, background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 12, cursor: 'pointer' }}
                 >
-                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: statusColor, flexShrink: 0 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 15, color: tk.text }}>
-                      {b.busNumber || bus.name}
-                      {b.busNumber && <span style={{ fontSize: 12, color: tk.textDim, marginLeft: 6 }}>{b.busNumber}</span>}
-                      {!b.busNumber && <span style={{ fontSize: 12, color: tk.textFaint, marginLeft: 6 }}>{T(lang, 'নম্বর নেই', 'no number')}</span>}
-                      {isOwn && <span style={{ fontSize: 11, color: '#3b82f6', marginLeft: 6 }}>{T(lang, 'আপনার বাস', 'Your bus')}</span>}
-                    </div>
-                    <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim }}>
-                      {nearest ? (lang === 'bn' ? nearest.bnName : nearest.name) : ''} · {b.status === 'moving' ? T(lang, 'চলছে', 'Moving') : b.status === 'idle' ? T(lang, 'অপেক্ষায়', 'Idle') : T(lang, 'পুরনো ডেটা', 'Stale')}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontFamily: SANS, fontSize: 12, color: tk.textDim }}>
-                      {b.contributors > 1 ? `👥 ${N(b.contributors, lang)} · ` : ''}{ago}
-                    </div>
-                    <div style={{ fontFamily: SANS, fontSize: 12, color: tk.textFaint }}>
-                      {b.speed > 1 ? `${Math.round(b.speed * 3.6)} km/h` : '0 km/h'}
-                    </div>
-                  </div>
-                </div>
-              );
-            })
+                  {T(lang, `আরও দেখুন (${N(communityBuses.length - LIVE_LIST_INITIAL, lang)})`, `See more (${N(communityBuses.length - LIVE_LIST_INITIAL, lang)})`)}
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>

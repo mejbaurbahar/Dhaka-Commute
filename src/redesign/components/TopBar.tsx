@@ -126,10 +126,12 @@ export function TopBar({
                 fontFamily: BEN,
                 fontWeight: 800,
                 fontSize: 18,
-                color: tk.text,
+                letterSpacing: lang === 'bn' ? -0.5 : 0,
               }}
             >
-              কই যাবো
+              {/* Bangladesh-flag colors: red কই + green যাবো */}
+              <span style={{ color: '#F42A41' }}>কই</span>
+              <span style={{ color: '#00A86B' }}> যাবো</span>
             </span>
           )}
         </button>
