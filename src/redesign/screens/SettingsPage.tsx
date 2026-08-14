@@ -44,9 +44,12 @@ export function SettingsPage(props: ScreenProps) {
   const pushAvailable = pushSupported();
 
   async function handlePushToggle() {
-    if (pushOn) return; // turning OFF is disabled for now — push stays on
+    // Subscribed → tapping is a no-op (turning OFF is disabled; push stays on).
+    // Not subscribed (first visit, or the browser's one-time prompt was
+    // missed/denied) → tapping re-asks for permission.
+    if (pushOn && Notification.permission === 'granted') return;
     const ok = await enablePush();
-    setPushOn(ok);
+    setPushOn(ok || Notification.permission === 'granted');
   }
   const [privacy, setPrivacy] = useState({
     stats: true,

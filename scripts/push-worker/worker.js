@@ -289,6 +289,9 @@ async function deliver(sub, event) {
       'Content-Encoding': 'aes128gcm',
       'Content-Type': 'application/octet-stream',
       TTL: String(ttl),
+      // Re-activation pushes should arrive promptly, not sit in a
+      // power-saving delivery window. Volume is tiny (≤1 push/sub/tick).
+      Urgency: 'high',
       Authorization: `vapid t=${jwt}, k=${CFG.VAPID_PUBLIC_KEY}`,
     },
     body,
@@ -355,6 +358,9 @@ async function deliverFcm(token, event) {
       notification: { title, body },
       // Android: white KoyJabo logo as the tray icon + brand accent color.
       android: {
+        // high = immediate delivery even in Doze/battery saver (FCM v1
+        // defaults to "normal", which groups/delays in power-saving states).
+        priority: 'high',
         notification: { icon: 'kj_push_icon', color: '#00c2ff', title, body },
       },
       data: { url: url || '/', type: event.type },

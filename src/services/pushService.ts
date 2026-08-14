@@ -99,6 +99,7 @@ async function subscribeOnDevice(): Promise<PushSubscription | null> {
   try {
     const reg = await navigator.serviceWorker.register(PUSH_SW_URL, { scope: PUSH_SW_SCOPE });
     await navigator.serviceWorker.ready;
+    reg.update().catch(() => {}); // pick up push-sw.js changes promptly
     let sub = await reg.pushManager.getSubscription();
     if (!sub) {
       sub = await reg.pushManager.subscribe({
@@ -290,22 +291,21 @@ export async function initPush(): Promise<void> {
 
   if (!pushSupported()) return;
 
-  // Push is ON by default: auto-subscribe on first visit (the browser shows
-  // its permission prompt once; a later visit never re-prompts after deny).
-  // The Settings toggle remains for users who want to turn it off.
-  if (!pushEnabled()) {
-    const ok = await enablePush();
-    if (!ok) return;
-  }
-
-  // Re-sync the subscription when permission was already granted
-  // (e.g. after a browser update reset the push service).
-  if (Notification.permission === 'granted') {
+  // Push is ON by default: ask the browser once on first visit (the Terms
+  // page promises this). If denied, the browser never re-prompts — the
+  // Settings toggle is the manual retry path.
+  if (!pushEnabled()) return; // user explicitly opted out
+  const ok = await enablePush();
+  if (!ok && Notification.permission === 'granted') {
+    // Permission granted but subscribe failed (e.g. push service reset) —
+    // re-sync the subscription on this visit.
     const sub = await subscribeOnDevice();
     if (sub) {
       persist(sub);
       post('/api/subscribe', { endpoint: sub.endpoint, keys: subKeys(sub), lang: currentLang() });
     }
+  } else if (!ok) {
+    return; // denied or unsupported — no events without a subscription
   }
 
   const firstVisit = localStorage.getItem(KEY_FIRST_VISIT);
