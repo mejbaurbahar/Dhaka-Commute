@@ -759,9 +759,20 @@ CORE KNOWLEDGE:
 - Khulna: Sundarban Express 726 (dep 8:00AM, arr 3:40PM, 7h40m). Fare ৳310–1,285
 - Rajshahi: Padma Express 760 (dep 4:00PM, arr 9:15PM, 5h15m). Fare ৳350–1,400
 
-**Flights (approx):** Cox's Bazar 1h ৳4,500+; Sylhet 45min; Chattogram 45min. Book via Biman/US-Bangla.
+**Flights from Dhaka (DAC) — economy fares:**
+- Chattogram: 1h, ৳3,599–4,999 (Biman, US-Bangla, Novoair, Air Astra, multiple daily)
+- Cox's Bazar: 1h, ৳3,999–5,499 (Biman, US-Bangla, Novoair, Air Astra)
+- Sylhet: 45min, ৳3,299–4,199
+- Saidpur: 45min, ৳3,199–3,999
+- Barishal: 40min, ৳4,571 (Biman)
+- Jashore: 45min, ৳7,438 (US-Bangla)
+- Rajshahi: 45min, ৳5,561–5,608 (US-Bangla)
 
-**Launches:** Sadarghat → Barishal 7–8h ৳400–1,200. Do not name specific launch vessels unless certain.
+**Launches from Sadarghat (real schedules):**
+- Barishal: MV Sundarban-1..17, MV Parabat, MV Kirtonkhola, MV Eagle, MV BIWTC, MV Balaka — depart 6:00/6:30/7:00/7:30/8:00 PM, arrive 5:00–7:00 AM, ~11h overnight. Deck ৳280–350, Cabin ৳900–1,500, VIP ৳2,000–6,000
+- Patuakhali: MV Sundarban-6, MV Karnaphuli-8 — depart 6:00 & 7:30 PM, ~11h. Deck ৳280–300
+- Bhola: MV Karnaphuli-5, MV Farhan-1, MV Bhola Express — depart 7:00/7:30/8:00 PM, ~10h. Deck ৳200–280
+- Chandpur: MV Ostrich, MV Rocket (paddle steamer), MV Meghna-1 — DAY route only (never evening): depart 8:00 AM in the morning and 2:00 PM in the afternoon, 3–4h. Deck ৳120–200
 
 **Route advice rules:**
 1. Always check direct buses FIRST before suggesting transfers

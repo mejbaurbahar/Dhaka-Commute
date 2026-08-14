@@ -148,12 +148,48 @@ const TOURIST_DESTINATIONS: Record<string, { en: string; bn: string; howToReach:
   }
 };
 
-// Major launch routes
+// Major launch routes — matched against app data/bangladeshLaunchData.ts
 const LAUNCH_ROUTES = [
-  { from: "Dhaka", to: "Barishal", launches: ["MV Sundarban", "MV Parabat", "MV Farhan", "MV Kirtankhola"], timing: "9-10 hours overnight", fare: "৳400-1200" },
-  { from: "Dhaka", to: "Khulna", launches: ["MV Sundarban routes"], timing: "10-12 hours", fare: "৳500-1500" },
-  { from: "Dhaka", to: "Patuakhali", launches: ["MV Suravi", "MV Kawsar"], timing: "8-10 hours", fare: "৳400-800" },
-  { from: "Dhaka", to: "Bhola", launches: ["MV Green Line Water Craft"], timing: "6-8 hours", fare: "৳300-600" }
+  {
+    from: "Dhaka", fromBn: "ঢাকা", fromAlt: "সদরঘাট",
+    to: "Barishal", toBn: "বরিশাল",
+    launches: ["MV Sundarban-১-১৭", "MV Parabat", "MV Kirtonkhola", "MV Eagle", "MV BIWTC", "MV Balaka"],
+    timing: "11 hours overnight — ছাড়ে সন্ধ্যা ৬টা-৮টা, পৌঁছায় ভোর ৫-৬:৩০টায়",
+    dep: "6:00/6:30/7:00/7:30/8:00 PM",
+    fare: "ডেক ৳২৮০-৩৫০ · কেবিন ৳৯০০-১৫০০ · VIP ৳২০০০-৬০০০",
+    fareEn: "Deck ৳280-350 · Cabin ৳900-1500 · VIP ৳2000-6000",
+    depEn: "6:00/6:30/7:00/7:30/8:00 PM"
+  },
+  {
+    from: "Dhaka", fromBn: "ঢাকা", fromAlt: "সদরঘাট",
+    to: "Patuakhali", toBn: "পটুয়াখালী",
+    launches: ["MV Sundarban-6 (পটুয়াখালী)", "MV Karnaphuli-8"],
+    timing: "11 hours overnight — ছাড়ে সন্ধ্যা ৬টা ও ৭:৩০টা",
+    dep: "6:00/7:30 PM",
+    fare: "ডেক ৳২৮০-৩০০ · কেবিন ৳১১০০-১৩০০ · VIP ৳৩৮০০-৪৫০০",
+    fareEn: "Deck ৳280-300 · Cabin ৳1100-1300 · VIP ৳3800-4500",
+    depEn: "6:00/7:30 PM"
+  },
+  {
+    from: "Dhaka", fromBn: "ঢাকা", fromAlt: "সদরঘাট",
+    to: "Bhola", toBn: "ভোলা",
+    launches: ["MV Karnaphuli-5", "MV Farhan-1", "MV Bhola Express"],
+    timing: "10 hours overnight — ছাড়ে সন্ধ্যা ৭টা-৮টা, পৌঁছায় ভোর ৫-৬টায়",
+    dep: "7:00/7:30/8:00 PM",
+    fare: "ডেক ৳২০০-২৮০ · কেবিন ৳৭০০-১১০০ · VIP ৳২০০০-৩৮০০",
+    fareEn: "Deck ৳200-280 · Cabin ৳700-1100 · VIP ৳2000-3800",
+    depEn: "7:00/7:30/8:00 PM"
+  },
+  {
+    from: "Dhaka", fromBn: "ঢাকা", fromAlt: "সদরঘাট",
+    to: "Chandpur", toBn: "চাঁদপুর",
+    launches: ["MV Ostrich", "MV Rocket (প্যাডেল স্টিমার)", "MV Meghna-1"],
+    timing: "3-4 hours দিনের রুট — সকাল ৮টা ও দুপুর ২টায় ছাড়ে",
+    dep: "8:00 AM / 2:00 PM",
+    fare: "ডেক ৳১২০-২০০ · কেবিন ৳৩০০-৫০০ · VIP ৳৭০০-১২০০",
+    fareEn: "Deck ৳120-200 · Cabin ৳300-500 · VIP ৳700-1200",
+    depEn: "8:00 AM / 2:00 PM"
+  }
 ];
 
 // Airport information
@@ -1222,23 +1258,26 @@ const findLaunchInfo = (query: string): string => {
   if (lowerQuery.includes("launch") || lowerQuery.includes("লঞ্চ") ||
     lowerQuery.includes("ferry") || lowerQuery.includes("নৌকা")) {
 
-    // Check for specific routes
+    // Check for specific routes — match English OR Bengali location names
     for (const route of LAUNCH_ROUTES) {
-      if ((lowerQuery.includes(normalize(route.from)) && lowerQuery.includes(normalize(route.to))) ||
-        (lowerQuery.includes(normalize(route.to)) && lowerQuery.includes(normalize(route.from)))) {
-
+      const matchesFrom = lowerQuery.includes(normalize(route.from)) ||
+        lowerQuery.includes(route.fromBn) ||
+        (route.fromAlt && lowerQuery.includes(route.fromAlt));
+      const matchesTo = lowerQuery.includes(normalize(route.to)) ||
+        lowerQuery.includes(route.toBn);
+      if (matchesFrom && matchesTo) {
         return isBn
-          ? `🚢 **লঞ্চ রুট: ${route.from} - ${route.to}**\n\n` +
+          ? `🚢 **লঞ্চ রুট: ${route.fromBn} (সদরঘাট) - ${route.toBn}**\n\n` +
           `**লঞ্চ:** ${route.launches.join(", ")}\n` +
-          `**সময়:** ${route.timing}\n` +
+          `**ছাড়ার সময়:** ${route.dep}\n` +
           `**ভাড়া:** ${route.fare}\n` +
-          `**ছাড়া:** সদরঘাট টার্মিনাল, সন্ধ্যা ৬-৮টা\n\n` +
+          `**সময়কাল:** ${route.timing}\n\n` +
           `💡 **টিপ:** অগ্রিম টিকিট নিন, VIP/AC কেবিন বুক করুন আরামের জন্য`
-          : `🚢 **Launch Route: ${route.from} - ${route.to}**\n\n` +
+          : `🚢 **Launch Route: ${route.from} (Sadarghat) - ${route.to}**\n\n` +
           `**Launches:** ${route.launches.join(", ")}\n` +
-          `**Duration:** ${route.timing}\n` +
-          `**Fare:** ${route.fare}\n` +
-          `**Departure:** Sadarghat Terminal, Evening 6-8 PM\n\n` +
+          `**Departures:** ${route.depEn}\n` +
+          `**Fare:** ${route.fareEn}\n` +
+          `**Duration:** ${route.timing}\n\n` +
           `💡 **Tip:** Book tickets in advance, get VIP/AC cabin for comfort`;
       }
     }
@@ -1246,17 +1285,17 @@ const findLaunchInfo = (query: string): string => {
     // General launch info
     return isBn
       ? `🚢 **লঞ্চ সার্ভিস (সদরঘাট টার্মিনাল থেকে):**\n\n` +
-      `🔹 **বরিশাল** - MV সুন্দরবন, MV পারাবত (৯-১০ ঘন্টা, ৳৪০০-১২০০)\n` +
-      `🔹 **খুলনা** - বিভিন্ন লঞ্চ (১০-১২ ঘন্টা, ৳৫০০-১৫০০)\n` +
-      `🔹 **পটুয়াখালী/কুয়াকাটা** - MV সুরভি (৮-১০ ঘন্টা, ৳৪০০-৮০০)\n` +
-      `🔹 **ভোলা** - MV গ্রীন লাইন (৬-৮ ঘন্টা, ৳৩০০-৬০০)\n\n` +
-      `**সময়সূচী:** সন্ধ্যা ৬-৮টায় ছাড়ে, সকালে পৌঁছায়`
+      `🔹 **বরিশাল** - MV সুন্দরবন, MV পারাবত, MV কীর্তনখোলা, MV ঈগল (১১ ঘন্টা রাতের রুট, ডেক ৳২৮০-৩৫০, VIP ৳২০০০-৬০০০)\n` +
+      `🔹 **পটুয়াখালী** - MV সুন্দরবন-৬, MV কর্ণফুলী-৮ (১১ ঘন্টা, ডেক ৳২৮০-৩০০)\n` +
+      `🔹 **ভোলা** - MV কর্ণফুলী-৫, MV ফারহান-১, MV ভোলা এক্সপ্রেস (১০ ঘন্টা, ডেক ৳২০০-২৮০)\n` +
+      `🔹 **চাঁদপুর** - MV অস্ট্রিচ, MV রকেট, MV মেঘনা-১ (৩-৪ ঘন্টা দিনের রুট, ডেক ৳১২০-২০০)\n\n` +
+      `**সময়সূচী:** দক্ষিণাঞ্চল রুট সন্ধ্যা ৬-৮টায় ছাড়ে, সকালে পৌঁছায়; চাঁদপুর রুট সকাল ৮টা ও দুপুর ২টায়`
       : `🚢 **Launch Services (from Sadarghat Terminal):**\n\n` +
-      `🔹 **Barishal** - MV Sundarban, MV Parabat (9-10 hrs, ৳400-1200)\n` +
-      `🔹 **Khulna** - Various launches (10-12 hrs, ৳500-1500)\n` +
-      `🔹 **Patuakhali/Kuakata** - MV Suravi (8-10 hrs, ৳400-800)\n` +
-      `🔹 **Bhola** - MV Green Line (6-8 hrs, ৳300-600)\n\n` +
-      `**Timing:** Evening 6-8 PM departure, morning arrival`;
+      `🔹 **Barishal** - MV Sundarban, MV Parabat, MV Kirtonkhola, MV Eagle (11 hrs overnight, Deck ৳280-350, VIP ৳2000-6000)\n` +
+      `🔹 **Patuakhali** - MV Sundarban-6, MV Karnaphuli-8 (11 hrs, Deck ৳280-300)\n` +
+      `🔹 **Bhola** - MV Karnaphuli-5, MV Farhan-1, MV Bhola Express (10 hrs, Deck ৳200-280)\n` +
+      `🔹 **Chandpur** - MV Ostrich, MV Rocket, MV Meghna-1 (3-4 hrs day route, Deck ৳120-200)\n\n` +
+      `**Timing:** Southern routes depart 6-8 PM, arrive morning; Chandpur route 8 AM & 2 PM`;
   }
 
   return "";
