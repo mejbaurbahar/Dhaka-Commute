@@ -67,6 +67,8 @@ import { AIFab } from './components/AIFab';
 const AIChatModal = React.lazy(() => import('./components/AIChatModal').then(m => ({ default: m.AIChatModal })));
 import { TopBar } from './components/TopBar';
 import { MobileTabBar } from './components/MobileTabBar';
+import { ConfigBanner } from './components/ConfigBanner';
+import { initRemoteConfig } from '../services/remoteConfigService';
 import { SideRailAd, AnchorAd, VignetteAd } from './components/AdComponents';
 import { BUS_DATA, STATIONS } from '../../constants';
 import { useAuth } from '../contexts/AuthContext';
@@ -275,6 +277,9 @@ export function KoyJaboApp() {
 
   // Daily login bonus
   useEffect(() => { claimDailyBonus(); }, []);
+
+  // Firebase Remote Config (maintenance/announcement flags) — fire-and-forget
+  useEffect(() => { initRemoteConfig(); }, []);
 
   // Listen for new SW / version — show update toast
   useEffect(() => {
@@ -631,6 +636,8 @@ export function KoyJaboApp() {
         user={user}
         onLogout={() => { logout(); nav('home'); }}
       />
+      {/* Remote Config maintenance/announcement bar — below TopBar, above content */}
+      <ConfigBanner lang={lang} />
       {/* Mobile tab bar — outside scroller too */}
       {isPhone && (
         <MobileTabBar
