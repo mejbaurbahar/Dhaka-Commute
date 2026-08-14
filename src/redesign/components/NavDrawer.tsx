@@ -33,7 +33,7 @@ const GROUPS: { heading: { bn: string; en: string }; links: DrawerLink[] }[] = [
   {
     heading: { bn: 'কোম্পানি', en: 'Company' },
     links: [
-      { bn: 'কেন KoyJabo', en: 'Why KoyJabo', route: 'why' },
+      { bn: 'কেন কই যাবো', en: 'Why KoyJabo', route: 'why' },
       { bn: 'আমাদের সম্পর্কে', en: 'About', route: 'about' },
       { bn: 'ব্লগ', en: 'Blog', route: 'blogs' },
       { bn: 'প্রশ্নোত্তর', en: 'QA', route: 'qa' },
@@ -138,7 +138,7 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute, isLo
                 backgroundClip: 'text',
               }}
             >
-              KoyJabo
+              কই যাবো
             </span>
           </div>
           <button
