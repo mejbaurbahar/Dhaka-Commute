@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { T, SANS, BEN, N } from '../tokens';
 import { getDtcaAllVehicleLocationCached, DtcaVehicleLocation } from '../../../services/dtcaTrackerService';
 
@@ -8,7 +8,7 @@ interface Props {
   onBusClick: (identifier: string, vrn: string) => void;
 }
 
-type State = 'loading' | 'loaded' | 'error';
+type State = 'loading' | 'loaded' | 'error' | 'stopped';
 
 function busStatusColor(path: DtcaVehicleLocation['path']): string {
   const p = path?.[0];
@@ -21,22 +21,31 @@ function busStatusColor(path: DtcaVehicleLocation['path']): string {
 export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
   const [buses, setBuses] = useState<DtcaVehicleLocation[]>([]);
   const [state, setState] = useState<State>('loading');
+  // DTCA upstream returns 403 with an empty body when its token is stale —
+  // stop auto-polling after 2 consecutive failures instead of hammering it
+  // forever. Manual Retry (and any later success) re-arms polling.
+  const failCountRef = useRef(0);
 
   const load = useCallback(async () => {
     setState('loading');
     try {
       const res = await getDtcaAllVehicleLocationCached();
+      failCountRef.current = 0;
       setBuses(res.vehicles ?? []);
       setState('loaded');
     } catch {
-      setState('error');
+      failCountRef.current += 1;
+      setState(failCountRef.current >= 2 ? 'stopped' : 'error');
     }
   }, []);
 
   useEffect(() => {
     void load();
-    // Skip polls while the tab is hidden (background tabs waste requests/CPU)
-    const interval = setInterval(() => { if (document.visibilityState === 'visible') void load(); }, 30_000);
+    // Skip polls while the tab is hidden (background tabs waste requests/CPU),
+    // and stop entirely after persistent upstream failures.
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible' && failCountRef.current < 2) void load();
+    }, 30_000);
     return () => clearInterval(interval);
   }, [load]);
 
@@ -73,6 +82,20 @@ export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
 
       {state === 'error' && (
         <div style={{ textAlign: 'center', padding: '8px 0' }}>
+          <button
+            onClick={() => void load()}
+            style={{ background: tk.primarySoft, color: tk.primary, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '5px 12px', fontFamily: SANS, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}
+          >
+            {T(lang, 'আবার চেষ্টা করুন', 'Retry')}
+          </button>
+        </div>
+      )}
+
+      {state === 'stopped' && (
+        <div style={{ textAlign: 'center', padding: '8px 0' }}>
+          <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim, marginBottom: 8 }}>
+            {T(lang, 'লাইভ তথ্য সাময়িকভাবে পাওয়া যাচ্ছে না। পরে আবার চেষ্টা করুন।', 'Live data is temporarily unavailable. Try again later.')}
+          </div>
           <button
             onClick={() => void load()}
             style={{ background: tk.primarySoft, color: tk.primary, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '5px 12px', fontFamily: SANS, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}

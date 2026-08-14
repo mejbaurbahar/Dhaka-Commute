@@ -117,7 +117,6 @@ export function TopBar({
             gap: 8,
             flexShrink: 0,
           }}
-          aria-label={T(lang, 'কই যাবো', 'Koy Jabo')}
         >
           <Logo tk={tk} size={isMobile ? 42 : 48} />
           <span
@@ -129,9 +128,9 @@ export function TopBar({
               whiteSpace: 'nowrap',
             }}
           >
-            {/* Bangladesh-flag colors: red কই + green যাবো */}
-            <span style={{ color: '#F42A41' }}>কই</span>
-            <span style={{ color: '#00A86B' }}> যাবো</span>
+            {/* Bangladesh-flag colors: red কই + green যাবো (WCAG AA on both themes) */}
+            <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>কই</span>
+            <span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}> যাবো</span>
           </span>
         </button>
 

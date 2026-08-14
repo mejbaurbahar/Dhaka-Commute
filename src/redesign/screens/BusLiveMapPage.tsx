@@ -219,6 +219,7 @@ export function BusLiveMapPage(props: Props) {
               {T(lang, 'শেয়ার করুন — সবাই এই বাসটি এই পাতায় লাইভ দেখতে পারবে। পরিচয় গোপন থাকে।', 'Share — everyone sees this bus live on this page. Your identity stays private.')}
             </div>
             <input
+              name="busNumber"
               list="kj-bus-numbers"
               value={busNumberInput}
               onChange={e => { setBusNumberInput(e.target.value); setShareError(null); }}
