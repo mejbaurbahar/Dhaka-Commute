@@ -116,6 +116,15 @@ export function PrivacyPage(props: Props) {
       ],
     },
     {
+      h: lbl('8a. Content ownership & protection', '৮ক. কনটেন্ট মালিকানা ও সুরক্ষা'),
+      body: lbl('All route data, fare tables, stop locations, schedules, text, design, and code on KoyJabo are the proprietary property of KoyJabo (কই যাবো) and are protected by copyright law. Viewing in a browser for personal use is permitted — nothing else.', 'কই যাবো-র সব রুট ডেটা, ভাড়ার টেবিল, স্টপ লোকেশন, সময়সূচি, লেখা, ডিজাইন ও কোড কই যাবোর মালিকানাধীন সম্পত্তি এবং কপিরাইট আইনে সুরক্ষিত। ব্যক্তিগত ব্যবহারের জন্য ব্রাউজারে দেখা অনুমোদিত — এর বেশি কিছু নয়।'),
+      bullets: [
+        lbl('You may not republish, mirror, redistribute, resell, or create derivative works from our dataset (including all bus routes, stops, and fares) without prior written permission.', 'আগে লিখিত অনুমতি ছাড়া আমাদের ডেটাসেট (সব বাস রুট, স্টপ ও ভাড়াসহ) পুনঃপ্রকাশ, মিরর, পুনঃবিতরণ, পুনঃবিক্রয়, বা ডেরিভেটিভ কাজ তৈরি করা যাবে না।'),
+        lbl('Automated scraping, bulk downloading, or mass extraction of KoyJabo data is prohibited. We monitor for abuse and may block IPs, user agents, or networks engaged in such activity.', 'কই যাবো ডেটার স্বয়ংক্রিয় স্ক্র্যাপিং, বাল্ক ডাউনলোড, বা গণহারে উত্তোলন নিষিদ্ধ। অপব্যবহার আমরা পর্যবেক্ষণ করি এবং এই ধরনের কার্যকলাপে জড়িত IP, ইউজার-এজেন্ট, বা নেটওয়ার্ক ব্লক করতে পারি।'),
+        lbl('Questions about reusing KoyJabo content: email koyjabo.bd@gmail.com. Unauthorized use is enforced under applicable copyright law and our Terms of Service.', 'কই যাবো কনটেন্ট পুনঃব্যবহার নিয়ে প্রশ্ন: koyjabo.bd@gmail.com-এ ইমেইল করুন। অননুমোদিত ব্যবহার প্রযোজ্য কপিরাইট আইন ও আমাদের Terms of Service-এর অধীনে ব্যবস্থা নেওয়া হয়।'),
+      ],
+    },
+    {
       h: lbl('9. Children', '৯. শিশুদের গোপনীয়তা'),
       body: lbl('KoyJabo is rated General. We do not knowingly collect data from children under 13. If you are a parent and believe your child has provided us data, email koyjabo.bd@gmail.com and we will delete it promptly.', 'কই যাবো জেনারেল রেটেড। আমরা জেনেশুনে ১৩ বছরের কম বয়সী শিশুদের কাছ থেকে ডেটা সংগ্রহ করি না। অভিভাবক হিসাবে আপনার সন্তান ডেটা দিয়েছে মনে করলে koyjabo.bd@gmail.com-এ ইমেইল করুন, দ্রুত মুছে ফেলব।'),
     },

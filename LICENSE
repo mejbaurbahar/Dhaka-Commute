@@ -1,0 +1,33 @@
+KoyJabo (কই যাবো) — Proprietary License
+Copyright (c) 2026 Mejbaur Bahar Fagun. All rights reserved.
+
+This repository and everything in it — source code, route data, fare
+tables, stop locations, schedules, designs, brand assets, and build
+artifacts — is the exclusive property of the copyright holder and is
+protected by copyright law (Bangladesh Copyright Act, 2023 — covering
+IT-based digital works including source code, data, tables, designs, and
+documentation) and international treaties.
+
+NOT OPEN SOURCE. NO LICENSE GRANTED.
+
+You may NOT, without prior written permission from the copyright holder:
+
+  1. Clone, copy, fork, mirror, or redistribute this repository or any
+     part of it, in whole or in part, for any purpose.
+  2. Build, publish, or operate a website, app, or service derived from
+     or substantially similar to this codebase, its data, or its design.
+  3. Extract, scrape, republish, or commercially exploit the route data,
+     fare tables, stop locations, or any other dataset contained herein.
+  4. Use the "KoyJabo" / "কই যাবো" name, logo, or visual identity.
+  5. Train or fine-tune AI/ML models on this content.
+
+Personal viewing and use of the deployed service (koyjabo.com) in a
+browser is the only permitted use. Any other use requires a written
+license agreement.
+
+Unauthorized use, copying, or cloning will be enforced to the fullest
+extent of the law, including DMCA takedown notices, Cloudflare/domain
+provider abuse reports, and legal action under Bangladeshi copyright
+law.
+
+For licensing inquiries: koyjabo.bd@gmail.com
