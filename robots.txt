@@ -6,8 +6,11 @@
 Sitemap: https://koyjabo.com/sitemap.xml
 
 # ─── Default: allow everything to all bots ─────────────────────────────────
+# NOTE: /data/ (proprietary route/fare datasets) is off-limits to generic
+# bots. Named search engines + AI crawlers below retain full access.
 User-agent: *
 Allow: /
+Disallow: /data/
 
 # ─── Search engines (full access) ──────────────────────────────────────────
 User-agent: Googlebot
