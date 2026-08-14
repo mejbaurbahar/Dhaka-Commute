@@ -106,6 +106,20 @@ export function AboutPage(props: PageShellProps) {
               "KoyJabo (কই যাবো = 'কোথায় যাচ্ছেন?') তৈরি হয়েছে ঢাকার গণপরিবহনে নেভিগেট করার বিশৃঙ্খলা সমাধান করতে। আমরা সকল ৬৪ জেলায় বাস, মেট্রো, ট্রেন, লঞ্চ এবং ফ্লাইট কভার করি। আমাদের লক্ষ্য সহজ: বাংলাদেশে প্রতিটি যাত্রা চাপমুক্ত ও সচেতন করা।",
             )}
           </p>
+          <p
+            style={{
+              fontFamily: lang === 'bn' ? BEN : SANS,
+              fontSize: 13.5,
+              color: tk.textFaint,
+              margin: '14px 0 0',
+              lineHeight: 1.8,
+            }}
+          >
+            {lbl(
+              "KoyJabo is a proprietary product developed and owned by Mejbaur Bahar Fagun (Jashore, Bangladesh). © 2026 KoyJabo (কই যাবো) — All rights reserved. Unauthorized copying, reproduction, or redistribution of the app, website, or its data is prohibited.",
+              "কই যাবো একটি মালিকানাধীন পণ্য — এর নির্মাতা ও মালিক মেজবাউর বাহার ফাগুন (যশোর, বাংলাদেশ)। © ২০২৬ কই যাবো (KoyJabo) — সর্বস্বত্ব সংরক্ষিত। অ্যাপ, ওয়েবসাইট বা এর ডেটার অননুমোদিত কপি, প্রতিলিপি বা পুনঃবিতরণ নিষিদ্ধ।",
+            )}
+          </p>
         </div>
 
         {/* Features */}
