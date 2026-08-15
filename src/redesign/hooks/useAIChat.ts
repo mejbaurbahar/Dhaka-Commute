@@ -8,7 +8,7 @@ import { getAuthUser } from '../../../services/communityDataService';
 
 export type Msg = { id: number; isUser: boolean; text: string; rich?: string };
 export const INIT_MESSAGES: Msg[] = [{ id: 1, isUser: false, text: 'hello', rich: 'greeting' }];
-export type RecentSession = { id: string; title: string };
+export type RecentSession = { id: string; title: string; lastUpdated: number };
 
 /**
  * Grounding: find the real buses from KoyJabo's dataset that match the
@@ -74,6 +74,9 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
   const sendingRef = useRef(false);
   const userAreaRef = useRef<string>('');
   const chatUser = getAuthUser();
+  // History isolation: every read/write is scoped to the signed-in user's id —
+  // a user can never see another user's conversations.
+  const historyUid = chatUser?.id ?? null;
   const userAvatarUrl = chatUser?.avatarUrl;
   const userInitials = (chatUser?.displayName || chatUser?.username || 'KJ').slice(0, 2).toUpperCase();
 
@@ -122,18 +125,18 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
 
   const [showAllRecents, setShowAllRecents] = useState(false);
   const [allRecents, setAllRecents] = useState<RecentSession[]>(() =>
-    getAllSessions().slice().sort((a, b) => b.lastUpdated - a.lastUpdated)
-      .map(s => ({ id: s.id, title: s.messages.find(m => m.role === 'user')?.text || T(lang, 'নতুন কথোপকথন', 'New conversation') }))
+    getAllSessions(historyUid).slice().sort((a, b) => b.lastUpdated - a.lastUpdated)
+      .map(s => ({ id: s.id, title: s.messages.find(m => m.role === 'user')?.text || T(lang, 'নতুন কথোপকথন', 'New conversation'), lastUpdated: s.lastUpdated }))
   );
   const recents = showAllRecents ? allRecents : allRecents.slice(0, 5);
 
   function refreshRecents() {
-    setAllRecents(getAllSessions().slice().sort((a, b) => b.lastUpdated - a.lastUpdated)
-      .map(s => ({ id: s.id, title: s.messages.find(m => m.role === 'user')?.text || T(lang, 'নতুন কথোপকথন', 'New conversation') })));
+    setAllRecents(getAllSessions(historyUid).slice().sort((a, b) => b.lastUpdated - a.lastUpdated)
+      .map(s => ({ id: s.id, title: s.messages.find(m => m.role === 'user')?.text || T(lang, 'নতুন কথোপকথন', 'New conversation'), lastUpdated: s.lastUpdated })));
   }
 
   function loadSession(id: string) {
-    const session = getSession(id);
+    const session = getSession(id, historyUid);
     if (!session) return;
     setSessionId(id);
     const msgs: Msg[] = session.messages.map((m, i) => ({ id: i, isUser: m.role === 'user', text: m.text }));
@@ -142,7 +145,7 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
 
   function handleDeleteSession(id: string, e: React.MouseEvent) {
     e.stopPropagation();
-    deleteSession(id);
+    deleteSession(id, historyUid);
     setAllRecents(prev => prev.filter(r => r.id !== id));
     if (sessionId === id) { setSessionId(null); setMessages(INIT_MESSAGES); }
   }
@@ -160,7 +163,7 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
     const userText = text.trim();
     const userMsg = { id: Date.now(), isUser: true, text: userText };
     setMessages(m => [...m, userMsg]);
-    const nextSessionId = saveChatMessage({ role: 'user', text: userText, timestamp: Date.now() } as any, sessionId);
+    const nextSessionId = saveChatMessage({ role: 'user', text: userText, timestamp: Date.now() } as any, sessionId, historyUid);
     setSessionId(nextSessionId);
     setInput('');
     setIsLoading(true);
@@ -195,7 +198,7 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
         const noLocMsg = lang === 'bn'
           ? `📍 আপনার বর্তমান অবস্থান জানতে পারছি না।\n\n**${goToDest}** যেতে চান, কিন্তু আপনি কোথা থেকে যাচ্ছেন? একটু বলুন — যেমন: 'মিরপুর থেকে ${goToDest}' বা 'ফার্মগেট থেকে ${goToDest}'।`
           : `📍 I couldn't detect your current location.\n\nYou want to go to **${goToDest}** — where are you starting from? Try: 'Mirpur to ${goToDest}' or 'Farmgate to ${goToDest}'.`;
-        saveChatMessage({ role: 'assistant', text: noLocMsg, timestamp: Date.now() } as any, nextSessionId);
+        saveChatMessage({ role: 'assistant', text: noLocMsg, timestamp: Date.now() } as any, nextSessionId, historyUid);
         setMessages(m => [...m, { id: Date.now() + 1, isUser: false, text: noLocMsg }]);
         return;
       }
@@ -232,7 +235,7 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
           response = prefix + response;
         }
       }
-      saveChatMessage({ role: 'assistant', text: response, timestamp: Date.now() } as any, nextSessionId);
+      saveChatMessage({ role: 'assistant', text: response, timestamp: Date.now() } as any, nextSessionId, historyUid);
       setMessages(m => [...m, { id: Date.now() + 1, isUser: false, text: response }]);
     } catch {
       setMessages(m => [...m, { id: Date.now() + 1, isUser: false, text: T(lang, 'দুঃখিত, একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'Sorry, something went wrong. Please try again.') }]);

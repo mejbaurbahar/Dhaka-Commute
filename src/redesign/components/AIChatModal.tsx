@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
 import { useAIChat } from '../hooks/useAIChat';
 import { AIChatBody, AvatarAI } from './AIChatBody';
@@ -27,6 +27,20 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  // On-screen keyboard: lift the mobile sheet above the keyboard (visualViewport
+  // is the only reliable signal on iOS Safari).
+  const [kbPad, setKbPad] = useState(0);
+  useEffect(() => {
+    if (!isMobile || !window.visualViewport) return;
+    const onVp = () => {
+      const vv = window.visualViewport!;
+      const kb = (window.innerHeight - vv.height) - vv.offsetTop;
+      setKbPad(kb > 80 ? kb : 0);
+    };
+    window.visualViewport.addEventListener('resize', onVp);
+    return () => window.visualViewport!.removeEventListener('resize', onVp);
+  }, [isMobile]);
 
   const header = (
     <div style={{
@@ -59,9 +73,10 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
     </div>
   );
 
-  // 60% of screen height, blurred backdrop, rounded card.
-  // Mobile: bottom sheet. Desktop: centered.
-  const cardHeight = '60dvh';
+  // ~72% of screen height, blurred backdrop, rounded card.
+  // Mobile: bottom sheet (lifted above the keyboard when it opens).
+  // Desktop: centered.
+  const cardHeight = isMobile ? `min(72dvh, calc(100dvh - ${kbPad}px))` : '72dvh';
   return (
     <div
       role="dialog" aria-modal="true" aria-label={T(lang, 'কই যাবো AI চ্যাট', 'KoyJabo AI chat')}
@@ -92,6 +107,7 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
           animation: isMobile ? 'kjSheetUp 0.28s cubic-bezier(0.16, 1, 0.3, 1)' : 'kjModalIn 0.22s ease-out',
           paddingBottom: isMobile ? 'env(safe-area-inset-bottom, 0px)' : 0,
           boxSizing: 'border-box',
+          ...(isMobile ? { marginBottom: kbPad, transition: 'margin-bottom 0.15s ease' } : {}),
         }}
       >
         {header}

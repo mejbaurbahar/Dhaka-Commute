@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
 import { useAIChat, SUGGESTIONS } from '../hooks/useAIChat';
 import { Icon } from './Icons';
+import { ChatHistoryDrawer } from './ChatHistoryDrawer';
 
 export function AvatarAI({ tk }: { tk: Tokens }) {
   return (
@@ -159,6 +160,22 @@ interface AIChatBodyProps {
 /** Messages + suggestion chips + input bar. Parent owns height (page flex or modal). */
 export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput }: AIChatBodyProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [kbPad, setKbPad] = useState(0);
+  const [historyOpen, setHistoryOpen] = useState(false);
+
+  // On-screen keyboard: track visualViewport so the input bar floats above the
+  // keyboard even when the layout viewport doesn't shrink (iOS Safari).
+  useEffect(() => {
+    if (!isMobile || !window.visualViewport) return;
+    const onVp = () => {
+      const vv = window.visualViewport!;
+      const kb = (window.innerHeight - vv.height) - vv.offsetTop;
+      setKbPad(kb > 80 ? kb : 0);
+    };
+    window.visualViewport.addEventListener('resize', onVp);
+    return () => window.visualViewport!.removeEventListener('resize', onVp);
+  }, [isMobile]);
 
   // Auto-scroll to latest message whenever messages or loading state changes
   useEffect(() => {
@@ -170,7 +187,30 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput }: AIChatB
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, maxWidth: isMobile ? '100%' : 900, width: '100%', margin: '0 auto', flex: 1 }}>
 
         {/* Messages area */}
-        <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: isMobile ? '14px 12px' : '20px 24px', display: 'flex', flexDirection: 'column', gap: isMobile ? 12 : 16 }}>
+        <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: isMobile ? '14px 12px' : '20px 24px', display: 'flex', flexDirection: 'column', gap: isMobile ? 12 : 16, position: 'relative' }}>
+          {isMobile && (
+            <button
+              onClick={() => setHistoryOpen(true)}
+              aria-label={T(lang, 'চ্যাট ইতিহাস', 'Chat history')}
+              style={{
+                position: 'absolute', top: 8, left: 12, zIndex: 6,
+                display: 'flex', alignItems: 'center', gap: 6,
+                background: tk.panel, border: `1px solid ${tk.line}`,
+                borderRadius: 999, padding: '5px 12px',
+                fontFamily: SANS, fontSize: 11, fontWeight: 700, color: tk.textDim,
+                cursor: 'pointer', boxShadow: `0 2px 10px ${tk.shadow ?? 'rgba(0,0,0,0.12)'}`,
+              }}
+            >
+              💬 {T(lang, 'ইতিহাস', 'History')}
+              {chat.allRecents.length > 0 && (
+                <span style={{
+                  background: tk.primary, color: tk.primaryInk, borderRadius: 999,
+                  minWidth: 17, height: 17, display: 'inline-flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: 10, padding: '0 4px',
+                }}>{chat.allRecents.length}</span>
+              )}
+            </button>
+          )}
           {chat.messages.map(msg => <ChatBubble key={msg.id} msg={msg} tk={tk} lang={lang} userAvatarUrl={chat.userAvatarUrl} userInitials={chat.userInitials} />)}
           {chat.isLoading && (
             <div style={{ display: 'flex', gap: 10, alignSelf: 'flex-start', maxWidth: '80%' }}>
@@ -195,7 +235,8 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput }: AIChatB
         )}
 
         {/* Input bar — sticky on mobile so it always floats above the page
-            scroll (page scrolls 60+px on small screens; input must stay visible) */}
+            scroll (page scrolls 60+px on small screens; input must stay visible).
+            bottom: kbPad lifts it above the on-screen keyboard. */}
         <div style={{
           flexShrink: 0,
           padding: isMobile ? '10px 12px' : '14px 20px',
@@ -203,12 +244,14 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput }: AIChatB
           borderTop: `1px solid ${tk.line}`,
           background: tk.panel,
           display: 'flex', gap: 8, alignItems: 'center',
-          ...(isMobile ? { position: 'sticky', bottom: 0, zIndex: 5, boxShadow: '0 -10px 24px rgba(0,0,0,0.10)' } : {}),
+          ...(isMobile ? { position: 'sticky', bottom: kbPad, zIndex: 5, boxShadow: '0 -10px 24px rgba(0,0,0,0.10)', transition: 'bottom 0.15s ease' } : {}),
         }}>
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: tk.inputBg, border: `1.5px solid ${tk.line}`, borderRadius: 999, padding: '0 16px', gap: 8, transition: 'border-color 0.2s' }}>
             <span style={{ fontSize: 16, flexShrink: 0 }}>🔍</span>
             <input
+              ref={inputRef}
               value={chat.input} onChange={e => chat.setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && chat.send()}
+              onFocus={() => setTimeout(() => inputRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' }), 300)}
               placeholder={T(lang, 'পরিবহন সম্পর্কে জিজ্ঞেস করুন...', 'Ask about transport in Bangladesh...')}
               autoFocus={autoFocusInput}
               style={{ flex: 1, background: 'transparent', border: 'none', padding: isMobile ? '14px 0' : '12px 0', fontFamily: BEN, fontSize: isMobile ? 16 : 14, color: tk.text, outline: 'none', minWidth: 0 }}
@@ -219,6 +262,7 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput }: AIChatB
           </button>
         </div>
       </div>
+      <ChatHistoryDrawer tk={tk} lang={lang} chat={chat} open={historyOpen} onClose={() => setHistoryOpen(false)} />
     </div>
   );
 }

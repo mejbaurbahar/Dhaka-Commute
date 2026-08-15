@@ -4,6 +4,7 @@ import { PageShell } from './PageShell';
 import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
 import { useAIChat, SUGGESTIONS } from '../hooks/useAIChat';
 import { AIChatBody } from '../components/AIChatBody';
+import { formatChatTimestamp } from '../../../services/chatHistoryManager';
 
 interface Props { theme: 'dark' | 'light'; device: 'desktop' | 'mobile'; lang: 'bn' | 'en'; route: string; canBack: boolean; onNav: (r: string) => void; onNavTab?: (r: string) => void; onBack: () => void; onLang: () => void; onTheme: () => void; onMenu: () => void; params?: Record<string, string>; }
 
@@ -53,7 +54,12 @@ export function AIChatPage(props: Props) {
                       onMouseEnter={e => { if (chat.sessionId !== r.id) (e.currentTarget.style.background = tk.chipBg); }}
                       onMouseLeave={e => { if (chat.sessionId !== r.id) (e.currentTarget.style.background = 'transparent'); }}>
                       <span style={{ fontSize: 14, flexShrink: 0 }}>💬</span>
-                      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.title}</span>
+                      <span style={{ flex: 1, minWidth: 0 }}>
+                        <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.title}</span>
+                        <span style={{ display: 'block', fontFamily: SANS, fontSize: 10, color: tk.textFaint, marginTop: 1 }}>
+                          {formatChatTimestamp(r.lastUpdated, lang)}
+                        </span>
+                      </span>
                       <button onClick={e => chat.handleDeleteSession(r.id, e)} style={{ flexShrink: 0, background: 'none', border: 'none', cursor: 'pointer', color: tk.textFaint, fontSize: 16, padding: '0 2px', lineHeight: 1, opacity: 0.6 }}>×</button>
                     </div>
                   ))}

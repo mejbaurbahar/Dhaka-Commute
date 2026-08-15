@@ -4,6 +4,7 @@ import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
 import { PageShell, PageShellProps } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { FbIcon, LiIcon } from '../components/BrandIcons';
 
 const STATS = [
   { valueEn: '2 years', valueBn: '২ বছর', labelEn: 'Building', labelBn: 'নির্মাণকাল' },
@@ -13,9 +14,9 @@ const STATS = [
 ];
 
 const CONTACTS = [
-  { icon: '💼', label: 'LinkedIn', href: 'https://www.linkedin.com/company/koy-jabo/', labelBn: 'লিংকডইন' },
-  { icon: '📘', label: 'Facebook', href: 'https://www.facebook.com/koyjabo/', labelBn: 'ফেসবুক' },
-  { icon: '✉️', label: 'koyjabo.bd@gmail.com', href: 'mailto:koyjabo.bd@gmail.com', labelBn: 'ইমেইল' },
+  { icon: 'li', label: 'LinkedIn', href: 'https://www.linkedin.com/company/koy-jabo/', labelBn: 'লিংকডইন' },
+  { icon: 'fb', label: 'Facebook', href: 'https://www.facebook.com/koyjabo/', labelBn: 'ফেসবুক' },
+  { icon: 'mail', label: 'koyjabo.bd@gmail.com', href: 'mailto:koyjabo.bd@gmail.com', labelBn: 'ইমেইল' },
 ];
 
 export function AboutPage(props: PageShellProps) {
@@ -290,7 +291,7 @@ export function AboutPage(props: PageShellProps) {
                 flex: isMobile ? undefined : 1,
               }}
             >
-              <span style={{ fontSize: 18 }}>{c.icon}</span>
+              {c.icon === 'fb' ? <FbIcon size={18} color="#1877F2" /> : c.icon === 'li' ? <LiIcon size={18} color="#0A66C2" /> : <span style={{ fontSize: 18 }}>✉️</span>}
               <span>{lbl(c.label, c.labelBn)}</span>
             </a>
           ))}

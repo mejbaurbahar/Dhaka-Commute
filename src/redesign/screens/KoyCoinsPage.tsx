@@ -4,6 +4,7 @@ import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, N } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { FbIcon, LiIcon } from '../components/BrandIcons';
 import { GovAdBanner } from '../components/GovAdBanner';
 import {
   getBalance, isAdFree, getAdFreeUntil, getTransactions,
@@ -21,8 +22,8 @@ const EARN_STEPS = [
   { e:'⭐', bn:'বাস রিভিউ দিন', en:'Submit bus review', pts:'+10', col:'#f59e0b' },
   { e:'📸', bn:'বাসের ছবি আপলোড', en:'Upload bus photo', pts:'+8', col:'#10b981' },
   { e:'✅', bn:'ভ্রমণ সম্পন্ন করুন', en:'Complete a trip', pts:'+15', col:'#0ea5e9' },
-  { e:'👍', bn:'Facebook ফলো করুন', en:'Follow on Facebook', pts:'+20', col:'#1877f2', oneTime:true },
-  { e:'💼', bn:'LinkedIn ফলো করুন', en:'Follow on LinkedIn', pts:'+20', col:'#0a66c2', oneTime:true },
+  { e:'fb', bn:'Facebook ফলো করুন', en:'Follow on Facebook', pts:'+20', col:'#1877f2', oneTime:true },
+  { e:'li', bn:'LinkedIn ফলো করুন', en:'Follow on LinkedIn', pts:'+20', col:'#0a66c2', oneTime:true },
 ];
 
 const AD_FREE_PLANS = [
@@ -198,11 +199,11 @@ export function KoyCoinsPage(props: Props) {
             </div>
             <div style={{ display:'flex', flexDirection:isMobile?'column':'row', gap:10 }}>
               {[
-                { id:'follow-facebook', bn:'Facebook ফলো', en:'Follow Facebook', col:'#1877f2', soft:'rgba(24,119,242,0.12)', pts:20, url:'https://facebook.com/koyjabo', e:'👍', claimed:fbClaimed, setClaimed:setFbClaimed },
-                { id:'follow-linkedin', bn:'LinkedIn ফলো', en:'Follow LinkedIn', col:'#0a66c2', soft:'rgba(10,102,194,0.12)', pts:20, url:'https://linkedin.com/company/koyjabo', e:'💼', claimed:liClaimed, setClaimed:setLiClaimed },
+                { id:'follow-facebook', bn:'Facebook ফলো', en:'Follow Facebook', col:'#1877f2', soft:'rgba(24,119,242,0.12)', pts:20, url:'https://facebook.com/koyjabo', e:'fb', claimed:fbClaimed, setClaimed:setFbClaimed },
+                { id:'follow-linkedin', bn:'LinkedIn ফলো', en:'Follow LinkedIn', col:'#0a66c2', soft:'rgba(10,102,194,0.12)', pts:20, url:'https://linkedin.com/company/koyjabo', e:'li', claimed:liClaimed, setClaimed:setLiClaimed },
               ].map((s,i)=>(
                 <div key={i} style={{ flex:1, background:s.claimed?tk.panelMuted:s.soft, border:`1.5px solid ${s.claimed?tk.line:s.col}`, borderRadius:14, padding:'14px 16px', display:'flex', alignItems:'center', gap:12 }}>
-                  <div style={{ fontSize:24 }}>{s.e}</div>
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'center', width:30, height:30, borderRadius:9, background:s.soft, flexShrink:0 }}>{s.e === 'fb' ? <FbIcon size={20} color="#1877f2" /> : <LiIcon size={20} color="#0a66c2" />}</div>
                   <div style={{ flex:1 }}>
                     <div style={{ fontFamily:BEN, fontWeight:700, fontSize:13, color:tk.text }}>{T(lang,s.bn,s.en)}</div>
                     <div style={{ fontFamily:SANS, fontSize:11, color:s.claimed?tk.textFaint:s.col, fontWeight:700 }}>🪙 +{N(s.pts, lang)} {s.claimed?T(lang,'সংগ্রহ হয়েছে','claimed'):T(lang,'কয়েন','coins')}</div>
@@ -224,7 +225,7 @@ export function KoyCoinsPage(props: Props) {
               {EARN_STEPS.map((step,i)=>(
                 <div key={i} style={{ display:'flex', gap:14 }}>
                   <div style={{ display:'flex', flexDirection:'column', alignItems:'center', width:24, flexShrink:0 }}>
-                    <div style={{ width:24, height:24, borderRadius:999, background:`${step.col}22`, border:`2px solid ${step.col}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, flexShrink:0 }}>{step.e}</div>
+                    <div style={{ width:24, height:24, borderRadius:999, background:`${step.col}22`, border:`2px solid ${step.col}`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, flexShrink:0 }}>{step.e === 'fb' ? <FbIcon size={14} color="#1877f2" /> : step.e === 'li' ? <LiIcon size={14} color="#0a66c2" /> : step.e}</div>
                     {i < EARN_STEPS.length-1 && <div style={{ width:2, flex:1, background:`${step.col}33`, minHeight:16 }}/>}
                   </div>
                   <div style={{ flex:1, paddingBottom:i < EARN_STEPS.length-1?12:0, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>

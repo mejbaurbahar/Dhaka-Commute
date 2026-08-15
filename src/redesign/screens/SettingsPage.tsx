@@ -7,7 +7,7 @@ import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { Icon } from '../components/Icons';
-import { enablePush, pushEnabled, pushSupported } from '../../services/pushService';
+import { enablePush, disablePush, pushEnabled, pushSupported } from '../../services/pushService';
 import { clearUserHistory } from '../../../services/analyticsService';
 
 interface ScreenProps {
@@ -41,15 +41,41 @@ export function SettingsPage(props: ScreenProps) {
 
   const [notifs, setNotifs] = useState({ reminders: true, alerts: true, news: false, email: false });
   const [pushOn, setPushOn] = useState<boolean>(() => pushEnabled());
+  const [pushMsg, setPushMsg] = useState<string | null>(null);
   const pushAvailable = pushSupported();
 
   async function handlePushToggle() {
-    // Subscribed → tapping is a no-op (turning OFF is disabled; push stays on).
-    // Not subscribed (first visit, or the browser's one-time prompt was
-    // missed/denied) → tapping re-asks for permission.
-    if (pushOn && Notification.permission === 'granted') return;
-    const ok = await enablePush();
-    setPushOn(ok || Notification.permission === 'granted');
+    // C3: the toggle really turns push OFF — unsubscribe from the delivery
+    // worker and the browser (previously OFF was a no-op; users could never
+    // opt out once subscribed).
+    if (pushOn) {
+      setPushMsg(null);
+      await disablePush();
+      setPushOn(false);
+      return;
+    }
+    setPushMsg(null);
+    const ok = await enablePush(); // user gesture → permission prompt OK
+    setPushOn(ok);
+    if (!ok) {
+      // Give the user a real reason + recovery path instead of a silent no-op.
+      if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
+        setPushMsg(lbl(
+          'Notifications are blocked in your browser. Enable them in site settings (lock icon → Notifications → Allow), then toggle back on.',
+          'ব্রাউজারে নোটিফিকেশন ব্লক করা আছে। সাইট সেটিংস থেকে চালু করুন (লক আইকন → নোটিফিকেশন → অনুমতি দিন), তারপর আবার চালু করুন।'
+        ));
+      } else if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+        setPushMsg(lbl(
+          'The permission prompt was dismissed. Tap the toggle again to retry.',
+          'অনুমতির বার্তাটি বাতিল হয়েছে। আবার চালু করুন।'
+        ));
+      } else {
+        setPushMsg(lbl(
+          'Could not subscribe right now — check your connection and retry.',
+          'এখন সাবস্ক্রাইব করা যাচ্ছে না — ইন্টারনেট চেক করে আবার চেষ্টা করুন।'
+        ));
+      }
+    }
   }
   const [privacy, setPrivacy] = useState({
     stats: true,
@@ -158,6 +184,11 @@ export function SettingsPage(props: ScreenProps) {
                 />
               ))}
             </div>
+            {gi === 1 && pushMsg && (
+              <div style={{ margin: '0 0 8px', padding: '10px 14px', borderRadius: 12, background: tk.accent + '14', border: `1px solid ${tk.accent}3d`, fontFamily: font, fontSize: 12, color: tk.accent, lineHeight: 1.55 }}>
+                {pushMsg}
+              </div>
+            )}
           </div>
         ))}
 

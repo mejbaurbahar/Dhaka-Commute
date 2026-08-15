@@ -4,6 +4,13 @@ const STORAGE_KEY = 'dhaka_commute_chat_history';
 const MAX_SESSIONS = 50; // Keep last 50 chat sessions
 
 /**
+ * Per-user isolation: chat history is keyed by the signed-in user's id so one
+ * user can NEVER see another user's conversations. Anonymous users (no
+ * account) share the legacy key — a single device holds only its own history.
+ */
+const keyFor = (uid?: string | null): string => (uid ? `${STORAGE_KEY}_${uid}` : STORAGE_KEY);
+
+/**
  * Generate a unique session ID
  */
 const generateSessionId = (): string => {
@@ -11,11 +18,11 @@ const generateSessionId = (): string => {
 };
 
 /**
- * Get all chat sessions from localStorage
+ * Get all chat sessions from localStorage (scoped to the given user)
  */
-export const getAllSessions = (): ChatSession[] => {
+export const getAllSessions = (uid?: string | null): ChatSession[] => {
     try {
-        const stored = localStorage.getItem(STORAGE_KEY);
+        const stored = localStorage.getItem(keyFor(uid));
         return stored ? JSON.parse(stored) : [];
     } catch (e) {
         return [];
@@ -23,18 +30,19 @@ export const getAllSessions = (): ChatSession[] => {
 };
 
 /**
- * Get a specific session by ID
+ * Get a specific session by ID (scoped to the given user)
  */
-export const getSession = (sessionId: string): ChatSession | null => {
-    const sessions = getAllSessions();
+export const getSession = (sessionId: string, uid?: string | null): ChatSession | null => {
+    const sessions = getAllSessions(uid);
     return sessions.find(s => s.id === sessionId) || null;
 };
 
 /**
- * Save a message to a session
+ * Save a message to a session (scoped to the given user)
  */
-export const saveChatMessage = (message: ChatMessage, sessionId?: string | null): string => {
-    const sessions = getAllSessions();
+export const saveChatMessage = (message: ChatMessage, sessionId?: string | null, uid?: string | null): string => {
+    const key = keyFor(uid);
+    const sessions = getAllSessions(uid);
     const currentSessionId = sessionId || generateSessionId();
 
     let session = sessions.find(s => s.id === currentSessionId);
@@ -55,24 +63,25 @@ export const saveChatMessage = (message: ChatMessage, sessionId?: string | null)
     // Keep only last MAX_SESSIONS
     const trimmedSessions = sessions.slice(-MAX_SESSIONS);
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmedSessions));
+    localStorage.setItem(key, JSON.stringify(trimmedSessions));
     return currentSessionId;
 };
 
 /**
- * Delete a specific session
+ * Delete a specific session (scoped to the given user)
  */
-export const deleteSession = (sessionId: string): void => {
-    const sessions = getAllSessions();
+export const deleteSession = (sessionId: string, uid?: string | null): void => {
+    const key = keyFor(uid);
+    const sessions = getAllSessions(uid);
     const filtered = sessions.filter(s => s.id !== sessionId);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    localStorage.setItem(key, JSON.stringify(filtered));
 };
 
 /**
- * Clear all chat history
+ * Clear all chat history (scoped to the given user)
  */
-export const clearAllHistory = (): void => {
-    localStorage.removeItem(STORAGE_KEY);
+export const clearAllHistory = (uid?: string | null): void => {
+    localStorage.removeItem(keyFor(uid));
 };
 
 /**

@@ -249,9 +249,27 @@ function getInitialLang(): Lang {
   return stored === 'en' ? 'en' : 'bn';
 }
 
+/** Theme persists per device in localStorage ('theme' key — the same key the
+ *  index.html pre-paint script reads, so no wrong-theme flash). Default:
+ *  Light for new users; an explicit Dark choice survives restarts. */
+function getInitialTheme(): Theme {
+  if (typeof window === 'undefined') return 'light';
+  try {
+    return localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+  } catch {
+    return 'light';
+  }
+}
+
+function toggleTheme(t: Theme): Theme {
+  const next = t === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('theme', next); } catch { /* private mode */ }
+  return next;
+}
+
 export function KoyJaboApp() {
   const { user, logout } = useAuth();
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const [lang, setLang] = useState<Lang>(getInitialLang);
   const [forceDesktop, setForceDesktop] = useState(false); // phone user can request desktop view
   const [stack, setStack] = useState<StackEntry[]>(() => [entryFromLocation()]);
@@ -274,6 +292,13 @@ export function KoyJaboApp() {
 
   // Inject global styles once
   useEffect(() => { injectGlobalStyles(); }, []);
+
+  // Keep <html>.dark in sync with the theme state — index.html's FOLM script
+  // sets it at load, but runtime toggles must update it too (CSS .dark rules
+  // like body background and .adsense-container depend on it).
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   // Daily login bonus
   useEffect(() => { claimDailyBonus(); }, []);
@@ -475,7 +500,7 @@ export function KoyJaboApp() {
     route: top.route, params: top.params ?? {},
     canBack: showBack, onBack: back, onNav: nav, onNavTab: navTab,
     onLang: toggleLang,
-    onTheme: () => setTheme(t => t === 'dark' ? 'light' : 'dark'),
+    onTheme: () => setTheme(toggleTheme),
     onMenu: () => setMenuOpen(true),
   } as any; // typed via each screen's Props interface
 
@@ -631,7 +656,7 @@ export function KoyJaboApp() {
         activeRoute={top.route}
         canBack={canBack} onBack={back}
         onNav={nav} onLang={toggleLang}
-        onTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+        onTheme={() => setTheme(toggleTheme)}
         onMenu={() => setMenuOpen(true)}
         user={user}
         onLogout={() => { logout(); nav('home'); }}

@@ -4,6 +4,7 @@ import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { FbIcon, LiIcon } from '../components/BrandIcons';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -55,13 +56,13 @@ export function ContactPage(props: Props) {
 
         <div style={{ display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:12,marginBottom:24 }}>
           {[
-            { e:'📧', l:'Email', v:'koyjabo.bd@gmail.com', href:'mailto:koyjabo.bd@gmail.com', c:tk.primarySoft, fc:tk.primary },
-            { e:'📘', l:'Facebook', v:'facebook.com/koyjabo', href:'https://facebook.com/koyjabo', c:'#1877f22a', fc:'#1877f2' },
-            { e:'💼', l:'LinkedIn', v:'linkedin.com/company/koy-jabo', href:'https://linkedin.com/company/koy-jabo', c:tk.chipBg, fc:tk.text },
+            { e:'mail', l:'Email', v:'koyjabo.bd@gmail.com', href:'mailto:koyjabo.bd@gmail.com', c:tk.primarySoft, fc:tk.primary },
+            { e:'fb', l:'Facebook', v:'facebook.com/koyjabo', href:'https://facebook.com/koyjabo', c:'#1877f22a', fc:'#1877f2' },
+            { e:'li', l:'LinkedIn', v:'linkedin.com/company/koy-jabo', href:'https://linkedin.com/company/koy-jabo', c:tk.chipBg, fc:tk.text },
             { e:'📝', l:T(lang,'ভুল তথ্য জানান','Report issue'), v:'Contact form', href:'#', c:tk.accentSoft, fc:tk.accent },
           ].map((c,i)=>(
             <a key={i} href={c.href} onClick={c.href === '#' ? (ev)=>{ ev.preventDefault(); document.getElementById('kj-contact-name')?.focus(); } : undefined} style={{ ...card(14),background:c.c,borderColor:c.fc+'33',display:'flex',alignItems:'center',gap:12,textDecoration:'none' }}>
-              <span style={{ fontSize:24 }}>{c.e}</span>
+              {c.e === 'fb' ? <FbIcon size={24} color="#1877F2" /> : c.e === 'li' ? <LiIcon size={24} color="#0A66C2" /> : <span style={{ fontSize:24 }}>{c.e === 'mail' ? '📧' : '📝'}</span>}
               <div>
                 <div style={{ fontFamily:SANS,fontWeight:700,fontSize:13,color:c.fc }}>{c.l}</div>
                 <div style={{ fontFamily:SANS,fontSize:12,color:tk.textDim }}>{c.v}</div>

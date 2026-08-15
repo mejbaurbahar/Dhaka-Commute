@@ -57,6 +57,7 @@ export function injectGlobalStyles() {
     @keyframes kjModalIn { from { opacity: 0; transform: translateY(14px) scale(0.985); } to { opacity: 1; transform: none; } }
     @keyframes kjFadeIn  { from { opacity: 0; } to { opacity: 1; } }
     @keyframes kjSheetUp { from { transform: translateY(100%); } to { transform: none; } }
+    @keyframes kjDrawerIn { from { transform: translateX(100%); } to { transform: none; } }
     @keyframes kjStopIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
     @keyframes kjPulseRing { 0% { transform: scale(0.6); opacity: 0.7; } 100% { transform: scale(1.9); opacity: 0; } }
     @keyframes kjLineFlow { 0% { top: -50%; } 100% { top: 110%; } }
