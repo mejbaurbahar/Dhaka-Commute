@@ -127,18 +127,9 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute, isLo
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Logo tk={tk} size={32} />
-            <span
-              style={{
-                fontFamily: "'Hind Siliguri', system-ui, sans-serif",
-                fontWeight: 800,
-                fontSize: 18,
-                background: `linear-gradient(135deg, ${tk.primary} 0%, #a855f7 100%)`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              কই যাবো
+            <span style={{ fontFamily: "'Hind Siliguri', system-ui, sans-serif", fontWeight: 800, fontSize: 18 }}>
+              <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>কই</span>
+              <span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}> যাবো</span>
             </span>
           </div>
           <button

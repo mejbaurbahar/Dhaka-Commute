@@ -2,7 +2,7 @@ import React from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 
 interface GovCard {
-  icon: string;
+  logo: string;
   nameBn: string;
   nameEn: string;
   tagBn: string;
@@ -16,7 +16,7 @@ interface GovCard {
 
 const GOV_CARDS: GovCard[] = [
   {
-    icon: '🚗',
+    logo: '/images/gov/brta.png',
     nameBn: 'BRTA',
     nameEn: 'BRTA',
     tagBn: 'সড়ক পরিবহন কর্তৃপক্ষ',
@@ -32,7 +32,7 @@ const GOV_CARDS: GovCard[] = [
     bgColor: 'rgba(37,99,235,0.1)',
   },
   {
-    icon: '🚂',
+    logo: '/images/gov/railway.svg',
     nameBn: 'বাংলাদেশ রেলওয়ে',
     nameEn: 'BD Railway',
     tagBn: 'ট্রেন টিকিট ও সময়সূচি',
@@ -48,7 +48,7 @@ const GOV_CARDS: GovCard[] = [
     bgColor: 'rgba(21,128,61,0.1)',
   },
   {
-    icon: '🏛️',
+    logo: '/images/gov/mygov.png',
     nameBn: 'মাইগভ',
     nameEn: 'MyGov',
     tagBn: 'এক ঠিকানায় সরকারি সেবা',
@@ -63,7 +63,7 @@ const GOV_CARDS: GovCard[] = [
     bgColor: 'rgba(4,120,87,0.1)',
   },
   {
-    icon: '✈️',
+    logo: '/images/gov/biman.svg',
     nameBn: 'বিমান বাংলাদেশ',
     nameEn: 'Biman Bangladesh',
     tagBn: 'জাতীয় বিমান সংস্থা',
@@ -78,7 +78,7 @@ const GOV_CARDS: GovCard[] = [
     bgColor: 'rgba(220,38,38,0.1)',
   },
   {
-    icon: '⛴️',
+    logo: '/images/gov/biwtc.png',
     nameBn: 'BIWTC',
     nameEn: 'BIWTC',
     tagBn: 'অভ্যন্তরীণ নৌ-পরিবহন',
@@ -137,11 +137,20 @@ function GovCardItem({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: compact ? 18 : 22,
             flexShrink: 0,
+            overflow: 'hidden',
           }}
         >
-          {card.icon}
+          <img
+            src={card.logo}
+            alt={card.nameEn}
+            style={{
+              width: '74%',
+              height: '74%',
+              objectFit: 'contain',
+              display: 'block',
+            }}
+          />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>

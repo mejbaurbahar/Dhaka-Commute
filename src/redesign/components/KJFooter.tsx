@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tokens, Lang, SANS, BEN, T } from '../tokens';
+import { Tokens, Lang, SANS, BEN, T, Theme } from '../tokens';
 import { Logo } from './Logo';
 
 const COLS = [
@@ -72,9 +72,10 @@ interface KJFooterProps {
   lang: Lang;
   isMobile: boolean;
   onNav: (route: string) => void;
+  theme: Theme;
 }
 
-export function KJFooter({ tk, lang, isMobile, onNav }: KJFooterProps) {
+export function KJFooter({ tk, lang, isMobile, onNav, theme }: KJFooterProps) {
   const cols = COLS;
 
   return (
@@ -141,8 +142,9 @@ export function KJFooter({ tk, lang, isMobile, onNav }: KJFooterProps) {
           >
             <Logo tk={tk} size={46} />
             <div>
-              <div style={{ fontFamily: BEN, fontWeight: 700, fontSize: 19, color: tk.text, lineHeight: 1 }}>
-                কই যাবো
+              <div style={{ fontFamily: BEN, fontWeight: 700, fontSize: 19, lineHeight: 1 }}>
+                <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>কই</span>{' '}
+                <span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}>যাবো</span>
               </div>
               <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 9, letterSpacing: 2, color: tk.textFaint, marginTop: 4 }}>
                 KOYJABO · BD

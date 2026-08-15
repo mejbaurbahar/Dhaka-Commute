@@ -2247,7 +2247,7 @@ export function HomePage({
         </div>
 
         {/* ── Footer ── */}
-        <KJFooterComponent tk={tk} lang={lang} isMobile={isMobile} onNav={onNav}/>
+        <KJFooterComponent tk={tk} lang={lang} isMobile={isMobile} onNav={onNav} theme={theme}/>
       </div>
 
       {/* Mobile: anchor ad above tab bar */}

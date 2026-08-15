@@ -108,7 +108,7 @@ export function PageShell({
 
       {/* Footer — hidden on AI chat page entirely */}
       {route !== 'ai' && (
-        <KJFooter tk={tk} lang={lang} isMobile={isMobile} onNav={onNav} />
+        <KJFooter tk={tk} lang={lang} isMobile={isMobile} onNav={onNav} theme={theme} />
       )}
 
       {/* MobileTabBar rendered in KoyJaboApp */}
