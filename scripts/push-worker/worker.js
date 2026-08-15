@@ -535,8 +535,23 @@ async function processSub(name, now) {
       }
       sub.updatedAt = now;
       await saveSub(sub);
+      return;
     }
-    // Any other status: keep the event, retry next tick.
+    // Any other status (push service throttling, transient errors): retry next
+    // tick, but cap attempts — an undeliverable event must not loop forever
+    // every 10 minutes. Dead-letter after 5 failed deliveries.
+    const attempts = (event.attempts || 0) + 1;
+    if (attempts >= 5) {
+      sub.events = (sub.events || []).filter((e) => e !== event);
+      sub.updatedAt = now;
+      await saveSub(sub);
+      return;
+    }
+    event.attempts = attempts;
+    const idx = (sub.events || []).indexOf(event);
+    if (idx >= 0) sub.events[idx] = event;
+    sub.updatedAt = now;
+    await saveSub(sub);
 }
 
 // ── router ────────────────────────────────────────────────────────
@@ -552,7 +567,10 @@ const ORIGIN_ALLOWLIST = new Set([
 
 // KV-backed per-IP limiter — global across isolates (the in-memory maps in
 // other workers reset per isolate; KV counter + short TTL is coarse but real).
-const RATE_LIMIT_PER_MINUTE = 120;
+// M4: 120/min hurts users behind shared NAT (one mobile carrier IP = many
+// phones) — 300/min is still far above a single device's legitimate rate
+// (subscribe + a few events per session).
+const RATE_LIMIT_PER_MINUTE = 300;
 
 async function rateLimited(request) {
   const ip = request.headers.get('CF-Connecting-IP') || '';

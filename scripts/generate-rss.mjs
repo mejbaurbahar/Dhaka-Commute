@@ -63,13 +63,22 @@ if (!posts.length) {
 
 // Newest first, cap at 20 items
 posts.sort((a, b) => (a.publishDate < b.publishDate ? 1 : -1));
+// Clean short title for the feed (LinkedIn posts show this verbatim — SEO
+// keyword soup reads as spam and kills click-through). The full SEO title
+// stays in data/blogPosts.ts for on-site search engines; only the feed
+// (LinkedIn source) gets the cleaned version.
+function cleanTitle(raw) {
+  const cut = raw.split(/\s*[—–:]\s*/)[0].trim();
+  return cut.length >= 15 ? cut : raw.trim();
+}
+
 const items = posts.slice(0, 20).map((p) => {
   const link = `${BASE}/blog/${p.slug}/`;
   const description = p.excerpt
     ? `<![CDATA[<img src="${esc(BASE + p.coverImage)}" alt="" /><p>${esc(p.excerpt)}</p>]]>`
     : '';
   return `    <item>
-      <title>${esc(p.title)}</title>
+      <title>${esc(cleanTitle(p.title))}</title>
       <link>${link}</link>
       <guid isPermaLink="true">${link}</guid>
       <pubDate>${rfc822(p.publishDate)}</pubDate>

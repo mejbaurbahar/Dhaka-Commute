@@ -20,10 +20,17 @@ const PUSH_SW_SCOPE = '/push/';
 
 const KEY_ENABLED = 'koyjabo_push_enabled';
 const KEY_ENDPOINT = 'koyjabo_push_endpoint';
+const KEY_SERVER_CONFIRMED = 'koyjabo_push_server_confirmed';
 const KEY_FIRST_VISIT = 'koyjabo_first_visit_at';
 const KEY_INSTALL_SCHEDULED = 'koyjabo_install_reminder_scheduled';
 
 export type PushEventType = 'install' | 'search-check' | 'search-tomorrow' | 'save' | 'dormant';
+
+/** Diagnostic log — silent unless a worker URL is configured (offline-first design). */
+function logPush(...args: unknown[]): void {
+  if (!apiBase()) return;
+  console.warn('[push]', ...args);
+}
 
 /** Web push needs SW + PushManager; the Android app uses native FCM (Capacitor). */
 export function pushSupported(): boolean {
@@ -43,7 +50,11 @@ export function pushSupported(): boolean {
 /** Push is ON by default; only an explicit user opt-out stores '0'. */
 export function pushEnabled(): boolean {
   try {
-    return localStorage.getItem(KEY_ENABLED) !== '0';
+    if (localStorage.getItem(KEY_ENABLED) === '0') return false;
+    // M2: a denied permission can never deliver — don't keep POSTing events
+    // the worker will throw away for a dead subscription.
+    if (typeof Notification !== 'undefined' && Notification.permission === 'denied') return false;
+    return true;
   } catch {
     return true;
   }
@@ -60,7 +71,10 @@ function apiBase(): string {
 
 function currentLang(): 'bn' | 'en' {
   try {
-    return localStorage.getItem('app-language') === 'bn' ? 'bn' : 'en';
+    // The redesign stores language as 'kj-language'; the legacy screens write
+    // 'app-language'. Reading both keeps pushes in the user's actual language.
+    const v = localStorage.getItem('kj-language') ?? localStorage.getItem('app-language');
+    return v === 'bn' ? 'bn' : 'en';
   } catch {
     return 'en';
   }
@@ -75,15 +89,33 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
   return bytes;
 }
 
-/** Fire-and-forget POST — never throws, never logs. */
+/** Fire-and-forget POST — never throws. keepalive lets it flush during unload. */
 function post(path: string, body: unknown): void {
   const base = apiBase();
   if (!base) return;
   fetch(base + path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    keepalive: true,
     body: JSON.stringify(body),
   }).catch(() => {});
+}
+
+/** POST that resolves true only when the delivery worker accepted (2xx). */
+async function postAwait(path: string, body: unknown): Promise<boolean> {
+  const base = apiBase();
+  if (!base) return false;
+  try {
+    const res = await fetch(base + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    return res.ok;
+  } catch (error) {
+    logPush('worker unreachable', path, error);
+    return false;
+  }
 }
 
 async function getPushRegistration(): Promise<ServiceWorkerRegistration | null> {
@@ -97,7 +129,14 @@ async function getPushRegistration(): Promise<ServiceWorkerRegistration | null> 
 async function subscribeOnDevice(): Promise<PushSubscription | null> {
   if (!pushSupported() || !apiBase()) return null;
   try {
-    const reg = await navigator.serviceWorker.register(PUSH_SW_URL, { scope: PUSH_SW_SCOPE });
+    // C2: pass the worker URL + current language as query params so the SW
+    // re-subscribes (pushsubscriptionchange) to the right worker in the
+    // user's language — no hardcoded origin inside the SW.
+    const swUrl =
+      PUSH_SW_URL +
+      '?api=' + encodeURIComponent(apiBase()) +
+      '&lang=' + currentLang();
+    const reg = await navigator.serviceWorker.register(swUrl, { scope: PUSH_SW_SCOPE });
     await navigator.serviceWorker.ready;
     reg.update().catch(() => {}); // pick up push-sw.js changes promptly
     let sub = await reg.pushManager.getSubscription();
@@ -108,15 +147,27 @@ async function subscribeOnDevice(): Promise<PushSubscription | null> {
       });
     }
     return sub;
-  } catch {
+  } catch (error) {
+    logPush('subscribe failed', error);
     return null;
   }
 }
 
-function persist(sub: PushSubscription): void {
+/**
+ * C1: persist the endpoint always, but only mark the feature enabled (and
+ * server-confirmed) after the delivery worker accepted the subscription.
+ * An endpoint the worker never heard of is a silent dead push — on failure
+ * the next visit (initPush) re-syncs it.
+ */
+function persist(sub: PushSubscription, confirmed: boolean): void {
   try {
-    localStorage.setItem(KEY_ENABLED, '1');
     localStorage.setItem(KEY_ENDPOINT, sub.endpoint);
+    if (confirmed) {
+      localStorage.setItem(KEY_ENABLED, '1');
+      localStorage.setItem(KEY_SERVER_CONFIRMED, '1');
+    } else {
+      localStorage.setItem(KEY_SERVER_CONFIRMED, '0');
+    }
   } catch {
     /* private mode */
   }
@@ -191,12 +242,19 @@ export async function enablePush(): Promise<boolean> {
   if (perm !== 'granted') {
     perm = await Notification.requestPermission();
   }
-  if (perm !== 'granted') return false;
+  if (perm !== 'granted') {
+    logPush('permission not granted:', perm);
+    return false;
+  }
   const sub = await subscribeOnDevice();
   if (!sub) return false;
-  persist(sub);
-  post('/api/subscribe', { endpoint: sub.endpoint, keys: subKeys(sub), lang: currentLang() });
-  return true;
+  // C1: server-confirm before calling it enabled (see persist()).
+  const ok = await postAwait('/api/subscribe', {
+    endpoint: sub.endpoint, keys: subKeys(sub), lang: currentLang(),
+  });
+  persist(sub, ok);
+  if (!ok) logPush('server did not confirm subscription — will retry next visit');
+  return ok;
 }
 
 export async function disablePush(): Promise<void> {
@@ -245,6 +303,27 @@ export function cancelPushEvent(type: PushEventType): void {
   post('/api/cancel', { endpoint, type });
 }
 
+// ── SW ↔ page sync (C2) ───────────────────────────────────────────
+
+/**
+ * The SW re-subscribes on pushsubscriptionchange (browser expires subs ~3
+ * months). It posts the NEW endpoint here so the page never keeps pushing
+ * events at a dead subscription. Only possible while a tab is open; the
+ * next visit's initPush() reconcile covers the rest.
+ */
+if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
+  navigator.serviceWorker.addEventListener('message', (event: MessageEvent) => {
+    const msg = event.data as { type?: string; endpoint?: string } | null;
+    if (msg?.type === 'koyjabo-push-endpoint' && msg.endpoint) {
+      try {
+        localStorage.setItem(KEY_ENDPOINT, msg.endpoint);
+      } catch {
+        /* private mode */
+      }
+    }
+  });
+}
+
 // ── Timing helpers ────────────────────────────────────────────────
 
 export function inHours(hours: number): number {
@@ -291,21 +370,32 @@ export async function initPush(): Promise<void> {
 
   if (!pushSupported()) return;
 
-  // Push is ON by default: ask the browser once on first visit (the Terms
-  // page promises this). If denied, the browser never re-prompts — the
-  // Settings toggle is the manual retry path.
+  // Push is ON by default, but H1: never request permission at page load.
+  // iOS Safari drops non-gesture prompts, and most browsers only show the
+  // prompt once — spending it on load permanently kills the feature. If the
+  // user already granted, silently re-sync; otherwise the Settings toggle
+  // (inside a click gesture) is the only path that prompts.
   if (!pushEnabled()) return; // user explicitly opted out
-  const ok = await enablePush();
-  if (!ok && Notification.permission === 'granted') {
-    // Permission granted but subscribe failed (e.g. push service reset) —
-    // re-sync the subscription on this visit.
+  if (Notification.permission !== 'granted') return;
+  const ok = await enablePush(); // already granted → no prompt, pure re-sync
+  if (!ok) {
+    // Permission granted but subscribe POST failed (worker down, push service
+    // reset) — re-sync the subscription on this visit.
     const sub = await subscribeOnDevice();
     if (sub) {
-      persist(sub);
       post('/api/subscribe', { endpoint: sub.endpoint, keys: subKeys(sub), lang: currentLang() });
+      localStorage.setItem(KEY_ENDPOINT, sub.endpoint);
     }
-  } else if (!ok) {
-    return; // denied or unsupported — no events without a subscription
+  } else if (localStorage.getItem(KEY_SERVER_CONFIRMED) === '0') {
+    // C1: the worker was unreachable when the user enabled push — confirm now
+    // (handleSubscribe rejects web endpoints without keys).
+    const sub = await subscribeOnDevice();
+    if (sub) {
+      const confirmed = await postAwait('/api/subscribe', {
+        endpoint: sub.endpoint, keys: subKeys(sub), lang: currentLang(),
+      });
+      if (confirmed) localStorage.setItem(KEY_SERVER_CONFIRMED, '1');
+    }
   }
 
   const firstVisit = localStorage.getItem(KEY_FIRST_VISIT);

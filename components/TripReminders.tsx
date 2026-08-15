@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Bell, Plus, Trash2, Clock, AlertCircle } from 'lucide-react';
 import { getLocalReminders, saveLocalReminders, syncReminders, pullReminders, TripReminder, getAuthUser } from '../services/communityDataService';
 import { useLanguage } from '../contexts/LanguageContext';
 import { trackFeatureUsage } from '../services/analyticsService';
+import { pushEnabled } from '../src/services/pushService';
 import SponsoredAdSlot from './SponsoredAdSlot';
 
 
@@ -14,11 +15,23 @@ const BEFORE_OPTIONS = [5, 10, 15, 20, 30, 45, 60];
 
 function requestNotificationPermission() {
   if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
+    // M3: respect the Settings push opt-out — don't prompt when the user
+    // explicitly disabled notifications.
+    if (pushEnabled()) Notification.requestPermission();
   }
 }
 
-function scheduleNextAlarm(reminder: TripReminder, lang: string = 'bn') {
+// H3: every armed timeout is tracked per reminder id, so toggling/delete
+// cancels it — previously timers kept firing after the reminder was off.
+const timerRegistry = new Map<string, number>();
+
+// H4: a missed alert fires once per fire window, not on every
+// visibilitychange (the old handler re-shone it each time the tab reappeared).
+const missedShown = new Set<string>();
+
+// H5/M5: language is read at FIRE time via getter, not captured at mount —
+// the old module-level scheduler held the mount-time language forever.
+function scheduleNextAlarm(reminder: TripReminder, getLang: () => string) {
   if (!reminder.enabled) return;
   const now = new Date();
   const [hh, mm] = reminder.time.split(':').map(Number);
@@ -28,7 +41,8 @@ function scheduleNextAlarm(reminder: TripReminder, lang: string = 'bn') {
     candidate.setHours(hh, mm - reminder.minutesBefore, 0, 0);
     if (candidate > now && reminder.days.includes(candidate.getDay())) {
       const msUntil = candidate.getTime() - now.getTime();
-      setTimeout(() => {
+      const timerId = window.setTimeout(() => {
+        const lang = getLang();
         if ('Notification' in window && Notification.permission === 'granted') {
           new Notification(`কই যাবো — ${reminder.label}`, {
             body: lang === 'bn'
@@ -37,7 +51,12 @@ function scheduleNextAlarm(reminder: TripReminder, lang: string = 'bn') {
             icon: '/icon-192x192.png',
           });
         }
+        // H2: re-arm the next weekly occurrence — one alarm per reminder was
+        // not enough when the app stays open across the whole week.
+        timerRegistry.delete(reminder.id);
+        scheduleNextAlarm(reminder, getLang);
       }, msUntil);
+      timerRegistry.set(reminder.id, timerId);
       break;
     }
   }
@@ -48,6 +67,8 @@ export default function TripReminders({ onBack }: Props) {
   const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
   const DAY_LABELS = language === 'bn' ? DAY_LABELS_BN : DAY_LABELS_EN;
   const user = getAuthUser();
+  const langRef = useRef(language);
+  useEffect(() => { langRef.current = language; }, [language]);
   const [reminders, setReminders] = useState<TripReminder[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -65,7 +86,7 @@ export default function TripReminders({ onBack }: Props) {
     pullReminders().then(() => {
       const loaded = getLocalReminders();
       setReminders(loaded);
-      loaded.filter(r => r.enabled).forEach(r => scheduleNextAlarm(r, language));
+      loaded.filter(r => r.enabled).forEach(r => scheduleNextAlarm(r, () => langRef.current));
     });
 
     const onVisibilityChange = () => {
@@ -74,15 +95,20 @@ export default function TripReminders({ onBack }: Props) {
       const current = getLocalReminders();
       const now = Date.now();
       current.filter(r => r.enabled).forEach(r => {
-        scheduleNextAlarm(r, language);
+        scheduleNextAlarm(r, () => langRef.current);
         const [hh, mm] = r.time.split(':').map(Number);
         const fire = new Date();
         fire.setHours(hh, mm - r.minutesBefore, 0, 0);
         const msSinceFire = now - fire.getTime();
-        if (msSinceFire >= 0 && msSinceFire <= 30 * 60 * 1000 && r.days.includes(new Date().getDay())) {
+        const fireKey = `${r.id}:${Math.floor(fire.getTime() / 60_000)}`;
+        if (
+          msSinceFire >= 0 && msSinceFire <= 30 * 60 * 1000 &&
+          r.days.includes(new Date().getDay()) && !missedShown.has(fireKey)
+        ) {
+          missedShown.add(fireKey);
           if ('Notification' in window && Notification.permission === 'granted') {
             new Notification(`কই যাবো — ${r.label}`, {
-              body: language === 'bn'
+              body: langRef.current === 'bn'
                 ? `${r.minutesBefore} মিনিট আগে যাত্রার সতর্কতা মিস হয়েছিল${r.busName ? ` · ${r.busName}` : ''}`
                 : `Missed alert from ${r.minutesBefore} min ago${r.busName ? ` · ${r.busName}` : ''}`,
               icon: '/icon-192x192.png',
@@ -121,7 +147,7 @@ export default function TripReminders({ onBack }: Props) {
     const updated = [...reminders, newReminder];
     setReminders(updated);
     saveLocalReminders(updated);
-    scheduleNextAlarm(newReminder, language);
+    scheduleNextAlarm(newReminder, () => langRef.current);
     setShowForm(false);
     setForm({ label: '', busName: '', fromStop: '', toStop: '', days: [1, 2, 3, 4, 5], time: '08:00', minutesBefore: 15 });
     if (user) {
@@ -135,12 +161,24 @@ export default function TripReminders({ onBack }: Props) {
     const updated = reminders.map(r => r.id === id ? { ...r, enabled: !r.enabled } : r);
     setReminders(updated);
     saveLocalReminders(updated);
+    // H3: cancel the armed timer when turning a reminder off.
+    const timer = timerRegistry.get(id);
+    if (timer !== undefined) {
+      window.clearTimeout(timer);
+      timerRegistry.delete(id);
+    }
     const toggled = updated.find(r => r.id === id);
-    if (toggled?.enabled) scheduleNextAlarm(toggled, language);
+    if (toggled?.enabled) scheduleNextAlarm(toggled, () => langRef.current);
     if (user) await syncReminders();
   };
 
   const deleteReminder = async (id: string) => {
+    // H3: also cancel the armed timer when deleting.
+    const timer = timerRegistry.get(id);
+    if (timer !== undefined) {
+      window.clearTimeout(timer);
+      timerRegistry.delete(id);
+    }
     const updated = reminders.filter(r => r.id !== id);
     setReminders(updated);
     saveLocalReminders(updated);
