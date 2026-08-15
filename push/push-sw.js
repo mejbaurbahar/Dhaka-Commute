@@ -11,15 +11,30 @@
 
 const ICON = self.location.origin + '/icon-192x192.png';
 
-// Keep in sync with src/services/pushService.ts (VAPID_PUBLIC_KEY) and the
-// deployed VITE_PUSH_API_URL.
+// Keep in sync with src/services/pushService.ts (VAPID_PUBLIC_KEY).
 const VAPID_PUBLIC_KEY =
   'BPWRfKooYJr8MkcJaOFw2PF3g5OBlikB5uZCcEiS1kGbhOXKTiG-_0rTau28lT2K0tluU4eQ6NByPsnT00sSEV8';
-const PUSH_API = 'https://koyjabo-push.fagun115946.workers.dev';
+
+// Config injected at registration time: the page registers this SW as
+// push-sw.js?api=<worker url>&lang=<bn|en>. This SW is served raw (not
+// bundled), so hardcoding the API origin here would drift from the deployed
+// VITE_PUSH_API_URL — reading it from scriptURL keeps one source of truth.
+const cfg = (() => {
+  try {
+    const u = new URL(self.registration.scriptURL);
+    return {
+      api: (u.searchParams.get('api') || '').replace(/\/$/, ''),
+      lang: u.searchParams.get('lang') === 'bn' ? 'bn' : 'en',
+    };
+  } catch {
+    return { api: '', lang: 'en' };
+  }
+})();
 
 // Chrome expires push subscriptions (~3 months). The browser fires this when
 // the old sub dies — without a handler the device silently stops receiving
-// pushes forever. Re-subscribe and tell the worker. (The page also re-syncs
+// pushes forever. Re-subscribe, tell the worker, and notify any open tab so
+// the page stops pushing events at the dead endpoint. (The page also re-syncs
 // on every visit, so this is a belt-and-braces path for never-visited tabs.)
 self.addEventListener('pushsubscriptionchange', (event) => {
   event.waitUntil(
@@ -39,11 +54,21 @@ self.addEventListener('pushsubscriptionchange', (event) => {
           applicationServerKey: urlB64ToU8(VAPID_PUBLIC_KEY),
         });
         const json = sub.toJSON();
-        await fetch(PUSH_API + '/api/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ endpoint: sub.endpoint, keys: json.keys, lang: 'en' }),
-        });
+        if (cfg.api) {
+          await fetch(cfg.api + '/api/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ endpoint: sub.endpoint, keys: json.keys, lang: cfg.lang }),
+          });
+        }
+        const clients = await self.clients.matchAll({ type: 'window' });
+        for (const client of clients) {
+          try {
+            client.postMessage({ type: 'koyjabo-push-endpoint', endpoint: sub.endpoint });
+          } catch {
+            /* tab closed mid-send */
+          }
+        }
       } catch {
         /* offline or permission revoked — next page visit re-syncs */
       }

@@ -16,7 +16,7 @@
        <script>/<style>. Switching to nonces would force every ads / Tailwind
        drop-in to opt in too. Everything else has been narrowed to a fixed
        origin list — no `https:` wildcards, no open connect-src. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://www.google.com https://adservice.google.com https://aistudiocdn.com https://shop.daamdekhi.com https://cdn.tailwindcss.com https://apis.google.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://dtca-backend.bondstein.net https://koyjabo-auth-proxy.fagun115946.workers.dev https://koyjabo-push.fagun115946.workers.dev https://koyjabo-bus-live.fagun115946.workers.dev https://api.koyjabo.com https://*.koyjabo.com https://api.github.com https://raw.githubusercontent.com https://challenges.cloudflare.com https://www.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://*.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://csi.gstatic.com https://www.google.com.bd https://api.tomtom.com https://api.maptiler.com https://router.project-osrm.org https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebaseinstallations.googleapis.com https://www.googleapis.com https://aistudiocdn.com https://fundingchoicesmessages.google.com https://shop.daamdekhi.com https://connect.facebook.net https://graph.facebook.com; frame-src https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://*.firebaseapp.com https://apis.google.com https://accounts.google.com https://connect.facebook.net https://www.facebook.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://www.google.com https://adservice.google.com https://aistudiocdn.com https://shop.daamdekhi.com https://cdn.tailwindcss.com https://apis.google.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://dtca-backend.bondstein.net https://koyjabo-auth-proxy.fagun115946.workers.dev https://koyjabo-push.fagun115946.workers.dev https://koyjabo-bus-live.fagun115946.workers.dev https://api.koyjabo.com https://*.koyjabo.com https://api.github.com https://raw.githubusercontent.com https://challenges.cloudflare.com https://www.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://*.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://csi.gstatic.com https://www.google.com.bd https://api.tomtom.com https://api.maptiler.com https://router.project-osrm.org https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebaseinstallations.googleapis.com https://firebaseremoteconfig.googleapis.com https://www.googleapis.com https://aistudiocdn.com https://fundingchoicesmessages.google.com https://shop.daamdekhi.com https://connect.facebook.net https://graph.facebook.com; frame-src https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://*.firebaseapp.com https://apis.google.com https://accounts.google.com https://connect.facebook.net https://www.facebook.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
 
 
   <!-- GitHub Pages SPA path restore — convert /?/bus/achia/ back to /bus/achia/ -->
@@ -30,17 +30,27 @@
     })();
   </script>
 
-  <!-- Prevent Flash of Light Mode (FOLM) - Apply dark mode before page renders -->
+  <!-- Prevent Flash of Wrong Theme — apply stored theme before page renders.
+       Default = Light (no class). Only an explicit Dark choice sets .dark + a
+       dark background so dark users never see a white flash. Must run before
+       paint; the app reads the same 'theme' key (KoyJaboApp.getInitialTheme). -->
   <script>
-    // This MUST run before page renders to prevent white flash
     (function () {
-      const theme = localStorage.getItem('theme');
-      // Default to dark if no preference is stored, or if theme is 'dark'
-      if (!theme || theme === 'dark') {
+      var theme = null;
+      try { theme = localStorage.getItem('theme'); } catch (e) {}
+      if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       }
     })();
   </script>
+  <style>
+    /* FOLM: dark users get a dark backdrop before React paints (app draws its
+       own bg via inline tokens after mount). !important beats the splash-time
+       inline background:#05060b on <body> so light theme never sits on a dark
+       page backdrop. */
+    html body { background-color: #eef3f7 !important; }
+    html.dark, html.dark body { background-color: #05060b !important; }
+  </style>
 
 
   <!-- PWA Meta Tags -->
@@ -713,7 +723,7 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-NNR2RDVF');</script>
   <!-- End Google Tag Manager -->
-    <script type="module" crossorigin src="/assets/index-Wff30S2p.js"></script>
+    <script type="module" crossorigin src="/assets/index-CGQeW9cU.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/train-data-Bfg7o-rQ.js">
     <link rel="modulepreload" crossorigin href="/assets/intercity-data-DQ2J8hio.js">
     <link rel="modulepreload" crossorigin href="/assets/ai-service-pKCg2RDk.js">
@@ -723,7 +733,7 @@
     <link rel="modulepreload" crossorigin href="/assets/react-dom-BGAxEeC3.js">
     <link rel="modulepreload" crossorigin href="/assets/lucide-isqBP3Jz.js">
     <link rel="stylesheet" crossorigin href="/assets/leaflet-Dgihpmma.css">
-    <link rel="stylesheet" crossorigin href="/assets/index-hNIuD80-.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-_3WymGlC.css">
   <link rel="manifest" href="/manifest.webmanifest">  <script type="application/ld+json" data-static-seo="route">{"@context":"https://schema.org","@type":"WebPage","name":"BRTC Rangpur-Shyamnagar (Nightly) Bus Route","url":"https://koyjabo.com/bus/brtc-rangpur-shyamnagar-nightly/","description":"BRTC Rangpur-Shyamnagar (Nightly) bus route in Dhaka.","about":{"@type":"BusTrip","name":"BRTC Rangpur-Shyamnagar (Nightly) Bus Route"}}</script>
   <script type="application/ld+json" data-static-seo="faq">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the route of the BRTC Rangpur-Shyamnagar (Nightly) bus in Dhaka?","acceptedAnswer":{"@type":"Answer","text":"The BRTC Rangpur-Shyamnagar (Nightly) bus route is listed on KoyJabo with its full stop list, route map and fare guidance for Dhaka."}},{"@type":"Question","name":"What is the fare of the BRTC Rangpur-Shyamnagar (Nightly) bus?","acceptedAnswer":{"@type":"Answer","text":"The BRTC Rangpur-Shyamnagar (Nightly) bus fare is distance-based (approx ৳30 full route). Use the KoyJabo fare calculator to find the exact fare between any two stops."}}]}</script>
 </head>
