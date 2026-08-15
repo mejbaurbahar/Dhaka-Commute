@@ -5513,5 +5513,743 @@ For live bus schedules, stops and exact fares, check [KoyJabo](https://koyjabo.c
 
 লাইভ বাস শিডিউল, স্টপ ও সঠিক ভাড়ার জন্য [KoyJabo](https://koyjabo.com) দেখুন — বিনামূল্যে, অফলাইনে কাজ করে।
 `
+	},
+	{
+		id: 'live-bus-tracking-dhaka-guide',
+		slug: 'live-bus-tracking-dhaka-guide',
+		title: 'ঢাকায় লাইভ বাস ট্র্যাকিং — বাস কোথায়, কখন আসবে?',
+		bnTitle: 'ঢাকায় লাইভ বাস ট্র্যাকিং — বাস কোথায়, কখন আসবে?',
+		excerpt: 'Live bus tracking in Dhaka: how to see exactly where your bus is, how the KoyJabo live map works, and how to time your departure from the stop. Updated August 2026.',
+		bnExcerpt: 'ঢাকায় লাইভ বাস ট্র্যাকিং: আপনার বাস এখন কোথায়, কখন স্টপে আসবে — কই যাবো লাইভ ম্যাপে যেভাবে দেখবেন। আগস্ট ২০২৬ আপডেট।',
+		coverImage: '/blog/live-bus-tracking-dhaka-guide.jpg',
+		author: 'KoyJabo Team',
+		publishDate: '2026-08-15',
+		readTime: '3 min read',
+		keywords: [
+			'live bus tracking dhaka', 'bus location dhaka', 'live bus map bangladesh',
+			'bus tracker dhaka', 'কই যাবো লাইভ বাস', 'bus কোথায়',
+		],
+		category: 'Bus & Transport',
+		content: `
+Dhaka buses run every 5–20 minutes — but only if you know where the bus actually is. Standing at a stop for 40 minutes guessing is no longer necessary.
+
+> 📍 **The fix:** KoyJabo's live bus map shows the current position of buses on the route. You see the bus approaching on the map and leave home just in time.
+
+---
+
+## 🗺️ How live bus tracking works on KoyJabo
+
+1. Open [koyjabo.com](https://koyjabo.com) — no app install needed.
+2. Search your route (for example "Gulshan 1 → Motijheel").
+3. Open the route's live map — bus icons show current positions.
+4. Watch the bus move toward your stop in real time.
+
+The map works on any phone, in any browser, and saves a cached copy so the route list still works offline.
+
+---
+
+## ⏱️ How much time do you actually save?
+
+| Situation | Old way | With live map |
+|---|---|---|
+| Morning office rush | 25–40 min wait | Leave 5–10 min before bus arrives |
+| Rainy season | Stand in rain, guessing | Wait under cover, step out at the right moment |
+| Last bus risk | Miss it → 2x fare in CNG | See it coming, don't miss it |
+
+---
+
+## 💡 Tips for using live tracking
+
+- **Check the map before leaving home** — if the bus just left the terminal, you have 15–20 minutes.
+- **Track the return route too** — same trip home in the evening.
+- **Share the plan** — the map is free, public and private-safe: no login, no location sharing from your phone.
+
+Stop guessing, start moving. See your bus live → [koyjabo.com](https://koyjabo.com)
+`,
+		bnContent: `
+ঢাকার বাস চলে ৫–২০ মিনিট পরপর — কিন্তু তখনই, যখন আপনি জানেন বাসটা আসলে কোথায় আছে। স্টপে ৪০ মিনিট দাঁড়িয়ে অনুমান করা আর জরুরি নয়।
+
+> 📍 **সমাধান:** কই যাবোর লাইভ বাস ম্যাপে রুটের বাসগুলোর বর্তমান অবস্থান দেখা যায়। ম্যাপে বাসকে এগিয়ে আসতে দেখে ঠিক সময়ে বাসা থেকে বের হন।
+
+---
+
+## 🗺️ কই যাবোতে লাইভ বাস ট্র্যাকিং যেভাবে কাজ করে
+
+১. [koyjabo.com](https://koyjabo.com) খুলুন — অ্যাপ লাগে না।
+২. আপনার রুট খুঁজুন (যেমন "গুলশান ১ → মতিঝিল")।
+৩. রুটের লাইভ ম্যাপ খুলুন — বাস আইকন বর্তমান অবস্থান দেখায়।
+৪. বাস আপনার স্টপের দিকে এগিয়ে আসা লাইভ দেখুন।
+
+ম্যাপ যেকোনো ফোনে, যেকোনো ব্রাউজারে চলে — আর অফলাইনে কাজ করার জন্য রুটের তালিকা সেভও থাকে।
+
+---
+
+## ⏱️ আসলে কত সময় বাঁচে?
+
+| পরিস্থিতি | আগের নিয়ম | লাইভ ম্যাপে |
+|---|---|---|
+| সকালের অফিস রাশ | ২৫–৪০ মিনিট অপেক্ষা | বাস আসার ৫–১০ মিনিট আগে বের হন |
+| বর্ষা মৌসুম | বৃষ্টিতে দাঁড়িয়ে অনুমান | ছাদের নিচে অপেক্ষা, ঠিক সময়ে বের হন |
+| শেষ বাস ঝুঁকি | বাস মিস → সিএনজিতে ২x ভাড়া | বাস আসতে দেখুন, আর মিস করবেন না |
+
+---
+
+## 💡 লাইভ ট্র্যাকিং ব্যবহারের টিপস
+
+- **বাসা থেকে বের হওয়ার আগে ম্যাপ দেখুন** — বাস টার্মিনাল ছেড়ে দিলে হাতে ১৫–২০ মিনিট।
+- **ফেরার রুটও ট্র্যাক করুন** — সন্ধ্যায় একই হিসাব।
+- **ম্যাপটি ফ্রি, পাবলিক ও প্রাইভেসি-সেফ** — লগইন নেই, ফোনের লোকেশন শেয়ার হয় না।
+
+অনুমান বাদ, লাইভ দেখে যাত্রা শুরু করুন → [koyjabo.com](https://koyjabo.com)
+`,
+	},
+	{
+		id: 'dhaka-metro-rail-mrt6-guide',
+		slug: 'dhaka-metro-rail-mrt6-guide',
+		title: 'ঢাকা মেট্রোরেল MRT-6 — ২৪ স্টেশন, ভাড়া ও যাত্রা গাইড',
+		bnTitle: 'ঢাকা মেট্রোরেল MRT-6 — ২৪ স্টেশন, ভাড়া ও যাত্রা গাইড',
+		excerpt: 'Complete Dhaka Metro Rail MRT-6 guide: all 24 stations from Uttara to Motijheel, fare chart, max speed, peak hour tips and how to plan a metro trip with KoyJabo.',
+		bnExcerpt: 'ঢাকা মেট্রোরেল MRT-6 সম্পূর্ণ গাইড: উত্তরা থেকে মতিঝিল সব ২৪ স্টেশন, ভাড়ার তালিকা, সর্বোচ্চ গতি, পিক আওয়ার টিপস ও কই যাবোতে মেট্রো যাত্রা প্ল্যান।',
+		coverImage: '/blog/dhaka-metro-rail-mrt6-guide.jpg',
+		author: 'KoyJabo Team',
+		publishDate: '2026-08-16',
+		readTime: '4 min read',
+		keywords: [
+			'dhaka metro rail mrt6 guide', 'metro rail fare dhaka', 'metrorail station list',
+			'ঢাকা মেট্রোরেল স্টেশন', 'মেট্রো ভাড়া ঢাকা', 'uttara motijheel metro time',
+		],
+		category: 'Metro Rail',
+		content: `
+The Dhaka Metro Rail MRT-6 is the train that changed Dhaka. From Uttara to Motijheel in about 39 minutes — air-conditioned, safe and on time.
+
+---
+
+## 🚇 The 24 stations of MRT-6
+
+Uttara North → Uttara Center → Uttara South → Pallabi → Mirpur 11 → Mirpur 10 → Kazipara → Shewrapara → Agargaon → Bijoy Sarani → Farmgate → Kawran Bazar → Shahbagh → University of Dhaka → Bangladesh Secretariat → Motijheel.
+
+*(Plus the new extension: Karwan Bazar → Shahbagh → Dhaka University → Motijheel already serves the core business district.)*
+
+The complete station map with exits and nearby bus stops is on [KoyJabo](https://koyjabo.com).
+
+---
+
+## 💰 Fare chart (one way, Max Pay)
+
+| Distance | Fare |
+|---|---|
+| 0–4 km | ৳20 |
+| 4–10 km | ৳30 |
+| 10–15 km | ৳40 |
+| 15–20 km | ৳50 |
+| Full line (Uttara → Motijheel) | ৳100 |
+
+Children under 4 travel free; student and senior citizen discounts apply with valid cards. Passengers can pay with MRT pass, Max Pay card, bKash/QR or cash at ticket counters.
+
+---
+
+## ⚡ Fast facts
+
+- **Max speed:** 80 km/h — one station to the next in ~1 minute.
+- **Headway:** every 5–8 minutes during peak hours.
+- **Peak hours:** 7:30–9:30 AM and 5:00–8:00 PM — avoid luggage in the first coach.
+- **Last-mile:** Jobike bicycle sharing pilot is running at Uttara North, Center and South stations.
+
+---
+
+## 🗺️ Plan a metro trip with KoyJabo
+
+1. Search your destination in [KoyJabo](https://koyjabo.com).
+2. See which MRT-6 station is closest and the bus route to reach it.
+3. Compare metro vs bus time and fare side by side.
+
+Metro guide → [koyjabo.com](https://koyjabo.com)
+`,
+		bnContent: `
+ঢাকা মেট্রোরেল MRT-6 হলো সেই ট্রেন যা ঢাকা বদলে দিয়েছে। উত্তরা থেকে মতিঝিল — মাত্র ~৩৯ মিনিট। এয়ারকন্ডিশনড, নিরাপদ, সময়মতো।
+
+---
+
+## 🚇 MRT-6-এর ২৪টি স্টেশন
+
+উত্তরা উত্তর → উত্তরা সেন্টার → উত্তরা দক্ষিণ → পল্লবী → মিরপুর ১১ → মিরপুর ১০ → কাজীপাড়া → শেওড়াপাড়া → আগারগাঁও → বিজয় সরণি → ফার্মগেট → কাওরান বাজার → শাহবাগ → ঢাকা বিশ্ববিদ্যালয় → বাংলাদেশ সচিবালয় → মতিঝিল।
+
+সম্পূর্ণ স্টেশন ম্যাপ, স্টেশনের বের হওয়ার পয়েন্ট ও কাছের বাস স্টপ [কই যাবোতে](https://koyjabo.com)।
+
+---
+
+## 💰 ভাড়ার তালিকা (একমুখী, Max Pay)
+
+| দূরত্ব | ভাড়া |
+|---|---|
+| ০–৪ কিমি | ২০ টাকা |
+| ৪–১০ কিমি | ৩০ টাকা |
+| ১০–১৫ কিমি | ৪০ টাকা |
+| ১৫–২০ কিমি | ৫০ টাকা |
+| পুরো লাইন (উত্তরা → মতিঝিল) | ১০০ টাকা |
+
+৪ বছরের নিচের শিশু ফ্রি; বৈধ কার্ডে শিক্ষার্থী ও বয়স্কদের ছাড় আছে। এমআরটি পাস, Max Pay কার্ড, বিকাশ/কিউআর বা কাউন্টারে নগদে ভাড়া দেওয়া যায়।
+
+---
+
+## ⚡ দ্রুত তথ্য
+
+- **সর্বোচ্চ গতি:** ৮০ কিমি/ঘণ্টা — এক স্টেশন থেকে পরের স্টেশন ~১ মিনিটে।
+- **ফ্রিকোয়েন্সি:** পিক আওয়ারে প্রতি ৫–৮ মিনিটে ট্রেন।
+- **পিক আওয়ার:** সকাল ৭:৩০–৯:৩০ ও বিকাল ৫:০০–৮:০০ — প্রথম কোচে লগেজ এড়িয়ে চলুন।
+- **শেষ মাইল:** উত্তরা উত্তর, সেন্টার ও দক্ষিণ স্টেশনে Jobike সাইকেল শেয়ারিং পাইলট চলছে।
+
+---
+
+## 🗺️ কই যাবোতে মেট্রো যাত্রা প্ল্যান করুন
+
+১. [কই যাবোতে](https://koyjabo.com) গন্তব্য সার্চ করুন।
+২. কোন MRT-6 স্টেশন কাছের ও সেখানে পৌঁছানোর বাস রুট দেখুন।
+৩. মেট্রো ও বাসের সময়–ভাড়া পাশাপাশি তুলনা করুন।
+
+মেট্রো গাইড → [koyjabo.com](https://koyjabo.com)
+`,
+	},
+	{
+		id: 'koyjabo-ai-bangla-transport-assistant',
+		slug: 'koyjabo-ai-bangla-transport-assistant',
+		title: 'বাংলায় পরিবহন প্রশ্ন করুন — কই যাবো AI সহকারী',
+		bnTitle: 'বাংলায় পরিবহন প্রশ্ন করুন — কই যাবো AI সহকারী',
+		excerpt: 'Ask KoyJabo AI in Bangla, Banglish or English and get transport answers in Bengali — routes, bus numbers, fares, journey time. Free, 24/7.',
+		bnExcerpt: 'বাংলা, বাংলিশ বা ইংরেজিতে প্রশ্ন করুন — কই যাবো AI উত্তর দেয় বাংলায়: রুট, বাস নম্বর, ভাড়া, সময়। ফ্রি, ২৪/৭।',
+		coverImage: '/blog/koyjabo-ai-bangla-assistant.jpg',
+		author: 'KoyJabo Team',
+		publishDate: '2026-08-17',
+		readTime: '3 min read',
+		keywords: [
+			'koyjabo ai', 'bangla transport assistant', 'banglish bus route',
+			'কই যাবো এআই', 'বাংলায় বাস রুট প্রশ্ন', 'transport chatbot bangladesh',
+		],
+		category: 'App Guide',
+		content: `
+"বাসে করে মিরপুর থেকে মতিঝিল যাব, কতক্ষণ লাগবে?" — Ask that in Bangla, get the answer in Bangla. Route, time, fare, everything.
+
+---
+
+## 💬 What KoyJabo AI understands
+
+- **খাঁটি বাংলা** — "ধানমন্ডি থেকে আজিমপুর বাস ভাড়া কত?"
+- **বাংলিশ** — "basa kore jabo" — it gets it.
+- **ইংরেজি** — "How do I go from Gulshan to Farmgate by bus?"
+
+Whatever you type, the answer comes back in Bengali with the exact bus numbers, stops and fares.
+
+---
+
+## ✅ Example questions
+
+| You ask | You get |
+|---|---|
+| "মিরপুর ১০ থেকে মতিঝিল বাসে কতক্ষণ?" | Best buses, route, ~50–60 min estimate |
+| "ঢাকা থেকে সিলেট কীভাবে যাব?" | Bus / train / flight options with fare range |
+| "মেট্রোয় মতিঝিল কতক্ষণ?" | MRT-6 time (~39 min) + station tips |
+| "ধানমন্ডি থেকে আজিমপুর ভাড়া কত?" | Fare for the local bus route |
+
+---
+
+## 🕐 Available anytime
+
+The assistant is **free, 24/7 and lives on the website** — no app install needed. Open [koyjabo.com/ai](https://koyjabo.com/ai) and start typing.
+
+Your 24/7 transport assistant → [koyjabo.com/ai](https://koyjabo.com/ai)
+`,
+		bnContent: `
+"বাসে করে মিরপুর থেকে মতিঝিল যাব, কতক্ষণ লাগবে?" — বাংলায় প্রশ্ন করুন, বাংলায় উত্তর পান। রুট, সময়, ভাড়া — সবকিছু।
+
+---
+
+## 💬 কই যাবো AI কী কী বোঝে
+
+- **খাঁটি বাংলা** — "ধানমন্ডি থেকে আজিমপুর বাস ভাড়া কত?"
+- **বাংলিশ** — "basa kore jabo" — বোঝে!
+- **ইংরেজি** — "How do I go from Gulshan to Farmgate by bus?"
+
+যেভাবেই লিখুন, উত্তর আসে বাংলায় — সঠিক বাস নম্বর, স্টপ ও ভাড়া সহ।
+
+---
+
+## ✅ কিছু উদাহরণ প্রশ্ন
+
+| আপনি জিজ্ঞেস করেন | আপনি পান |
+|---|---|
+| "মিরপুর ১০ থেকে মতিঝিল বাসে কতক্ষণ?" | সেরা বাস, রুট, ~৫০–৬০ মিনিটের হিসাব |
+| "ঢাকা থেকে সিলেট কীভাবে যাব?" | বাস / ট্রেন / ফ্লাইট — ভাড়াসহ বিকল্প |
+| "মেট্রোয় মতিঝিল কতক্ষণ?" | MRT-6 সময় (~৩৯ মিনিট) + স্টেশন টিপস |
+| "ধানমন্ডি থেকে আজিমপুর ভাড়া কত?" | লোকাল বাস রুটের ভাড়া |
+
+---
+
+## 🕐 যেকোনো সময় পাওয়া যায়
+
+সহকারীটি **ফ্রি, ২৪/৭** এবং ওয়েবসাইটেই থাকে — অ্যাপ ইনস্টলের দরকার নেই। [koyjabo.com/ai](https://koyjabo.com/ai) খুলে টাইপ করা শুরু করুন।
+
+২৪/৭ পরিবহন সহকারী → [koyjabo.com/ai](https://koyjabo.com/ai)
+`,
+	},
+	{
+		id: 'koyjabo-app-dhaka-bus-routes-guide',
+		slug: 'koyjabo-app-dhaka-bus-routes-guide',
+		title: 'কই যাবো — ৩০ সেকেন্ডে ঢাকার বাস রুট খুঁজুন',
+		bnTitle: 'কই যাবো — ৩০ সেকেন্ডে ঢাকার বাস রুট খুঁজুন',
+		excerpt: 'How to use KoyJabo: search any destination in Dhaka and get the right bus number, route map and fare in 30 seconds. Works on any phone, offline too.',
+		bnExcerpt: 'কই যাবো যেভাবে ব্যবহার করবেন: ঢাকার যেকোনো গন্তব্য সার্চ করে ৩০ সেকেন্ডে সঠিক বাস নম্বর, রুট ম্যাপ ও ভাড়া পান। যেকোনো ফোনে চলে, অফলাইনেও।',
+		coverImage: '/blog/koyjabo-app-dhaka-routes.jpg',
+		author: 'KoyJabo Team',
+		publishDate: '2026-08-18',
+		readTime: '3 min read',
+		keywords: [
+			'how to use koyjabo', 'dhaka bus route search', 'bus number dhaka',
+			'কই যাবো ব্যবহার', 'ঢাকা বাস রুট খোঁজা', 'bus route map dhaka',
+		],
+		category: 'App Guide',
+		content: `
+Need to go somewhere in Dhaka? In 30 seconds you can know exactly which bus to take, the route map and the fare.
+
+---
+
+## 🚌 Step by step
+
+1. Open [koyjabo.com](https://koyjabo.com) — no app download needed.
+2. Type your destination — "Motijheel", "Mirpur 10", anything.
+3. Get the correct bus numbers + route map + fare instantly.
+
+That's it. Works on any phone, in any browser.
+
+---
+
+## 🔖 Things you can do
+
+- **Search from-to routes** — e.g. "Gulshan 1 → Motijheel" shows all buses on that corridor.
+- **See live bus positions** — watch the bus approach on the live map.
+- **Save favorite routes** — one tap on ❤️, then open them from the Favorites page — even offline.
+- **Check metro, train, launch and flight options** — intercity trips included.
+- **Ask the AI** — any transport question, answered in Bangla.
+
+---
+
+## 📴 Offline-first
+
+KoyJabo is a PWA: once you visit, your favorite routes and search data are cached. When the internet drops, the app still works — the route list stays available.
+
+Save it today — you will use it every day → [koyjabo.com](https://koyjabo.com)
+`,
+		bnContent: `
+ঢাকায় কোথাও যেতে হবে? ৩০ সেকেন্ডেই জেনে নিন কোন বাসে উঠবেন, রুট ম্যাপ কেমন, ভাড়া কত।
+
+---
+
+## 🚌 ধাপে ধাপে
+
+১. [koyjabo.com](https://koyjabo.com) খুলুন — অ্যাপ ডাউনলোড লাগে না।
+২. গন্তব্য লিখুন — 'মতিঝিল', 'মিরপুর ১০', যেকোনো কিছু।
+৩. সঠিক বাস নম্বর + রুট ম্যাপ + ভাড়া — সাথে সাথে।
+
+এতটুকুই! যেকোনো ফোনে, যেকোনো ব্রাউজারে চলে।
+
+---
+
+## 🔖 যা যা করা যায়
+
+- **ফ্রম–টু রুট সার্চ** — "গুলশান ১ → মতিঝিল" লিখলে ওই করিডরের সব বাস।
+- **লাইভ বাস দেখুন** — লাইভ ম্যাপে বাসকে এগিয়ে আসতে দেখুন।
+- **ফেভারিট রুট সেভ করুন** — ❤️ আইকনে এক ট্যাপ, তারপর ফেভারিটস পেজ থেকে — অফলাইনেও।
+- **মেট্রো, ট্রেন, লঞ্চ, ফ্লাইট** — ইন্টারসিটি যাত্রাও আছে।
+- **AI-কে প্রশ্ন করুন** — যেকোনো পরিবহন প্রশ্নের বাংলা উত্তর।
+
+---
+
+## 📴 অফলাইন-ফার্স্ট
+
+কই যাবো একটি PWA: একবার খুললে ফেভারিট রুট ও সার্চ ডেটা ক্যাশে থেকে যায়। ইন্টারনেট বন্ধ থাকলেও অ্যাপ চলে — রুটের তালিকা পাওয়া যায়।
+
+আজই সেভ করুন — প্রতিদিন কাজে লাগবে → [koyjabo.com](https://koyjabo.com)
+`,
+	},
+	{
+		id: 'local-bus-fare-dhaka-guide',
+		slug: 'local-bus-fare-dhaka-guide',
+		title: 'ঢাকার লোকাল বাস ভাড়া — সম্পূর্ণ গাইড ২০২৬',
+		bnTitle: 'ঢাকার লোকাল বাস ভাড়া — সম্পূর্ণ গাইড ২০২৬',
+		excerpt: 'Dhaka local bus fare chart 2026: short, mid and long distance fares, student discounts, minibus/AC coach rates, and how to check the exact fare on your route with KoyJabo.',
+		bnExcerpt: 'ঢাকার লোকাল বাস ভাড়ার তালিকা ২০২৬: স্বল্প, মাঝারি ও দীর্ঘ দূরত্বের ভাড়া, শিক্ষার্থী ছাড়, মিনিবাস/AC কোচ — এবং কই যাবোতে আপনার রুটের সঠিক ভাড়া যেভাবে দেখবেন।',
+		coverImage: '/blog/local-bus-fare-dhaka-guide.jpg',
+		author: 'KoyJabo Team',
+		publishDate: '2026-08-19',
+		readTime: '3 min read',
+		keywords: [
+			'dhaka local bus fare 2026', 'bus fare dhaka city', 'ঢাকার বাস ভাড়া',
+			'local bus ticket price dhaka', 'student bus discount bangladesh',
+		],
+		category: 'Bus & Transport',
+		content: `
+Dhaka city buses have no pre-booking — buy a ticket from the conductor or pay on board. Here is what a local bus ticket costs in 2026.
+
+---
+
+## 💰 Estimated local bus fares
+
+| Ticket type | Fare |
+|---|---|
+| Short distance (1–4 km, e.g. Banani → Gulshan) | ৳10–15 |
+| Mid distance (4–8 km, e.g. Gulshan → Farmgate) | ৳15–25 |
+| Long distance (8+ km, e.g. Uttara → Motijheel) | ৳25–40 |
+| Minibus / AC coach inside Dhaka | ৳30–60 |
+| Student (with student card) | ~50% off on BRTC buses |
+
+Fares are distance-based. For the exact fare between two stops on your route, use the KoyJabo fare calculator — it covers 200+ Dhaka routes.
+
+---
+
+## 🧾 How to pay
+
+- **Conductor ticket:** hand over the cash, get a paper ticket.
+- **Pass / card:** some routes accept transport passes.
+- **BRTC student discount:** show your student card.
+
+---
+
+## 📏 Fare check on KoyJabo
+
+1. Open [koyjabo.com](https://koyjabo.com).
+2. Enter your from and to stops.
+3. See the bus numbers, route map and exact fare — plus how long the trip takes.
+
+The right bus, the right fare → [koyjabo.com](https://koyjabo.com)
+`,
+		bnContent: `
+ঢাকার সিটি বাসে আগে থেকে বুকিং লাগে না — বাসে উঠে কন্ডাক্টরের কাছ থেকে টিকিট কিনুন বা ভাড়া বুঝিয়ে দিন। ২০২৬ সালে লোকাল বাস ভাড়া কেমন, তা এখানে।
+
+---
+
+## 💰 আনুমানিক লোকাল বাস ভাড়া
+
+| টিকিটের ধরন | ভাড়া |
+|---|---|
+| স্বল্প দূরত্ব (১–৪ কিমি, যেমন বনানী → গুলশান) | ১০–১৫ টাকা |
+| মাঝারি দূরত্ব (৪–৮ কিমি, যেমন গুলশান → ফার্মগেট) | ১৫–২৫ টাকা |
+| দীর্ঘ দূরত্ব (৮+ কিমি, যেমন উত্তরা → মতিঝিল) | ২৫–৪০ টাকা |
+| মিনিবাস / ঢাকার ভেতরে AC কোচ | ৩০–৬০ টাকা |
+| শিক্ষার্থী (ছাত্র কার্ড সহ) | BRTC বাসে ~৫০% ছাড় |
+
+ভাড়া দূরত্বভিত্তিক। আপনার রুটের দুই স্টপের মাঝে সঠিক ভাড়া দেখতে কই যাবোর ভাড়া ক্যালকুলেটর ব্যবহার করুন — ২০০+ ঢাকা রুট।
+
+---
+
+## 🧾 কীভাবে পেমেন্ট করবেন
+
+- **কন্ডাক্টর টিকিট:** নগদ দিয়ে পেপার টিকিট নিন।
+- **পাস / কার্ড:** কিছু রুটে ট্রান্সপোর্ট পাস চলে।
+- **BRTC শিক্ষার্থী ছাড়:** ছাত্র কার্ড দেখালেই।
+
+---
+
+## 📏 কই যাবোতে ভাড়া চেক করুন
+
+১. [koyjabo.com](https://koyjabo.com) খুলুন।
+২. আপনার ফ্রম–টু স্টপ লিখুন।
+৩. বাস নম্বর, রুট ম্যাপ ও সঠিক ভাড়া — সাথে কত সময় লাগবে তাও দেখুন।
+
+সঠিক বাস, সঠিক ভাড়া → [koyjabo.com](https://koyjabo.com)
+`,
+	},
+	{
+		id: 'dhaka-to-sylhet-travel-guide-3-ways',
+		slug: 'dhaka-to-sylhet-travel-guide-3-ways',
+		title: 'ঢাকা থেকে সিলেট — ৩ পথ, কোনটি আপনার জন্য সেরা?',
+		bnTitle: 'ঢাকা থেকে সিলেট — ৩ পথ, কোনটি আপনার জন্য সেরা?',
+		excerpt: 'Dhaka to Sylhet by bus, train or flight — compare time, fare and comfort, then plan the whole trip including the Dhaka side with KoyJabo. Updated August 2026.',
+		bnExcerpt: 'ঢাকা থেকে সিলেট — বাস, ট্রেন বা ফ্লাইট: সময়, ভাড়া ও আরাম তুলনা করুন, তারপর কই যাবোতে পুরো যাত্রা প্ল্যান করুন। আগস্ট ২০২৬ আপডেট।',
+		coverImage: '/blog/uk-bangladeshi-travel-guide-sylhet-chittagong-dhaka-2026.jpg',
+		author: 'KoyJabo Team',
+		publishDate: '2026-08-20',
+		readTime: '4 min read',
+		keywords: [
+			'dhaka to sylhet bus fare', 'dhaka to sylhet train', 'sylhet flight dhaka',
+			'ঢাকা থেকে সিলেট যাওয়ার উপায়', 'ঢাকা সিলেট বাস ভাড়া',
+		],
+		category: 'Travel Guide',
+		content: `
+Three ways to get from Dhaka to Sylhet — each with its own trade-off between time, money and comfort.
+
+---
+
+## 🚌 1. Bus — flexible & frequent
+
+- **Duration:** ~4–5 hours
+- **Fare:** ৳680–740 (non-AC), ৳900–1,500 (AC / premium)
+- **Operators:** Hanif, Shohagh, Shyamoli, Green Line, Saudia, Ena
+- **Departures:** Mohakhali & Sayedabad terminals, dozens of daily departures
+
+Best when you want flexibility — morning or night departure on your schedule.
+
+---
+
+## 🚆 2. Train — comfortable & scenic
+
+- **Duration:** ~4.5–6 hours
+- **Fare:** ৳335 (Shovon) to ৳1,000+ (AC Berth)
+- **Classes:** Shovon, Shovon Chair, Snigdha, AC Berth
+- **Tip:** book 5–10 days ahead; weekend & holiday trains sell out fast
+
+Best when you want space to stretch and a scenic route through the haors.
+
+---
+
+## ✈️ 3. Flight — fastest
+
+- **Duration:** ~45 minutes
+- **Fare:** ৳5,000–9,000 one way
+- **Note:** add ~3 hours for airport, traffic and check-in time
+
+Best when time is money — but count the full door-to-door time before paying.
+
+---
+
+## 🗺️ Plan the Dhaka side too
+
+Before any of these, you still need to cross Dhaka. Use [KoyJabo](https://koyjabo.com) to find the right bus to Mohakhali / Sayedabad / Kamalapur / the airport — with live bus positions so you never miss the connection.
+
+Compare all three, book smart → [koyjabo.com](https://koyjabo.com)
+`,
+		bnContent: `
+ঢাকা থেকে সিলেট যাওয়ার তিনটি পথ — সময়, খরচ ও আরামের বিনিময় প্রতিটির আলাদা।
+
+---
+
+## 🚌 ১. বাস — নমনীয় ও ঘন ঘন
+
+- **সময়:** ~৪–৫ ঘণ্টা
+- **ভাড়া:** ৬৮০–৭৪০ টাকা (নন-AC), ৯০০–১,৫০০ টাকা (AC / প্রিমিয়াম)
+- **অপারেটর:** হানিফ, শোহাগ, শ্যামলী, গ্রীন লাইন, সৌদিয়া, এনা
+- **ছাড়ার পয়েন্ট:** মোহাখালী ও সায়েদাবাদ টার্মিনাল — প্রতিদিন অসংখ্য ছাড়া
+
+সবচেয়ে নমনীয় — সকাল হোক বা রাত, আপনার সময়ে।
+
+---
+
+## 🚆 ২. ট্রেন — আরামদায়ক ও মনোরম
+
+- **সময়:** ~৪.৫–৬ ঘণ্টা
+- **ভাড়া:** ৩৩৫ টাকা (শোভন) থেকে ১,০০০+ টাকা (AC বার্থ)
+- **ক্লাস:** শোভন, শোভন চেয়ার, স্নিগ্ধা, AC বার্থ
+- **টিপস:** ৫–১০ দিন আগে বুক করুন; উইকেন্ড ও ঈদের ট্রেন তাড়াতাড়ি শেষ হয়
+
+সবচেয়ে আরামদায়ক — হাওরের পাশ দিয়ে মনোরম পথ।
+
+---
+
+## ✈️ ৩. ফ্লাইট — সবচেয়ে দ্রুত
+
+- **সময়:** ~৪৫ মিনিট
+- **ভাড়া:** একমুখী ৫,০০০–৯,০০০ টাকা
+- **মনে রাখবেন:** এয়ারপোর্ট, ট্রাফিক ও চেক-ইনে আরও ~৩ ঘণ্টা যোগ হয়
+
+সময়ই টাকা — তবে পেমেন্টের আগে দরজা-থেকে-দরজা সময় হিসাব করে নিন।
+
+---
+
+## 🗺️ ঢাকার দিকটাও প্ল্যান করুন
+
+যে পথেই যান, আগে ঢাকা পাড়ি দিতে হবে। [কই যাবো](https://koyjabo.com) ব্যবহার করে মোহাখালী, সায়েদাবাদ, কমলাপুর বা এয়ারপোর্ট যাওয়ার সঠিক বাস খুঁজুন — লাইভ বাস অবস্থানসহ, যেন কানেকশন মিস না হয়।
+
+তিন পথ তুলনা করে স্মার্ট যাত্রা → [koyjabo.com](https://koyjabo.com)
+`,
+	},
+	{
+		id: 'night-launch-dhaka-barishal-guide',
+		slug: 'night-launch-dhaka-barishal-guide',
+		title: 'ঢাকা থেকে বরিশাল রাতের লঞ্চ — অভিজ্ঞতা ও খরচ',
+		bnTitle: 'ঢাকা থেকে বরিশাল রাতের লঞ্চ — অভিজ্ঞতা ও খরচ',
+		excerpt: 'The Dhaka–Barishal night launch experience: cabin costs from ~৳500, fresh ilish on deck, schedules and ghats — and how to plan the river route with KoyJabo.',
+		bnExcerpt: 'ঢাকা–বরিশাল রাতের লঞ্চের অভিজ্ঞতা: ~৫০০ টাকা থেকে কেবিন, ডেকের ওপর তাজা ইলিশ, সময়সূচি ও ঘাট — আর কই যাবোতে নদী রুট প্ল্যান।',
+		coverImage: '/blog/koyjabo.jpg',
+		author: 'KoyJabo Team',
+		publishDate: '2026-08-21',
+		readTime: '3 min read',
+		keywords: [
+			'dhaka barishal night launch', 'launch fare barishal', 'রাতের লঞ্চ ঢাকা বরিশাল',
+			'launch journey bangladesh', 'sadarghat launch schedule',
+		],
+		category: 'Travel Guide',
+		content: `
+Three days, three meals, 300 km — a Bangladeshi launch journey is an experience no train can give you.
+
+---
+
+## 🌊 The night launch experience
+
+- **Route:** Dhaka (Sadarghat) → Barishal, overnight sail
+- **Cabin:** from ~৳500 for a bed on the river
+- **On deck:** fresh ilish fry straight from the river kitchen
+
+Sleep while the river moves — wake up in Barishal, rested and ready.
+
+---
+
+## 💰 What it costs
+
+| Option | Approx. fare |
+|---|---|
+| Deck (sitting) | ৳150–250 |
+| Cabin (single) | ~৳500–700 |
+| Cabin (double / AC) | ৳1,200–2,000 |
+
+Fares vary by operator and season (Eid weeks cost more and sell out days ahead).
+
+---
+
+## 🚢 Practical tips
+
+- **Ghat:** Sadarghat is the main departure point in Dhaka — get there 30–45 min early.
+- **Choose the right launch:** big operators with fixed schedules are more punctual.
+- **Pack light:** cabins are compact; keep valuables in a small bag with you.
+- **Eat local:** the deck kitchen's ilish and khichuri are part of the experience.
+
+---
+
+## 🗺️ Plan the river route with KoyJabo
+
+KoyJabo's river routes include schedules, ghats and fares — and the bus/CNG route to reach Sadarghat from anywhere in Dhaka.
+
+Plan your river trip → [koyjabo.com](https://koyjabo.com)
+`,
+		bnContent: `
+৩ দিন, ৩ বেলা, ৩০০ কিমি — বাংলাদেশি লঞ্চের যাত্রা এমন এক অভিজ্ঞতা যা কোনো ট্রেন দিতে পারে না।
+
+---
+
+## 🌊 রাতের লঞ্চের অভিজ্ঞতা
+
+- **রুট:** ঢাকা (সদরঘাট) → বরিশাল, সারারাত যাত্রা
+- **কেবিন:** নদীর ওপর বিছানার জন্য ~৫০০ টাকা থেকে
+- **ডেকের ওপর:** নদীর রান্নাঘর থেকে তাজা ইলিশ ভাজা
+
+নদী এগোয়, আপনি ঘুমান — সকালে বরিশালে, সতেজ অবস্থায়।
+
+---
+
+## 💰 খরচ কেমন
+
+| বিকল্প | আনুমানিক ভাড়া |
+|---|---|
+| ডেক (বসা) | ১৫০–২৫০ টাকা |
+| কেবিন (একক) | ~৫০০–৭০০ টাকা |
+| কেবিন (দ্বৈত / AC) | ১,২০০–২,০০০ টাকা |
+
+অপারেটর ও মৌসুম অনুযায়ী ভাড়া বদলায় (ঈদের সপ্তাহে দাম বাড়ে, টিকিট দিন আগে শেষ হয়)।
+
+---
+
+## 🚢 ব্যবহারিক টিপস
+
+- **ঘাট:** ঢাকায় সদরঘাটই মূল ছাড়ার পয়েন্ট — ৩০–৪৫ মিনিট আগে পৌঁছান।
+- **সঠিক লঞ্চ বাছুন:** বড় অপারেটরদের নির্দিষ্ট সময়সূচি থাকে।
+- **কম লাগেজ:** কেবিন ছোট হয়; মূল্যবান জিনিস কাছের ছোট ব্যাগে রাখুন।
+- **স্থানীয় খাবার:** ডেকের রান্নাঘরের ইলিশ-খিচুড়ি অভিজ্ঞতারই অংশ।
+
+---
+
+## 🗺️ কই যাবোতে নদী রুট প্ল্যান করুন
+
+কই যাবোর নদী রুটে আছে সময়সূচি, ঘাট ও ভাড়া — আর ঢাকার যেকোনো জায়গা থেকে সদরঘাট পৌঁছানোর বাস/সিএনজি রুটও।
+
+নদীপথের পরিকল্পনা করুন → [koyjabo.com](https://koyjabo.com)
+`,
+	},
+	{
+		id: 'train-dhaka-chattogram-guide',
+		slug: 'train-dhaka-chattogram-guide',
+		title: 'ট্রেনে ঢাকা থেকে চট্টগ্রাম — সময়সূচি, টিকিট ও টিপস',
+		bnTitle: 'ট্রেনে ঢাকা থেকে চট্টগ্রাম — সময়সূচি, টিকিট ও টিপস',
+		excerpt: 'Train from Dhaka to Chattogram: the busiest route in Bangladesh — schedules, fare classes, booking tips, and planning the whole trip with KoyJabo.',
+		bnExcerpt: 'ঢাকা থেকে চট্টগ্রাম ট্রেন: বাংলাদেশের ব্যস্ততম রুট — সময়সূচি, ভাড়ার ক্লাস, বুকিং টিপস এবং কই যাবোতে পুরো যাত্রা প্ল্যান।',
+		coverImage: '/blog/long-distance-bus-fare-hike-bangladesh.jpg',
+		author: 'KoyJabo Team',
+		publishDate: '2026-08-22',
+		readTime: '4 min read',
+		keywords: [
+			'dhaka chattogram train schedule', 'dhaka chittagong train fare',
+			'ঢাকা চট্টগ্রাম ট্রেন', 'kamalapur train ticket', 'bangladesh railway booking tips',
+		],
+		category: 'Train & Railway',
+		content: `
+The Dhaka–Chattogram railway is the busiest in Bangladesh. Tickets sell fast, but the trip is easy if you plan ahead.
+
+---
+
+## 🚆 Popular trains (Kamalapur ↔ Chattogram)
+
+| Train | Class | Approx. duration |
+|---|---|---|
+| Suborno Express | AC Berth / Seat | ~5.5–6.5 h |
+| Mohanagar Express | AC / non-AC | ~6–7 h |
+| Mahanagar Provati | Non-AC | ~6–7 h |
+| Chattala Express | Non-AC | ~6.5–7 h |
+
+Fares range from ~৳335 (Shovon) to ৳1,000+ (AC Berth).
+
+---
+
+## 🎫 Booking tips
+
+1. **Book 5–10 days ahead** — especially for weekends, holidays and Eid.
+2. **Use the official app/website** (or the station counter as backup).
+3. **Choose your class early** — AC Berth and Snigdha sell out first.
+4. **Save your e-ticket** — screenshot works fine for verification.
+
+---
+
+## 🗺️ Plan the whole trip with KoyJabo
+
+The train is only half the journey — you also need to reach Kamalapur on time. KoyJabo shows:
+
+- The right bus to Kamalapur from your area — with live bus positions
+- Offline-saved schedules so you can check even without internet
+- The bus route for the Chattogram side too
+
+Train guide → [koyjabo.com](https://koyjabo.com)
+`,
+		bnContent: `
+ঢাকা–চট্টগ্রাম রেলপথ বাংলাদেশের ব্যস্ততম। টিকিট দ্রুত শেষ হয় — কিন্তু আগে থেকে প্ল্যান করলে যাত্রা সহজ।
+
+---
+
+## 🚆 জনপ্রিয় ট্রেন (কমলাপুর ↔ চট্টগ্রাম)
+
+| ট্রেন | ক্লাস | আনুমানিক সময় |
+|---|---|---|
+| সুবর্ণ এক্সপ্রেস | AC বার্থ / সিট | ~৫.৫–৬.৫ ঘণ্টা |
+| মহানগর এক্সপ্রেস | AC / নন-AC | ~৬–৭ ঘণ্টা |
+| মহানগর প্রভাতী | নন-AC | ~৬–৭ ঘণ্টা |
+| চট্টলা এক্সপ্রেস | নন-AC | ~৬.৫–৭ ঘণ্টা |
+
+ভাড়া ~৩৩৫ টাকা (শোভন) থেকে ১,০০০+ টাকা (AC বার্থ)।
+
+---
+
+## 🎫 বুকিং টিপস
+
+১. **৫–১০ দিন আগে বুক করুন** — বিশেষ করে উইকেন্ড, ছুটি ও ঈদে।
+২. **অফিসিয়াল অ্যাপ/ওয়েবসাইট** ব্যবহার করুন (ব্যাকআপে স্টেশন কাউন্টার)।
+৩. **ক্লাস আগে বাছুন** — AC বার্থ ও স্নিগ্ধা সবার আগে শেষ হয়।
+৪. **ই-টিকিট সেভ রাখুন** — স্ক্রিনশটও চেক করার সময় চলে।
+
+---
+
+## 🗺️ কই যাবোতে পুরো যাত্রা প্ল্যান করুন
+
+ট্রেন যাত্রার অর্ধেক — কমলাপুর পৌঁছানোটাও প্ল্যান দরকার। কই যাবো দেখায়:
+
+- আপনার এলাকা থেকে কমলাপুর যাওয়ার সঠিক বাস — লাইভ বাস অবস্থানসহ
+- অফলাইনে সেভ করা সময়সূচি — ইন্টারনেট ছাড়াও চেক করা যায়
+- চট্টগ্রামের দিকের বাস রুটও
+
+ট্রেন গাইড → [koyjabo.com](https://koyjabo.com)
+`,
 	}
 ];
