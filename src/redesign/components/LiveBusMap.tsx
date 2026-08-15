@@ -40,6 +40,12 @@ interface Props {
   selectedNumber: string | null;
   sharingBusNumber: string | null;
   onMarkerClick?: (busNumber: string) => void;
+  /** User GPS location + nearest stop on this route (index into routeStops) — draws a dashed line + blue dot */
+  userProximity?: { lat: number; lng: number; stopIndex: number; distanceKm: number } | null;
+}
+
+function userIconHtml(): string {
+  return `<div style="width:26px;height:26px;border-radius:50%;background:#3b82f6;border:3px solid white;box-shadow:0 0 0 6px rgba(59,130,246,.4),0 2px 8px rgba(0,0,0,.35);margin:-13px 0 0 -13px;animation:kjPulse 1.6s infinite"></div>`;
 }
 
 /**
@@ -47,10 +53,12 @@ interface Props {
  * amber idle / gray stale), blue-ring highlight for the selected or own bus,
  * click → popup (bus number, nearest stop, status, speed, contributors, ago).
  */
-export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, buses, selectedNumber, sharingBusNumber, onMarkerClick }: Props) {
+export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, buses, selectedNumber, sharingBusNumber, onMarkerClick, userProximity }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const busLayerRef = useRef<L.LayerGroup | null>(null);
+  const userLayerRef = useRef<L.LayerGroup | null>(null);
+  const fittedUserRef = useRef(false);
   const flownRef = useRef<string | null>(null);
 
   function ago(ts: number): string {
@@ -71,6 +79,7 @@ export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, bu
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(map);
       mapRef.current = map;
       busLayerRef.current = L.layerGroup().addTo(map);
+      userLayerRef.current = L.layerGroup().addTo(map);
       setTimeout(() => map.invalidateSize(), 300);
 
       if (routeStops.length > 1) {
@@ -97,6 +106,7 @@ export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, bu
         map.remove();
         mapRef.current = null;
         busLayerRef.current = null;
+        userLayerRef.current = null;
         flownRef.current = null;
       };
     }, 150);
@@ -138,6 +148,43 @@ export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, bu
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buses, selectedNumber, sharingBusNumber]);
+
+  // user GPS dot + dashed line to their nearest stop on this route.
+  // Redraws on every position update; fits the view once so the user can see
+  // both their location and the nearest stop (e.g. Hemayetpur → Technical).
+  useEffect(() => {
+    const map = mapRef.current;
+    const layer = userLayerRef.current;
+    if (!map || !layer) return;
+    layer.clearLayers();
+    if (!userProximity) {
+      fittedUserRef.current = false;
+      return;
+    }
+    const { lat, lng, stopIndex, distanceKm } = userProximity;
+    const stop = routeStops[stopIndex];
+    if (stop) {
+      const kmText = `${N(distanceKm.toFixed(1), lang)} ${lang === 'bn' ? 'কিমি' : 'km'}`;
+      L.polyline([[lat, lng], [stop.lat, stop.lng]], {
+        color: '#ef4444',
+        weight: 3,
+        dashArray: '8 8',
+        opacity: 0.85,
+      })
+        .bindTooltip(`📏 ${kmText}`, { permanent: true, direction: 'center', className: 'kj-userline-tip' })
+        .addTo(layer);
+    }
+    L.marker([lat, lng], { icon: L.divIcon({ className: '', html: userIconHtml() }), zIndexOffset: 1000 })
+      .bindTooltip(`<b>${T(lang, 'আপনি এখানে', 'You are here')}</b>`, { permanent: false, direction: 'top', offset: [0, -12] })
+      .addTo(layer);
+    if (!fittedUserRef.current) {
+      fittedUserRef.current = true;
+      const pts: [number, number][] = [[lat, lng]];
+      if (stop) pts.push([stop.lat, stop.lng]);
+      map.fitBounds(L.latLngBounds(pts), { padding: [60, 60], maxZoom: 16 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userProximity, routeStops, stopIds.join('|')]);
 
   // fly to the selected bus (once per selection, not per poll)
   useEffect(() => {

@@ -50,7 +50,9 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
     }}>
       <AvatarAI tk={tk} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: SANS, fontSize: 14, fontWeight: 800, color: tk.text }}>KoyJabo AI</div>
+        <div style={{ fontFamily: SANS, fontSize: 14, fontWeight: 800 }}>
+          <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>Koy</span><span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}>Jabo</span> <span style={{ color: tk.text }}>AI</span>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
           <span style={{ fontFamily: BEN, fontSize: 11, color: tk.textDim }}>{T(lang, 'যেকোনো পরিবহন প্রশ্ন করুন', 'Ask any transport question')}</span>

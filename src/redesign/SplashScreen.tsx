@@ -35,12 +35,16 @@ export function SplashScreen() {
         </div>
         <div style={{
           fontFamily: "'Hind Siliguri', sans-serif", fontWeight: 700,
-          fontSize: 30, color: '#eafcff', letterSpacing: -0.5,
-        }}>কই যাবো</div>
+          fontSize: 30, letterSpacing: -0.5,
+        }}>
+          <span style={{ color: '#FF5A6E' }}>কই</span><span style={{ color: '#00C081' }}> যাবো</span>
+        </div>
         <div style={{
           fontFamily: "'Inter', sans-serif", fontWeight: 700,
-          fontSize: 11, letterSpacing: 4, color: '#4ad6ee', marginTop: 4,
-        }}>KOYJABO</div>
+          fontSize: 11, letterSpacing: 4, marginTop: 4,
+        }}>
+          <span style={{ color: '#FF5A6E' }}>KOY</span><span style={{ color: '#00C081' }}>JABO</span>
+        </div>
         <div style={{
           width: 168, height: 4, borderRadius: 999,
           background: 'rgba(255,255,255,0.1)', marginTop: 22, overflow: 'hidden',

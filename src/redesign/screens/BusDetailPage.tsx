@@ -260,6 +260,7 @@ export function BusDetailPage(props: Props) {
             selectedNumber={selectedLiveBus}
             sharingBusNumber={getSharingState()?.busNumber ?? null}
             onMarkerClick={setSelectedLiveBus}
+            userProximity={nearest && userLocation ? { lat: userLocation.lat, lng: userLocation.lng, stopIndex: nearest.index, distanceKm: nearest.distance } : null}
           />
         </div>
 
@@ -336,7 +337,10 @@ export function BusDetailPage(props: Props) {
                         <span style={{ fontFamily:BEN,fontWeight:isEnd?700:500,fontSize:14,color:tk.text }}>{lang==='bn'?s.bn:s.en}</span>
                         {s.isFrom && <Pill tk={tk} tone="primary">{T(lang,'বোর্ডিং','Boarding')}</Pill>}
                         {s.isTo && <Pill tk={tk} tone="accent">{T(lang,'গন্তব্য','Destination')}</Pill>}
-                        {isNearest && <Pill tk={tk} tone="mute">{T(lang,'আপনি এখানে','You are here')}</Pill>}
+                        {isNearest && nearest && (nearest.distance <= 1.5
+                          ? <Pill tk={tk} tone="mute">{T(lang,'আপনি এখানে','You are here')}</Pill>
+                          : <Pill tk={tk} tone="mute">{N(nearest.distance.toFixed(1), lang)} {T(lang,'কিমি দূরে','km away')}</Pill>
+                        )}
                       </div>
                       {showHelp && (
                         <button onClick={() => setShowHelpline(true)} style={{ background:tk.accentSoft,border:`1px solid ${tk.accent}55`,borderRadius:999,padding:'6px 10px',fontFamily:BEN,fontWeight:700,fontSize:12,color:tk.accent,cursor:'pointer',whiteSpace:'nowrap',flexShrink:0 }}>

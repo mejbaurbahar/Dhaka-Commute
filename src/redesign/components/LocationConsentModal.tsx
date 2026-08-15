@@ -44,7 +44,9 @@ export function LocationConsentModal({ tk, lang, open, onAllow, onDeny, onNav }:
             <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 17, color: tk.text }}>
               {T(lang, 'আপনার অবস্থান ব্যবহার করি?', 'Use your location?')}
             </div>
-            <div style={{ fontFamily: SANS, fontSize: 12, color: textFaintModal, marginTop: 2 }}>KoyJabo</div>
+            <div style={{ fontFamily: SANS, fontSize: 12, marginTop: 2 }}>
+              <span style={{ color: '#D91F35' }}>Koy</span><span style={{ color: '#008355' }}>Jabo</span>
+            </div>
           </div>
         </div>
 

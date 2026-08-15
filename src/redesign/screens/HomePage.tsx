@@ -864,7 +864,9 @@ function KoyJaboStory({
         }}
       >
         <div style={{ background: 'rgba(0,245,255,0.15)', padding: '5px 6px 3px' }}>
-          <div style={{ fontFamily: BEN, fontSize: 7, fontWeight: 800, color: '#00f5ff', letterSpacing: 0.5 }}>KoyJabo</div>
+          <div style={{ fontFamily: BEN, fontSize: 7, fontWeight: 800, letterSpacing: 0.5 }}>
+            <span style={{ color: '#FF5A6E' }}>Koy</span><span style={{ color: '#00C081' }}>Jabo</span>
+          </div>
         </div>
         <div style={{ padding: '4px 6px', display: 'flex', flexDirection: 'column', gap: 3 }}>
           <div

@@ -32,7 +32,9 @@ export function AIChatPage(props: Props) {
                   <svg viewBox="0 0 32 32" width="20" height="20"><rect x="8" y="10" width="16" height="14" rx="5" fill="rgba(255,255,255,0.9)" /><circle cx="13" cy="16" r="1.8" fill={tk.primaryDeep} /><circle cx="19" cy="16" r="1.8" fill={tk.primaryDeep} /></svg>
                 </div>
                 <div>
-                  <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 800, color: tk.text }}>KoyJabo AI</div>
+                  <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 800 }}>
+                    <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>Koy</span><span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}>Jabo</span> <span style={{ color: tk.text }}>AI</span>
+                  </div>
                   <div style={{ fontFamily: BEN, fontSize: 10, color: tk.textDim }}>পরিবহন সহায়ক • Transport Assistant</div>
                 </div>
               </div>
