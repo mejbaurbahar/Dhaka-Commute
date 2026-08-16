@@ -31,8 +31,23 @@ export function QAPage(props: Props) {
   return (
     <PageShell {...props}>
       <div style={{ padding:isMobile?'16px 16px 48px':'28px 40px 48px', maxWidth:760, margin:'0 auto' }}>
-        <h1 style={{ fontFamily:BEN,fontWeight:700,fontSize:isMobile?22:28,color:tk.text,marginBottom:6 }}>{T(lang,'প্রশ্নোত্তর','Q & A')}</h1>
-        <p style={{ fontFamily:BEN,fontSize:14,color:tk.textDim,marginBottom:20 }}>{T(lang,'সাধারণ প্রশ্নের উত্তর','Answers to common questions')}</p>
+
+        {/* Hero */}
+        <div className="kj-enter-1" style={{
+          borderRadius:20,overflow:'hidden',position:'relative',
+          background:'linear-gradient(135deg, #1e3a8a 0%, #5b21b6 60%, #7c3aed 100%)',
+          color:'#fff',padding:isMobile?'24px 20px 20px':'36px 32px 28px',
+          marginBottom:24,
+          boxShadow:'0 6px 32px rgba(0,0,0,0.22)',
+        }}>
+          <div style={{ position:'absolute',inset:0,pointerEvents:'none',backgroundImage:'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',backgroundSize:'28px 28px',maskImage:'linear-gradient(135deg,transparent 0%,rgba(0,0,0,0.45) 100%)',WebkitMaskImage:'linear-gradient(135deg,transparent 0%,rgba(0,0,0,0.45) 100%)'}}/>
+          <div style={{ position:'absolute',right:-40,top:-40,width:180,height:180,borderRadius:999,background:'rgba(255,255,255,0.07)',pointerEvents:'none'}}/>
+          <div style={{ position:'relative',zIndex:1 }}>
+            <span style={{ fontFamily:SANS,fontSize:10,fontWeight:800,letterSpacing:1.8,opacity:0.72,textTransform:'uppercase',display:'block',marginBottom:8 }}>❓ FAQ</span>
+            <h1 style={{ fontFamily:BEN,fontWeight:800,fontSize:isMobile?24:32,margin:'0 0 6px',lineHeight:1.2 }}>{T(lang,'প্রশ্নোত্তর','Q & A')}</h1>
+            <p style={{ fontFamily:BEN,fontSize:13,opacity:0.85,margin:0 }}>{T(lang,'সাধারণ প্রশ্নের উত্তর','Answers to common questions')}</p>
+          </div>
+        </div>
 
         {/* Search */}
         <div style={{ background:tk.inputBg,border:`1px solid ${tk.line}`,borderRadius:14,padding:'12px 14px',display:'flex',gap:10,marginBottom:20 }}>

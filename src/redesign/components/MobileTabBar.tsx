@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 import { Icon } from './Icons';
 
+// Section groups — a tab is "active" if activeRoute matches any of its routes
 const TABS = [
-  { bn: 'হোম', en: 'Home', route: 'home', icon: 'home' as const },
-  { bn: 'খুঁজুন', en: 'Search', route: 'intercity', icon: 'search' as const },
-  { bn: 'সেভড', en: 'Saved', route: 'favorites', icon: 'star' as const },
-  { bn: 'AI', en: 'AI', route: 'ai', icon: 'spark' as const },
+  {
+    bn: 'হোম', en: 'Home',
+    route: 'home' as const,
+    icon: 'home' as const,
+    routes: ['home'],
+  },
+  {
+    bn: 'বাস', en: 'Bus',
+    route: 'bus-hub' as const,
+    icon: 'bus' as const,
+    routes: ['bus-hub', 'results', 'bus-detail', 'from-to-bus', 'bus-live-map', 'dtca-bus-detail'],
+  },
+  {
+    bn: 'সেভড', en: 'Saved',
+    route: 'favorites' as const,
+    icon: 'star' as const,
+    routes: ['favorites'],
+  },
 ] as const;
 
 interface MobileTabBarProps {
@@ -14,9 +29,27 @@ interface MobileTabBarProps {
   lang: Lang;
   activeRoute?: string;
   onNav: (route: string) => void;
+  onMenu: () => void;
 }
 
-export function MobileTabBar({ tk, lang, activeRoute, onNav }: MobileTabBarProps) {
+export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTabBarProps) {
+  const activeIndex = TABS.findIndex(tab =>
+    (tab.routes as readonly string[]).includes(activeRoute ?? '')
+  );
+  // -1 means "More" tab is conceptually active (drawer page)
+  const moreActive = activeIndex === -1;
+
+  // Track previous index for animation direction
+  const prevIdx = useRef(activeIndex);
+  const [animKey, setAnimKey] = useState(0);
+
+  useEffect(() => {
+    if (prevIdx.current !== activeIndex) {
+      prevIdx.current = activeIndex;
+      setAnimKey(k => k + 1);
+    }
+  }, [activeIndex]);
+
   return (
     <div
       style={{
@@ -26,20 +59,20 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav }: MobileTabBarProps
         right: 0,
         zIndex: 150,
         background: tk.panel,
-        backdropFilter: 'blur(14px)',
-        WebkitBackdropFilter: 'blur(14px)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
         borderTop: `1px solid ${tk.line}`,
-        // Edge-to-edge Android: system gesture bar overlays the bottom —
-        // extend the padding so tab labels never sit under it.
-        padding: '8px 10px calc(14px + env(safe-area-inset-bottom))',
+        padding: '0 4px',
+        paddingBottom: 'env(safe-area-inset-bottom)',
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
         width: '100%',
         boxSizing: 'border-box',
+        minHeight: 58,
       }}
     >
-      {TABS.map((tab) => {
-        const active = activeRoute === tab.route;
+      {TABS.map((tab, idx) => {
+        const active = (tab.routes as readonly string[]).includes(activeRoute ?? '');
         const IconComp = Icon[tab.icon];
 
         return (
@@ -53,42 +86,91 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav }: MobileTabBarProps
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: 3,
-              padding: '4px 0 0',
+              padding: '10px 0 8px',
               color: active ? tk.primary : tk.textFaint,
               position: 'relative',
+              minHeight: 54,
+              WebkitTapHighlightColor: 'transparent',
             }}
             aria-label={T(lang, tab.bn, tab.en)}
+            aria-current={active ? 'page' : undefined}
           >
-            {/* Active indicator bar */}
+            {/* Floating pill indicator */}
             {active && (
               <div
+                key={`pill-${animKey}`}
                 style={{
                   position: 'absolute',
-                  top: 0,
+                  top: 8,
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  width: 24,
-                  height: 3,
-                  borderRadius: 999,
-                  background: tk.primary,
+                  width: 44,
+                  height: 32,
+                  borderRadius: 12,
+                  background: tk.primarySoft,
+                  animation: 'kjTabPop .22s cubic-bezier(.2,.7,.25,1) both',
                 }}
               />
             )}
-            <IconComp s={20} />
-            <span
-              style={{
-                fontFamily: lang === 'bn' ? BEN : SANS,
-                fontSize: 10,
-                fontWeight: active ? 600 : 400,
-                lineHeight: 1,
-              }}
-            >
+
+            {/* Icon — scales up when active */}
+            <div style={{
+              position: 'relative',
+              zIndex: 1,
+              transform: active ? 'scale(1.12)' : 'scale(1)',
+              transition: 'transform 0.2s cubic-bezier(.2,.7,.25,1)',
+            }}>
+              <IconComp s={active ? 22 : 21} />
+            </div>
+
+            <span style={{
+              fontFamily: lang === 'bn' ? BEN : SANS,
+              fontSize: 10,
+              fontWeight: active ? 700 : 400,
+              lineHeight: 1,
+              position: 'relative',
+              zIndex: 1,
+              letterSpacing: active ? -0.2 : 0,
+              transition: 'font-weight 0.15s, color 0.15s',
+            }}>
               {T(lang, tab.bn, tab.en)}
             </span>
           </button>
         );
       })}
+
+      {/* More tab — opens nav drawer */}
+      <button
+        onClick={onMenu}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 3,
+          padding: '10px 0 8px',
+          color: moreActive ? tk.primary : tk.textFaint,
+          minHeight: 54,
+          position: 'relative',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+        aria-label={T(lang, 'আরও', 'More')}
+      >
+        <Icon.menu s={21} />
+        <span style={{
+          fontFamily: lang === 'bn' ? BEN : SANS,
+          fontSize: 10,
+          fontWeight: 400,
+          lineHeight: 1,
+        }}>
+          {T(lang, 'আরও', 'More')}
+        </span>
+      </button>
     </div>
   );
 }

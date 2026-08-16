@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
-import { KJ_TOKENS, T, SANS, BEN, Tokens } from '../tokens';
+import { KJ_TOKENS, T, SANS, BEN, N, Tokens } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovAdBanner } from '../components/GovAdBanner';
@@ -64,12 +64,12 @@ export function FavoritesPage(props: ScreenProps) {
   return (
     <PageShell {...props} canBack>
       <div style={{ maxWidth: isMobile ? '100%' : 760, margin: '0 auto', padding: isMobile ? '16px 12px 100px' : '32px 16px 60px', display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <h1 style={{ margin: 0, fontFamily: font, fontWeight: 700, fontSize: 24, color: tk.text }}>
+        <div className="kj-enter-1" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <h1 style={{ margin: 0, fontFamily: font, fontWeight: 800, fontSize: 24, color: tk.text }}>
             {lbl('Favorites', 'প্রিয়')}
           </h1>
           <div style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}44`, borderRadius: 999, padding: '2px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 13, color: tk.primary }}>
-            {favorites.length}
+            {N(favorites.length, lang)}
           </div>
         </div>
 
@@ -134,11 +134,40 @@ export function FavoritesPage(props: ScreenProps) {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
-            <div style={{ ...card, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '56px 24px', gap: 12, textAlign: 'center' }}>
-              <div style={{ fontFamily: font, fontWeight: 700, fontSize: 18, color: tk.textDim }}>{lbl('No favorites yet', 'এখনো কোনো প্রিয় নেই')}</div>
-              <div style={{ fontFamily: font, fontSize: 14, color: tk.textFaint, maxWidth: 300, lineHeight: 1.5 }}>
-                {lbl('Tap the heart on a real bus route to save it here.', 'বাস রুটের হার্ট চাপলে এখানে সেভ হবে।')}
+            <div style={{
+              ...card, display: 'flex', flexDirection: 'column', alignItems: 'center',
+              justifyContent: 'center', padding: '48px 24px', gap: 14, textAlign: 'center',
+              background: `linear-gradient(135deg, ${tk.panelMuted}, ${tk.panel})`,
+            }}>
+              {/* Icon with gradient bg */}
+              <div style={{
+                width: 72, height: 72, borderRadius: 22,
+                background: 'linear-gradient(135deg, #ff2a6d22, #ff2a6d44)',
+                border: '1px solid rgba(255,42,109,0.2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 36,
+                animation: 'kjBobY 2.8s ease-in-out infinite',
+              }}>
+                🔖
               </div>
+              <div>
+                <div style={{ fontFamily: font, fontWeight: 700, fontSize: 17, color: tk.text, marginBottom: 6 }}>
+                  {lbl('No favorites yet', 'এখনো কোনো প্রিয় নেই')}
+                </div>
+                <div style={{ fontFamily: font, fontSize: 13, color: tk.textFaint, maxWidth: 260, lineHeight: 1.6 }}>
+                  {lbl('Tap the heart on any bus route to save it here.', 'বাস রুটের ❤️ আইকন চাপলে এখানে সেভ হবে।')}
+                </div>
+              </div>
+              <button
+                onClick={() => onNav('bus-hub')}
+                style={{
+                  background: tk.primary, color: tk.primaryInk, border: 'none',
+                  borderRadius: 14, padding: '11px 24px',
+                  fontFamily: font, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                }}
+              >
+                {lbl('Browse buses', 'বাস দেখুন')}
+              </button>
             </div>
             <NativeAdCard
               tk={tk}

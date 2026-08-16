@@ -105,22 +105,78 @@ export function SettingsPage(props: ScreenProps) {
   }
   const [confirmClear, setConfirmClear] = useState(false);
 
-  const card: React.CSSProperties = { background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, overflow: 'hidden', marginBottom: 4 };
+  const card: React.CSSProperties = {
+    background: tk.panel,
+    border: `1px solid ${tk.line}`,
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginBottom: 4,
+    boxShadow: `0 2px 12px rgba(0,0,0,0.04)`,
+  };
 
-  const SectionLabel = ({ label }: { label: string }) => (
-    <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 11, color: tk.textFaint, padding: '16px 4px 8px', textTransform: 'uppercase', letterSpacing: 1.4 }}>{label}</div>
-  );
-
-  const RowItem = ({ icon, label, sub, right, onClick, danger }: { icon: string; label: string; sub?: string; right?: React.ReactNode; onClick?: () => void; danger?: boolean }) => (
-    <div onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 16px', borderTop: `1px solid ${tk.line}`, cursor: onClick ? 'pointer' : 'default' }}>
-      <span style={{ fontSize: 18, flexShrink: 0 }}>{icon}</span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: font, fontSize: 14, fontWeight: 500, color: danger ? tk.accent : tk.text }}>{label}</div>
-        {sub && <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginTop: 2 }}>{sub}</div>}
-      </div>
-      {right ?? <Icon.arrowR s={14} />}
+  const SectionLabel = ({ label, color }: { label: string; color?: string }) => (
+    <div style={{
+      fontFamily: SANS, fontWeight: 800, fontSize: 10, color: color ?? tk.textFaint,
+      padding: '18px 4px 8px', textTransform: 'uppercase', letterSpacing: 1.5,
+      display: 'flex', alignItems: 'center', gap: 8,
+    }}>
+      {color && <div style={{ width: 14, height: 2, borderRadius: 999, background: color }} />}
+      {label}
     </div>
   );
+
+  // Icon background colors per group
+  const iconBgMap: Record<string, { bg: string; text: string }> = {
+    '🎨': { bg: 'linear-gradient(135deg,#f59e0b,#ef4444)', text: '#fff' },
+    '🌐': { bg: 'linear-gradient(135deg,#3b82f6,#6366f1)', text: '#fff' },
+    '🔔': { bg: 'linear-gradient(135deg,#f59e0b,#ef4444)', text: '#fff' },
+    '⏰': { bg: 'linear-gradient(135deg,#8b5cf6,#a855f7)', text: '#fff' },
+    '🚨': { bg: 'linear-gradient(135deg,#ef4444,#f97316)', text: '#fff' },
+    '📰': { bg: 'linear-gradient(135deg,#10b981,#059669)', text: '#fff' },
+    '✉️': { bg: 'linear-gradient(135deg,#3b82f6,#06b6d4)', text: '#fff' },
+    '📊': { bg: 'linear-gradient(135deg,#06b6d4,#3b82f6)', text: '#fff' },
+    '📍': { bg: 'linear-gradient(135deg,#ef4444,#f97316)', text: '#fff' },
+    '🗑':  { bg: 'linear-gradient(135deg,#6b7280,#4b5563)', text: '#fff' },
+    '❓': { bg: 'linear-gradient(135deg,#8b5cf6,#6366f1)', text: '#fff' },
+    '✉':  { bg: 'linear-gradient(135deg,#3b82f6,#06b6d4)', text: '#fff' },
+    '📄': { bg: 'linear-gradient(135deg,#6b7280,#4b5563)', text: '#fff' },
+    '🛡': { bg: 'linear-gradient(135deg,#059669,#0d9488)', text: '#fff' },
+    'ℹ️': { bg: 'linear-gradient(135deg,#3b82f6,#6366f1)', text: '#fff' },
+    '🆕': { bg: 'linear-gradient(135deg,#10b981,#059669)', text: '#fff' },
+  };
+
+  const RowItem = ({ icon, label, sub, right, onClick, danger }: { icon: string; label: string; sub?: string; right?: React.ReactNode; onClick?: () => void; danger?: boolean }) => {
+    const iconStyle = iconBgMap[icon] ?? { bg: tk.panelMuted, text: tk.text };
+    return (
+      <div
+        onClick={onClick}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 14,
+          padding: '12px 16px',
+          borderTop: `1px solid ${tk.line}`,
+          cursor: onClick ? 'pointer' : 'default',
+          transition: 'background 0.13s',
+        }}
+        onMouseEnter={onClick ? e => ((e.currentTarget as HTMLDivElement).style.background = tk.panelMuted) : undefined}
+        onMouseLeave={onClick ? e => ((e.currentTarget as HTMLDivElement).style.background = 'transparent') : undefined}
+      >
+        {/* Gradient icon chip */}
+        <div style={{
+          width: 36, height: 36, borderRadius: 11, flexShrink: 0,
+          background: iconStyle.bg,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 16,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+        }}>{icon}</div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: font, fontSize: 14, fontWeight: 500, color: danger ? tk.accent : tk.text }}>{label}</div>
+          {sub && <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginTop: 2, lineHeight: 1.4 }}>{sub}</div>}
+        </div>
+        {right ?? (onClick ? <span style={{ color: tk.textFaint, display: 'flex' }}><Icon.arrowR s={14} /></span> : null)}
+      </div>
+    );
+  };
 
   const groups = [
     {
@@ -165,12 +221,16 @@ export function SettingsPage(props: ScreenProps) {
     <PageShell {...props} canBack>
       <div style={{ maxWidth: isMobile ? '100%' : 720, margin: '0 auto', padding: isMobile ? '16px 12px 100px' : '24px 40px 60px' }}>
 
-        <h1 style={{ margin: '0 0 4px', fontFamily: font, fontWeight: 700, fontSize: 26, color: tk.text, letterSpacing: -0.5 }}>{lbl('Settings', 'সেটিংস')}</h1>
-        <p style={{ margin: '0 0 20px', fontFamily: SANS, fontSize: 13, color: tk.textDim }}>{lbl('Manage your preferences', 'আপনার পছন্দ পরিচালনা করুন')}</p>
+        <div className="kj-enter-1">
+          <h1 style={{ margin: '0 0 4px', fontFamily: font, fontWeight: 800, fontSize: 26, color: tk.text, letterSpacing: -0.5 }}>{lbl('Settings', 'সেটিংস')}</h1>
+          <p style={{ margin: '0 0 20px', fontFamily: SANS, fontSize: 13, color: tk.textDim }}>{lbl('Manage your preferences', 'আপনার পছন্দ পরিচালনা করুন')}</p>
+        </div>
 
-        {groups.map((g, gi) => (
-          <div key={gi}>
-            <SectionLabel label={g.title} />
+        {groups.map((g, gi) => {
+          const sectionColor = gi === 0 ? '#00b8d9' : gi === 1 ? '#ff2a6d' : gi === 2 ? '#a259ff' : '#6b7280';
+          return (
+          <div key={gi} className={`kj-enter-${Math.min(gi + 2, 6)}`}>
+            <SectionLabel label={g.title} color={sectionColor} />
             <div style={card}>
               {g.items.map((item, i) => (
                 <RowItem
@@ -184,13 +244,14 @@ export function SettingsPage(props: ScreenProps) {
                 />
               ))}
             </div>
-            {gi === 1 && pushMsg && (
+              {gi === 1 && pushMsg && (
               <div style={{ margin: '0 0 8px', padding: '10px 14px', borderRadius: 12, background: tk.accent + '14', border: `1px solid ${tk.accent}3d`, fontFamily: font, fontSize: 12, color: tk.accent, lineHeight: 1.55 }}>
                 {pushMsg}
               </div>
             )}
           </div>
-        ))}
+        );
+        })}
 
         <NativeAdCard
           tk={tk}

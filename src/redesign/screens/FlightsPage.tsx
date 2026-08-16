@@ -88,7 +88,7 @@ export function FlightsPage(props: Props) {
       const meta = AIRLINE_META[r.airline] ?? { name:{bn:r.airline,en:r.airline}, col:['#3b82f6','#60a5fa'] as [string,string], rating:4.0, reviews:0 };
       return {
         ...r, ...meta,
-        fare: r.fareEco.toLocaleString(),
+        fare: String(r.fareEco),
         stop: r.daysOp === 'Daily' ? 'Nonstop' : r.daysOp,
         best: r.airline === 'BS',
         cheap: routes.length > 1 && r.fareEco === minFare,
@@ -103,7 +103,7 @@ export function FlightsPage(props: Props) {
       const meta = AIRLINE_META[r.airline] ?? { name:{bn:r.airline,en:r.airline}, col:['#3b82f6','#60a5fa'] as [string,string], rating:4.0, reviews:0 };
       return {
         ...r, ...meta,
-        fare: r.fareEco.toLocaleString(),
+        fare: String(r.fareEco),
         stop: 'Nonstop',
         best: r.airline === 'BS',
         cheap: r.fareEco === minFare && routes.length > 1,

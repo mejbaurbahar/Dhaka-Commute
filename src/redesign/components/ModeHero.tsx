@@ -25,42 +25,130 @@ function Vehicle3D({ kind, size }: { kind: VehicleKind; size: number }) {
   return <Launch3D size={size}/>;
 }
 
+const KIND_LABEL: Record<VehicleKind, { bn: string; en: string }> = {
+  bus:    { bn: 'লোকাল বাস', en: 'LOCAL BUS' },
+  train:  { bn: 'ট্রেন',    en: 'TRAIN' },
+  plane:  { bn: 'বিমান',    en: 'FLIGHTS' },
+  launch: { bn: 'লঞ্চ',     en: 'LAUNCH' },
+  truck:  { bn: 'ট্রাক',    en: 'TRUCK' },
+};
+
 export function ModeHero({ tk, isMobile, lang, kind, gradient, title, subtitle, stats }: ModeHeroProps) {
+  const kindLbl = KIND_LABEL[kind];
+
   return (
     <div style={{
       borderRadius: 24, overflow: 'hidden', position: 'relative',
       background: gradient, color: '#fff',
-      padding: isMobile ? '18px 18px 0' : '32px 32px 0',
+      padding: isMobile ? '20px 18px 0' : '32px 32px 0',
       marginBottom: 18, boxShadow: tk.shadowLg,
-      minHeight: isMobile ? 240 : 280,
+      minHeight: isMobile ? 220 : 270,
     }}>
-      {/* decorative blobs */}
-      <div style={{ position: 'absolute', right: -50, top: -60, width: 240, height: 240, borderRadius: 999, background: 'rgba(255,255,255,0.15)', animation: 'kjpulse 3s ease-in-out infinite' }}/>
-      <div style={{ position: 'absolute', left: '40%', bottom: -80, width: 200, height: 200, borderRadius: 999, background: 'rgba(255,255,255,0.08)' }}/>
+      {/* Grid overlay — futuristic depth */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
+        backgroundSize: '32px 32px',
+        maskImage: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 100%)',
+        WebkitMaskImage: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 100%)',
+      }} />
+
+      {/* Decorative blobs */}
+      <div style={{
+        position: 'absolute', right: -60, top: -70, width: 260, height: 260,
+        borderRadius: 999, background: 'rgba(255,255,255,0.12)',
+        animation: 'kjpulse 3.5s ease-in-out infinite',
+        pointerEvents: 'none',
+      }}/>
+      <div style={{
+        position: 'absolute', left: '35%', bottom: -90, width: 220, height: 220,
+        borderRadius: 999, background: 'rgba(255,255,255,0.07)',
+        pointerEvents: 'none',
+      }}/>
 
       <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 240px', minWidth: 0 }}>
-          <span style={{ fontFamily: SANS, fontSize: 11, fontWeight: 700, letterSpacing: 1.4, opacity: 0.85, textTransform: 'uppercase' }}>
-            ✦ KoyJabo · {kind}
+        <div style={{ flex: '1 1 220px', minWidth: 0 }} className="kj-enter-1">
+          {/* Mode breadcrumb */}
+          <span style={{
+            fontFamily: SANS, fontSize: 10, fontWeight: 800,
+            letterSpacing: 1.8, opacity: 0.8, textTransform: 'uppercase',
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+          }}>
+            <span style={{
+              width: 6, height: 6, borderRadius: '50%',
+              background: 'rgba(255,255,255,0.9)',
+              display: 'inline-block',
+            }}/>
+            KoyJabo · {T(lang, kindLbl.bn, kindLbl.en)}
           </span>
-          <h1 style={{ fontFamily: BEN, fontSize: isMobile ? 26 : 38, fontWeight: 700, margin: '6px 0 8px', letterSpacing: -0.6, lineHeight: 1.1 }}>
+
+          {/* Title */}
+          <h1 className="kj-hero-title" style={{
+            fontFamily: BEN,
+            fontSize: isMobile ? 24 : 36,
+            fontWeight: 700,
+            margin: '8px 0 10px',
+            letterSpacing: -0.6,
+            lineHeight: 1.15,
+            color: '#fff',
+          }}>
             {title}
           </h1>
-          <p style={{ fontFamily: BEN, fontSize: isMobile ? 13 : 14, opacity: 0.92, lineHeight: 1.55, margin: 0, maxWidth: 480 }}>
+
+          {/* Subtitle */}
+          <p style={{
+            fontFamily: BEN,
+            fontSize: isMobile ? 12 : 13,
+            opacity: 0.88,
+            lineHeight: 1.6,
+            margin: 0,
+            maxWidth: 460,
+          }}>
             {subtitle}
           </p>
-          <div style={{ display: 'flex', gap: 14, marginTop: 18, flexWrap: 'wrap', overflowX: 'auto', scrollbarWidth: 'none' }}>
+
+          {/* Stats row */}
+          <div style={{
+            display: 'flex', gap: 0, marginTop: 20,
+            background: 'rgba(0,0,0,0.18)',
+            borderRadius: 14, overflow: 'hidden',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            width: 'fit-content',
+            maxWidth: '100%',
+          }}>
             {stats.map((s, i) => (
-              <div key={i} style={{ minWidth: 70, flexShrink: 0 }}>
-                <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: isMobile ? 18 : 22, letterSpacing: -0.4 }}>{s.v}</div>
-                <div style={{ fontFamily: SANS, fontSize: 9, fontWeight: 700, letterSpacing: 1.2, opacity: 0.85, textTransform: 'uppercase', marginTop: 2 }}>{s.l}</div>
+              <div key={i} style={{
+                padding: isMobile ? '10px 14px' : '12px 18px',
+                borderRight: i < stats.length - 1 ? '1px solid rgba(255,255,255,0.12)' : 'none',
+                minWidth: isMobile ? 60 : 80,
+              }}>
+                <div className="kj-stat" style={{
+                  fontFamily: SANS, fontWeight: 800,
+                  fontSize: isMobile ? 16 : 20,
+                  letterSpacing: -0.5,
+                  lineHeight: 1,
+                  color: '#fff',
+                }}>{s.v}</div>
+                <div style={{
+                  fontFamily: SANS, fontSize: 9, fontWeight: 700,
+                  letterSpacing: 0.8, opacity: 0.75,
+                  textTransform: 'uppercase', marginTop: 4,
+                  color: '#fff',
+                }}>{s.l}</div>
               </div>
             ))}
           </div>
         </div>
+
         {/* 3D vehicle — bottom-right, peeking out */}
-        <div style={{ flexShrink: 0, alignSelf: 'flex-end', marginBottom: isMobile ? -20 : -10, overflow: 'hidden' }}>
-          <Vehicle3D kind={kind} size={isMobile ? 160 : 280}/>
+        <div style={{
+          flexShrink: 0, alignSelf: 'flex-end',
+          marginBottom: isMobile ? -18 : -8,
+          overflow: 'hidden', opacity: 0.92,
+        }}>
+          <Vehicle3D kind={kind} size={isMobile ? 150 : 260}/>
         </div>
       </div>
     </div>

@@ -277,7 +277,7 @@ export function BusDetailPage(props: Props) {
 
         <div style={{ display:'grid',gridTemplateColumns:isMobile?'1fr':'1.35fr 0.8fr',gap:20 }}>
           <div>
-            <div style={{ ...card(18),marginBottom:16 }}>
+            <div className="kj-enter-1" style={{ ...card(18),marginBottom:16 }}>
               <div style={{ display:'flex',alignItems:'center',gap:12,marginBottom:14 }}>
                 <div style={{ width:44,height:44,borderRadius:12,background:`linear-gradient(135deg,${colPair[0]},${colPair[1]})`,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:SANS,fontWeight:800,fontSize:15 }}>{badge}</div>
                 <div style={{ flex:1 }}>
@@ -285,8 +285,8 @@ export function BusDetailPage(props: Props) {
                   <div style={{ display:'flex',alignItems:'center',gap:6,marginTop:2,flexWrap:'wrap' }}>
                     {ratingSummary && ratingSummary.count > 0 ? (
                       <>
-                        <span style={{ color:'#f59e0b',fontSize:12 }}>★ {ratingSummary.average.toFixed(1)}</span>
-                        <span style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint }}>{ratingSummary.count} {T(lang,'রিভিউ','reviews')}</span>
+                        <span style={{ color:'#f59e0b',fontSize:12 }}>★ {N(ratingSummary.average.toFixed(1), lang)}</span>
+                        <span style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint }}>{N(ratingSummary.count, lang)} {T(lang,'রিভিউ','reviews')}</span>
                       </>
                     ) : (
                       <span style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint }}>{T(lang,'এখনো কোনো রিভিউ নেই','No reviews yet')}</span>
@@ -299,19 +299,19 @@ export function BusDetailPage(props: Props) {
               <div style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint,marginBottom:12 }}>{bus.hours}</div>
               <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8 }}>
                 {[
-                  {v:N(bus.stops.length, lang),l:T(lang,'স্টপ','stops')},
-                  {v:Fare(fareAmt, lang),l:T(lang,'ভাড়া','fare')},
-                  {v:bus.type,l:T(lang,'ধরন','type')},
+                  {v:N(bus.stops.length, lang),l:T(lang,'স্টপ','stops'),grad:`linear-gradient(135deg,${colPair[0]}33,${colPair[1]}55)`,fg:colPair[1]},
+                  {v:Fare(fareAmt, lang),l:T(lang,'ভাড়া','fare'),grad:'linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.3))',fg:'#10b981'},
+                  {v:bus.type,l:T(lang,'ধরন','type'),grad:'linear-gradient(135deg,rgba(162,89,255,0.12),rgba(162,89,255,0.25))',fg:'#a259ff'},
                 ].map((s,i)=>(
-                  <div key={i} style={{ background:tk.panelMuted,borderRadius:10,padding:'8px 6px',textAlign:'center' }}>
-                    <div style={{ fontFamily:SANS,fontWeight:800,fontSize:14,color:tk.text }}>{s.v}</div>
-                    <div style={{ fontFamily:SANS,fontSize:10,color:tk.textFaint }}>{s.l}</div>
+                  <div key={i} className="kj-stat" style={{ background:s.grad,border:`1px solid ${s.fg}33`,borderRadius:12,padding:'10px 6px',textAlign:'center' }}>
+                    <div style={{ fontFamily:SANS,fontWeight:800,fontSize:14,color:s.fg }}>{s.v}</div>
+                    <div style={{ fontFamily:SANS,fontSize:10,color:tk.textFaint,marginTop:2 }}>{s.l}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div style={{ ...card(18),marginBottom:16 }}>
+            <div className="kj-enter-2" style={{ ...card(18),marginBottom:16 }}>
               <div style={{ fontFamily:BEN,fontWeight:700,fontSize:15,color:tk.text,marginBottom:14 }}>{T(lang,'স্টপসমূহ','Stops')} <span style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint }}>({N(realStops.length, lang)})</span></div>
               {realStops.map((s,i)=>{
                 const isNearest = nearest?.index === i;
@@ -363,7 +363,10 @@ export function BusDetailPage(props: Props) {
           </div>
 
           <div style={{ display:'flex',flexDirection:'column',gap:16 }}>
-            <div style={{ ...card(16),background:`linear-gradient(135deg,${colPair[0]},${colPair[1]})`,color:'#fff',border:'none' }}>
+            <div className="kj-enter-1" style={{ ...card(16),background:`linear-gradient(135deg,${colPair[0]},${colPair[1]})`,color:'#fff',border:'none',position:'relative',overflow:'hidden' }}>
+              {/* grid overlay */}
+              <div style={{ position:'absolute',inset:0,pointerEvents:'none',backgroundImage:'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',backgroundSize:'24px 24px',maskImage:'linear-gradient(135deg,transparent 0%,rgba(0,0,0,0.4) 100%)',WebkitMaskImage:'linear-gradient(135deg,transparent 0%,rgba(0,0,0,0.4) 100%)'}}/>
+              <div style={{ position:'relative',zIndex:1 }}>
               <div style={{ fontFamily:BEN,fontWeight:700,fontSize:16,marginBottom:12 }}>{T(lang,'বাস তথ্য','Bus info')}</div>
               {[
                 {l:T(lang,'অপারেটর','Operator'),v:bus.name},
@@ -382,8 +385,9 @@ export function BusDetailPage(props: Props) {
                   {T(lang,'নিকটতম স্টপ','Nearest stop')}: {lang === 'bn' ? realStops[nearest.index]?.bn : realStops[nearest.index]?.en} · {N(nearest.distance.toFixed(1), lang)} km
                 </p>
               )}
+              </div>
             </div>
-            <div style={card(16)}>
+            <div className="kj-enter-2" style={card(16)}>
               <div style={{ fontFamily:BEN,fontWeight:700,fontSize:15,color:tk.text,marginBottom:10 }}>{T(lang,'কমিউনিটি','Community')}</div>
               <button onClick={() => setShowRating(true)} style={{ ...chipBtn(tk),width:'100%',justifyContent:'center',marginBottom:8 }}>
                 ★ {T(lang,'রিভিউ দিন','Rate & review')}

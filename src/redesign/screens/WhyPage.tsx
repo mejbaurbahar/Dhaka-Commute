@@ -124,9 +124,10 @@ export function WhyPage(props: PageShellProps) {
             marginBottom: 40,
           }}
         >
-          {FEATURES.map((f) => (
+          {FEATURES.map((f, i) => (
             <div
               key={f.titleEn}
+              className={`kj-card kj-enter-${i + 1}`}
               style={{
                 background: `linear-gradient(135deg, ${f.from} 0%, ${f.to} 100%)`,
                 borderRadius: 16,
@@ -192,6 +193,7 @@ export function WhyPage(props: PageShellProps) {
           {STATS.map((s) => (
             <div key={s.labelEn}>
               <div
+                className="kj-stat"
                 style={{
                   fontFamily: BEN,
                   fontSize: isMobile ? 24 : 32,

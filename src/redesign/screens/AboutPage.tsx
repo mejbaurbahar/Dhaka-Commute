@@ -168,19 +168,30 @@ export function AboutPage(props: PageShellProps) {
                 '২৪/৭ ভ্রমণ সহায়তা বাংলা ও ইংরেজিতে — রুট, ভাড়া, সময়সূচি ও পরিবহন প্রশ্নের উত্তর।',
               ),
             },
-          ].map((f) => (
+          ].map((f, i) => (
             <div
               key={f.title}
+              className={`kj-card kj-enter-${i + 1}`}
               style={{
                 background: tk.panel,
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
                 border: `1px solid ${tk.line}`,
-                borderRadius: 14,
-                padding: '20px 16px',
+                borderRadius: 16,
+                padding: '20px 18px',
               }}
             >
-              <div style={{ fontSize: 24, marginBottom: 8 }}>{f.icon}</div>
+              <div style={{
+                width: 44, height: 44, borderRadius: 13,
+                background: i === 0 ? 'linear-gradient(135deg,rgba(0,245,255,0.18),rgba(0,245,255,0.35))'
+                  : i === 1 ? 'linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.32))'
+                  : 'linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.3))',
+                border: `1px solid ${i === 0 ? 'rgba(0,245,255,0.25)' : i === 1 ? 'rgba(16,185,129,0.25)' : 'rgba(239,68,68,0.25)'}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 22, marginBottom: 14,
+              }}>
+                {f.icon}
+              </div>
               <div
                 style={{
                   fontFamily: lang === 'bn' ? BEN : SANS,
@@ -223,9 +234,10 @@ export function AboutPage(props: PageShellProps) {
           {STATS.map((s) => (
             <div key={s.labelEn}>
               <div
+                className="kj-stat"
                 style={{
                   fontFamily: BEN,
-                  fontSize: 26,
+                  fontSize: 28,
                   fontWeight: 800,
                   color: tk.primary,
                   lineHeight: 1.1,

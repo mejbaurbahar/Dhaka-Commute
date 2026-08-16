@@ -727,8 +727,8 @@ export function IntercityPage(props: Props) {
                       <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginTop: 2 }}>{r.dep} – {r.arr} · {r.dur} · {r.daysOp}</div>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 700, color: tk.text }}>{Fare(r.fareEco.toLocaleString(), lang)}</div>
-                      {r.fareBiz && <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim }}>Biz: {Fare(r.fareBiz.toLocaleString(), lang)}</div>}
+                      <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 700, color: tk.text }}>{Fare(r.fareEco, lang)}</div>
+                      {r.fareBiz && <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim }}>{T(lang,'বিজ:','Biz:')} {Fare(r.fareBiz, lang)}</div>}
                     </div>
                   </button>
                 );

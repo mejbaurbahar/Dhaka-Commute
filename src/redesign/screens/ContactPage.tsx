@@ -51,8 +51,22 @@ export function ContactPage(props: Props) {
   return (
     <PageShell {...props}>
       <div style={{ padding:isMobile?'16px 16px 48px':'28px 40px 48px', maxWidth:700, margin:'0 auto' }}>
-        <h1 style={{ fontFamily:BEN,fontWeight:700,fontSize:isMobile?22:28,color:tk.text,marginBottom:6 }}>{T(lang,'যোগাযোগ করুন','Contact Us')}</h1>
-        <p style={{ fontFamily:BEN,fontSize:14,color:tk.textDim,marginBottom:24 }}>{T(lang,'আমরা ২৪-৪৮ ঘণ্টার মধ্যে উত্তর দিই।','We respond within 24-48 hours.')}</p>
+
+        {/* Hero */}
+        <div className="kj-enter-1" style={{
+          borderRadius:20,overflow:'hidden',position:'relative',
+          background:'linear-gradient(135deg, #006a4e 0%, #10b981 50%, #34d399 100%)',
+          color:'#fff',padding:isMobile?'24px 20px 20px':'36px 32px 28px',
+          marginBottom:24,boxShadow:'0 6px 32px rgba(0,0,0,0.2)',
+        }}>
+          <div style={{ position:'absolute',inset:0,pointerEvents:'none',backgroundImage:'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',backgroundSize:'28px 28px',maskImage:'linear-gradient(135deg,transparent,rgba(0,0,0,0.4))',WebkitMaskImage:'linear-gradient(135deg,transparent,rgba(0,0,0,0.4))'}}/>
+          <div style={{ position:'absolute',right:-30,top:-30,width:160,height:160,borderRadius:999,background:'rgba(255,255,255,0.08)',pointerEvents:'none'}}/>
+          <div style={{ position:'relative',zIndex:1 }}>
+            <span style={{ fontFamily:SANS,fontSize:10,fontWeight:800,letterSpacing:1.8,opacity:0.72,textTransform:'uppercase',display:'block',marginBottom:8 }}>✉️ {T(lang,'যোগাযোগ','Contact')}</span>
+            <h1 style={{ fontFamily:BEN,fontWeight:800,fontSize:isMobile?24:32,margin:'0 0 6px',lineHeight:1.2 }}>{T(lang,'যোগাযোগ করুন','Contact Us')}</h1>
+            <p style={{ fontFamily:BEN,fontSize:13,opacity:0.85,margin:0 }}>{T(lang,'আমরা ২৪-৪৮ ঘণ্টার মধ্যে উত্তর দিই।','We respond within 24-48 hours.')}</p>
+          </div>
+        </div>
 
         <div style={{ display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:12,marginBottom:24 }}>
           {[

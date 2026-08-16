@@ -68,7 +68,7 @@ export function ProfilePage(props: ScreenProps) {
       <div style={{ padding: isMobile ? '16px 12px 100px' : '24px 40px 60px' }}>
 
         {/* Hero card */}
-        <div style={{
+        <div className="kj-enter-1" style={{
           background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 22,
           padding: isMobile ? 18 : 24, marginBottom: 24,
           display: 'flex', flexDirection: isMobile ? 'column' : 'row',
@@ -102,7 +102,7 @@ export function ProfilePage(props: ScreenProps) {
             <div style={{ display: 'flex', gap: isMobile ? 16 : 28, marginTop: 14, flexWrap: 'wrap' }}>
               {STATS.map((s) => (
                 <div key={s.label}>
-                  <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: 20, color: tk.text, letterSpacing: -0.5 }}>{s.value}</div>
+                  <div className="kj-stat" style={{ fontFamily: SANS, fontWeight: 800, fontSize: 22, color: tk.primary, letterSpacing: -0.5 }}>{s.value}</div>
                   <div style={{ fontFamily: SANS, fontSize: 10, fontWeight: 700, color: tk.textFaint, letterSpacing: 1.2, textTransform: 'uppercase', marginTop: 2 }}>{s.label}</div>
                 </div>
               ))}

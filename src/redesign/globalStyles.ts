@@ -5,7 +5,7 @@ export function injectGlobalStyles() {
   style.id = 'kj-global-styles';
   style.textContent = `
     html, body { margin: 0; padding: 0; background: #05060b; font-family: 'Inter', system-ui, sans-serif; }
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     #root { min-height: 100vh; }
 
     .kj-screen, .kj-screen * { scrollbar-width: none; }
@@ -25,12 +25,22 @@ export function injectGlobalStyles() {
     .kj-chips-scroll { overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap !important; }
     .kj-chips-scroll::-webkit-scrollbar { display: none; }
 
+    /* Native press feedback — applies to all buttons without custom active handlers */
+    button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    button:active { opacity: 0.72; }
+
+    /* Screen transition animations:
+       kj-fwd  = navigate deeper (new page slides in from right — Android standard)
+       kj-back = pop back (previous page appears from left)
+       kj-tab  = tab switch (cross-fade, no directional slide) */
     @media (prefers-reduced-motion: no-preference) {
-      .kj-fwd  { animation: kjIn   .26s cubic-bezier(.2,.7,.25,1) both; }
-      .kj-back { animation: kjBack .26s cubic-bezier(.2,.7,.25,1) both; }
+      .kj-fwd  { animation: kjIn   .24s cubic-bezier(.2,.7,.25,1) both; }
+      .kj-back { animation: kjBack .24s cubic-bezier(.2,.7,.25,1) both; }
+      .kj-tab  { animation: kjTab  .18s ease both; }
     }
-    @keyframes kjIn   { from { transform: translateY(10px); } to { transform: none; } }
-    @keyframes kjBack { from { transform: translateY(-8px); } to { transform: none; } }
+    @keyframes kjIn   { from { transform: translateX(28px); opacity: 0.82; } to { transform: none; opacity: 1; } }
+    @keyframes kjBack { from { transform: translateX(-20px); opacity: 0.82; } to { transform: none; opacity: 1; } }
+    @keyframes kjTab  { from { opacity: 0.6; } to { opacity: 1; } }
 
     @keyframes kjpulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
     .kj-anim-pulse { animation: kjpulse 2.4s ease-in-out infinite; }
@@ -99,7 +109,53 @@ export function injectGlobalStyles() {
     .kj-anim-blink   { animation: kj-blink 1.3s ease-in-out infinite; }
     .kj-anim-prop    { animation: kj-prop 0.12s linear infinite; transform-origin: 50% 50%; transform-box: fill-box; }
 
-    /* Futuristic skin */
+    /* ── Staggered entrance animations ─────────────────────────────────────── */
+    @keyframes kjSlideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: no-preference) {
+      .kj-enter-1 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .00s both; }
+      .kj-enter-2 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .07s both; }
+      .kj-enter-3 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .14s both; }
+      .kj-enter-4 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .21s both; }
+      .kj-enter-5 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .28s both; }
+      .kj-enter-6 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .35s both; }
+    }
+
+    /* ── Scale in (for modals, cards) ──────────────────────────────────────── */
+    @keyframes kjScaleIn { from { transform: scale(0.94); opacity: 0; } to { transform: none; opacity: 1; } }
+    .kj-scale-in { animation: kjScaleIn .3s cubic-bezier(.2,.7,.25,1) both; }
+
+    /* ── Glow pulse (for active tabs, badges) ─────────────────────────────── */
+    @keyframes kjGlowCyan  { 0%,100% { box-shadow: 0 0 10px rgba(0,245,255,0.55); } 50% { box-shadow: 0 0 22px rgba(0,245,255,0.9); } }
+    @keyframes kjGlowAccent{ 0%,100% { box-shadow: 0 0 10px rgba(255,42,109,0.5); } 50% { box-shadow: 0 0 20px rgba(255,42,109,0.85); } }
+    .kj-glow-cyan   { animation: kjGlowCyan   2.2s ease-in-out infinite; }
+    .kj-glow-accent { animation: kjGlowAccent 2.2s ease-in-out infinite; }
+
+    /* ── Number count-up hint (attach to stat numbers) ──────────────────────── */
+    @keyframes kjStatIn { from { opacity: 0; transform: translateY(6px) scale(.95); } to { opacity: 1; transform: none; } }
+    .kj-stat { animation: kjStatIn .5s cubic-bezier(.2,.7,.25,1) .1s both; }
+
+    /* ── Tab bar active indicator slide ─────────────────────────────────────── */
+    @keyframes kjTabPop { from { transform: scale(0.7); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
+    .kj-tab-pop { animation: kjTabPop .22s cubic-bezier(.2,.7,.25,1) both; }
+
+    /* ── Card hover with lift (both desktop and mobile-friendly) ────────────── */
+    .kj-card { transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+    @media (hover: hover) {
+      .kj-card:hover { transform: translateY(-3px); }
+    }
+    .kj-card:active { transform: scale(0.985); }
+
+    /* ── Ripple on tap ──────────────────────────────────────────────────────── */
+    @keyframes kjRipple { 0% { transform: scale(0); opacity: 0.4; } 100% { transform: scale(4); opacity: 0; } }
+
+    /* ── Mode hero gradient text (dark mode) ────────────────────────────────── */
+    .kj-hero-title {
+      background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.82) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    /* ── Futuristic skin */
     :root {
       --kj-neon-cyan: #00f5ff;
       --kj-neon-magenta: #ff2a6d;

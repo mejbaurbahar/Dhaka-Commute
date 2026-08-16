@@ -67,16 +67,16 @@ export function PageShell({
         }}
       />
 
-      {/* Single spacer to offset the fixed TopBar (grows with status-bar inset on edge-to-edge Android) */}
+      {/* Spacer = fixed TopBar height + Android status bar inset */}
       <div style={{ height: isMobile ? 'calc(52px + env(safe-area-inset-top))' : 60, flexShrink: 0 }}/>
 
-      {/* Back bar — shown on detail/inner pages when user can go back */}
-      {canBack && (
+      {/* Desktop-only back bar — mobile back is handled by TopBar back arrow */}
+      {canBack && !isMobile && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
           padding: '10px 16px', background: tk.bg,
           borderBottom: `1px solid ${tk.line}`,
-          position: 'sticky', top: isMobile ? 'calc(52px + env(safe-area-inset-top))' : 60, zIndex: 10,
+          position: 'sticky', top: 60, zIndex: 10,
         }}>
           <button onClick={onBack} style={{
             width: 36, height: 36, borderRadius: 10,

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
-import { KJ_TOKENS, T, SANS, BEN, chipBtn } from '../tokens';
+import { KJ_TOKENS, T, N, Fare, SANS, BEN, chipBtn } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { Stars } from '../components/Stars';
@@ -80,7 +80,7 @@ export function FlightDetailPage(props: Props) {
   const toCode = params?.toIATA || 'CXB';
   const fromName = params?.fromName || 'Dhaka (Shahjalal)';
   const toName = params?.toName || "Cox's Bazar";
-  const flightFare = params?.fare ? parseInt(params.fare).toLocaleString() : a.fare;
+  const flightFareRaw = params?.fare ? String(parseInt(params.fare)) : String(a.fare);
   const adFree = isAdFree();
 
   const [tab, setTab] = useState<TabKey>('info');
@@ -107,7 +107,7 @@ export function FlightDetailPage(props: Props) {
               <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:4 }}>
                 <Stars value={a.rating} size={11}/>
                 <span style={{ fontFamily:SANS, fontWeight:700, fontSize:12 }}>{a.rating}</span>
-                <span style={{ fontFamily:SANS, fontSize:11, opacity:0.75 }}>({a.reviews} {T(lang,'রিভিউ','reviews')})</span>
+                <span style={{ fontFamily:SANS, fontSize:11, opacity:0.75 }}>({N(a.reviews, lang)} {T(lang,'রিভিউ','reviews')})</span>
               </div>
             </div>
           </div>
@@ -143,11 +143,11 @@ export function FlightDetailPage(props: Props) {
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16, flexWrap:'wrap', gap:10 }}>
             <div>
               <span style={{ fontFamily:SANS, fontSize:12, color:tk.textFaint }}>{T(lang,'শুরু থেকে','Starts from')} </span>
-              <span style={{ fontFamily:SANS, fontWeight:800, fontSize:26, color:tk.text }}>৳ {flightFare}</span>
+              <span style={{ fontFamily:SANS, fontWeight:800, fontSize:26, color:tk.text }}>{Fare(flightFareRaw, lang)}</span>
               <div style={{ fontFamily:SANS, fontSize:11, color:tk.textFaint }}>{T(lang,'অফিসিয়াল সাইটে যাচাই করুন','verify on official site')}</div>
             </div>
             <div style={{ background:a.seats <= 5 ? '#ff2a6d22' : tk.primarySoft, border:`1px solid ${a.seats <= 5 ? '#ff2a6d' : tk.primary}`, borderRadius:999, padding:'6px 14px', fontFamily:SANS, fontWeight:700, fontSize:12, color:a.seats <= 5 ? '#ff2a6d' : tk.primary }}>
-              {a.seats} {T(lang,'আসন বাকি','seats left')}
+              {N(a.seats, lang)} {T(lang,'আসন বাকি','seats left')}
             </div>
           </div>
 
@@ -191,7 +191,7 @@ export function FlightDetailPage(props: Props) {
                   <div style={{ flex:1 }}>
                     <div style={{ fontFamily:BEN, fontWeight:700, fontSize:14, color:tk.text }}>{T(lang,c.cls.bn,c.cls.en)}</div>
                   </div>
-                  <div style={{ fontFamily:SANS, fontWeight:800, fontSize:16, color:c.col }}>৳ {c.fare}</div>
+                  <div style={{ fontFamily:SANS, fontWeight:800, fontSize:16, color:c.col }}>{Fare(c.fare, lang)}</div>
                 </div>
               ))}
               <div style={{ ...card(12), background:tk.amberSoft, borderColor:tk.amber }}>

@@ -371,7 +371,7 @@ export function LocalBusPage(props: Props) {
                               <span style={{ fontFamily:SANS, fontWeight:700, fontSize:12, color:'#10b981' }}>৳ {journey.fare.replace('৳ ','')}</span>
                             </div>
                           </div>
-                          <div style={{ fontFamily:SANS, fontWeight:700, fontSize:11, color:tk.textFaint }}>{journey.legs.length} {T(lang,'লেগ','legs')}</div>
+                          <div style={{ fontFamily:SANS, fontWeight:700, fontSize:11, color:tk.textFaint }}>{N(journey.legs.length, lang)} {T(lang,'লেগ','legs')}</div>
                         </div>
                         {/* Leg timeline */}
                         <div style={{ position:'relative' }}>

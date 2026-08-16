@@ -135,7 +135,7 @@ export function MetroPage(props: Props) {
   }, [fareFrom, fareTo]);
 
   const nearestName = nearestMetro ? T(lang, nearestMetro.bn, nearestMetro.en) : T(lang, 'নিকটতম স্টেশন', 'nearest station');
-  const nearestDistance = nearestMetro ? (nearestMetro.distance < 1 ? `${Math.round(nearestMetro.distance * 1000)} m` : `${nearestMetro.distance.toFixed(1)} km`) : '';
+  const nearestDistance = nearestMetro ? (nearestMetro.distance < 1 ? `${N(Math.round(nearestMetro.distance * 1000), lang)} m` : `${N(nearestMetro.distance.toFixed(1), lang)} km`) : '';
 
   return (
     <PageShell {...props}>

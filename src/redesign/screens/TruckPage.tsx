@@ -329,7 +329,7 @@ export function TruckPage(props: Props) {
                 title={T(
                   lang,
                   `যানবাহন · ${N(filteredCats.length, lang)} টি অপশন`,
-                  `Vehicles · ${filteredCats.length} options`,
+                  `Vehicles · ${N(filteredCats.length, lang)} options`,
                 )}
               />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
@@ -664,7 +664,7 @@ function QuotePanel({
 
           <div style={{ fontFamily: BEN, fontSize: 11, color: tk.textFaint, marginTop: 8, lineHeight: 1.45 }}>
             {lang === 'bn'
-              ? `নোট: বিডিং মার্কেটপ্লেসে চূড়ান্ত ভাড়া ভেন্ডর বিড করার পর; অন-ডিমান্ড সার্ভিসে রিয়েল-টাইম ফিক্সড প্রাইস। অতিরিক্ত: লোডার ৳${SURCHARGES.loaderPerPerson.low}-${SURCHARGES.loaderPerPerson.high}/জন, রাত ১০টার পর +৳${SURCHARGES.nightAfter10pm.low}।`
+              ? `নোট: বিডিং মার্কেটপ্লেসে চূড়ান্ত ভাড়া ভেন্ডর বিড করার পর; অন-ডিমান্ড সার্ভিসে রিয়েল-টাইম ফিক্সড প্রাইস। অতিরিক্ত: লোডার ৳${N(SURCHARGES.loaderPerPerson.low, lang)}-${N(SURCHARGES.loaderPerPerson.high, lang)}/জন, রাত ১০টার পর +৳${N(SURCHARGES.nightAfter10pm.low, lang)}।`
               : `Note: On the bidding marketplace, exact fare comes after vendor bids; the on-demand service shows real-time fixed price. Extras: loader ৳${SURCHARGES.loaderPerPerson.low}-${SURCHARGES.loaderPerPerson.high}/person, after-10pm +৳${SURCHARGES.nightAfter10pm.low}.`}
           </div>
         </div>

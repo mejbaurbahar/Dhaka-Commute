@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
-import { KJ_TOKENS, T, SANS, BEN, Tokens } from '../tokens';
+import { KJ_TOKENS, T, SANS, BEN, N, Tokens } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovAdBanner } from '../components/GovAdBanner';
@@ -133,7 +133,7 @@ export function HistoryPage(props: ScreenProps) {
   return (
     <PageShell {...props} canBack>
       <div style={{ padding: isMobile ? '16px 12px 100px' : '24px 40px 60px', display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div style={{
+        <div className="kj-enter-1" style={{
           borderRadius: 22,
           padding: isMobile ? 18 : 28,
           position: 'relative',
@@ -148,7 +148,7 @@ export function HistoryPage(props: ScreenProps) {
           </span>
           <h1 style={{ fontFamily: font, fontSize: isMobile ? 22 : 30, fontWeight: 700, margin: '6px 0 18px', lineHeight: 1.2 }}>
             {hasData
-              ? lbl(`${totalSearches} searches recorded`, `${totalSearches}টি সার্চ সংরক্ষিত`)
+              ? lbl(`${N(totalSearches, lang)} searches recorded`, `${N(totalSearches, lang)}টি সার্চ সংরক্ষিত`)
               : lbl('No history yet', 'এখনো কোনো ইতিহাস নেই')}
           </h1>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4,1fr)', gap: 10 }}>
@@ -158,10 +158,10 @@ export function HistoryPage(props: ScreenProps) {
               { label: lbl('Journey days', 'যাত্রার দিন'), value: journeyDays, icon: '📍' },
               { label: lbl('Features opened', 'ফিচার ব্যবহার'), value: featureCount, icon: '✨' },
             ].map((s) => (
-              <div key={s.label} style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 14, padding: '12px 10px', textAlign: 'center' }}>
-                <div style={{ fontSize: 20, marginBottom: 6 }}>{s.icon}</div>
-                <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: isMobile ? 16 : 22 }}>{s.value}</div>
-                <div style={{ fontFamily: font, fontSize: 10, fontWeight: 700, opacity: 0.85, letterSpacing: 1.2, textTransform: 'uppercase', marginTop: 3 }}>{s.label}</div>
+              <div key={s.label} className="kj-stat" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 14, padding: '12px 10px', textAlign: 'center' }}>
+                <div style={{ fontSize: 22, marginBottom: 6 }}>{s.icon}</div>
+                <div style={{ fontFamily: SANS, fontWeight: 800, fontSize: isMobile ? 18 : 24, lineHeight: 1 }}>{N(s.value, lang)}</div>
+                <div style={{ fontFamily: font, fontSize: 10, fontWeight: 700, opacity: 0.85, letterSpacing: 1.2, textTransform: 'uppercase', marginTop: 4 }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -187,7 +187,7 @@ export function HistoryPage(props: ScreenProps) {
             />
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr', gap: 20 }}>
+          <div className="kj-enter-2" style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr', gap: 20 }}>
             <div style={card}>
               <div style={{ fontFamily: font, fontWeight: 700, fontSize: 16, color: tk.text, marginBottom: 12 }}>
                 {lbl('Recent activity', 'সাম্প্রতিক কার্যকলাপ')}
@@ -219,7 +219,7 @@ export function HistoryPage(props: ScreenProps) {
                     <div key={mode} style={{ marginBottom: 12 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: font, fontSize: 13, color: tk.text, marginBottom: 6 }}>
                         <span>{mode}</span>
-                        <span>{pct}%</span>
+                        <span>{N(pct, lang)}%</span>
                       </div>
                       <div style={{ height: 7, borderRadius: 999, background: tk.panelMuted, overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${pct}%`, borderRadius: 999, background: tk.primary }} />
@@ -240,9 +240,9 @@ export function HistoryPage(props: ScreenProps) {
                     <div key={journey!.date} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '12px 0', borderTop: index ? `1px solid ${tk.line}` : 'none' }}>
                       <div>
                         <div style={{ fontFamily: SANS, fontWeight: 700, color: tk.text }}>{journey!.date}</div>
-                        <div style={{ fontFamily: font, fontSize: 12, color: tk.textDim }}>{journey!.points.length} {lbl('location points', 'লোকেশন পয়েন্ট')}</div>
+                        <div style={{ fontFamily: font, fontSize: 12, color: tk.textDim }}>{N(journey!.points.length, lang)} {lbl('location points', 'লোকেশন পয়েন্ট')}</div>
                       </div>
-                      <div style={{ fontFamily: SANS, fontWeight: 800, color: tk.primary }}>{journey!.totalDistance.toFixed(1)} km</div>
+                      <div style={{ fontFamily: SANS, fontWeight: 800, color: tk.primary }}>{N(journey!.totalDistance.toFixed(1), lang)} km</div>
                     </div>
                   ))}
                 </div>

@@ -155,10 +155,11 @@ interface AIChatBodyProps {
   isMobile: boolean;
   chat: ReturnType<typeof useAIChat>;
   autoFocusInput?: boolean;
+  hideHistoryBtn?: boolean;
 }
 
 /** Messages + suggestion chips + input bar. Parent owns height (page flex or modal). */
-export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput }: AIChatBodyProps) {
+export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput, hideHistoryBtn }: AIChatBodyProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [kbPad, setKbPad] = useState(0);
@@ -188,7 +189,7 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput }: AIChatB
 
         {/* Messages area */}
         <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: isMobile ? '14px 12px' : '20px 24px', display: 'flex', flexDirection: 'column', gap: isMobile ? 12 : 16, position: 'relative' }}>
-          {isMobile && (
+          {isMobile && !hideHistoryBtn && (
             <button
               onClick={() => setHistoryOpen(true)}
               aria-label={T(lang, 'চ্যাট ইতিহাস', 'Chat history')}
@@ -198,7 +199,7 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput }: AIChatB
                 background: tk.panel, border: `1px solid ${tk.line}`,
                 borderRadius: 999, padding: '5px 12px',
                 fontFamily: SANS, fontSize: 11, fontWeight: 700, color: tk.textDim,
-                cursor: 'pointer', boxShadow: `0 2px 10px ${tk.shadow ?? 'rgba(0,0,0,0.12)'}`,
+                cursor: 'pointer', boxShadow: `0 2px 10px rgba(0,0,0,0.12)`,
               }}
             >
               💬 {T(lang, 'ইতিহাস', 'History')}

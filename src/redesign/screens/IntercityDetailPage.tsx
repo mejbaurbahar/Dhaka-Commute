@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang } from '../tokens';
+import { KJ_TOKENS, SANS, BEN, T, N, Tokens, Lang } from '../tokens';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { PageShell } from './PageShell';
 import { findOperator, findRoutesByFromTo, BUS_OPERATOR_DETAILS } from '../../../data/intercityOperatorData';
@@ -603,8 +603,8 @@ export function IntercityDetailPage(props: Props) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
                 <span style={{ fontFamily: SANS, fontSize: 13, color: 'rgba(255,255,255,0.75)' }}>
                   ⭐ {ratingSummary
-                    ? `${ratingSummary.average.toFixed(1)} (${ratingSummary.count} ${lbl('reviews', 'রিভিউ')})`
-                    : `4.2 (${lbl('loading...', 'লোড হচ্ছে...')})`}
+                    ? `${N(ratingSummary.average.toFixed(1), lang)} (${N(ratingSummary.count, lang)} ${lbl('reviews', 'রিভিউ')})`
+                    : `${N('4.2', lang)} (${lbl('loading...', 'লোড হচ্ছে...')})`}
                 </span>
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 5,

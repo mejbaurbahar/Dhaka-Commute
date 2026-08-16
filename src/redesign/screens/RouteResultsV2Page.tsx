@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
-import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang } from '../tokens';
+import { KJ_TOKENS, SANS, BEN, T, N, Tokens, Lang } from '../tokens';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { GovAdBanner } from '../components/GovAdBanner';
 import { PageShell } from './PageShell';
@@ -334,7 +334,7 @@ export function RouteResultsV2Page(props: Props) {
             <div style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, padding: '6px 14px', display: 'flex', alignItems: 'center', gap: 6, fontFamily: SANS, fontSize: 12 }}>
               <span>🚌</span>
               <span style={{ color: tk.textDim }}>{lbl('Results', 'ফলাফল')}</span>
-              <span style={{ color: tk.text, fontWeight: 700 }}>{RESULTS.length}</span>
+              <span style={{ color: tk.text, fontWeight: 700 }}>{N(RESULTS.length, lang)}</span>
             </div>
             {activeFilterCount > 0 && (
               <div style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}`, borderRadius: 999, padding: '6px 14px', fontFamily: SANS, fontSize: 12, color: tk.primary, fontWeight: 600 }}>
@@ -430,7 +430,7 @@ export function RouteResultsV2Page(props: Props) {
                   icon="💡"
                 />
               )}
-              <div style={{ background: tk.panel, border: `1px solid ${r.isAC ? '#10b981' : tk.line}`, borderRadius: 18, overflow: 'hidden', boxShadow: tk.shadow }}>
+              <div className={`kj-card kj-enter-${Math.min(idx + 1, 6)}`} style={{ background: tk.panel, border: `1px solid ${r.isAC ? '#10b981' : tk.line}`, borderRadius: 18, overflow: 'hidden', boxShadow: tk.shadow }}>
                 {r.isAC && (
                   <div style={{ background: 'linear-gradient(135deg,#10b981,#059669)', padding: '7px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 14 }}>❄️</span>
@@ -470,7 +470,7 @@ export function RouteResultsV2Page(props: Props) {
                           <span style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 6, padding: '3px 8px', fontFamily: SANS, fontSize: 12, color: tk.textDim }}>
                             {lbl(r.type, r.typeBn)}
                           </span>
-                          {r.stops.length > 0 && <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>{r.stops.length} {lbl('stops', 'স্টপ')}</span>}
+                          {r.stops.length > 0 && <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>{N(r.stops.length, lang)} {lbl('stops', 'স্টপ')}</span>}
                         </div>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                           <button onClick={() => setFavoriteIds(toggleFavoriteBus(r.busId, r.name))}

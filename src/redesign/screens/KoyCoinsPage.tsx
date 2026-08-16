@@ -40,8 +40,8 @@ function fmtTime(ms: number): string {
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
-function fmtDate(ts: number): string {
-  return new Date(ts).toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:false });
+function fmtDate(ts: number, lang: 'bn' | 'en'): string {
+  return new Date(ts).toLocaleString(lang === 'bn' ? 'bn-BD' : 'en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:false });
 }
 
 export function KoyCoinsPage(props: Props) {
@@ -258,7 +258,7 @@ export function KoyCoinsPage(props: Props) {
                     <div style={{ flex:1, paddingBottom:i<Math.min(txns.length,15)-1?12:0, display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
                       <div>
                         <div style={{ fontFamily:BEN, fontSize:12, color:tk.text }}>{tx.reason}</div>
-                        <div style={{ fontFamily:SANS, fontSize:10, color:tk.textFaint }}>{fmtDate(tx.ts)}</div>
+                        <div style={{ fontFamily:SANS, fontSize:10, color:tk.textFaint }}>{fmtDate(tx.ts, lang)}</div>
                       </div>
                       <div style={{ fontFamily:SANS, fontWeight:700, fontSize:13, color:tx.type==='earn'?'#10b981':'#ef4444', flexShrink:0 }}>
                         {tx.type==='earn'?'+':'-'}{N(tx.amount, lang)}

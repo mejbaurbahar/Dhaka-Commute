@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
+import { KJ_TOKENS, T, N, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot } from '../components/AdSlot';
 import { BUS_DATA, STATIONS } from '../../../constants';
@@ -166,7 +166,7 @@ export function FromToBusPage(props: Props) {
 
           <div style={{ marginTop: 16 }}>
             {leg(
-              lang === 'bn' ? `ধাপ ১: ${fromName.bn} → ${viaName.bn} (${leg1Buses.length}টি বাস)` : `Step 1: ${fromName.en} → ${viaName.en} (${leg1Buses.length} buses)`,
+              lang === 'bn' ? `ধাপ ১: ${fromName.bn} → ${viaName.bn} (${N(leg1Buses.length, lang)}টি বাস)` : `Step 1: ${fromName.en} → ${viaName.en} (${N(leg1Buses.length, lang)} buses)`,
               leg1Buses, fromName, viaName, interchange.from, interchange.via
             )}
             <div style={{ ...card(12), marginBottom: 10, background: `${tk.primary}10`, borderColor: `${tk.primary}40` }}>
@@ -177,7 +177,7 @@ export function FromToBusPage(props: Props) {
               </span>
             </div>
             {leg(
-              lang === 'bn' ? `ধাপ ২: ${viaName.bn} → ${toName.bn} (${leg2Buses.length}টি বাস)` : `Step 2: ${viaName.en} → ${toName.en} (${leg2Buses.length} buses)`,
+              lang === 'bn' ? `ধাপ ২: ${viaName.bn} → ${toName.bn} (${N(leg2Buses.length, lang)}টি বাস)` : `Step 2: ${viaName.en} → ${toName.en} (${N(leg2Buses.length, lang)} buses)`,
               leg2Buses, viaName, toName, interchange.via, interchange.to
             )}
           </div>
@@ -265,7 +265,7 @@ export function FromToBusPage(props: Props) {
               {lang === 'bn' ? `${fromName.bn} → ${toName.bn}` : `${fromName.en} → ${toName.en}`}
             </span>
             <span style={{ color: tk.textDim, fontSize: 13 }}>
-              {T(lang, `${buses.length}টি বাস এই রুটে চলাচল করে`, `${buses.length} bus${buses.length === 1 ? '' : 'es'} on this route`)}
+              {T(lang, `${N(buses.length, lang)}টি বাস এই রুটে চলাচল করে`, `${N(buses.length, lang)} bus${buses.length === 1 ? '' : 'es'} on this route`)}
             </span>
           </div>
           <p style={{ color: tk.textDim, margin: '8px 0 0', fontSize: 13 }}>

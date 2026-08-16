@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
 import { useAIChat } from '../hooks/useAIChat';
 import { AIChatBody, AvatarAI } from './AIChatBody';
+import { ChatHistoryDrawer } from './ChatHistoryDrawer';
 
 interface AIChatModalProps {
   theme: 'dark' | 'light';
@@ -19,6 +20,7 @@ interface AIChatModalProps {
 export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChatModalProps) {
   const tk: Tokens = KJ_TOKENS[theme];
   const chat = useAIChat(lang, initialQ);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -44,8 +46,8 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
 
   const header = (
     <div style={{
-      flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12,
-      padding: '12px 16px', borderBottom: `1px solid ${tk.line}`,
+      flexShrink: 0, display: 'flex', alignItems: 'center', gap: 10,
+      padding: '10px 14px', borderBottom: `1px solid ${tk.line}`,
       background: `linear-gradient(135deg,${tk.primarySoft} 0%,${tk.accentSoft ?? tk.panelMuted} 100%)`,
     }}>
       <AvatarAI tk={tk} />
@@ -54,21 +56,41 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
           <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>Koy</span><span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}>Jabo</span> <span style={{ color: tk.text }}>AI</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-          <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block', animation: 'kjpulse 2s ease-in-out infinite' }} />
           <span style={{ fontFamily: BEN, fontSize: 11, color: tk.textDim }}>{T(lang, 'যেকোনো পরিবহন প্রশ্ন করুন', 'Ask any transport question')}</span>
         </div>
       </div>
+      {/* History button — shows count badge when there are past sessions */}
+      <button
+        onClick={() => setHistoryOpen(true)}
+        aria-label={T(lang, 'চ্যাট ইতিহাস', 'Chat history')}
+        style={{
+          position: 'relative',
+          display: 'flex', alignItems: 'center', gap: 5,
+          background: tk.panelMuted, border: `1px solid ${tk.line}`,
+          borderRadius: 999, padding: '6px 12px',
+          fontFamily: BEN, fontSize: 11, fontWeight: 700, color: tk.textDim,
+          cursor: 'pointer', flexShrink: 0,
+        }}
+      >
+        💬 {T(lang, 'ইতিহাস', 'History')}
+        {chat.allRecents.length > 0 && (
+          <span style={{
+            background: tk.primary, color: tk.primaryInk, borderRadius: 999,
+            minWidth: 17, height: 17, display: 'inline-flex', alignItems: 'center',
+            justifyContent: 'center', fontSize: 10, fontWeight: 800, padding: '0 4px',
+          }}>{chat.allRecents.length}</span>
+        )}
+      </button>
       <button
         onClick={onClose}
         aria-label={T(lang, 'বন্ধ করুন', 'Close chat')}
         style={{
-          width: 36, height: 36, borderRadius: 999, border: `1px solid ${tk.line}`,
+          width: 34, height: 34, borderRadius: 999, border: `1px solid ${tk.line}`,
           background: tk.panel, color: tk.text, cursor: 'pointer', flexShrink: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 18, lineHeight: 1, transition: 'all 0.15s',
+          fontSize: 18, lineHeight: 1,
         }}
-        onMouseEnter={e => { e.currentTarget.style.background = tk.panelMuted; }}
-        onMouseLeave={e => { e.currentTarget.style.background = tk.panel; }}
       >
         ✕
       </button>
@@ -114,8 +136,18 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
       >
         {header}
         {/* No autoFocus — let the user see the modal first, then tap the input */}
-        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} />
+        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} hideHistoryBtn />
       </div>
+      {/* History drawer — rendered outside the card so it overlays properly */}
+      {historyOpen && (
+        <ChatHistoryDrawer
+          open={historyOpen}
+          onClose={() => setHistoryOpen(false)}
+          chat={chat}
+          tk={tk}
+          lang={lang}
+        />
+      )}
     </div>
   );
 }

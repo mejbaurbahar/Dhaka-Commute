@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react';
+import { App as CapApp } from '@capacitor/app';
 import { KJ_TOKENS, Theme, Lang, Device } from './tokens';
 import { injectGlobalStyles } from './globalStyles';
 import { findPair, findInterchange } from './busPairs';
@@ -276,7 +277,7 @@ export function KoyJaboApp() {
   const stackRef = useRef(stack);
   stackRef.current = stack;
   const [menuOpen, setMenuOpen] = useState(false);
-  const [dir, setDir] = useState<'fwd' | 'back'>('fwd');
+  const [dir, setDir] = useState<'fwd' | 'back' | 'tab'>('fwd');
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [splash, setSplash] = useState(true);
   const [updateReady, setUpdateReady] = useState(false);
@@ -448,7 +449,7 @@ export function KoyJaboApp() {
   const navTab = useCallback((route: Route) => {
     if (route === 'ai') { setAiOpen(true); return; } // AI tab = popup, not a page
     const entry = { route };
-    setDir('fwd');
+    setDir('tab'); // tab switch = cross-fade, not directional slide
     pushUrl(entry);
     setStack([entry]);
     if (scrollerRef.current) scrollerRef.current.scrollTop = 0;
@@ -482,6 +483,30 @@ export function KoyJaboApp() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [canBack, back]);
+
+  // Android hardware back button — keep refs so the listener registered
+  // once at mount always sees the latest state without re-registering.
+  const backRef = useRef(back);
+  backRef.current = back;
+  const canBackRef = useRef(canBack);
+  canBackRef.current = canBack;
+  const aiOpenRef = useRef(aiOpen);
+  aiOpenRef.current = aiOpen;
+
+  useEffect(() => {
+    if (!NATIVE_BUILD) return;
+    let handle: { remove: () => void } | null = null;
+    CapApp.addListener('backButton', () => {
+      // If AI modal open, close it first
+      if (aiOpenRef.current) { setAiOpen(false); return; }
+      if (canBackRef.current) {
+        backRef.current();
+      } else {
+        CapApp.minimizeApp();
+      }
+    }).then(h => { handle = h; });
+    return () => { handle?.remove(); };
+  }, []); // register once at mount — uses refs for live state
 
   // Back button only on detail/leaf pages, not on hub/main pages
   // bus-live-map always gets a back button — users often land on it directly via URL.
@@ -654,7 +679,7 @@ export function KoyJaboApp() {
         tk={tk} lang={lang} theme={theme}
         device={resolvedDevice}
         activeRoute={top.route}
-        canBack={canBack} onBack={back}
+        canBack={showBack} onBack={back}
         onNav={nav} onLang={toggleLang}
         onTheme={() => setTheme(toggleTheme)}
         onMenu={() => setMenuOpen(true)}
@@ -669,6 +694,7 @@ export function KoyJaboApp() {
           tk={tk} lang={lang}
           activeRoute={top.route}
           onNav={navTab}
+          onMenu={() => setMenuOpen(true)}
         />
       )}
       <main>{stage}</main>
