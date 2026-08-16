@@ -8254,18 +8254,428 @@ export const ADVANCED_QA_DATA: AdvancedQAItem[] = [
     "answer_en": "Bus/train from Dhaka to Mymensingh (~2.5 hrs). Shashi Lodge is 1 km from station — rickshaw 20 TK.",
     "answer_bn": "ঢাকা থেকে বাস/ট্রেনে ময়মনসিংহ (~আড়াই ঘণ্টা)। শশী লজ স্টেশন থেকে ১ কিমি — রিকশায় ২০ টাকা।",
     "keywords": [
-      "how",
-      "visit",
-      "mymensingh s",
-      "shashi",
-      "lodge",
-      "palace",
-      "ময মনস হ র",
-      "র জব ড ত",
-      "ক ভ ব",
-      "য ব",
-      "tourist",
-      "place"
+      "how", "visit", "mymensingh s", "shashi", "lodge", "palace",
+      "ময মনস হ র", "র জব ড ত", "ক ভ ব", "য ব", "tourist", "place"
+    ]
+  },
+  {
+    "id": "491",
+    "category": "Inter-City",
+    "question_en": "What is the bus fare from Dhaka to Chittagong in 2026?",
+    "question_bn": "২০২৬ সালে ঢাকা থেকে চট্টগ্রামে বাস ভাড়া কত?",
+    "answer_en": "Official BRTA 2026 rate: ৳704 (51-seat AC) from Sayedabad. Non-AC ৳450-550. Green Line, Shyamoli, Hanif, S Alam, Soudia operate this route. Distance ~245 km via Padma Bridge, journey ~5-6 hrs.",
+    "answer_bn": "BRTA ২০২৬ নির্ধারিত ভাড়া: ৳৭০৪ (৫১-আসন AC) সায়েদাবাদ থেকে। নন-এসি ৳৪৫০-৫৫০। গ্রীন লাইন, শ্যামলী, হানিফ, এস আলম, সৌদিয়া এই রুটে চলে। দূরত্ব ~২৪৫ কিমি, যাত্রা ~৫-৬ ঘণ্টা।",
+    "keywords": [
+      "bus", "fare", "dhaka", "chittagong", "chattogram", "2026", "ভাড়া",
+      "ঢাকা", "চট্টগ্রাম", "বাস", "কত", "sayedabad", "সায়েদাবাদ", "intercity"
+    ]
+  },
+  {
+    "id": "492",
+    "category": "Inter-City",
+    "question_en": "Bus fare from Dhaka to Sylhet 2026?",
+    "question_bn": "ঢাকা থেকে সিলেটে বাস ভাড়া ২০২৬?",
+    "answer_en": "BRTA 2026 rate: ৳580-740 depending on seat count. Shyamoli, Hanif, Green Line operate Sayedabad/Mohakhali → Sylhet. Journey ~6-7 hrs. Train alternative: Upaban/Jayantika Express ৳265-1678.",
+    "answer_bn": "BRTA ২০২৬: ৳৫৮০-৭৪০ (আসন সংখ্যার উপর নির্ভর করে)। শ্যামলী, হানিফ, গ্রীন লাইন সায়েদাবাদ/মহাখালী → সিলেট চলে। যাত্রা ~৬-৭ ঘণ্টা। ট্রেন বিকল্প: উপবন/জয়ন্তিকা এক্সপ্রেস ৳২৬৫-১৬৭৮।",
+    "keywords": [
+      "bus", "fare", "dhaka", "sylhet", "2026", "ভাড়া", "ঢাকা", "সিলেট",
+      "বাস", "কত", "upaban", "jayantika", "উপবন", "intercity"
+    ]
+  },
+  {
+    "id": "493",
+    "category": "Inter-City",
+    "question_en": "Bus fare from Dhaka to Rajshahi 2026?",
+    "question_bn": "ঢাকা থেকে রাজশাহীতে বাস ভাড়া ২০২৬?",
+    "answer_en": "BRTA 2026: ৳777 (51-seat) / ৳991 (40-seat AC). Gabtoli terminal. Operators: Hanif, S.R Travels, National Travels, Shyamoli. Journey ~5-6 hrs. Train: Silk City/Padma Express from Kamalapur ৳390-1600.",
+    "answer_bn": "BRTA ২০২৬: ৳৭৭৭ (৫১-আসন) / ৳৯৯১ (৪০-আসন AC)। গাবতলী টার্মিনাল থেকে। অপারেটর: হানিফ, এস.আর ট্রাভেলস, ন্যাশনাল ট্রাভেলস, শ্যামলী। যাত্রা ~৫-৬ ঘণ্টা। ট্রেন: সিল্ক সিটি/পদ্মা এক্সপ্রেস কমলাপুর থেকে ৳৩৯০-১৬০০।",
+    "keywords": [
+      "bus", "fare", "dhaka", "rajshahi", "2026", "ভাড়া", "ঢাকা", "রাজশাহী",
+      "বাস", "কত", "gabtoli", "গাবতলী", "silk city", "padma express", "intercity"
+    ]
+  },
+  {
+    "id": "494",
+    "category": "Inter-City",
+    "question_en": "Bus fare from Dhaka to Barishal 2026?",
+    "question_bn": "ঢাকা থেকে বরিশালে বাস ভাড়া ২০২৬?",
+    "answer_en": "BRTA 2026: ৳464 (51-seat) / ৳592 (40-seat AC) from Sayedabad. Operators: Sakura, Sohagh, Hanif, Suravi. Journey ~5 hrs via Padma Bridge. Alternative: Launch from Sadarghat ৳280-6000 overnight.",
+    "answer_bn": "BRTA ২০২৬: ৳৪৬৪ (৫১-আসন) / ৳৫৯২ (৪০-আসন AC) সায়েদাবাদ থেকে। অপারেটর: সাকুরা, সোহাগ, হানিফ, সুরভি। পদ্মা সেতু হয়ে ~৫ ঘণ্টা। বিকল্প: সদরঘাট থেকে লঞ্চ ৳২৮০-৬০০০ রাতারাতি।",
+    "keywords": [
+      "bus", "fare", "dhaka", "barishal", "barisal", "2026", "ভাড়া", "ঢাকা",
+      "বরিশাল", "বাস", "কত", "sayedabad", "সায়েদাবাদ", "sakura", "sohagh", "launch"
+    ]
+  },
+  {
+    "id": "495",
+    "category": "Inter-City",
+    "question_en": "Bus fare from Dhaka to Rangpur 2026?",
+    "question_bn": "ঢাকা থেকে রংপুরে বাস ভাড়া ২০২৬?",
+    "answer_en": "BRTA 2026: ৳751 (51-seat) / ৳911 (40-seat AC) from Gabtoli. Operators: Hanif, SR Travels, NABO Paribahan, Shyamoli. Journey ~7-8 hrs. Train: Rangpur Express/Kurigram Express from Kamalapur.",
+    "answer_bn": "BRTA ২০২৬: ৳৭৫১ (৫১-আসন) / ৳৯১১ (৪০-আসন AC) গাবতলী থেকে। অপারেটর: হানিফ, এসআর ট্রাভেলস, নাবো পরিবহন, শ্যামলী। যাত্রা ~৭-৮ ঘণ্টা। ট্রেন: রংপুর এক্সপ্রেস/কুড়িগ্রাম এক্সপ্রেস কমলাপুর থেকে।",
+    "keywords": [
+      "bus", "fare", "dhaka", "rangpur", "2026", "ভাড়া", "ঢাকা", "রংপুর",
+      "বাস", "কত", "gabtoli", "গাবতলী", "intercity"
+    ]
+  },
+  {
+    "id": "496",
+    "category": "Inter-City",
+    "question_en": "Bus fare from Dhaka to Mymensingh 2026?",
+    "question_bn": "ঢাকা থেকে ময়মনসিংহে বাস ভাড়া ২০২৬?",
+    "answer_en": "BRTA 2026: ৳294 (51-seat) / ৳375 (40-seat AC) from Mohakhali. Journey ~2.5-3 hrs. Operators: Enah Transport, Shyamoli, Desh Travels. Train: Tista/Agnibina/Brahmaputra Express ~₳110-400.",
+    "answer_bn": "BRTA ২০২৬: ৳২৯৪ (৫১-আসন) / ৳৩৭৫ (৪০-আসন AC) মহাখালী থেকে। যাত্রা ~২.৫-৩ ঘণ্টা। অপারেটর: ইনা ট্রান্সপোর্ট, শ্যামলী, দেশ ট্রাভেলস। ট্রেন: তিস্তা/অগ্নিবীণা/ব্রহ্মপুত্র এক্সপ্রেস ~৳১১০-৪০০।",
+    "keywords": [
+      "bus", "fare", "dhaka", "mymensingh", "2026", "ভাড়া", "ঢাকা", "ময়মনসিংহ",
+      "বাস", "কত", "mohakhali", "মহাখালী", "tista", "তিস্তা", "intercity"
+    ]
+  },
+  {
+    "id": "497",
+    "category": "Inter-City",
+    "question_en": "Bus fare from Dhaka to Cox's Bazar 2026?",
+    "question_bn": "ঢাকা থেকে কক্সবাজারে বাস ভাড়া ২০২৬?",
+    "answer_en": "BRTA 2026: ৳900 (51-seat) / ৳1147 (40-seat AC) from Sayedabad. Operators: Green Line, Shyamoli, Hanif, Soudia, TR Travels. Night buses ~10-12 hrs. AC sleeper ৳1200-2500.",
+    "answer_bn": "BRTA ২০২৬: ৳৯০০ (৫১-আসন) / ৳১১৪৭ (৪০-আসন AC) সায়েদাবাদ থেকে। অপারেটর: গ্রীন লাইন, শ্যামলী, হানিফ, সৌদিয়া, টিআর ট্রাভেলস। রাতের বাস ~১০-১২ ঘণ্টা। এসি স্লিপার ৳১২০০-২৫০০।",
+    "keywords": [
+      "bus", "fare", "dhaka", "cox bazar", "coxs bazar", "coxsbazar", "2026",
+      "ভাড়া", "ঢাকা", "কক্সবাজার", "বাস", "কত", "green line", "sleeper", "intercity"
+    ]
+  },
+  {
+    "id": "498",
+    "category": "Inter-City",
+    "question_en": "Bus fare from Dhaka to Panchagarh (furthest north) 2026?",
+    "question_bn": "ঢাকা থেকে পঞ্চগড় (সর্ব উত্তর) বাস ভাড়া ২০২৬?",
+    "answer_en": "BRTA 2026: ৳1005 (51-seat) / ৳1281 (40-seat AC). Gabtoli terminal. Journey ~9-10 hrs. Panchagarh is the northernmost district; also train — Ekota Express/Panchagarh Express from Kamalapur.",
+    "answer_bn": "BRTA ২০২৬: ৳১০০৫ (৫১-আসন) / ৳১২৮১ (৪০-আসন AC)। গাবতলী টার্মিনাল। যাত্রা ~৯-১০ ঘণ্টা। পঞ্চগড় সর্বোত্তর জেলা; ট্রেনও আছে — একতা এক্সপ্রেস/পঞ্চগড় এক্সপ্রেস কমলাপুর থেকে।",
+    "keywords": [
+      "bus", "fare", "dhaka", "panchagarh", "2026", "ভাড়া", "ঢাকা", "পঞ্চগড়",
+      "বাস", "কত", "north", "ekota", "একতা", "intercity"
+    ]
+  },
+  {
+    "id": "499",
+    "category": "Inter-City",
+    "question_en": "Bus fare from Dhaka to Khulna 2026?",
+    "question_bn": "ঢাকা থেকে খুলনায় বাস ভাড়া ২০২৬?",
+    "answer_en": "Bus ৳700-1200 from Gabtoli/Sayedabad, ~7-9 hrs via Padma Bridge. Operators: Soukhin, Hanif, Shyamoli, Eagle. Train: Sundarban Express / Chitra Express ৳390-1900 (~9 hrs). Launch: Sadarghat overnight ৳300-6000. ⚠️ NO airport in Khulna — nearest is Jashore (JSR), 60km away.",
+    "answer_bn": "বাস ৳৭০০-১২০০ গাবতলী/সায়েদাবাদ থেকে, পদ্মা সেতু হয়ে ~৭-৯ ঘণ্টা। অপারেটর: সৌখিন, হানিফ, শ্যামলী, ঈগল। ট্রেন: সুন্দরবন এক্সপ্রেস / চিত্রা এক্সপ্রেস ৳৩৯০-১৯০০ (~৯ ঘণ্টা)। লঞ্চ: সদরঘাট রাতারাতি ৳৩০০-৬০০০। ⚠️ খুলনায় বিমানবন্দর নেই — নিকটতম যশোর (JSR), ৬০ কিমি দূরে।",
+    "keywords": [
+      "bus", "fare", "dhaka", "khulna", "2026", "ভাড়া", "ঢাকা", "খুলনা",
+      "বাস", "কত", "sundarban express", "chitra express", "সুন্দরবন", "intercity"
+    ]
+  },
+  {
+    "id": "500",
+    "category": "Launch",
+    "question_en": "How to go from Dhaka to Barishal by launch?",
+    "question_bn": "ঢাকা থেকে বরিশালে লঞ্চে কিভাবে যাবো?",
+    "answer_en": "Sadarghat Launch Terminal, Dhaka. Launches depart 6:00-8:00 PM daily. Journey: ~11 hrs overnight, arrives 5:00-6:30 AM. Fare: Deck ৳280-350 · Single Cabin ৳900-1500 · Double Cabin ৳1500-2500 · VIP ৳2000-6000. Launches: MV Sundarban 1-17, MV Parabat, MV Kirtonkhola, MV Eagle.",
+    "answer_bn": "ঢাকা সদরঘাট লঞ্চ টার্মিনাল থেকে প্রতিদিন সন্ধ্যা ৬টা-৮টায় লঞ্চ ছাড়ে। যাত্রা: ~১১ ঘণ্টা রাতারাতি, ভোর ৫-৬:৩০টায় পৌঁছায়। ভাড়া: ডেক ৳২৮০-৩৫০ · সিঙ্গেল কেবিন ৳৯০০-১৫০০ · ডবল কেবিন ৳১৫০০-২৫০০ · ভিআইপি ৳২০০০-৬০০০। লঞ্চ: MV সুন্দরবন ১-১৭, MV পারাবত, MV কীর্তনখোলা, MV ঈগল।",
+    "keywords": [
+      "launch", "dhaka", "barishal", "barisal", "sadarghat", "ferry", "লঞ্চ",
+      "ঢাকা", "বরিশাল", "সদরঘাট", "কেবিন", "ডেক", "কিভাবে", "যাবো"
+    ]
+  },
+  {
+    "id": "501",
+    "category": "Launch",
+    "question_en": "Launch routes from Sadarghat Dhaka — which destinations?",
+    "question_bn": "সদরঘাট থেকে কোন কোন লঞ্চ রুট আছে?",
+    "answer_en": "Major Sadarghat launch routes: 1) Dhaka→Barishal (11 hrs, ৳280-6000) 2) Dhaka→Patuakhali (11 hrs, ৳280-4500) 3) Dhaka→Bhola (10 hrs, ৳200-3800) 4) Dhaka→Chandpur (3-4 hrs, ৳120-1200) 5) Dhaka→Khulna (10-12 hrs overnight). All depart Sadarghat 5PM-9PM. Chandpur departs 8AM & 2PM.",
+    "answer_bn": "সদরঘাটের প্রধান লঞ্চ রুট: ১) ঢাকা→বরিশাল (১১ ঘণ্টা, ৳২৮০-৬০০০) ২) ঢাকা→পটুয়াখালী (১১ ঘণ্টা, ৳২৮০-৪৫০০) ৩) ঢাকা→ভোলা (১০ ঘণ্টা, ৳২০০-৩৮০০) ৪) ঢাকা→চাঁদপুর (৩-৪ ঘণ্টা, ৳১২০-১২০০) ৫) ঢাকা→খুলনা (১০-১২ ঘণ্টা রাতারাতি)। সব ছাড়ে বিকাল ৫টা-রাত ৯টায়। চাঁদপুর ছাড়ে সকাল ৮টা ও দুপুর ২টায়।",
+    "keywords": [
+      "launch", "sadarghat", "routes", "dhaka", "ferry", "লঞ্চ", "সদরঘাট",
+      "রুট", "কোন", "কোথায়", "যায়", "patuakhali", "bhola", "chandpur", "khulna"
+    ]
+  },
+  {
+    "id": "502",
+    "category": "Launch",
+    "question_en": "How to go from Dhaka to Chandpur by launch?",
+    "question_bn": "ঢাকা থেকে চাঁদপুরে লঞ্চে কিভাবে যাবো?",
+    "answer_en": "Sadarghat, Dhaka. Departs 8:00 AM and 2:00 PM. Journey: 3-4 hours (daytime route). Fare: Deck ৳120-200 · Cabin ৳300-500 · VIP ৳700-1200. Launches: MV Ostrich, MV Rocket (paddle steamer), MV Meghna-1. Fast alternative: Sadarghat to Chandpur also by speedboat.",
+    "answer_bn": "ঢাকা সদরঘাট থেকে সকাল ৮টা ও দুপুর ২টায় ছাড়ে। যাত্রা: ৩-৪ ঘণ্টা (দিনের রুট)। ভাড়া: ডেক ৳১২০-২০০ · কেবিন ৳৩০০-৫০০ · ভিআইপি ৳৭০০-১২০০। লঞ্চ: MV অস্ট্রিচ, MV রকেট (প্যাডেল স্টিমার), MV মেঘনা-১।",
+    "keywords": [
+      "launch", "dhaka", "chandpur", "sadarghat", "লঞ্চ", "ঢাকা", "চাঁদপুর",
+      "সদরঘাট", "কিভাবে", "যাবো", "rocket", "paddle", "steamer", "রকেট"
+    ]
+  },
+  {
+    "id": "503",
+    "category": "Inter-City",
+    "question_en": "Which bus terminal to use for which destination from Dhaka?",
+    "question_bn": "ঢাকা থেকে কোন গন্তব্যের জন্য কোন বাস টার্মিনাল ব্যবহার করবো?",
+    "answer_en": "Dhaka has 3 main intercity bus terminals:\n• Sayedabad (Southeast): Chittagong, Sylhet, Cox's Bazar, Noakhali, Comilla, Barishal, Mymensingh (some)\n• Gabtoli (West/Northwest): Rajshahi, Khulna, Rangpur, Bogura, Dinajpur, Panchagarh, Faridpur\n• Mohakhali (North): Mymensingh, Jamalpur, Netrokona, Kishoreganj",
+    "answer_bn": "ঢাকায় ৩টি প্রধান আন্তঃজেলা বাস টার্মিনাল:\n• সায়েদাবাদ (দক্ষিণ-পূর্ব): চট্টগ্রাম, সিলেট, কক্সবাজার, নোয়াখালী, কুমিল্লা, বরিশাল\n• গাবতলী (পশ্চিম/উত্তর-পশ্চিম): রাজশাহী, খুলনা, রংপুর, বগুড়া, দিনাজপুর, পঞ্চগড়, ফরিদপুর\n• মহাখালী (উত্তর): ময়মনসিংহ, জামালপুর, নেত্রকোণা, কিশোরগঞ্জ",
+    "keywords": [
+      "bus", "terminal", "dhaka", "sayedabad", "gabtoli", "mohakhali", "which",
+      "সায়েদাবাদ", "গাবতলী", "মহাখালী", "টার্মিনাল", "কোন", "বাস", "কোথায়"
+    ]
+  },
+  {
+    "id": "504",
+    "category": "Inter-City",
+    "question_en": "How to travel between two cities not via Dhaka in Bangladesh?",
+    "question_bn": "বাংলাদেশে ঢাকা ছাড়া দুই শহরের মধ্যে যাতায়াত করব কিভাবে?",
+    "answer_en": "Bangladesh uses a hub-and-spoke system centered on Dhaka. Most intercity routes go TO or FROM Dhaka. For non-Dhaka pairs (e.g. Chittagong→Sylhet), you may need to: 1) Find a direct bus (fewer options), 2) Pass through a junction city, or 3) Change at Dhaka/Comilla/Feni. All internal flights also only connect TO/FROM Dhaka — no direct Chittagong↔Sylhet flights.",
+    "answer_bn": "বাংলাদেশে ঢাকাকেন্দ্রিক হাব-এন্ড-স্পোক পদ্ধতি ব্যবহার হয়। বেশিরভাগ আন্তঃজেলা রুট ঢাকা থেকে বা ঢাকায় আসে। ঢাকা বাদে যেমন (চট্টগ্রাম→সিলেট), আপনাকে: ১) সরাসরি বাস খুঁজতে হবে (কম বিকল্প), ২) জংশন শহর দিয়ে যেতে হবে, ৩) ঢাকা/কুমিল্লা/ফেনী তে বদলাতে হবে। সব অভ্যন্তরীণ বিমানও শুধু ঢাকার সাথে সংযুক্ত।",
+    "keywords": [
+      "chittagong", "sylhet", "direct", "non dhaka", "hub", "spoke", "between",
+      "চট্টগ্রাম", "সিলেট", "সরাসরি", "ঢাকা", "ছাড়া", "দুই", "শহর", "বদল"
+    ]
+  },
+  {
+    "id": "505",
+    "category": "Train",
+    "question_en": "Is there a direct train from Dhaka to Barishal?",
+    "question_bn": "ঢাকা থেকে বরিশালে কি সরাসরি ট্রেন আছে?",
+    "answer_en": "NO direct train to Barishal exists — the railway doesn't reach Barishal. Best options: 1) Launch from Sadarghat (overnight, ৳280-6000) 2) Bus from Sayedabad (5 hrs via Padma Bridge, ৳464-592). The launch journey is scenic and relaxing.",
+    "answer_bn": "বরিশালে সরাসরি ট্রেন নেই — রেলওয়ে বরিশাল পর্যন্ত পৌঁছায়নি। সেরা বিকল্প: ১) সদরঘাট থেকে লঞ্চ (রাতারাতি, ৳২৮০-৬০০০) ২) সায়েদাবাদ থেকে বাস (পদ্মা সেতু হয়ে ৫ ঘণ্টা, ৳৪৬৪-৫৯২)। লঞ্চ যাত্রা দৃশ্যমান ও আরামদায়ক।",
+    "keywords": [
+      "direct", "train", "dhaka", "barishal", "barisal", "no train", "সরাসরি",
+      "ট্রেন", "ঢাকা", "বরিশাল", "নেই", "কি", "আছে", "launch", "লঞ্চ"
+    ]
+  },
+  {
+    "id": "506",
+    "category": "Train",
+    "question_en": "Train fare from Dhaka to Sylhet 2026?",
+    "question_bn": "ঢাকা থেকে সিলেটে ট্রেনের ভাড়া ২০২৬?",
+    "answer_en": "Dhaka Kamalapur to Sylhet train fares: Shuvan ৳265 · Shuvanchair ৳500 · Snigdha (AC Chair) ৳963 · 1st Berth ৳1280 · AC Berth ৳1678. Trains: Upaban Express, Jayantika Express, Kalni Express, Parabat Express, Surma Mail. Journey 6.5-7.5 hrs. Book at eticket.railway.gov.bd (opens 10 days ahead).",
+    "answer_bn": "ঢাকা কমলাপুর থেকে সিলেট ট্রেন ভাড়া: শুভন ৳২৬৫ · শুভনচেয়ার ৳৫০০ · স্নিগ্ধা (AC চেয়ার) ৳৯৬৩ · ১ম বার্থ ৳১২৮০ · AC বার্থ ৳১৬৭৮। ট্রেন: উপবন এক্সপ্রেস, জয়ন্তিকা এক্সপ্রেস, কালনী এক্সপ্রেস, পারাবত এক্সপ্রেস, সুরমা মেইল। যাত্রা ৬.৫-৭.৫ ঘণ্টা।",
+    "keywords": [
+      "train", "fare", "dhaka", "sylhet", "2026", "ট্রেন", "ভাড়া", "ঢাকা",
+      "সিলেট", "কত", "upaban", "jayantika", "উপবন", "জয়ন্তিকা", "kamalapur"
+    ]
+  },
+  {
+    "id": "507",
+    "category": "Train",
+    "question_en": "Train fare from Dhaka to Chittagong 2026?",
+    "question_bn": "ঢাকা থেকে চট্টগ্রামে ট্রেনের ভাড়া ২০২৬?",
+    "answer_en": "Dhaka Kamalapur to Chittagong: Shuvan ৳310 · Snigdha AC Chair ৳1025 · 1st Berth ৳1483 · AC Berth ৳1890. Trains: Subarna Express, Sonar Bangla, Turna Express, Mohanagar Goduli. Journey ~5-6 hrs. Book 10 days ahead at eticket.railway.gov.bd. Tickets via bKash/Nagad/Rocket also.",
+    "answer_bn": "ঢাকা কমলাপুর থেকে চট্টগ্রাম: শুভন ৳৩১০ · স্নিগ্ধা AC চেয়ার ৳১০২৫ · ১ম বার্থ ৳১৪৮৩ · AC বার্থ ৳১৮৯০। ট্রেন: সুবর্ণ এক্সপ্রেস, সোনার বাংলা, তূর্ণা এক্সপ্রেস, মহানগর গোধূলি। যাত্রা ~৫-৬ ঘণ্টা। টিকেট ১০ দিন আগে eticket.railway.gov.bd তে।",
+    "keywords": [
+      "train", "fare", "dhaka", "chittagong", "chattogram", "2026", "ট্রেন",
+      "ভাড়া", "ঢাকা", "চট্টগ্রাম", "কত", "subarna", "turna", "সুবর্ণ", "তূর্ণা"
+    ]
+  },
+  {
+    "id": "508",
+    "category": "Train",
+    "question_en": "How to buy Bangladesh train ticket online?",
+    "question_bn": "বাংলাদেশে অনলাইনে ট্রেনের টিকেট কিভাবে কিনবো?",
+    "answer_en": "Official site: eticket.railway.gov.bd. Tickets open 10 days before journey. Payment: bKash, Nagad, Rocket, Visa/Mastercard. ৳20 service charge per ticket. Mobile app: Bangladesh Railway available on Play Store. Tip: tickets sell out fast for popular routes — book exactly at midnight when window opens.",
+    "answer_bn": "অফিসিয়াল সাইট: eticket.railway.gov.bd। টিকেট যাত্রার ১০ দিন আগে পাওয়া যায়। পেমেন্ট: বিকাশ, নগদ, রকেট, ভিসা/মাস্টারকার্ড। প্রতি টিকেটে ৳২০ সার্ভিস চার্জ। মোবাইল অ্যাপ: বাংলাদেশ রেলওয়ে গুগল প্লে স্টোরে পাবেন। টিপ: জনপ্রিয় রুটে টিকেট দ্রুত শেষ হয় — উইন্ডো খুলতেই মধ্যরাতে বুক করুন।",
+    "keywords": [
+      "buy", "train", "ticket", "online", "eticket", "railway", "কিনবো",
+      "ট্রেন", "টিকেট", "অনলাইন", "bkash", "nagad", "বিকাশ", "নগদ", "booking"
+    ]
+  },
+  {
+    "id": "509",
+    "category": "Inter-City",
+    "question_en": "How to buy intercity bus ticket online Bangladesh?",
+    "question_bn": "বাংলাদেশে অনলাইনে বাসের টিকেট কিভাবে কিনবো?",
+    "answer_en": "Online bus booking platforms: 1) shohoz.com / Shohoz app (biggest, covers all major operators) 2) Busbd.com 3) Direct operator apps (Shyamoli, Hanif). You can pay with bKash, Nagad, card. Book 1-7 days ahead. Counter booking still common — arrive 30 mins before departure.",
+    "answer_bn": "অনলাইন বাস বুকিং: ১) shohoz.com / শোহোজ অ্যাপ (সবচেয়ে বড়, সব প্রধান অপারেটর) ২) Busbd.com ৩) সরাসরি অপারেটর অ্যাপ (শ্যামলী, হানিফ)। বিকাশ, নগদ, কার্ডে পেমেন্ট। ১-৭ দিন আগে বুক করুন। কাউন্টার বুকিং এখনো সাধারণ — ছাড়ার ৩০ মিনিট আগে আসুন।",
+    "keywords": [
+      "buy", "bus", "ticket", "online", "shohoz", "busbd", "কিনবো", "বাস",
+      "টিকেট", "অনলাইন", "বুকিং", "শোহোজ", "bkash", "nagad", "বিকাশ"
+    ]
+  },
+  {
+    "id": "510",
+    "category": "Inter-City",
+    "question_en": "How to go from Dhaka to Sundarbans?",
+    "question_bn": "ঢাকা থেকে সুন্দরবন কিভাবে যাবো?",
+    "answer_en": "Route: Dhaka → Khulna → Mongla/Khulna → Sundarbans by boat.\n🚂 Train: Sundarban Express or Chitra Express to Khulna (9 hrs, ৳390-1900)\n🚌 Bus: ~7-9 hrs via Padma Bridge (৳700-1200)\n🚢 Launch: Sadarghat to Khulna overnight\nFrom Khulna/Mongla, take a 2-3 day boat tour (৳8000-15000/person). Entry permits required.",
+    "answer_bn": "রুট: ঢাকা → খুলনা → মংলা/খুলনা → সুন্দরবন নৌকায়।\n🚂 ট্রেন: সুন্দরবন এক্সপ্রেস বা চিত্রা এক্সপ্রেস খুলনায় (৯ ঘণ্টা, ৳৩৯০-১৯০০)\n🚌 বাস: পদ্মা সেতু হয়ে ~৭-৯ ঘণ্টা (৳৭০০-১২০০)\n🚢 লঞ্চ: সদরঘাট থেকে খুলনা রাতারাতি\nখুলনা/মংলা থেকে ২-৩ দিনের বোট ট্যুর নিন (৳৮০০০-১৫০০০/জন)।",
+    "keywords": [
+      "dhaka", "sundarbans", "sundarban", "khulna", "mongla", "how", "tour",
+      "ঢাকা", "সুন্দরবন", "খুলনা", "মংলা", "কিভাবে", "যাবো", "ট্যুর", "নৌকা"
+    ]
+  },
+  {
+    "id": "511",
+    "category": "Inter-City",
+    "question_en": "How to go from Dhaka to Kuakata?",
+    "question_bn": "ঢাকা থেকে কুয়াকাটা কিভাবে যাবো?",
+    "answer_en": "Route 1 (Launch): Sadarghat → Patuakhali launch (8-10 hrs, ৳280-4500) → local bus to Kuakata (~1.5 hrs).\nRoute 2 (Bus): Direct Dhaka (Gabtoli/Sayedabad) → Kuakata, 10-12 hrs (৳600-1000). Operators: Sakura, Sourov, Sohagh Paribahan.\nBest to travel overnight. Kuakata is only beach where you see both sunrise & sunset!",
+    "answer_bn": "রুট ১ (লঞ্চ): সদরঘাট → পটুয়াখালী লঞ্চ (৮-১০ ঘণ্টা, ৳২৮০-৪৫০০) → লোকাল বাসে কুয়াকাটা (~১.৫ ঘণ্টা)।\nরুট ২ (বাস): সরাসরি ঢাকা (গাবতলী/সায়েদাবাদ) → কুয়াকাটা, ১০-১২ ঘণ্টা (৳৬০০-১০০০)। অপারেটর: সাকুরা, সৌরভ, সোহাগ পরিবহন।\nরাতারাতি ভ্রমণ সেরা। কুয়াকাটা একমাত্র সৈকত যেখানে সূর্যোদয় ও সূর্যাস্ত দুটোই দেখা যায়!",
+    "keywords": [
+      "dhaka", "kuakata", "patuakhali", "how", "launch", "bus", "কুয়াকাটা",
+      "ঢাকা", "কিভাবে", "যাবো", "লঞ্চ", "বাস", "sunrise", "sunset", "সূর্যাস্ত"
+    ]
+  },
+  {
+    "id": "512",
+    "category": "Inter-City",
+    "question_en": "How to go from Dhaka to Rangamati / Hill Tracts?",
+    "question_bn": "ঢাকা থেকে রাঙামাটি / পার্বত্য চট্টগ্রাম কিভাবে যাবো?",
+    "answer_en": "Route: Dhaka → Chittagong (bus/train/flight) → Rangamati by local bus (1.5 hrs, ৳120-160).\nDirect Dhaka→Rangamati buses also available from Sayedabad (~10-12 hrs). Operators: S Alam, Hanif, Shanti Paribahan.\nFor Bandarban: same Chittagong first, then local bus ~2 hrs.\nFor Khagrachari: via Chittagong or direct bus.\n⚠️ Some areas require permits (Ruma/Thanchi in Bandarban).",
+    "answer_bn": "রুট: ঢাকা → চট্টগ্রাম (বাস/ট্রেন/বিমান) → রাঙামাটি লোকাল বাসে (১.৫ ঘণ্টা, ৳১২০-১৬০)।\nসরাসরি ঢাকা→রাঙামাটি বাসও আছে সায়েদাবাদ থেকে (~১০-১২ ঘণ্টা)। অপারেটর: এস আলম, হানিফ, শান্তি পরিবহন।\nবান্দরবানের জন্য: প্রথমে চট্টগ্রাম, তারপর লোকাল বাস ~২ ঘণ্টা।\n⚠️ কিছু এলাকায় পারমিট লাগে (বান্দরবানে রুমা/থানচি)।",
+    "keywords": [
+      "dhaka", "rangamati", "hill tracts", "bandarban", "khagrachari", "chittagong",
+      "ঢাকা", "রাঙামাটি", "পার্বত্য", "বান্দরবান", "কিভাবে", "যাবো", "পারমিট"
+    ]
+  },
+  {
+    "id": "513",
+    "category": "Transport",
+    "question_en": "BRTA 2026 bus fare increase — when and how much?",
+    "question_bn": "BRTA ২০২৬ বাস ভাড়া বৃদ্ধি — কখন এবং কত?",
+    "answer_en": "In April 2026, the Bangladesh government increased bus fares by 11 paisa per km following a fuel price hike. The new rate: ৳2.23/km for 51-seat intercity buses. City buses: ৳2.05-2.15/km. The fare hike affected all intercity routes. All fares listed in KoyJabo reflect this 2026 update.",
+    "answer_bn": "এপ্রিল ২০২৬ এ বাংলাদেশ সরকার জ্বালানি মূল্য বৃদ্ধির পর বাস ভাড়া প্রতি কিমিতে ১১ পয়সা বাড়িয়েছে। নতুন হার: ৫১-আসন আন্তঃজেলা বাসে ৳২.২৩/কিমি। শহর বাস: ৳২.০৫-২.১৫/কিমি। এই ভাড়া বৃদ্ধি সব আন্তঃজেলা রুটে প্রযোজ্য হয়েছে।",
+    "keywords": [
+      "brta", "2026", "bus", "fare", "increase", "hike", "ভাড়া", "বৃদ্ধি",
+      "BRTA", "বাস", "নতুন", "পরিবর্তন", "april", "এপ্রিল", "fuel"
+    ]
+  },
+  {
+    "id": "514",
+    "category": "Transport",
+    "question_en": "Does Bangladesh have airports in Khulna or Benapole?",
+    "question_bn": "বাংলাদেশে খুলনা বা বেনাপোলে কি কোনো বিমানবন্দর আছে?",
+    "answer_en": "NO. There is NO airport in Khulna city. NO airport in Benapole. The nearest airport to both is Jashore Airport (JSR), Benapole is only 14km from Jashore Airport. Khulna is 60km from Jashore. To fly: take Dhaka→Jashore flight (40 min, ৳4500-9000), then bus/CNG to your destination.",
+    "answer_bn": "না। খুলনা শহরে কোনো বিমানবন্দর নেই। বেনাপোলেও কোনো বিমানবন্দর নেই। উভয়ের নিকটতম বিমানবন্দর হলো যশোর বিমানবন্দর (JSR)। বেনাপোল থেকে যশোর বিমানবন্দর মাত্র ১৪ কিমি। খুলনা থেকে ৬০ কিমি। বিমানে যেতে: ঢাকা→যশোর ফ্লাইট (৪০ মিনিট, ৳৪৫০০-৯০০০), তারপর বাস/সিএনজিতে গন্তব্যে।",
+    "keywords": [
+      "airport", "khulna", "benapole", "jessore", "jashore", "no airport",
+      "বিমানবন্দর", "খুলনা", "বেনাপোল", "যশোর", "নেই", "JSR", "কি", "আছে"
+    ]
+  },
+  {
+    "id": "515",
+    "category": "Transport",
+    "question_en": "How many domestic airports in Bangladesh and which cities?",
+    "question_bn": "বাংলাদেশে কতটি অভ্যন্তরীণ বিমানবন্দর আছে এবং কোন কোন শহরে?",
+    "answer_en": "Bangladesh has 8 operational airports: 1) Dhaka — Hazrat Shahjalal (DAC) 2) Chittagong — Shah Amanat (CGP) 3) Sylhet — Osmani (ZYL) 4) Cox's Bazar (CXB) 5) Jashore (JSR) — serves Khulna/Benapole region 6) Saidpur (SPD) — serves Rangpur/Dinajpur 7) Barishal (BZL) 8) Rajshahi — Shah Makhdum (RJH). All domestic flights go through Dhaka — no direct inter-city flights without Dhaka.",
+    "answer_bn": "বাংলাদেশে ৮টি চালু বিমানবন্দর: ১) ঢাকা — হজরত শাহজালাল (DAC) ২) চট্টগ্রাম — শাহ আমানত (CGP) ৩) সিলেট — ওসমানী (ZYL) ৪) কক্সবাজার (CXB) ৫) যশোর (JSR) — খুলনা/বেনাপোল অঞ্চল ৬) সৈয়দপুর (SPD) — রংপুর/দিনাজপুর ৭) বরিশাল (BZL) ৮) রাজশাহী — শাহ মখদুম (RJH)। সব অভ্যন্তরীণ বিমান ঢাকা হয়ে চলে — ঢাকা ছাড়া সরাসরি শহর-থেকে-শহর ফ্লাইট নেই।",
+    "keywords": [
+      "airport", "bangladesh", "domestic", "how many", "বিমানবন্দর", "বাংলাদেশ",
+      "কতটি", "অভ্যন্তরীণ", "DAC", "CGP", "ZYL", "JSR", "SPD", "BZL", "RJH"
+    ]
+  },
+  {
+    "id": "516",
+    "category": "Inter-City",
+    "question_en": "How to go from Dhaka to Dinajpur?",
+    "question_bn": "ঢাকা থেকে দিনাজপুর কিভাবে যাবো?",
+    "answer_en": "Bus: Gabtoli terminal → Dinajpur, ~8-9 hrs, ৳800-1100. Operators: Hanif, SR Travels, Nabo Paribahan, Shyamoli.\nTrain: Dhaka Kamalapur → Dinajpur via Parbatipur — Ekota Express, Drutojan Express, ~9 hrs.\nFlight: Dhaka → Saidpur Airport (45 min), then bus/CNG to Dinajpur (~1.5 hrs, 50km).",
+    "answer_bn": "বাস: গাবতলী টার্মিনাল → দিনাজপুর, ~৮-৯ ঘণ্টা, ৳৮০০-১১০০। অপারেটর: হানিফ, এসআর ট্রাভেলস, নাবো পরিবহন, শ্যামলী।\nট্রেন: ঢাকা কমলাপুর → দিনাজপুর পার্বতীপুর হয়ে — একতা এক্সপ্রেস, দ্রুতযান এক্সপ্রেস, ~৯ ঘণ্টা।\nবিমান: ঢাকা → সৈয়দপুর বিমানবন্দর (৪৫ মিনিট), তারপর বাস/সিএনজি দিনাজপুর (~১.৫ ঘণ্টা, ৫০ কিমি)।",
+    "keywords": [
+      "dhaka", "dinajpur", "how", "bus", "train", "ঢাকা", "দিনাজপুর", "কিভাবে",
+      "যাবো", "saidpur", "সৈয়দপুর", "ekota", "একতা", "gabtoli", "গাবতলী"
+    ]
+  },
+  {
+    "id": "517",
+    "category": "Inter-City",
+    "question_en": "How to go from Dhaka to Tangail?",
+    "question_bn": "ঢাকা থেকে টাঙ্গাইল কিভাবে যাবো?",
+    "answer_en": "Bus: Gabtoli or Mahakhali terminal, ~2.5-3 hrs, ৳150-250. Very frequent buses — Bmoot Paribahan, Bhuiyan Bus, Tangail Express. Also local Bangla Motor buses from Gabtoli. Train: From Kamalapur ~3-4 hrs. CNG microbus also popular from Gabtoli.",
+    "answer_bn": "বাস: গাবতলী বা মহাখালী টার্মিনাল, ~২.৫-৩ ঘণ্টা, ৳১৫০-২৫০। খুব ঘন ঘন বাস আছে — বিমুট পরিবহন, ভূঁইয়া বাস, টাঙ্গাইল এক্সপ্রেস। গাবতলী থেকে লোকাল বাংলা মটর বাস। ট্রেন: কমলাপুর থেকে ~৩-৪ ঘণ্টা।",
+    "keywords": [
+      "dhaka", "tangail", "how", "bus", "ঢাকা", "টাঙ্গাইল", "কিভাবে", "যাবো",
+      "gabtoli", "গাবতলী", "বাস", "intercity"
+    ]
+  },
+  {
+    "id": "518",
+    "category": "Inter-City",
+    "question_en": "How to go from Dhaka to Comilla?",
+    "question_bn": "ঢাকা থেকে কুমিল্লা কিভাবে যাবো?",
+    "answer_en": "Bus: Sayedabad terminal → Comilla, ~2 hrs, ৳150-250. Frequent buses — Comilla Paribahan, Tisha, Royal Coach. Train: Kamalapur → Comilla Cantonment/Town — Mahanagar Goduli, Subarna Express (en route) ~2.5 hrs. Very frequent options — one of the busiest routes from Dhaka.",
+    "answer_bn": "বাস: সায়েদাবাদ টার্মিনাল → কুমিল্লা, ~২ ঘণ্টা, ৳১৫০-২৫০। ঘন ঘন বাস — কুমিল্লা পরিবহন, তিশা, রয়্যাল কোচ। ট্রেন: কমলাপুর → কুমিল্লা ক্যান্টনমেন্ট/শহর — মহানগর গোধূলি, সুবর্ণ এক্সপ্রেস ~২.৫ ঘণ্টা। ঢাকা থেকে অন্যতম ব্যস্ততম রুট।",
+    "keywords": [
+      "dhaka", "comilla", "cumilla", "how", "bus", "ঢাকা", "কুমিল্লা", "কিভাবে",
+      "যাবো", "sayedabad", "সায়েদাবাদ", "tisha", "mahanagar", "intercity"
+    ]
+  },
+  {
+    "id": "519",
+    "category": "Inter-City",
+    "question_en": "How to go from Dhaka to Faridpur?",
+    "question_bn": "ঢাকা থেকে ফরিদপুর কিভাবে যাবো?",
+    "answer_en": "Bus: Gabtoli terminal → Faridpur, ~3-4 hrs via Padma Bridge, ৳250-400. Operators: Kholshi Paribahan, Faridpur Bus Service, Eagle. Very fast since Padma Bridge opened — previously needed ferry crossing. Train also available Kamalapur→Faridpur.",
+    "answer_bn": "বাস: গাবতলী টার্মিনাল → ফরিদপুর, পদ্মা সেতু হয়ে ~৩-৪ ঘণ্টা, ৳২৫০-৪০০। অপারেটর: খলসী পরিবহন, ফরিদপুর বাস সার্ভিস, ঈগল। পদ্মা সেতু খোলার পর এখন অনেক দ্রুত — আগে ফেরি পার হতে হতো।",
+    "keywords": [
+      "dhaka", "faridpur", "padma bridge", "how", "bus", "ঢাকা", "ফরিদপুর",
+      "পদ্মা সেতু", "কিভাবে", "যাবো", "gabtoli", "গাবতলী"
+    ]
+  },
+  {
+    "id": "520",
+    "category": "Transport",
+    "question_en": "What is the Padma Bridge route impact on travel from Dhaka?",
+    "question_bn": "পদ্মা সেতু চালু হওয়ার পর ঢাকা থেকে দূরত্ব কেমন কমেছে?",
+    "answer_en": "Padma Bridge (2022) transformed southwest Bangladesh travel: Dhaka→Khulna: 7-9 hrs (was 12+ hrs with ferry) · Dhaka→Barishal: 5 hrs (was 8+ hrs) · Dhaka→Faridpur: 3-4 hrs (was 5+ hrs) · Dhaka→Gopalganj: 3-4 hrs · Dhaka→Benapole: 6-8 hrs. All southwest routes now use this bridge.",
+    "answer_bn": "পদ্মা সেতু (২০২২) দক্ষিণ-পশ্চিম বাংলাদেশের যোগাযোগ বদলে দিয়েছে: ঢাকা→খুলনা: ৭-৯ ঘণ্টা (আগে ফেরিসহ ১২+ ঘণ্টা) · ঢাকা→বরিশাল: ৫ ঘণ্টা (আগে ৮+ ঘণ্টা) · ঢাকা→ফরিদপুর: ৩-৪ ঘণ্টা · ঢাকা→গোপালগঞ্জ: ৩-৪ ঘণ্টা · ঢাকা→বেনাপোল: ৬-৮ ঘণ্টা।",
+    "keywords": [
+      "padma bridge", "travel time", "impact", "dhaka", "southwest", "পদ্মা সেতু",
+      "ঢাকা", "দূরত্ব", "সময়", "কমেছে", "খুলনা", "বরিশাল", "ফেরি"
+    ]
+  },
+  {
+    "id": "521",
+    "category": "Inter-City",
+    "question_en": "How to go from Chittagong to Sylhet without going to Dhaka?",
+    "question_bn": "ঢাকা না গিয়ে চট্টগ্রাম থেকে সিলেট কিভাবে যাবো?",
+    "answer_en": "Direct Chittagong→Sylhet buses exist but fewer options: ~6-7 hrs, ৳450-700. Operators: Shyamoli, Hanif (limited). Via Comilla/Feni junction is common path. Train: no direct Chittagong→Sylhet train — you'd change at Akhaura/Dhaka. For most travelers, going via Dhaka is more convenient with better frequency.",
+    "answer_bn": "সরাসরি চট্টগ্রাম→সিলেট বাস আছে কিন্তু কম বিকল্প: ~৬-৭ ঘণ্টা, ৳৪৫০-৭০০। অপারেটর: শ্যামলী, হানিফ (সীমিত)। কুমিল্লা/ফেনী জংশন হয়ে সাধারণ পথ। ট্রেন: সরাসরি চট্টগ্রাম→সিলেট ট্রেন নেই — আখাউড়া/ঢাকায় বদলাতে হবে। বেশিরভাগ যাত্রীর জন্য ঢাকা হয়ে যাওয়া আরো সুবিধাজনক।",
+    "keywords": [
+      "chittagong", "sylhet", "without dhaka", "direct", "no dhaka", "চট্টগ্রাম",
+      "সিলেট", "ঢাকা", "ছাড়া", "সরাসরি", "বাস", "কিভাবে"
+    ]
+  },
+  {
+    "id": "522",
+    "category": "Train",
+    "question_en": "Which trains go from Dhaka to Khulna?",
+    "question_bn": "ঢাকা থেকে খুলনায় কোন কোন ট্রেন যায়?",
+    "answer_en": "Two trains: 1) Sundarban Express (Khulna↔Dhaka, departs Kamalapur morning) 2) Chitra Express (Dhaka Kamalapur → Khulna, evening departure). Journey ~9 hrs. Fares: Shuvan ৳390 · Snigdha ৳1220 · 1st Berth ৳1600 · AC Berth ৳1900. Book at eticket.railway.gov.bd 10 days ahead.",
+    "answer_bn": "দুটি ট্রেন: ১) সুন্দরবন এক্সপ্রেস (খুলনা↔ঢাকা, কমলাপুর সকালে ছাড়ে) ২) চিত্রা এক্সপ্রেস (ঢাকা কমলাপুর → খুলনা, সন্ধ্যার ছাড়ে)। যাত্রা ~৯ ঘণ্টা। ভাড়া: শুভন ৳৩৯০ · স্নিগ্ধা ৳১২২০ · ১ম বার্থ ৳১৬০০ · AC বার্থ ৳১৯০০।",
+    "keywords": [
+      "train", "dhaka", "khulna", "sundarban express", "chitra express", "ট্রেন",
+      "ঢাকা", "খুলনা", "সুন্দরবন এক্সপ্রেস", "চিত্রা এক্সপ্রেস", "কোন"
+    ]
+  },
+  {
+    "id": "523",
+    "category": "Inter-City",
+    "question_en": "CNG fare from Jashore airport to Benapole border?",
+    "question_bn": "যশোর বিমানবন্দর থেকে বেনাপোল বর্ডার পর্যন্ত সিএনজি ভাড়া কত?",
+    "answer_en": "Jashore Airport (JSR) to Benapole border: ~14km. CNG auto-rickshaw: ৳300-400 (negotiate, ~30 min). Share CNG: ৳60-80/person. Jashore city to Benapole: local bus ৳20-50, tempo/CNG ৳100-200. The airport is very close to Benapole — fastest way to reach Benapole from Dhaka is fly to Jashore + CNG.",
+    "answer_bn": "যশোর বিমানবন্দর (JSR) থেকে বেনাপোল বর্ডার: ~১৪ কিমি। সিএনজি অটোরিকশা: ৳৩০০-৪০০ (দরাদরি করুন, ~৩০ মিনিট)। শেয়ার সিএনজি: ৳৬০-৮০/জন। যশোর শহর থেকে বেনাপোল: লোকাল বাস ৳২০-৫০, টেম্পো/সিএনজি ৳১০০-২০০। ঢাকা থেকে বেনাপোল পৌঁছানোর দ্রুততম উপায় হলো যশোর ফ্লাইট + সিএনজি।",
+    "keywords": [
+      "cng", "jashore", "jessore", "airport", "benapole", "fare", "border",
+      "যশোর", "বিমানবন্দর", "বেনাপোল", "সিএনজি", "ভাড়া", "বর্ডার", "কত"
+    ]
+  },
+  {
+    "id": "524",
+    "category": "Inter-City",
+    "question_en": "Dhaka to Noakhali bus train options 2026?",
+    "question_bn": "ঢাকা থেকে নোয়াখালীতে বাস ট্রেনের তথ্য ২০২৬?",
+    "answer_en": "Bus: Sayedabad terminal → Noakhali, ~4-5 hrs, ৳350-500. Operators: Noakhali Express, Tisha, Shyamoli.\nTrain: Kamalapur → Noakhali/Maijdee Court — Upakul Express, Noakhali Express ~4 hrs. Fares Shuvan ৳240-350.\nFor Lakshmipur/Feni: buses from Sayedabad also available.",
+    "answer_bn": "বাস: সায়েদাবাদ টার্মিনাল → নোয়াখালী, ~৪-৫ ঘণ্টা, ৳৩৫০-৫০০। অপারেটর: নোয়াখালী এক্সপ্রেস, তিশা, শ্যামলী।\nট্রেন: কমলাপুর → নোয়াখালী/মাইজদী কোর্ট — উপকূল এক্সপ্রেস, নোয়াখালী এক্সপ্রেস ~৪ ঘণ্টা।",
+    "keywords": [
+      "dhaka", "noakhali", "bus", "train", "2026", "ঢাকা", "নোয়াখালী", "বাস",
+      "ট্রেন", "কিভাবে", "যাবো", "উপকূল", "upakul"
+    ]
+  },
+  {
+    "id": "525",
+    "category": "Transport",
+    "question_en": "Eid travel tips Bangladesh — how to book in advance?",
+    "question_bn": "ঈদের সময় বাংলাদেশে যাতায়াতের টিপস — কিভাবে আগে থেকে বুক করবো?",
+    "answer_en": "Eid travel tips: 1) Train: book exactly when window opens (10 days before) at midnight — sells in minutes. 2) Bus: book 3-7 days ahead via Shohoz or direct counters. 3) Launch: book 2-5 days ahead at Sadarghat counters. 4) Flights: book 2-4 weeks ahead. 5) Avoid rush day (day before Eid) — travel 2-3 days earlier. 6) Return journey: book before you depart. Fares same but availability zero at last minute.",
+    "answer_bn": "ঈদ ট্রাভেল টিপস: ১) ট্রেন: উইন্ডো খুলতেই (১০ দিন আগে) মধ্যরাতে বুক করুন — মিনিটেই শেষ হয়। ২) বাস: ৩-৭ দিন আগে শোহোজ বা সরাসরি কাউন্টারে। ৩) লঞ্চ: ২-৫ দিন আগে সদরঘাট কাউন্টারে। ৪) বিমান: ২-৪ সপ্তাহ আগে। ৫) ভিড়ের দিন (ঈদের আগের দিন) এড়িয়ে চলুন — ২-৩ দিন আগে যান।",
+    "keywords": [
+      "eid", "travel", "tips", "bangladesh", "book", "advance", "ঈদ", "যাতায়াত",
+      "টিপস", "আগে", "বুক", "ট্রেন", "বাস", "লঞ্চ", "shohoz"
     ]
   }
 ];

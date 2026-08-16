@@ -170,6 +170,74 @@ function buildRealDataContext(userText: string): string {
     );
   }
 
+  // ── 6. Intercity bus fares & terminals (2026 BRTA) ───────────────────────
+  const isInterCityQuery = lower.includes('intercity') || lower.includes('inter-city') ||
+    lower.includes('how to go') || lower.includes('how to reach') || lower.includes('কিভাবে যাব') ||
+    lower.includes('যেতে চাই') || lower.includes('jabo') || lower.includes('যাবো') ||
+    lower.includes('bus fare') || lower.includes('ভাড়া') || lower.includes('দূরত্ব');
+
+  const mentionsChittagong = lower.includes('chittagong') || lower.includes('chattogram') || lower.includes('চট্টগ্রাম');
+  const mentionsSylhet = lower.includes('sylhet') || lower.includes('সিলেট');
+  const mentionsRajshahi = lower.includes('rajshahi') || lower.includes('রাজশাহী');
+  const mentionsBarishal = lower.includes('barishal') || lower.includes('barisal') || lower.includes('বরিশাল');
+  const mentionsRangpur = lower.includes('rangpur') || lower.includes('রংপুর');
+  const mentionsMymensingh = lower.includes('mymensingh') || lower.includes('ময়মনসিংহ');
+  const mentionsCoxBazar = lower.includes("cox") || lower.includes('কক্সবাজার');
+  const mentionsLaunch = lower.includes('launch') || lower.includes('লঞ্চ') || lower.includes('sadarghat') || lower.includes('সদরঘাট') || lower.includes('ferry');
+
+  if (isInterCityQuery || mentionsChittagong || mentionsSylhet || mentionsRajshahi ||
+      mentionsBarishal || mentionsRangpur || mentionsMymensingh || mentionsCoxBazar) {
+    sections.push(
+      '[INTERCITY BUS FARES — BRTA 2026 OFFICIAL RATES]\n' +
+      'Terminal: Sayedabad (SE), Gabtoli (W/NW), Mohakhali (N)\n' +
+      '• Dhaka→Chittagong: ৳704 (51-seat) | Sayedabad | ~5-6 hrs | Green Line, Shyamoli, Hanif\n' +
+      '• Dhaka→Sylhet: ৳580-740 | Sayedabad | ~6-7 hrs | Shyamoli, Hanif, Green Line\n' +
+      '• Dhaka→Rajshahi: ৳777-991 | Gabtoli | ~5-6 hrs | Hanif, SR Travels, National\n' +
+      '• Dhaka→Barishal: ৳464-592 | Sayedabad | ~5 hrs via Padma Bridge | Sakura, Sohagh\n' +
+      '• Dhaka→Khulna: ৳700-1200 | Gabtoli/Sayedabad | ~7-9 hrs | Soukhin, Hanif, Eagle\n' +
+      '• Dhaka→Rangpur: ৳751-911 | Gabtoli | ~7-8 hrs\n' +
+      "• Dhaka→Cox's Bazar: ৳900-1147 | Sayedabad | ~10-12 hrs | Green Line, Shyamoli\n" +
+      '• Dhaka→Mymensingh: ৳294-375 | Mohakhali | ~2.5-3 hrs\n' +
+      '• Dhaka→Panchagarh: ৳1005-1281 | Gabtoli | ~9-10 hrs\n' +
+      'Online booking: shohoz.com | Fare increased April 2026 by 11 paisa/km'
+    );
+  }
+
+  if (mentionsLaunch) {
+    sections.push(
+      '[SADARGHAT LAUNCH ROUTES — VERIFIED REAL DATA]\n' +
+      'Terminal: Sadarghat Launch Ghat, Dhaka (Old Dhaka)\n' +
+      '• Dhaka→Barishal: departs 6:00-8:00 PM | 11 hrs overnight | Deck ৳280-350, Cabin ৳900-1500, VIP ৳2000-6000\n' +
+      '  Launches: MV Sundarban 1-17, MV Parabat, MV Kirtonkhola, MV Eagle\n' +
+      '• Dhaka→Patuakhali: departs 6:00/7:30 PM | 11 hrs | Deck ৳280-300, Cabin ৳1100-1300\n' +
+      '• Dhaka→Bhola: departs 7:00-8:00 PM | 10 hrs | Deck ৳200-280, Cabin ৳700-1100\n' +
+      '• Dhaka→Chandpur: departs 8:00 AM & 2:00 PM | 3-4 hrs (daytime) | Deck ৳120-200, Cabin ৳300-500\n' +
+      '  Launches: MV Ostrich, MV Rocket (paddle steamer), MV Meghna-1\n' +
+      '• Dhaka→Khulna: overnight ~10-12 hrs\n' +
+      'RULE: For Barishal/Bhola/Patuakhali — always mention launch as the scenic overnight option alongside bus.'
+    );
+  }
+
+  // ── 7. Train route grounding ──────────────────────────────────────────────
+  const isTrainQuery = lower.includes('train') || lower.includes('ট্রেন') || lower.includes('railway') ||
+    lower.includes('express') || lower.includes('এক্সপ্রেস') || lower.includes('kamalapur') || lower.includes('কমলাপুর');
+
+  if (isTrainQuery) {
+    sections.push(
+      '[BANGLADESH TRAIN ROUTES — KEY DATA]\n' +
+      '• Dhaka→Chittagong: Subarna Express, Sonar Bangla, Turna, Mohanagar Goduli | 5-6 hrs | Shuvan ৳310, AC Berth ৳1890\n' +
+      '• Dhaka→Sylhet: Upaban Express, Jayantika, Kalni, Parabat, Surma Mail | 6.5-7.5 hrs | Shuvan ৳265, AC Berth ৳1678\n' +
+      "• Dhaka→Cox's Bazar: Cox's Bazar Express, Parjatak | overnight\n" +
+      '• Dhaka→Rajshahi: Silk City, Padma Express, Dhumketu, Banalata | Shuvan ৳390, AC Berth ৳1600\n' +
+      '• Dhaka→Khulna: Sundarban Express, Chitra Express | 9 hrs | Shuvan ৳390, AC Berth ৳1900\n' +
+      '• Dhaka→Mymensingh: Tista Express, Agnibina, Brahmaputra, Jamuna | Shuvan ৳110\n' +
+      '• Dhaka→Benapole: Benapole Express (departs 6:20 AM), Rupashi Bangla | 8 hrs | ৳310-1285\n' +
+      '• Dhaka→Rangpur: Rangpur Express, Kurigram Express\n' +
+      '• Dhaka→Barishal: NO DIRECT TRAIN — use launch or bus\n' +
+      'Book: eticket.railway.gov.bd | Opens 10 days ahead | Pay: bKash, Nagad, Rocket | ৳20 service charge'
+    );
+  }
+
   if (sections.length === 0) return '';
   return sections.join('\n\n');
 }
