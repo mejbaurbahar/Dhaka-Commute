@@ -5,21 +5,62 @@ import { askGeminiRoute, ChatMessage } from '../../../services/geminiService';
 import { askGitHubModels } from '../../../services/githubModelsService';
 import { getAllSessions, getSession, saveChatMessage, deleteSession } from '../../../services/chatHistoryManager';
 import { getAuthUser } from '../../../services/communityDataService';
+import { ALL_PLACES } from '../../../data/bangladeshPlaces';
+import { findTransitRoutes, fuzzyMatchStop, formatTransitPlan } from '../../../services/transitPlanner';
 
 export type Msg = { id: number; isUser: boolean; text: string; rich?: string };
 export const INIT_MESSAGES: Msg[] = [{ id: 1, isUser: false, text: 'hello', rich: 'greeting' }];
 export type RecentSession = { id: string; title: string; lastUpdated: number };
 
 /**
- * Grounding: find the real buses from KoyJabo's dataset that match the
- * user's question, so the model answers from actual data instead of
- * inventing routes. Returns up to 6 matching buses (name + real route),
- * or '' when nothing matches well enough to inject.
+ * Grounding: inject real bus routes, tourist/transport place data, and
+ * multi-bus transit plans so the model answers from authoritative data.
  */
 function buildRealDataContext(userText: string): string {
-  const tokens = (userText.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu) || []).filter(t => !['কি', 'কী', 'the', 'and', 'for', 'from', 'how', 'bus'].includes(t));
-  if (tokens.length === 0) return '';
-  const matches: { bus: typeof BUS_DATA[0]; score: number }[] = [];
+  const lower = userText.toLowerCase();
+  const tokens = (lower.match(/[\p{L}\p{N}]{3,}/gu) || [])
+    .filter(t => !['কি', 'কী', 'the', 'and', 'for', 'from', 'how', 'bus', 'what', 'where', 'কোন', 'কোথায়'].includes(t));
+
+  const sections: string[] = [];
+
+  // ── 1. Tourist / transport place lookup ──────────────────────────────────
+  const PLACE_KEYWORDS = ['tourist', 'historical', 'museum', 'park', 'beach', 'fort', 'temple',
+    'mosque', 'shrine', 'monument', 'airport', 'station', 'terminal', 'ghat', 'launch',
+    'যাদুঘর', 'মসজিদ', 'দুর্গ', 'সমুদ্র', 'সৈকত', 'বিমানবন্দর', 'রেলওয়ে', 'লঞ্চ', 'ঘাট',
+    'ঐতিহাসিক', 'পর্যটন', 'দর্শনীয়', 'বিখ্যাত', 'কোথায়', 'কীভাবে', 'দেখার', 'visit',
+    'place', 'location', 'where', 'gps', 'coordinate', 'map',
+  ];
+  const isPlaceQuery = PLACE_KEYWORDS.some(kw => lower.includes(kw));
+
+  if (isPlaceQuery || tokens.length > 0) {
+    const placeMatches: { place: typeof ALL_PLACES[0]; score: number }[] = [];
+    for (const place of ALL_PLACES) {
+      let score = 0;
+      const searchStr = (place.en + ' ' + place.bn + ' ' + (place.description ?? '') + ' ' + (place.district ?? '') + ' ' + (place.division ?? '')).toLowerCase();
+      for (const tok of tokens) {
+        if (searchStr.includes(tok)) score += (tok.length > 4 ? 3 : 2);
+      }
+      if (isPlaceQuery && score === 0) {
+        // Even low-score matches for explicit place queries
+        if (tokens.some(t => searchStr.includes(t))) score = 1;
+      }
+      if (score > 0) placeMatches.push({ place, score });
+    }
+    placeMatches.sort((a, b) => b.score - a.score);
+    if (placeMatches.length > 0) {
+      const picked = placeMatches.slice(0, 6);
+      sections.push('[PLACES & TRANSPORT HUBS]\n' + picked.map(m => {
+        const p = m.place;
+        const gps = `GPS: ${p.lat.toFixed(4)},${p.lng.toFixed(4)}`;
+        const iata = p.iata ? ` | IATA: ${p.iata}` : '';
+        const fee = p.entryFee ? ` | Entry: ${p.entryFee}` : '';
+        return `- ${p.en} (${p.bn}) [${p.type}] ${gps}${iata}${fee}${p.description ? ' — ' + p.description : ''}`;
+      }).join('\n'));
+    }
+  }
+
+  // ── 2. Bus route matches ──────────────────────────────────────────────────
+  const busMatches: { bus: typeof BUS_DATA[0]; score: number }[] = [];
   for (const bus of BUS_DATA) {
     if (bus.active === false) continue;
     let score = 0;
@@ -30,14 +71,42 @@ function buildRealDataContext(userText: string): string {
       else if (route.includes(tok)) score += 2;
       else if (bus.stops.some(s => s.toLowerCase().includes(tok))) score += 1;
     }
-    if (score >= 3) matches.push({ bus, score });
+    if (score >= 3) busMatches.push({ bus, score });
   }
-  matches.sort((a, b) => b.score - a.score);
-  const picked = matches.slice(0, 6);
-  if (picked.length < 2) return '';
-  return picked
-    .map(m => `- ${m.bus.name}${m.bus.bnName ? ` (${m.bus.bnName})` : ''}: ${m.bus.routeString}${m.bus.type ? ` • ${m.bus.type}` : ''}`)
-    .join('\n');
+  busMatches.sort((a, b) => b.score - a.score);
+  const busLines = busMatches.slice(0, 6);
+  if (busLines.length >= 1) {
+    sections.push('[BUS ROUTES]\n' + busLines
+      .map(m => `- ${m.bus.name}${m.bus.bnName ? ` (${m.bus.bnName})` : ''}: ${m.bus.routeString}${m.bus.type ? ` • ${m.bus.type}` : ''}`)
+      .join('\n'));
+  }
+
+  // ── 3. Transit plan (multi-bus routing for "A to B" queries) ─────────────
+  // Detect "from X to Y" or "X থেকে Y" patterns
+  const FROM_TO_RE = /(?:from\s+|থেকে\s*)?([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})\s+(?:to|→|যাব|যাওয়া|যেতে|to go)\s+([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})/i;
+  const ARROW_RE = /([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,15?})\s*(?:→|to|থেকে)\s*([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,15?})/i;
+
+  let fromTok: string | null = null;
+  let toTok: string | null = null;
+  const m1 = userText.match(FROM_TO_RE);
+  const m2 = userText.match(ARROW_RE);
+  if (m1) { fromTok = m1[1].trim(); toTok = m1[2].trim(); }
+  else if (m2) { fromTok = m2[1].trim(); toTok = m2[2].trim(); }
+
+  if (fromTok && toTok) {
+    const fromId = fuzzyMatchStop(fromTok);
+    const toId = fuzzyMatchStop(toTok);
+    if (fromId && toId && fromId !== toId) {
+      const routes = findTransitRoutes(fromId, toId);
+      if (routes.length > 0) {
+        const plan = formatTransitPlan(fromTok, toTok, routes);
+        sections.push(plan);
+      }
+    }
+  }
+
+  if (sections.length === 0) return '';
+  return sections.join('\n\n');
 }
 
 // Find nearest station name from GPS coords using all known STATIONS
