@@ -157,7 +157,7 @@ export default defineConfig(({ mode }) => {
           ],
           navigateFallback: 'index.html',  // Enable automatic fallback to index.html for SPA offline support
           // Only deny actual static file paths — NOT the /intercity page itself (must fall through to index.html)
-          navigateFallbackDenylist: [/^\/api/, /^\/intercity\/(assets|data|sw\.js|workbox-|manifest\.webmanifest|logo\.png)/, /^\/ads\.txt/, /^\/robots\.txt/, /^\/sitemap\.xml/, /^\/version\.json/],
+          navigateFallbackDenylist: [/^\/api/, /^\/\.well-known\//, /^\/intercity\/(assets|data|sw\.js|workbox-|manifest\.webmanifest|logo\.png)/, /^\/ads\.txt/, /^\/robots\.txt/, /^\/sitemap\.xml/, /^\/version\.json/],
           cleanupOutdatedCaches: true,
           // Inline the workbox runtime instead of loading from CDN
           mode: 'production',
@@ -165,7 +165,7 @@ export default defineConfig(({ mode }) => {
           skipWaiting: true,
           clientsClaim: true,
           // Cache versioning for proper updates
-          cacheId: 'dhaka-commute-v118',
+          cacheId: 'dhaka-commute-v119',
           maximumFileSizeToCacheInBytes: 10485760, // 10 MB
 
           runtimeCaching: [
