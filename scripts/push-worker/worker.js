@@ -23,9 +23,9 @@
  */
 
 const SUB_PREFIX = 'sub:';
-const TYPES = ['install', 'search-check', 'search-tomorrow', 'save', 'dormant'];
+const TYPES = ['install', 'search-check', 'search-tomorrow', 'save', 'dormant', 'search-start', 'route-view'];
 const MAX_EVENTS = 10;
-const DORMANT_MAX_NUDGES = 3; // "forgot KoyJabo" fires at most 3 times (every 48h of silence)
+const DORMANT_MAX_NUDGES = 5; // "forgot KoyJabo" fires at most 5 times (every 48h of silence)
 
 // Vars/secrets arrive via env bindings (module workers) — set per entry.
 let CFG = {};
@@ -103,6 +103,42 @@ const NOTIFICATIONS = {
       title: 'Forgot to use KoyJabo?',
       body: "You have not used KoyJabo for 2 days! Buses, trains, metro — all free. Come back now!",
       url: () => '/',
+    },
+  },
+  'search-start': {
+    bn: {
+      title: 'রুট সার্চ অসম্পূর্ণ!',
+      body: (d) =>
+        d && d.from && d.to
+          ? `${d.from} থেকে ${d.to} যেতে কী বাসে যাবেন? KoyJabo-তে রুট খুঁজুন!`
+          : 'আপনি KoyJabo-তে রুট খুঁজতে শুরু করেছিলেন — খুঁজে নিন!',
+      url: () => '/local-bus',
+    },
+    en: {
+      title: 'Incomplete route search!',
+      body: (d) =>
+        d && d.from && d.to
+          ? `Going from ${d.from} to ${d.to}? Find your bus on KoyJabo!`
+          : 'You started searching on KoyJabo — complete your route!',
+      url: () => '/local-bus',
+    },
+  },
+  'route-view': {
+    bn: {
+      title: 'যাত্রার আগে মনে করিয়ে দিচ্ছি',
+      body: (d) =>
+        d && d.name
+          ? `আপনি ${d.name} রুট দেখেছিলেন। যাত্রার সময় হলে KoyJabo খুলুন!`
+          : 'আপনি একটি রুট দেখেছিলেন — যাত্রার আগে আবার চেক করুন!',
+      url: (d) => (d && d.url) || '/',
+    },
+    en: {
+      title: 'Travel reminder',
+      body: (d) =>
+        d && d.name
+          ? `You viewed the ${d.name} route. Open KoyJabo when it's time to travel!`
+          : 'You viewed a route — check it again before you travel!',
+      url: (d) => (d && d.url) || '/',
     },
   },
 };

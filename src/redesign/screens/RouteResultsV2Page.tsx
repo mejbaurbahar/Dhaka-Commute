@@ -7,7 +7,7 @@ import { GovAdBanner } from '../components/GovAdBanner';
 import { PageShell } from './PageShell';
 import { BUS_DATA, STATIONS } from '../../../constants';
 import { trackBusSearch } from '../../../services/analyticsService';
-import { inHours, nextMorning, trackPushEvent } from '../../services/pushService';
+import { inHours, nextMorning, trackPushEvent, cancelPushEvent } from '../../services/pushService';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
 import { Icon } from '../components/Icons';
 import { enhancedBusSearch } from '../../../services/searchService';
@@ -103,6 +103,7 @@ export function RouteResultsV2Page(props: Props) {
       (searchQ ? `&search=${encodeURIComponent(searchQ)}` : '');
     trackPushEvent('search-check', { url, from: fromQ, to: toQ }, inHours(1));
     trackPushEvent('search-tomorrow', { url, from: fromQ, to: toQ }, nextMorning());
+    cancelPushEvent('search-start'); // user completed the search — cancel the abandoned-search nudge
   }, [fromQ, toQ, searchQ]);
 
   // ── Transit routes (1-transfer) for when no direct bus is found ─────────────

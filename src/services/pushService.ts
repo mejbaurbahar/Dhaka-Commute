@@ -24,7 +24,7 @@ const KEY_SERVER_CONFIRMED = 'koyjabo_push_server_confirmed';
 const KEY_FIRST_VISIT = 'koyjabo_first_visit_at';
 const KEY_INSTALL_SCHEDULED = 'koyjabo_install_reminder_scheduled';
 
-export type PushEventType = 'install' | 'search-check' | 'search-tomorrow' | 'save' | 'dormant';
+export type PushEventType = 'install' | 'search-check' | 'search-tomorrow' | 'save' | 'dormant' | 'search-start' | 'route-view';
 
 /** Diagnostic log — silent unless a worker URL is configured (offline-first design). */
 function logPush(...args: unknown[]): void {

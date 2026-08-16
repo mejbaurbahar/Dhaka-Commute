@@ -17,6 +17,7 @@ import { earnCoins } from '../utils/koyCoinService';
 import type { UserLocation } from '../../../types';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
 import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag, setJsonLd } from '../utils/useDocumentTitle';
+import { inHours, trackPushEvent } from '../../services/pushService';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -95,6 +96,13 @@ export function BusDetailPage(props: Props) {
       ],
     });
   }, [busId, bus]);
+
+  // Schedule a travel reminder 3h after viewing a route — fires only if the
+  // user closes the app without saving the route; favourites.ts cancels it on save.
+  useEffect(() => {
+    if (!bus) return;
+    trackPushEvent('route-view', { name: bus.name, url: `/bus/${slugify(bus.name)}` }, inHours(3));
+  }, [busId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Detect if user's from→to direction is reverse of the bus route order
   // e.g. bus goes Gabtoli(0)→Gulshan(5), user searched Gulshan→Gabtoli → isReversed=true

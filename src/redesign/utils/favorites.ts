@@ -29,6 +29,7 @@ export function toggleFavoriteBus(busId: string, name?: string): string[] {
   const added = next.includes(busId) && !current.includes(busId);
   if (added) {
     trackPushEvent('save', { name: name ?? '' }, inHours(48));
+    cancelPushEvent('route-view'); // user saved the route — no need for "planning to travel?" nudge
   } else {
     cancelPushEvent('save');
   }

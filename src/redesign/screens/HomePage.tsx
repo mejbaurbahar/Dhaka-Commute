@@ -25,6 +25,7 @@ import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { getFavoriteBusIds } from '../utils/favorites';
 import { getUserHistory, splitRouteKey } from '../../../services/analyticsService';
 import { enhancedBusSearch } from '../../../services/searchService';
+import { inHours, trackPushEvent } from '../../services/pushService';
 import { useAuth } from '../../contexts/AuthContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -103,6 +104,18 @@ function SearchPanel({
     const t = setTimeout(() => setDebouncedQ(searchQ), 200);
     return () => clearTimeout(t);
   }, [searchQ]);
+
+  // Abandoned-search nudge: if user fills both from+to but never clicks Find Routes,
+  // schedule a push for 45 min later. Cancelled by RouteResultsV2Page on success.
+  useEffect(() => {
+    const f = from.trim();
+    const t = to.trim();
+    if (!f || !t) return;
+    const timer = setTimeout(() => {
+      trackPushEvent('search-start', { from: f, to: t }, inHours(0.75));
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [from, to]);
   const fromRef = useRef<HTMLDivElement>(null);
   const toRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
