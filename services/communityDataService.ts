@@ -662,3 +662,57 @@ export async function deleteTrainPhoto(trainId: string, photoId: string): Promis
   }
   return repoPut(`data/train-photos/${trainId}.json`, existing, `train-photo-delete: ${photoId}`);
 }
+
+// ── Bus Plate Suggestions ─────────────────────────────────────────────────────
+// Format validation: DMB XX-XXXX (e.g. DMB 12-3814)
+export const PLATE_REGEX = /^DMB\s+\d{2}-\d{4}$/i;
+
+export type PlateSuggestion = {
+  id: string;
+  busId: string;
+  busName: string;
+  plate: string;
+  userId: string;
+  displayName: string;
+  timestamp: number;
+  status: 'pending' | 'verified' | 'rejected';
+};
+
+type PlateSuggestionCollection = {
+  busId: string;
+  suggestions: PlateSuggestion[];
+};
+
+export async function getBusPlatesuggestons(busId: string): Promise<PlateSuggestion[]> {
+  const data = await repoGet<PlateSuggestionCollection>(`data/plate-suggestions/${busId}.json`);
+  return data?.suggestions ?? [];
+}
+
+export async function submitBusPlate(busId: string, busName: string, plate: string, cfToken?: string): Promise<{ ok: boolean; error?: string }> {
+  const normalised = plate.toUpperCase().replace(/\s+/g, ' ').trim();
+  if (!PLATE_REGEX.test(normalised)) {
+    return { ok: false, error: 'Invalid format. Use: DMB 12-3814' };
+  }
+  const user = getCommunityUser();
+  if (!user) return { ok: false, error: 'Sign in to submit a plate' };
+
+  const existing = await repoGet<PlateSuggestionCollection>(`data/plate-suggestions/${busId}.json`) || { busId, suggestions: [] };
+  const duplicate = existing.suggestions.some(s => s.plate === normalised && s.status !== 'rejected');
+  if (duplicate) return { ok: false, error: 'This plate is already submitted' };
+
+  const entry: PlateSuggestion = {
+    id: crypto.randomUUID(),
+    busId,
+    busName,
+    plate: normalised,
+    userId: user.id,
+    displayName: user.displayName,
+    timestamp: Date.now(),
+    status: 'pending',
+  };
+  existing.suggestions.unshift(entry);
+  if (existing.suggestions.length > 100) existing.suggestions = existing.suggestions.slice(0, 100);
+
+  const ok = await repoPutOrQueue(`data/plate-suggestions/${busId}.json`, existing, `plate-suggest: ${busName} ${normalised}`, cfToken);
+  return { ok };
+}
