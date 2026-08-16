@@ -238,6 +238,57 @@ function buildRealDataContext(userText: string): string {
     );
   }
 
+  // ── 8. Domestic air travel grounding ─────────────────────────────────────
+  const isAirQuery = lower.includes('flight') || lower.includes('ফ্লাইট') ||
+    lower.includes('বিমান') || lower.includes('plane') || lower.includes('air ticket') ||
+    lower.includes('বিমান ভাড়া') || lower.includes('airport') || lower.includes('বিমানবন্দর') ||
+    lower.includes('novoair') || lower.includes('us-bangla') || lower.includes('sharetrip') ||
+    lower.includes('gozayaan') || lower.includes('domestic') || lower.includes('শাহজালাল') ||
+    lower.includes('shahjalal') || lower.includes('biman');
+
+  if (isAirQuery) {
+    sections.push(
+      '[BANGLADESH DOMESTIC FLIGHTS — 2026 DATA]\n' +
+      'All domestic flights depart from Hazrat Shahjalal Airport (DAC), Dhaka\n' +
+      '• Dhaka→Cox\'s Bazar (CXB): ~45 min | ৳3000-8000 | 4-6 flights/day | Biman, US-Bangla, Novoair, Air Astra\n' +
+      '• Dhaka→Chittagong (CGP): ~40 min | ৳3000-6500 | 8-10 flights/day (busiest route)\n' +
+      '• Dhaka→Sylhet Osmani (ZYL): ~40 min | ৳3500-7000 | 3-4 flights/day\n' +
+      '• Dhaka→Jessore (JSR): ~30 min | ৳2500-5500 | 2-3 flights/day\n' +
+      '• Dhaka→Rajshahi (RJH): ~40 min | ৳3000-6000 | 2-3 flights/day\n' +
+      '• Dhaka→Barishal (BZL): limited schedule | ৳3000-5500 | check biman.com.bd\n' +
+      'Book via: ShareTrip (sharetrip.net), GoZayaan (gozayaan.com), Shohoz, biman.com.bd\n' +
+      'Airport arrival: domestic 90 min early | international 3 hrs early\n' +
+      'From airport to city: BRTC AC bus ৳50-80 | CNG ৳200-400 | Uber/Pathao ৳350-600\n' +
+      'Best airlines: US-Bangla (most punctual) | Novoair (reliable) | Biman (cheapest)\n' +
+      'ALSO: Train to Cox\'s Bazar — Cox\'s Bazar Express (813/814) from Kamalapur ~9 hrs, Shuvan Chair ৳505, AC Berth ৳1680'
+    );
+  }
+
+  // ── 9. Dhaka local city bus grounding ────────────────────────────────────
+  const isLocalBusQuery = lower.includes('local bus') || lower.includes('লোকাল বাস') ||
+    lower.includes('city bus') || lower.includes('student fare') || lower.includes('স্টুডেন্ট ভাড়া') ||
+    lower.includes('brtc') || lower.includes('abdullahpur') || lower.includes('আব্দুল্লাহপুর') ||
+    lower.includes('minimum fare') || lower.includes('সর্বনিম্ন ভাড়া') || lower.includes('ঢাকা শহর') ||
+    lower.includes('gulistan') || lower.includes('গুলিস্তান');
+
+  if (isLocalBusQuery) {
+    sections.push(
+      '[DHAKA CITY LOCAL BUS — 2026 FARE GUIDE]\n' +
+      'City bus fare (BRTA 2026): Minimum ৳10 (0-2 km), then ৳2/km\n' +
+      '• Uttara/Abdullahpur → Gulistan: ৳30-40 | 45-70 min\n' +
+      '• Mirpur 10 → Motijheel: ৳25-30 | 40-60 min\n' +
+      '• Mohakhali → Sadarghat: ৳20-25 | 30-45 min\n' +
+      '• Gazipur → Gulistan: ৳60-80 | 1.5-2 hrs\n' +
+      '• BRTC AC buses: ৳50-100 flat | Major corridors\n' +
+      'Student discount (50%): ONLY on BRTC government buses with valid student ID card\n' +
+      'Payment: Cash only — no card or mobile payment accepted\n' +
+      'Bus apps: KoyJabo app shows local bus routes by stop/area\n' +
+      'Mymensingh→Dhaka (Mohakhali): ৳150-200 | ~2.5-3 hrs\n' +
+      'Kishoreganj→Dhaka (Mohakhali/Sayedabad): ৳200-250 | ~3-4 hrs\n' +
+      'Dhaka→Khulna (Gabtoli): Non-AC ৳500-700 | AC ৳800-1200 | ~5-6 hrs'
+    );
+  }
+
   if (sections.length === 0) return '';
   return sections.join('\n\n');
 }

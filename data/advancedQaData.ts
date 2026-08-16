@@ -8917,5 +8917,365 @@ export const ADVANCED_QA_DATA: AdvancedQAItem[] = [
       "metro", "MRT", "fare", "guide", "station", "pairs", "uttara", "motijheel",
       "মেট্রো", "ভাড়া", "স্টেশন", "উত্তরা", "মতিঝিল", "আগারগাঁও", "মিরপুর", "kত"
     ]
+  },
+  {
+    "id": "546",
+    "category": "Air",
+    "question_en": "Dhaka to Cox's Bazar flight fare and time — how much does a domestic flight cost?",
+    "question_bn": "ঢাকা থেকে কক্সবাজার বিমান ভাড়া কত? ফ্লাইটে কতক্ষণ লাগে?",
+    "answer_en": "Dhaka (DAC) → Cox's Bazar (CXB): Flight time ~45 mins. Fare ৳3000-8000 one-way depending on airline and advance booking. Airlines: Biman Bangladesh, US-Bangla, Novoair, Air Astra. 4-6 daily flights. Book at ShareTrip, GoZayaan, or direct airline websites. Best price: book 2-3 weeks ahead.",
+    "answer_bn": "ঢাকা (DAC) → কক্সবাজার (CXB): ফ্লাইট সময় ~৪৫ মিনিট। ভাড়া ৳৩০০০-৮০০০ ওয়ানওয়ে (এয়ারলাইন ও বুকিং সময়ের উপর নির্ভর করে)। এয়ারলাইন: বিমান বাংলাদেশ, ইউএস-বাংলা, নভোএয়ার, এয়ার অ্যাস্ট্রা। দিনে ৪-৬টি ফ্লাইট। ShareTrip, GoZayaan বা সরাসরি এয়ারলাইন ওয়েবসাইটে বুক করুন। ২-৩ সপ্তাহ আগে বুক করলে ভালো দাম পাবেন।",
+    "keywords": [
+      "flight", "dhaka", "coxsbazar", "coxs bazar", "air", "fare", "domestic",
+      "বিমান", "ঢাকা", "কক্সবাজার", "ভাড়া", "ফ্লাইট", "কত", "us-bangla", "novoair"
+    ]
+  },
+  {
+    "id": "547",
+    "category": "Air",
+    "question_en": "Dhaka to Chittagong flight fare 2026?",
+    "question_bn": "ঢাকা থেকে চট্টগ্রাম বিমান ভাড়া ২০২৬?",
+    "answer_en": "Dhaka (DAC) → Chittagong/Shah Amanat (CGP): ~40 min flight. Fare ৳3000-6500 one-way. 8-10 flights daily (most frequent domestic route). Airlines: Biman, US-Bangla, Novoair. Book via ShareTrip or GoZayaan. Note: Bus/train alternatives are cheaper (~৳700-1400) but take 5-6 hrs.",
+    "answer_bn": "ঢাকা (DAC) → চট্টগ্রাম/শাহ আমানত (CGP): ~৪০ মিনিট ফ্লাইট। ভাড়া ৳৩০০০-৬৫০০ ওয়ানওয়ে। প্রতিদিন ৮-১০টি ফ্লাইট (সবচেয়ে ব্যস্ত ঘরোয়া রুট)। এয়ারলাইন: বিমান, ইউএস-বাংলা, নভোএয়ার। ShareTrip বা GoZayaan-এ বুক করুন। বিকল্প: বাস/ট্রেন সস্তা (~৳৭০০-১৪০০) কিন্তু ৫-৬ ঘণ্টা লাগে।",
+    "keywords": [
+      "flight", "dhaka", "chittagong", "chattogram", "air", "fare", "2026",
+      "বিমান", "ঢাকা", "চট্টগ্রাম", "ভাড়া", "ফ্লাইট", "কত", "shah amanat", "CGP"
+    ]
+  },
+  {
+    "id": "548",
+    "category": "Air",
+    "question_en": "Dhaka to Sylhet domestic flight fare and schedule?",
+    "question_bn": "ঢাকা থেকে সিলেট বিমান ভাড়া ও সময়সূচি?",
+    "answer_en": "Dhaka (DAC) → Sylhet Osmani (ZYL): ~40 min flight. Fare ৳3500-7000 one-way. 3-4 flights daily. Airlines: Biman, US-Bangla. Train (Upaban/Jayantika) is popular alternative at ৳265-1678 and more scenic but 6-7 hrs. Book flights via ShareTrip, GoZayaan, or biman.com.bd.",
+    "answer_bn": "ঢাকা (DAC) → সিলেট ওসমানী (ZYL): ~৪০ মিনিট ফ্লাইট। ভাড়া ৳৩৫০০-৭০০০ ওয়ানওয়ে। প্রতিদিন ৩-৪টি ফ্লাইট। এয়ারলাইন: বিমান, ইউএস-বাংলা। ট্রেন (উপবন/জয়ন্তিকা) জনপ্রিয় বিকল্প ৳২৬৫-১৬৭৮ তে, ৬-৭ ঘণ্টা কিন্তু দৃশ্যাবলি সুন্দর।",
+    "keywords": [
+      "flight", "dhaka", "sylhet", "osmani", "air", "fare", "schedule",
+      "বিমান", "ঢাকা", "সিলেট", "ওসমানী", "ভাড়া", "ZYL", "ফ্লাইট", "কত"
+    ]
+  },
+  {
+    "id": "549",
+    "category": "Air",
+    "question_en": "Dhaka to Rajshahi or Jessore domestic flight fare?",
+    "question_bn": "ঢাকা থেকে রাজশাহী বা যশোর বিমান ভাড়া কত?",
+    "answer_en": "Dhaka→Rajshahi (RJH): ~40 min, fare ৳3000-6000, 2-3 flights/day. Dhaka→Jessore (JSR): ~30 min, fare ৳2500-5500, 2-3 flights/day. Airlines: Biman, US-Bangla. For Rajshahi, train (Silk City Express) at ৳390-1600 is 5-6 hrs and often preferred. For Jessore, bus from Gabtoli is ৳500-700 in 4-5 hrs.",
+    "answer_bn": "ঢাকা → রাজশাহী (RJH): ~৪০ মিনিট, ভাড়া ৳৩০০০-৬০০০, দিনে ২-৩ ফ্লাইট। ঢাকা → যশোর (JSR): ~৩০ মিনিট, ভাড়া ৳২৫০০-৫৫০০, দিনে ২-৩ ফ্লাইট। এয়ারলাইন: বিমান, ইউএস-বাংলা। রাজশাহীতে ট্রেন (সিল্ক সিটি) ৳৩৯০-১৬০০ সস্তা ও জনপ্রিয়।",
+    "keywords": [
+      "flight", "dhaka", "rajshahi", "jessore", "jashore", "air", "fare",
+      "বিমান", "ঢাকা", "রাজশাহী", "যশোর", "ভাড়া", "RJH", "JSR", "ফ্লাইট"
+    ]
+  },
+  {
+    "id": "550",
+    "category": "Air",
+    "question_en": "Which apps and websites to book domestic flights in Bangladesh cheapest?",
+    "question_bn": "বাংলাদেশে ঘরোয়া ফ্লাইট সবচেয়ে সস্তায় কোথায় বুক করবো?",
+    "answer_en": "Best apps/sites for Bangladesh domestic flights: 1) ShareTrip (sharetrip.net) — most popular, app available 2) GoZayaan (gozayaan.com) — competitive prices 3) Shohoz (shohoz.com) — also covers flights 4) Direct airline sites: biman.com.bd, usbanglaairlines.com, flynovoair.com 5) For cheapest: compare all platforms, book 2-3 weeks ahead. Check weekday vs weekend fares.",
+    "answer_bn": "বাংলাদেশে ঘরোয়া ফ্লাইট বুকিং: ১) ShareTrip (sharetrip.net) — সবচেয়ে জনপ্রিয়, অ্যাপ আছে ২) GoZayaan (gozayaan.com) — প্রতিযোগিতামূলক দাম ৩) শোহোজ (shohoz.com) ৪) সরাসরি: biman.com.bd, usbanglaairlines.com, flynovoair.com ৫) সস্তায় পেতে: সব প্ল্যাটফর্ম তুলনা করুন, ২-৩ সপ্তাহ আগে বুক করুন।",
+    "keywords": [
+      "book", "flight", "cheap", "app", "sharetrip", "gozayaan", "biman", "domestic",
+      "ফ্লাইট", "বুক", "সস্তা", "অ্যাপ", "শেয়ারট্রিপ", "গোজায়ান", "বিমান"
+    ]
+  },
+  {
+    "id": "551",
+    "category": "Air",
+    "question_en": "How early to arrive at Dhaka airport for a domestic flight?",
+    "question_bn": "ঢাকা বিমানবন্দরে ঘরোয়া ফ্লাইটের জন্য কতক্ষণ আগে পৌঁছাতে হবে?",
+    "answer_en": "Hazrat Shahjalal Airport (DAC) arrival tips: Domestic flights — arrive 90 minutes to 2 hours before departure. International — arrive 3 hours before. Check-in closes 45 mins before domestic departure. Online check-in available 24 hrs before on all major airlines. Terminal 2 handles most domestic flights.",
+    "answer_bn": "হযরত শাহজালাল বিমানবন্দরে পৌঁছানোর টিপস: ঘরোয়া ফ্লাইট — ছাড়ার ৯০ মিনিট থেকে ২ ঘণ্টা আগে পৌঁছান। আন্তর্জাতিক — ৩ ঘণ্টা আগে। চেক-ইন ঘরোয়া ফ্লাইটের ৪৫ মিনিট আগে বন্ধ হয়ে যায়। সব বড় এয়ারলাইনে ২৪ ঘণ্টা আগে অনলাইন চেক-ইন করা যায়।",
+    "keywords": [
+      "airport", "arrive", "early", "domestic", "flight", "dahaka", "shahjalal",
+      "বিমানবন্দর", "কতক্ষণ", "আগে", "পৌঁছাতে", "ঘরোয়া", "ফ্লাইট", "শাহজালাল"
+    ]
+  },
+  {
+    "id": "552",
+    "category": "Air",
+    "question_en": "Dhaka to Cox's Bazar by train — Cox's Bazar Express schedule and fare?",
+    "question_bn": "ঢাকা থেকে ট্রেনে কক্সবাজার যাওয়ার উপায় — কক্সবাজার এক্সপ্রেস সময় ও ভাড়া?",
+    "answer_en": "Direct train Dhaka→Cox's Bazar: Cox's Bazar Express (train 813/814) and Paryatak Express. Departs Kamalapur, journey ~8-10 hrs. Shuvan Chair ~৳505, AC Berth ~৳1680. Book at eticket.railway.gov.bd up to 10 days ahead — sells fast. Much cheaper than flight, no traffic jam. Chittagong→Cox's Bazar leg takes ~2-2.5 hrs.",
+    "answer_bn": "সরাসরি ট্রেন ঢাকা → কক্সবাজার: কক্সবাজার এক্সপ্রেস (ট্রেন ৮১৩/৮১৪) ও পর্যটক এক্সপ্রেস। কমলাপুর থেকে ছেড়ে যাত্রা ~৮-১০ ঘণ্টা। শোভন চেয়ার ~৳৫০৫, AC বার্থ ~৳১৬৮০। eticket.railway.gov.bd-তে ১০ দিন আগে থেকে বুক করুন — দ্রুত শেষ হয়। ফ্লাইটের চেয়ে অনেক সস্তা, যানজট নেই। চট্টগ্রাম → কক্সবাজার অংশ ~২-২.৫ ঘণ্টা।",
+    "keywords": [
+      "train", "dhaka", "coxsbazar", "cox bazar", "express", "813", "814", "schedule",
+      "ট্রেন", "ঢাকা", "কক্সবাজার", "এক্সপ্রেস", "ভাড়া", "সময়", "পর্যটক", "কমলাপুর"
+    ]
+  },
+  {
+    "id": "553",
+    "category": "Air",
+    "question_en": "Biman Bangladesh vs US-Bangla vs Novoair — which domestic airline is best?",
+    "question_bn": "বিমান বাংলাদেশ বনাম ইউএস-বাংলা বনাম নভোএয়ার — কোন ঘরোয়া এয়ারলাইন ভালো?",
+    "answer_en": "Bangladesh domestic airlines comparison: US-Bangla Airlines — most punctual, best service, larger fleet, most routes. Novoair — reliable, good legroom. Biman Bangladesh — government airline, cheaper but less reliable/punctual. Air Astra — newer, competitive prices. For Cox's Bazar: US-Bangla most flights. Best price: compare all on ShareTrip/GoZayaan.",
+    "answer_bn": "বাংলাদেশ ঘরোয়া এয়ারলাইন তুলনা: ইউএস-বাংলা এয়ারলাইন্স — সবচেয়ে সময়মতো, সেরা সার্ভিস, বেশি রুট। নভোএয়ার — নির্ভরযোগ্য, ভালো লেগরুম। বিমান বাংলাদেশ — সরকারি, সস্তা কিন্তু কম নির্ভরযোগ্য। এয়ার অ্যাস্ট্রা — নতুন, প্রতিযোগিতামূলক মূল্য। ShareTrip/GoZayaan-এ সব তুলনা করুন।",
+    "keywords": [
+      "biman", "us-bangla", "novoair", "air astra", "domestic", "airline", "compare",
+      "বিমান", "ইউএস-বাংলা", "নভোএয়ার", "ঘরোয়া", "এয়ারলাইন", "কোনটা", "ভালো"
+    ]
+  },
+  {
+    "id": "554",
+    "category": "Local Bus",
+    "question_en": "Abdullahpur to Gulistan direct local bus — is there any? What is the student fare?",
+    "question_bn": "আব্দুল্লাহপুর থেকে সরাসরি গুলিস্তানের লোকাল বাস আছে? স্টুডেন্ট ভাড়া কত?",
+    "answer_en": "Abdullahpur (Uttara) → Gulistan: Yes, direct local buses run this route (Uttara Paribahan, Bus 27/28 corridor). Fare ~৳30-40 full fare. Student discount (50% off) is ONLY on BRTC government buses with valid student ID — not on private buses. BRTC AC buses on this route: ৳50-80 flat. Journey ~45-70 min without heavy traffic.",
+    "answer_bn": "আব্দুল্লাহপুর (উত্তরা) → গুলিস্তান: হ্যাঁ, সরাসরি লোকাল বাস চলে (উত্তরা পরিবহন, ২৭/২৮ করিডোর)। ভাড়া ~৳৩০-৪০ পূর্ণ। স্টুডেন্ট ছাড় (৫০%) শুধু BRTC সরকারি বাসে বৈধ স্টুডেন্ট আইডি সহ — প্রাইভেট বাসে না। BRTC AC বাস: ৳৫০-৮০ ফ্ল্যাট। যাত্রা ~৪৫-৭০ মিনিট (ট্রাফিক না থাকলে)।",
+    "keywords": [
+      "abdullahpur", "gulistan", "local", "bus", "student", "fare", "uttara",
+      "আব্দুল্লাহপুর", "গুলিস্তান", "লোকাল", "বাস", "স্টুডেন্ট", "ভাড়া", "উত্তরা", "BRTC"
+    ]
+  },
+  {
+    "id": "555",
+    "category": "Local Bus",
+    "question_en": "Mymensingh to Dhaka local bus fare and where to board?",
+    "question_bn": "ময়মনসিংহ টু ঢাকা লোকাল বাস ভাড়া কত? আর কোথায় থেকে উঠে?",
+    "answer_en": "Mymensingh → Dhaka: Local buses (non-AC) depart from Mymensingh bus stand, arrive Mohakhali terminal. Fare ~৳150-200. Journey ~2.5-3 hrs. Frequent buses from 5 AM. AC buses (Shyamoli, Ena) ৳300-400 from same terminal. Train alternative: Brahmaputra Express or Jamuna Express ~2.5 hrs, ৳135-450, often preferred.",
+    "answer_bn": "ময়মনসিংহ → ঢাকা: লোকাল বাস (নন-এসি) ময়মনসিংহ বাস স্ট্যান্ড থেকে মহাখালী টার্মিনালে আসে। ভাড়া ~৳১৫০-২০০। যাত্রা ~২.৫-৩ ঘণ্টা। ভোর ৫টা থেকে ঘন ঘন বাস। এসি বাস (শ্যামলী, ঈনা) ৳৩০০-৪০০। ট্রেন বিকল্প: ব্রহ্মপুত্র/যমুনা এক্সপ্রেস ~২.৫ ঘণ্টা, ৳১৩৫-৪৫০।",
+    "keywords": [
+      "mymensingh", "dhaka", "local", "bus", "fare", "board", "mohakhali",
+      "ময়মনসিংহ", "ঢাকা", "লোকাল", "বাস", "ভাড়া", "কোথায়", "উঠে", "মহাখালী"
+    ]
+  },
+  {
+    "id": "556",
+    "category": "Local Bus",
+    "question_en": "Kishoreganj to Dhaka bus — local bus options and fare?",
+    "question_bn": "কিশোরগঞ্জ থেকে ঢাকা লোকাল বাস আছে কি আর ভাড়া কত?",
+    "answer_en": "Kishoreganj → Dhaka: Local buses depart Kishoreganj central bus stand, arrive Mohakhali or Saydabad. Fare ~৳200-250 (local/non-AC). AC buses: ৳350-500. Journey ~3-4 hrs. Train option: Kishoreganj Express or Egaro Sindhur Provati from Kamalapur ~3 hrs, ৳145-550. Buses run frequently from early morning.",
+    "answer_bn": "কিশোরগঞ্জ → ঢাকা: লোকাল বাস কিশোরগঞ্জ সেন্ট্রাল বাস স্ট্যান্ড থেকে মহাখালী বা সায়েদাবাদে আসে। ভাড়া ~৳২০০-২৫০ (লোকাল/নন-এসি)। এসি বাস: ৳৩৫০-৫০০। যাত্রা ~৩-৪ ঘণ্টা। ট্রেন: কিশোরগঞ্জ এক্সপ্রেস বা এগারো সিন্ধুর প্রভাতী কমলাপুর থেকে ~৩ ঘণ্টা, ৳১৪৫-৫৫০।",
+    "keywords": [
+      "kishoreganj", "dhaka", "bus", "local", "fare", "কিশোরগঞ্জ", "ঢাকা", "বাস",
+      "লোকাল", "ভাড়া", "কত", "mohakhali", "মহাখালী", "ট্রেন"
+    ]
+  },
+  {
+    "id": "557",
+    "category": "Local Bus",
+    "question_en": "Dhaka city bus minimum fare and fare structure 2026?",
+    "question_bn": "ঢাকা শহরের বাসে সর্বনিম্ন ভাড়া কত? ভাড়ার কাঠামো কেমন?",
+    "answer_en": "Dhaka city bus fare (BRTA 2026): Minimum fare ৳10 (first 2 km). After that ~৳2/km. Common routes: Mirpur→Motijheel ~৳25-30, Uttara→Gulistan ~৳35-40, Mohakhali→Sadarghat ~৳20-25. BRTC AC bus: ৳50-80 flat. Payment cash only — no card/mobile payment. Student discount (50%) only on BRTC with ID.",
+    "answer_bn": "ঢাকা শহরের বাস ভাড়া (BRTA ২০২৬): সর্বনিম্ন ৳১০ (প্রথম ২ কিমি)। তারপর ~৳২/কিমি। সাধারণ রুট: মিরপুর → মতিঝিল ~৳২৫-৩০, উত্তরা → গুলিস্তান ~৳৩৫-৪০, মহাখালী → সদরঘাট ~৳২০-২৫। BRTC AC বাস: ৳৫০-৮০ ফ্ল্যাট। শুধু নগদ পেমেন্ট — কার্ড/মোবাইল না।",
+    "keywords": [
+      "dhaka", "city", "bus", "minimum", "fare", "structure", "2026",
+      "ঢাকা", "শহর", "বাস", "সর্বনিম্ন", "ভাড়া", "কাঠামো", "BRTC", "স্টুডেন্ট"
+    ]
+  },
+  {
+    "id": "558",
+    "category": "Local Bus",
+    "question_en": "Dhaka to Khulna — local bus options, how long does it take?",
+    "question_bn": "ঢাকা থেকে খুলনা যাওয়ার বাস কোথায় পাওয়া যায়? সময় কত লাগে?",
+    "answer_en": "Dhaka→Khulna: Buses depart from Gabtoli terminal (some from Sayedabad). Fare: Non-AC ৳500-700, AC ৳800-1200. Journey ~5-6 hrs via Padma Bridge (280 km). Best operators: Shyamoli, Hanif, Royal Coach, Soudia. Book via Shohoz.com or at Gabtoli counter. Train: Sundarban/Chitra Express from Kamalapur ~9 hrs (via Jessore).",
+    "answer_bn": "ঢাকা → খুলনা: গাবতলী টার্মিনাল থেকে বাস (কিছু সায়েদাবাদ থেকেও)। ভাড়া: নন-এসি ৳৫০০-৭০০, এসি ৳৮০০-১২০০। যাত্রা ~৫-৬ ঘণ্টা পদ্মা সেতু হয়ে (২৮০ কিমি)। সেরা অপারেটর: শ্যামলী, হানিফ, রয়্যাল কোচ, সৌদিয়া। Shohoz.com বা গাবতলী কাউন্টারে বুক করুন।",
+    "keywords": [
+      "dhaka", "khulna", "bus", "local", "fare", "time", "gabtoli",
+      "ঢাকা", "খুলনা", "বাস", "ভাড়া", "কত", "গাবতলী", "শ্যামলী", "padma"
+    ]
+  },
+  {
+    "id": "559",
+    "category": "Metro",
+    "question_en": "How to get MRT Rapid Pass — where to buy, cost and how to recharge?",
+    "question_bn": "MRT র‍্যাপিড পাস কোথায় পাওয়া যায়? দাম কত? কিভাবে রিচার্জ করবো?",
+    "answer_en": "MRT-6 Rapid Pass (stored value card): Available at any MRT-6 station counter — Uttara North, Agargaon, Motijheel, etc. Cost: ৳200 refundable deposit + minimum ৳100 top-up = ৳300 total to start. Benefit: 10% discount on every trip. Recharge at station machines or counters. Get card from Mohakhali: go to Agargaon MRT station (nearest).",
+    "answer_bn": "MRT-6 র‍্যাপিড পাস (স্টোরড ভ্যালু কার্ড): যেকোনো MRT-6 স্টেশন কাউন্টারে পাওয়া যায় — উত্তরা উত্তর, আগারগাঁও, মতিঝিল ইত্যাদি। দাম: ৳২০০ ফেরতযোগ্য জামানত + সর্বনিম্ন ৳১০০ রিচার্জ = শুরুতে মোট ৳৩০০। সুবিধা: প্রতি যাত্রায় ১০% ছাড়। স্টেশন মেশিন বা কাউন্টারে রিচার্জ করুন।",
+    "keywords": [
+      "MRT", "rapid", "pass", "card", "buy", "recharge", "cost", "deposit",
+      "র‍্যাপিড", "পাস", "কার্ড", "কোথায়", "পাওয়া", "রিচার্জ", "মেট্রো", "agargaon"
+    ]
+  },
+  {
+    "id": "560",
+    "category": "Metro",
+    "question_en": "Are there student, disabled or senior citizen discounts on MRT metro and train?",
+    "question_bn": "মেট্রোরেল ও ট্রেনে শিক্ষার্থী, প্রতিবন্ধী ও সিনিয়র সিটিজেনদের ছাড় আছে কি?",
+    "answer_en": "Bangladesh 2026 discount policy: MRT-6 metro — student discount scheme being piloted (check DMTCL announcements). Intercity trains — 50% discount for students, disabled persons, and senior citizens (60+) on Shuvan and Shuvan Chair class with valid ID. Apply at station counter or during eticket booking under 'Concession' option. Carry valid NID/student card when traveling.",
+    "answer_bn": "বাংলাদেশ ২০২৬ ছাড় নীতি: MRT-6 মেট্রো — শিক্ষার্থী ছাড় পাইলট চলছে (DMTCL ঘোষণা দেখুন)। আন্তঃনগর ট্রেন — শিক্ষার্থী, প্রতিবন্ধী ও সিনিয়র সিটিজেন (৬০+)-এর জন্য শোভন ও শোভন চেয়ার ক্লাসে ৫০% ছাড় বৈধ আইডি সহ। স্টেশন কাউন্টারে বা eticket বুকিংয়ে 'Concession' অপশনে আবেদন করুন।",
+    "keywords": [
+      "student", "discount", "metro", "train", "disabled", "senior", "concession",
+      "শিক্ষার্থী", "ছাড়", "মেট্রো", "ট্রেন", "প্রতিবন্ধী", "সিনিয়র", "কনসেশন"
+    ]
+  },
+  {
+    "id": "561",
+    "category": "Metro",
+    "question_en": "What buses connect from Agargaon metro station to other Dhaka areas?",
+    "question_bn": "আগারগাঁও মেট্রো স্টেশন থেকে ঢাকার অন্যান্য এলাকায় কোন বাস পাওয়া যায়?",
+    "answer_en": "From Agargaon MRT station: Buses to Mirpur (local ৳10-15), Mohakhali (৳15-20), Farmgate (৳10-15), Sher-e-Bangla Nagar, Tejgaon, Airport road. CNG/rickshaw to Bijoy Sarani, Karwan Bazar (~৳40-60). Agargaon is a major bus hub — many cross-city routes stop here. Exit via Gate 1 for bus stand.",
+    "answer_bn": "আগারগাঁও MRT স্টেশন থেকে: বাস মিরপুরে (৳১০-১৫), মহাখালী (৳১৫-২০), ফার্মগেট (৳১০-১৫), শেরেবাংলা নগর, তেজগাঁও, এয়ারপোর্ট রোডে। সিএনজি/রিকশায় বিজয় সরণি, কাওরানবাজার (~৳৪০-৬০)। আগারগাঁও বড় বাস হাব — অনেক ক্রস-সিটি রুট এখানে থামে।",
+    "keywords": [
+      "agargaon", "metro", "bus", "connection", "mirpur", "mohakhali", "farmgate",
+      "আগারগাঁও", "মেট্রো", "বাস", "সংযোগ", "মিরপুর", "মহাখালী", "ফার্মগেট"
+    ]
+  },
+  {
+    "id": "562",
+    "category": "Train",
+    "question_en": "Explain Bangladesh train classes — Shuvan, Shuvan Chair, Snigdha, AC Berth, First Class?",
+    "question_bn": "বাংলাদেশ ট্রেনের শ্রেণী বিবরণ — শোভন, শোভন চেয়ার, স্নিগ্ধা, এসি বার্থ, প্রথম শ্রেণী?",
+    "answer_en": "Bangladesh Railway train classes (cheapest to most expensive): 1) Shuvan (শোভন) — hard seat, no AC, cheapest. 2) Shuvan Chair (শোভন চেয়ার) — cushioned reclining seat, no AC, most popular. 3) First Class (প্রথম শ্রেণী) — larger seat, some AC, old coaches. 4) Snigdha (স্নিগ্ধা) — AC chair car, modern, comfortable. 5) AC Berth (এসি বার্থ) — sleeping berth with AC, sleeper for overnight journeys. 6) First Class Berth — older AC sleeping. Snigdha and AC Berth are ~3-4× Shuvan price.",
+    "answer_bn": "বাংলাদেশ রেলওয়ে শ্রেণী (সস্তা থেকে দামি): ১) শোভন — শক্ত সিট, নন-এসি, সবচেয়ে সস্তা। ২) শোভন চেয়ার — কুশন রিক্লাইনিং সিট, নন-এসি, সবচেয়ে জনপ্রিয়। ৩) প্রথম শ্রেণী — বড় সিট, কিছু এসি। ৪) স্নিগ্ধা — এসি চেয়ার কার, আধুনিক। ৫) এসি বার্থ — এসি স্লিপার, দীর্ঘ যাত্রার জন্য। ৬) প্রথম শ্রেণী বার্থ — পুরানো এসি স্লিপার।",
+    "keywords": [
+      "train", "class", "shuvan", "chair", "snigdha", "ac", "berth", "first",
+      "ট্রেন", "শ্রেণী", "শোভন", "চেয়ার", "স্নিগ্ধা", "বার্থ", "প্রথম", "কোনটা"
+    ]
+  },
+  {
+    "id": "563",
+    "category": "Train",
+    "question_en": "How to book train tickets online Bangladesh — step by step guide?",
+    "question_bn": "বাংলাদেশে অনলাইনে ট্রেনের টিকেট কিভাবে কাটবো — ধাপে ধাপে গাইড?",
+    "answer_en": "Bangladesh Railway online booking steps: 1) Go to eticket.railway.gov.bd 2) Register with NID + mobile number 3) Search by origin/destination + date 4) Select train + class + seats 5) Pay by bKash, Nagad, Rocket, card, or net banking 6) Download/print e-ticket or show QR on phone. Shohoz.com also sells rail tickets. Tickets open 10 days before departure — for popular trains log in at midnight when window opens.",
+    "answer_bn": "বাংলাদেশ রেলওয়ে অনলাইন বুকিং ধাপ: ১) eticket.railway.gov.bd-এ যান ২) NID + মোবাইল নম্বর দিয়ে রেজিস্ট্রেশন ৩) উৎস/গন্তব্য + তারিখ খুঁজুন ৪) ট্রেন + ক্লাস + সিট নির্বাচন ৫) বিকাশ, নগদ, রকেট, কার্ড বা নেট ব্যাংকিংয়ে পেমেন্ট ৬) ই-টিকেট ডাউনলোড বা ফোনে QR দেখান। জনপ্রিয় ট্রেনের জন্য উইন্ডো খুলতেই (মধ্যরাতে) বুক করুন।",
+    "keywords": [
+      "train", "ticket", "online", "book", "step", "eticket", "railway", "guide",
+      "ট্রেন", "টিকেট", "অনলাইন", "বুক", "কিভাবে", "eticket", "রেলওয়ে", "বিকাশ"
+    ]
+  },
+  {
+    "id": "564",
+    "category": "Train",
+    "question_en": "How many days in advance can I book Bangladesh train tickets online?",
+    "question_bn": "বাংলাদেশে ট্রেনের টিকেট কতদিন আগে অনলাইনে কাটা যায়?",
+    "answer_en": "Bangladesh Railway booking window: 10 days in advance via eticket.railway.gov.bd (opens at midnight). For example, a ticket for August 25 opens at 12:00 AM August 15. Station counter tickets: 5 days ahead. Tips: For Eid trains, set alarm for midnight exactly. Shohoz.com also opens same day. Advance purchase non-refundable fee applies for cancellations.",
+    "answer_bn": "বাংলাদেশ রেলওয়ে বুকিং উইন্ডো: eticket.railway.gov.bd-এ ১০ দিন আগে থেকে (মধ্যরাত ১২টায় খোলে)। উদাহরণ: আগস্ট ২৫-এর টিকেট আগস্ট ১৫ রাত ১২টায় খোলে। স্টেশন কাউন্টার: ৫ দিন আগে। টিপস: ঈদের ট্রেনের জন্য ঠিক মধ্যরাতে অ্যালার্ম দিন। বাতিলে ফি কাটে।",
+    "keywords": [
+      "train", "ticket", "advance", "days", "book", "window", "eticket", "midnight",
+      "ট্রেন", "টিকেট", "আগে", "কতদিন", "অনলাইন", "মধ্যরাত", "উইন্ডো", "ঈদ"
+    ]
+  },
+  {
+    "id": "565",
+    "category": "Train",
+    "question_en": "Mohanganj Express train from Dhaka — schedule, stops and fare?",
+    "question_bn": "মোহনগঞ্জ এক্সপ্রেস ট্রেন ঢাকা থেকে — সময়সূচি, স্টপ ও ভাড়া?",
+    "answer_en": "Mohanganj Express (train 745/746): Dhaka Kamalapur → Mohanganj (Netrokona district). Departs ~8:15 AM, arrives ~1:30 PM (~5 hrs). Shuvan ৳195, Shuvan Chair ৳235, Snigdha ~৳555. Stops: Tongi, Mymensingh, Gafargaon, Nandail, Mohanganj. Return departs afternoon. Book at eticket.railway.gov.bd. Night bus from Mohakhali terminal after 9 PM is an alternative.",
+    "answer_bn": "মোহনগঞ্জ এক্সপ্রেস (ট্রেন ৭৪৫/৭৪৬): ঢাকা কমলাপুর → মোহনগঞ্জ (নেত্রকোণা জেলা)। সকাল ~৮:১৫-এ ছেড়ে ~দুপুর ১:৩০-এ পৌঁছায় (~৫ ঘণ্টা)। শোভন ৳১৯৫, শোভন চেয়ার ৳২৩৫, স্নিগ্ধা ~৳৫৫৫। স্টপ: টঙ্গী, ময়মনসিংহ, গফরগাঁও, নান্দাইল, মোহনগঞ্জ।",
+    "keywords": [
+      "mohanganj", "express", "train", "schedule", "dhaka", "kamalapur", "fare",
+      "মোহনগঞ্জ", "এক্সপ্রেস", "ট্রেন", "সময়সূচি", "ঢাকা", "ভাড়া", "নেত্রকোণা"
+    ]
+  },
+  {
+    "id": "566",
+    "category": "Launch",
+    "question_en": "Dhaka to Khulna launch from Sadarghat — schedule, fare and duration?",
+    "question_bn": "সদরঘাট থেকে ঢাকা থেকে খুলনা লঞ্চ — সময়, ভাড়া ও সময় লাগে কত?",
+    "answer_en": "Dhaka (Sadarghat) → Khulna: Launches depart nightly 5-8 PM. Journey ~18-22 hrs (300+ km via river). Deck fare ৳300-400, Single cabin ৳1200-1800, Double cabin ৳2000-3000, VIP ৳4000-6000. Main operators: Sundarban, MV Khulna lines. Buy at Sadarghat counter 2-3 days ahead. Bus via Padma Bridge is faster (5-6 hrs) and cheaper but launch is scenic.",
+    "answer_bn": "ঢাকা (সদরঘাট) → খুলনা: বিকেল ৫-৮টায় নিয়মিত লঞ্চ ছাড়ে। যাত্রা ~১৮-২২ ঘণ্টা (৩০০+ কিমি নদীপথে)। ডেক ভাড়া ৳৩০০-৪০০, সিঙ্গেল কেবিন ৳১২০০-১৮০০, ডাবল কেবিন ৳২০০০-৩০০০, VIP ৳৪০০০-৬০০০। সদরঘাট কাউন্টারে ২-৩ দিন আগে কিনুন।",
+    "keywords": [
+      "dhaka", "khulna", "launch", "sadarghat", "schedule", "fare", "duration",
+      "ঢাকা", "খুলনা", "লঞ্চ", "সদরঘাট", "সময়", "ভাড়া", "কেবিন", "ডেক"
+    ]
+  },
+  {
+    "id": "567",
+    "category": "Launch",
+    "question_en": "Dhaka to Pirojpur launch fare and timing?",
+    "question_bn": "ঢাকা থেকে পিরোজপুর লঞ্চ — ভাড়া ও সময়?",
+    "answer_en": "Dhaka (Sadarghat) → Pirojpur: 1-2 launches daily, depart evening 5-7 PM. Journey ~12-14 hrs. Deck fare ৳200-280, Single cabin ৳700-900, Double cabin ৳1200-1500. Buy ticket at Sadarghat Pirojpur launch counter. Limited online availability — buy in person. During Eid extra launches added on this route.",
+    "answer_bn": "ঢাকা (সদরঘাট) → পিরোজপুর: প্রতিদিন ১-২টি লঞ্চ, সন্ধ্যা ৫-৭টায় ছেড়ে যায়। যাত্রা ~১২-১৪ ঘণ্টা। ডেক ভাড়া ৳২০০-২৮০, সিঙ্গেল কেবিন ৳৭০০-৯০০, ডাবল কেবিন ৳১২০০-১৫০০। সদরঘাট পিরোজপুর লঞ্চ কাউন্টারে টিকেট কিনুন। ঈদে অতিরিক্ত লঞ্চ।",
+    "keywords": [
+      "dhaka", "pirojpur", "launch", "fare", "timing", "sadarghat",
+      "ঢাকা", "পিরোজপুর", "লঞ্চ", "ভাড়া", "সময়", "সদরঘাট", "কেবিন", "ডেক"
+    ]
+  },
+  {
+    "id": "568",
+    "category": "Launch",
+    "question_en": "How to navigate Sadarghat terminal — which counter for which launch route?",
+    "question_bn": "সদরঘাট টার্মিনালে কিভাবে ঘুরবো — কোন রুটের জন্য কোন কাউন্টার?",
+    "answer_en": "Sadarghat Terminal navigation: Multiple pontoons (ঘাট) labeled by destination. On arrival, check the large electronic board at entrance showing routes + pontoon numbers. Ticket counters: each route has a separate counter — look for signboards. General layout: South zone = Barisal/Bhola/Patuakhali routes. North zone = Chandpur/Comilla routes. Open 8 AM–11 PM. Pontoon numbers change seasonally — always check board.",
+    "answer_bn": "সদরঘাট টার্মিনাল নেভিগেশন: গন্তব্য অনুযায়ী লেবেল করা পন্টুন (ঘাট) আছে। প্রবেশ করেই বড় ইলেকট্রনিক বোর্ডে রুট + পন্টুন নম্বর দেখুন। প্রতিটি রুটের আলাদা টিকেট কাউন্টার — সাইনবোর্ড দেখুন। সাধারণ বিন্যাস: দক্ষিণ জোন = বরিশাল/ভোলা/পটুয়াখালী রুট। উত্তর জোন = চাঁদপুর/কুমিল্লা রুট। কাউন্টার খোলা ৮ AM-১১ PM।",
+    "keywords": [
+      "sadarghat", "terminal", "navigate", "counter", "pontoon", "route", "board",
+      "সদরঘাট", "টার্মিনাল", "কাউন্টার", "পন্টুন", "রুট", "বোর্ড", "ঘাট", "কিভাবে"
+    ]
+  },
+  {
+    "id": "569",
+    "category": "Launch",
+    "question_en": "What is the difference between deck, single cabin, double cabin and VIP cabin on a launch?",
+    "question_bn": "লঞ্চের ডেক, সিঙ্গেল কেবিন, ডাবল কেবিন ও VIP কেবিনের পার্থক্য কি?",
+    "answer_en": "Bangladesh launch cabin types: Deck (ডেক) — open air seating on lower deck, cheapest, crowded. Single cabin (সিঙ্গেল কেবিন) — private room with 1 bed/berth, lock on door, basic AC/fan. Double cabin (ডাবল কেবিন) — 2 beds, suitable for couples/families. VIP cabin — larger, better facilities, AC, sometimes bathroom inside. On Dhaka-Barishal route: Deck ৳150, Single ৳600-900, Double ৳1000-1500, VIP ৳2000-3000.",
+    "answer_bn": "বাংলাদেশ লঞ্চের কেবিন ধরন: ডেক — নিচের তলায় খোলা বসার জায়গা, সবচেয়ে সস্তা, ভিড়। সিঙ্গেল কেবিন — ১টি বেড সহ প্রাইভেট রুম, দরজায় তালা, বেসিক AC/ফ্যান। ডাবল কেবিন — ২টি বেড, দম্পতি/পরিবারের জন্য। VIP কেবিন — বড় রুম, ভালো সুবিধা, AC, কখনো ওয়াশরুম।",
+    "keywords": [
+      "launch", "deck", "single", "cabin", "double", "vip", "difference",
+      "লঞ্চ", "ডেক", "সিঙ্গেল", "কেবিন", "ডাবল", "VIP", "পার্থক্য", "কোনটা"
+    ]
+  },
+  {
+    "id": "570",
+    "category": "Launch",
+    "question_en": "Eid rush launch tips — when to book and how to secure a good cabin?",
+    "question_bn": "ঈদের সময় লঞ্চে যাওয়ার টিপস — কখন বুক করবো, ভালো কেবিন কিভাবে পাবো?",
+    "answer_en": "Eid launch tips: 1) Book 5-7 days before Eid at Sadarghat counter in person — online unavailable for most routes. 2) Fares rise 30-50% during Eid. 3) Government BIWTC launches cheaper and safer than private. 4) Avoid day before Eid departure (most crowded). 5) For double cabin book 1 week ahead. 6) Deck gets very overcrowded on Eid — upgrade to cabin if possible. 7) Extra launches added by BIWTC on major routes.",
+    "answer_bn": "ঈদ লঞ্চ টিপস: ১) ঈদের ৫-৭ দিন আগে সদরঘাট কাউন্টারে সরাসরি বুক করুন। ২) ঈদে ভাড়া ৩০-৫০% বাড়ে। ৩) BIWTC সরকারি লঞ্চ সস্তা ও নিরাপদ। ৪) ঈদের আগের দিন ভ্রমণ এড়িয়ে চলুন (সবচেয়ে ভিড়)। ৫) ডাবল কেবিন ১ সপ্তাহ আগে বুক করুন। ৬) ঈদে ডেক খুব ভিড় হয় — কেবিনে আপগ্রেড করুন।",
+    "keywords": [
+      "eid", "launch", "tips", "book", "cabin", "sadarghat", "biwtc",
+      "ঈদ", "লঞ্চ", "টিপস", "বুক", "কেবিন", "সদরঘাট", "BIWTC", "ভাড়া"
+    ]
+  },
+  {
+    "id": "571",
+    "category": "Air",
+    "question_en": "Dhaka to Barishal domestic flight — is there any? What are the options?",
+    "question_bn": "ঢাকা থেকে বরিশাল বিমান — কোনো ঘরোয়া ফ্লাইট আছে কি?",
+    "answer_en": "Dhaka→Barishal (BZL): Yes, limited domestic flights exist. Fare ~৳3000-5500. Limited frequency — check biman.com.bd or US-Bangla for current schedule. Most travelers prefer launch (scenic, ৳150-2500) or bus via Padma Bridge (~৳500-700, 5 hrs). Launch is the iconic Barishal travel experience.",
+    "answer_bn": "ঢাকা → বরিশাল (BZL): হ্যাঁ, সীমিত ঘরোয়া ফ্লাইট আছে। ভাড়া ~৳৩০০০-৫৫০০। ফ্লাইট কম — biman.com.bd বা ইউএস-বাংলায় বর্তমান সময়সূচি দেখুন। বেশিরভাগ যাত্রী লঞ্চ (৳১৫০-২৫০০, দৃশ্যাবলি চমৎকার) বা পদ্মা সেতু হয়ে বাস (~৳৫০০-৭০০, ৫ ঘণ্টা) পছন্দ করেন।",
+    "keywords": [
+      "dhaka", "barishal", "barisal", "flight", "domestic", "air", "BZL",
+      "ঢাকা", "বরিশাল", "বিমান", "ফ্লাইট", "ঘরোয়া", "আছে", "কি", "লঞ্চ"
+    ]
+  },
+  {
+    "id": "572",
+    "category": "Air",
+    "question_en": "How to travel from Hazrat Shahjalal Airport to Dhaka city — bus, CNG, metro?",
+    "question_bn": "হযরত শাহজালাল বিমানবন্দর থেকে ঢাকা শহরে কিভাবে যাবো — বাস, সিএনজি, মেট্রো?",
+    "answer_en": "From Hazrat Shahjalal Airport (DAC) to Dhaka city: 1) BRTC AC bus — ৳50-80 to Motijheel/Gulistan area. 2) Metered CNG — ৳200-400 to central Dhaka. 3) Uber/Pathao — ৳350-600 depending on destination. 4) Taxi from airport — ৳500-800. Metro (MRT-1 airport line) is under construction. For Uttara: CNG ৳60-100, only 10-15 mins.",
+    "answer_bn": "হযরত শাহজালাল বিমানবন্দর থেকে ঢাকায়: ১) BRTC AC বাস — ৳৫০-৮০ মতিঝিল/গুলিস্তান। ২) মিটার্ড সিএনজি — ৳২০০-৪০০ কেন্দ্রীয় ঢাকায়। ৩) উবার/পাঠাও — ৳৩৫০-৬০০। ৪) বিমানবন্দর ট্যাক্সি — ৳৫০০-৮০০। মেট্রো (MRT-1 বিমানবন্দর লাইন) নির্মাণাধীন। উত্তরায়: সিএনজি ৳৬০-১০০, ১০-১৫ মিনিট।",
+    "keywords": [
+      "airport", "shahjalal", "dhaka", "city", "bus", "cng", "metro", "how",
+      "বিমানবন্দর", "শাহজালাল", "ঢাকা", "শহর", "বাস", "সিএনজি", "কিভাবে", "BRTC"
+    ]
+  },
+  {
+    "id": "573",
+    "category": "Inter-City",
+    "question_en": "Dhaka to Barisal by bus via Padma Bridge — fare and time in 2026?",
+    "question_bn": "পদ্মা সেতু হয়ে ঢাকা থেকে বরিশাল বাসে — ভাড়া ও সময় ২০২৬?",
+    "answer_en": "Dhaka→Barisal by bus via Padma Bridge: ~5 hrs (was 8-10 hrs before bridge opened). Fare: Non-AC ৳400-550, AC ৳580-700. Operators: Hanif, Sakura, Shyamoli from Sayedabad terminal. Book via Shohoz.com or Sayedabad counter. Padma Bridge has transformed this route — bus is now a strong competitor to launch for daytime travel.",
+    "answer_bn": "পদ্মা সেতু হয়ে ঢাকা → বরিশাল বাসে: ~৫ ঘণ্টা (সেতু খোলার আগে ছিল ৮-১০ ঘণ্টা)। ভাড়া: নন-এসি ৳৪০০-৫৫০, এসি ৳৫৮০-৭০০। অপারেটর: হানিফ, সাকুরা, শ্যামলী সায়েদাবাদ টার্মিনাল থেকে। পদ্মা সেতু এই রুট বদলে দিয়েছে — দিনের ভ্রমণে বাস এখন লঞ্চের শক্তিশালী প্রতিদ্বন্দ্বী।",
+    "keywords": [
+      "dhaka", "barishal", "barisal", "bus", "padma", "bridge", "fare", "2026",
+      "ঢাকা", "বরিশাল", "বাস", "পদ্মা", "সেতু", "ভাড়া", "সময়", "সায়েদাবাদ"
+    ]
+  },
+  {
+    "id": "574",
+    "category": "Metro",
+    "question_en": "Farmgate metro station area — what is nearby and how to connect to buses?",
+    "question_bn": "ফার্মগেট মেট্রো স্টেশন এলাকায় কি কি আছে এবং বাসে কিভাবে যাবো?",
+    "answer_en": "Farmgate MRT-6 station area: Major bus hub connecting to all Dhaka zones. Local buses from Farmgate to: Mirpur (৳15-20), Mohakhali (৳10-15), Sadarghat (৳20-25), Gazipur (৳40-60), Narayanganj (৳30-40). Nearby: BRTA office, Green Road market, Tejgaon industrial area. CNG to Karwan Bazar (৳30-40), Kawran Bazar to Farmgate metro fare = ৳20.",
+    "answer_bn": "ফার্মগেট MRT-6 স্টেশন এলাকা: সব ঢাকা জোনের সাথে সংযুক্ত বড় বাস হাব। ফার্মগেট থেকে লোকাল বাস: মিরপুর (৳১৫-২০), মহাখালী (৳১০-১৫), সদরঘাট (৳২০-২৫), গাজীপুর (৳৪০-৬০), নারায়ণগঞ্জ (৳৩০-৪০)। কাছে: BRTA অফিস, গ্রীন রোড মার্কেট, তেজগাঁও শিল্পাঞ্চল।",
+    "keywords": [
+      "farmgate", "metro", "bus", "connection", "nearby", "route",
+      "ফার্মগেট", "মেট্রো", "বাস", "সংযোগ", "কাছে", "মিরপুর", "মহাখালী"
+    ]
+  },
+  {
+    "id": "575",
+    "category": "Train",
+    "question_en": "Nodail to Dhaka train — Shuvan Chair fare and route?",
+    "question_bn": "নড়াইল থেকে ঢাকা ট্রেন — শোভন চেয়ার ভাড়া ও রুট?",
+    "answer_en": "Narail/Noadail → Dhaka Kamalapur: Shuvan Chair fare ৳370 (Narail), ৳350 (Louhajong). Direct trains exist on this route. Journey ~4-5 hrs. Book at eticket.railway.gov.bd. If no seat available, Gabtoli bus to Jessore/Khulna direction then Narail is an option.",
+    "answer_bn": "নড়াইল/নড়াইল → ঢাকা কমলাপুর: শোভন চেয়ার ভাড়া ৳৩৭০ (নড়াইল), ৳৩৫০ (লোহাগড়া)। সরাসরি ট্রেন চলে। যাত্রা ~৪-৫ ঘণ্টা। eticket.railway.gov.bd-এ বুক করুন।",
+    "keywords": [
+      "narail", "noadail", "nodail", "dhaka", "train", "shuvan", "chair", "fare",
+      "নড়াইল", "ঢাকা", "ট্রেন", "শোভন", "চেয়ার", "ভাড়া", "কমলাপুর", "লোহাগড়া"
+    ]
   }
 ];
