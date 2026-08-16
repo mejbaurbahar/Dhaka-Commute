@@ -465,47 +465,94 @@ export function BusDetailPage(props: Props) {
               </div>
             </div>
 
-            <div className="kj-enter-2" style={{ ...card(18),marginBottom:16 }}>
-              <div style={{ fontFamily:BEN,fontWeight:700,fontSize:15,color:tk.text,marginBottom:14 }}>{T(lang,'স্টপসমূহ','Stops')} <span style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint }}>({N(realStops.length, lang)})</span></div>
-              {realStops.map((s,i)=>{
-                const isNearest = nearest?.index === i;
-                const showHelp = isNearest && nearest.distance <= 1.5;
-                const isEnd = s.isFrom || s.isTo || isNearest;
-                const dotColor = isNearest ? '#38bdf8' : s.isFrom ? tk.primary : tk.accent;
+            {needsTransit && transitRoutes[0] ? (
+              transitRoutes[0].legs.map((leg, li) => {
+                const legColor = li === 0 ? tk.primary : '#f59e0b';
                 return (
-                  <div key={s.id} style={{ display:'flex',gap:14,paddingBottom:i<realStops.length-1?14:0,position:'relative',animation:'kjStopIn 0.4s ease-out both',animationDelay:`${Math.min(i*45,900)}ms` }}>
-                    {/* rail with flowing light */}
-                    <div style={{ width:22,flexShrink:0,position:'relative',display:'flex',justifyContent:'center' }}>
-                      {i<realStops.length-1 && (
-                        <div style={{ position:'absolute',top:18,bottom:-6,width:3,borderRadius:3,background:tk.primary,opacity:0.14,overflow:'hidden' }}>
-                          <div style={{ position:'absolute',left:0,right:0,height:'45%',background:`linear-gradient(180deg,transparent,${tk.primary}cc,transparent)`,animation:'kjLineFlow 1.6s linear infinite' }}/>
+                  <div key={li} className="kj-enter-2" style={{ ...card(18), marginBottom:16, border:`1.5px solid ${legColor}55` }}>
+                    <div style={{ display:'flex',alignItems:'center',gap:8,marginBottom:14 }}>
+                      <span style={{ background:legColor,color:'#fff',borderRadius:6,padding:'3px 10px',fontFamily:SANS,fontSize:12,fontWeight:700,flexShrink:0 }}>
+                        {li === 0 ? '①' : '②'} {lang==='bn'?leg.busBn:leg.bus}
+                      </span>
+                      <div style={{ fontFamily:BEN,fontWeight:700,fontSize:15,color:tk.text }}>
+                        {T(lang,'স্টপসমূহ','Stops')} <span style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint }}>({N(leg.stops.length, lang)})</span>
+                      </div>
+                    </div>
+                    {leg.stops.map((sid, i) => {
+                      const st = STATIONS[sid];
+                      const isFirst = i === 0;
+                      const isLast = i === leg.stops.length - 1;
+                      const isEnd = isFirst || isLast;
+                      const dotColor = isFirst ? legColor : isLast ? (li === 0 ? '#f59e0b' : tk.accent) : tk.line;
+                      return (
+                        <div key={sid} style={{ display:'flex',gap:14,paddingBottom:i<leg.stops.length-1?14:0,position:'relative',animation:'kjStopIn 0.4s ease-out both',animationDelay:`${Math.min(i*45,900)}ms` }}>
+                          <div style={{ width:22,flexShrink:0,position:'relative',display:'flex',justifyContent:'center' }}>
+                            {i < leg.stops.length - 1 && (
+                              <div style={{ position:'absolute',top:18,bottom:-6,width:3,borderRadius:3,background:legColor,opacity:0.14,overflow:'hidden' }}>
+                                <div style={{ position:'absolute',left:0,right:0,height:'45%',background:`linear-gradient(180deg,transparent,${legColor}cc,transparent)`,animation:'kjLineFlow 1.6s linear infinite' }}/>
+                              </div>
+                            )}
+                            <div style={{ position:'relative',marginTop:2 }}>
+                              {isEnd && <div style={{ position:'absolute',inset:-7,borderRadius:999,background:dotColor,opacity:0.35,animation:'kjPulseRing 2s ease-out infinite' }}/>}
+                              <div style={{ width:isEnd?16:11,height:isEnd?16:11,borderRadius:999,border:`2.5px solid ${isEnd?dotColor:tk.line}`,background:isFirst?legColor:isLast?(li===0?'#f59e0b':tk.accent):tk.panel,boxShadow:isEnd?`0 0 12px ${dotColor}66`:undefined,position:'relative',zIndex:1 }}/>
+                            </div>
+                          </div>
+                          <div style={{ flex:1,display:'flex',alignItems:'center',gap:6,flexWrap:'wrap' }}>
+                            <span style={{ fontFamily:BEN,fontWeight:isEnd?700:500,fontSize:14,color:tk.text }}>
+                              {lang==='bn'&&st?.bnName?st.bnName:st?.name??sid.replace(/_/g,' ')}
+                            </span>
+                            {isFirst && <Pill tk={tk} tone="primary">{T(lang,'বোর্ডিং','Boarding')}</Pill>}
+                            {isLast && li === 0 && <Pill tk={tk} tone="mute">{T(lang,'ট্রান্সফার','Transfer')}</Pill>}
+                            {isLast && li === transitRoutes[0].legs.length - 1 && <Pill tk={tk} tone="accent">{T(lang,'গন্তব্য','Destination')}</Pill>}
+                          </div>
                         </div>
-                      )}
-                      <div style={{ position:'relative',marginTop:2 }}>
-                        {isEnd && <div style={{ position:'absolute',inset:-7,borderRadius:999,background:dotColor,opacity:0.35,animation:'kjPulseRing 2s ease-out infinite' }}/>}
-                        <div style={{ width:isEnd?16:11,height:isEnd?16:11,borderRadius:999,border:`2.5px solid ${dotColor}`,background:isNearest?'#0ea5e9':s.isFrom?tk.primary:s.isTo?tk.accent:tk.panel,boxShadow:isEnd?`0 0 12px ${dotColor}66`:undefined,position:'relative',zIndex:1 }}/>
-                      </div>
-                    </div>
-                    <div style={{ flex:1,display:'flex',alignItems:'center',justifyContent:'space-between',gap:10 }}>
-                      <div style={{ display:'flex',alignItems:'center',gap:6,flexWrap:'wrap' }}>
-                        <span style={{ fontFamily:BEN,fontWeight:isEnd?700:500,fontSize:14,color:tk.text }}>{lang==='bn'?s.bn:s.en}</span>
-                        {s.isFrom && <Pill tk={tk} tone="primary">{T(lang,'বোর্ডিং','Boarding')}</Pill>}
-                        {s.isTo && <Pill tk={tk} tone="accent">{T(lang,'গন্তব্য','Destination')}</Pill>}
-                        {isNearest && nearest && (nearest.distance <= 1.5
-                          ? <Pill tk={tk} tone="mute">{T(lang,'আপনি এখানে','You are here')}</Pill>
-                          : <Pill tk={tk} tone="mute">{N(nearest.distance.toFixed(1), lang)} {T(lang,'কিমি দূরে','km away')}</Pill>
-                        )}
-                      </div>
-                      {showHelp && (
-                        <button onClick={() => setShowHelpline(true)} style={{ background:tk.accentSoft,border:`1px solid ${tk.accent}55`,borderRadius:999,padding:'6px 10px',fontFamily:BEN,fontWeight:700,fontSize:12,color:tk.accent,cursor:'pointer',whiteSpace:'nowrap',flexShrink:0 }}>
-                          {T(lang,'হেল্পলাইন','Help line')}
-                        </button>
-                      )}
-                    </div>
+                      );
+                    })}
                   </div>
                 );
-              })}
-            </div>
+              })
+            ) : (
+              <div className="kj-enter-2" style={{ ...card(18),marginBottom:16 }}>
+                <div style={{ fontFamily:BEN,fontWeight:700,fontSize:15,color:tk.text,marginBottom:14 }}>{T(lang,'স্টপসমূহ','Stops')} <span style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint }}>({N(realStops.length, lang)})</span></div>
+                {realStops.map((s,i)=>{
+                  const isNearest = nearest?.index === i;
+                  const showHelp = isNearest && nearest.distance <= 1.5;
+                  const isEnd = s.isFrom || s.isTo || isNearest;
+                  const dotColor = isNearest ? '#38bdf8' : s.isFrom ? tk.primary : tk.accent;
+                  return (
+                    <div key={s.id} style={{ display:'flex',gap:14,paddingBottom:i<realStops.length-1?14:0,position:'relative',animation:'kjStopIn 0.4s ease-out both',animationDelay:`${Math.min(i*45,900)}ms` }}>
+                      <div style={{ width:22,flexShrink:0,position:'relative',display:'flex',justifyContent:'center' }}>
+                        {i<realStops.length-1 && (
+                          <div style={{ position:'absolute',top:18,bottom:-6,width:3,borderRadius:3,background:tk.primary,opacity:0.14,overflow:'hidden' }}>
+                            <div style={{ position:'absolute',left:0,right:0,height:'45%',background:`linear-gradient(180deg,transparent,${tk.primary}cc,transparent)`,animation:'kjLineFlow 1.6s linear infinite' }}/>
+                          </div>
+                        )}
+                        <div style={{ position:'relative',marginTop:2 }}>
+                          {isEnd && <div style={{ position:'absolute',inset:-7,borderRadius:999,background:dotColor,opacity:0.35,animation:'kjPulseRing 2s ease-out infinite' }}/>}
+                          <div style={{ width:isEnd?16:11,height:isEnd?16:11,borderRadius:999,border:`2.5px solid ${dotColor}`,background:isNearest?'#0ea5e9':s.isFrom?tk.primary:s.isTo?tk.accent:tk.panel,boxShadow:isEnd?`0 0 12px ${dotColor}66`:undefined,position:'relative',zIndex:1 }}/>
+                        </div>
+                      </div>
+                      <div style={{ flex:1,display:'flex',alignItems:'center',justifyContent:'space-between',gap:10 }}>
+                        <div style={{ display:'flex',alignItems:'center',gap:6,flexWrap:'wrap' }}>
+                          <span style={{ fontFamily:BEN,fontWeight:isEnd?700:500,fontSize:14,color:tk.text }}>{lang==='bn'?s.bn:s.en}</span>
+                          {s.isFrom && <Pill tk={tk} tone="primary">{T(lang,'বোর্ডিং','Boarding')}</Pill>}
+                          {s.isTo && <Pill tk={tk} tone="accent">{T(lang,'গন্তব্য','Destination')}</Pill>}
+                          {isNearest && nearest && (nearest.distance <= 1.5
+                            ? <Pill tk={tk} tone="mute">{T(lang,'আপনি এখানে','You are here')}</Pill>
+                            : <Pill tk={tk} tone="mute">{N(nearest.distance.toFixed(1), lang)} {T(lang,'কিমি দূরে','km away')}</Pill>
+                          )}
+                        </div>
+                        {showHelp && (
+                          <button onClick={() => setShowHelpline(true)} style={{ background:tk.accentSoft,border:`1px solid ${tk.accent}55`,borderRadius:999,padding:'6px 10px',fontFamily:BEN,fontWeight:700,fontSize:12,color:tk.accent,cursor:'pointer',whiteSpace:'nowrap',flexShrink:0 }}>
+                            {T(lang,'হেল্পলাইন','Help line')}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
             <NativeAdCard
               tk={tk}
