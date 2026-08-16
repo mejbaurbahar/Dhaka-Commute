@@ -66,10 +66,12 @@ function buildRealDataContext(userText: string): string {
     let score = 0;
     const name = (bus.name + ' ' + (bus.bnName || '')).toLowerCase();
     const route = bus.routeString.toLowerCase();
+    const plateStr = ((bus as unknown as { plates?: string[] }).plates ?? []).join(' ').toLowerCase();
     for (const tok of tokens) {
       if (name.includes(tok)) score += 3;
       else if (route.includes(tok)) score += 2;
       else if (bus.stops.some(s => s.toLowerCase().includes(tok))) score += 1;
+      else if (plateStr && plateStr.includes(tok)) score += 3; // exact plate match
     }
     if (score >= 3) busMatches.push({ bus, score });
   }
@@ -77,7 +79,11 @@ function buildRealDataContext(userText: string): string {
   const busLines = busMatches.slice(0, 6);
   if (busLines.length >= 1) {
     sections.push('[BUS ROUTES]\n' + busLines
-      .map(m => `- ${m.bus.name}${m.bus.bnName ? ` (${m.bus.bnName})` : ''}: ${m.bus.routeString}${m.bus.type ? ` • ${m.bus.type}` : ''}`)
+      .map(m => {
+        const plates = (m.bus as unknown as { plates?: string[] }).plates;
+        const plateInfo = plates && plates.length > 0 ? ` | Plates: ${plates.join(', ')}` : '';
+        return `- ${m.bus.name}${m.bus.bnName ? ` (${m.bus.bnName})` : ''}: ${m.bus.routeString}${m.bus.type ? ` • ${m.bus.type}` : ''}${plateInfo}`;
+      })
       .join('\n'));
   }
 

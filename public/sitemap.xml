@@ -383,7 +383,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Bus Routes (401) -->
+  <!-- Bus Routes (409) -->
   <url>
     <loc>https://koyjabo.com/bus/13-no/</loc>
     <lastmod>2026-08-16</lastmod>
@@ -2786,6 +2786,54 @@
   </url>
   <url>
     <loc>https://koyjabo.com/bus/rng-station-modern-more/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/savar-poribahan/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/boishaki/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/bosumoti-mowa-gabtoli/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/bosumoti-gabtoli-gazipur/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/moumita-dmb/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/itihas-dhaka-metro-b/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/poristhan/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/vuia/</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

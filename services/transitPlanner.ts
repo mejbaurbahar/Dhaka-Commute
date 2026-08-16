@@ -9,11 +9,15 @@ export interface TransitLeg {
   bus: string;
   busBn: string;
   busType: string;
+  busId: string;
   from: string;
   fromBn: string;
+  fromId: string;
   to: string;
   toBn: string;
+  toId: string;
   stopsBetween: number;
+  stops: string[]; // ordered stop IDs for this leg
 }
 
 export interface TransitRoute {
@@ -79,11 +83,15 @@ export function findTransitRoutes(fromId: string, toId: string): TransitRoute[] 
         bus: b.name,
         busBn: b.bnName ?? b.name,
         busType: b.type ?? 'Local',
+        busId: b.id,
         from: fLbl.en,
         fromBn: fLbl.bn,
+        fromId,
         to: tLbl.en,
         toBn: tLbl.bn,
+        toId,
         stopsBetween: ti - fi - 1,
+        stops: b.stops.slice(fi, ti + 1),
       }],
     });
   }
@@ -141,27 +149,46 @@ export function findTransitRoutes(fromId: string, toId: string): TransitRoute[] 
     const xLbl = stationLabel(t.transfer);
     const fLbl = stationLabel(fromId);
     const tLbl = stationLabel(toId);
+    // Compute stops for each leg
+    const b1fi = t.bus1.stops.indexOf(fromId);
+    const b1ti = t.bus1.stops.indexOf(t.transfer);
+    const b2fi = t.bus2.stops.indexOf(t.transfer);
+    const b2ti = t.bus2.stops.indexOf(toId);
+    const leg1Stops = b1fi !== -1 && b1ti !== -1
+      ? (b1fi < b1ti ? t.bus1.stops.slice(b1fi, b1ti + 1) : t.bus1.stops.slice(b1ti, b1fi + 1).reverse())
+      : [fromId, t.transfer];
+    const leg2Stops = b2fi !== -1 && b2ti !== -1
+      ? (b2fi < b2ti ? t.bus2.stops.slice(b2fi, b2ti + 1) : t.bus2.stops.slice(b2ti, b2fi + 1).reverse())
+      : [t.transfer, toId];
     results.push({
       legs: [
         {
           bus: t.bus1.name,
           busBn: t.bus1.bnName ?? t.bus1.name,
           busType: t.bus1.type ?? 'Local',
+          busId: t.bus1.id,
           from: fLbl.en,
           fromBn: fLbl.bn,
+          fromId,
           to: xLbl.en,
           toBn: xLbl.bn,
-          stopsBetween: 0,
+          toId: t.transfer,
+          stopsBetween: leg1Stops.length - 2,
+          stops: leg1Stops,
         },
         {
           bus: t.bus2.name,
           busBn: t.bus2.bnName ?? t.bus2.name,
           busType: t.bus2.type ?? 'Local',
+          busId: t.bus2.id,
           from: xLbl.en,
           fromBn: xLbl.bn,
+          fromId: t.transfer,
           to: tLbl.en,
           toBn: tLbl.bn,
-          stopsBetween: 0,
+          toId,
+          stopsBetween: leg2Stops.length - 2,
+          stops: leg2Stops,
         },
       ],
       transferAt: xLbl.en,
@@ -190,6 +217,21 @@ export function fuzzyMatchStop(token: string): string | null {
     if (name.includes(t) || t.includes(name.replace(/\s+/g, '')) || bn.includes(t)) return id;
   }
   return null;
+}
+
+/**
+ * Return ALL buses that serve a given leg (fromId → toId) in order.
+ * Used by UI to show alternative bus options for a transit leg.
+ */
+export function getBusesForLeg(fromId: string, toId: string): Array<{ id: string; name: string; bnName: string; type: string }> {
+  return BUS_DATA
+    .filter(b => {
+      if (b.active === false) return false;
+      const fi = b.stops.indexOf(fromId);
+      const ti = b.stops.indexOf(toId);
+      return fi !== -1 && ti !== -1 && fi < ti;
+    })
+    .map(b => ({ id: b.id, name: b.name, bnName: b.bnName, type: b.type }));
 }
 
 /** Format a transit plan as a compact string for AI context injection. */

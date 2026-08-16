@@ -37,6 +37,7 @@ export interface BusRoute {
   hours: string;
   color?: string;
   active?: boolean; // false = discontinued/inactive, omitted means active
+  plates?: string[]; // BRTA registration plate numbers for this operator/route
 }
 
 export interface UserLocation {

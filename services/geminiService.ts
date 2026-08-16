@@ -1,4 +1,5 @@
 import { BUS_DATA, METRO_STATIONS, STATIONS } from '../constants';
+import { ALL_PLACES } from '../data/bangladeshPlaces';
 import { noVerifiedDataMessage, VERIFIED_FACTS } from './transportKnowledge';
 import { BD_TRAIN_ROUTES, TRAIN_STATIONS } from '../data/bangladeshTrainData';
 import { INTERCITY_BUS_ROUTES, MAJOR_TRANSPORT_HUBS } from '../data/intercityData';
@@ -892,10 +893,18 @@ const findLocalBusInfo = (query: string): string => {
       if (route) return route;
     }
   }
-  // Search for a specific bus name
-  const bus = BUS_DATA.find(b => b.active !== false && lowerQuery.includes(normalize(b.name)));
+  // Search for a specific bus name or plate number
+  const bus = BUS_DATA.find(b => {
+    if (b.active === false) return false;
+    if (lowerQuery.includes(normalize(b.name))) return true;
+    if (b.bnName && lowerQuery.includes(normalize(b.bnName))) return true;
+    // Plate number search: "12-3814", "11-9440", "15-5698" etc.
+    if ((b as any).plates && (b as any).plates.some((p: string) => lowerQuery.includes(p.toLowerCase().replace(/\s/g, '')))) return true;
+    return false;
+  });
   if (bus) {
-    return `🚌 **${bus.name}**: Route is ${bus.routeString}.\n**Stops:** ${bus.stops.join(', ')}.`;
+    const plateInfo = (bus as any).plates ? `\n**Plate(s):** ${(bus as any).plates.join(', ')}` : '';
+    return `🚌 **${bus.name}** (${bus.bnName}): Route is ${bus.routeString}.\n**Type:** ${bus.type} | **Hours:** ${bus.hours}${plateInfo}`;
   }
   return "";
 };
@@ -1144,6 +1153,44 @@ const findTouristInfo = (query: string): string => {
   const lowerQuery = normalize(query);
   const isBn = /[\u0980-\u09FF]/.test(query);
 
+  // 1. GPS place lookup from bangladeshPlaces.ts (specific place with coordinates)
+  const PLACE_TRIGGER = lowerQuery.includes('where') ||
+    lowerQuery.includes('location') || lowerQuery.includes('gps') || lowerQuery.includes('map') ||
+    lowerQuery.includes('address') || lowerQuery.includes('historical') || lowerQuery.includes('museum') ||
+    lowerQuery.includes('fort') || lowerQuery.includes('mosque') || lowerQuery.includes('airport') ||
+    lowerQuery.includes('station') || lowerQuery.includes('terminal') ||
+    lowerQuery.includes('\u0995\u09cb\u09a5\u09be\u09af\u09bc') ||  // কোথায়
+    lowerQuery.includes('\u09af\u09be\u09a6\u09c1\u0998\u09b0') ||  // যাদুঘর
+    lowerQuery.includes('\u09ac\u09bf\u09ae\u09be\u09a8\u09ac\u09a8\u09cd\u09a6\u09b0') || // বিমানবন্দর
+    lowerQuery.includes('\u09b0\u09c7\u09b2');  // রেল
+
+  if (PLACE_TRIGGER || lowerQuery.includes('tourist') || lowerQuery.includes('visit') || lowerQuery.includes('bhromon') || lowerQuery.includes('\u09ad\u09cd\u09b0\u09ae\u09a3')) {
+    const matched = ALL_PLACES.filter(p => {
+      const s = normalize(p.en + ' ' + p.bn + ' ' + (p.description ?? '') + ' ' + (p.district ?? '') + ' ' + (p.division ?? ''));
+      const words = s.split(/\s+/).filter((w: string) => w.length > 3);
+      return words.some((w: string) => lowerQuery.includes(w.substring(0, Math.max(4, w.length - 1))));
+    }).slice(0, 4);
+
+    if (matched.length > 0) {
+      const typeEmoji: Record<string, string> = {
+        tourist: '\uD83C\uDFD6\uFE0F', historical: '\uD83C\uDFDB\uFE0F', airport: '\u2708\uFE0F',
+        bus_terminal: '\uD83D\uDE8C', train_station: '\uD83D\uDE82', launch_terminal: '\uD83D\uDEA2', landmark: '\uD83D\uDCCD'
+      };
+      const lines = matched.map((p: typeof ALL_PLACES[0]) => {
+        const emoji = typeEmoji[p.type] ?? '\uD83D\uDCCD';
+        const gpsLink = `GPS: ${p.lat.toFixed(4)},${p.lng.toFixed(4)}`;
+        const iata = p.iata ? ` | IATA: **${p.iata}**` : '';
+        const fee = p.entryFee ? ` | Entry: ${p.entryFee}` : '';
+        const desc = isBn ? (p.descriptionBn ?? p.description ?? '') : (p.description ?? '');
+        return isBn
+          ? `${emoji} **${p.bn}** (${p.en})\n   \uD83D\uDCCD ${gpsLink}${iata}${fee}${desc ? '\n   ' + desc : ''}`
+          : `${emoji} **${p.en}** (${p.bn})\n   \uD83D\uDCCD ${gpsLink}${iata}${fee}${desc ? '\n   ' + desc : ''}`;
+      });
+      return (isBn ? '\uD83D\uDCCD **\u09B8\u09CD\u09A5\u09BE\u09A8\u09C7\u09B0 \u09A4\u09A5\u09CD\u09AF:**\n\n' : '\uD83D\uDCCD **Place Info:**\n\n') + lines.join('\n\n');
+    }
+  }
+
+  // 2. Detailed TOURIST_DESTINATIONS (how-to-reach + fares)
   for (const [key, destination] of Object.entries(TOURIST_DESTINATIONS)) {
     if (lowerQuery.includes(normalize(key)) ||
       (destination.bn && lowerQuery.includes(normalize(destination.bn)))) {
@@ -1151,32 +1198,34 @@ const findTouristInfo = (query: string): string => {
     }
   }
 
-  // General tourist queries
+  // 3. General tourist query
   if (lowerQuery.includes("tourist") || lowerQuery.includes("tour") ||
     lowerQuery.includes("visit") || lowerQuery.includes("holiday") ||
-    lowerQuery.includes("vacation") || lowerQuery.includes("ঘুরতে") ||
-    lowerQuery.includes("ভ্রমণ") || lowerQuery.includes("পর্যটন")) {
+    lowerQuery.includes("vacation") || lowerQuery.includes("bhromon") ||
+    lowerQuery.includes("porjoton") || lowerQuery.includes("ghurte") ||
+    /[\u0980-\u09FF].*\u09AD\u09CD\u09B0\u09AE\u09A3/.test(lowerQuery)) {
     return isBn
-      ? `🗺️ **জনপ্রিয় পর্যটন স্থান:**\n\n` +
-      `🏖️ **কক্সবাজার** - বিশ্বের দীর্ঘতম সমুদ্র সৈকত\n` +
-      `🏝️ **সেন্ট মার্টিন** - প্রবাল দ্বীপ\n` +
-      `🌳 **সুন্দরবন** - ম্যানগ্রোভ বন ও রয়েল বেঙ্গল টাইগার\n` +
-      `🍃 **সিলেট** - চা বাগান ও জাফলং\n` +
-      `⛰️ **বান্দরবান** - নীলগিরি, নাফাকুম\n` +
-      `🌅 **কুয়াকাটা** - সাগর কন্যা\n` +
-      `🏛️ **পুরান ঢাকা** - লালবাগ কেল্লা, আহসান মঞ্জিল\n` +
-      `🦌 **রাতারগুল** - সোয়াম্প ফরেস্ট\n\n` +
-      `যেকোনো জায়গার বিস্তারিত জানতে নাম টাইপ করুন!`
-      : `🗺️ **Popular Tourist Destinations:**\n\n` +
-      `🏖️ **Cox's Bazar** - World's longest sea beach\n` +
-      `🏝️ **Saint Martin** - Coral island\n` +
-      `🌳 **Sundarbans** - Mangrove forest & Royal Bengal Tigers\n` +
-      `🍃 **Sylhet** - Tea gardens & Jaflong\n` +
-      `⛰️ **Bandarban** - Nilgiri, Nafakum waterfalls\n` +
-      `🌅 **Kuakata** - Daughter of the sea\n` +
-      `🏛️ **Old Dhaka** - Lalbagh Fort, Ahsan Manzil\n` +
-      `🦌 **Ratargul** - Swamp forest\n\n` +
-      `Type any destination name for detailed info!`;
+      ? `\uD83D\uDDFA\uFE0F **\u099C\u09A8\u09AA\u09CD\u09B0\u09BF\u09AF\u09BC \u09AA\u09B0\u09CD\u09AF\u099F\u09A8 \u09B8\u09CD\u09A5\u09BE\u09A8 (GPS \u09B8\u09B9):**\n\n` +
+      `\uD83C\uDFD6\uFE0F **\u0995\u0995\u09CD\u09B8\u09AC\u09BE\u099C\u09BE\u09B0** (GPS: 21.4272, 91.9810) - \u09AC\u09BF\u09B6\u09CD\u09AC\u09C7\u09B0 \u09A6\u09C0\u09B0\u09CD\u0998\u09A4\u09AE \u09B8\u09AE\u09C1\u09A6\u09CD\u09B0 \u09B8\u09C8\u0995\u09A4\n` +
+      `\uD83C\uDFDD\uFE0F **\u09B8\u09C7\u09A8\u09CD\u099F \u09AE\u09BE\u09B0\u09CD\u099F\u09BF\u09A8** (GPS: 20.6270, 92.3192) - \u09AA\u09CD\u09B0\u09AC\u09BE\u09B2 \u09A6\u09CD\u09AC\u09C0\u09AA\n` +
+      `\uD83C\uDF33 **\u09B8\u09C1\u09A8\u09CD\u09A6\u09B0\u09AC\u09A8** (GPS: 21.9497, 89.1833) - \u09AE\u09CD\u09AF\u09BE\u09A8\u0997\u09CD\u09B0\u09CB\u09AD \u09AC\u09A8, \u0987\u0989\u09A8\u09C7\u09B8\u0995\u09CB\n` +
+      `\uD83C\uDF43 **\u099C\u09BE\u09AB\u09B2\u0982, \u09B8\u09BF\u09B2\u09C7\u099F** (GPS: 25.1726, 92.0315) - \u09AA\u09BE\u09A5\u09B0 \u09B8\u09C8\u0995\u09A4\n` +
+      `\u26F0\uFE0F **\u09AC\u09BE\u09A8\u09CD\u09A6\u09B0\u09AC\u09BE\u09A8** (GPS: 22.1953, 92.2184) - \u09A8\u09C0\u09B2\u0997\u09BF\u09B0\u09BF, \u09A8\u09BE\u09AB\u09BE\u0995\u09C1\u09AE\n` +
+      `\uD83C\uDF05 **\u0995\u09C1\u09AF\u09BC\u09BE\u0995\u09BE\u099F\u09BE** (GPS: 21.8180, 90.1205) - \u09B8\u09BE\u0997\u09B0 \u0995\u09A8\u09CD\u09AF\u09BE\n` +
+      `\uD83C\uDFDB\uFE0F **\u0986\u09B9\u09B8\u09BE\u09A8 \u09AE\u099E\u09CD\u099C\u09BF\u09B2** (GPS: 23.7085, 90.4060) - \u09AA\u09C1\u09B0\u09BE\u09A8 \u09A2\u09BE\u0995\u09BE\n` +
+      `\uD83C\uDFF0 **\u09B2\u09BE\u09B2\u09AC\u09BE\u0997 \u0995\u09C7\u09B2\u09CD\u09B2\u09BE** (GPS: 23.7189, 90.3882) - \u09AE\u09C1\u0998\u09B2 \u09A6\u09C1\u09B0\u09CD\u0997\n\n` +
+      `\u09AF\u09C7\u0995\u09CB\u09A8\u09CB \u099C\u09BE\u09AF\u09BC\u0997\u09BE\u09B0 GPS \u0993 \u09AC\u09BF\u09B8\u09CD\u09A4\u09BE\u09B0\u09BF\u09A4 \u099C\u09BE\u09A8\u09A4\u09C7 \u09A8\u09BE\u09AE \u099F\u09BE\u0987\u09AA \u0995\u09B0\u09C1\u09A8!`
+      : `\uD83D\uDDFA\uFE0F **Popular Tourist Destinations (with GPS):**\n\n` +
+      `\uD83C\uDFD6\uFE0F **Cox's Bazar** (GPS: 21.4272, 91.9810) - World's longest sea beach\n` +
+      `\uD83C\uDFDD\uFE0F **Saint Martin** (GPS: 20.6270, 92.3192) - Bangladesh's only coral island\n` +
+      `\uD83C\uDF33 **Sundarbans** (GPS: 21.9497, 89.1833) - Mangrove forest, UNESCO Heritage\n` +
+      `\uD83C\uDF43 **Jaflong, Sylhet** (GPS: 25.1726, 92.0315) - Stone beach at India border\n` +
+      `\u26F0\uFE0F **Bandarban** (GPS: 22.1953, 92.2184) - Nilgiri, Nafakum waterfalls\n` +
+      `\uD83C\uDF05 **Kuakata** (GPS: 21.8180, 90.1205) - Daughter of the sea\n` +
+      `\uD83C\uDFDB\uFE0F **Ahsan Manzil** (GPS: 23.7085, 90.4060) - Pink Palace, Old Dhaka\n` +
+      `\uD83C\uDFF0 **Lalbagh Fort** (GPS: 23.7189, 90.3882) - 17th century Mughal fort\n` +
+      `\uD83C\uDFDB\uFE0F **Sixty Dome Mosque** (GPS: 22.6618, 89.7286) - Bagerhat, UNESCO\n\n` +
+      `Type any place name to get GPS, directions & how to reach!`;
   }
 
   return "";
@@ -1539,26 +1588,30 @@ const KOYJABO_SYSTEM_PROMPT = {
   },
   capabilities: {
     en: [
-      '🚌 Dhaka local bus routes, stops & fares (200+ lines)',
+      '🚌 Dhaka local bus routes, stops & fares (200+ lines + plate numbers)',
+      '🔀 Multi-bus transit plans — finds transfer routes when no direct bus exists',
       '🚇 Metro Rail MRT-6 — Uttara ↔ Motijheel stations, fares & schedules',
       '🚂 Intercity trains — all BD Railway routes with fares & timings',
       '🚌 Intercity buses — AC/Non-AC operators, counter locations',
-      '✈️ Domestic flights — Biman, US-Bangla, Novoair routes',
+      '✈️ Domestic flights — all 8 BD airports (DAC/CGP/ZYL/CXB/JSR/SPD/BZL/RJH)',
       '🚢 Launch services — Sadarghat to southern Bangladesh',
-      '🗺️ Tourist route plans — Cox\'s Bazar, Sylhet, Bandarban & more',
-      '📍 Nearest transport from your current location',
-      '🚶 First-mile & last-mile walking directions',
+      '🏛️ Tourist & historical places — GPS coordinates for 80+ sites',
+      '🗺️ Tourist route plans — Cox\'s Bazar, Sylhet, Bandarban, Sundarbans & more',
+      '📍 Nearest transport from your current location (GPS-aware)',
+      '🔍 Bus search by plate number (e.g. "12-3814", "DMB 11-7340")',
     ],
     bn: [
-      '🚌 ঢাকার স্থানীয় বাস রুট, স্টপ ও ভাড়া (২০০+ লাইন)',
+      '🚌 ঢাকার স্থানীয় বাস রুট, স্টপ ও ভাড়া (২০০+ লাইন + প্লেট নম্বর)',
+      '🔀 ট্রানজিট রুট — সরাসরি বাস না পেলে বদল করার পথ দেখায়',
       '🚇 মেট্রোরেল MRT-6 — উত্তরা ↔ মতিঝিল স্টেশন, ভাড়া ও সময়সূচি',
       '🚂 আন্তঃজেলা ট্রেন — সব বিডি রেলওয়ে রুট ভাড়া ও সময় সহ',
       '🚌 আন্তঃজেলা বাস — AC/Non-AC অপারেটর ও কাউন্টার তথ্য',
-      '✈️ ঘরোয়া বিমান — বিমান, ইউএস-বাংলা, নভোএয়ার রুট',
+      '✈️ ঘরোয়া বিমান — ৮টি বিমানবন্দর (DAC/CGP/ZYL/CXB/JSR/SPD/BZL/RJH)',
       '🚢 লঞ্চ সার্ভিস — সদরঘাট থেকে দক্ষিণ বাংলা',
-      '🗺️ পর্যটন রুট প্ল্যান — কক্সবাজার, সিলেট, বান্দরবান ইত্যাদি',
-      '📍 আপনার অবস্থান থেকে নিকটতম পরিবহন',
-      '🚶 ফার্স্ট-মাইল ও লাস্ট-মাইল হাঁটার নির্দেশনা',
+      '🏛️ পর্যটন ও ঐতিহাসিক স্থান — ৮০+ স্থানের GPS অবস্থান',
+      '🗺️ পর্যটন রুট প্ল্যান — কক্সবাজার, সিলেট, বান্দরবান, সুন্দরবন ইত্যাদি',
+      '📍 আপনার অবস্থান থেকে নিকটতম পরিবহন (GPS সচেতন)',
+      '🔍 প্লেট নম্বর দিয়ে বাস খোঁজা (যেমন "12-3814", "DMB 11-7340")',
     ],
   },
   rules: [
@@ -1569,6 +1622,9 @@ const KOYJABO_SYSTEM_PROMPT = {
     'Detect typos and informal location names via fuzzy matching.',
     'For intercity queries always show Bus + Train options side by side when both available.',
     'Peak-hour warnings must be shown for Dhaka local queries between 8-10 AM and 5-8 PM.',
+    'For tourist/historical places, always include the GPS coordinates (lat, lng) in the response.',
+    'For plate number queries (e.g. "12-3814"), find the matching bus and show its full route.',
+    'When no direct bus found for A→B, always suggest a 1-transfer transit plan.',
   ],
 };
 

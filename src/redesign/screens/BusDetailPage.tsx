@@ -12,6 +12,7 @@ import EmergencyHelplineModal from '../../../components/EmergencyHelplineModal';
 import { getBusRatings, BusRatingSummary } from '../../../services/communityDataService';
 import { getBuses as getCommunityBuses, getSharingState, getNearestStopName, type CommunityBus } from '../../../services/busLiveService';
 import { resolveStationIds } from '../../../services/searchService';
+import { findTransitRoutes, getBusesForLeg } from '../../../services/transitPlanner';
 import { earnCoins } from '../utils/koyCoinService';
 import type { UserLocation } from '../../../types';
 import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
@@ -100,6 +101,15 @@ export function BusDetailPage(props: Props) {
   const fromIdx = bus ? bus.stops.indexOf(fromId) : -1;
   const toIdx = bus ? bus.stops.indexOf(toId) : -1;
   const isRouteReversed = fromIdx > toIdx && fromIdx !== -1 && toIdx !== -1;
+
+  // Transit: show alternate plan when from/to params are given but not both on this bus
+  const needsTransit = !!(params?.from && params?.to && bus && (fromIdx === -1 || toIdx === -1));
+
+  const transitRoutes = useMemo(() => {
+    if (!needsTransit) return [];
+    return findTransitRoutes(fromId, toId);
+  }, [needsTransit, fromId, toId]);
+
   const [favoriteIds, setFavoriteIds] = useState<string[]>(() => getFavoriteBusIds());
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [showRating, setShowRating] = useState(false);
@@ -242,9 +252,132 @@ export function BusDetailPage(props: Props) {
     return list;
   })();
 
+  // Helper: get all buses for a transit leg (for showing alternatives)
+  const legBuses = (legFromId: string, legToId: string) => getBusesForLeg(legFromId, legToId);
+
   return (
     <PageShell {...props}>
       <div style={{ padding:isMobile?'16px 16px 24px':'28px 40px 80px', maxWidth:1180, margin:'0 auto' }}>
+
+        {/* ── Transit panel: shown when from/to params are not both on this bus ── */}
+        {needsTransit && (
+          <div style={{ background: theme === 'dark' ? '#1a0d00' : '#fff7ed', border: '1.5px solid #f97316', borderRadius: 18, padding: '18px 18px 14px', marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <span style={{ fontSize: 22 }}>🔀</span>
+              <div>
+                <div style={{ fontFamily: BEN, fontWeight: 700, fontSize: 16, color: '#f97316' }}>
+                  {T(lang, 'সরাসরি বাস নেই — ট্রানজিট প্রয়োজন', 'No Direct Bus — Transit Required')}
+                </div>
+                <div style={{ fontFamily: SANS, fontSize: 12, color: tk.textFaint, marginTop: 2 }}>
+                  {STATIONS[fromId]
+                    ? (lang === 'bn' ? STATIONS[fromId].bnName : STATIONS[fromId].name) ?? params?.from
+                    : params?.from}
+                  {' → '}
+                  {STATIONS[toId]
+                    ? (lang === 'bn' ? STATIONS[toId].bnName : STATIONS[toId].name) ?? params?.to
+                    : params?.to}
+                </div>
+              </div>
+            </div>
+
+            {transitRoutes.length === 0 ? (
+              <div style={{ fontFamily: BEN, fontSize: 14, color: tk.textDim, padding: '10px 0' }}>
+                {T(lang, 'কোনো ট্রানজিট রুট পাওয়া যায়নি। অন্য রুট খুঁজুন।', 'No transit routes found. Try searching another route.')}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {transitRoutes.slice(0, 2).map((route, ri) => (
+                  <div key={ri} style={{ background: tk.bg, border: `1px solid ${tk.line}`, borderRadius: 14, padding: '14px 16px' }}>
+                    <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginBottom: 10, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' as const }}>
+                      {T(lang, `বিকল্প ${ri + 1}`, `Option ${ri + 1}`)}
+                      {route.transferAt && (
+                        <> &nbsp;·&nbsp; {T(lang, 'ট্রান্সফার:', 'Transfer at:')} <span style={{ color: tk.primary, fontWeight: 700 }}>
+                          {lang === 'bn' && route.transferAtBn ? route.transferAtBn : route.transferAt}
+                        </span></>
+                      )}
+                    </div>
+                    {route.legs.map((leg, li) => {
+                      const altBuses = legBuses(leg.fromId, leg.toId).filter(b => b.id !== leg.busId).slice(0, 3);
+                      const legColor = li === 0 ? tk.primary : '#f59e0b';
+                      return (
+                        <div key={li}>
+                          {/* Leg row */}
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: altBuses.length > 0 ? 6 : li < route.legs.length - 1 ? 12 : 0 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3, flexShrink: 0 }}>
+                              <div style={{ width: 10, height: 10, borderRadius: '50%', background: legColor, border: `2px solid ${legColor}` }} />
+                              {li < route.legs.length - 1 && (
+                                <div style={{ width: 2, height: 28, background: `linear-gradient(${legColor}, #f59e0b)`, margin: '3px 0' }} />
+                              )}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                                <span style={{ background: legColor, color: '#fff', borderRadius: 6, padding: '3px 10px', fontFamily: SANS, fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
+                                  {li + 1}. {lang === 'bn' ? leg.busBn : leg.bus}
+                                </span>
+                                <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text }}>
+                                  {lang === 'bn' ? `${leg.fromBn} → ${leg.toBn}` : `${leg.from} → ${leg.to}`}
+                                </span>
+                                {leg.stopsBetween > 0 && (
+                                  <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, background: tk.panelMuted, borderRadius: 4, padding: '2px 6px' }}>
+                                    {N(leg.stopsBetween, lang)} {T(lang, 'স্টপ', 'stops')}
+                                  </span>
+                                )}
+                              </div>
+                              {/* Stop dots strip for this leg */}
+                              {leg.stops.length > 2 && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 6, flexWrap: 'wrap' }}>
+                                  {leg.stops.slice(0, 8).map((sid, si) => {
+                                    const st = STATIONS[sid];
+                                    const isEnd = si === 0 || si === leg.stops.length - 1 || si === Math.min(7, leg.stops.length - 1);
+                                    return (
+                                      <React.Fragment key={sid}>
+                                        <span title={st?.name ?? sid} style={{ fontSize: isEnd ? 11 : 8, fontFamily: SANS, color: isEnd ? legColor : tk.textFaint, fontWeight: isEnd ? 600 : 400, whiteSpace: 'nowrap' }}>
+                                          {isEnd ? (lang === 'bn' && st?.bnName ? st.bnName : st?.name ?? sid.replace(/_/g, ' ')) : '•'}
+                                        </span>
+                                        {si < Math.min(7, leg.stops.length - 1) && (
+                                          <span style={{ fontSize: 9, color: tk.textFaint, margin: '0 1px' }}>—</span>
+                                        )}
+                                      </React.Fragment>
+                                    );
+                                  })}
+                                  {leg.stops.length > 8 && (
+                                    <span style={{ fontSize: 10, color: tk.textFaint }}>+{N(leg.stops.length - 8, lang)}</span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {/* Alternative buses for this leg */}
+                          {altBuses.length > 0 && (
+                            <div style={{ marginLeft: 20, marginBottom: li < route.legs.length - 1 ? 10 : 0, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                              <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, alignSelf: 'center' }}>
+                                {T(lang, 'বিকল্প:', 'Alt:')}
+                              </span>
+                              {altBuses.map(b => (
+                                <button
+                                  key={b.id}
+                                  onClick={() => props.onNav('bus-detail', { busId: b.id, from: leg.fromId, to: leg.toId })}
+                                  style={{ fontFamily: BEN, fontSize: 11, color: legColor, background: 'transparent', border: `1px solid ${legColor}40`, borderRadius: 6, padding: '2px 8px', cursor: 'pointer' }}
+                                >
+                                  {lang === 'bn' ? b.bnName : b.name}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            )}
+            <div style={{ marginTop: 12, fontFamily: SANS, fontSize: 12, color: tk.textFaint, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>💡</span>
+              <span>{T(lang, 'প্রথম বাসে উঠুন, ট্রান্সফার পয়েন্টে নামুন, তারপর দ্বিতীয় বাসে উঠুন।', 'Board the first bus, alight at the transfer stop, then take the second bus.')}</span>
+            </div>
+          </div>
+        )}
+
         {/* Single live map — route + all live buses on this route (no second map) */}
         <div style={{ height:isMobile?320:430,borderRadius:16,overflow:'hidden',position:'relative',marginBottom:18,background:'#0a1f14',border:`1px solid ${tk.line}` }}>
           <LiveBusMap

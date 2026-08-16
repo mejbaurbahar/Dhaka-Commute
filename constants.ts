@@ -4707,6 +4707,98 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['rng_station', 'rng_bus_stand', 'zero_point_rng', 'shapla_chattar', 'dhap', 'modern_more'],
     type: 'Local',
     hours: '7:00 AM - 9:00 PM'
+  },
+
+  // ===== USER-VERIFIED DHAKA LOCAL BUSES (with BRTA plate numbers) =====
+  {
+    id: 'savar_poribahan',
+    name: 'Savar Poribahan',
+    bnName: 'সাভার পরিবহন',
+    routeString: 'Savar ⇄ Gabtoli ⇄ Motijheel',
+    stops: ['savar', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'paltan', 'gulistan', 'motijheel'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['12-3814', '11-9440', '15-5698']
+  },
+  {
+    id: 'boishaki_paribahan_1',
+    name: 'Boishaki Paribahan',
+    bnName: 'বৈশাখী পরিবহন',
+    routeString: 'Gabtoli ⇄ Motijheel',
+    stops: ['gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'dhanmondi27', 'dhanmondi32', 'kalabagan', 'science_lab', 'katabon', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gulistan', 'motijheel'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['12-0668', '12-3624', '15-0524', '11-9467']
+  },
+  {
+    id: 'bosumoti_mowa_gabtoli',
+    name: 'Bosumoti (Mowa–Gabtoli)',
+    bnName: 'বসুমতি (মাওয়া–গাবতলী)',
+    routeString: 'Maowa ⇄ Gabtoli',
+    stops: ['maowa', 'sreenagar', 'munshiganj', 'keraniganj_kadomtoli', 'gabtoli'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 9:00 PM',
+    plates: ['15-4008']
+  },
+  {
+    id: 'bosumoti_gabtoli_gazipur',
+    name: 'Bosumoti (Gabtoli–Gazipur)',
+    bnName: 'বসুমতি (গাবতলী–গাজীপুর)',
+    routeString: 'Gabtoli ⇄ Gazipur',
+    stops: ['gabtoli', 'mazar_road', 'technical', 'mirpur1', 'mirpur10', 'pallabi', 'purobi', 'ecb', 'kuril_flyover', 'tongi', 'tongi_college_gate', 'gazipur'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['11-7340']
+  },
+  {
+    id: 'moumita_dmb',
+    name: 'Moumita (DMB)',
+    bnName: 'মৌমিতা (ডিএমবি)',
+    routeString: 'Chashara ⇄ Gabtoli',
+    stops: ['chashara', 'signboard', 'matuail', 'rayerbag', 'jatrabari', 'sayedabad', 'gulistan', 'shahbag', 'farmgate', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['13-1531']
+  },
+  {
+    id: 'itihas_dmb',
+    name: 'Itihas (Dhaka Metro B)',
+    bnName: 'ইতিহাস (ঢাকা মেট্রো-ব)',
+    routeString: 'Mirpur 10 ⇄ Motijheel',
+    stops: ['mirpur10', 'mirpur2', 'mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'farmgate', 'kawran_bazar', 'shahbag', 'paltan', 'gulistan', 'motijheel'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['15-3635']
+  },
+  {
+    id: 'poristhan_dmb',
+    name: 'Poristhan',
+    bnName: 'পরিস্থান',
+    routeString: 'Mirpur 12 ⇄ Gulistan',
+    stops: ['mirpur12', 'mirpur11', 'mirpur10', 'mirpur2', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'kallyanpur', 'shyamoli', 'asad_gate', 'college_gate', 'shahbag', 'paltan', 'gulistan'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['11-7064']
+  },
+  {
+    id: 'vuia_mohammadpur',
+    name: 'Vuia',
+    bnName: 'ভুইয়া পরিবহন',
+    routeString: 'Mohammadpur ⇄ Jatrabari',
+    stops: ['mohammadpur', 'asad_gate', 'shishu_mela', 'college_gate', 'dhanmondi27', 'dhanmondi32', 'kalabagan', 'science_lab', 'katabon', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gulistan', 'tikatuli', 'sayedabad', 'jatrabari'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['15-7783']
+  },
+  {
+    id: 'shikor_dmb',
+    name: 'Shikor',
+    bnName: 'শিখর',
+    routeString: 'Mirpur 10 ⇄ Demra',
+    stops: ['mirpur10', 'mirpur2', 'mirpur1', 'ansar_camp', 'technical', 'kallyanpur', 'shyamoli', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'gulistan', 'tikatuli', 'sayedabad', 'jatrabari', 'shanir_akhra', 'signboard', 'demra'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['11-8643']
   }
 ];
 
