@@ -17,7 +17,8 @@ export interface LaunchRoute {
 }
 
 export const LAUNCH_TERMINALS = [
-  { id: 'sadarghat', en: 'Sadarghat (Dhaka)', bn: 'সদরঘাট (ঢাকা)', lat: 23.7050, lng: 90.4050 },
+  { id: 'sadarghat', en: 'Sadarghat (Dhaka)', bn: 'সদরঘাট (ঢাকা)', lat: 23.7055, lng: 90.4101 },
+  { id: 'lalkuthi', en: 'Lalkuthi Ghat (Dhaka)', bn: 'লালকুঠি ঘাট (ঢাকা)', lat: 23.7040, lng: 90.4118 },
   { id: 'barisal', en: 'Barisal Ghat', bn: 'বরিশাল ঘাট', lat: 22.7010, lng: 90.3535 },
   { id: 'khulna', en: 'Khulna Ghat', bn: 'খুলনা ঘাট', lat: 22.8456, lng: 89.5403 },
   { id: 'patuakhali', en: 'Patuakhali Ghat', bn: 'পটুয়াখালী ঘাট', lat: 22.3596, lng: 90.3290 },

@@ -31,6 +31,7 @@ export const BD_LOCATIONS: BDLocation[] = [
   { id:'motijheel', en:'Motijheel', bn:'মতিঝিল', type:'hub', division:'Dhaka', district:'Dhaka' },
   { id:'old_dhaka', en:'Old Dhaka', bn:'পুরান ঢাকা', type:'area', division:'Dhaka', district:'Dhaka' },
   { id:'sadarghat', en:'Sadarghat', bn:'সদরঘাট', type:'hub', division:'Dhaka', district:'Dhaka' },
+  { id:'lalkuthi', en:'Lalkuthi Ghat', bn:'লালকুঠি ঘাট', type:'hub', division:'Dhaka', district:'Dhaka' },
   { id:'gabtoli', en:'Gabtoli', bn:'গাবতলী', type:'hub', division:'Dhaka', district:'Dhaka' },
   { id:'mohakhali', en:'Mohakhali', bn:'মহাখালী', type:'hub', division:'Dhaka', district:'Dhaka' },
   { id:'kamalapur', en:'Kamalapur', bn:'কমলাপুর', type:'hub', division:'Dhaka', district:'Dhaka' },
