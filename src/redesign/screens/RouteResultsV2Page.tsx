@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, SANS, BEN, T, N, Tokens, Lang } from '../tokens';
@@ -13,6 +13,8 @@ import { Icon } from '../components/Icons';
 import { enhancedBusSearch } from '../../../services/searchService';
 import { DTCABusListSection } from '../components/DTCABusListSection';
 import { findTransitRoutes, fuzzyMatchStop } from '../../../services/transitPlanner';
+import { SuggestionDropdown } from '../components/SuggestionDropdown';
+import { useLocationSearch } from '../../../hooks/useLocationSearch';
 
 const DTCA_STOPPAGES = ['agora','banani','dcc','gulshan 1','gulshan 2','gulshan1','gulshan2','nabisco mor','notun bazar','natun bazar','police plaza','shanta tower'];
 const DTCA_OPERATOR_TERMS = ['dhakar chaka','dhaka chaka','chaka','ঢাকার চাকা','ঢাকা চাকা','gulshan chaka','গুলশান চাকা'];
@@ -64,6 +66,18 @@ export function RouteResultsV2Page(props: Props) {
   const searchQ = params?.search ?? '';
   const sortParam = params?.sort ?? null;   // 'fastest'|'cheapest'|'non-ac'|'now'
   const showDtca = matchesDtcaRoute(fromQ) || matchesDtcaRoute(toQ) || matchesDtcaRoute(searchQ);
+
+  // ── Editable search bar state ─────────────────────────────────────────────────
+  const [editFrom, setEditFrom] = useState(fromQ);
+  const [editTo, setEditTo] = useState(toQ);
+  const [fromFocus, setFromFocus] = useState(false);
+  const [toFocus, setToFocus] = useState(false);
+  const fromRef = useRef<HTMLInputElement>(null);
+  const toRef = useRef<HTMLInputElement>(null);
+  const { suggestions: fromSuggs } = useLocationSearch(editFrom, { limit: 8 });
+  const { suggestions: toSuggs } = useLocationSearch(editTo, { limit: 8 });
+
+  React.useEffect(() => { setEditFrom(fromQ); setEditTo(toQ); }, [fromQ, toQ]);
 
   // ── Filter state ─────────────────────────────────────────────────────────────
   const [activeTOD, setActiveTOD] = useState<string | null>(null);
@@ -322,21 +336,48 @@ export function RouteResultsV2Page(props: Props) {
       {/* Hero bar */}
       <div style={{ background: tk.panel, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderBottom: `1px solid ${tk.line}`, padding: isMobile ? '16px' : '16px 32px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          {/* From → To */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
-            <div style={{ background: tk.inputBg, border: `1px solid ${tk.line}`, borderRadius: 10, padding: '8px 12px', fontFamily: SANS, fontSize: 14, fontWeight: 600, color: tk.text, minWidth: 120 }}>
-              {fromQ || lbl('Any origin', 'যেকোনো')}
+          {/* From → To — editable inputs + Search */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: isMobile ? '42%' : 120 }}>
+              <input
+                ref={fromRef}
+                value={editFrom}
+                onChange={e => setEditFrom(e.target.value)}
+                onFocus={() => setFromFocus(true)}
+                onBlur={() => setTimeout(() => setFromFocus(false), 150)}
+                placeholder={lbl('From', 'প্রেরণ')}
+                style={{ width: '100%', background: tk.inputBg, border: `1px solid ${fromFocus ? tk.primary : tk.line}`, borderRadius: 10, padding: '8px 12px', fontFamily: SANS, fontSize: 14, fontWeight: 600, color: tk.text, outline: 'none', boxSizing: 'border-box' }}
+              />
+              {fromFocus && fromSuggs.length > 0 && (
+                <SuggestionDropdown suggestions={fromSuggs as any} onSelect={s => { setEditFrom(s.label); setFromFocus(false); }} onDismiss={() => setFromFocus(false)} tk={tk} lang={lang} anchorRef={fromRef} />
+              )}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: SANS, fontSize: 12, color: tk.textFaint, whiteSpace: 'nowrap' }}>
-              <div style={{ width: 28, height: 1, background: tk.line }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontFamily: SANS, fontSize: 12, color: tk.textFaint, whiteSpace: 'nowrap' }}>
+              <div style={{ width: 16, height: 1, background: tk.line }} />
               <span>→</span>
-              <div style={{ width: 28, height: 1, background: tk.line }} />
+              <div style={{ width: 16, height: 1, background: tk.line }} />
             </div>
-            <div style={{ background: tk.inputBg, border: `1px solid ${tk.line}`, borderRadius: 10, padding: '8px 12px', fontFamily: SANS, fontSize: 14, fontWeight: 600, color: tk.text, minWidth: 120 }}>
-              {toQ || lbl('Any destination', 'যেকোনো')}
+            <div style={{ position: 'relative', flex: 1, minWidth: isMobile ? '42%' : 120 }}>
+              <input
+                ref={toRef}
+                value={editTo}
+                onChange={e => setEditTo(e.target.value)}
+                onFocus={() => setToFocus(true)}
+                onBlur={() => setTimeout(() => setToFocus(false), 150)}
+                placeholder={lbl('To', 'গন্তব্য')}
+                style={{ width: '100%', background: tk.inputBg, border: `1px solid ${toFocus ? tk.primary : tk.line}`, borderRadius: 10, padding: '8px 12px', fontFamily: SANS, fontSize: 14, fontWeight: 600, color: tk.text, outline: 'none', boxSizing: 'border-box' }}
+              />
+              {toFocus && toSuggs.length > 0 && (
+                <SuggestionDropdown suggestions={toSuggs as any} onSelect={s => { setEditTo(s.label); setToFocus(false); }} onDismiss={() => setToFocus(false)} tk={tk} lang={lang} anchorRef={toRef} />
+              )}
             </div>
-            <button onClick={() => onNav('bus-hub', { from: toQ, to: fromQ })} aria-label={lbl('Swap origin and destination', 'যাত্রা শুরু ও গন্তব্য অদলবদল')}
-              style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '8px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Icon.swap s={16} /></button>
+            <button onClick={() => { const t = editFrom; setEditFrom(editTo); setEditTo(t); }} aria-label={lbl('Swap origin and destination', 'যাত্রা শুরু ও গন্তব্য অদলবদল')}
+              style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '8px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}><Icon.swap s={16} /></button>
+            <button
+              onClick={() => { if (editFrom.trim() || editTo.trim()) onNav('results', { from: editFrom.trim(), to: editTo.trim(), search: editFrom.trim() || editTo.trim() }); }}
+              style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', border: 'none', borderRadius: 10, padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: SANS, fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0, whiteSpace: 'nowrap' }}>
+              🔍 {lbl('Search', 'খুঁজুন')}
+            </button>
           </div>
 
           {/* Stat chips */}

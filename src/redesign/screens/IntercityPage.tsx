@@ -52,6 +52,40 @@ const OPERATORS = [
   },
 ];
 
+// Brand colors + abbreviations for Bangladesh intercity bus operators
+const OP_BRAND: Record<string, { bg1: string; bg2: string; abbr: string }> = {
+  'green line':    { bg1: '#006a4e', bg2: '#10b981', abbr: 'GL' },
+  'shyamoli':      { bg1: '#c47c0a', bg2: '#f59e0b', abbr: 'SY' },
+  'hanif':         { bg1: '#c91f36', bg2: '#ef4444', abbr: 'HF' },
+  'sohag':         { bg1: '#1e40af', bg2: '#3b82f6', abbr: 'SH' },
+  'ena':           { bg1: '#0e7490', bg2: '#06b6d4', abbr: 'EN' },
+  's.alam':        { bg1: '#1d4ed8', bg2: '#60a5fa', abbr: 'SA' },
+  'eagle':         { bg1: '#1e3a8a', bg2: '#2563eb', abbr: 'EG' },
+  'sakura':        { bg1: '#be185d', bg2: '#f472b6', abbr: 'SK' },
+  'nabil':         { bg1: '#7c3aed', bg2: '#a78bfa', abbr: 'NB' },
+  'soukhin':       { bg1: '#065f46', bg2: '#34d399', abbr: 'SO' },
+  'sr':            { bg1: '#92400e', bg2: '#fbbf24', abbr: 'SR' },
+  'royal coach':   { bg1: '#6d28d9', bg2: '#8b5cf6', abbr: 'RC' },
+  'brtc':          { bg1: '#b91c1c', bg2: '#f87171', abbr: 'BR' },
+  'tk travels':    { bg1: '#0f766e', bg2: '#2dd4bf', abbr: 'TK' },
+  'brtc ac':       { bg1: '#b91c1c', bg2: '#f87171', abbr: 'BR' },
+  'nashim':        { bg1: '#1f2937', bg2: '#6b7280', abbr: 'NS' },
+  'relax':         { bg1: '#4338ca', bg2: '#818cf8', abbr: 'RL' },
+  'shohagh':       { bg1: '#1e3a8a', bg2: '#93c5fd', abbr: 'SG' },
+  'provati':       { bg1: '#854d0e', bg2: '#fbbf24', abbr: 'PV' },
+  'bandhan':       { bg1: '#0c4a6e', bg2: '#38bdf8', abbr: 'BD' },
+};
+
+function getOpBrand(name: string): { bg1: string; bg2: string; abbr: string } {
+  const lc = name.toLowerCase();
+  for (const [key, val] of Object.entries(OP_BRAND)) {
+    if (lc.includes(key)) return val;
+  }
+  const words = name.trim().split(/\s+/);
+  const abbr = words.length >= 2 ? (words[0][0] + words[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
+  return { bg1: '#374151', bg2: '#6b7280', abbr };
+}
+
 const CHIPS = [
   { label: 'Bus', labelBn: 'বাস', icon: '🚌' },
   { label: 'Train', labelBn: 'ট্রেন', icon: '🚆' },
@@ -666,7 +700,12 @@ export function IntercityPage(props: Props) {
                       <button key={c.opName + i}
                         onClick={() => onNav('intercity-detail', { operator: c.opName, route: c.route, district: c.district, costNonAC: c.costNonAC, costAC: c.costAC, contact: c.contact, counter: opDetails?.mainCounterLocation || '', from: from || 'Dhaka', to: to || c.district })}
                         style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 14, padding: '14px 16px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 48, height: 48, borderRadius: 12, background: `linear-gradient(135deg,${col},${col}aa)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>🚌</div>
+                        {(() => { const b = getOpBrand(c.opName); return (
+                          <div style={{ width: 48, height: 48, borderRadius: 12, background: `linear-gradient(135deg,${b.bg1},${b.bg2})`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: `0 2px 8px ${b.bg1}55` }}>
+                            <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 900, color: '#fff', letterSpacing: 0.5, lineHeight: 1 }}>{b.abbr}</div>
+                            <div style={{ fontFamily: SANS, fontSize: 7, fontWeight: 600, color: 'rgba(255,255,255,0.75)', marginTop: 2, letterSpacing: 0.3 }}>BUS</div>
+                          </div>
+                        ); })()}
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontFamily: SANS, fontSize: 15, fontWeight: 700, color: tk.text }}>{c.opName}</div>
                           <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginTop: 3 }}>{c.route}</div>
