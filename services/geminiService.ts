@@ -143,8 +143,8 @@ const TOURIST_DESTINATIONS: Record<string, { en: string; bn: string; howToReach:
     en: "Benapole - Bangladesh-India Land Border",
     bn: "বেনাপোল - বাংলাদেশ-ভারত স্থলবন্দর",
     howToReach: {
-      en: "🚉 **Benapole (Jashore district, SW Bangladesh):**\n🚂 **Train:** Benapole Express (Dhaka Kamalapur → Benapole, departs 6:20 AM, ~8 hrs) · Rupashi Bangla Express\n🚌 **Bus:** S Alam, Shyamoli, Hanif (Dhaka Kalyanpur/Gabtoli → Benapole, 6-8 hrs via Padma Bridge)\n🚗 **From Jashore:** Local bus/CNG, ~30 mins\n💰 **Cost:** Train ৳200-600, Bus ৳500-900\n🛂 **India Border:** Bangladesh Immigration open daily · Petrapole side (India)",
-      bn: "🚉 **বেনাপোল (যশোর জেলা, দক্ষিণ-পশ্চিম বাংলাদেশ):**\n🚂 **ট্রেন:** বেনাপোল এক্সপ্রেস (ঢাকা কমলাপুর → বেনাপোল, সকাল ৬:২০, ~৮ ঘন্টা) · রূপসী বাংলা এক্সপ্রেস\n🚌 **বাস:** এস আলম, শ্যামলী, হানিফ (ঢাকা কল্যাণপুর/গাবতলী → বেনাপোল, পদ্মা সেতু হয়ে ৬-৮ ঘন্টা)\n🚗 **যশোর থেকে:** লোকাল বাস/সিএনজি, ~৩০ মিনিট\n💰 **খরচ:** ট্রেন ৳২০০-৬০০, বাস ৳৫০০-৯০০\n🛂 **ভারত সীমান্ত:** বাংলাদেশ ইমিগ্রেশন প্রতিদিন খোলা · পেট্রাপোল (ভারত)"
+      en: "🚉 **Benapole (Jashore district, SW Bangladesh — Bangladesh-India land border):**\n🚂 **Train (Recommended):** Benapole Express (Dhaka Kamalapur → Benapole, departs 6:20 AM, ~8 hrs, ৳310-1285) · Rupashi Bangla Express\n🚌 **Bus:** S Alam, Shyamoli, Hanif, Green Line (Dhaka Kalyanpur/Gabtoli → Benapole, 6-8 hrs via Padma Bridge, ৳500-900)\n✈️ **By Air (Fastest):** Fly Dhaka → Jashore Airport JSR (40 min, ৳5000-9000) → CNG/auto to Benapole (14km, ~30 min, ৳300-400)\n🚗 **From Jashore town:** Local bus/CNG, ~30 min, ৳20-50\n⚠️ NO AIRPORT IN BENAPOLE OR KHULNA — nearest airport is Jashore (JSR)\n🛂 **India Border:** Bangladesh Immigration open daily · Petrapole side (India)",
+      bn: "🚉 **বেনাপোল (যশোর জেলা, বাংলাদেশ-ভারত স্থলবন্দর):**\n🚂 **ট্রেন (প্রস্তাবিত):** বেনাপোল এক্সপ্রেস (ঢাকা কমলাপুর → বেনাপোল, সকাল ৬:২০, ~৮ ঘন্টা, ৳৩১০-১২৮৫) · রূপসী বাংলা এক্সপ্রেস\n🚌 **বাস:** এস আলম, শ্যামলী, হানিফ, গ্রিন লাইন (ঢাকা কল্যাণপুর/গাবতলী → বেনাপোল, পদ্মা সেতু হয়ে ৬-৮ ঘন্টা, ৳৫০০-৯০০)\n✈️ **বিমানে (দ্রুততম):** ঢাকা → যশোর বিমানবন্দর JSR (৪০ মিনিট, ৳৫০০০-৯০০০) → সিএনজি/অটোতে বেনাপোল (১৪ কিমি, ~৩০ মিনিট, ৳৩০০-৪০০)\n🚗 **যশোর শহর থেকে:** লোকাল বাস/সিএনজি, ~৩০ মিনিট, ৳২০-৫০\n⚠️ বেনাপোল বা খুলনায় কোনো বিমানবন্দর নেই — নিকটতম বিমানবন্দর: যশোর (JSR)\n🛂 **ভারত সীমান্ত:** বাংলাদেশ ইমিগ্রেশন প্রতিদিন খোলা · পেট্রাপোল (ভারত)"
     }
   }
 };
@@ -1630,6 +1630,9 @@ const KOYJABO_SYSTEM_PROMPT = {
     'For tourist/historical places, always include the GPS coordinates (lat, lng) in the response.',
     'For plate number queries (e.g. "12-3814"), find the matching bus and show its full route.',
     'When no direct bus found for A→B, always suggest a 1-transfer transit plan.',
+    'BANGLADESH AIRPORTS — ONLY THESE 8 EXIST: (1) Dhaka-Hazrat Shahjalal DAC, (2) Chattogram-Shah Amanat CGP, (3) Sylhet-Osmani ZYL, (4) Cox\'s Bazar CXB, (5) Jashore JSR, (6) Saidpur SPD, (7) Barishal BZL, (8) Rajshahi-Shah Makhdum RJH. THERE IS NO AIRPORT IN KHULNA. NEVER mention flights to Khulna. The nearest airport to Khulna is Jashore (JSR) ~60km away. Always say "fly to Jashore, then travel to Khulna (~1.5 hrs by bus/CNG)".',
+    'BENAPOLE: No airport in Benapole. Nearest airport is Jashore (JSR) only 14km away. Best routes: (1) Train — Benapole Express, Kamalapur 6:20 AM, ~8 hrs, ৳310-1285; (2) Bus — S Alam/Shyamoli/Hanif, Gabtoli/Kalyanpur, ~6-8 hrs via Padma Bridge, ৳500-900; (3) By air — fly to Jashore (40 min, ৳5000-9000) then CNG 14km to Benapole (~30 min). Always list all 3 options.',
+    'KHULNA travel from Dhaka: (1) Train — Sundarban Express or Chitra Express, ~9 hrs, ৳390-1900; (2) Bus — multiple operators, ~7-9 hrs via Padma Bridge, ৳700-1200; (3) Launch — Sadarghat to Khulna, overnight ~10-12 hrs; (4) By air — fly to Jashore (JSR, 40 min) then bus/CNG to Khulna city (~1.5 hrs, 60km). NEVER say flights go directly to Khulna.',
   ],
 };
 

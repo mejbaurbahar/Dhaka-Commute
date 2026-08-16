@@ -125,6 +125,51 @@ function buildRealDataContext(userText: string): string {
     );
   }
 
+  // ── 5. Airport / flight grounding ─────────────────────────────────────────
+  const isFlightQuery = lower.includes('flight') || lower.includes('fly') || lower.includes('plane') || lower.includes('air') ||
+    lower.includes('বিমান') || lower.includes('ফ্লাইট') || lower.includes('উড়োজাহাজ') || lower.includes('এয়ার');
+  const isAirportPlace = lower.includes('airport') || lower.includes('বিমানবন্দর');
+  const mentionsKhulna = lower.includes('khulna') || lower.includes('খুলনা');
+  const mentionsBenapole = lower.includes('benapole') || lower.includes('বেনাপোল');
+  const mentionsJashore = lower.includes('jashore') || lower.includes('jessore') || lower.includes('যশোর');
+
+  if (isFlightQuery || isAirportPlace || mentionsKhulna || mentionsBenapole || mentionsJashore) {
+    sections.push(
+      '[BANGLADESH AIRPORTS — VERIFIED REAL DATA]\n' +
+      'AIRPORTS THAT EXIST (domestic flights operate):\n' +
+      '1. Dhaka — Hazrat Shahjalal International Airport (DAC/VGHS)\n' +
+      '2. Chattogram — Shah Amanat International Airport (CGP)\n' +
+      '3. Sylhet — Osmani International Airport (ZYL)\n' +
+      "4. Cox's Bazar — Cox's Bazar Airport (CXB)\n" +
+      '5. Jashore — Jashore Airport (JSR) — serves Khulna region AND Benapole\n' +
+      '6. Saidpur — Saidpur Airport (SPD) — serves Rangpur/Dinajpur\n' +
+      '7. Barishal — Barishal Airport (BZL)\n' +
+      '8. Rajshahi — Shah Makhdum Airport (RJH)\n' +
+      '\n⚠️ CRITICAL FACTS — NEVER CONTRADICT:\n' +
+      '• Khulna city has NO airport. ZERO. The nearest airport is Jashore (JSR), ~60km from Khulna city.\n' +
+      '• NEVER say "flights to Khulna" — say "fly to Jashore (nearest airport to Khulna), then bus/CNG to Khulna (~1.5 hrs)".\n' +
+      '• Benapole has NO airport. Nearest = Jashore Airport (JSR), only 14km from Benapole border.\n' +
+      '• To reach Benapole by air: fly Dhaka → Jashore (40 min, ৳5000-9000), then CNG/auto to Benapole (14km, ~30 min, ৳300-400).\n' +
+      '\nDomestic routes from Dhaka:\n' +
+      '• Dhaka → Jashore (JSR): US-Bangla, Biman, Air Astra | 40 min | ৳4500-9000\n' +
+      '• Dhaka → Chattogram: 45 min | Dhaka → Sylhet: 45 min | Dhaka → Cox\'s Bazar: 55 min\n' +
+      '• Dhaka → Saidpur: 45 min | Dhaka → Barishal: 40 min | Dhaka → Rajshahi: 45 min'
+    );
+  }
+
+  if (mentionsBenapole) {
+    sections.push(
+      '[BENAPOLE — VERIFIED ROUTE DATA]\n' +
+      'Benapole is in Jashore district, SW Bangladesh. Bangladesh-India land border crossing.\n' +
+      'WAYS TO REACH BENAPOLE FROM DHAKA:\n' +
+      '🚂 Train (Recommended): Benapole Express or Rupashi Bangla Express — Dhaka Kamalapur → Benapole — departs 6:20 AM — ~8 hrs — ৳310-1285\n' +
+      '🚌 Bus: S Alam, Shyamoli, Hanif, Green Line — Dhaka Gabtoli/Kalyanpur → Benapole — ~6-8 hrs via Padma Bridge — ৳500-900\n' +
+      '✈️ Via Air: Fly Dhaka → Jashore Airport (40 min, ৳5000-9000) → CNG to Benapole (14km, ~30 min, ৳300-400) — fastest but most expensive\n' +
+      '🚌 From Jashore town to Benapole: Local bus/tempo/CNG ~30 min, ৳20-50\n' +
+      '🛂 Border: Bangladesh Immigration open daily. Indian side: Petrapole. Carry passport/travel docs.'
+    );
+  }
+
   if (sections.length === 0) return '';
   return sections.join('\n\n');
 }
