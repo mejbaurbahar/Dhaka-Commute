@@ -8677,5 +8677,245 @@ export const ADVANCED_QA_DATA: AdvancedQAItem[] = [
       "eid", "travel", "tips", "bangladesh", "book", "advance", "ঈদ", "যাতায়াত",
       "টিপস", "আগে", "বুক", "ট্রেন", "বাস", "লঞ্চ", "shohoz"
     ]
+  },
+  {
+    "id": "526",
+    "category": "Metro",
+    "question_en": "What is the metro fare from Motijheel to Mirpur 10 or Mirpur 11?",
+    "question_bn": "মেট্রো রেল মতিঝিল থেকে মিরপুর ১০ বা মিরপুর ১১ ভাড়া কত?",
+    "answer_en": "MRT-6 fare: Motijheel → Mirpur 10 = ৳60. Motijheel → Mirpur 11 = ৳70. Journey ~20-25 mins. Buy token or use MRT Pass at any station. Trains every 8-10 mins during peak hours.",
+    "answer_bn": "MRT-6 ভাড়া: মতিঝিল → মিরপুর ১০ = ৳৬০। মতিঝিল → মিরপুর ১১ = ৳৭০। যাত্রা ~২০-২৫ মিনিট। যেকোনো স্টেশনে টোকেন বা MRT পাস কিনুন। পিক আওয়ারে ৮-১০ মিনিট পর পর ট্রেন।",
+    "keywords": [
+      "metro", "fare", "motijheel", "mirpur", "10", "11", "মেট্রো", "ভাড়া",
+      "মতিঝিল", "মিরপুর", "MRT", "কত", "টাকা", "mrt6"
+    ]
+  },
+  {
+    "id": "527",
+    "category": "Metro",
+    "question_en": "Metro fare from Kawran Bazar to Uttara North?",
+    "question_bn": "কাওরানবাজার মেট্রো রেল স্টেশন থেকে উত্তরা উত্তর পর্যন্ত ভাড়া কত?",
+    "answer_en": "MRT-6: Kawran Bazar → Uttara North = ৳70. Journey ~22 mins. Total line Uttara North ↔ Motijheel = ৳100 (full fare, ~32 mins). Kawran Bazar station is at the BRTC bus depot intersection.",
+    "answer_bn": "MRT-6: কাওরানবাজার → উত্তরা উত্তর = ৳৭০। যাত্রা ~২২ মিনিট। পুরো লাইন উত্তরা উত্তর ↔ মতিঝিল = ৳১০০ (~৩২ মিনিট)। কাওরানবাজার স্টেশন BRTC বাস ডিপোর কাছে।",
+    "keywords": [
+      "metro", "fare", "kawran", "bazar", "uttara", "north", "মেট্রো", "ভাড়া",
+      "কাওরানবাজার", "উত্তরা", "উত্তর", "MRT", "কত", "mrt6"
+    ]
+  },
+  {
+    "id": "528",
+    "category": "Metro",
+    "question_en": "Which metro station to get off for Jamuna Future Park?",
+    "question_bn": "ঢাকা মেট্রো রেল এ যমুনা ফিউচার পার্ক এ যেতে কোন স্টেশন এ নামতে হবে?",
+    "answer_en": "No direct metro to Jamuna Future Park (Kuril, Bashundhara) currently — MRT-6 doesn't reach that area. Best option: get off at Uttara North metro station, then take local bus or CNG to Kuril/JFP (30-40 mins, ৳50-80). MRT-1 (airport line) when complete will have a closer stop.",
+    "answer_bn": "যমুনা ফিউচার পার্ক (কুড়িল, বসুন্ধরা) এখন সরাসরি মেট্রো নেই — MRT-6 ওই এলাকায় যায় না। সেরা পথ: উত্তরা উত্তর মেট্রো স্টেশনে নেমে বাস/সিএনজিতে কুড়িল/JFP (৩০-৪০ মিনিট, ৳৫০-৮০)। MRT-1 (বিমানবন্দর লাইন) সম্পন্ন হলে আরও কাছে হবে।",
+    "keywords": [
+      "metro", "jamuna", "future", "park", "station", "কোন", "স্টেশন", "নামতে",
+      "যমুনা", "ফিউচার", "পার্ক", "মেট্রো", "কুড়িল", "kuril", "mrt"
+    ]
+  },
+  {
+    "id": "529",
+    "category": "Metro",
+    "question_en": "Which metro station is nearest to Titumir College or Bangla College Dhaka?",
+    "question_bn": "তিতুমীর কলেজ বা বাংলা কলেজের কাছে কোন মেট্রো স্টেশন আছে?",
+    "answer_en": "Titumir College (Mohakhali): nearest metro is Agargaon station (~2-3 km, CNG ৳50-70 or 20 min walk). Bangla College (Mirpur): nearest is Mirpur 10 station (~1 km, 10-12 min walk or rickshaw ৳20-30). Agargaon to Mirpur 10 = ৳30 metro fare.",
+    "answer_bn": "তিতুমীর কলেজ (মহাখালী): কাছের মেট্রো আগারগাঁও স্টেশন (~২-৩ কিমি, সিএনজি ৳৫০-৭০ বা ২০ মিনিট হাঁটা)। বাংলা কলেজ (মিরপুর): কাছের মেট্রো মিরপুর ১০ স্টেশন (~১ কিমি, ১০-১২ মিনিট হাঁটা বা রিকশায় ৳২০-৩০)।",
+    "keywords": [
+      "metro", "titumir", "college", "bangla", "college", "nearest", "station",
+      "তিতুমীর", "কলেজ", "বাংলা", "কলেজ", "মেট্রো", "স্টেশন", "কাছে", "agargaon"
+    ]
+  },
+  {
+    "id": "530",
+    "category": "Metro",
+    "question_en": "Rickshaw fare from Kamalapur railway station to Motijheel metro station?",
+    "question_bn": "কমলাপুর রেলস্টেশন থেকে মতিঝিল মেট্রো রেল স্টেশন এর রিকশা ভাড়া কত?",
+    "answer_en": "Kamalapur to Motijheel metro is about 1.5 km. Rickshaw fare approximately ৳30-50. Walking is possible in ~15-18 mins. You can also take a short CNG for ৳40-60. The metro station is near Dilkusha Commercial Area.",
+    "answer_bn": "কমলাপুর থেকে মতিঝিল মেট্রো স্টেশন প্রায় ১.৫ কিমি। রিকশা ভাড়া আনুমানিক ৳৩০-৫০। হেঁটে ~১৫-১৮ মিনিট। সিএনজিতে ৳৪০-৬০। মেট্রো স্টেশনটি দিলকুশা বাণিজ্যিক এলাকার কাছে।",
+    "keywords": [
+      "kamalapur", "motijheel", "metro", "rickshaw", "fare", "walk", "কমলাপুর",
+      "মতিঝিল", "মেট্রো", "রিকশা", "ভাড়া", "হাঁটা", "কত", "রেলস্টেশন"
+    ]
+  },
+  {
+    "id": "531",
+    "category": "Launch",
+    "question_en": "Dhaka to Chandpur launch schedule 2026 — what time do launches depart?",
+    "question_bn": "ঢাকা থেকে চাঁদপুর লঞ্চ সময়সূচি ২০২৬ — কখন লঞ্চ ছাড়ে?",
+    "answer_en": "Dhaka (Sadarghat) → Chandpur launches 2026: First launch 6:35 AM (MV Sonar Tori), last night service 12:00 midnight (MV Rof Rof Night). 19 launches total across the day. Deck fare ~৳120-150, single cabin ~৳600-800, double cabin ~৳1000-1200. Journey ~3-4 hrs. Source: Chandpur Launch Ghat authority.",
+    "answer_bn": "ঢাকা (সদরঘাট) → চাঁদপুর লঞ্চ ২০২৬: প্রথম লঞ্চ সকাল ৬:৩৫ (এম.ভি. সোনার তরী), শেষ নাইট সার্ভিস রাত ১২:০০ (এম.ভি. রফ রফ নাইট)। সারাদিনে ১৯টি লঞ্চ। ডেক ভাড়া ~৳১২০-১৫০, সিঙ্গেল কেবিন ~৳৬০০-৮০০, ডাবল কেবিন ~৳১০০০-১২০০। যাত্রা ~৩-৪ ঘণ্টা।",
+    "keywords": [
+      "dhaka", "chandpur", "launch", "schedule", "2026", "time", "সময়সূচি",
+      "ঢাকা", "চাঁদপুর", "লঞ্চ", "কখন", "ছাড়ে", "সদরঘাট", "sadarghat", "ভাড়া"
+    ]
+  },
+  {
+    "id": "532",
+    "category": "Launch",
+    "question_en": "Dhaka to Barguna launch — how many launches, schedule and fare?",
+    "question_bn": "ঢাকা থেকে বরগুনা লঞ্চ — কয়টি লঞ্চ চলে, সময় ও ভাড়া কত?",
+    "answer_en": "Dhaka (Sadarghat) → Barguna: usually 2-3 launches daily, departing evening (~5-8 PM). Journey ~10-12 hrs overnight. Deck fare ৳250-350, single cabin ৳700-900, double cabin ৳1200-1600. During Eid extra launches added. Book at Sadarghat counters 2-5 days ahead. Main operators: MV Sundarbon, MV Barguna routes.",
+    "answer_bn": "ঢাকা (সদরঘাট) → বরগুনা: সাধারণত ২-৩টি লঞ্চ প্রতিদিন, বিকেল-সন্ধ্যায় ছেড়ে যায় (~বিকেল ৫-৮টা)। যাত্রা ~১০-১২ ঘণ্টা রাতভর। ডেক ভাড়া ৳২৫০-৩৫০, সিঙ্গেল কেবিন ৳৭০০-৯০০, ডাবল কেবিন ৳১২০০-১৬০০। ঈদে অতিরিক্ত লঞ্চ যোগ হয়। সদরঘাট কাউন্টারে ২-৫ দিন আগে বুক করুন।",
+    "keywords": [
+      "dhaka", "barguna", "launch", "schedule", "fare", "ঢাকা", "বরগুনা",
+      "লঞ্চ", "ভাড়া", "কেবিন", "ডেক", "কয়টি", "সময়", "sadarghat", "সদরঘাট"
+    ]
+  },
+  {
+    "id": "533",
+    "category": "Launch",
+    "question_en": "Dhaka to Barishal launch cabin fare — single cabin, double cabin, deck price?",
+    "question_bn": "ঢাকা থেকে বরিশাল লঞ্চ ভাড়া — সিঙ্গেল কেবিন, ডাবল কেবিন, ডেক কত?",
+    "answer_en": "Dhaka (Sadarghat) → Barishal launch fares: Deck ৳150-200, Single cabin ৳600-900, Double cabin ৳1000-1500, VIP cabin ৳2000-3000. Launches depart 5-7 PM, arrive ~5-6 AM (12 hrs). During Eid fares may rise 30-50%. Best operators: MV Sundarbon 7/8/10, MV Paris, BIWTC government launches. Book at Sadarghat counter Gate 3.",
+    "answer_bn": "ঢাকা (সদরঘাট) → বরিশাল লঞ্চ ভাড়া: ডেক ৳১৫০-২০০, সিঙ্গেল কেবিন ৳৬০০-৯০০, ডাবল কেবিন ৳১০০০-১৫০০, VIP কেবিন ৳২০০০-৩০০০। বিকেল ৫-৭টায় ছেড়ে ভোর ৫-৬টায় পৌঁছায় (~১২ ঘণ্টা)। ঈদে ভাড়া ৩০-৫০% বেড়ে যেতে পারে। সেরা অপারেটর: এম.ভি. সুন্দরবন ৭/৮/১০, এম.ভি. প্যারিস, BIWTC সরকারি লঞ্চ।",
+    "keywords": [
+      "dhaka", "barishal", "barisal", "launch", "cabin", "fare", "single", "double",
+      "deck", "ঢাকা", "বরিশাল", "লঞ্চ", "ভাড়া", "সিঙ্গেল", "কেবিন", "ডাবল", "ডেক"
+    ]
+  },
+  {
+    "id": "534",
+    "category": "Launch",
+    "question_en": "Dhaka to Patuakhali launch — departure time, deck fare, how long?",
+    "question_bn": "ঢাকা থেকে পটুয়াখালী লঞ্চ — কখন ছাড়ে, ডেক ভাড়া কত, কতক্ষণ লাগে?",
+    "answer_en": "Dhaka (Sadarghat) → Patuakhali: Launches depart evening 5-7 PM. Journey ~10-12 hrs (arrive early morning). Deck fare ৳200-250. Single cabin ৳700-900. Double cabin ৳1200-1500. 1-2 launches daily, extra during Eid. Buy ticket at Sadarghat counter or at launch directly.",
+    "answer_bn": "ঢাকা (সদরঘাট) → পটুয়াখালী: বিকেল ৫-৭টায় লঞ্চ ছেড়ে যায়। যাত্রা ~১০-১২ ঘণ্টা (ভোরে পৌঁছায়)। ডেক ভাড়া ৳২০০-২৫০। সিঙ্গেল কেবিন ৳৭০০-৯০০। ডাবল কেবিন ৳১২০০-১৫০০। প্রতিদিন ১-২টি লঞ্চ, ঈদে অতিরিক্ত।",
+    "keywords": [
+      "dhaka", "patuakhali", "launch", "time", "fare", "deck", "ঢাকা", "পটুয়াখালী",
+      "লঞ্চ", "কখন", "ছাড়ে", "ডেক", "ভাড়া", "কতক্ষণ", "সদরঘাট"
+    ]
+  },
+  {
+    "id": "535",
+    "category": "Inter-City",
+    "question_en": "Which bus from Dhaka to Jashore gives good service and what is the fare?",
+    "question_bn": "ঢাকা থেকে যশোর কোন বাস ভালো সার্ভিস দেয় ও কত টাকা ভাড়া নেয়?",
+    "answer_en": "Best buses Dhaka→Jashore: Shyamoli (AC ৳650-700), Hanif Enterprise (non-AC ৳400-450), Eagle Paribahan, Sohag Paribahan. All depart from Gabtoli terminal. Journey ~4-5 hrs (240 km via Padma Bridge). Book via Shohoz.com or at Gabtoli counter. Non-AC buses frequent throughout the day.",
+    "answer_bn": "ঢাকা → যশোর সেরা বাস: শ্যামলী (AC ৳৬৫০-৭০০), হানিফ এন্টারপ্রাইজ (নন-এসি ৳৪০০-৪৫০), ঈগল পরিবহন, সোহাগ পরিবহন। সব বাস গাবতলী টার্মিনাল থেকে ছেড়ে যায়। যাত্রা ~৪-৫ ঘণ্টা (পদ্মা সেতু হয়ে ২৪০ কিমি)। Shohoz.com বা গাবতলী কাউন্টারে বুক করুন।",
+    "keywords": [
+      "bus", "dhaka", "jashore", "jessore", "fare", "good", "service", "বাস",
+      "ঢাকা", "যশোর", "ভাড়া", "ভালো", "সার্ভিস", "shyamoli", "hanif", "gabtoli"
+    ]
+  },
+  {
+    "id": "536",
+    "category": "Inter-City",
+    "question_en": "Which bus is best from Dhaka to Kolkata? Shyamoli NR Travels experience?",
+    "question_bn": "ঢাকা থেকে কলকাতা যাওয়ার জন্য কোন বাস সার্ভিস সবচেয়ে ভালো হবে?",
+    "answer_en": "Dhaka→Kolkata buses: Shyamoli NR Travels (most popular, quick immigration processing), Green Line, Soudia, Royal Coach. All depart Kalyanpur or Mohakhali terminal. Journey ~10-12 hrs (border crossing at Benapole). Fare ৳1200-2000 depending on AC/sleeper. Book via Shohoz.com or counter 3-7 days ahead. Shyamoli NR Travels is widely praised for faster immigration handling.",
+    "answer_bn": "ঢাকা → কলকাতা বাস: শ্যামলী এনআর ট্রাভেলস (সবচেয়ে জনপ্রিয়, দ্রুত ইমিগ্রেশন), গ্রীন লাইন, সৌদিয়া, রয়্যাল কোচ। কল্যাণপুর বা মহাখালী টার্মিনাল থেকে যায়। যাত্রা ~১০-১২ ঘণ্টা (বেনাপোল সীমান্ত হয়ে)। ভাড়া ৳১২০০-২০০০। Shohoz.com বা কাউন্টারে ৩-৭ দিন আগে বুক করুন।",
+    "keywords": [
+      "bus", "dhaka", "kolkata", "calcutta", "india", "shyamoli", "nr", "travels",
+      "ঢাকা", "কলকাতা", "বাস", "ভারত", "শ্যামলী", "ইমিগ্রেশন", "benapole", "বেনাপোল"
+    ]
+  },
+  {
+    "id": "537",
+    "category": "Inter-City",
+    "question_en": "Dhaka to Sreemangal — AC bus options, travel time, tips for traveling with kids?",
+    "question_bn": "ঢাকা থেকে শ্রীমঙ্গল — এসি বাস কোনটি ভালো, কতক্ষণ লাগে, বাচ্চা নিয়ে কিভাবে যাবো?",
+    "answer_en": "Dhaka→Sreemangal by AC bus: Hanif AC, Shyamoli AC from Mohakhali/Sayedabad ~3-4 hrs, fare ৳350-500. Train option: Parabat Express or Upaban Express from Kamalapur ~3.5 hrs, ৳200-500 — more comfortable for kids. With small children, train is recommended (more space, no motion sickness). Avoid bus if road construction ongoing on Sylhet highway.",
+    "answer_bn": "ঢাকা → শ্রীমঙ্গল এসি বাস: হানিফ AC, শ্যামলী AC মহাখালী/সায়েদাবাদ থেকে ~৩-৪ ঘণ্টা, ভাড়া ৳৩৫০-৫০০। ট্রেন বিকল্প: পারাবত এক্সপ্রেস বা উপবন এক্সপ্রেস কমলাপুর থেকে ~৩.৫ ঘণ্টা, ৳২০০-৫০০ — বাচ্চাদের জন্য বেশি আরামদায়ক। ছোট বাচ্চা থাকলে ট্রেন সুপারিশযোগ্য।",
+    "keywords": [
+      "dhaka", "sreemangal", "srimangal", "bus", "ac", "kids", "children", "train",
+      "ঢাকা", "শ্রীমঙ্গল", "বাস", "এসি", "বাচ্চা", "ট্রেন", "কতক্ষণ", "parabat"
+    ]
+  },
+  {
+    "id": "538",
+    "category": "Inter-City",
+    "question_en": "Dhaka to Khagrachhari sleeper bus — best options, couple seat fare, advance booking?",
+    "question_bn": "ঢাকা থেকে খাগড়াছড়ি স্লিপার বাস — কোনটি সবচেয়ে ভালো, কাপল সিটের ভাড়া কত, আগাম বুকিং কিভাবে?",
+    "answer_en": "Dhaka→Khagrachhari sleeper buses: S Alam, Shyamoli, Hanif operate this route from Sayedabad/Fakirapool. Sleeper fare ৳900-1200, couple seat ৳1600-2000. Journey ~8-9 hrs (270 km). Advance booking: Shohoz.com or direct counter at Sayedabad 3-5 days ahead. Buses usually depart 9-11 PM for overnight travel.",
+    "answer_bn": "ঢাকা → খাগড়াছড়ি স্লিপার বাস: এস আলম, শ্যামলী, হানিফ সায়েদাবাদ/ফকিরাপুল থেকে যায়। স্লিপার ভাড়া ৳৯০০-১২০০, কাপল সিট ৳১৬০০-২০০০। যাত্রা ~৮-৯ ঘণ্টা (২৭০ কিমি)। আগাম বুকিং: Shohoz.com বা সায়েদাবাদ কাউন্টারে ৩-৫ দিন আগে। বাস সাধারণত রাত ৯-১১টায় ছেড়ে যায়।",
+    "keywords": [
+      "dhaka", "khagrachhari", "khagrachari", "sleeper", "bus", "couple", "seat",
+      "ঢাকা", "খাগড়াছড়ি", "স্লিপার", "বাস", "কাপল", "সিট", "ভাড়া", "বুকিং"
+    ]
+  },
+  {
+    "id": "539",
+    "category": "Inter-City",
+    "question_en": "Bus from Tongi to Bakshigonj — is there any service?",
+    "question_bn": "টঙ্গী থেকে বক্সীগঞ্জের বাস আছে কি?",
+    "answer_en": "Tongi to Bakshigonj (Jamalpur district): no direct bus typically. Best route: Tongi → Dhaka Mohakhali terminal (30 min, local bus), then Mohakhali → Jamalpur/Bakshigonj bus (~3-4 hrs, ৳300-400). Alternatively CNG/auto-rickshaw from Tongi to Mymensingh, then connecting bus to Bakshigonj.",
+    "answer_bn": "টঙ্গী থেকে বক্সীগঞ্জ (জামালপুর জেলা): সাধারণত সরাসরি বাস নেই। সেরা পথ: টঙ্গী → ঢাকা মহাখালী টার্মিনাল (৩০ মিনিট, লোকাল বাস), তারপর মহাখালী → জামালপুর/বক্সীগঞ্জ বাস (~৩-৪ ঘণ্টা, ৳৩০০-৪০০)। বিকল্প: টঙ্গী থেকে সিএনজিতে ময়মনসিংহ, তারপর বক্সীগঞ্জগামী বাস।",
+    "keywords": [
+      "tongi", "bakshigonj", "bus", "jamalpur", "টঙ্গী", "বক্সীগঞ্জ", "বাস",
+      "জামালপুর", "আছে", "কি", "mohakhali", "মহাখালী", "direct"
+    ]
+  },
+  {
+    "id": "540",
+    "category": "Train",
+    "question_en": "Can I board a train without ticket and buy ticket from TT (ticket collector) on board?",
+    "question_bn": "ট্রেনের টিকেট ছাড়া উঠা যাবে? উঠে টিটি থেকে টিকেট করা যাবে?",
+    "answer_en": "Technically yes — you can board and pay the TT (Travelling Ticket Examiner) on board. However: 1) You must pay full fare + ৳30-50 fine for boarding without ticket. 2) TT may ask you to deboard if train is full. 3) For long routes, reserve seats unavailable — you get only unreserved/standing. Better to check eticket.railway.gov.bd for available seats or queue tickets (no-reservation) at station counter.",
+    "answer_bn": "টেকনিক্যালি হ্যাঁ — ট্রেনে উঠে টিটি (ট্র্যাভেলিং টিকেট এগজ্যামিনার) থেকে টিকেট নেওয়া যায়। তবে: ১) পূর্ণ ভাড়া + ৳৩০-৫০ জরিমানা দিতে হবে। ২) ট্রেন ভর্তি থাকলে নামিয়ে দিতে পারে। ৩) সংরক্ষিত সিট পাবেন না — শুধু অসংরক্ষিত/দাঁড়ানো। eticket.railway.gov.bd বা স্টেশন কাউন্টারে ফাঁকা সিট চেক করুন।",
+    "keywords": [
+      "train", "board", "without", "ticket", "tt", "collector", "fine",
+      "ট্রেন", "টিকেট", "ছাড়া", "উঠা", "টিটি", "জরিমানা", "eticket", "আনরিজার্ভড"
+    ]
+  },
+  {
+    "id": "541",
+    "category": "Train",
+    "question_en": "Train ticket refund not received after many days — what to do?",
+    "question_bn": "ট্রেনের টিকেট রিফান্ড করেছি কিন্তু টাকা ফেরত পাচ্ছি না — এখন কি করবো?",
+    "answer_en": "Bangladesh Railway refund timeline: card payments return to bank in 7-14 working days. If >14 days, steps: 1) Check eticket.railway.gov.bd 'My Refunds' section. 2) Call Bangladesh Railway helpline: 16516. 3) Email: info@railway.gov.bd with your NID, booking reference, refund date. 4) Visit nearest divisional railway office. Card refunds sometimes delayed by bank processing — contact your bank as well.",
+    "answer_bn": "বাংলাদেশ রেলওয়ে রিফান্ড সময়: কার্ড পেমেন্ট ব্যাংকে ফেরত আসতে ৭-১৪ কার্যদিবস। ১৪ দিনের বেশি হলে: ১) eticket.railway.gov.bd-এ 'My Refunds' চেক করুন। ২) রেলওয়ে হেল্পলাইন: ১৬৫১৬। ৩) ইমেইল: info@railway.gov.bd (NID, বুকিং রেফারেন্স, রিফান্ডের তারিখ সহ)। ৪) কাছের বিভাগীয় রেলওয়ে অফিসে যান।",
+    "keywords": [
+      "train", "ticket", "refund", "not", "received", "days", "what", "do",
+      "ট্রেন", "টিকেট", "রিফান্ড", "টাকা", "ফেরত", "পাচ্ছি", "না", "helpline", "16516"
+    ]
+  },
+  {
+    "id": "542",
+    "category": "Train",
+    "question_en": "Lost alternative phone number on railway account — can't get OTP to book train tickets, what to do?",
+    "question_bn": "রেলওয়ে অ্যাকাউন্টে বিকল্প নম্বর হারিয়ে গেছে, OTP পাচ্ছি না, ট্রেন টিকেট বুক করতে পারছি না — সমাধান?",
+    "answer_en": "If lost access to alternative number on eticket.railway.gov.bd: 1) Visit nearest Bangladesh Railway divisional office with your NID — they can manually reset. 2) Call helpline 16516 and explain — phone verification can be done in person. 3) Create a new account with your current number (if NID not already used on another account). Tip: always keep alternative number updated in your railway profile.",
+    "answer_bn": "eticket.railway.gov.bd-এ বিকল্প নম্বর হারিয়ে গেলে: ১) NID নিয়ে কাছের বাংলাদেশ রেলওয়ে বিভাগীয় অফিসে যান — সেখানে ম্যানুয়ালি রিসেট করা যায়। ২) হেল্পলাইন ১৬৫১৬-তে ফোন করুন। ৩) বর্তমান নম্বর দিয়ে নতুন অ্যাকাউন্ট খুলুন (যদি NID অন্য অ্যাকাউন্টে না থাকে)। টিপ: রেলওয়ে প্রোফাইলে বিকল্প নম্বর সবসময় আপডেট রাখুন।",
+    "keywords": [
+      "railway", "account", "alternative", "number", "otp", "lost", "book",
+      "রেলওয়ে", "অ্যাকাউন্ট", "বিকল্প", "নম্বর", "OTP", "পাচ্ছি", "না", "সমাধান", "16516"
+    ]
+  },
+  {
+    "id": "543",
+    "category": "Inter-City",
+    "question_en": "Chittagong or Comilla to Sreemangal bus — which service and how long?",
+    "question_bn": "চট্টগ্রাম বা কুমিল্লা থেকে শ্রীমঙ্গল কোন বাস ভালো হবে?",
+    "answer_en": "Chittagong→Sreemangal: No direct train — take bus to Comilla or Akhaura, then local bus/CNG to Sreemangal. Or: Chittagong→Dhaka Sayedabad, then Dhaka→Sreemangal bus. Comilla→Sreemangal: ~2-3 hrs by bus/CNG. Operators: local Sylhet-bound buses passing Sreemangal stop. Fare Comilla→Sreemangal ~৳150-200.",
+    "answer_bn": "চট্টগ্রাম → শ্রীমঙ্গল: সরাসরি ট্রেন নেই — কুমিল্লা বা আখাউড়া হয়ে লোকাল বাস/সিএনজিতে শ্রীমঙ্গল। অথবা চট্টগ্রাম → ঢাকা সায়েদাবাদ, তারপর ঢাকা → শ্রীমঙ্গল বাস। কুমিল্লা → শ্রীমঙ্গল: ~২-৩ ঘণ্টা বাস/সিএনজিতে। ভাড়া কুমিল্লা → শ্রীমঙ্গল ~৳১৫০-২০০।",
+    "keywords": [
+      "chittagong", "comilla", "sreemangal", "bus", "how", "long",
+      "চট্টগ্রাম", "কুমিল্লা", "শ্রীমঙ্গল", "বাস", "কিভাবে", "যাবো", "সরাসরি"
+    ]
+  },
+  {
+    "id": "544",
+    "category": "Inter-City",
+    "question_en": "Is there any bus from Dhaka to Jamalpur or Mohanganj after 9 PM? Night bus options?",
+    "question_bn": "ঢাকা থেকে জামালপুর বা মোহনগঞ্জ রাত ৯টার পরে কি কোন বাস চলে?",
+    "answer_en": "Dhaka (Mohakhali) → Jamalpur/Mohanganj night buses: Last buses usually depart 9-10 PM from Mohakhali terminal. After 10 PM very limited. Options: 1) Check Mohakhali terminal directly for night departures. 2) Train: Brahmaputra Express or Haor Express from Kamalapur (check schedule). 3) For emergencies after 11 PM, shared CNG/microbus from Mohakhali area (negotiate fare ৳400-600 per person).",
+    "answer_bn": "ঢাকা (মহাখালী) → জামালপুর/মোহনগঞ্জ রাতের বাস: সাধারণত শেষ বাস রাত ৯-১০টায় মহাখালী টার্মিনাল থেকে ছেড়ে যায়। রাত ১০টার পর খুব কম। বিকল্প: ১) মহাখালী টার্মিনালে সরাসরি জিজ্ঞেস করুন রাতের বাসের জন্য। ২) ট্রেন: ব্রহ্মপুত্র এক্সপ্রেস বা হাওর এক্সপ্রেস কমলাপুর থেকে। ৩) রাত ১১টার পর ইমার্জেন্সিতে মহাখালী থেকে শেয়ার সিএনজি/মাইক্রোবাস।",
+    "keywords": [
+      "dhaka", "jamalpur", "mohanganj", "night", "bus", "9pm", "after",
+      "ঢাকা", "জামালপুর", "মোহনগঞ্জ", "রাত", "বাস", "৯টা", "পরে", "mohakhali", "মহাখালী"
+    ]
+  },
+  {
+    "id": "545",
+    "category": "Metro",
+    "question_en": "What is the general MRT-6 metro fare guide for common station pairs in Dhaka?",
+    "question_bn": "ঢাকা MRT-6 মেট্রো রেলের সাধারণ ভাড়া — বিভিন্ন স্টেশনের মধ্যে কত টাকা?",
+    "answer_en": "MRT-6 key fares: Uttara North↔Motijheel ৳100 (full line, 32 min). Uttara North↔Agargaon ৳60. Uttara North↔Mirpur 10 ৳40. Motijheel↔Farmgate ৳30. Motijheel↔Agargaon ৳50. Motijheel↔Mirpur 10 ৳60. Karwan Bazar↔Uttara North ৳70. Min fare ৳20 (adjacent stations). MRT Pass gives 10% discount. Trains 6:30 AM – 9:50 PM (Friday starts 3:00 PM).",
+    "answer_bn": "MRT-6 প্রধান ভাড়া: উত্তরা উত্তর↔মতিঝিল ৳১০০ (পুরো লাইন, ৩২ মিনিট)। উত্তরা উত্তর↔আগারগাঁও ৳৬০। উত্তরা উত্তর↔মিরপুর ১০ ৳৪০। মতিঝিল↔ফার্মগেট ৳৩০। মতিঝিল↔আগারগাঁও ৳৫০। মতিঝিল↔মিরপুর ১০ ৳৬০। কাওরানবাজার↔উত্তরা উত্তর ৳৭০। সর্বনিম্ন ভাড়া ৳২০ (পাশাপাশি স্টেশন)। MRT পাসে ১০% ছাড়। ট্রেন সকাল ৬:৩০ – রাত ৯:৫০ (শুক্রবার বিকেল ৩টায় শুরু)।",
+    "keywords": [
+      "metro", "MRT", "fare", "guide", "station", "pairs", "uttara", "motijheel",
+      "মেট্রো", "ভাড়া", "স্টেশন", "উত্তরা", "মতিঝিল", "আগারগাঁও", "মিরপুর", "kত"
+    ]
   }
 ];
