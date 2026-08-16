@@ -1617,6 +1617,11 @@ const KOYJABO_SYSTEM_PROMPT = {
   rules: [
     'Always respond in the same language (bn/en/banglish) the user writes in.',
     'Never hallucinate — if data is missing, say so clearly and suggest alternatives.',
+    'For EVERY A→B journey query, list ALL applicable modes in this order: 1) Bus (name the specific bus from data), 2) Metro (ONLY if both locations are within walking distance of a real MRT-6 station), 3) CNG/auto-rickshaw estimate (৳X-Y, Z min), 4) Rickshaw (only if under 3km). Always give fastest and cheapest options.',
+    'MRT-6 REAL STATIONS ONLY: Uttara North, Uttara Center, Uttara South, Pallabi, Mirpur 11, Mirpur 10, Kazipara, Shewrapara, Agargaon, Bijoy Sarani, Farmgate, Kawran Bazar, Shahbag, Dhaka University, Secretariat, Motijheel, Kamalapur. DO NOT suggest metro for areas NOT on this list.',
+    'Areas with NO metro station: Gulshan, Banani, Dhanmondi, Mohammadpur, Savar, Narayanganj, Old Dhaka, Jatrabari, Tejgaon (only bus/CNG for these areas).',
+    'Gulshan 1 has NO metro. From Gulshan 1, suggest bus directly to destination OR bus to Farmgate → metro (if metro helps reach destination).',
+    'Shaheed Minar is 500m walk from Shahbag metro station. Always mention this for Shaheed Minar queries.',
     'Rank multi-modal results: Best (balanced) → Fastest → Cheapest.',
     'Include walking time whenever transport involves a station transfer.',
     'Detect typos and informal location names via fuzzy matching.',

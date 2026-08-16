@@ -226,11 +226,16 @@ export function BusLiveMapPage(props: Props) {
               placeholder={T(lang, 'বাস নম্বর (আবশ্যক) — যেমন: DA M 12-2467', 'Bus number (required) — e.g. DA M 12-2467')}
               style={inputStyle}
             />
-            {knownNumbers.length > 0 && (
-              <datalist id="kj-bus-numbers">
-                {knownNumbers.map(n => <option key={n} value={n} />)}
-              </datalist>
-            )}
+            <datalist id="kj-bus-numbers">
+              {/* Plate numbers from BRTA data for this route */}
+              {((bus as unknown as { plates?: string[] })?.plates ?? []).map(p => (
+                <option key={`plate-${p}`} value={p} />
+              ))}
+              {/* Numbers from live community sharing */}
+              {knownNumbers.filter(n => !((bus as unknown as { plates?: string[] })?.plates ?? []).includes(n)).map(n => (
+                <option key={n} value={n} />
+              ))}
+            </datalist>
             <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textFaint, marginBottom: 10 }}>
               {T(lang, 'তালিকায় আপনার নম্বর নেই? নিজের নম্বর লিখে শেয়ার করুন — সবাই দেখতে পাবে।', 'Not on the list? Type your own number to share it — everyone will see it.')}
             </div>

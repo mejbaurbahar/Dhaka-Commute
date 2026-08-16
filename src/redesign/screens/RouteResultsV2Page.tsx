@@ -409,48 +409,71 @@ export function RouteResultsV2Page(props: Props) {
                 )}
               </div>
 
-              {/* Transit route suggestions when no direct bus exists */}
+              {/* Transit route suggestions — clickable cards with full detail + map */}
               {transitRoutes.length > 0 && (
-                <div style={{ background: tk.panel, border: `1px solid ${tk.primary}40`, borderRadius: 16, padding: '20px 18px' }}>
+                <div style={{ background: tk.panel, border: `1.5px solid #f97316`, borderRadius: 16, padding: '18px 18px 14px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                     <span style={{ fontSize: 20 }}>🔀</span>
-                    <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 15, fontWeight: 700, color: tk.text }}>
-                      {lbl('Transit Routes (Change Bus)', 'ট্রানজিট রুট (বাস পরিবর্তন করুন)')}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    {transitRoutes.map((r, ri) => (
-                      <div key={ri} style={{ background: tk.bg, border: `1px solid ${tk.line}`, borderRadius: 12, padding: '14px 16px' }}>
-                        {r.legs.length === 1 ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                            <span style={{ background: tk.primary, color: '#fff', borderRadius: 6, padding: '3px 10px', fontFamily: SANS, fontSize: 12, fontWeight: 700 }}>{r.legs[0].bus}</span>
-                            <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text }}>{r.legs[0].from} → {r.legs[0].to}</span>
-                            <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginLeft: 'auto' }}>{lbl('Direct', 'সরাসরি')}</span>
-                          </div>
-                        ) : (
-                          <>
-                            <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginBottom: 8 }}>
-                              {lbl('Transfer at', 'বদলান')} <strong style={{ color: tk.primary }}>{r.transferAt}</strong>
-                              {r.transferAtBn && lang === 'bn' && <> / <strong style={{ color: tk.primary }}>{r.transferAtBn}</strong></>}
-                            </div>
-                            {r.legs.map((leg, li) => (
-                              <div key={li} style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: li < r.legs.length - 1 ? 8 : 0 }}>
-                                <span style={{ background: li === 0 ? tk.primary : '#f59e0b', color: '#fff', borderRadius: 6, padding: '3px 10px', fontFamily: SANS, fontSize: 12, fontWeight: 700 }}>
-                                  {li === 0 ? '①' : '②'} {leg.bus}
-                                </span>
-                                <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text }}>
-                                  {lang === 'bn' ? `${leg.fromBn} → ${leg.toBn}` : `${leg.from} → ${leg.to}`}
-                                </span>
-                                <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, background: tk.panelMuted, borderRadius: 4, padding: '2px 6px' }}>{leg.busType}</span>
-                              </div>
-                            ))}
-                          </>
-                        )}
+                    <div>
+                      <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 15, fontWeight: 700, color: '#f97316' }}>
+                        {lbl('Transit Required — No Direct Bus', 'সরাসরি বাস নেই — ট্রানজিট করুন')}
                       </div>
-                    ))}
+                      <div style={{ fontFamily: SANS, fontSize: 12, color: tk.textFaint, marginTop: 2 }}>
+                        {lbl('Tap a route below to see the full map & all stops', 'নিচের রুটে ট্যাপ করুন — পুরো ম্যাপ ও স্টপ দেখতে')}
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ marginTop: 12, fontFamily: SANS, fontSize: 12, color: tk.textFaint }}>
-                    💡 {lbl('Board the first bus, alight at the transfer stop, then take the second bus.', 'প্রথম বাসে চড়ুন, ট্রান্সফার পয়েন্টে নামুন, তারপর দ্বিতীয় বাসে উঠুন।')}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {transitRoutes.map((r, ri) => {
+                      const leg1 = r.legs[0];
+                      const leg2 = r.legs[1];
+                      const handleClick = () => {
+                        if (leg1) props.onNav('bus-detail', { busId: leg1.busId, from: leg1.fromId, to: leg1.toId });
+                      };
+                      return (
+                        <button
+                          key={ri}
+                          onClick={handleClick}
+                          style={{ background: tk.bg, border: `1px solid ${tk.line}`, borderRadius: 12, padding: '14px 16px', cursor: 'pointer', textAlign: 'left' as const, width: '100%', transition: 'border-color 0.15s' }}
+                          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#f97316'; }}
+                          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = tk.line; }}
+                        >
+                          {r.legs.length === 1 ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                              <span style={{ background: tk.primary, color: '#fff', borderRadius: 6, padding: '3px 10px', fontFamily: SANS, fontSize: 12, fontWeight: 700 }}>{leg1.bus}</span>
+                              <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text }}>{lang === 'bn' ? `${leg1.fromBn} → ${leg1.toBn}` : `${leg1.from} → ${leg1.to}`}</span>
+                              <span style={{ fontFamily: SANS, fontSize: 11, color: '#10b981', marginLeft: 'auto', fontWeight: 700 }}>{lbl('Direct ›', 'সরাসরি ›')}</span>
+                            </div>
+                          ) : (
+                            <>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                                <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>
+                                  {lbl('Transfer at', 'বদলান')} <strong style={{ color: '#f97316' }}>{lang === 'bn' && r.transferAtBn ? r.transferAtBn : r.transferAt}</strong>
+                                </div>
+                                <span style={{ fontFamily: SANS, fontSize: 11, color: '#f59e0b', fontWeight: 700 }}>{lbl('View map & stops ›', 'ম্যাপ ও স্টপ দেখুন ›')}</span>
+                              </div>
+                              {r.legs.map((leg, li) => (
+                                <div key={li} style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: li < r.legs.length - 1 ? 8 : 0 }}>
+                                  <span style={{ background: li === 0 ? tk.primary : '#f59e0b', color: '#fff', borderRadius: 6, padding: '3px 10px', fontFamily: SANS, fontSize: 12, fontWeight: 700 }}>
+                                    {li === 0 ? '①' : '②'} {lang === 'bn' ? leg.busBn : leg.bus}
+                                  </span>
+                                  <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text }}>
+                                    {lang === 'bn' ? `${leg.fromBn} → ${leg.toBn}` : `${leg.from} → ${leg.to}`}
+                                  </span>
+                                  {leg.stopsBetween > 0 && (
+                                    <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, background: tk.panelMuted, borderRadius: 4, padding: '2px 6px' }}>{leg.stopsBetween} {lbl('stops', 'স্টপ')}</span>
+                                  )}
+                                </div>
+                              ))}
+                            </>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div style={{ marginTop: 12, fontFamily: SANS, fontSize: 12, color: tk.textFaint, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span>💡</span>
+                    <span>{lbl('Board the first bus, alight at the transfer stop, then take the second bus.', 'প্রথম বাসে চড়ুন, ট্রান্সফার পয়েন্টে নামুন, তারপর দ্বিতীয় বাসে উঠুন।')}</span>
                   </div>
                 </div>
               )}

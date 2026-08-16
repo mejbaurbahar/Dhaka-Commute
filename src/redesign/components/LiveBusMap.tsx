@@ -42,6 +42,8 @@ interface Props {
   onMarkerClick?: (busNumber: string) => void;
   /** User GPS location + nearest stop on this route (index into routeStops) — draws a dashed line + blue dot */
   userProximity?: { lat: number; lng: number; stopIndex: number; distanceKm: number } | null;
+  /** Index in routeStops where leg 2 begins (transit: show two-colored route) */
+  transferStopIndex?: number;
 }
 
 function userIconHtml(): string {
@@ -53,7 +55,7 @@ function userIconHtml(): string {
  * amber idle / gray stale), blue-ring highlight for the selected or own bus,
  * click → popup (bus number, nearest stop, status, speed, contributors, ago).
  */
-export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, buses, selectedNumber, sharingBusNumber, onMarkerClick, userProximity }: Props) {
+export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, buses, selectedNumber, sharingBusNumber, onMarkerClick, userProximity, transferStopIndex }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const busLayerRef = useRef<L.LayerGroup | null>(null);
@@ -84,19 +86,33 @@ export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, bu
 
       if (routeStops.length > 1) {
         const coords: [number, number][] = routeStops.map(s => [s.lat, s.lng]);
-        L.polyline(coords, { color: '#10b981', weight: 4, opacity: 0.7 }).addTo(map);
+        if (transferStopIndex !== undefined && transferStopIndex > 0 && transferStopIndex < routeStops.length) {
+          // Transit: leg 1 green, leg 2 amber
+          L.polyline(coords.slice(0, transferStopIndex + 1), { color: '#10b981', weight: 5, opacity: 0.8 }).addTo(map);
+          L.polyline(coords.slice(transferStopIndex), { color: '#f59e0b', weight: 5, opacity: 0.8, dashArray: '8 4' }).addTo(map);
+        } else {
+          L.polyline(coords, { color: '#10b981', weight: 4, opacity: 0.7 }).addTo(map);
+        }
         routeStops.forEach((stop, idx) => {
           const isFirst = idx === 0;
           const isLast = idx === routeStops.length - 1;
+          const isTransfer = transferStopIndex !== undefined && idx === transferStopIndex;
+          const dotColor = isTransfer ? '#f97316' : (idx < (transferStopIndex ?? routeStops.length) ? '#10b981' : '#f59e0b');
+          const endColor = isTransfer ? '#ea580c' : (isFirst ? '#006a4e' : '#b45309');
           L.circleMarker([stop.lat, stop.lng], {
-            radius: isFirst || isLast ? 9 : 6,
-            fillColor: isFirst || isLast ? '#006a4e' : '#10b981',
+            radius: isFirst || isLast || isTransfer ? 10 : 5,
+            fillColor: isFirst || isLast || isTransfer ? endColor : dotColor,
             color: 'white',
-            weight: 2,
+            weight: isTransfer ? 3 : 2,
             opacity: 1,
             fillOpacity: 1,
           })
-            .bindTooltip(`<b>${lang === 'bn' ? stop.bnName : stop.name}</b>`, { permanent: false, direction: 'top', offset: [0, -8] })
+            .bindTooltip(
+              isTransfer
+                ? `<b>🔀 ${lang === 'bn' ? stop.bnName : stop.name}</b><br><small>Transit point</small>`
+                : `<b>${lang === 'bn' ? stop.bnName : stop.name}</b>`,
+              { permanent: false, direction: 'top', offset: [0, -8] }
+            )
             .addTo(map);
         });
         map.fitBounds(L.latLngBounds(coords), { padding: [40, 40] });

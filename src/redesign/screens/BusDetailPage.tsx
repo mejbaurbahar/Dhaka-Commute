@@ -110,6 +110,20 @@ export function BusDetailPage(props: Props) {
     return findTransitRoutes(fromId, toId);
   }, [needsTransit, fromId, toId]);
 
+  // For transit: build combined stop list + transfer index for the unified map
+  const transitMapData = useMemo(() => {
+    if (!needsTransit || !transitRoutes[0] || transitRoutes[0].legs.length < 2) return null;
+    const leg1 = transitRoutes[0].legs[0];
+    const leg2 = transitRoutes[0].legs[1];
+    const allStopIds = [...leg1.stops, ...leg2.stops.slice(1)];
+    const stops = allStopIds.map(sid => {
+      const st = STATIONS[sid];
+      if (!st || typeof st.lat !== 'number' || typeof st.lng !== 'number') return null;
+      return { lat: st.lat as number, lng: st.lng as number, name: st.name ?? sid, bnName: st.bnName ?? sid };
+    }).filter((s): s is NonNullable<typeof s> => s !== null);
+    return { stops, transferIndex: leg1.stops.length - 1, stopIds: allStopIds };
+  }, [needsTransit, transitRoutes]);
+
   const [favoriteIds, setFavoriteIds] = useState<string[]>(() => getFavoriteBusIds());
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [showRating, setShowRating] = useState(false);
@@ -378,22 +392,29 @@ export function BusDetailPage(props: Props) {
           </div>
         )}
 
-        {/* Single live map — route + all live buses on this route (no second map) */}
-        <div style={{ height:isMobile?320:430,borderRadius:16,overflow:'hidden',position:'relative',marginBottom:18,background:'#0a1f14',border:`1px solid ${tk.line}` }}>
+        {/* Map: transit (two-color legs) or regular single-bus route */}
+        <div style={{ height:isMobile?320:430,borderRadius:16,overflow:'hidden',position:'relative',marginBottom:18,background:'#0a1f14',border:`1px solid ${needsTransit ? '#f97316' : tk.line}` }}>
+          {needsTransit && transitMapData && (
+            <div style={{ position:'absolute',top:8,left:8,zIndex:1000,display:'flex',gap:6,pointerEvents:'none' }}>
+              <span style={{ background:'#10b981',color:'#fff',borderRadius:6,padding:'3px 8px',fontSize:11,fontFamily:'sans-serif',fontWeight:700 }}>① {transitRoutes[0]?.legs[0]?.bus}</span>
+              <span style={{ background:'#f59e0b',color:'#fff',borderRadius:6,padding:'3px 8px',fontSize:11,fontFamily:'sans-serif',fontWeight:700 }}>② {transitRoutes[0]?.legs[1]?.bus}</span>
+            </div>
+          )}
           <LiveBusMap
             tk={tk}
             lang={lang}
             isMobile={isMobile}
             height={isMobile ? 320 : 430}
-            routeStops={realStops
+            routeStops={transitMapData ? transitMapData.stops : realStops
               .filter(s => typeof s.lat === 'number' && typeof s.lng === 'number')
               .map(s => ({ lat: s.lat as number, lng: s.lng as number, name: s.en, bnName: s.bn }))}
-            stopIds={bus.stops}
+            stopIds={transitMapData ? transitMapData.stopIds : bus.stops}
             buses={communityBuses}
             selectedNumber={selectedLiveBus}
             sharingBusNumber={getSharingState()?.busNumber ?? null}
             onMarkerClick={setSelectedLiveBus}
-            userProximity={nearest && userLocation ? { lat: userLocation.lat, lng: userLocation.lng, stopIndex: nearest.index, distanceKm: nearest.distance } : null}
+            userProximity={!needsTransit && nearest && userLocation ? { lat: userLocation.lat, lng: userLocation.lng, stopIndex: nearest.index, distanceKm: nearest.distance } : null}
+            transferStopIndex={transitMapData?.transferIndex}
           />
         </div>
 

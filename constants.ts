@@ -1160,7 +1160,8 @@ export const BUS_DATA: BusRoute[] = [
     routeString: 'Savar ⇄ Notun Bazar',
     stops: ['savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'taltola', 'zia_uddyan', 'bijoy_sarani', 'tejgaon', 'jahangir_gate', 'mohakhali', 'mohakhali_flyover', 'wireless', 'gulshan1', 'badda_link_road', 'bashtola', 'shahjadpur', 'uttar_badda', 'notun_bazar'],
     type: 'Semi-Sitting',
-    hours: '6:00 AM - 10:00 PM'
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['12-0668', '12-3624', '15-0524', '11-9467'],
   },
   {
     id: 'balaka',

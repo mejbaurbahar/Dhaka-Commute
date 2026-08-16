@@ -111,6 +111,20 @@ function buildRealDataContext(userText: string): string {
     }
   }
 
+  // ── 4. Metro context injection ─────────────────────────────────────────────
+  const isMetroQuery = lower.includes('metro') || lower.includes('মেট্রো') || lower.includes('mrt') || lower.includes('subway');
+  const isJourneyQuery = !!(fromTok && toTok) || lower.includes(' to ') || lower.includes('theke') || lower.includes('থেকে') || lower.includes('jabo') || lower.includes('যাব');
+  if (isMetroQuery || isJourneyQuery) {
+    sections.push(
+      '[MRT-6 METRO — REAL STATIONS ONLY]\n' +
+      'Operating line: Uttara North → Uttara Center → Uttara South → Pallabi → Mirpur 11 → Mirpur 10 → Kazipara → Shewrapara → Agargaon → Bijoy Sarani → Farmgate → Kawran Bazar → Shahbag → Dhaka University → Secretariat → Motijheel → Kamalapur\n' +
+      'Fare: ৳20–100 | Hours: 7:10 AM – 8:40 PM (closed Friday)\n' +
+      'NO metro in: Gulshan, Banani, Dhanmondi, Mohammadpur, Savar, Jatrabari, Tejgaon, Rayer Bazar\n' +
+      'Shaheed Minar = 500m walk from Shahbag Metro. Central Shaheed Minar → nearest metro: Shahbag (5 min walk).\n' +
+      'RULE: Only suggest metro if origin or destination is within 1km of an MRT-6 station above.'
+    );
+  }
+
   if (sections.length === 0) return '';
   return sections.join('\n\n');
 }
