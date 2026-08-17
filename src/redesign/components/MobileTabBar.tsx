@@ -161,12 +161,38 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
         }}
         aria-label={T(lang, 'আরও', 'More')}
       >
-        <Icon.menu s={21} />
+        {moreActive && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 8,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: 44,
+              height: 32,
+              borderRadius: 12,
+              background: tk.primarySoft,
+              animation: 'kjTabPop .22s cubic-bezier(.2,.7,.25,1) both',
+            }}
+          />
+        )}
+        <div style={{
+          position: 'relative',
+          zIndex: 1,
+          transform: moreActive ? 'scale(1.12)' : 'scale(1)',
+          transition: 'transform 0.2s cubic-bezier(.2,.7,.25,1)',
+        }}>
+          <Icon.menu s={moreActive ? 22 : 21} />
+        </div>
         <span style={{
           fontFamily: lang === 'bn' ? BEN : SANS,
           fontSize: 10,
-          fontWeight: 400,
+          fontWeight: moreActive ? 700 : 400,
           lineHeight: 1,
+          position: 'relative',
+          zIndex: 1,
+          letterSpacing: moreActive ? -0.2 : 0,
+          transition: 'font-weight 0.15s, color 0.15s',
         }}>
           {T(lang, 'আরও', 'More')}
         </span>

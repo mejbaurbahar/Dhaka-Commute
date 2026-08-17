@@ -4,6 +4,7 @@ import { PageShell } from './PageShell';
 import { AdSlot } from '../components/AdSlot';
 import { BUS_DATA, STATIONS } from '../../../constants';
 import { BUS_PAIRS, findPair, pairPath, findInterchange, interchangePath } from '../busPairs';
+import { findTransitGroups, TransitGroup } from '../utils/localBusRouting';
 import { trackBusSearch } from '../../../services/analyticsService';
 import { cancelPushEvent } from '../../services/pushService';
 import { setCanonicalUrl, setMetaTag, setPropertyMetaTag, setJsonLd, useDocumentTitle } from '../utils/useDocumentTitle';
@@ -28,13 +29,24 @@ export function FromToBusPage(props: Props) {
   const to = params?.to ?? '';
   const pair = findPair(from, to);
   const interchange = findInterchange(from, to);
-  const via = params?.via ?? interchange?.via ?? '';
-  const buses = pair
-    ? BUS_DATA.filter(b => b.stops.some(s => s.startsWith(pair.from)) && b.stops.some(s => s.startsWith(pair.to)))
-    : [];
-  const fromName = pair ? { en: pair.fromEn, bn: pair.fromBn } : { en: from, bn: from };
-  const toName = pair ? { en: pair.toEn, bn: pair.toBn } : { en: to, bn: to };
 
+  // Dynamic transit search — works for any Dhaka city stop pair
+  const transitResult = React.useMemo(() => findTransitGroups(from, to), [from, to]);
+
+  const via = params?.via ?? interchange?.via ?? '';
+  // Prefer dynamic direct buses; fall back to hardcoded pair match
+  const dynamicDirect = transitResult.directBuses;
+  const buses = dynamicDirect.length > 0
+    ? dynamicDirect
+    : pair
+      ? BUS_DATA.filter(b => b.stops.some(s => s.startsWith(pair.from)) && b.stops.some(s => s.startsWith(pair.to)))
+      : [];
+  const fromName = pair ? { en: pair.fromEn, bn: pair.fromBn } : { en: from.replace(/_/g, ' '), bn: from.replace(/_/g, ' ') };
+  const toName = pair ? { en: pair.toEn, bn: pair.toBn } : { en: to.replace(/_/g, ' '), bn: to.replace(/_/g, ' ') };
+
+  // Transit groups from dynamic routing (all possible 1-transfer options)
+  const transitGroups = transitResult.groups;
+  // Fall back to legacy interchange for known hardcoded pairs
   const viaName = interchange
     ? { en: interchange.viaEn, bn: interchange.viaBn }
     : { en: via.replace(/_/g, ' '), bn: via.replace(/_/g, ' ') };
@@ -44,7 +56,9 @@ export function FromToBusPage(props: Props) {
   const leg2Buses = interchange
     ? BUS_DATA.filter(b => b.stops.some(s => s.startsWith(interchange.via)) && b.stops.some(s => s.startsWith(interchange.to)))
     : [];
-  const isInterchange = Boolean(interchange) && buses.length === 0;
+  // Use dynamic transit groups when available, else fall back to hardcoded interchange
+  const hasTransitGroups = transitGroups.length > 0;
+  const isInterchange = (hasTransitGroups || (Boolean(interchange) && buses.length === 0)) && buses.length === 0;
 
   useDocumentTitle(lang === 'bn'
     ? `${fromName.bn} থেকে ${toName.bn} বাস${isInterchange ? ` — ${viaName.bn} এ বাস বদল` : ''}`
@@ -112,6 +126,150 @@ export function FromToBusPage(props: Props) {
     });
   }, [pair, interchange, buses, leg1Buses, leg2Buses, fromName.en, fromName.bn, toName.en, toName.bn, viaName.en, viaName.bn]);
 
+  // ── Dynamic multi-option transit UI ──────────────────────────────────────
+  if (isInterchange && hasTransitGroups) {
+    const busChip = (bus: (typeof BUS_DATA)[0], fromId: string, toId: string) => (
+      <button key={bus.id}
+        onClick={() => { trackBusSearch(bus.id, bus.name); cancelPushEvent('search-check'); cancelPushEvent('search-tomorrow'); onNav('bus-detail', { busId: bus.id, from: fromId, to: toId }); }}
+        style={{
+          display: 'inline-flex', alignItems: 'center',
+          background: `${tk.primary}15`, border: `1px solid ${tk.primary}35`,
+          borderRadius: 999, padding: '4px 10px', cursor: 'pointer',
+          fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 12, fontWeight: 700,
+          color: tk.primary, whiteSpace: 'nowrap', flexShrink: 0,
+        }}>
+        {lang === 'bn' ? bus.bnName : bus.name}
+      </button>
+    );
+
+    const transitGroupCard = (group: TransitGroup, idx: number) => (
+      <div key={group.id} style={{ ...card(16), marginBottom: 14 }}>
+        {/* Card header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{
+              background: tk.primary, color: '#fff', borderRadius: 999,
+              width: 22, height: 22, display: 'inline-flex', alignItems: 'center',
+              justifyContent: 'center', fontFamily: SANS, fontSize: 11, fontWeight: 800, flexShrink: 0,
+            }}>{idx + 1}</span>
+            <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 15, fontWeight: 800, color: tk.text }}>
+              {lang === 'bn'
+                ? `${group.leg1FromBnLabel} → ${group.viaBnLabel} → ${group.leg2ToBnLabel}`
+                : `Via ${group.viaLabel}`}
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim, background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, padding: '3px 8px' }}>
+              ~৳{group.approxFare}
+            </span>
+            <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim, background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, padding: '3px 8px' }}>
+              ~{group.approxMinutes}{lang === 'bn' ? 'মি' : 'm'}
+            </span>
+          </div>
+        </div>
+
+        {/* Leg 1 */}
+        <div style={{ marginBottom: 10 }}>
+          <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 12, fontWeight: 700, color: tk.textDim, marginBottom: 8 }}>
+            {lang === 'bn'
+              ? `ধাপ ১: ${group.leg1FromBnLabel} → ${group.viaBnLabel} (যেকোনো বাসে)`
+              : `Step 1: ${group.leg1FromLabel} → ${group.viaLabel} (take any bus)`}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {group.leg1Buses.slice(0, 8).map(bus => busChip(bus, from, group.viaId))}
+            {group.leg1Buses.length > 8 && (
+              <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, alignSelf: 'center' }}>
+                +{group.leg1Buses.length - 8} {lang === 'bn' ? 'আরও' : 'more'}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Transfer badge */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8, margin: '10px 0',
+          padding: '8px 12px', borderRadius: 10,
+          background: `${tk.primary}10`, border: `1px solid ${tk.primary}30`,
+        }}>
+          <span style={{ fontSize: 16 }}>⇅</span>
+          <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 12, fontWeight: 700, color: tk.primary }}>
+            {lang === 'bn'
+              ? `${group.viaBnLabel} এ নামুন — বাস বদল করুন`
+              : `Get off at ${group.viaLabel} — change bus`}
+          </span>
+        </div>
+
+        {/* Leg 2 */}
+        <div>
+          <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 12, fontWeight: 700, color: tk.textDim, marginBottom: 8 }}>
+            {lang === 'bn'
+              ? `ধাপ ২: ${group.viaBnLabel} → ${group.leg2ToBnLabel} (যেকোনো বাসে)`
+              : `Step 2: ${group.viaLabel} → ${group.leg2ToLabel} (take any bus)`}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {group.leg2Buses.slice(0, 8).map(bus => busChip(bus, group.viaId, to))}
+            {group.leg2Buses.length > 8 && (
+              <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, alignSelf: 'center' }}>
+                +{group.leg2Buses.length - 8} {lang === 'bn' ? 'আরও' : 'more'}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+
+    return (
+      <PageShell {...props}>
+        <div style={{ maxWidth: 720, margin: '0 auto', padding: isMobile ? 16 : 32 }}>
+          {/* Route header */}
+          <div style={card()}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 22, fontWeight: 800 }}>
+                {lang === 'bn' ? `${fromName.bn} → ${toName.bn}` : `${fromName.en} → ${toName.en}`}
+              </span>
+              <span style={{ color: tk.textDim, fontSize: 13 }}>
+                {T(lang, 'সরাসরি বাস নেই — বাস বদল করুন', 'No direct bus — change buses')}
+              </span>
+            </div>
+            <p style={{ color: tk.textDim, margin: '8px 0 0', fontSize: 13 }}>
+              {lang === 'bn'
+                ? `${fromName.bn} থেকে ${toName.bn} সরাসরি কোনো বাস নেই। নিচে ${N(transitGroups.length, lang)}টি সম্ভাব্য বাস বদলের পথ দেওয়া হয়েছে। যেটা সুবিধাজনক সেটা বেছে নিন।`
+                : `No direct bus from ${fromName.en} to ${toName.en}. ${N(transitGroups.length, lang)} possible transit routes are shown below — pick the one that works for you.`}
+            </p>
+          </div>
+
+          {/* Transit option cards */}
+          <div style={{ marginTop: 16 }}>
+            <h2 style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 15, margin: '0 0 12px', color: tk.textDim }}>
+              {T(lang, 'বাস বদলের সম্ভাব্য পথ', 'Possible transit routes')}
+            </h2>
+            {transitGroups.map((group, idx) => transitGroupCard(group, idx))}
+          </div>
+
+          <div style={{ marginTop: 12 }}>
+            <AdSlot tk={tk} lang={lang} />
+          </div>
+
+          <div style={{ marginTop: 20 }}>
+            <h2 style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 17, margin: '0 0 10px' }}>
+              {T(lang, 'আরও জনপ্রিয় রুট', 'More popular routes')}
+            </h2>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 10 }}>
+              {BUS_PAIRS.slice(0, 8).map(p => (
+                <a key={`${p.from}-${p.to}`} href={pairPath(p)}
+                  onClick={(e) => { e.preventDefault(); onNav('from-to-bus', { from: p.from, to: p.to }); }}
+                  style={{ ...card(12), textDecoration: 'none', color: tk.text, fontSize: 13, fontWeight: 600 }}>
+                  {lang === 'bn' ? `${p.fromBn} → ${p.toBn}` : `${p.fromEn} → ${p.toEn}`}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </PageShell>
+    );
+  }
+
+  // ── Legacy single-interchange (hardcoded SEO pairs fallback) ──────────────
   if (isInterchange && interchange) {
     const leg = (title: string, list: typeof BUS_DATA, src: { en: string; bn: string }, dst: { en: string; bn: string }, srcId: string, dstId: string) => (
       <div style={{ marginBottom: 10 }}>

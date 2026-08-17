@@ -26,10 +26,12 @@ export function ChatHistoryDrawer({ tk, lang, chat, open, onClose, contained }: 
       onClick={onClose}
       style={{
         position: contained ? 'absolute' : 'fixed', inset: 0, zIndex: 9600,
-        background: 'rgba(0,0,0,0.45)',
-        backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+        background: contained ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.45)',
+        backdropFilter: contained ? undefined : 'blur(4px)',
+        WebkitBackdropFilter: contained ? undefined : 'blur(4px)',
         display: open ? 'flex' : 'none',
         justifyContent: 'flex-end',
+        overflow: 'hidden',
         animation: 'kjFadeIn 0.15s ease-out',
       }}
     >

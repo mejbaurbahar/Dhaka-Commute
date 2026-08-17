@@ -2221,6 +2221,15 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 12:00 PM'
   },
   {
+    id: 'robrob',
+    name: 'Robrob',
+    bnName: 'রবরব',
+    routeString: 'Gabtoli ⇄ Airport',
+    stops: ['gabtoli', 'technical', 'ansar_camp', 'mirpur1', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewrapara', 'kuril', 'khilkhet', 'airport'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
     id: 'rois',
     name: 'Rois',
     bnName: 'রাইস',
@@ -4804,6 +4813,116 @@ export const BUS_DATA: BusRoute[] = [
     type: 'Local',
     hours: '6:00 AM - 10:00 PM',
     plates: ['11-8643']
+  },
+
+  // ── Routes added from dhakatc.com data ───────────────────────────────────
+  {
+    id: 'ayat',
+    name: 'Ayat Bus',
+    bnName: 'আয়াত বাস',
+    routeString: 'Chiriyakhana ⇄ Kamalapur',
+    stops: ['chiriyakhana', 'sony_cinema', 'mirpur2', 'mirpur10', 'kazipara', 'shewrapara', 'taltola', 'agargaon', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bangla_motor', 'mogbazar', 'mouchak', 'malibagh', 'rajarbag', 'kamalapur'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'kanak',
+    name: 'Kanak Bus',
+    bnName: 'কনক বাস',
+    routeString: 'Mirpur 1 ⇄ Abdullahpur',
+    stops: ['mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'khilkhet', 'jashimuddin', 'rajlakshmi', 'azampur', 'house_building', 'abdullahpur'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'mirpur_metro_svc',
+    name: 'Mirpur Metro Services',
+    bnName: 'মিরপুর মেট্রো সার্ভিস',
+    routeString: 'Azimpur ⇄ Mirpur 1',
+    stops: ['azimpur', 'nilkhet', 'newmarket', 'science_lab', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'bangla_college', 'tolarbag', 'ansar_camp', 'mirpur1'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'shikhor_1',
+    name: 'Shikhor Paribahan',
+    bnName: 'শিখর পরিবহন',
+    routeString: 'Mirpur 12 ⇄ Jatrabari',
+    stops: ['mirpur12', 'pallabi', 'purobi', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'taltola', 'agargaon', 'bijoy_sarani', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gpo', 'gulistan', 'janapath_moor', 'jatrabari'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'shikhor_2',
+    name: 'Shikhor Paribahan (Return)',
+    bnName: 'শিখর পরিবহন',
+    routeString: 'Jatrabari ⇄ Mirpur 12',
+    stops: ['jatrabari', 'sayedabad', 'gulistan', 'gpo', 'paltan', 'press_club', 'high_court', 'matsya_bhaban', 'shahbag', 'bangla_motor', 'kawran_bazar', 'farmgate', 'bijoy_sarani', 'agargaon', 'taltola', 'shewrapara', 'kazipara', 'mirpur10', 'mirpur11', 'pallabi', 'purobi', 'mirpur12'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'supravat',
+    name: 'Supravat',
+    bnName: 'সুপ্রভাত',
+    routeString: 'Victoria Park ⇄ Tongi',
+    stops: ['victoria_park', 'sadarghat', 'ray_saheb_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'house_building', 'abdullahpur', 'tongi'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:30 PM'
+  },
+  {
+    id: 'trust_transport_1',
+    name: 'Trust Transport (Mirpur-Banani)',
+    bnName: 'ট্রাস্ট ট্রান্সপোর্ট',
+    routeString: 'Mirpur 10 ⇄ Banani',
+    stops: ['mirpur10', 'mirpur13', 'mirpur14', 'kachukhet', 'sainik_club', 'banani'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'trust_transport_2',
+    name: 'Trust Transport (Mirpur-Shahbag)',
+    bnName: 'ট্রাস্ট ট্রান্সপোর্ট',
+    routeString: 'Mirpur 10 ⇄ Shahbag',
+    stops: ['mirpur10', 'mirpur13', 'mirpur14', 'kachukhet', 'workshop', 'saudi_colony', 'jahangir_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'trust_transport_3',
+    name: 'Trust Transport (DOHS-Motijheel)',
+    bnName: 'ট্রাস্ট ট্রান্সপোর্ট',
+    routeString: 'Mirpur DOHS ⇄ Motijheel',
+    stops: ['mirpur_dohs', 'kalshi', 'ecb', 'cantonment', 'workshop', 'saudi_colony', 'jahangir_gate', 'farmgate', 'kawran_bazar', 'bangla_motor', 'shahbag', 'high_court', 'press_club', 'paltan', 'dainik_bangla_moor', 'motijheel'],
+    type: 'Local',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'trust_transport_ac',
+    name: 'Trust Transport AC',
+    bnName: 'ট্রাস্ট ট্রান্সপোর্ট এসি',
+    routeString: 'Mirpur DOHS ⇄ Kawran Bazar',
+    stops: ['mirpur_dohs', 'kalshi', 'ecb', 'cantonment', 'workshop', 'saudi_colony', 'jahangir_gate', 'farmgate', 'kawran_bazar'],
+    type: 'AC',
+    hours: '7:00 AM - 9:00 PM'
+  },
+  {
+    id: 'victor_paribahan',
+    name: 'Victor Paribahan',
+    bnName: 'ভিক্টর পরিবহন',
+    routeString: 'Sadarghat ⇄ Kuril',
+    stops: ['sadarghat', 'ray_saheb_bazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
+    id: 'victor_classic_diabari',
+    name: 'Victor Classic (Sadarghat-Diabari)',
+    bnName: 'ভিক্টর ক্লাসিক',
+    routeString: 'Sadarghat ⇄ Diabari',
+    stops: ['sadarghat', 'ray_saheb_bazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'house_building', 'diabari'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:30 PM'
   }
 ];
 
