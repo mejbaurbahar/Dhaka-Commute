@@ -128,6 +128,7 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
           boxShadow: `0 32px 90px -20px rgba(0,0,0,0.6), 0 0 0 1px ${tk.primary}22`,
           overflow: 'hidden',
           display: 'flex', flexDirection: 'column',
+          position: 'relative',
           animation: isMobile ? 'kjSheetUp 0.28s cubic-bezier(0.16, 1, 0.3, 1)' : 'kjModalIn 0.22s ease-out',
           paddingBottom: isMobile ? 'env(safe-area-inset-bottom, 0px)' : 0,
           boxSizing: 'border-box',
@@ -137,17 +138,17 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
         {header}
         {/* No autoFocus — let the user see the modal first, then tap the input */}
         <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} hideHistoryBtn />
+        {historyOpen && (
+          <ChatHistoryDrawer
+            open={historyOpen}
+            onClose={() => setHistoryOpen(false)}
+            chat={chat}
+            tk={tk}
+            lang={lang}
+            contained
+          />
+        )}
       </div>
-      {/* History drawer — rendered outside the card so it overlays properly */}
-      {historyOpen && (
-        <ChatHistoryDrawer
-          open={historyOpen}
-          onClose={() => setHistoryOpen(false)}
-          chat={chat}
-          tk={tk}
-          lang={lang}
-        />
-      )}
     </div>
   );
 }

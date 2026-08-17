@@ -878,6 +878,11 @@ export const STATIONS: Record<string, Station> = {
   // ── Jhenaidah corridor stops ──────────────────────────────────────────────
   jhenaidah:      { id: 'jhenaidah',      name: 'Jhenaidah',             bnName: 'ঝিনাইদহ',                lat: 23.5430, lng: 89.1556 },
   chuadanga:      { id: 'chuadanga',      name: 'Chuadanga',             bnName: 'চুয়াডাঙ্গা',              lat: 23.6403, lng: 88.8413 },
+  // ── Missing intercity terminal stops ─────────────────────────────────────
+  bandarban:      { id: 'bandarban',      name: 'Bandarban',             bnName: 'বান্দরবান',               lat: 22.1953, lng: 92.2184 },
+  moulvibazar:    { id: 'moulvibazar',    name: 'Moulvibazar',           bnName: 'মৌলভীবাজার',              lat: 24.4825, lng: 91.7774 },
+  sreemangal:     { id: 'sreemangal',     name: 'Sreemangal',            bnName: 'শ্রীমঙ্গল',               lat: 24.3020, lng: 91.7260 },
+  paksey:         { id: 'paksey',         name: 'Paksey',                bnName: 'পাকশী',                   lat: 24.0120, lng: 89.0250 },
 };
 
 
@@ -1122,7 +1127,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Asmani',
     bnName: 'আসমানী',
     routeString: 'Mirpur 14 ⇄ Madanpur',
-    stops: ['mirpur14', 'mirpur13', 'mirpur11', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'taltola', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'mohakhali_flyover', 'wireless', 'gulshan1', 'badda_link_road', 'madhya_badda', 'merul', 'rampura', 'banasree', 'khilgaon_flyover', 'tt_para', 'mugdapara', 'kamalapur', 'maniknagar', 'tt_para', 'sayedabad', 'jatrabari', 'shonir_akhra', 'shanir_akhra', 'rayerbag', 'matuail', 'signboard', 'chittagong_road', 'kachpur_bridge', 'madanpur'],
+    stops: ['mirpur14', 'mirpur13', 'mirpur11', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'taltola', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'mohakhali_flyover', 'wireless', 'gulshan1', 'badda_link_road', 'madhya_badda', 'merul', 'rampura', 'banasree', 'khilgaon_flyover', 'tt_para', 'mugdapara', 'kamalapur', 'maniknagar', 'sayedabad', 'jatrabari', 'shonir_akhra', 'shanir_akhra', 'rayerbag', 'matuail', 'signboard', 'chittagong_road', 'kachpur_bridge', 'madanpur'],
     type: 'Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -2121,7 +2126,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Power Paribahan',
     bnName: 'পাওয়ার পরিবহন',
     routeString: 'Mirpur 14 ⇄ Konabari',
-    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'mazar_road', 'konabari', 'rupnagar', 'beribadh', 'birulia', 'ashulia', 'zirabo', 'narsinghpur', 'surabari', 'jarun', 'konabari'],
+    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'sony_cinema', 'mirpur1', 'mazar_road', 'rupnagar', 'beribadh', 'birulia', 'ashulia', 'zirabo', 'narsinghpur', 'surabari', 'jarun', 'konabari'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -2746,7 +2751,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Dhanmondi Circular Bus',
     bnName: 'ধানমন্ডি সার্কুলার বাস',
     routeString: 'Dhanmondi Circular',
-    stops: ['dhanmondi27', 'dhanmondi32', 'kalabagan', 'science_lab', 'newmarket', 'nilkhet', 'azimpur', 'bata_signal', 'city_college', 'jigatola', 'shankar', 'dhanmondi15', 'dhanmondi27'],
+    stops: ['dhanmondi27', 'dhanmondi32', 'kalabagan', 'science_lab', 'newmarket', 'nilkhet', 'azimpur', 'bata_signal', 'city_college', 'jigatola', 'shankar', 'dhanmondi15'],
     type: 'Local',
     hours: '8:00 AM - 8:00 PM'
   },

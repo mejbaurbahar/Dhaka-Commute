@@ -9,6 +9,7 @@ interface ChatHistoryDrawerProps {
   chat: ReturnType<typeof useAIChat>;
   open: boolean;
   onClose: () => void;
+  contained?: boolean;
 }
 
 /**
@@ -16,7 +17,7 @@ interface ChatHistoryDrawerProps {
  * relative timestamps. Desktop uses the always-visible sidebar on /ai; this
  * covers the modal and mobile page where there is no sidebar.
  */
-export function ChatHistoryDrawer({ tk, lang, chat, open, onClose }: ChatHistoryDrawerProps) {
+export function ChatHistoryDrawer({ tk, lang, chat, open, onClose, contained }: ChatHistoryDrawerProps) {
   const sessions: RecentSession[] = chat.allRecents;
 
   return (
@@ -24,7 +25,7 @@ export function ChatHistoryDrawer({ tk, lang, chat, open, onClose }: ChatHistory
       role="dialog" aria-modal="true" aria-label={T(lang, 'চ্যাট ইতিহাস', 'Chat history')}
       onClick={onClose}
       style={{
-        position: 'fixed', inset: 0, zIndex: 9600,
+        position: contained ? 'absolute' : 'fixed', inset: 0, zIndex: 9600,
         background: 'rgba(0,0,0,0.45)',
         backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
         display: open ? 'flex' : 'none',

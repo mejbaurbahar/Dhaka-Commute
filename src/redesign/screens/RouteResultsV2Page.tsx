@@ -33,7 +33,14 @@ function busMatchesRoute(r: typeof BUS_DATA[0], from: string, to: string): boole
   const rf = normQ(from); const rt = normQ(to);
   const matchF = !from || r.routeString.toLowerCase().includes(from.toLowerCase()) || r.stops.some(s=>normQ(s).includes(rf));
   const matchT = !to || r.routeString.toLowerCase().includes(to.toLowerCase()) || r.stops.some(s=>normQ(s).includes(rt));
-  return matchF && matchT;
+  if (!matchF || !matchT) return false;
+  // When both endpoints match, verify from comes before to in stop order
+  if (from && to) {
+    const fi = r.stops.findIndex(s => normQ(s).includes(rf) || normQ(STATIONS[s]?.name ?? '').includes(rf));
+    const ti = r.stops.findIndex(s => normQ(s).includes(rt) || normQ(STATIONS[s]?.name ?? '').includes(rt));
+    if (fi !== -1 && ti !== -1) return fi < ti;
+  }
+  return true;
 }
 
 const TYPE_COLOR: Record<string, string> = {
@@ -144,6 +151,11 @@ export function RouteResultsV2Page(props: Props) {
         filtered = filtered.filter(r => ids.has(r.id));
       } else {
         filtered = filtered.filter(r => busMatchesRoute(r, fromQ, toQ));
+      }
+      // When both endpoints given, post-filter to buses that serve both
+      if (fromQ && toQ) {
+        const postFiltered = filtered.filter(r => busMatchesRoute(r, fromQ, toQ));
+        if (postFiltered.length > 0) filtered = postFiltered;
       }
     }
 
