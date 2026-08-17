@@ -336,8 +336,8 @@ async function dtcaFetch(path, env) {
     headers: { ...DTCA_HEADERS, Authorization: `Bearer ${activeToken}` },
   });
 
-  // On 401/421 (stale or rejected token), auto-refresh and retry once
-  if (res.status === 401 || res.status === 421) {
+  // On 401/403/421 (stale or rejected token), auto-refresh and retry once
+  if (res.status === 401 || res.status === 403 || res.status === 421) {
     const newToken = await dtcaAutoLogin(env);
     if (!newToken) return res; // login also failed — return the error as-is
     _dtcaTokenOverride = newToken;
@@ -723,7 +723,7 @@ CORE KNOWLEDGE:
 - Bagerhat: ৳650–680 / ৳1,000
 - Satkhira: ৳700–820 / ৳920–1,000
 - Jashore (Jessore): ৳600–750 / ৳850–1,700 (4–5h via Padma Bridge). Ops: Shyamoli, Hanif, Eagle, Sohag. Board: Gabtoli/Kalyanpur. 🚂 Jashore Express train also available.
-- Benapole (India border / বেনাপোল): ৳500–900 / ৳800–1,100 (6–8h via Padma Bridge). Ops: S.Alam, Shyamoli, Hanif, Green Line, Eagle. Board: Gabtoli/Kalyanpur. 🚂 Train: Benapole Express (dep 6:20AM Kamalapur, ~8h, ৳310–1,285) or Rupashi Bangla Express. For Kolkata: Shyamoli NR Travels Dhaka→Kolkata via Benapole border (৳1,200–2,000, ~10–12h, departs Kalyanpur).
+- Benapole (India border / বেনাপোল): ৳500–900 / ৳800–1,100 (6–8h via Padma Bridge). Ops: Shyamoli, Hanif. Board: Gabtoli/Kalyanpur. 🚂 Train: Benapole Express 795/796 (dep 11:30PM Kamalapur overnight, arr ~7:00AM, Shuvan ৳310, Shuvan Chair ৳415, Snigdha ৳617, AC Berth ৳1,285) ALSO Ruposhi Bangla Express 827/828 (dep 10:45AM, arr ~2:25PM, via Narail, Shuvan ৳310). For Kolkata: Shyamoli NR Travels Dhaka→Kolkata via Benapole border (৳1,200–2,000, ~10–12h, departs Kalyanpur).
 - Jhenaidah: ৳700–750 / ৳900–1,400
 - Magura: ৳550 / ৳900
 - Narail: ৳550 / ৳900
@@ -760,12 +760,12 @@ CORE KNOWLEDGE:
 - Naogaon, Bogra (Bogura): via Rajshahi corridor, board Gabtoli. Bogra ৳480–580 / ৳800–1,600.
 
 **Trains from Dhaka (Kamalapur) — real schedules:**
-- Chattogram: Suborno Express 701 (dep 7:00AM, arr 11:55AM, 4h55m) / 702 (dep 4:30PM, arr 9:25PM). Fare ৳405–1,591. Also: Mahanagar Godhuli, Turna Nishitha.
+- Chattogram: Sonar Bangla Express 788, Turna Nishitha, Mahanagar Godhuli (dep 7:00AM–4:30PM, 5–6h). Fare Shuvan ৳310, AC Berth ৳1,890. (Subarna Express 701 runs Chittagong→Dhaka direction, dep CTG 7:00AM, arr Dhaka 11:55AM.)
 - Sylhet: Upaban Express 739 (dep 10:00PM, arr 5:00AM, 7h). Fare ৳375–1,678. Also: Parabat Express.
 - Khulna: Sundarban Express 726 (dep 8:00AM, arr 3:40PM, 7h40m). Fare ৳310–1,285. Also: Chitra Express.
 - Rajshahi: Padma Express 760 (dep 4:00PM, arr 9:15PM, 5h15m). Fare ৳350–1,400. Also: Silk City Express, Dhaka Mail.
-- Benapole / Jashore: Benapole Express (dep 6:20AM Kamalapur, arr ~2:00PM Benapole, ~8h). Fare Shuvan ৳310, AC Chair ৳640, AC Berth ৳1,285. Also: Rupashi Bangla Express. Board at Kamalapur.
-- Cox's Bazar: Cox's Bazar Express 813 (dep 6:30AM Kamalapur, ~9h direct). Fare Shuvan Chair ৳505, AC Berth ৳1,680. Also: Paryatak Express. Bangladesh's ONLY direct train to Cox's Bazar.
+- Benapole / Jashore: Benapole Express 795/796 (dep 11:30PM Kamalapur overnight, arr ~7:00AM Benapole, ~8h via Faridpur-Kushtia-Jessore). Fare Shuvan ৳310, Shuvan Chair ৳415, Snigdha ৳617, AC Berth ৳1,285. ALSO Ruposhi Bangla Express 827/828 (dep 10:45AM, arr ~2:25PM, via Narail, Shuvan ৳310). Book: eticket.railway.gov.bd
+- Cox's Bazar: Cox's Bazar Express 813/814 (dep 6:30AM Kamalapur, ~8h20m direct). Fare Shuvan Chair ৳535, AC Berth ৳1,591. Also: Paryatak Express 809. Bangladesh's ONLY direct train to Cox's Bazar.
 - Mymensingh: Brahmaputra Express, Jamuna Express, Haor Express (dep 7:00–8:00AM, ~2–2.5h). Fare ৳75–305. Board: Kamalapur or Airport Station.
 - Rangpur / Dinajpur: Rangpur Express, Lalmoni Express (dep 8:30PM, ~8h). Fare ৳300–1,200.
 - Barishal (Faridpur): Faridpur–Dhaka service, ~4h. Fare ৳150–600.
@@ -779,13 +779,13 @@ Online booking: eticket.railway.gov.bd — opens 10 days before, midnight 12:00A
 - Sylhet: 45min, ৳3,299–4,199
 - Saidpur: 45min, ৳3,199–3,999
 - Barishal: 40min, ৳3,000–5,000 (Biman, 2-3 flights/day)
-- Jashore (JSR): 35–40min, ৳2,500–5,500 (US-Bangla, Novoair; 2-3 flights/day). NOTE: Jashore airport is the nearest airport for Khulna (60km) AND Benapole border (14km). From JSR to Benapole: CNG ~30 min, ৳300–400.
+- Jashore (JSR): 35–40min, ৳2,500–5,500 (US-Bangla, Novoair; 2-3 flights/day). NOTE: Jashore airport is the nearest airport for Khulna (60km) AND Benapole border (~18–20km by road). From JSR to Benapole: CNG ~35–45 min, ৳400–500.
 - Rajshahi: 40min, ৳3,000–6,000 (US-Bangla, Biman)
 - Saidpur (for Rangpur/Dinajpur): 45min, ৳3,199–3,999
 ⚠️ NO airport in Khulna city. NO airport in Benapole. Nearest = Jashore Airport (JSR).
 
 **Launches from Sadarghat (real schedules):**
-- Barishal: MV Sundarban-1..17, MV Parabat, MV Kirtonkhola, MV Eagle, MV BIWTC, MV Balaka — depart 6:00/6:30/7:00/7:30/8:00 PM, arrive 5:00–7:00 AM, ~11h overnight. Deck ৳280–350, Cabin ৳900–1,500, VIP ৳2,000–6,000
+- Barishal: MV Sundarban (various, e.g. MV Sundarban 8, 10, 12), MV Parabat, MV Kirtonkhola, MV Eagle, MV BIWTC, MV Balaka — depart 6:00/6:30/7:00/7:30/8:00 PM, arrive 5:00–7:00 AM, ~11h overnight. Deck ৳280–350, Cabin ৳900–1,500, VIP ৳2,000–6,000
 - Patuakhali: MV Sundarban-6, MV Karnaphuli-8 — depart 6:00 & 7:30 PM, ~11h. Deck ৳280–300
 - Bhola: MV Karnaphuli-5, MV Farhan-1, MV Bhola Express — depart 7:00/7:30/8:00 PM, ~10h. Deck ৳200–280
 - Chandpur: MV Ostrich, MV Rocket (paddle steamer), MV Meghna-1 — DAY route only (never evening): depart 8:00 AM and 2:00 PM, 3–4h. Deck ৳120–200
