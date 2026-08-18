@@ -76,16 +76,13 @@ async function loadLocations(): Promise<CompactLocation[]> {
     }
 
     if (!data) {
-      console.warn('[LocationSearch] Location dataset unavailable; using built-in static locations only.');
       _loadPromise = null;
       return [] as CompactLocation[];
     }
 
     _locations = data;
-    console.log(`[LocationSearch] Loaded ${data.length} locations`);
     return data;
-  })().catch(err => {
-    console.warn('[LocationSearch] Failed to load bd-locations.json:', err?.message || err);
+  })().catch(() => {
     _loadPromise = null;
     return [] as CompactLocation[];
   });

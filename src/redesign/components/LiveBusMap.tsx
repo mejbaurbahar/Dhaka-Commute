@@ -109,7 +109,7 @@ export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, bu
           })
             .bindTooltip(
               isTransfer
-                ? `<b>🔀 ${lang === 'bn' ? stop.bnName : stop.name}</b><br><small>Transit point</small>`
+                ? `<b>🔀 ${lang === 'bn' ? stop.bnName : stop.name}</b><br><small>${lang === 'bn' ? 'ট্রানজিট পয়েন্ট' : 'Transit point'}</small>`
                 : `<b>${lang === 'bn' ? stop.bnName : stop.name}</b>`,
               { permanent: false, direction: 'top', offset: [0, -8] }
             )
