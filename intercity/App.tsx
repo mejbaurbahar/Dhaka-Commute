@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLanguage } from './contexts/LanguageContext';
-import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map, X, Bot, FileText, Settings, Shield, Download, Calendar, HelpCircle, LogIn, LogOut, User, Phone, Bus, Plane, ChevronRight, AlertTriangle, Calculator, Ticket, BookOpen, UserPlus, MapPin, Star, Rocket } from 'lucide-react';
+import { Search, ArrowRightLeft, AlertCircle, PlayCircle, WifiOff, Activity, Home, Train, Sparkles, Clock, Info, Sun, Moon, Menu, Navigation, Map, X, Bot, FileText, Settings, Shield, Download, Calendar, HelpCircle, Phone, Bus, Plane, ChevronRight, AlertTriangle, Calculator, Ticket, BookOpen, MapPin, Star, Rocket } from 'lucide-react';
 import { AnimatedLogo } from './components/AnimatedLogo';
 import AdUnit from './components/AdUnit';
 import DhakaAlive from './components/DhakaAlive';
@@ -13,22 +13,8 @@ import { POPULAR_ROUTES, DEMO_RESPONSE, DEMO_RESPONSE_BN } from './constants';
 import { getOfflineIntercityData } from './offlineService';
 import { RouteResponse, ErrorResponse } from './types';
 
-// Read auth session from localStorage (written by main app's AuthContext)
-interface StoredUser { id: string; email: string; username: string; displayName: string; avatarUrl?: string; }
-function getStoredUser(): StoredUser | null {
-  try {
-    const raw = localStorage.getItem('koyjabo_auth_session');
-    if (!raw) return null;
-    const session = JSON.parse(raw) as { user: StoredUser; expiresAt: number };
-    if (session.expiresAt && Date.now() > session.expiresAt) return null;
-    return session.user ?? null;
-  } catch {
-    return null;
-  }
-}
-
 const PROXY = (import.meta.env.VITE_API_PROXY as string | undefined)
-  || 'https://koyjabo-auth-proxy.mejbaur-bahar.workers.dev';
+  || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 interface UserLocation {
   lat: number;
@@ -44,9 +30,6 @@ function App() {
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<RouteResponse | null>(null);
-
-  // Auth state from localStorage
-  const [authUser, setAuthUser] = useState<StoredUser | null>(() => getStoredUser());
 
   const [error, setError] = useState<string | null>(null);
 
@@ -128,13 +111,6 @@ function App() {
     };
   }, []);
 
-  // Sync auth state when localStorage changes (e.g. user logs in/out in main app tab)
-  useEffect(() => {
-    const handleStorage = () => setAuthUser(getStoredUser());
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
-
   // Record visit so global stats stay accurate when users land on /intercity/ directly
   useEffect(() => {
     const SESSION_KEY = 'dhaka_commute_session_init';
@@ -153,8 +129,6 @@ function App() {
       body: JSON.stringify({
         requestId: crypto.randomUUID(),
         action: 'record-visit',
-        email: '',
-        userId: authUser?.id ?? '',
         data: JSON.stringify({ visitorId }),
       }),
     }).catch(() => {});
@@ -186,12 +160,6 @@ function App() {
         window.history.pushState({}, '', buildIntercityUrl(fromParam, toParam));
       }
 
-      // Only auto-search if user is signed in
-      if (!getStoredUser()) {
-        setResult(null);
-        return;
-      }
-
       setLoading(true);
       setTimeout(async () => {
         try {
@@ -211,7 +179,7 @@ function App() {
   // Handle URL parameters for redirection / deep links
   useEffect(() => {
     applyRouteFromUrl(false);
-  }, [applyRouteFromUrl, authUser]);
+  }, [applyRouteFromUrl]);
 
   // Browser back/forward should restore URL-driven state
   useEffect(() => {
@@ -258,9 +226,7 @@ function App() {
   // (mirrors trackIntercitySearch in main app's analyticsService.ts)
   const trackSearchInHistory = (fromVal: string, toVal: string, transportType: string) => {
     try {
-      const session = localStorage.getItem('koyjabo_auth_session');
-      const userId = session ? (JSON.parse(session) as { user: { id: string } }).user?.id : null;
-      const historyKey = userId ? `koyjabo_history_${userId}` : 'dhaka_commute_user_history';
+      const historyKey = 'dhaka_commute_user_history';
       const today = new Date().toISOString().split('T')[0];
       const raw = localStorage.getItem(historyKey);
       const history = raw ? JSON.parse(raw) : {
@@ -278,32 +244,6 @@ function App() {
       if (!history.todayIntercity.includes(routeKey)) history.todayIntercity.push(routeKey);
       if (history.intercitySearches.length > 100) history.intercitySearches = history.intercitySearches.slice(-100);
       localStorage.setItem(historyKey, JSON.stringify(history));
-
-      // Push history to GitHub repo (fire-and-forget)
-      if (userId) {
-        const trimmed = {
-          busSearches: (history.busSearches || []).slice(-50),
-          routeSearches: (history.routeSearches || []).slice(-50),
-          intercitySearches: history.intercitySearches.slice(-50),
-          trainSearches: (history.trainSearches || []).slice(-50),
-          mostUsedBuses: history.mostUsedBuses || {},
-          mostUsedRoutes: history.mostUsedRoutes || {},
-          mostUsedIntercity: history.mostUsedIntercity,
-          mostUsedTrains: history.mostUsedTrains || {},
-        };
-        fetch(`${PROXY}/gh`, {
-          method: 'POST',
-          credentials: 'omit',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            requestId: crypto.randomUUID(),
-            action: 'save-history',
-            email: '',
-            userId,
-            data: JSON.stringify(trimmed),
-          }),
-        }).catch(() => {});
-      }
     } catch {
       // best-effort
     }
@@ -311,11 +251,6 @@ function App() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!authUser) {
-      setError(t('intercity.signInPrefixError'));
-      return;
-    }
 
     if (!from || !to) {
       setError(t('intercity.selectStartEnd'));
@@ -447,27 +382,6 @@ function App() {
             <span>{t('busDetails.liveView')}</span>
           </button>
           <ThemeToggle isDarkMode={isDarkMode} toggleTheme={() => setIsDarkMode(!isDarkMode)} />
-          {/* Auth buttons - desktop header */}
-          {authUser ? (
-            <button
-              onClick={() => { window.location.href = '/#profile'; }}
-              className="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shrink-0 border-2 border-blue-200 dark:border-blue-700 hover:ring-2 hover:ring-blue-400 transition"
-              title={authUser.displayName}
-              aria-label="Profile"
-            >
-              {authUser.avatarUrl
-                ? <img src={authUser.avatarUrl} alt={authUser.displayName} className="w-full h-full object-cover" />
-                : authUser.displayName.charAt(0).toUpperCase()
-              }</button>
-          ) : (
-            <button
-              onClick={() => { window.location.href = '/#login'; }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-kj-line hover:bg-kj-chip-bg dark:hover:bg-kj-chip-bg text-kj-text-dim font-semibold text-sm transition-colors"
-            >
-              <LogIn size={15} />
-              {t('nav.login')}
-            </button>
-          )}
           <button
             onClick={() => setIsMenuOpen(true)}
             className="p-2 hover:bg-kj-chip-bg dark:hover:bg-kj-chip-bg rounded-full transition-colors text-kj-text-dim">
@@ -495,27 +409,6 @@ function App() {
             className="p-2 hover:bg-blue-50 bg-white border-2 border-blue-100 rounded-full text-blue-600 transition-colors shadow-lg shadow-blue-100 active:scale-95 animate-pulse flex items-center justify-center" aria-label="Live Location">
             <Navigation className="w-4 h-4" />
           </button>
-          {/* Auth button - mobile header */}
-          {authUser ? (
-            <button
-              onClick={() => { window.location.href = '/#profile'; }}
-              className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shrink-0 border-2 border-blue-200 dark:border-blue-700"
-              aria-label="Profile"
-            >
-              {authUser.avatarUrl
-                ? <img src={authUser.avatarUrl} alt={authUser.displayName} className="w-full h-full object-cover" />
-                : authUser.displayName.charAt(0).toUpperCase()
-              }
-            </button>
-          ) : (
-            <button
-              onClick={() => { window.location.href = '/#login'; }}
-              className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400 transition-colors flex items-center justify-center"
-              aria-label="Sign in"
-            >
-              <LogIn className="w-4 h-4" />
-            </button>
-          )}
           <button
             onClick={() => setIsMenuOpen(true)}
             className="p-2 hover:bg-kj-chip-bg dark:hover:bg-kj-chip-bg rounded-full text-kj-text-dim transition-colors flex items-center justify-center" aria-label="Open menu">
@@ -583,15 +476,6 @@ function App() {
                   </div>
                   <div className="px-4 py-3 space-y-3">
                     <p className="text-kj-text-dim text-sm">{error}</p>
-                    {!authUser && (
-                      <button
-                        onClick={() => { window.location.href = '/#login'; }}
-                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#006a4e] to-emerald-600 text-white font-semibold rounded-xl text-sm transition-all hover:shadow-md hover:-translate-y-0.5 active:scale-95"
-                      >
-                        <LogIn size={14} />
-                        {language === 'bn' ? 'সাইন ইন করুন' : 'Sign In'}
-                      </button>
-                    )}
                   </div>
                 </div>
               </div>
@@ -620,8 +504,8 @@ function App() {
               </div>
             )}
 
-            {/* Demo option — shown when not logged in and no result */}
-            {!authUser && !loading && !result && (
+            {/* Demo option — shown when no result yet */}
+            {!loading && !result && (
               <div className="pt-2">
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-5 border border-blue-100 dark:border-blue-800/50">
                   <div className="flex items-start gap-4">
@@ -640,8 +524,8 @@ function App() {
 
             <AdUnit className="my-2" />
 
-            {/* Saved routes — shown when logged in and no result */}
-            {authUser && !result && !loading && savedRoutes.length > 0 && (
+            {/* Saved routes — shown when no result */}
+            {!result && !loading && savedRoutes.length > 0 && (
               <div className="pt-2 space-y-1.5">
                 <h3 className="text-xs font-bold text-yellow-600 dark:text-yellow-400 uppercase tracking-wider px-1 pt-1 flex items-center gap-1">
                   <Star className="w-3 h-3 fill-current" />
@@ -665,8 +549,8 @@ function App() {
               </div>
             )}
 
-            {/* Transport mode list — shown when logged in and no result */}
-            {authUser && !result && !loading && (
+            {/* Transport mode list — shown when no result */}
+            {!result && !loading && (
               <div className="pt-2 space-y-2">
                 <h3 className="text-xs font-bold text-kj-text-dim uppercase tracking-wider px-1 pt-1">
                   {t('intercity.travelModes')}
@@ -788,15 +672,6 @@ function App() {
                   </div>
                   <h3 className="font-extrabold text-xl text-kj-text mb-2">{language === 'bn' ? 'ত্রুটি' : 'Error'}</h3>
                   <p className="text-kj-text-dim text-sm mb-5 leading-relaxed">{error}</p>
-                  {!authUser && (
-                    <button
-                      onClick={() => { window.location.href = '/#login'; }}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#006a4e] to-emerald-600 hover:from-[#005a3e] hover:to-emerald-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all"
-                    >
-                      <LogIn size={18} />
-                      {language === 'bn' ? 'সাইন ইন করুন' : 'Sign In'}
-                    </button>
-                  )}
                 </div>
               </div>
             )}
@@ -821,7 +696,7 @@ function App() {
             {/* Empty state: transport mode detail or welcome */}
             {!loading && !result && !error && (
               <div className="flex flex-col items-center justify-center h-full min-h-[400px] p-8 text-center">
-                {selectedMode === 'bus' && authUser && (
+                {selectedMode === 'bus' && (
                   <div className="bg-kj-panel rounded-3xl p-8 shadow-xl border border-kj-line max-w-lg w-full text-left">
                     <div className="text-4xl mb-4 text-center">🚌</div>
                     <h3 className="text-xl font-bold text-kj-text mb-2 text-center">{t('intercity.byBus')}</h3>
@@ -833,7 +708,7 @@ function App() {
                     </div>
                   </div>
                 )}
-                {selectedMode === 'train' && authUser && (
+                {selectedMode === 'train' && (
                   <div className="bg-kj-panel rounded-3xl p-8 shadow-xl border border-kj-line max-w-lg w-full text-left">
                     <div className="text-4xl mb-4 text-center">🚂</div>
                     <h3 className="text-xl font-bold text-kj-text mb-2 text-center">{t('intercity.byTrain')}</h3>
@@ -845,7 +720,7 @@ function App() {
                     </div>
                   </div>
                 )}
-                {selectedMode === 'plane' && authUser && (
+                {selectedMode === 'plane' && (
                   <div className="bg-kj-panel rounded-3xl p-8 shadow-xl border border-kj-line max-w-lg w-full text-left">
                     <div className="text-4xl mb-4 text-center">✈️</div>
                     <h3 className="text-xl font-bold text-kj-text mb-2 text-center">{t('intercity.byAir')}</h3>
@@ -857,7 +732,7 @@ function App() {
                     </div>
                   </div>
                 )}
-                {selectedMode === 'launch' && authUser && (
+                {selectedMode === 'launch' && (
                   <div className="bg-kj-panel rounded-3xl p-8 shadow-xl border border-kj-line max-w-lg w-full text-left">
                     <div className="text-4xl mb-4 text-center">🛥️</div>
                     <h3 className="text-xl font-bold text-kj-text mb-2 text-center">{t('intercity.launchTitle')}</h3>
@@ -869,7 +744,7 @@ function App() {
                     </div>
                   </div>
                 )}
-                {(!selectedMode || !authUser) && null}
+                {!selectedMode && null}
               </div>
             )}
           </div>
@@ -889,75 +764,23 @@ function App() {
             </div>
 
             <div className="space-y-2 flex-1 overflow-y-auto hidden-scrollbar">
-              {/* Auth Section */}
-              {authUser ? (
-                <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 mb-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                      {authUser.avatarUrl
-                        ? <img src={authUser.avatarUrl} alt={authUser.displayName} className="w-full h-full object-cover" />
-                        : authUser.displayName.charAt(0).toUpperCase()
-                      }
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-kj-text truncate">{authUser.displayName}</p>
-                      {authUser.username && <p className="text-xs text-kj-text-dim truncate">@{authUser.username}</p>}
-                    </div>
-                  </div>
-                  <div className="flex gap-2 mt-3">
-                    <button
-                      onClick={() => { window.location.href = '/#profile'; setIsMenuOpen(false); }}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors"
-                    >
-                      <User className="w-3.5 h-3.5" /> {t('nav.profile') || 'Profile'}
-                    </button>
-                    <button
-                      onClick={() => {
-                        localStorage.removeItem('koyjabo_auth_session');
-                        setAuthUser(null);
-                        setResult(null);
-                        setIsMenuOpen(false);
-                      }}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-kj-chip-bg hover:bg-kj-chip-bg text-kj-text-dim text-xs font-semibold transition-colors"
-                    >
-                      <LogOut className="w-3.5 h-3.5" /> {t('common.logout') || 'Logout'}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex gap-2 mb-2">
-                  <button
-                    onClick={() => { window.location.href = '/#login'; setIsMenuOpen(false); }}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors"
-                  >
-                    <LogIn className="w-4 h-4" /> {t('nav.login')}
-                  </button>
-                  <button
-                    onClick={() => { window.location.href = '/#signup'; setIsMenuOpen(false); }}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-kj-primary hover:bg-kj-primary-deep text-white text-sm font-semibold transition-colors"
-                  >
-                    <UserPlus className="w-4 h-4" /> {t('nav.signup') || 'Sign Up'}
-                  </button>
-                </div>
-              )}
+              {/* No account needed */}
+              <div className="p-3 rounded-xl bg-kj-chip-bg border border-kj-line mb-2">
+                <p className="text-xs text-kj-text-dim leading-relaxed">{language === 'bn' ? 'কোনো অ্যাকাউন্ট লাগে না — সব ফিচার বেনামে কাজ করে।' : 'No account needed — everything works anonymously.'}</p>
+              </div>
 
-              {/* History & Settings — only for logged-in users */}
-              {authUser && (
-                <>
-                  <button
-                    onClick={() => { window.location.href = '/#history'; setIsMenuOpen(false); }}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-kj-chip-bg dark:hover:bg-kj-chip-bg text-kj-text-dim font-medium transition-colors"
-                  >
-                    <Clock className="w-5 h-5 text-kj-primary" /> {t('nav.history') || 'History'}
-                  </button>
-                  <button
-                    onClick={() => { window.location.href = '/#settings'; setIsMenuOpen(false); }}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-kj-chip-bg dark:hover:bg-kj-chip-bg text-kj-text-dim font-medium transition-colors"
-                  >
-                    <Settings className="w-5 h-5 text-kj-text-dim" /> {t('nav.settings') || 'Settings'}
-                  </button>
-                </>
-              )}
+              <button
+                onClick={() => { window.location.href = '/#history'; setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-kj-chip-bg dark:hover:bg-kj-chip-bg text-kj-text-dim font-medium transition-colors"
+              >
+                <Clock className="w-5 h-5 text-kj-primary" /> {t('nav.history') || 'History'}
+              </button>
+              <button
+                onClick={() => { window.location.href = '/#settings'; setIsMenuOpen(false); }}
+                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-kj-chip-bg dark:hover:bg-kj-chip-bg text-kj-text-dim font-medium transition-colors"
+              >
+                <Settings className="w-5 h-5 text-kj-text-dim" /> {t('nav.settings') || 'Settings'}
+              </button>
 
               <button
                 onClick={() => { window.location.href = '/#blog'; setIsMenuOpen(false); }}

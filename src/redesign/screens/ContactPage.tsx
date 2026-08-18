@@ -94,8 +94,8 @@ export function ContactPage(props: Props) {
               <input id="kj-contact-name" value={name} onChange={e=>setName(e.target.value)} placeholder={T(lang,'আপনার নাম','Your name')} style={inputStyle()}/>
             </div>
             <div>
-              <label style={{ fontFamily:SANS,fontSize:11,fontWeight:700,color:tk.textFaint,textTransform:'uppercase',letterSpacing:1,display:'block',marginBottom:6 }}>Email</label>
-              <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="your@email.com" style={{ ...inputStyle(), fontFamily:SANS }}/>
+              <label style={{ fontFamily:SANS,fontSize:11,fontWeight:700,color:tk.textFaint,textTransform:'uppercase',letterSpacing:1,display:'block',marginBottom:6 }}>{T(lang,'ইমেইল','Email')}</label>
+              <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder={T(lang,'আপনার ইমেইল','your@email.com')} style={{ ...inputStyle(), fontFamily:SANS }}/>
             </div>
             <div>
               <label style={{ fontFamily:SANS,fontSize:11,fontWeight:700,color:tk.textFaint,textTransform:'uppercase',letterSpacing:1,display:'block',marginBottom:6 }}>{T(lang,'বিষয়','Subject')}</label>

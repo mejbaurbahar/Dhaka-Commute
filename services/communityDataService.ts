@@ -46,23 +46,17 @@ type PendingCommunityWrite = {
   createdAt: number;
 };
 
+/** No accounts — always null (removed auth remnant kept for call-site compatibility). */
 export function getAuthUser(): { id: string; displayName: string; username: string; avatarUrl?: string; email?: string } | null {
-  try {
-    const s = localStorage.getItem('koyjabo_auth_session');
-    if (!s) return null;
-    const u = JSON.parse(s)?.user;
-    return u?.id ? { id: u.id, displayName: u.displayName ?? '', username: u.username ?? '', avatarUrl: u.avatarUrl ?? undefined, email: u.email ?? undefined } : null;
-  } catch { return null; }
+  return null;
 }
 
 /**
- * getCommunityUser — identity for community features. Returns the signed-in
- * account when present, otherwise a stable anonymous per-device identity
- * (same device id as live bus sharing). No account = no gate.
+ * getCommunityUser — identity for community features. KoyJabo has no
+ * accounts: a stable anonymous per-device identity (same device id as live
+ * bus sharing) is always used.
  */
 export function getCommunityUser(): { id: string; displayName: string; username: string; avatarUrl?: string; email?: string } | null {
-  const auth = getAuthUser();
-  if (auth) return auth;
   try {
     const deviceId = getDeviceId();
     return { id: deviceId, displayName: 'Passenger', username: 'anonymous', email: undefined };
@@ -276,14 +270,13 @@ export async function deleteBusRating(busId: string): Promise<boolean> {
 
 /** Toggle "Helpful" upvote on a review. Returns updated rating (or null). */
 export async function toggleRatingUpvote(busId: string, ratingTimestamp: number): Promise<BusRating | null> {
-  const user = getAuthUser();
-  if (!user) return null;
+  const voterId = getDeviceId();
   const existing = await getBusRatings(busId);
   if (!existing) return null;
   const target = existing.ratings.find(r => r.timestamp === ratingTimestamp);
   if (!target) return null;
   const upvotes = target.upvotes ?? [];
-  const next = upvotes.includes(user.id) ? upvotes.filter(id => id !== user.id) : [...upvotes, user.id];
+  const next = upvotes.includes(voterId) ? upvotes.filter(id => id !== voterId) : [...upvotes, voterId];
   const updated = { ...target, upvotes: next };
   const ratings = existing.ratings.map(r => (r.timestamp === ratingTimestamp ? updated : r));
   const ok = await repoPutOrQueue(

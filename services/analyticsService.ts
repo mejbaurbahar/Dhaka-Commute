@@ -118,16 +118,8 @@ const ANON_HISTORY_KEY = 'dhaka_commute_user_history';
 const GLOBAL_STATS_KEY = 'dhaka_commute_global_stats';
 const VISITOR_ID_KEY   = 'dhaka_commute_visitor_id';
 
-// Current logged-in user ID — set by AuthContext on login/logout
-let _currentUserId: string | null = null;
-
-/** Call this when a user logs in or out so history uses their own storage key. */
-export const setHistoryUser = (userId: string | null): void => {
-    _currentUserId = userId;
-};
-
-const getHistoryKey = (): string =>
-    _currentUserId ? `koyjabo_history_${_currentUserId}` : ANON_HISTORY_KEY;
+// No accounts — history always uses the anonymous per-device key.
+const getHistoryKey = (): string => ANON_HISTORY_KEY;
 
 /** Load externally-fetched history into the current user's localStorage slot.
  *  Merges remote arrays with local ones so locally-written entries (e.g. from
@@ -285,10 +277,7 @@ export const incrementVisitCount = async (userId?: string): Promise<void> => {
         body: JSON.stringify({
             requestId: crypto.randomUUID(),
             action: 'record-visit',
-            email: '',
-            passwordHash: '',
-            userId: userId || '',
-            data: JSON.stringify({ visitorId, userId: userId || 'anonymous' }),
+            data: JSON.stringify({ visitorId }),
         }),
     }).catch(() => {}); // Non-critical, ignore errors
 };
@@ -356,54 +345,9 @@ export const getUserHistory = (): UserHistory => {
     }
 };
 
-// ── Sync history to GitHub ──────────────────────────────────────────────────
-let _syncDebounce: ReturnType<typeof setTimeout> | null = null;
-
-const syncHistoryToGitHub = (history: UserHistory): void => {
-    if (!_currentUserId || !PROXY) return;
-
-    if (_syncDebounce) clearTimeout(_syncDebounce);
-    _syncDebounce = setTimeout(() => {
-        const userId = _currentUserId;
-        if (!userId) return;
-        const trimmed = {
-            busSearches:             (history.busSearches || []).slice(-50),
-            routeSearches:           (history.routeSearches || []).slice(-50),
-            intercitySearches:       (history.intercitySearches || []).slice(-50),
-            trainSearches:           (history.trainSearches || []).slice(-50),
-            metroSearches:           (history.metroSearches || []).slice(-50),
-            flightSearches:          (history.flightSearches || []).slice(-50),
-            launchSearches:          (history.launchSearches || []).slice(-50),
-            truckSearches:           (history.truckSearches || []).slice(-50),
-            fareCalcSearches:        (history.fareCalcSearches || []).slice(-50),
-            mostUsedBuses:           history.mostUsedBuses || {},
-            mostUsedRoutes:          history.mostUsedRoutes || {},
-            mostUsedIntercity:       history.mostUsedIntercity || {},
-            mostUsedTrains:          history.mostUsedTrains || {},
-            communityFeatureUsage:   history.communityFeatureUsage || {},
-            communityFeatureHistory: (history.communityFeatureHistory || []).slice(-100),
-        };
-
-        fetch(`${PROXY}/gh`, {
-            method: 'POST',
-            credentials: 'omit',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                requestId: crypto.randomUUID(),
-                action: 'save-history',
-                userId,
-                data: JSON.stringify(trimmed)
-            }),
-        }).catch(() => {});
-    }, 5000);
-};
-
 const saveUserHistory = (history: UserHistory): void => {
     try {
         localStorage.setItem(getHistoryKey(), JSON.stringify(history));
-        if (_currentUserId) {
-            syncHistoryToGitHub(history);
-        }
     } catch {
         // ignore
     }
@@ -483,7 +427,6 @@ export const trackFeatureUsage = (feature: string): void => {
         feature,
         timestamp: Date.now(),
         date: getTodayDate(),
-        userId: _currentUserId || undefined,
     });
     if (history.communityFeatureHistory.length > 200) {
         history.communityFeatureHistory = history.communityFeatureHistory.slice(-200);
