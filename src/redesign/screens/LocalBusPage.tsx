@@ -18,6 +18,7 @@ import { trackBusSearch, trackRouteSearch, getUserHistory } from '../../../servi
 import { enhancedBusSearch } from '../../../services/searchService';
 import { earnCoins } from '../utils/koyCoinService';
 import { DTCABusListSection } from '../components/DTCABusListSection';
+import { ChakaStaticRoutes } from '../components/ChakaStaticRoutes';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -122,10 +123,12 @@ export function LocalBusPage(props: Props) {
       let out = [...list];
       if (quickAC) out = out.filter(r => r.type === 'AC');
       if (quickFastest) out = out.sort((a, b) => a.stops.length - b.stops.length);
+      // Active buses always before inactive
+      out.sort((a, b) => (a.active === false ? 1 : 0) - (b.active === false ? 1 : 0));
       return out;
     };
 
-    if (!hasSearched) return applyQuick(BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10));
+    if (!hasSearched) return applyQuick(BUS_DATA.filter(r => r.name.length > 3).slice(0, 12));
     const q = searchQuery.trim();
     const f = fromInput.trim();
     const t = toInput.trim();
@@ -139,7 +142,7 @@ export function LocalBusPage(props: Props) {
       }
       const result = enhancedBusSearch(q);
       if (result.buses.length > 0) {
-        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 20));
+        return applyQuick(result.buses.slice(0, 25));
       }
       const lowered = q.toLowerCase();
       return applyQuick(BUS_DATA.filter(r =>
@@ -148,7 +151,7 @@ export function LocalBusPage(props: Props) {
         r.routeString.toLowerCase().includes(lowered) ||
         r.type.toLowerCase().includes(lowered) ||
         r.stops.some(s => s.toLowerCase().includes(norm(lowered)))
-      ).slice(0, 20));
+      ).slice(0, 25));
     }
 
     if (f && t) {
@@ -161,26 +164,37 @@ export function LocalBusPage(props: Props) {
     if (f) {
       const result = enhancedBusSearch(f);
       if (result.buses.length > 0) {
-        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 15));
+        return applyQuick(result.buses.slice(0, 20));
       }
-      return applyQuick(BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 15));
+      return applyQuick(BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 20));
     }
     if (t) {
       const result = enhancedBusSearch(t);
       if (result.buses.length > 0) {
-        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 15));
+        return applyQuick(result.buses.slice(0, 20));
       }
-      return applyQuick(BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 15));
+      return applyQuick(BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 20));
     }
-    return applyQuick(BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10));
+    return applyQuick(BUS_DATA.filter(r => r.name.length > 3).slice(0, 12));
   }, [searchQuery, fromInput, toInput, hasSearched, searchAttr, quickFastest, quickAC]);
 
   const DTCA_TERMS = ['dhakar chaka','dhaka chaka','chaka','ঢাকার চাকা','ঢাকা চাকা','gulshan chaka','গুলশান চাকা'];
-  const showInlineDtca = hasSearched && DTCA_TERMS.some(t =>
-    searchQuery.toLowerCase().includes(t) ||
-    fromInput.toLowerCase().includes(t) ||
-    toInput.toLowerCase().includes(t)
+  const DTCA_STOPPAGES = ['agora','banani','dcc','gulshan 1','gulshan 2','gulshan1','gulshan2','nabisco mor','notun bazar','natun bazar','police plaza','shanta tower'];
+  const CHAKA_BUS_IDS = new Set(['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka']);
+  const opTerm = (q: string) => DTCA_TERMS.some(t => q.toLowerCase().includes(t));
+  const localStop = (q: string) => DTCA_STOPPAGES.some(s => q.toLowerCase().includes(s));
+  // Live-bus section only for genuinely Dhaka-local context (operator term, or
+  // BOTH endpoints DTCA stops) — Hemayetpur → Gulshan 1 must not show
+  // Gulshan-area live buses.
+  const showInlineDtca = hasSearched && (
+    opTerm(searchQuery) || opTerm(fromInput) || opTerm(toInput) ||
+    (!!fromInput && !!toInput && localStop(fromInput) && localStop(toInput))
   );
+  const chakaSearch = hasSearched && (opTerm(searchQuery) || opTerm(fromInput) || opTerm(toInput));
+
+  // Operator-term search ("dhakar chaka") — static chaka routes move to the
+  // dedicated fallback list under the live section; don't list them here.
+  const visibleRoutes = chakaSearch ? filteredRoutes.filter(r => !CHAKA_BUS_IDS.has(r.id)) : filteredRoutes;
 
   const [mode, setMode] = useState<'buses'|'transit'>('buses');
 
@@ -306,22 +320,29 @@ export function LocalBusPage(props: Props) {
                         lang={lang}
                         onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
                       />
+                      {chakaSearch && (
+                        <ChakaStaticRoutes
+                          tk={tk}
+                          lang={lang}
+                          onBusClick={(busId) => onNav('bus-detail', { busId, from: fromInput, to: toInput })}
+                        />
+                      )}
                     </div>
                   )}
                   <SectionHeader tk={tk} lang={lang}
                     title={hasSearched
-                      ? T(lang, `${N(filteredRoutes.length,lang)}টি রুট পাওয়া গেছে`, `${N(filteredRoutes.length,lang)} routes found`)
+                      ? T(lang, `${N(visibleRoutes.length,lang)}টি রুট পাওয়া গেছে`, `${N(visibleRoutes.length,lang)} routes found`)
                       : T(lang,'জনপ্রিয় বাস রুট','Popular bus routes')}
                     action={T(lang,'সব দেখুন','See all')}/>
                   <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                    {filteredRoutes.length === 0 && (
+                    {visibleRoutes.length === 0 && (
                       <div style={{ background:tk.panel, border:`1px dashed ${tk.line}`, borderRadius:16, padding:'28px 16px', textAlign:'center' }}>
                         <div style={{ fontSize:28, marginBottom:8 }}>🚌</div>
                         <div style={{ fontFamily:BEN, fontSize:14, fontWeight:600, color:tk.text, marginBottom:4 }}>{T(lang,'কোনো রুট পাওয়া যায়নি','No routes found')}</div>
                         <div style={{ fontFamily:SANS, fontSize:12, color:tk.textFaint }}>{T(lang,'অন্য নাম বা রুট দিয়ে খুঁজে দেখুন','Try a different name or route')}</div>
                       </div>
                     )}
-                    {filteredRoutes.map((r,i)=>{
+                    {visibleRoutes.map((r,i)=>{
                       const col = routeColor(r.type);
                       const initials = r.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
                       return (
@@ -335,12 +356,17 @@ export function LocalBusPage(props: Props) {
                               icon="🎯"
                             />
                           )}
-                          <div onClick={()=>{ trackBusSearch(r.id, r.name); onNav('bus-detail', { busId: r.id, from: fromInput, to: toInput }); }} className="kj-card-hov" style={{ ...card(14), display:'flex', alignItems:'center', gap:12, cursor:'pointer' }}>
-                            <div style={{ width:44, height:44, borderRadius:12, flexShrink:0, background:`linear-gradient(135deg,${col}cc,${col})`, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:SANS, fontWeight:800, fontSize:13 }}>{initials}</div>
+                          <div onClick={()=>{ trackBusSearch(r.id, r.name); onNav('bus-detail', { busId: r.id, from: fromInput, to: toInput }); }} className="kj-card-hov" style={{ ...card(14), display:'flex', alignItems:'center', gap:12, cursor:'pointer', opacity: r.active === false ? 0.6 : 1 }}>
+                            <div style={{ width:44, height:44, borderRadius:12, flexShrink:0, background: r.active === false ? '#9ca3af' : `linear-gradient(135deg,${col}cc,${col})`, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:SANS, fontWeight:800, fontSize:13 }}>{initials}</div>
                             <div style={{ flex:1, minWidth:0 }}>
                               <div style={{ display:'flex', alignItems:'center', gap:6, flexWrap:'wrap' }}>
                                 <span style={{ fontFamily:BEN, fontWeight:700, fontSize:14, color:tk.text }}>{lang==='bn'?r.bnName:r.name}</span>
                                 {r.type==='AC' && <Pill tk={tk} tone="primary">AC</Pill>}
+                                {r.active === false && (
+                                  <span style={{ fontFamily:SANS, fontSize:10, fontWeight:700, background:'#ef444420', color:'#ef4444', border:'1px solid #ef444440', borderRadius:6, padding:'1px 6px' }}>
+                                    {T(lang, 'বন্ধ', 'Inactive')}
+                                  </span>
+                                )}
                               </div>
                               <div style={{ fontFamily:BEN, fontSize:12, color:tk.textDim, marginTop:2 }}>{r.routeString}</div>
                               <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:4 }}>

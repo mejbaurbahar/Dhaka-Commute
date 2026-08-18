@@ -29,16 +29,17 @@ export const AIRPORTS_DATA = [
 export const DOMESTIC_ROUTES: DomesticRoute[] = [
 
   // ── DAC ↔ CGP (Dhaka ↔ Chittagong) ─────────────────────────────────────────
-  { id:'bg601', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG601', dep:'06:00', arr:'07:00', dur:'1h 0m', daysOp:'Daily', fareEco:4499, fareBiz:9500, aircraft:'Boeing 737-800' },
-  { id:'bg603', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG603', dep:'09:00', arr:'10:00', dur:'1h 0m', daysOp:'Daily', fareEco:4499, fareBiz:9500, aircraft:'Boeing 737-800' },
-  { id:'bg605', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG605', dep:'13:00', arr:'14:00', dur:'1h 0m', daysOp:'Daily', fareEco:4799, fareBiz:9800, aircraft:'Dash 8-400' },
-  { id:'bg607', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG607', dep:'17:00', arr:'18:00', dur:'1h 0m', daysOp:'Daily', fareEco:4799, fareBiz:9800, aircraft:'Boeing 737-800' },
-  { id:'bg609', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG609', dep:'20:00', arr:'21:00', dur:'1h 0m', daysOp:'Daily', fareEco:4999, fareBiz:10200, aircraft:'Boeing 737-800' },
+  { id:'bg601', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG121', dep:'08:00', arr:'09:00', dur:'1h 0m', daysOp:'Mon,Wed', fareEco:4499, fareBiz:9500, aircraft:'Boeing 737-800' }, // verified trip.com
+  { id:'bg603', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG615', dep:'13:55', arr:'14:55', dur:'1h 0m', daysOp:'Daily', fareEco:4499, fareBiz:9500, aircraft:'Boeing 737-800' }, // verified trip.com
+  { id:'bg605', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG135', dep:'17:30', arr:'18:30', dur:'1h 0m', daysOp:'Tue,Sat', fareEco:4799, fareBiz:9800, aircraft:'Boeing 737-800' }, // verified trip.com
+  { id:'bg607', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG147', dep:'18:35', arr:'19:35', dur:'1h 0m', daysOp:'Daily', fareEco:4799, fareBiz:9800, aircraft:'Boeing 737-800' }, // verified trip.com
+  { id:'bg609', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG151', dep:'19:30', arr:'20:30', dur:'1h 0m', daysOp:'Tue,Fri', fareEco:4999, fareBiz:10200, aircraft:'Boeing 737-800' }, // verified trip.com
+  { id:'bg617', from:'DAC', to:'CGP', airline:'BG', flightNo:'BG617', dep:'20:45', arr:'21:45', dur:'1h 0m', daysOp:'Daily', fareEco:4999, fareBiz:10200, aircraft:'Boeing 737-800' }, // verified trip.com — late-night option
   { id:'bs141', from:'DAC', to:'CGP', airline:'BS', flightNo:'BS141', dep:'07:30', arr:'08:30', dur:'1h 0m', daysOp:'Daily', fareEco:3999, aircraft:'Boeing 737-800' },
   { id:'bs143', from:'DAC', to:'CGP', airline:'BS', flightNo:'BS143', dep:'10:30', arr:'11:30', dur:'1h 0m', daysOp:'Daily', fareEco:3999, aircraft:'ATR 72-600' },
   { id:'bs145', from:'DAC', to:'CGP', airline:'BS', flightNo:'BS145', dep:'14:30', arr:'15:30', dur:'1h 0m', daysOp:'Daily', fareEco:4199, aircraft:'Boeing 737-800' },
   { id:'bs147', from:'DAC', to:'CGP', airline:'BS', flightNo:'BS147', dep:'18:30', arr:'19:30', dur:'1h 0m', daysOp:'Daily', fareEco:4399, aircraft:'Boeing 737-800' },
-  { id:'vq101', from:'DAC', to:'CGP', airline:'VQ', flightNo:'VQ101', dep:'08:00', arr:'09:00', dur:'1h 0m', daysOp:'Daily', fareEco:3799, aircraft:'ATR 72-600' },
+  { id:'vq101', from:'DAC', to:'CGP', airline:'VQ', flightNo:'VQ901', dep:'07:00', arr:'07:55', dur:'0h 55m', daysOp:'Mon-Sat', fareEco:3799, aircraft:'ATR 72-600' }, // verified lowcost.club
   { id:'vq103', from:'DAC', to:'CGP', airline:'VQ', flightNo:'VQ103', dep:'12:20', arr:'13:20', dur:'1h 0m', daysOp:'Daily', fareEco:3799, aircraft:'ATR 72-600' },
   { id:'vq105', from:'DAC', to:'CGP', airline:'VQ', flightNo:'VQ105', dep:'16:00', arr:'17:00', dur:'1h 0m', daysOp:'Daily', fareEco:3999, aircraft:'ATR 72-600' },
   { id:'2a201', from:'DAC', to:'CGP', airline:'2A', flightNo:'2A201', dep:'09:30', arr:'10:30', dur:'1h 0m', daysOp:'Daily', fareEco:3599, aircraft:'ATR 72-600' },
@@ -53,16 +54,13 @@ export const DOMESTIC_ROUTES: DomesticRoute[] = [
   { id:'bs144', from:'CGP', to:'DAC', airline:'BS', flightNo:'BS144', dep:'12:00', arr:'13:00', dur:'1h 0m', daysOp:'Daily', fareEco:3999, aircraft:'ATR 72-600' },
   { id:'bs146', from:'CGP', to:'DAC', airline:'BS', flightNo:'BS146', dep:'16:00', arr:'17:00', dur:'1h 0m', daysOp:'Daily', fareEco:4199, aircraft:'Boeing 737-800' },
   { id:'bs148', from:'CGP', to:'DAC', airline:'BS', flightNo:'BS148', dep:'20:00', arr:'21:00', dur:'1h 0m', daysOp:'Daily', fareEco:4399, aircraft:'Boeing 737-800' },
-  { id:'vq102', from:'CGP', to:'DAC', airline:'VQ', flightNo:'VQ102', dep:'09:30', arr:'10:30', dur:'1h 0m', daysOp:'Daily', fareEco:3799, aircraft:'ATR 72-600' },
+  { id:'vq102', from:'CGP', to:'DAC', airline:'VQ', flightNo:'VQ902', dep:'08:25', arr:'09:20', dur:'0h 55m', daysOp:'Mon,Tue,Fri,Sat,Sun', fareEco:3799, aircraft:'ATR 72-600' }, // verified lowcost.club
   { id:'vq104', from:'CGP', to:'DAC', airline:'VQ', flightNo:'VQ104', dep:'13:50', arr:'14:50', dur:'1h 0m', daysOp:'Daily', fareEco:3799, aircraft:'ATR 72-600' },
   { id:'2a202', from:'CGP', to:'DAC', airline:'2A', flightNo:'2A202', dep:'11:00', arr:'12:00', dur:'1h 0m', daysOp:'Daily', fareEco:3599, aircraft:'ATR 72-600' },
   { id:'2a204', from:'CGP', to:'DAC', airline:'2A', flightNo:'2A204', dep:'17:35', arr:'18:35', dur:'1h 0m', daysOp:'Daily', fareEco:3599, aircraft:'ATR 72-600' },
 
   // ── DAC ↔ CXB (Dhaka ↔ Cox's Bazar) ───────────────────────────────────────
-  { id:'bg611', from:'DAC', to:'CXB', airline:'BG', flightNo:'BG611', dep:'07:00', arr:'08:05', dur:'1h 5m', daysOp:'Daily', fareEco:4999, fareBiz:10500, aircraft:'Boeing 737-800' },
-  { id:'bg613', from:'DAC', to:'CXB', airline:'BG', flightNo:'BG613', dep:'11:00', arr:'12:05', dur:'1h 5m', daysOp:'Daily', fareEco:4999, fareBiz:10500, aircraft:'Boeing 737-800' },
-  { id:'bg615', from:'DAC', to:'CXB', airline:'BG', flightNo:'BG615', dep:'15:00', arr:'16:05', dur:'1h 5m', daysOp:'Daily', fareEco:5199, fareBiz:11000, aircraft:'Boeing 737-800' },
-  { id:'bg617', from:'DAC', to:'CXB', airline:'BG', flightNo:'BG617', dep:'19:30', arr:'20:35', dur:'1h 5m', daysOp:'Daily', fareEco:5499, fareBiz:11500, aircraft:'Boeing 737-800' },
+  { id:'bg611', from:'DAC', to:'CXB', airline:'BG', flightNo:'BG433', dep:'10:15', arr:'11:30', dur:'1h 15m', daysOp:'Mon,Tue,Thu,Fri,Sat', fareEco:4999, fareBiz:10500, aircraft:'Boeing 737-800' }, // verified lowcost.club
   { id:'bs151', from:'DAC', to:'CXB', airline:'BS', flightNo:'BS151', dep:'08:30', arr:'09:35', dur:'1h 5m', daysOp:'Daily', fareEco:4499, aircraft:'Boeing 737-800' },
   { id:'bs153', from:'DAC', to:'CXB', airline:'BS', flightNo:'BS153', dep:'12:00', arr:'13:05', dur:'1h 5m', daysOp:'Daily', fareEco:4499, aircraft:'ATR 72-600' },
   { id:'bs155', from:'DAC', to:'CXB', airline:'BS', flightNo:'BS155', dep:'16:00', arr:'17:05', dur:'1h 5m', daysOp:'Daily', fareEco:4699, aircraft:'Boeing 737-800' },
@@ -86,15 +84,15 @@ export const DOMESTIC_ROUTES: DomesticRoute[] = [
   { id:'2a214', from:'CXB', to:'DAC', airline:'2A', flightNo:'2A214', dep:'18:40', arr:'19:45', dur:'1h 5m', daysOp:'Daily', fareEco:3999, aircraft:'ATR 72-600' },
 
   // ── DAC ↔ ZYL (Dhaka ↔ Sylhet) ──────────────────────────────────────────────
-  { id:'bg621', from:'DAC', to:'ZYL', airline:'BG', flightNo:'BG621', dep:'08:00', arr:'08:50', dur:'0h 50m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' },
-  { id:'bg623', from:'DAC', to:'ZYL', airline:'BG', flightNo:'BG623', dep:'12:30', arr:'13:20', dur:'0h 50m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' },
+  { id:'bg621', from:'DAC', to:'ZYL', airline:'BG', flightNo:'BG237', dep:'15:25', arr:'16:10', dur:'0h 45m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' }, // verified trip.com
+  { id:'bg623', from:'DAC', to:'ZYL', airline:'BG', flightNo:'BG251', dep:'18:45', arr:'19:30', dur:'0h 45m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' }, // verified trip.com
   { id:'bg625', from:'DAC', to:'ZYL', airline:'BG', flightNo:'BG625', dep:'17:00', arr:'17:50', dur:'0h 50m', daysOp:'Daily', fareEco:4199, fareBiz:9000, aircraft:'Dash 8-400' },
-  { id:'bs161', from:'DAC', to:'ZYL', airline:'BS', flightNo:'BS161', dep:'09:30', arr:'10:20', dur:'0h 50m', daysOp:'Daily', fareEco:3699, aircraft:'ATR 72-600' },
-  { id:'bs163', from:'DAC', to:'ZYL', airline:'BS', flightNo:'BS163', dep:'14:00', arr:'14:50', dur:'0h 50m', daysOp:'Daily', fareEco:3699, aircraft:'ATR 72-600' },
-  { id:'bs165', from:'DAC', to:'ZYL', airline:'BS', flightNo:'BS165', dep:'18:30', arr:'19:20', dur:'0h 50m', daysOp:'Daily', fareEco:3899, aircraft:'ATR 72-600' },
+  { id:'bs161', from:'DAC', to:'ZYL', airline:'BS', flightNo:'BS531', dep:'10:45', arr:'11:35', dur:'0h 50m', daysOp:'Daily', fareEco:3699, aircraft:'ATR 72-600' }, // verified newagebd
+  { id:'bs163', from:'DAC', to:'ZYL', airline:'BS', flightNo:'BS533', dep:'12:45', arr:'13:35', dur:'0h 50m', daysOp:'Daily', fareEco:3699, aircraft:'ATR 72-600' }, // verified newagebd
+  { id:'bs165', from:'DAC', to:'ZYL', airline:'BS', flightNo:'BS535', dep:'18:15', arr:'19:05', dur:'0h 50m', daysOp:'Daily', fareEco:3899, aircraft:'ATR 72-600' }, // verified newagebd
   { id:'vq121', from:'DAC', to:'ZYL', airline:'VQ', flightNo:'VQ121', dep:'11:00', arr:'11:50', dur:'0h 50m', daysOp:'Daily', fareEco:3599, aircraft:'ATR 72-600' },
   { id:'vq123', from:'DAC', to:'ZYL', airline:'VQ', flightNo:'VQ123', dep:'15:30', arr:'16:20', dur:'0h 50m', daysOp:'Daily', fareEco:3599, aircraft:'ATR 72-600' },
-  { id:'2a221', from:'DAC', to:'ZYL', airline:'2A', flightNo:'2A221', dep:'10:00', arr:'10:50', dur:'0h 50m', daysOp:'Daily', fareEco:3299, aircraft:'ATR 72-600' },
+  { id:'2a221', from:'DAC', to:'ZYL', airline:'2A', flightNo:'2A431', dep:'07:30', arr:'08:20', dur:'0h 50m', daysOp:'Daily', fareEco:3299, aircraft:'ATR 72-600' }, // verified bdnews24
   { id:'2a223', from:'DAC', to:'ZYL', airline:'2A', flightNo:'2A223', dep:'16:30', arr:'17:20', dur:'0h 50m', daysOp:'Daily', fareEco:3299, aircraft:'ATR 72-600' },
   // Return ZYL→DAC
   { id:'bg622', from:'ZYL', to:'DAC', airline:'BG', flightNo:'BG622', dep:'09:20', arr:'10:10', dur:'0h 50m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' },
@@ -107,19 +105,19 @@ export const DOMESTIC_ROUTES: DomesticRoute[] = [
   { id:'2a222', from:'ZYL', to:'DAC', airline:'2A', flightNo:'2A222', dep:'11:20', arr:'12:10', dur:'0h 50m', daysOp:'Daily', fareEco:3299, aircraft:'ATR 72-600' },
 
   // ── DAC ↔ JSR (Dhaka ↔ Jashore) — Shohoz: US-Bangla ONLY ──────────────────
-  { id:'bs121', from:'DAC', to:'JSR', airline:'BS', flightNo:'BS121', dep:'09:30', arr:'10:15', dur:'0h 45m', daysOp:'Daily', fareEco:7438, aircraft:'ATR 72-600' },
+  { id:'bs121', from:'DAC', to:'JSR', airline:'BS', flightNo:'BS129', dep:'16:00', arr:'16:45', dur:'0h 45m', daysOp:'Daily', fareEco:7438, aircraft:'ATR 72-600' }, // verified lowcost.club
   // Return JSR→DAC
   { id:'bs122', from:'JSR', to:'DAC', airline:'BS', flightNo:'BS122', dep:'10:45', arr:'11:30', dur:'0h 45m', daysOp:'Daily', fareEco:7438, aircraft:'ATR 72-600' },
 
   // ── DAC ↔ SPD (Dhaka ↔ Saidpur) ─────────────────────────────────────────────
-  { id:'bg641', from:'DAC', to:'SPD', airline:'BG', flightNo:'BG641', dep:'09:00', arr:'10:00', dur:'1h 0m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' },
-  { id:'bg643', from:'DAC', to:'SPD', airline:'BG', flightNo:'BG643', dep:'15:00', arr:'16:00', dur:'1h 0m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' },
+  { id:'bg641', from:'DAC', to:'SPD', airline:'BG', flightNo:'BG491', dep:'07:10', arr:'08:10', dur:'1h 0m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' }, // verified lowcost.club
+  { id:'bg643', from:'DAC', to:'SPD', airline:'BG', flightNo:'BG493', dep:'19:45', arr:'20:45', dur:'1h 0m', daysOp:'Wed', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' }, // verified flight-status.com
   { id:'bs181', from:'DAC', to:'SPD', airline:'BS', flightNo:'BS181', dep:'11:00', arr:'12:00', dur:'1h 0m', daysOp:'Daily', fareEco:3699, aircraft:'ATR 72-600' },
   { id:'bs183', from:'DAC', to:'SPD', airline:'BS', flightNo:'BS183', dep:'16:30', arr:'17:30', dur:'1h 0m', daysOp:'Daily', fareEco:3699, aircraft:'ATR 72-600' },
   { id:'vq141', from:'DAC', to:'SPD', airline:'VQ', flightNo:'VQ141', dep:'13:00', arr:'14:00', dur:'1h 0m', daysOp:'Daily', fareEco:3499, aircraft:'ATR 72-600' },
   { id:'2a241', from:'DAC', to:'SPD', airline:'2A', flightNo:'2A241', dep:'10:00', arr:'11:00', dur:'1h 0m', daysOp:'Daily', fareEco:3199, aircraft:'ATR 72-600' },
   // Return SPD→DAC
-  { id:'bg642', from:'SPD', to:'DAC', airline:'BG', flightNo:'BG642', dep:'10:30', arr:'11:30', dur:'1h 0m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' },
+  { id:'bg642', from:'SPD', to:'DAC', airline:'BG', flightNo:'BG536', dep:'15:00', arr:'15:55', dur:'0h 55m', daysOp:'Sat', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' }, // verified flight-status.com
   { id:'bg644', from:'SPD', to:'DAC', airline:'BG', flightNo:'BG644', dep:'16:30', arr:'17:30', dur:'1h 0m', daysOp:'Daily', fareEco:3999, fareBiz:8500, aircraft:'Dash 8-400' },
   { id:'bs182', from:'SPD', to:'DAC', airline:'BS', flightNo:'BS182', dep:'12:30', arr:'13:30', dur:'1h 0m', daysOp:'Daily', fareEco:3699, aircraft:'ATR 72-600' },
   { id:'bs184', from:'SPD', to:'DAC', airline:'BS', flightNo:'BS184', dep:'18:00', arr:'19:00', dur:'1h 0m', daysOp:'Daily', fareEco:3699, aircraft:'ATR 72-600' },
@@ -127,7 +125,7 @@ export const DOMESTIC_ROUTES: DomesticRoute[] = [
   { id:'2a242', from:'SPD', to:'DAC', airline:'2A', flightNo:'2A242', dep:'11:30', arr:'12:30', dur:'1h 0m', daysOp:'Daily', fareEco:3199, aircraft:'ATR 72-600' },
 
   // ── DAC ↔ BZL (Dhaka ↔ Barisal) — Shohoz: Biman ONLY ────────────────────────
-  { id:'bg473', from:'DAC', to:'BZL', airline:'BG', flightNo:'BG473', dep:'16:50', arr:'17:40', dur:'0h 50m', daysOp:'Daily', fareEco:4571, fareBiz:8000, aircraft:'Dash 8-400' },
+  { id:'bg473', from:'DAC', to:'BZL', airline:'BG', flightNo:'BG473', dep:'16:00', arr:'16:50', dur:'0h 50m', daysOp:'Thu (limited weekly)', fareEco:4571, fareBiz:8000, aircraft:'Dash 8-400' }, // verified lowcost.club
   // Return BZL→DAC
   { id:'bg474', from:'BZL', to:'DAC', airline:'BG', flightNo:'BG474', dep:'18:10', arr:'19:00', dur:'0h 50m', daysOp:'Daily', fareEco:4571, fareBiz:8000, aircraft:'Dash 8-400' },
 

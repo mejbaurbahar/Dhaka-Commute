@@ -243,3 +243,132 @@ export function planLocalBusTransit(fromValue: string, toValue: string, maxRoute
     .sort((a, b) => a.totalDuration - b.totalDuration || a.totalFare - b.totalFare)
     .slice(0, maxRoutes);
 }
+
+// ── Transit group finder ──────────────────────────────────────────────────────
+// Groups all possible 1-transfer routes by their transfer stop.
+// Each group exposes ALL leg-1 and leg-2 buses so the UI can show
+// "any of these buses" per leg instead of one fixed bus.
+
+export interface TransitGroup {
+  id: string;
+  viaId: string;
+  viaLabel: string;
+  viaBnLabel: string;
+  leg1Buses: BusRoute[];
+  leg2Buses: BusRoute[];
+  leg1FromLabel: string;
+  leg1FromBnLabel: string;
+  leg1ToLabel: string;
+  leg1ToBnLabel: string;
+  leg2ToLabel: string;
+  leg2ToBnLabel: string;
+  approxFare: number;
+  approxMinutes: number;
+}
+
+export interface TransitSearchResult {
+  directBuses: BusRoute[];
+  groups: TransitGroup[];
+  fromResolved: boolean;
+  toResolved: boolean;
+}
+
+function stationLabel(id: string) {
+  const s = STATIONS[id];
+  return s?.name ?? stopLabelFromId(id);
+}
+
+function stationBnLabel(id: string) {
+  const s = STATIONS[id];
+  return s?.bnName ?? stopLabelFromId(id);
+}
+
+function legFareEstimate(dist: number) {
+  return Math.max(10, Math.ceil(dist * 2.53));
+}
+
+function legMinEstimate(dist: number) {
+  return Math.max(8, Math.round((dist / 15) * 60));
+}
+
+export function findTransitGroups(fromValue: string, toValue: string): TransitSearchResult {
+  const fromId = resolveStationId(fromValue);
+  const toId = resolveStationId(toValue);
+
+  if (!fromId || !toId || fromId === toId) {
+    return { directBuses: [], groups: [], fromResolved: Boolean(fromId), toResolved: Boolean(toId) };
+  }
+
+  const startStops = nearestBusStops(fromId, 12, 3.5);
+  const endStops = nearestBusStops(toId, 12, 3.5);
+
+  // Direct buses
+  const directSet = new Set<string>();
+  const directBuses: BusRoute[] = [];
+  startStops.forEach(start => {
+    endStops.forEach(end => {
+      busesBetween(start.stopId, end.stopId).forEach(bus => {
+        if (!directSet.has(bus.id)) {
+          directSet.add(bus.id);
+          directBuses.push(bus);
+        }
+      });
+    });
+  });
+
+  if (directBuses.length > 0) {
+    return { directBuses, groups: [], fromResolved: true, toResolved: true };
+  }
+
+  // Build via-stop groups: key = transferStopId
+  const viaMap = new Map<string, { leg1: Map<string, BusRoute>; leg2: Map<string, BusRoute> }>();
+
+  startStops.forEach(start => {
+    const firstLegBuses = busesByStop.get(start.stopId) ?? [];
+    firstLegBuses.forEach(firstBus => {
+      firstBus.stops.forEach(via => {
+        if (!STATIONS[via] || via === start.stopId || via === fromId || via === toId) return;
+        // Require the via stop to exist as a known bus interchange (at least 2 different buses stop there)
+        const viaBuses = busesByStop.get(via);
+        if (!viaBuses || viaBuses.length < 2) return;
+
+        endStops.forEach(end => {
+          const leg2 = busesBetween(via, end.stopId);
+          if (!leg2.length) return;
+
+          if (!viaMap.has(via)) viaMap.set(via, { leg1: new Map(), leg2: new Map() });
+          const g = viaMap.get(via)!;
+          g.leg1.set(firstBus.id, firstBus);
+          leg2.forEach(b => g.leg2.set(b.id, b));
+        });
+      });
+    });
+  });
+
+  const groups: TransitGroup[] = Array.from(viaMap.entries())
+    .filter(([, g]) => g.leg1.size > 0 && g.leg2.size > 0)
+    .map(([viaId, g]) => {
+      const leg1Dist = distanceKm(fromId, viaId);
+      const leg2Dist = distanceKm(viaId, toId);
+      return {
+        id: viaId,
+        viaId,
+        viaLabel: stationLabel(viaId),
+        viaBnLabel: stationBnLabel(viaId),
+        leg1Buses: Array.from(g.leg1.values()),
+        leg2Buses: Array.from(g.leg2.values()),
+        leg1FromLabel: stationLabel(fromId),
+        leg1FromBnLabel: stationBnLabel(fromId),
+        leg1ToLabel: stationLabel(viaId),
+        leg1ToBnLabel: stationBnLabel(viaId),
+        leg2ToLabel: stationLabel(toId),
+        leg2ToBnLabel: stationBnLabel(toId),
+        approxFare: legFareEstimate(leg1Dist) + legFareEstimate(leg2Dist),
+        approxMinutes: legMinEstimate(leg1Dist) + legMinEstimate(leg2Dist) + 5,
+      };
+    })
+    .sort((a, b) => a.approxMinutes - b.approxMinutes)
+    .slice(0, 8);
+
+  return { directBuses: [], groups, fromResolved: true, toResolved: true };
+}

@@ -65,6 +65,7 @@ import { claimDailyBonus } from './utils/koyCoinService';
 import { NavDrawer } from './components/NavDrawer';
 // FloatingControls removed per user request
 import { AIFab } from './components/AIFab';
+import { AppUpdateDialog } from './components/AppUpdateDialog';
 const AIChatModal = React.lazy(() => import('./components/AIChatModal').then(m => ({ default: m.AIChatModal })));
 import { TopBar } from './components/TopBar';
 import { MobileTabBar } from './components/MobileTabBar';
@@ -280,7 +281,6 @@ export function KoyJaboApp() {
   const [dir, setDir] = useState<'fwd' | 'back' | 'tab'>('fwd');
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [splash, setSplash] = useState(true);
-  const [updateReady, setUpdateReady] = useState(false);
   const [vignette, setVignette] = useState(false);
   const [anchorOn, setAnchorOn] = useState(true);
   const [vw, setVw] = useState(window.innerWidth);
@@ -307,9 +307,18 @@ export function KoyJaboApp() {
   // Firebase Remote Config (maintenance/announcement flags) — fire-and-forget
   useEffect(() => { initRemoteConfig(); }, []);
 
-  // Listen for new SW / version — show update toast
+  // New SW / version available → silent auto-update (reload). No popup on the
+  // website — the PWA updates itself. The native app shows its own Play Store
+  // update dialog (AppUpdateDialog), also without this toast.
   useEffect(() => {
-    const handler = () => setUpdateReady(true);
+    const handler = () => {
+      // Local dev: BUILD_VERSION isn't set, so version.json never matches the
+      // running bundle — would reload on every focus. Skip reloading there.
+      const host = window.location.hostname;
+      if (host === 'localhost' || host === '127.0.0.1') return;
+      // Small grace so the current render commits; then apply the update.
+      setTimeout(() => window.location.reload(), 1200);
+    };
     window.addEventListener('kj-update-available', handler);
     return () => window.removeEventListener('kj-update-available', handler);
   }, []);
@@ -717,52 +726,8 @@ export function KoyJaboApp() {
       {/* No anchor ad on the AI chat page — it covers the sticky input bar */}
       {showAnchor && top.route !== 'ai' && <AnchorAd key={top.route} tk={tk} lang={lang} onClose={() => setAnchorOn(false)} bottomOffset={isPhone ? 'calc(72px + env(safe-area-inset-bottom))' : '0px'}/>}
       {!isPhone && <VignetteAd tk={tk} lang={lang} open={vignette} onClose={() => setVignette(false)}/>}
-      {/* ── Update-available toast ── */}
-      {updateReady && (
-        <div style={{
-          position: 'fixed', bottom: isPhone ? 'calc(200px + env(safe-area-inset-bottom))' : 24, left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 9999,
-          display: 'flex', alignItems: 'center', gap: 12,
-          background: tk.primary,
-          color: '#fff',
-          borderRadius: 999,
-          padding: '10px 10px 10px 18px',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2)',
-          fontFamily: lang === 'bn' ? "'Noto Sans Bengali', sans-serif" : "'Inter', sans-serif",
-          fontSize: 13, fontWeight: 600,
-          whiteSpace: 'nowrap',
-          animation: 'kjUpdateSlideUp 0.35s ease',
-        }}>
-          <span style={{ fontSize: 18 }}>🎉</span>
-          <span>{lang === 'bn' ? 'নতুন আপডেট পাওয়া গেছে!' : 'New update available!'}</span>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              background: 'rgba(255,255,255,0.22)',
-              border: '1.5px solid rgba(255,255,255,0.4)',
-              color: '#fff',
-              borderRadius: 999,
-              padding: '6px 16px',
-              fontFamily: 'inherit', fontWeight: 700, fontSize: 12,
-              cursor: 'pointer', whiteSpace: 'nowrap',
-            }}
-          >
-            {lang === 'bn' ? '↺ রিফ্রেশ করুন' : '↺ Refresh'}
-          </button>
-          <button
-            onClick={() => setUpdateReady(false)}
-            aria-label="Dismiss"
-            style={{
-              background: 'transparent', border: 'none',
-              color: 'rgba(255,255,255,0.7)',
-              fontSize: 18, cursor: 'pointer', padding: '0 4px',
-              lineHeight: 1,
-            }}
-          >✕</button>
-          <style>{`@keyframes kjUpdateSlideUp { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`}</style>
-        </div>
-      )}
+      {/* Native app only: Play Store update dialog (never shown on the website) */}
+      <AppUpdateDialog tk={tk} lang={lang} />
       <LocationConsentModal
         tk={tk} lang={lang} open={showConsentModal}
         onNav={(r) => { setShowConsentModal(false); nav(r); }}

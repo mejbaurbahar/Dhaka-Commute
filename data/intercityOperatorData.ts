@@ -114,10 +114,10 @@ export const BUS_OPERATOR_DETAILS: BusOperatorDetail[] = [
         from: 'Dhaka', to: 'Chattogram', fromBn: 'ঢাকা', toBn: 'চট্টগ্রাম',
         dhakaCounters: ['Arambagh (Motijheel)', 'Kalyanpur', 'Mohakhali'],
         destCounters: ['Oxygen More (Chattogram City)', 'Agrabad', 'GEC Circle'],
-        distanceKm: 242, durationHrs: '5-6h',
+        distanceKm: 242, durationHrs: '7h 40m', // verified ticketroutes.com
         fareNonAC: '৳680', fareAC: '৳1200',
-        departureTimes: ['22:00', '23:00', '23:30', '07:00', '08:00'],
-        returnTimes: ['22:00', '23:00', '07:00'],
+        departureTimes: ['06:45', '08:45', '10:45', '12:45', '14:45', '16:45', '18:45', '20:45', '22:45'], // verified ticketroutes.com
+        returnTimes: ['06:45', '08:45', '10:45', '12:45', '14:45', '16:45', '18:45', '20:45', '22:45'],
         busType: ['AC Sleeper', 'AC'],
         stops: [
           { name: 'Dhaka (Arambagh)', bnName: 'ঢাকা (আরামবাগ)', type: 'origin' },
@@ -171,10 +171,10 @@ export const BUS_OPERATOR_DETAILS: BusOperatorDetail[] = [
         from: 'Dhaka', to: 'Khulna', fromBn: 'ঢাকা', toBn: 'খুলনা',
         dhakaCounters: ['Kalyanpur', 'Gabtoli'],
         destCounters: ['Khulna Sonadanga Bus Terminal', 'Rupsha'],
-        distanceKm: 270, durationHrs: '4-5h',
+        distanceKm: 270, durationHrs: '8h 30m', // verified ticketroutes.com
         fareNonAC: '৳650', fareAC: '৳1200',
-        departureTimes: ['07:00', '08:30', '21:00', '22:00'],
-        returnTimes: ['07:00', '21:00'],
+        departureTimes: ['06:15', '08:15', '10:15', '12:15', '14:15', '23:00', '23:30'], // verified ticketroutes.com
+        returnTimes: ['06:15', '08:15', '10:15', '12:15', '14:15', '23:00', '23:30'],
         busType: ['AC Sleeper', 'AC'],
         stops: [
           { name: 'Dhaka (Kalyanpur)', bnName: 'ঢাকা (কল্যাণপুর)', type: 'origin' },
@@ -243,10 +243,10 @@ export const BUS_OPERATOR_DETAILS: BusOperatorDetail[] = [
         from: 'Dhaka', to: 'Khulna', fromBn: 'ঢাকা', toBn: 'খুলনা',
         dhakaCounters: ['Malibagh', 'Gabtoli', 'Jigatola'],
         destCounters: ['Khulna Sonadanga Terminal', 'Shibbari More'],
-        distanceKm: 270, durationHrs: '4-5h',
-        fareNonAC: '৳650', fareAC: '৳1100',
-        departureTimes: ['06:30', '07:30', '08:30', '09:30', '14:00', '15:00', '21:00', '22:00', '23:00'],
-        returnTimes: ['06:30', '07:30', '14:00', '21:00', '22:00'],
+        distanceKm: 270, durationHrs: '7-8h', // verified shohagh.com official + ticketroutes
+        fareNonAC: '৳840', fareAC: '৳1400', // official shohagh.com fare table
+        departureTimes: ['07:30', '14:00', '20:30', '21:45'], // official shohagh.com: 07:30 AM / 02:00 PM / 08:30 PM / 09:45 PM
+        returnTimes: ['21:30', '22:30'], // ticketroutes Sonadanga→Malibagh night returns
         busType: ['AC Coach', 'Non-AC'],
         stops: [
           { name: 'Dhaka (Malibagh)', bnName: 'ঢাকা (মালিবাগ)', type: 'origin' },
@@ -282,7 +282,7 @@ export const BUS_OPERATOR_DETAILS: BusOperatorDetail[] = [
         dhakaCounters: ['Malibagh', 'Gabtoli'],
         destCounters: ['Jessore Notun Bus Stand'],
         distanceKm: 210, durationHrs: '3-4h',
-        fareNonAC: '৳600', fareAC: '৳1000',
+        fareNonAC: '৳600', fareAC: '৳1300-1500', // official shohagh.com (via Padma Bridge 1500)
         departureTimes: ['07:00', '08:00', '10:00', '14:00', '21:00', '22:00'],
         returnTimes: ['07:00', '14:00', '21:00'],
         busType: ['AC Coach', 'Non-AC'],
@@ -298,7 +298,7 @@ export const BUS_OPERATOR_DETAILS: BusOperatorDetail[] = [
         dhakaCounters: ['Malibagh', 'Gabtoli'],
         destCounters: ['Satkhira Bus Terminal'],
         distanceKm: 290, durationHrs: '5-6h',
-        fareNonAC: '৳700', fareAC: '৳1200',
+        fareNonAC: '৳820', fareAC: '৳1400', // official shohagh.com fare table
         departureTimes: ['07:00', '21:00', '22:00'],
         returnTimes: ['07:00', '21:00'],
         busType: ['AC Coach', 'Non-AC'],
@@ -307,6 +307,58 @@ export const BUS_OPERATOR_DETAILS: BusOperatorDetail[] = [
           { name: 'Bhanga', bnName: 'ভাঙ্গা', arrivalTime: '01:20', type: 'major' },
           { name: 'Jessore', bnName: 'যশোর', arrivalTime: '03:00', type: 'major' },
           { name: 'Satkhira', bnName: 'সাতক্ষীরা', arrivalTime: '05:00', type: 'destination' },
+        ],
+      },
+      // ── Verified Aug 2026 (shohagh.com official fare table, ticketroutes, bangla2000, 12go) ──
+      {
+        id: 'sh_dhaka_chittagong',
+        from: 'Dhaka', to: 'Chattogram', fromBn: 'ঢাকা', toBn: 'চট্টগ্রাম',
+        dhakaCounters: ['Malibagh (113 DIT Road)', 'Kalabagan', 'Gabtoli'],
+        destCounters: ['CMP Dampara', 'Agrabad'],
+        distanceKm: 299, durationHrs: '8-9h',
+        fareNonAC: 'UNKNOWN', fareAC: '৳1400-1600', // official: AC Business 1400, Double Decker 1600
+        departureTimes: ['07:30', '09:30', '11:00', '14:30', '16:30', '22:00', '22:45', '23:00'], // bangla2000 + 12go
+        returnTimes: ['22:45', '23:00'], // ticketroutes CMP Dampara→Malibagh night returns
+        busType: ['AC Coach', 'VIP 33', 'Non-AC'],
+        stops: [
+          { name: 'Dhaka (Malibagh)', bnName: 'ঢাকা (মালিবাগ)', type: 'origin' },
+          { name: 'Cumilla', bnName: 'কুমিল্লা', arrivalTime: '02:00', type: 'major' },
+          { name: 'Feni', bnName: 'ফেনী', arrivalTime: '03:00', type: 'major' },
+          { name: 'Chattogram (CMP Dampara)', bnName: 'চট্টগ্রাম (সিএমপি দামপাড়া)', arrivalTime: '05:00', type: 'destination' },
+        ],
+      },
+      {
+        id: 'sh_dhaka_coxsbazar',
+        from: 'Dhaka', to: "Cox's Bazar", fromBn: 'ঢাকা', toBn: 'কক্সবাজার',
+        dhakaCounters: ['Malibagh (113 DIT Road)', 'Gabtoli'],
+        destCounters: ['Kolatoli Road Bus Station', "Cox's Bazar"],
+        distanceKm: 500, durationHrs: '10-11h',
+        fareNonAC: 'UNKNOWN', fareAC: '৳1450-2000', // official: Economy 1450, Business 2000, DD 2000
+        departureTimes: ['22:00'], // official shohagh.com: night 10:00 PM, arrive ~8 AM
+        returnTimes: ['20:30'], // 12go: 8:30 PM Kalatoli→Malibagh 10h30m
+        busType: ['AC Coach', 'VIP 33', 'Double Decker'],
+        stops: [
+          { name: 'Dhaka (Malibagh)', bnName: 'ঢাকা (মালিবাগ)', type: 'origin' },
+          { name: 'Cumilla', bnName: 'কুমিল্লা', arrivalTime: '23:30', type: 'major' },
+          { name: 'Chattogram', bnName: 'চট্টগ্রাম', arrivalTime: '02:00', type: 'major' },
+          { name: "Cox's Bazar", bnName: 'কক্সবাজার', arrivalTime: '08:00', type: 'destination' },
+        ],
+      },
+      {
+        id: 'sh_dhaka_benapole',
+        from: 'Dhaka', to: 'Benapole', fromBn: 'ঢাকা', toBn: 'বেনাপোল',
+        dhakaCounters: ['Malibagh (113 DIT Road)', 'Arambagh', 'Kallyanpur'],
+        destCounters: ['Benapole Zero Point (BD-India border)'],
+        distanceKm: 340, durationHrs: '6h 15m-7h',
+        fareNonAC: '৳775', fareAC: '৳1400-1600', // official: standard 775, AC Business 1400 / via Padma 1600
+        departureTimes: ['06:45', '23:00'], // ticketroutes: 06:45 (arr 13:45) & 23:00 (arr 06:00 next day)
+        returnTimes: ['06:45', '23:00'],
+        busType: ['AC Coach', 'Non-AC'],
+        stops: [
+          { name: 'Dhaka (Malibagh)', bnName: 'ঢাকা (মালিবাগ)', type: 'origin' },
+          { name: 'Bhanga (Padma Bridge)', bnName: 'ভাঙ্গা (পদ্মা সেতু)', arrivalTime: '02:00', type: 'major' },
+          { name: 'Jessore', bnName: 'যশোর', arrivalTime: '03:30', type: 'major' },
+          { name: 'Benapole', bnName: 'বেনাপোল', arrivalTime: '05:00', type: 'destination' },
         ],
       },
     ],
@@ -346,10 +398,10 @@ export const BUS_OPERATOR_DETAILS: BusOperatorDetail[] = [
         from: 'Dhaka', to: 'Chattogram', fromBn: 'ঢাকা', toBn: 'চট্টগ্রাম',
         dhakaCounters: ['Sayedabad', 'Arambagh', 'Kalyanpur'],
         destCounters: ['Chittagong Dampara', 'Agrabad'],
-        distanceKm: 242, durationHrs: '5-6h',
+        distanceKm: 265, durationHrs: '6-7h',
         fareNonAC: '৳680', fareAC: '৳1100',
-        departureTimes: ['06:00', '07:00', '22:00', '23:00'],
-        returnTimes: ['06:00', '22:00'],
+        departureTimes: ['04:30', '23:30'], // read.cash: 29 daily trips, first 04:30 AM last 11:30 PM (single-source — verify at counter)
+        returnTimes: ['04:30', '23:30'],
         busType: ['AC Sleeper', 'Non-AC'],
         stops: [
           { name: 'Dhaka (Sayedabad)', bnName: 'ঢাকা (সায়েদাবাদ)', type: 'origin' },
@@ -716,10 +768,10 @@ export const BUS_OPERATOR_DETAILS: BusOperatorDetail[] = [
         from: 'Dhaka', to: 'Chattogram', fromBn: 'ঢাকা', toBn: 'চট্টগ্রাম',
         dhakaCounters: ['Arambagh', 'Kalyanpur', 'Fakirapool'],
         destCounters: ['Chattogram Oxygen More', 'Kazir Dewri'],
-        distanceKm: 242, durationHrs: '5-6h',
+        distanceKm: 310, durationHrs: '7-8h',
         fareNonAC: '৳680', fareAC: '৳1200',
-        departureTimes: ['07:00', '08:00', '22:00', '23:00'],
-        returnTimes: ['07:00', '22:00'],
+        departureTimes: ['01:25', '23:55'], // read.cash: 2 daily trips, 01:25 AM + 11:55 PM
+        returnTimes: ['UNKNOWN'],
         busType: ['AC Sleeper', 'AC'],
         stops: [
           { name: 'Dhaka (Arambagh)', bnName: 'ঢাকা (আরামবাগ)', type: 'origin' },

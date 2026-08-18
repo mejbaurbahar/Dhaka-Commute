@@ -165,12 +165,10 @@ function NativeAd({ placement, onFilled }: { placement: AdPlacement; onFilled?: 
 }
 
 // ── Unified export ──────────────────────────────────────────────────────────
-// Expression ternary on the build-time literal so rollup tree-shakes the
-// dead branch out of each build (web: zero AdMob, app: zero AdSense).
+// NATIVE_BUILD returns null until AdMob approval is granted.
+// Web/AdSense path is completely unaffected.
 const PlatformAd: React.FC<PlatformAdProps> = ({ placement, className, style, onFilled }) =>
-  NATIVE_BUILD ? (
-    <NativeAd placement={placement} onFilled={onFilled} />
-  ) : (
+  NATIVE_BUILD ? null : (
     <WebAd placement={placement} style={style} onFilled={onFilled} />
   );
 

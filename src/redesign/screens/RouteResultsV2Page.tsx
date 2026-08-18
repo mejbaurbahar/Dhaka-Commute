@@ -12,16 +12,28 @@ import { getFavoriteBusIds, toggleFavoriteBus } from '../utils/favorites';
 import { Icon } from '../components/Icons';
 import { enhancedBusSearch } from '../../../services/searchService';
 import { DTCABusListSection } from '../components/DTCABusListSection';
+import { ChakaStaticRoutes } from '../components/ChakaStaticRoutes';
 import { findTransitRoutes, fuzzyMatchStop } from '../../../services/transitPlanner';
 import { SuggestionDropdown } from '../components/SuggestionDropdown';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 
 const DTCA_STOPPAGES = ['agora','banani','dcc','gulshan 1','gulshan 2','gulshan1','gulshan2','nabisco mor','notun bazar','natun bazar','police plaza','shanta tower'];
 const DTCA_OPERATOR_TERMS = ['dhakar chaka','dhaka chaka','chaka','ঢাকার চাকা','ঢাকা চাকা','gulshan chaka','গুলশান চাকা'];
-function matchesDtcaRoute(q: string): boolean {
-  if (!q) return false;
-  const lq = q.toLowerCase().trim();
-  return DTCA_STOPPAGES.some(s => lq.includes(s)) || DTCA_OPERATOR_TERMS.some(t => lq.includes(t));
+const CHAKA_BUS_IDS = new Set(['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka']);
+const isOperatorTerm = (q: string) => DTCA_OPERATOR_TERMS.some(t => q.toLowerCase().includes(t));
+const isLocalStop = (q: string) => DTCA_STOPPAGES.some(s => q.toLowerCase().includes(s));
+// Live-bus section only for genuinely Dhaka-local context: an operator term
+// anywhere, or BOTH endpoints being DTCA stoppages. A search like
+// Hemayetpur → Gulshan 1 must NOT show Gulshan-area live buses — the user is
+// nowhere near the live network.
+function showLiveSection(from: string, to: string, search: string): boolean {
+  return isOperatorTerm(search) || isOperatorTerm(from) || isOperatorTerm(to) ||
+    (!!from && !!to && isLocalStop(from) && isLocalStop(to));
+}
+// Searching "dhakar chaka" = operator search → the static chaka routes are
+// shown in the fallback list under the live section, not as plain results.
+function isChakaSearch(from: string, to: string, search: string): boolean {
+  return isOperatorTerm(search) || isOperatorTerm(from) || isOperatorTerm(to);
 }
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:Lang; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
@@ -33,7 +45,14 @@ function busMatchesRoute(r: typeof BUS_DATA[0], from: string, to: string): boole
   const rf = normQ(from); const rt = normQ(to);
   const matchF = !from || r.routeString.toLowerCase().includes(from.toLowerCase()) || r.stops.some(s=>normQ(s).includes(rf));
   const matchT = !to || r.routeString.toLowerCase().includes(to.toLowerCase()) || r.stops.some(s=>normQ(s).includes(rt));
-  return matchF && matchT;
+  if (!matchF || !matchT) return false;
+  // When both endpoints match, verify from comes before to in stop order
+  if (from && to) {
+    const fi = r.stops.findIndex(s => normQ(s).includes(rf) || normQ(STATIONS[s]?.name ?? '').includes(rf));
+    const ti = r.stops.findIndex(s => normQ(s).includes(rt) || normQ(STATIONS[s]?.name ?? '').includes(rt));
+    if (fi !== -1 && ti !== -1) return fi < ti;
+  }
+  return true;
 }
 
 const TYPE_COLOR: Record<string, string> = {
@@ -65,7 +84,8 @@ export function RouteResultsV2Page(props: Props) {
   const toQ = params?.to ?? '';
   const searchQ = params?.search ?? '';
   const sortParam = params?.sort ?? null;   // 'fastest'|'cheapest'|'non-ac'|'now'
-  const showDtca = matchesDtcaRoute(fromQ) || matchesDtcaRoute(toQ) || matchesDtcaRoute(searchQ);
+  const showDtca = showLiveSection(fromQ, toQ, searchQ);
+  const chakaSearch = isChakaSearch(fromQ, toQ, searchQ);
 
   // ── Editable search bar state ─────────────────────────────────────────────────
   const [editFrom, setEditFrom] = useState(fromQ);
@@ -145,6 +165,18 @@ export function RouteResultsV2Page(props: Props) {
       } else {
         filtered = filtered.filter(r => busMatchesRoute(r, fromQ, toQ));
       }
+      // When both endpoints given, post-filter to buses that serve both
+      if (fromQ && toQ) {
+        const postFiltered = filtered.filter(r => busMatchesRoute(r, fromQ, toQ));
+        if (postFiltered.length > 0) filtered = postFiltered;
+      }
+    }
+
+    // Operator-term search ("dhakar chaka") — the static chaka routes live in
+    // the dedicated fallback list under the live section; don't duplicate them
+    // as plain result cards.
+    if (chakaSearch) {
+      filtered = filtered.filter(r => !CHAKA_BUS_IDS.has(r.id));
     }
 
     // Non-AC chip (from home)
@@ -206,7 +238,7 @@ export function RouteResultsV2Page(props: Props) {
         isAC: r.type === 'AC',
       };
     });
-  }, [fromQ, toQ, searchQ, activeTOD, fareMin, fareMax, selTypes, selOps, selAmenities, sortMode, nonAcOnly]);
+  }, [fromQ, toQ, searchQ, chakaSearch, activeTOD, fareMin, fareMax, selTypes, selOps, selAmenities, sortMode, nonAcOnly]);
 
   // ── Toggle helpers ─────────────────────────────────────────────────────────────
   const toggleSet = (s: Set<string>, val: string): Set<string> => {
@@ -424,16 +456,26 @@ export function RouteResultsV2Page(props: Props) {
         {/* Results list */}
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-          {/* DTCA live buses — shown when search matches Dhaka local stoppage names */}
+          {/* DTCA live buses — only for genuinely Dhaka-local context (both
+              endpoints DTCA stops, or an operator-term search) */}
           {showDtca && (
-            <DTCABusListSection
-              tk={tk}
-              lang={lang}
-              onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
-            />
+            <>
+              <DTCABusListSection
+                tk={tk}
+                lang={lang}
+                onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
+              />
+              {chakaSearch && (
+                <ChakaStaticRoutes
+                  tk={tk}
+                  lang={lang}
+                  onBusClick={(busId) => onNav('bus-detail', { busId, from: fromQ, to: toQ })}
+                />
+              )}
+            </>
           )}
 
-          {RESULTS.length === 0 && (
+          {RESULTS.length === 0 && !(chakaSearch && showDtca) && (
             <>
               <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '32px 24px', textAlign: 'center' }}>
                 <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>

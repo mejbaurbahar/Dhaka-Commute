@@ -116,17 +116,33 @@ export function findTransitRoutes(fromId: string, toId: string): TransitRoute[] 
     }
   }
 
-  // Find transfers: stops reachable from fromId that lead to toId
+  // Find transfers: stops reachable from fromId that lead to toId (forward direction only)
   const transfers: Array<{ transfer: string; bus1: typeof BUS_DATA[0]; bus2: typeof BUS_DATA[0] }> = [];
   for (const b of toBuses) {
     const ti = b.stops.indexOf(toId);
     if (ti === -1) continue;
-    for (let i = 0; i < b.stops.length; i++) {
+    for (let i = 0; i < ti; i++) {
       const stop = b.stops[i];
       if (stop === fromId || stop === toId) continue;
       if (fromReach.has(stop)) {
         transfers.push({ transfer: stop, bus1: fromReach.get(stop)!, bus2: b });
-        break; // one transfer per destination bus is enough
+        break;
+      }
+    }
+  }
+
+  // Fallback: bidirectional buses can be boarded in reverse direction
+  if (transfers.length < 2) {
+    for (const b of toBuses) {
+      const ti = b.stops.indexOf(toId);
+      if (ti === -1 || !b.routeString.includes('⇄')) continue;
+      for (let i = ti + 1; i < b.stops.length; i++) {
+        const stop = b.stops[i];
+        if (stop === fromId || stop === toId) continue;
+        if (fromReach.has(stop) && !transfers.some(t => t.transfer === stop && t.bus2.id === b.id)) {
+          transfers.push({ transfer: stop, bus1: fromReach.get(stop)!, bus2: b });
+          break;
+        }
       }
     }
   }

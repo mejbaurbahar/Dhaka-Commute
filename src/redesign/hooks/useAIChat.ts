@@ -7,6 +7,7 @@ import { getAllSessions, getSession, saveChatMessage, deleteSession } from '../.
 import { getAuthUser } from '../../../services/communityDataService';
 import { ALL_PLACES } from '../../../data/bangladeshPlaces';
 import { findTransitRoutes, fuzzyMatchStop, formatTransitPlan } from '../../../services/transitPlanner';
+import { intercityRouteFor, nearestBoardingTerminals, terminalsServing } from '../utils/intercityBoarding';
 
 export type Msg = { id: number; isUser: boolean; text: string; rich?: string };
 export const INIT_MESSAGES: Msg[] = [{ id: 1, isUser: false, text: 'hello', rich: 'greeting' }];
@@ -82,22 +83,52 @@ function buildRealDataContext(userText: string): string {
       .map(m => {
         const plates = (m.bus as unknown as { plates?: string[] }).plates;
         const plateInfo = plates && plates.length > 0 ? ` | Plates: ${plates.join(', ')}` : '';
-        return `- ${m.bus.name}${m.bus.bnName ? ` (${m.bus.bnName})` : ''}: ${m.bus.routeString}${m.bus.type ? ` • ${m.bus.type}` : ''}${plateInfo}`;
+        // Show which queried stops this bus actually serves
+        const matchedStops = tokens
+          .flatMap(tok => m.bus.stops.filter(s => s.replace(/_/g, '').includes(tok.replace(/\s/g, ''))))
+          .filter((s, i, arr) => arr.indexOf(s) === i)
+          .map(s => (STATIONS as Record<string, {name?:string}>)[s]?.name ?? s.replace(/_/g, ' '))
+          .slice(0, 4);
+        const stopInfo = matchedStops.length > 0 ? ` | Serves: ${matchedStops.join(' → ')}` : '';
+        return `- ${m.bus.name}${m.bus.bnName ? ` (${m.bus.bnName})` : ''}: ${m.bus.routeString}${m.bus.type ? ` • ${m.bus.type}` : ''}${plateInfo}${stopInfo}`;
       })
       .join('\n'));
   }
 
   // ── 3. Transit plan (multi-bus routing for "A to B" queries) ─────────────
-  // Detect "from X to Y" or "X থেকে Y" patterns
-  const FROM_TO_RE = /(?:from\s+|থেকে\s*)?([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})\s+(?:to|→|যাব|যাওয়া|যেতে|to go)\s+([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})/i;
-  const ARROW_RE = /([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,15?})\s*(?:→|to|থেকে)\s*([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,15?})/i;
+  // Patterns for "I am at X, how to go Y" and "from X to Y"
+  // Allow digits so "Gulshan 1", "Mirpur 10", "Sector 7" match correctly.
+  const IAM_AT_RE = /(?:i(?:'m|\s+am)\s+(?:at|in|near)|at\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,25?})(?=\s*[,।]|\s+(?:how|want|need|kiv|কিভ|যেতে|jabo|jete))/i;
+  const FROM_TO_RE = /(?:from\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20?})\s+(?:to|→)\s+([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20?})/i;
+  const BN_FROM_TO_RE = /([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20?})\s+থেকে\s+([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20?})/i;
+  const ARROW_RE = /([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,15?})\s*→\s*([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,15?})/i;
 
   let fromTok: string | null = null;
   let toTok: string | null = null;
-  const m1 = userText.match(FROM_TO_RE);
-  const m2 = userText.match(ARROW_RE);
-  if (m1) { fromTok = m1[1].trim(); toTok = m1[2].trim(); }
-  else if (m2) { fromTok = m2[1].trim(); toTok = m2[2].trim(); }
+
+  // "I am at X, how to go Y" → extract X as from, run extractGoToDest for Y
+  const iamAt = userText.match(IAM_AT_RE);
+  if (iamAt) {
+    fromTok = iamAt[1].trim();
+    // extract destination from rest of query
+    const destPart = userText.slice(iamAt.index! + iamAt[0].length);
+    const goRe = /(?:how\s+(?:to\s+)?(?:go|get)\s+(?:to\s+)?|go\s+to\s+|to\s+|reach\s+|যাব\s+|যাওয়ার\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{1,30?})(?:\?|।|,|$)/i;
+    const gm = destPart.match(goRe);
+    if (gm) toTok = gm[1].trim().replace(/[?।,]$/, '');
+  }
+
+  if (!fromTok || !toTok) {
+    const m1 = userText.match(FROM_TO_RE);
+    const m2 = userText.match(BN_FROM_TO_RE);
+    const m3 = userText.match(ARROW_RE);
+    // Bangla verb-final: "ami X jeta chai" / "ami X jabo"
+    const BN_DEST_ONLY_RE = /(?:ami\s+|আমি\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,30?}?)\s+(?:jeta\s+chai|jete\s+chai|jaite\s+chai|jabo|যেতে\s+চাই|যাবো?)(?:\s*$|\s*[?।,])/i;
+    const m4 = userText.match(BN_DEST_ONLY_RE);
+    if (m1) { fromTok = m1[1].trim(); toTok = m1[2].trim(); }
+    else if (m2) { fromTok = m2[1].trim(); toTok = m2[2].trim(); }
+    else if (m3) { fromTok = m3[1].trim(); toTok = m3[2].trim(); }
+    else if (m4) { toTok = m4[1].trim(); } // fromTok stays null; transit plan needs area from send()
+  }
 
   if (fromTok && toTok) {
     const fromId = fuzzyMatchStop(fromTok);
@@ -111,17 +142,67 @@ function buildRealDataContext(userText: string): string {
     }
   }
 
+  // ── 3b. Direct bus finder — scan all active buses for from→to stop pair ────
+  // This fills in when fuzzyMatchStop or findTransitRoutes misses the route
+  // because the stop name is slightly different from the station ID.
+  if (fromTok && toTok) {
+    const ftLower = fromTok.toLowerCase().replace(/\s+/g, '');
+    const ttLower = toTok.toLowerCase().replace(/\s+/g, '');
+    const directBuses = BUS_DATA.filter(b => {
+      if (b.active === false) return false;
+      const fi = b.stops.findIndex(s => s.replace(/_/g, '').includes(ftLower) || ftLower.includes(s.replace(/_/g, '')));
+      const ti = b.stops.findIndex(s => s.replace(/_/g, '').includes(ttLower) || ttLower.includes(s.replace(/_/g, '')));
+      return fi !== -1 && ti !== -1 && fi < ti;
+    });
+    if (directBuses.length > 0) {
+      sections.push(
+        `[DIRECT BUSES — ${fromTok.toUpperCase()} → ${toTok.toUpperCase()}]\n` +
+        `These buses serve BOTH stops in order. Board at ${fromTok}, alight at ${toTok}:\n` +
+        directBuses.slice(0, 5).map(b => `- ${b.name} (${b.bnName ?? b.name}): ${b.routeString} • ${b.type}`).join('\n') +
+        '\nTell the user EXACTLY these buses go from one to the other directly.'
+      );
+    }
+  }
+
+  // ── 3c. Nearest-useful boarding for intercity journeys ─────────────────────
+  // If the query is "user area → intercity destination", rank Dhaka boarding
+  // terminals by distance from the user AND whether they serve the destination.
+  // Never force a famous-but-far terminal when a closer useful one exists.
+  if (fromTok && toTok && intercityRouteFor(toTok)) {
+    const ranked = nearestBoardingTerminals(fromTok);
+    if (ranked.length > 0) {
+      const servingIds = new Set(terminalsServing(toTok));
+      const nearestServing = ranked.find(t => servingIds.has(t.terminalId));
+      const rec = nearestServing ?? ranked[0];
+      const recNote = nearestServing
+        ? `nearest terminal that actually serves ${toTok}`
+        : `no data lists a direct boarding point for ${toTok} — nearest terminal; verify at counter`;
+      sections.push(
+        `[USER AT ${fromTok.toUpperCase()} — NEAREST USEFUL BOARDING FOR ${toTok.toUpperCase()}]\n` +
+        'Intercity boarding points ranked by distance from the user:\n' +
+        ranked.map((t, i) => {
+          const star = t.terminalId === rec.terminalId ? ' ← BEST for ' + toTok : (servingIds.has(t.terminalId) ? ` (serves ${toTok})` : '');
+          return `  ${i + 1}. ${t.name} (${t.bnName}) — ${t.distKm.toFixed(1)} km${star}`;
+        }).join('\n') +
+        `\nRECOMMENDATION: ${rec.name} (${rec.distKm.toFixed(1)} km from user) — ${recNote}.` +
+        '\nRULE: Never send the user to a famous-but-far terminal when a closer one serves the destination.' +
+        '\nCRITICAL: The terminal marked "← BEST" is the ONLY boarding point to recommend for this intercity trip. Never pick a different terminal, and never invent one. Every intercity bus/train leg you mention must come from the intercity/train sections of this context — if a leg is not listed there, it does not exist. Example: no intercity bus to Benapole departs from Kamalapur Railway Station — buses to Benapole leave from Gabtoli/Kallyanpur (Shyamoli, Hanif, Shohagh, Tungipara).'
+      );
+    }
+  }
+
   // ── 4. Metro context injection ─────────────────────────────────────────────
   const isMetroQuery = lower.includes('metro') || lower.includes('মেট্রো') || lower.includes('mrt') || lower.includes('subway');
-  const isJourneyQuery = !!(fromTok && toTok) || lower.includes(' to ') || lower.includes('theke') || lower.includes('থেকে') || lower.includes('jabo') || lower.includes('যাব');
+  const isJourneyQuery = !!(fromTok && toTok) || lower.includes(' to ') || lower.includes('theke') || lower.includes('থেকে') || lower.includes('jabo') || lower.includes('যাব') || lower.includes('jeta chai') || lower.includes('jete chai') || lower.includes('যেতে চাই');
   if (isMetroQuery || isJourneyQuery) {
     sections.push(
       '[MRT-6 METRO — REAL STATIONS ONLY]\n' +
       'Operating line: Uttara North → Uttara Center → Uttara South → Pallabi → Mirpur 11 → Mirpur 10 → Kazipara → Shewrapara → Agargaon → Bijoy Sarani → Farmgate → Kawran Bazar → Shahbag → Dhaka University → Secretariat → Motijheel → Kamalapur\n' +
-      'Fare: ৳20–100 | Hours (Mon-Thu, Sat-Sun): First train 6:30 AM, Last 9:50 PM | FRIDAY: starts 3:00 PM (NOT closed, delayed start)\n' +
+      'Fare: ৳20–100 | Hours (Mon-Thu, Sat-Sun): First train 6:30 AM, Last 9:50 PM | FRIDAY: starts 2:30 PM (NOT closed, delayed start)\n' +
       'NO metro in: Gulshan, Banani, Dhanmondi, Mohammadpur, Savar, Jatrabari, Tejgaon, Rayer Bazar\n' +
       'Shaheed Minar = 500m walk from Shahbag Metro. Central Shaheed Minar → nearest metro: Shahbag (5 min walk).\n' +
-      'RULE: Only suggest metro if origin or destination is within 1km of an MRT-6 station above.'
+      'RULE: Only suggest metro if origin or destination is within 1km of an MRT-6 station above.\n' +
+      'CRITICAL: MRT-5 (North/South), MRT-1, MRT-2, MRT-4 are PLANNED/UNDER CONSTRUCTION — NOT OPERATIONAL as of 2026. NEVER suggest them for travel, never give their fares or times. Only MRT-6 is open.'
     );
   }
 
@@ -148,8 +229,8 @@ function buildRealDataContext(userText: string): string {
       '\n⚠️ CRITICAL FACTS — NEVER CONTRADICT:\n' +
       '• Khulna city has NO airport. ZERO. The nearest airport is Jashore (JSR), ~60km from Khulna city.\n' +
       '• NEVER say "flights to Khulna" — say "fly to Jashore (nearest airport to Khulna), then bus/CNG to Khulna (~1.5 hrs)".\n' +
-      '• Benapole has NO airport. Nearest = Jashore Airport (JSR), only 14km from Benapole border.\n' +
-      '• To reach Benapole by air: fly Dhaka → Jashore (40 min, ৳5000-9000), then CNG/auto to Benapole (14km, ~30 min, ৳300-400).\n' +
+      '• Benapole has NO airport. Nearest = Jashore Airport (JSR), ~18-20 km by road from Benapole border.\n' +
+      '• To reach Benapole by air: fly Dhaka → Jashore (40 min, ৳5000-9000), then CNG/auto to Benapole (~18-20km, ~35-45 min, ৳400-500).\n' +
       '\nDomestic routes from Dhaka:\n' +
       '• Dhaka → Jashore (JSR): US-Bangla, Biman, Air Astra | 40 min | ৳4500-9000\n' +
       '• Dhaka → Chattogram: 45 min | Dhaka → Sylhet: 45 min | Dhaka → Cox\'s Bazar: 55 min\n' +
@@ -162,9 +243,10 @@ function buildRealDataContext(userText: string): string {
       '[BENAPOLE — VERIFIED ROUTE DATA]\n' +
       'Benapole is in Jashore district, SW Bangladesh. Bangladesh-India land border crossing.\n' +
       'WAYS TO REACH BENAPOLE FROM DHAKA:\n' +
-      '🚂 Train (Recommended): Benapole Express or Rupashi Bangla Express — Dhaka Kamalapur → Benapole — departs 6:20 AM — ~8 hrs — ৳310-1285\n' +
-      '🚌 Bus: S Alam, Shyamoli, Hanif, Green Line — Dhaka Gabtoli/Kalyanpur → Benapole — ~6-8 hrs via Padma Bridge — ৳500-900\n' +
-      '✈️ Via Air: Fly Dhaka → Jashore Airport (40 min, ৳5000-9000) → CNG to Benapole (14km, ~30 min, ৳300-400) — fastest but most expensive\n' +
+      '🚂 Train: Benapole Express 795/796 — Dhaka Kamalapur → Benapole — departs 11:30 PM (overnight), arrives ~7:00 AM, ~8 hrs via Faridpur-Kushtia-Jessore — Shuvan ৳310, Shuvan Chair ৳415, Snigdha ৳617, AC Berth ৳1285\n' +
+      '  Also: Ruposhi Bangla Express 827/828 — departs 10:45 AM, arrives ~2:25 PM, via Narail — Shuvan ৳310\n' +
+      '🚌 Bus: Shyamoli, Hanif — Dhaka Gabtoli/Kalyanpur → Benapole — ~6-8 hrs via Padma Bridge — ৳500-900\n' +
+      '✈️ Via Air: Fly Dhaka → Jashore Airport (40 min, ৳5000-9000) → CNG to Benapole (~18-20km, ~35-45 min, ৳400-500) — fastest but most expensive\n' +
       '🚌 From Jashore town to Benapole: Local bus/tempo/CNG ~30 min, ৳20-50\n' +
       '🛂 Border: Bangladesh Immigration open daily. Indian side: Petrapole. Carry passport/travel docs.'
     );
@@ -174,7 +256,8 @@ function buildRealDataContext(userText: string): string {
   const isInterCityQuery = lower.includes('intercity') || lower.includes('inter-city') ||
     lower.includes('how to go') || lower.includes('how to reach') || lower.includes('কিভাবে যাব') ||
     lower.includes('যেতে চাই') || lower.includes('jabo') || lower.includes('যাবো') ||
-    lower.includes('bus fare') || lower.includes('ভাড়া') || lower.includes('দূরত্ব');
+    lower.includes('bus fare') || lower.includes('ভাড়া') || lower.includes('দূরত্ব') ||
+    lower.includes('jeta chai') || lower.includes('jete chai') || lower.includes('যেতে চাই');
 
   const mentionsChittagong = lower.includes('chittagong') || lower.includes('chattogram') || lower.includes('চট্টগ্রাম');
   const mentionsSylhet = lower.includes('sylhet') || lower.includes('সিলেট');
@@ -183,18 +266,18 @@ function buildRealDataContext(userText: string): string {
   const mentionsRangpur = lower.includes('rangpur') || lower.includes('রংপুর');
   const mentionsMymensingh = lower.includes('mymensingh') || lower.includes('ময়মনসিংহ');
   const mentionsCoxBazar = lower.includes("cox") || lower.includes('কক্সবাজার');
-  const mentionsLaunch = lower.includes('launch') || lower.includes('লঞ্চ') || lower.includes('sadarghat') || lower.includes('সদরঘাট') || lower.includes('ferry');
+  const mentionsLaunch = lower.includes('launch') || lower.includes('লঞ্চ') || lower.includes('sadarghat') || lower.includes('সদরঘাট') || lower.includes('ferry') || mentionsBarishal;
 
   if (isInterCityQuery || mentionsChittagong || mentionsSylhet || mentionsRajshahi ||
       mentionsBarishal || mentionsRangpur || mentionsMymensingh || mentionsCoxBazar) {
     sections.push(
       '[INTERCITY BUS FARES — BRTA 2026 OFFICIAL RATES]\n' +
       'Terminal: Sayedabad (SE), Gabtoli (W/NW), Mohakhali (N)\n' +
-      '• Dhaka→Chittagong: ৳704 (51-seat) | Sayedabad | ~5-6 hrs | Green Line, Shyamoli, Hanif\n' +
-      '• Dhaka→Sylhet: ৳580-740 | Sayedabad | ~6-7 hrs | Shyamoli, Hanif, Green Line\n' +
-      '• Dhaka→Rajshahi: ৳777-991 | Gabtoli | ~5-6 hrs | Hanif, SR Travels, National\n' +
-      '• Dhaka→Barishal: ৳464-592 | Sayedabad | ~5 hrs via Padma Bridge | Sakura, Sohagh\n' +
-      '• Dhaka→Khulna: ৳700-1200 | Gabtoli/Sayedabad | ~7-9 hrs | Soukhin, Hanif, Eagle\n' +
+      '• Dhaka→Chittagong: ৳704 (51-seat) | Sayedabad | ~5-6 hrs | Shyamoli, Hanif\n' +
+      '• Dhaka→Sylhet: ৳580-740 | Sayedabad | ~6-7 hrs | Shyamoli, Hanif\n' +
+      '• Dhaka→Rajshahi: ৳777-991 | Gabtoli | ~5-6 hrs | Hanif, National\n' +
+      '• Dhaka→Barishal: ৳464-592 | Sayedabad | ~5 hrs via Padma Bridge | Shohagh\n' +
+      '• Dhaka→Khulna: ৳700-1200 | Gabtoli or Kalyanpur | ~7-9 hrs | Hanif\n' +
       '• Dhaka→Rangpur: ৳751-911 | Gabtoli | ~7-8 hrs\n' +
       "• Dhaka→Cox's Bazar: ৳900-1147 | Sayedabad | ~10-12 hrs | Green Line, Shyamoli\n" +
       '• Dhaka→Mymensingh: ৳294-375 | Mohakhali | ~2.5-3 hrs\n' +
@@ -208,30 +291,44 @@ function buildRealDataContext(userText: string): string {
       '[SADARGHAT LAUNCH ROUTES — VERIFIED REAL DATA]\n' +
       'Terminal: Sadarghat Launch Ghat, Dhaka (Old Dhaka)\n' +
       '• Dhaka→Barishal: departs 6:00-8:00 PM | 11 hrs overnight | Deck ৳280-350, Cabin ৳900-1500, VIP ৳2000-6000\n' +
-      '  Launches: MV Sundarban 1-17, MV Parabat, MV Kirtonkhola, MV Eagle\n' +
+      '  Launches: MV Sundarban (various, e.g. MV Sundarban 8, 10, 12), MV Parabat, MV Kirtonkhola\n' +
       '• Dhaka→Patuakhali: departs 6:00/7:30 PM | 11 hrs | Deck ৳280-300, Cabin ৳1100-1300\n' +
       '• Dhaka→Bhola: departs 7:00-8:00 PM | 10 hrs | Deck ৳200-280, Cabin ৳700-1100\n' +
       '• Dhaka→Chandpur: departs 8:00 AM & 2:00 PM | 3-4 hrs (daytime) | Deck ৳120-200, Cabin ৳300-500\n' +
       '  Launches: MV Ostrich, MV Rocket (paddle steamer), MV Meghna-1\n' +
       '• Dhaka→Khulna: overnight ~10-12 hrs\n' +
+      '• Day services (verified): Green Line Water Bus 8:00 AM (5.5h, Deck ৳700, Business ৳1000); Adventure 5 AC catamaran 8:30 AM (4.5h, Deck ৳600, VIP cabin ৳1200)\n' +
+      '• Rocket paddle steamer (BIWTC): Dhaka 6:30 PM → Barishal, daily except Fri, 2-bed cabin ৳2320\n' +
       'RULE: For Barishal/Bhola/Patuakhali — always mention launch as the scenic overnight option alongside bus.'
+    );
+  }
+
+  if (mentionsLaunch) {
+    sections.push(
+      '[FERRY CROSSINGS — VERIFIED]\n' +
+      '• Paturia (Manikganj) ⇄ Daulatdia (Rajbari): ACTIVE, ~24h continuous, crossing 25-40 min — key Dhaka→Rajshahi/Khulna corridor\n' +
+      '• Mawa ⇄ Shimulia: DISCONTINUED PERMANENTLY since Padma Bridge (June 2022) — never suggest this ferry; use Padma Bridge road route\n' +
+      'RULE: If user asks about Mawa-Shimulia ferry, tell them it is closed and buses/cars use Padma Bridge.'
     );
   }
 
   // ── 7. Train route grounding ──────────────────────────────────────────────
   const isTrainQuery = lower.includes('train') || lower.includes('ট্রেন') || lower.includes('railway') ||
-    lower.includes('express') || lower.includes('এক্সপ্রেস') || lower.includes('kamalapur') || lower.includes('কমলাপুর');
+    lower.includes('express') || lower.includes('এক্সপ্রেস') || lower.includes('kamalapur') || lower.includes('কমলাপুর') ||
+    mentionsCoxBazar;
 
   if (isTrainQuery) {
     sections.push(
       '[BANGLADESH TRAIN ROUTES — KEY DATA]\n' +
-      '• Dhaka→Chittagong: Subarna Express, Sonar Bangla, Turna, Mohanagar Goduli | 5-6 hrs | Shuvan ৳310, AC Berth ৳1890\n' +
+      '• Dhaka→Chittagong: Sonar Bangla Express 788, Turna, Mohanagar Goduli | 5-6 hrs | Shuvan ৳310, AC Berth ৳1890\n' +
+      '  (Subarna Express 701 runs Chittagong→Dhaka direction, departs CTG 7:00 AM → Dhaka 11:55 AM)\n' +
       '• Dhaka→Sylhet: Upaban Express, Jayantika, Kalni, Parabat, Surma Mail | 6.5-7.5 hrs | Shuvan ৳265, AC Berth ৳1678\n' +
       "• Dhaka→Cox's Bazar: Cox's Bazar Express, Parjatak | overnight\n" +
       '• Dhaka→Rajshahi: Silk City, Padma Express, Dhumketu, Banalata | Shuvan ৳390, AC Berth ৳1600\n' +
       '• Dhaka→Khulna: Sundarban Express, Chitra Express | 9 hrs | Shuvan ৳390, AC Berth ৳1900\n' +
       '• Dhaka→Mymensingh: Tista Express, Agnibina, Brahmaputra, Jamuna | Shuvan ৳110\n' +
-      '• Dhaka→Benapole: Benapole Express (departs 6:20 AM), Rupashi Bangla | 8 hrs | ৳310-1285\n' +
+      '• Dhaka→Benapole: Benapole Express 795/796 (departs 11:30 PM overnight, arrives ~7:00 AM, ~8 hrs, via Faridpur-Kushtia-Jessore) | Shuvan ৳310, Shuvan Chair ৳415, Snigdha ৳617, AC Berth ৳1285\n' +
+      '  ALSO: Ruposhi Bangla Express 827/828 (departs 10:45 AM, arrives ~2:25 PM, via Narail, Shuvan ৳310) | Book: eticket.railway.gov.bd\n' +
       '• Dhaka→Rangpur: Rangpur Express, Kurigram Express\n' +
       '• Dhaka→Barishal: NO DIRECT TRAIN — use launch or bus\n' +
       'Book: eticket.railway.gov.bd | Opens 10 days ahead | Pay: bKash, Nagad, Rocket | ৳20 service charge'
@@ -244,7 +341,7 @@ function buildRealDataContext(userText: string): string {
     lower.includes('বিমান ভাড়া') || lower.includes('airport') || lower.includes('বিমানবন্দর') ||
     lower.includes('novoair') || lower.includes('us-bangla') || lower.includes('sharetrip') ||
     lower.includes('gozayaan') || lower.includes('domestic') || lower.includes('শাহজালাল') ||
-    lower.includes('shahjalal') || lower.includes('biman');
+    lower.includes('shahjalal') || lower.includes('biman') || mentionsCoxBazar;
 
   if (isAirQuery) {
     sections.push(
@@ -253,14 +350,14 @@ function buildRealDataContext(userText: string): string {
       '• Dhaka→Cox\'s Bazar (CXB): ~45 min | ৳3000-8000 | 4-6 flights/day | Biman, US-Bangla, Novoair, Air Astra\n' +
       '• Dhaka→Chittagong (CGP): ~40 min | ৳3000-6500 | 8-10 flights/day (busiest route)\n' +
       '• Dhaka→Sylhet Osmani (ZYL): ~40 min | ৳3500-7000 | 3-4 flights/day\n' +
-      '• Dhaka→Jessore (JSR): ~30 min | ৳2500-5500 | 2-3 flights/day\n' +
+      '• Dhaka→Jessore (JSR): ~40 min | ৳2500-5500 | 2-3 flights/day\n' +
       '• Dhaka→Rajshahi (RJH): ~40 min | ৳3000-6000 | 2-3 flights/day\n' +
       '• Dhaka→Barishal (BZL): limited schedule | ৳3000-5500 | check biman.com.bd\n' +
       'Book via: ShareTrip (sharetrip.net), GoZayaan (gozayaan.com), Shohoz, biman.com.bd\n' +
       'Airport arrival: domestic 90 min early | international 3 hrs early\n' +
       'From airport to city: BRTC AC bus ৳50-80 | CNG ৳200-400 | Uber/Pathao ৳350-600\n' +
       'Best airlines: US-Bangla (most punctual) | Novoair (reliable) | Biman (cheapest)\n' +
-      'ALSO: Train to Cox\'s Bazar — Cox\'s Bazar Express (813/814) from Kamalapur ~9 hrs, Shuvan Chair ৳505, AC Berth ৳1680'
+      'ALSO: Train to Cox\'s Bazar — Cox\'s Bazar Express (813/814) from Kamalapur ~8h20m, Shuvan Chair ৳535, AC Berth ৳1591'
     );
   }
 
@@ -429,11 +526,21 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
 
       const hasFrom = /\bfrom\b|থেকে|হতে/i.test(userText);
 
+      // Extract explicit "I am at X" location from message — overrides GPS area
+      const iamAtMsg = userText.match(/(?:i(?:'m|\s+am)\s+(?:at|in|near)|at\s+)([A-Za-z0-9ঀ-৿][A-Za-z0-9ঀ-৿\s]{2,25?})(?=\s*[,।]|\s+(?:how|want|need|kiv|কিভ|যেতে|jabo|jete))/i);
+      if (iamAtMsg) {
+        const extracted = iamAtMsg[1].trim();
+        userAreaRef.current = extracted;
+        localStorage.setItem('kj-location-area', extracted);
+      }
+
       // Extract destination from "how to go X", "want to go X", "jeta chai X" etc.
       function extractGoToDest(q: string): string | null {
         const m = q.match(
-          /(?:how\s+(?:to\s+)?(?:go|get)\s+(?:to\s+)?|route\s+to\s+|reach\s+|take\s+me\s+to\s+|go\s+to\s+|directions?\s+to\s+|best\s+(?:bus|way)\s+(?:to|for)\s+|nearest\s+way\s+to\s+|how\s+can\s+i\s+(?:get\s+to|reach)\s+|(?:i\s+)?want\s+to\s+go(?:\s+to)?\s+|(?:i\s+)?want\s+to\s+visit\s+|(?:i\s+)?need\s+to\s+go(?:\s+to)?\s+|(?:i\s+)?(?:am|m)\s+going(?:\s+to)?\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s']{1,40})(?:\?|।|,|$)/i
-        ) || q.match(/(?:কিভাবে\s+যাব[োে]?\s+|যেতে\s+চাই\s+|যাবো?\s+কিভাবে\s+|জেতে\s+চাই\s+|jeta\s+chai\s*,?\s*|jabo\s+|jete\s+chai\s+|jaite\s+chai\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s']{1,40})(?:\?|।|,|$)/i);
+          /(?:how\s+(?:to\s+)?(?:go|get)\s+(?:to\s+)?|route\s+to\s+|reach\s+|take\s+me\s+to\s+|go\s+to\s+|directions?\s+to\s+|best\s+(?:bus|way)\s+(?:to|for)\s+|nearest\s+way\s+to\s+|how\s+can\s+i\s+(?:get\s+to|reach)\s+|(?:i\s+)?want\s+to\s+go(?:\s+to)?\s+|(?:i\s+)?want\s+to\s+visit\s+|(?:i\s+)?need\s+to\s+go(?:\s+to)?\s+|(?:i\s+)?(?:am|m)\s+going(?:\s+to)?\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s']{1,40})(?:\?|।|,|$)/i
+        ) || q.match(/(?:কিভাবে\s+যাব[োে]?\s+|যেতে\s+চাই\s+|যাবো?\s+কিভাবে\s+|জেতে\s+চাই\s+|jeta\s+chai\s*,?\s*|jabo\s+|jete\s+chai\s+|jaite\s+chai\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s']{1,40})(?:\?|।|,|$)/i)
+          // Bangla verb-final word order: "ami X jeta chai" / "ami X jabo"
+          || q.match(/(?:ami\s+|আমি\s+)?([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,30?}?)\s+(?:jeta\s+chai|jete\s+chai|jaite\s+chai|jabo|যেতে\s+চাই|যাবো?)(?:\s*$|\s*[?।,])/i);
         return m ? m[1].trim().replace(/[?।,]$/, '').trim() : null;
       }
 
@@ -468,7 +575,10 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
 
       // Ground the answer in KoyJabo's real dataset — never let the model
       // invent routes/fares. Injected as authoritative context.
-      const realData = buildRealDataContext(userText);
+      // When nav intent is detected, feed the enriched "from X to Y" form so
+      // buildRealDataContext can extract proper from/to tokens for transit planning.
+      const dataContextQuery = (area && goToDest) ? `from ${area} to ${goToDest}` : userText;
+      const realData = buildRealDataContext(dataContextQuery);
       const groundedMessage = realData
         ? `${userText}\n\n[REAL BUS DATA from koyjabo.com — authoritative. Answer ONLY from this list and the data in your instructions; never invent a bus, stop, or fare not listed here. If nothing in this list matches, say you're not sure.]\n${realData}`
         : userText;

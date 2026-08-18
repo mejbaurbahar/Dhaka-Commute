@@ -4,6 +4,7 @@ import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
 import { PageShell, PageShellProps } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
+import { isNativePlatform } from '../../utils/platformDetect';
 
 const FEATURES = [
   {
@@ -271,8 +272,8 @@ export function WhyPage(props: PageShellProps) {
           </p>
         </div>
 
-        {/* Install PWA card */}
-        <div
+        {/* Install PWA card — hidden inside the native app (already installed) */}
+        {!isNativePlatform() && <div
           style={{
             background: `linear-gradient(135deg, ${tk.primary} 0%, #a855f7 100%)`,
             borderRadius: 20,
@@ -327,7 +328,7 @@ export function WhyPage(props: PageShellProps) {
           >
             {lbl('Download App', 'অ্যাপ ডাউনলোড করুন')}
           </button>
-        </div>
+        </div>}
 
         {/* Ads */}
           <NativeAdCard

@@ -839,11 +839,11 @@ export function IntercityDetailPage(props: Props) {
               <div style={{ borderBottom: `1px solid ${tk.line}`, paddingBottom: 14, marginBottom: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                   <span style={{ fontFamily: SANS, fontSize: 13, color: tk.textDim }}>{lbl('AC Sleeper', 'এসি স্লিপার')}</span>
-                  <span style={{ fontFamily: SANS, fontSize: 14, fontWeight: 700, color: '#10b981' }}>৳900–1200</span>
+                  <span style={{ fontFamily: SANS, fontSize: 14, fontWeight: 700, color: '#10b981' }}>{displayFareAC || '৳900–1200'}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ fontFamily: SANS, fontSize: 13, color: tk.textDim }}>{lbl('Non-AC', 'নন-এসি')}</span>
-                  <span style={{ fontFamily: SANS, fontSize: 14, fontWeight: 700, color: '#10b981' }}>৳700</span>
+                  <span style={{ fontFamily: SANS, fontSize: 14, fontWeight: 700, color: '#10b981' }}>{displayFareNonAC || '৳700'}</span>
                 </div>
               </div>
 
