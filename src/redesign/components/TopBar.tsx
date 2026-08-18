@@ -42,13 +42,6 @@ const ROUTE_TITLES: Record<string, { bn: string; en: string }> = {
   favorites:         { bn: 'সেভড',              en: 'Saved' },
   history:           { bn: 'ইতিহাস',            en: 'History' },
   settings:          { bn: 'সেটিংস',            en: 'Settings' },
-  devices:           { bn: 'ডিভাইস',            en: 'Devices' },
-  profile:           { bn: 'প্রোফাইল',          en: 'Profile' },
-  'edit-profile':    { bn: 'প্রোফাইল সম্পাদনা', en: 'Edit Profile' },
-  password:          { bn: 'পাসওয়ার্ড',         en: 'Password' },
-  signin:            { bn: 'সাইন ইন',           en: 'Sign In' },
-  signup:            { bn: 'সাইন আপ',           en: 'Sign Up' },
-  'forgot-password': { bn: 'পাসওয়ার্ড ভুলেছি',  en: 'Forgot Password' },
   why:               { bn: 'কেন কই যাবো',       en: 'Why KoyJabo' },
   about:             { bn: 'আমাদের সম্পর্কে',    en: 'About' },
   blogs:             { bn: 'ব্লগ',              en: 'Blog' },
@@ -76,8 +69,6 @@ interface TopBarProps {
   onMenu: () => void;
   canBack?: boolean;
   onBack?: () => void;
-  user?: { displayName?: string; username?: string; avatarUrl?: string } | null;
-  onLogout?: () => void;
 }
 
 

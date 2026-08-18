@@ -14,7 +14,7 @@ import {
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
 const EARN_STEPS = [
-  { e:'📅', bn:'প্রতিদিন লগইন', en:'Daily login', pts:'+10', col:'#10b981' },
+  { e:'📅', bn:'প্রতিদিন ব্যবহার', en:'Daily use', pts:'+10', col:'#10b981' },
   { e:'🔍', bn:'বাস/ট্রেন/মেট্রো সার্চ', en:'Search bus/train/metro/launch', pts:'+5', col:'#0ea5e9' },
   { e:'🔀', bn:'ট্রানজিট রুট দেখুন', en:'View transit route', pts:'+5', col:'#7c3aed' },
   { e:'✈️', bn:'ফ্লাইট বিস্তারিত', en:'View flight detail', pts:'+2', col:'#f59e0b' },

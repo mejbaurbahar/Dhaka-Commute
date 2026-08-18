@@ -86,7 +86,6 @@ interface NavDrawerProps {
   theme: Theme;
   lang: Lang;
   activeRoute?: string;
-  isLoggedIn?: boolean;
 }
 
 export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: NavDrawerProps) {

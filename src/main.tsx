@@ -69,7 +69,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 import AntiScraping from '../components/AntiScraping';
 import { ToastProvider } from '../contexts/ToastContext';
 import { LanguageProvider } from '../contexts/LanguageContext';
-import { AuthProvider } from './contexts/AuthContext';
 import { initPush } from './services/pushService';
 import { initOfflineEventsSync } from '../services/offlineEventsService';
 import { killConsoleInProd, installAntiDevtools } from './utils/security';
@@ -82,13 +81,11 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
       <ErrorBoundary>
-        <AuthProvider>
-          <LanguageProvider>
-            <ToastProvider>
-              <KoyJaboApp />
-            </ToastProvider>
-          </LanguageProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <ToastProvider>
+            <KoyJaboApp />
+          </ToastProvider>
+        </LanguageProvider>
       </ErrorBoundary>
     </React.StrictMode>
   );

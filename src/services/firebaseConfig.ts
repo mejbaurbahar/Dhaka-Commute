@@ -1,5 +1,4 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey:            (import.meta.env.VITE_FIREBASE_API_KEY              as string | undefined) ?? '',
@@ -17,11 +16,3 @@ export const isFirebaseConfigured =
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
 export { app };
-
-export const auth = getAuth(app);
-
-export const googleProvider = (() => {
-  const p = new GoogleAuthProvider();
-  p.setCustomParameters({ prompt: 'select_account' });
-  return p;
-})();

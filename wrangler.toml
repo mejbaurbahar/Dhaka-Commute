@@ -7,9 +7,6 @@ APP_OWNER = "mejbaurbahar"
 APP_REPO = "Dhaka-Commute"
 DATA_OWNER = "mejbaurbahar"
 DATA_REPO = "koyjabo"
-# Firebase project number (the `aud` claim of ID tokens). Only ID tokens
-# minted for THIS Firebase project may mint sessions — see verifyFirebaseIdToken.
-FIREBASE_PROJECT_NUMBER = "53533704224"
 
 # GH_TOKEN is set as a secret (not here) via: npx wrangler secret put GH_TOKEN
 

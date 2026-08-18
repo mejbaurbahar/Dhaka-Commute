@@ -98,10 +98,21 @@ function buildRealDataContext(userText: string): string {
   // ── 3. Transit plan (multi-bus routing for "A to B" queries) ─────────────
   // Patterns for "I am at X, how to go Y" and "from X to Y"
   // Allow digits so "Gulshan 1", "Mirpur 10", "Sector 7" match correctly.
-  const IAM_AT_RE = /(?:i(?:'m|\s+am)\s+(?:at|in|near)|at\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,25?})(?=\s*[,।]|\s+(?:how|want|need|kiv|কিভ|যেতে|jabo|jete))/i;
-  const FROM_TO_RE = /(?:from\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20?})\s+(?:to|→)\s+([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20?})/i;
-  const BN_FROM_TO_RE = /([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20?})\s+থেকে\s+([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20?})/i;
-  const ARROW_RE = /([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,15?})\s*→\s*([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,15?})/i;
+  // NOTE: `{N,M?}` never matches in JS regex (parses as a broken interval) —
+  // use plain greedy `{N,M}` and trim filler words afterwards.
+  // Trims trailing question words ("কোন বাস যায়", "how much") off a captured
+  // place name: greedy capture includes everything to end of string, so cut at
+  // the first filler word boundary.
+  const cutFiller = (s: string) => {
+    // NOTE: no \b here — JS \b is ASCII-only, so it never binds after a Bangla
+    // letter. Use a negative letter/digit lookahead as the word boundary.
+    const i = s.search(/\s+(?:কোনটা|কোনটি|কোন|কখন|কি|কী|কত|বাসের|বাস|ট্রেনের|ট্রেন|মেট্রোর|মেট্রো|লঞ্চের|লঞ্চ|ফ্লাইটের|ফ্লাইট|ভাড়ার|ভাড়া|সময়সূচি|সময়|টাইম|থেকে|হতে|যায়|যাবো?|জায়|আছে|চাই|কিভাবে|যাওয়ার|কেমন|নম্বর|সব|jabo|jete|bus|train|metro|fare|time|how|much|from|to|route|ticket|leave|depart|arrive)(?![a-zA-Z0-9ঀ-৿])/i);
+    return i > 0 ? s.slice(0, i).trim() : s.trim().replace(/[?।,]$/, '');
+  };
+  const IAM_AT_RE = /(?:i(?:'m|\s+am)\s+(?:at|in|near)|at\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,25})(?=\s*[,।]|\s+(?:how|want|need|kiv|কিভ|যেতে|jabo|jete))/i;
+  const FROM_TO_RE = /(?:from\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20})\s+(?:to|→)\s+([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20})/i;
+  const BN_FROM_TO_RE = /([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20})\s+থেকে\s+([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,20})/i;
+  const ARROW_RE = /([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,15})\s*→\s*([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,15})/i;
 
   let fromTok: string | null = null;
   let toTok: string | null = null;
@@ -112,7 +123,7 @@ function buildRealDataContext(userText: string): string {
     fromTok = iamAt[1].trim();
     // extract destination from rest of query
     const destPart = userText.slice(iamAt.index! + iamAt[0].length);
-    const goRe = /(?:how\s+(?:to\s+)?(?:go|get)\s+(?:to\s+)?|go\s+to\s+|to\s+|reach\s+|যাব\s+|যাওয়ার\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{1,30?})(?:\?|।|,|$)/i;
+    const goRe = /(?:how\s+(?:to\s+)?(?:go|get)\s+(?:to\s+)?|go\s+to\s+|to\s+|reach\s+|যাব\s+|যাওয়ার\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{1,30}?)(?:\?|।|,|$)/i;
     const gm = destPart.match(goRe);
     if (gm) toTok = gm[1].trim().replace(/[?।,]$/, '');
   }
@@ -122,11 +133,11 @@ function buildRealDataContext(userText: string): string {
     const m2 = userText.match(BN_FROM_TO_RE);
     const m3 = userText.match(ARROW_RE);
     // Bangla verb-final: "ami X jeta chai" / "ami X jabo"
-    const BN_DEST_ONLY_RE = /(?:ami\s+|আমি\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,30?}?)\s+(?:jeta\s+chai|jete\s+chai|jaite\s+chai|jabo|যেতে\s+চাই|যাবো?)(?:\s*$|\s*[?।,])/i;
+    const BN_DEST_ONLY_RE = /(?:ami\s+|আমি\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,30}?)\s+(?:jeta\s+chai|jete\s+chai|jaite\s+chai|jabo|যেতে\s+চাই|যাবো?)(?:\s*$|\s*[?।,])/i;
     const m4 = userText.match(BN_DEST_ONLY_RE);
-    if (m1) { fromTok = m1[1].trim(); toTok = m1[2].trim(); }
-    else if (m2) { fromTok = m2[1].trim(); toTok = m2[2].trim(); }
-    else if (m3) { fromTok = m3[1].trim(); toTok = m3[2].trim(); }
+    if (m1) { fromTok = m1[1].trim(); toTok = cutFiller(m1[2]); }
+    else if (m2) { fromTok = m2[1].trim(); toTok = cutFiller(m2[2]); }
+    else if (m3) { fromTok = m3[1].trim(); toTok = cutFiller(m3[2]); }
     else if (m4) { toTok = m4[1].trim(); } // fromTok stays null; transit plan needs area from send()
   }
 
@@ -527,7 +538,7 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
       const hasFrom = /\bfrom\b|থেকে|হতে/i.test(userText);
 
       // Extract explicit "I am at X" location from message — overrides GPS area
-      const iamAtMsg = userText.match(/(?:i(?:'m|\s+am)\s+(?:at|in|near)|at\s+)([A-Za-z0-9ঀ-৿][A-Za-z0-9ঀ-৿\s]{2,25?})(?=\s*[,।]|\s+(?:how|want|need|kiv|কিভ|যেতে|jabo|jete))/i);
+      const iamAtMsg = userText.match(/(?:i(?:'m|\s+am)\s+(?:at|in|near)|at\s+)([A-Za-z0-9ঀ-৿][A-Za-z0-9ঀ-৿\s]{2,25}?)(?=\s*[,।]|\s+(?:how|want|need|kiv|কিভ|যেতে|jabo|jete))/i);
       if (iamAtMsg) {
         const extracted = iamAtMsg[1].trim();
         userAreaRef.current = extracted;
@@ -540,7 +551,7 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
           /(?:how\s+(?:to\s+)?(?:go|get)\s+(?:to\s+)?|route\s+to\s+|reach\s+|take\s+me\s+to\s+|go\s+to\s+|directions?\s+to\s+|best\s+(?:bus|way)\s+(?:to|for)\s+|nearest\s+way\s+to\s+|how\s+can\s+i\s+(?:get\s+to|reach)\s+|(?:i\s+)?want\s+to\s+go(?:\s+to)?\s+|(?:i\s+)?want\s+to\s+visit\s+|(?:i\s+)?need\s+to\s+go(?:\s+to)?\s+|(?:i\s+)?(?:am|m)\s+going(?:\s+to)?\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s']{1,40})(?:\?|।|,|$)/i
         ) || q.match(/(?:কিভাবে\s+যাব[োে]?\s+|যেতে\s+চাই\s+|যাবো?\s+কিভাবে\s+|জেতে\s+চাই\s+|jeta\s+chai\s*,?\s*|jabo\s+|jete\s+chai\s+|jaite\s+chai\s+)([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s']{1,40})(?:\?|।|,|$)/i)
           // Bangla verb-final word order: "ami X jeta chai" / "ami X jabo"
-          || q.match(/(?:ami\s+|আমি\s+)?([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,30?}?)\s+(?:jeta\s+chai|jete\s+chai|jaite\s+chai|jabo|যেতে\s+চাই|যাবো?)(?:\s*$|\s*[?।,])/i);
+          || q.match(/(?:ami\s+|আমি\s+)?([a-zA-Z0-9ঀ-৿][a-zA-Z0-9ঀ-৿\s]{2,30}?)\s+(?:jeta\s+chai|jete\s+chai|jaite\s+chai|jabo|যেতে\s+চাই|যাবো?)(?:\s*$|\s*[?।,])/i);
         return m ? m[1].trim().replace(/[?।,]$/, '').trim() : null;
       }
 
