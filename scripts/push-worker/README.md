@@ -35,7 +35,7 @@ npx wrangler kv namespace create PUSH_SUBS
 #   → copy the id into wrangler.toml (REPLACE_WITH_KV_NAMESPACE_ID)
 
 # 2. Set the VAPID private key as a secret
-#    value lives in repo root .env → VITE_VAPID_PRIVATE_KEY
+#    value lives in repo root .env → VAPID_PRIVATE_KEY (non-VITE_, stays out of client bundles)
 npx wrangler secret put VAPID_PRIVATE_KEY
 
 # 3. Deploy
