@@ -19,6 +19,7 @@ import { enhancedBusSearch } from '../../../services/searchService';
 import { earnCoins } from '../utils/koyCoinService';
 import { DTCABusListSection } from '../components/DTCABusListSection';
 import { ChakaStaticRoutes } from '../components/ChakaStaticRoutes';
+import { CHAKA_BUS_SNAPSHOT } from '../../../data/chakaBuses';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -325,17 +326,20 @@ export function LocalBusPage(props: Props) {
                           tk={tk}
                           lang={lang}
                           onBusClick={(busId) => onNav('bus-detail', { busId, from: fromInput, to: toInput })}
+                          onDtcaBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
                         />
                       )}
                     </div>
                   )}
                   <SectionHeader tk={tk} lang={lang}
                     title={hasSearched
-                      ? T(lang, `${N(visibleRoutes.length,lang)}টি রুট পাওয়া গেছে`, `${N(visibleRoutes.length,lang)} routes found`)
+                      ? (chakaSearch
+                        ? T(lang, `${N(CHAKA_BUS_SNAPSHOT.buses.length + CHAKA_BUS_IDS.size, lang)}টি ঢাকার চাকা বাস/রুট পাওয়া গেছে`, `${N(CHAKA_BUS_SNAPSHOT.buses.length + CHAKA_BUS_IDS.size, lang)} Dhaka Chaka buses/routes found`)
+                        : T(lang, `${N(visibleRoutes.length,lang)}টি রুট পাওয়া গেছে`, `${N(visibleRoutes.length,lang)} routes found`))
                       : T(lang,'জনপ্রিয় বাস রুট','Popular bus routes')}
                     action={T(lang,'সব দেখুন','See all')}/>
                   <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                    {visibleRoutes.length === 0 && (
+                    {visibleRoutes.length === 0 && !chakaSearch && (
                       <div style={{ background:tk.panel, border:`1px dashed ${tk.line}`, borderRadius:16, padding:'28px 16px', textAlign:'center' }}>
                         <div style={{ fontSize:28, marginBottom:8 }}>🚌</div>
                         <div style={{ fontFamily:BEN, fontSize:14, fontWeight:600, color:tk.text, marginBottom:4 }}>{T(lang,'কোনো রুট পাওয়া যায়নি','No routes found')}</div>

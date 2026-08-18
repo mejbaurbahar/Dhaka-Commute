@@ -302,12 +302,36 @@ const DTCA_HEADERS = {
   Referer: 'https://buskothay.com/',
 };
 
+// ── DTCA credential auto-rotation ──────────────────────────────────────────
+// User requirement (Aug 2026): never require manual secret updates — the
+// worker should keep working with ANY valid-format BD mobile
+// (013/014/016/018/017 + 8 digits) and any name, rotating automatically.
+// Try the configured account (DTCA_PHONE/DTCA_NAME) first; after repeated
+// login/fetch failures (in-memory counter, day-based base keeps rotation
+// deterministic within a day) fall back to auto-generated credentials so
+// nothing ever blocks on a stale secret.
+// Honest note: upstream DTCA also binds tokens to the browser TLS session —
+// server-side fetches 403 even with fresh tokens — so rotation alone does
+// NOT unlock live data. The static snapshot (data/chakaBuses.ts) is the
+// reliable user-facing fallback; this rotation keeps the live path trying.
+let _dtcaRotateCount = 0;
+const DTCA_PHONE_PREFIXES = ['013', '014', '016', '018', '017'];
+const DTCA_NAMES = ['Koy Jabo', 'KoyJabo', 'Passenger', 'Traveller', 'Daily Rider', 'City Commuter'];
+
+function dtcaPickCredentials(env) {
+  if (env.DTCA_PHONE && _dtcaRotateCount < 3) return { phone: env.DTCA_PHONE, name: env.DTCA_NAME || 'KoyJabo' };
+  const day = Math.floor(Date.now() / 86400000);
+  const n = day + _dtcaRotateCount;
+  const prefix = DTCA_PHONE_PREFIXES[n % DTCA_PHONE_PREFIXES.length];
+  const digits = String(n % 100000000).padStart(8, '0');
+  return { phone: prefix + digits, name: DTCA_NAMES[n % DTCA_NAMES.length] };
+}
+
 // Auto-login using stored credentials — no Turnstile needed from server-side
 // NOTE: upstream now REQUIRES `public_key` (added ~Aug 2026). 'cf-chl-stage' is
 // Cloudflare's staging key — accepted by the backend's presence check.
 async function dtcaAutoLogin(env) {
-  const phone = env.DTCA_PHONE || '';
-  const name = env.DTCA_NAME || 'KoyJabo';
+  const { phone, name } = dtcaPickCredentials(env);
   if (!phone) return null;
   try {
     const res = await fetch(`${DTCA_API}/login`, {
@@ -318,11 +342,13 @@ async function dtcaAutoLogin(env) {
     const body = await res.text();
     if (!res.ok) {
       console.log(`DTCA login failed: HTTP ${res.status} — ${body.slice(0, 200)}`);
+      _dtcaRotateCount += 1;
       return null;
     }
     try { return JSON.parse(body)?.token || null; } catch { return null; }
   } catch (err) {
     console.log(`DTCA login error: ${err?.message}`);
+    _dtcaRotateCount += 1;
     return null;
   }
 }
@@ -350,6 +376,7 @@ async function dtcaFetch(path, env) {
       headers: { ...DTCA_HEADERS, Authorization: `Bearer ${newToken}` },
     });
     console.log(`DTCA retry ${path}: HTTP ${retried.status}`);
+    if (retried.status === 401 || retried.status === 403 || retried.status === 421) _dtcaRotateCount += 1;
     return retried;
   }
 

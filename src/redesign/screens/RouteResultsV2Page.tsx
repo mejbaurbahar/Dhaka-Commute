@@ -13,6 +13,7 @@ import { Icon } from '../components/Icons';
 import { enhancedBusSearch } from '../../../services/searchService';
 import { DTCABusListSection } from '../components/DTCABusListSection';
 import { ChakaStaticRoutes } from '../components/ChakaStaticRoutes';
+import { CHAKA_BUS_SNAPSHOT } from '../../../data/chakaBuses';
 import { findTransitRoutes, fuzzyMatchStop } from '../../../services/transitPlanner';
 import { SuggestionDropdown } from '../components/SuggestionDropdown';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
@@ -418,7 +419,9 @@ export function RouteResultsV2Page(props: Props) {
             <div style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, padding: '6px 14px', display: 'flex', alignItems: 'center', gap: 6, fontFamily: SANS, fontSize: 12 }}>
               <span>🚌</span>
               <span style={{ color: tk.textDim }}>{lbl('Results', 'ফলাফল')}</span>
-              <span style={{ color: tk.text, fontWeight: 700 }}>{N(RESULTS.length, lang)}</span>
+              <span style={{ color: tk.text, fontWeight: 700 }}>
+                {chakaSearch ? N(CHAKA_BUS_SNAPSHOT.buses.length + CHAKA_BUS_IDS.size, lang) : N(RESULTS.length, lang)}
+              </span>
             </div>
             {activeFilterCount > 0 && (
               <div style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}`, borderRadius: 999, padding: '6px 14px', fontFamily: SANS, fontSize: 12, color: tk.primary, fontWeight: 600 }}>
@@ -470,6 +473,7 @@ export function RouteResultsV2Page(props: Props) {
                   tk={tk}
                   lang={lang}
                   onBusClick={(busId) => onNav('bus-detail', { busId, from: fromQ, to: toQ })}
+                  onDtcaBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
                 />
               )}
             </>
