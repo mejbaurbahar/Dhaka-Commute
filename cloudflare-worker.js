@@ -316,10 +316,10 @@ const DTCA_HEADERS = {
 // reliable user-facing fallback; this rotation keeps the live path trying.
 let _dtcaRotateCount = 0;
 const DTCA_PHONE_PREFIXES = ['013', '014', '016', '018', '017'];
-const DTCA_NAMES = ['Koy Jabo', 'KoyJabo', 'Passenger', 'Traveller', 'Daily Rider', 'City Commuter'];
+const DTCA_NAMES = ['Passenger', 'Traveller', 'Daily Rider', 'City Commuter'];
 
 function dtcaPickCredentials(env) {
-  if (env.DTCA_PHONE && _dtcaRotateCount < 3) return { phone: env.DTCA_PHONE, name: env.DTCA_NAME || 'KoyJabo' };
+  if (env.DTCA_PHONE && _dtcaRotateCount < 3) return { phone: env.DTCA_PHONE, name: env.DTCA_NAME || 'Passenger' };
   const day = Math.floor(Date.now() / 86400000);
   const n = day + _dtcaRotateCount;
   const prefix = DTCA_PHONE_PREFIXES[n % DTCA_PHONE_PREFIXES.length];
