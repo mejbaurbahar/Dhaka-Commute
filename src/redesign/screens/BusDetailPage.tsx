@@ -429,16 +429,14 @@ export function BusDetailPage(props: Props) {
           />
         </div>
 
-        {!isMobile && (
-          <div style={{ display:'flex', gap:10, marginBottom:20 }}>
-            <button onClick={() => setFavoriteIds(toggleFavoriteBus(bus.id, bus.name))} style={{ ...chipBtn(tk), borderRadius:12, padding:'10px 16px', color:isFavorite?tk.accent:tk.text, flex:1, justifyContent:'center' }}>
-              {isFavorite?'♥':'♡'} {T(lang,'সেভ','Save')}
-            </button>
-            <button onClick={() => setShowRating(true)} style={{ ...chipBtn(tk), borderRadius:12, padding:'10px 16px', flex:1, justifyContent:'center' }}>
-              ★ {T(lang,'রেট','Rate')}
-            </button>
-          </div>
-        )}
+        <div style={{ display:'flex', gap:10, marginBottom:20 }}>
+          <button onClick={() => setFavoriteIds(toggleFavoriteBus(bus.id, bus.name))} style={{ ...chipBtn(tk), borderRadius:12, padding:'10px 16px', color:isFavorite?tk.accent:tk.text, flex:1, justifyContent:'center' }}>
+            {isFavorite?'♥':'♡'} {T(lang,'সেভ','Save')}
+          </button>
+          <button onClick={() => setShowRating(true)} style={{ ...chipBtn(tk), borderRadius:12, padding:'10px 16px', flex:1, justifyContent:'center' }}>
+            ★ {T(lang,'রেট','Rate')}
+          </button>
+        </div>
 
         <div style={{ display:'grid',gridTemplateColumns:isMobile?'1fr':'1.35fr 0.8fr',gap:20 }}>
           <div>

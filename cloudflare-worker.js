@@ -51,6 +51,8 @@ const READ_DENY_PATTERNS = [
   /^data\/feedback\//,
   /^data\/user-events\//,
   /^data\/learning\/queries\//,
+  /^data\/learning\/visits\//,
+  /^data\/chat\//,
 ];
 
 // save-data / delete-data path whitelist. Each entry pairs a regex with an
@@ -1017,8 +1019,8 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
         );
       }
 
-      // Validate: only allow safe JSON paths, no traversal
-      if (!/^[\w/.-]+\.json$/.test(p) || p.includes('..')) {
+      // Validate: only allow safe JSON paths under data/, no traversal
+      if (!/^[\w/.-]+\.json$/.test(p) || p.includes('..') || !p.startsWith('data/')) {
         return new Response(
           JSON.stringify({ error: 'Invalid path' }),
           { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }

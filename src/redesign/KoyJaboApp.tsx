@@ -285,8 +285,11 @@ export function KoyJaboApp() {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
-  // Daily login bonus
+  // Daily-use bonus (no accounts — per-device)
   useEffect(() => { claimDailyBonus(); }, []);
+
+  // Clear any stale pre-removal auth session left in old browsers
+  useEffect(() => { try { localStorage.removeItem('koyjabo_auth_session'); } catch { /* ignore */ } }, []);
 
   // Firebase Remote Config (maintenance/announcement flags) — fire-and-forget
   useEffect(() => { initRemoteConfig(); }, []);

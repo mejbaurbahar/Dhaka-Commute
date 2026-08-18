@@ -86,7 +86,7 @@ export function PrivacyPage(props: Props) {
       body: lbl('Following GDPR-style principles, you have the following rights regardless of where you live:', 'GDPR-ধাঁচের নীতি অনুসরণ করে, আপনি যেখানেই থাকুন এই অধিকারগুলি আছে:'),
       bullets: [
         lbl('Right to access: ask what data we have about you.', 'অ্যাক্সেসের অধিকার: আমরা আপনার সম্পর্কে কী ডেটা রাখি জানতে চাইতে পারেন।'),
-        lbl('Right to deletion: request full deletion of your account + data.', 'মুছে ফেলার অধিকার: আপনার অ্যাকাউন্ট ও ডেটা মুছে ফেলার অনুরোধ।'),
+        lbl('Right to deletion: clear your local data (favorites, history) or request removal of community contributions tied to your device.', 'মুছে ফেলার অধিকার: লোকাল ডেটা (ফেভারিট, হিস্টরি) মুছুন বা আপনার ডিভাইসের সাথে যুক্ত কমিউনিটি অবদান মুছে ফেলার অনুরোধ করুন।'),
         lbl('Right to portability: export your favorites + history as JSON.', 'পোর্টেবিলিটির অধিকার: ফেভারিট ও হিস্টরি JSON হিসেবে রপ্তানি।'),
         lbl('Right to correction: update or fix any data we hold.', 'সংশোধনের অধিকার: আমাদের কাছে থাকা ডেটা আপডেট বা ঠিক করুন।'),
         lbl('Right to object: opt out of analytics via browser Do-Not-Track.', 'আপত্তির অধিকার: ব্রাউজার Do-Not-Track দিয়ে অ্যানালিটিক্স থেকে অপ্ট-আউট।'),
@@ -137,7 +137,7 @@ export function PrivacyPage(props: Props) {
     },
     {
       h: lbl('12. Changes to this policy', '১২. এই নীতিতে পরিবর্তন'),
-      body: lbl('We will update this policy as needed and post the new date at the top. Material changes (those that affect your rights) will be announced via in-app banner and email if you have an account. Continued use after a policy update means acceptance of the new terms.', 'প্রয়োজনে আমরা এই নীতি আপডেট করব এবং উপরে নতুন তারিখ পোস্ট করব। বড় পরিবর্তন (যা আপনার অধিকারে প্রভাব ফেলে) ইন-অ্যাপ ব্যানার ও অ্যাকাউন্ট থাকলে ইমেইলে ঘোষণা হবে। আপডেটের পরেও ব্যবহার চালিয়ে গেলে নতুন শর্তে সম্মতি ধরা হবে।'),
+      body: lbl('We will update this policy as needed and post the new date at the top. Material changes (those that affect your rights) will be announced via in-app banner. Continued use after a policy update means acceptance of the new terms.', 'প্রয়োজনে আমরা এই নীতি আপডেট করব এবং উপরে নতুন তারিখ পোস্ট করব। বড় পরিবর্তন (যা আপনার অধিকারে প্রভাব ফেলে) ইন-অ্যাপ ব্যানারে ঘোষণা হবে। আপডেটের পরেও ব্যবহার চালিয়ে গেলে নতুন শর্তে সম্মতি ধরা হবে।'),
     },
     {
       h: lbl('13. Contact', '১৩. যোগাযোগ'),

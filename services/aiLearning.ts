@@ -17,8 +17,7 @@ const _PROXY = (typeof import.meta !== 'undefined' && (import.meta as any).env?.
   || 'https://koyjabo-auth-proxy.fagun115946.workers.dev';
 
 function _getUid(): string {
-  try { return JSON.parse(localStorage.getItem('koyjabo_auth_session') ?? '{}')?.user?.id || 'anonymous'; }
-  catch { return 'anonymous'; }
+  return 'anonymous';
 }
 
 function _sendQueryRecord(query: string, response: string, intentType: string, quality: string, lang: string): void {

@@ -48,14 +48,13 @@ export function TermsPage(props: Props) {
       ],
     },
     {
-      h: lbl('4. User accounts', '৪. ইউজার অ্যাকাউন্ট'),
-      body: lbl('Account features are optional. If you create an account:', 'অ্যাকাউন্ট ফিচার ঐচ্ছিক। অ্যাকাউন্ট তৈরি করলে:'),
+      h: lbl('4. No account required', '৪. অ্যাকাউন্ট প্রয়োজন নেই'),
+      body: lbl('KoyJabo has no account system. You never sign up or sign in — everything works anonymously on your device.', 'কই যাবোতে কোনো অ্যাকাউন্ট ব্যবস্থা নেই। আপনাকে কখনো সাইন-আপ বা সাইন-ইন করতে হবে না — সবকিছু আপনার ডিভাইসে সম্পূর্ণ বেনামে কাজ করে।'),
       bullets: [
-        lbl('You are responsible for keeping your password secure.', 'আপনার পাসওয়ার্ড নিরাপদ রাখার দায়িত্ব আপনার।'),
-        lbl('Provide accurate email and display name; no impersonation.', 'সঠিক ইমেইল ও ডিসপ্লে নাম দিন; অন্যের পরিচয়ে নয়।'),
-        lbl('One account per person; sharing accounts may lead to suspension.', 'প্রতি ব্যক্তি একটি অ্যাকাউন্ট; শেয়ার করলে স্থগিত হতে পারে।'),
-        lbl('We may suspend accounts for spam, abuse, or breach of these terms.', 'স্প্যাম, অপব্যবহার, বা শর্ত লঙ্ঘনের জন্য অ্যাকাউন্ট স্থগিত করতে পারি।'),
-        lbl('Delete your account anytime: Settings → Sign out → contact support to fully purge.', 'যেকোনো সময় অ্যাকাউন্ট মুছুন: Settings → Sign out → পূর্ণ মুছতে সাপোর্টে যোগাযোগ।'),
+        lbl('No passwords, no emails, no profiles — nothing to keep secure.', 'কোনো পাসওয়ার্ড, ইমেইল, বা প্রোফাইল নেই — সুরক্ষিত রাখার কিছু নেই।'),
+        lbl('Your saved routes and history are stored locally on your device.', 'আপনার সেভ করা রুট ও ইতিহাস আপনার ডিভাইসে লোকালি সংরক্ষিত থাকে।'),
+        lbl('Community contributions (reviews, photos, bus sharing) are tied to your device, not an account.', 'কমিউনিটি অবদান (রিভিউ, ফটো, বাস শেয়ারিং) অ্যাকাউন্টের বদলে ডিভাইসের সাথে যুক্ত।'),
+        lbl('We may block devices, not accounts, for spam, abuse, or breach of these terms.', 'স্প্যাম, অপব্যবহার, বা শর্ত লঙ্ঘনের জন্য অ্যাকাউন্ট নয়, ডিভাইস ব্লক করতে পারি।'),
       ],
     },
     {
@@ -92,7 +91,7 @@ export function TermsPage(props: Props) {
         lbl('No credential stuffing, brute force, password spraying, or auth bypass attempts.', 'কোনো credential stuffing, brute force, password spraying, বা auth bypass চেষ্টা নয়।'),
         lbl('No exploit attempts against XSS, SQLi, SSRF, CSRF, deserialization, or any other vulnerability class.', 'XSS, SQLi, SSRF, CSRF, deserialization, বা অন্য কোনো vulnerability ক্লাসের বিরুদ্ধে কোনো exploit চেষ্টা নয়।'),
         lbl('If you find a security issue, report it responsibly to the contact email in section 16. We respond within 7 days. Public disclosure before we patch is grounds for legal action.', 'নিরাপত্তা সমস্যা খুঁজে পেলে, সেকশন ১৬-এর কন্টাক্ট ইমেইলে দায়িত্বশীলভাবে রিপোর্ট করুন। ৭ দিনের মধ্যে সাড়া দেই। প্যাচের আগে পাবলিক প্রকাশ আইনি ব্যবস্থার ভিত্তি।'),
-        lbl('Violators may face account ban, IP block, civil liability, and criminal referral.', 'লঙ্ঘনকারীরা অ্যাকাউন্ট ব্যান, IP ব্লক, দেওয়ানি দায়, ও ফৌজদারি referral-এর মুখোমুখি হতে পারেন।'),
+        lbl('Violators may face device block, IP block, civil liability, and criminal referral.', 'লঙ্ঘনকারীরা ডিভাইস ব্লক, IP ব্লক, দেওয়ানি দায়, ও ফৌজদারি referral-এর মুখোমুখি হতে পারেন।'),
       ],
     },
     {
@@ -114,8 +113,8 @@ export function TermsPage(props: Props) {
       body: lbl('KoyCoins are loyalty points earned by using KoyJabo features (searches, AI chat, daily use). They:', 'KoyCoins হল কই যাবোর ফিচার ব্যবহার করে অর্জিত লয়্যালটি পয়েন্ট (সার্চ, AI চ্যাট, দৈনিক ব্যবহার)। এগুলো:'),
       bullets: [
         lbl('Have no monetary value and cannot be redeemed for cash.', 'আর্থিক মূল্য নেই এবং নগদে রিডিম করা যায় না।'),
-        lbl('Are non-transferable between accounts.', 'অ্যাকাউন্টের মধ্যে স্থানান্তরযোগ্য নয়।'),
-        lbl('Expire after 12 months of account inactivity.', 'অ্যাকাউন্ট ১২ মাস নিষ্ক্রিয় থাকলে মেয়াদ শেষ।'),
+        lbl('Are non-transferable between devices.', 'ডিভাইসের মধ্যে স্থানান্তরযোগ্য নয়।'),
+        lbl('Expire after 12 months without app usage.', '১২ মাস অ্যাপ ব্যবহার না করলে মেয়াদ শেষ।'),
         lbl('Can be revoked for fraud or terms violations.', 'জালিয়াতি বা শর্ত লঙ্ঘনের জন্য বাতিল করা যেতে পারে।'),
       ],
     },
