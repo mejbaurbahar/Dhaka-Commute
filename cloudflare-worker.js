@@ -41,6 +41,9 @@ const ALLOWED_ACTIONS = new Set([
   'google-signup', 'set-google-password',
   // New server-side auth helpers — bcrypt + session token issuance never leak to client
   'auth-login', 'auth-google-lookup', 'auth-reset-status',
+  // Offline-first event sync (web PWA + Android app queue events offline and
+  // flush this endpoint when connectivity returns)
+  'sync-events',
 ]);
 
 // Paths whose READ must never be exposed via /gh?r=d&p=...
@@ -269,6 +272,7 @@ const RATE_BUCKETS = {
   'save-data':          { limit: 30,  windowMs: 60_000 },
   'delete-data':        { limit: 30,  windowMs: 60_000 },
   'record-query':       { limit: 30,  windowMs: 60_000 },
+  'sync-events':        { limit: 30,  windowMs: 60_000 },
   'upload-avatar':      { limit: 5,   windowMs: 60_000 },
   'google-signup':      { limit: 5,   windowMs: 60_000 },
 };
@@ -1463,6 +1467,72 @@ If asked who built you: "Mejbaur Bahar Fagun, software engineer, Bangladesh."`;
         return new Response(
           JSON.stringify({ success: writeOk.ok }),
           { status: writeOk.ok ? 200 : 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+        );
+      }
+
+      // ── sync-events — offline-first event collection ──────────────────────
+      // Web PWA + Android app queue user events (searches, feature usage)
+      // locally while offline, then POST the batch here when connectivity
+      // returns. Dedupe by client-generated event id so a retry after a
+      // dropped response never double-records. Stored per-day in the data
+      // repo (data/user-events/YYYY-MM-DD.json), capped at 2000 events/day.
+      if (body.action === 'sync-events') {
+        let payload = {};
+        try { payload = JSON.parse(body.data || '{}'); } catch { /* ignore */ }
+        const events = Array.isArray(payload.events) ? payload.events : [];
+        if (events.length === 0 || events.length > 100) {
+          return new Response(
+            JSON.stringify({ success: false, error: 'Invalid events batch (1-100)' }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+          );
+        }
+        const valid = [];
+        for (const ev of events) {
+          const id = String(ev?.id || '');
+          const type = String(ev?.type || '');
+          let serialized = '';
+          try { serialized = JSON.stringify(ev); } catch { /* ignore */ }
+          if (!/^[A-Za-z0-9-]{8,64}$/.test(id)) continue;
+          if (!/^[a-z_]{2,40}$/.test(type)) continue;
+          if (serialized.length > 2048) continue; // per-event cap — text events only
+          valid.push({
+            id,
+            type,
+            ts: Number(ev.ts) || Date.now(),
+            payload: ev.payload ?? {},
+            device: String(ev.device || 'anonymous').slice(0, 80),
+          });
+        }
+        if (!valid.length) {
+          return new Response(
+            JSON.stringify({ success: false, error: 'No valid events' }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+          );
+        }
+        const today = new Date().toISOString().split('T')[0];
+        const path = `data/user-events/${today}.json`;
+        const existing = await readDataFile(DATA_TOKEN, DATA_OWNER, DATA_REPO, path);
+        const record = existing?.content || { date: today, events: [] };
+        const seen = new Set((record.events || []).map((e) => e.id));
+        const fresh = [];
+        for (const ev of valid) {
+          if (seen.has(ev.id)) continue;
+          seen.add(ev.id);
+          fresh.push(ev);
+        }
+        if (fresh.length) {
+          record.events = [...(record.events || []), ...fresh].slice(-2000);
+          const writeOk = await writeDataFile(DATA_TOKEN, DATA_OWNER, DATA_REPO, path, record, `Sync events: ${fresh.length} (${today})`, ctx);
+          if (!writeOk.ok) {
+            return new Response(
+              JSON.stringify({ success: false, error: writeOk.message }),
+              { status: writeOk.status === 403 ? 403 : 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+            );
+          }
+        }
+        return new Response(
+          JSON.stringify({ success: true, accepted: fresh.map((e) => e.id), duplicate: valid.length - fresh.length }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
         );
       }
 
