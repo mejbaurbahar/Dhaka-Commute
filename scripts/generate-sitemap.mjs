@@ -202,6 +202,6 @@ console.log(`✅ sitemap.xml written — ${staticPages.length} static, ${blogPag
 // whenever a new Android build is published (see android/app/build.gradle).
 const versionOut = path.join(root, 'public', 'version.json');
 const buildVersion = process.env.BUILD_VERSION || `${Date.now()}`;
-const androidVersionCode = Number(process.env.ANDROID_VERSION_CODE || 23);
+const androidVersionCode = Number(process.env.ANDROID_VERSION_CODE || 24);
 fs.writeFileSync(versionOut, JSON.stringify({ version: buildVersion, builtAt: new Date().toISOString(), androidVersionCode }, null, 2), 'utf8');
 console.log(`✅ version.json written — ${buildVersion} (androidVersionCode ${androidVersionCode})`);

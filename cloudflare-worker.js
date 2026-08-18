@@ -315,10 +315,14 @@ async function dtcaAutoLogin(env) {
       headers: { ...DTCA_HEADERS, 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, phone_number: phone, public_key: env.DTCA_PUBLIC_KEY || 'cf-chl-stage' }),
     });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data?.token || null;
-  } catch {
+    const body = await res.text();
+    if (!res.ok) {
+      console.log(`DTCA login failed: HTTP ${res.status} — ${body.slice(0, 200)}`);
+      return null;
+    }
+    try { return JSON.parse(body)?.token || null; } catch { return null; }
+  } catch (err) {
+    console.log(`DTCA login error: ${err?.message}`);
     return null;
   }
 }
@@ -338,12 +342,15 @@ async function dtcaFetch(path, env) {
 
   // On 401/403/421 (stale or rejected token), auto-refresh and retry once
   if (res.status === 401 || res.status === 403 || res.status === 421) {
+    console.log(`DTCA first fetch ${path}: HTTP ${res.status}`);
     const newToken = await dtcaAutoLogin(env);
     if (!newToken) return res; // login also failed — return the error as-is
     _dtcaTokenOverride = newToken;
-    return fetch(`${DTCA_API}/${path}`, {
+    const retried = await fetch(`${DTCA_API}/${path}`, {
       headers: { ...DTCA_HEADERS, Authorization: `Bearer ${newToken}` },
     });
+    console.log(`DTCA retry ${path}: HTTP ${retried.status}`);
+    return retried;
   }
 
   return res;
@@ -615,6 +622,7 @@ export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
     const url = new URL(request.url);
+    console.log(`kj-worker: ${request.method} ${url.pathname}`);
 
     // Handle CORS preflight
     if (request.method === 'OPTIONS') {

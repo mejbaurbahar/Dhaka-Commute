@@ -931,16 +931,13 @@ function KoyJaboStory({
           <div style={{ fontFamily: BEN, fontSize: 7, fontWeight: 800, color: '#00f5ff' }}>৩টি রুট পাওয়া গেছে</div>
         </div>
         {[
-          { route: 'গ্রীন লাইন', fare: '৳৬০', time: '৪৮ মিনিট', c: '#10b981' },
-          { route: 'হানিফ', fare: '৳৭৫', time: '১ ঘন্টা', c: '#3b82f6' },
-          { route: 'বিআরটিসি', fare: '৳৪৫', time: '৫২ মিনিট', c: '#8b5cf6' },
+          { route: 'গ্রীন লাইন', c: '#10b981' },
+          { route: 'হানিফ', c: '#3b82f6' },
+          { route: 'বিআরটিসি', c: '#8b5cf6' },
         ].map((r, i) => (
           <div key={i} style={{ padding: '3px 6px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontFamily: BEN, fontSize: 7, color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{r.route}</span>
-            <div style={{ display: 'flex', gap: 3 }}>
-              <span style={{ fontFamily: BEN, fontSize: 6, background: 'rgba(34,197,94,0.15)', color: '#4ade80', borderRadius: 3, padding: '1px 3px' }}>{r.fare}</span>
-              <span style={{ fontFamily: BEN, fontSize: 6, color: 'rgba(255,255,255,0.4)' }}>{r.time}</span>
-            </div>
+            <span style={{ fontFamily: BEN, fontSize: 6, color: 'rgba(255,255,255,0.35)' }}>✓</span>
           </div>
         ))}
       </div>

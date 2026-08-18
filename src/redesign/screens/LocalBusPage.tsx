@@ -18,6 +18,7 @@ import { trackBusSearch, trackRouteSearch, getUserHistory } from '../../../servi
 import { enhancedBusSearch } from '../../../services/searchService';
 import { earnCoins } from '../utils/koyCoinService';
 import { DTCABusListSection } from '../components/DTCABusListSection';
+import { ChakaStaticRoutes } from '../components/ChakaStaticRoutes';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -178,11 +179,22 @@ export function LocalBusPage(props: Props) {
   }, [searchQuery, fromInput, toInput, hasSearched, searchAttr, quickFastest, quickAC]);
 
   const DTCA_TERMS = ['dhakar chaka','dhaka chaka','chaka','ঢাকার চাকা','ঢাকা চাকা','gulshan chaka','গুলশান চাকা'];
-  const showInlineDtca = hasSearched && DTCA_TERMS.some(t =>
-    searchQuery.toLowerCase().includes(t) ||
-    fromInput.toLowerCase().includes(t) ||
-    toInput.toLowerCase().includes(t)
+  const DTCA_STOPPAGES = ['agora','banani','dcc','gulshan 1','gulshan 2','gulshan1','gulshan2','nabisco mor','notun bazar','natun bazar','police plaza','shanta tower'];
+  const CHAKA_BUS_IDS = new Set(['dhakar_chaka_1', 'dhakar_chaka_2', 'gulshan_chaka']);
+  const opTerm = (q: string) => DTCA_TERMS.some(t => q.toLowerCase().includes(t));
+  const localStop = (q: string) => DTCA_STOPPAGES.some(s => q.toLowerCase().includes(s));
+  // Live-bus section only for genuinely Dhaka-local context (operator term, or
+  // BOTH endpoints DTCA stops) — Hemayetpur → Gulshan 1 must not show
+  // Gulshan-area live buses.
+  const showInlineDtca = hasSearched && (
+    opTerm(searchQuery) || opTerm(fromInput) || opTerm(toInput) ||
+    (!!fromInput && !!toInput && localStop(fromInput) && localStop(toInput))
   );
+  const chakaSearch = hasSearched && (opTerm(searchQuery) || opTerm(fromInput) || opTerm(toInput));
+
+  // Operator-term search ("dhakar chaka") — static chaka routes move to the
+  // dedicated fallback list under the live section; don't list them here.
+  const visibleRoutes = chakaSearch ? filteredRoutes.filter(r => !CHAKA_BUS_IDS.has(r.id)) : filteredRoutes;
 
   const [mode, setMode] = useState<'buses'|'transit'>('buses');
 
@@ -308,22 +320,29 @@ export function LocalBusPage(props: Props) {
                         lang={lang}
                         onBusClick={(identifier, vrn) => onNav('dtca-bus-detail', { identifier, vrn })}
                       />
+                      {chakaSearch && (
+                        <ChakaStaticRoutes
+                          tk={tk}
+                          lang={lang}
+                          onBusClick={(busId) => onNav('bus-detail', { busId, from: fromInput, to: toInput })}
+                        />
+                      )}
                     </div>
                   )}
                   <SectionHeader tk={tk} lang={lang}
                     title={hasSearched
-                      ? T(lang, `${N(filteredRoutes.length,lang)}টি রুট পাওয়া গেছে`, `${N(filteredRoutes.length,lang)} routes found`)
+                      ? T(lang, `${N(visibleRoutes.length,lang)}টি রুট পাওয়া গেছে`, `${N(visibleRoutes.length,lang)} routes found`)
                       : T(lang,'জনপ্রিয় বাস রুট','Popular bus routes')}
                     action={T(lang,'সব দেখুন','See all')}/>
                   <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                    {filteredRoutes.length === 0 && (
+                    {visibleRoutes.length === 0 && (
                       <div style={{ background:tk.panel, border:`1px dashed ${tk.line}`, borderRadius:16, padding:'28px 16px', textAlign:'center' }}>
                         <div style={{ fontSize:28, marginBottom:8 }}>🚌</div>
                         <div style={{ fontFamily:BEN, fontSize:14, fontWeight:600, color:tk.text, marginBottom:4 }}>{T(lang,'কোনো রুট পাওয়া যায়নি','No routes found')}</div>
                         <div style={{ fontFamily:SANS, fontSize:12, color:tk.textFaint }}>{T(lang,'অন্য নাম বা রুট দিয়ে খুঁজে দেখুন','Try a different name or route')}</div>
                       </div>
                     )}
-                    {filteredRoutes.map((r,i)=>{
+                    {visibleRoutes.map((r,i)=>{
                       const col = routeColor(r.type);
                       const initials = r.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
                       return (
