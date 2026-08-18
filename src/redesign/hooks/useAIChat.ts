@@ -82,22 +82,47 @@ function buildRealDataContext(userText: string): string {
       .map(m => {
         const plates = (m.bus as unknown as { plates?: string[] }).plates;
         const plateInfo = plates && plates.length > 0 ? ` | Plates: ${plates.join(', ')}` : '';
-        return `- ${m.bus.name}${m.bus.bnName ? ` (${m.bus.bnName})` : ''}: ${m.bus.routeString}${m.bus.type ? ` • ${m.bus.type}` : ''}${plateInfo}`;
+        // Show which queried stops this bus actually serves
+        const matchedStops = tokens
+          .flatMap(tok => m.bus.stops.filter(s => s.replace(/_/g, '').includes(tok.replace(/\s/g, ''))))
+          .filter((s, i, arr) => arr.indexOf(s) === i)
+          .map(s => (STATIONS as Record<string, {name?:string}>)[s]?.name ?? s.replace(/_/g, ' '))
+          .slice(0, 4);
+        const stopInfo = matchedStops.length > 0 ? ` | Serves: ${matchedStops.join(' → ')}` : '';
+        return `- ${m.bus.name}${m.bus.bnName ? ` (${m.bus.bnName})` : ''}: ${m.bus.routeString}${m.bus.type ? ` • ${m.bus.type}` : ''}${plateInfo}${stopInfo}`;
       })
       .join('\n'));
   }
 
   // ── 3. Transit plan (multi-bus routing for "A to B" queries) ─────────────
-  // Detect "from X to Y" or "X থেকে Y" patterns
-  const FROM_TO_RE = /(?:from\s+|থেকে\s*)?([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})\s+(?:to|→|যাব|যাওয়া|যেতে|to go)\s+([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})/i;
-  const ARROW_RE = /([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,15?})\s*(?:→|to|থেকে)\s*([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,15?})/i;
+  // Patterns for "I am at X, how to go Y" and "from X to Y"
+  const IAM_AT_RE = /(?:i(?:'m|\s+am)\s+(?:at|in|near)|at\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,25?})(?=\s*[,।]|\s+(?:how|want|need|kiv|কিভ|যেতে|jabo|jete))/i;
+  const FROM_TO_RE = /(?:from\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})\s+(?:to|→)\s+([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})/i;
+  const BN_FROM_TO_RE = /([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})\s+থেকে\s+([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,20?})/i;
+  const ARROW_RE = /([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,15?})\s*→\s*([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,15?})/i;
 
   let fromTok: string | null = null;
   let toTok: string | null = null;
-  const m1 = userText.match(FROM_TO_RE);
-  const m2 = userText.match(ARROW_RE);
-  if (m1) { fromTok = m1[1].trim(); toTok = m1[2].trim(); }
-  else if (m2) { fromTok = m2[1].trim(); toTok = m2[2].trim(); }
+
+  // "I am at X, how to go Y" → extract X as from, run extractGoToDest for Y
+  const iamAt = userText.match(IAM_AT_RE);
+  if (iamAt) {
+    fromTok = iamAt[1].trim();
+    // extract destination from rest of query
+    const destPart = userText.slice(iamAt.index! + iamAt[0].length);
+    const goRe = /(?:how\s+(?:to\s+)?(?:go|get)\s+(?:to\s+)?|go\s+to\s+|to\s+|reach\s+|যাব\s+|যাওয়ার\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{1,30?})(?:\?|।|,|$)/i;
+    const gm = destPart.match(goRe);
+    if (gm) toTok = gm[1].trim().replace(/[?।,]$/, '');
+  }
+
+  if (!fromTok || !toTok) {
+    const m1 = userText.match(FROM_TO_RE);
+    const m2 = userText.match(BN_FROM_TO_RE);
+    const m3 = userText.match(ARROW_RE);
+    if (m1) { fromTok = m1[1].trim(); toTok = m1[2].trim(); }
+    else if (m2) { fromTok = m2[1].trim(); toTok = m2[2].trim(); }
+    else if (m3) { fromTok = m3[1].trim(); toTok = m3[2].trim(); }
+  }
 
   if (fromTok && toTok) {
     const fromId = fuzzyMatchStop(fromTok);
@@ -108,6 +133,28 @@ function buildRealDataContext(userText: string): string {
         const plan = formatTransitPlan(fromTok, toTok, routes);
         sections.push(plan);
       }
+    }
+  }
+
+  // ── 3b. Direct bus finder — scan all active buses for from→to stop pair ────
+  // This fills in when fuzzyMatchStop or findTransitRoutes misses the route
+  // because the stop name is slightly different from the station ID.
+  if (fromTok && toTok) {
+    const ftLower = fromTok.toLowerCase().replace(/\s+/g, '');
+    const ttLower = toTok.toLowerCase().replace(/\s+/g, '');
+    const directBuses = BUS_DATA.filter(b => {
+      if (b.active === false) return false;
+      const fi = b.stops.findIndex(s => s.replace(/_/g, '').includes(ftLower) || ftLower.includes(s.replace(/_/g, '')));
+      const ti = b.stops.findIndex(s => s.replace(/_/g, '').includes(ttLower) || ttLower.includes(s.replace(/_/g, '')));
+      return fi !== -1 && ti !== -1 && fi < ti;
+    });
+    if (directBuses.length > 0) {
+      sections.push(
+        `[DIRECT BUSES — ${fromTok.toUpperCase()} → ${toTok.toUpperCase()}]\n` +
+        `These buses serve BOTH stops in order. Board at ${fromTok}, alight at ${toTok}:\n` +
+        directBuses.slice(0, 5).map(b => `- ${b.name} (${b.bnName ?? b.name}): ${b.routeString} • ${b.type}`).join('\n') +
+        '\nTell the user EXACTLY these buses go from one to the other directly.'
+      );
     }
   }
 
@@ -432,6 +479,14 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
         .map(m => ({ role: m.isUser ? 'user' : 'assistant', text: m.text }));
 
       const hasFrom = /\bfrom\b|থেকে|হতে/i.test(userText);
+
+      // Extract explicit "I am at X" location from message — overrides GPS area
+      const iamAtMsg = userText.match(/(?:i(?:'m|\s+am)\s+(?:at|in|near)|at\s+)([A-Za-zঀ-৿][A-Za-zঀ-৿\s]{2,25?})(?=\s*[,।]|\s+(?:how|want|need|kiv|কিভ|যেতে|jabo|jete))/i);
+      if (iamAtMsg) {
+        const extracted = iamAtMsg[1].trim();
+        userAreaRef.current = extracted;
+        localStorage.setItem('kj-location-area', extracted);
+      }
 
       // Extract destination from "how to go X", "want to go X", "jeta chai X" etc.
       function extractGoToDest(q: string): string | null {

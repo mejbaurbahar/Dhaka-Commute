@@ -122,6 +122,8 @@ export function LocalBusPage(props: Props) {
       let out = [...list];
       if (quickAC) out = out.filter(r => r.type === 'AC');
       if (quickFastest) out = out.sort((a, b) => a.stops.length - b.stops.length);
+      // Active buses always before inactive
+      out.sort((a, b) => (a.active === false ? 1 : 0) - (b.active === false ? 1 : 0));
       return out;
     };
 
@@ -139,7 +141,7 @@ export function LocalBusPage(props: Props) {
       }
       const result = enhancedBusSearch(q);
       if (result.buses.length > 0) {
-        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 20));
+        return applyQuick(result.buses.slice(0, 25));
       }
       const lowered = q.toLowerCase();
       return applyQuick(BUS_DATA.filter(r =>
@@ -148,7 +150,7 @@ export function LocalBusPage(props: Props) {
         r.routeString.toLowerCase().includes(lowered) ||
         r.type.toLowerCase().includes(lowered) ||
         r.stops.some(s => s.toLowerCase().includes(norm(lowered)))
-      ).slice(0, 20));
+      ).slice(0, 25));
     }
 
     if (f && t) {
@@ -161,16 +163,16 @@ export function LocalBusPage(props: Props) {
     if (f) {
       const result = enhancedBusSearch(f);
       if (result.buses.length > 0) {
-        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 15));
+        return applyQuick(result.buses.slice(0, 20));
       }
-      return applyQuick(BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 15));
+      return applyQuick(BUS_DATA.filter(r => matchesStation(r, f)).slice(0, 20));
     }
     if (t) {
       const result = enhancedBusSearch(t);
       if (result.buses.length > 0) {
-        return applyQuick(result.buses.filter(r => r.active !== false).slice(0, 15));
+        return applyQuick(result.buses.slice(0, 20));
       }
-      return applyQuick(BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 15));
+      return applyQuick(BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 20));
     }
     return applyQuick(BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10));
   }, [searchQuery, fromInput, toInput, hasSearched, searchAttr, quickFastest, quickAC]);
@@ -335,12 +337,17 @@ export function LocalBusPage(props: Props) {
                               icon="🎯"
                             />
                           )}
-                          <div onClick={()=>{ trackBusSearch(r.id, r.name); onNav('bus-detail', { busId: r.id, from: fromInput, to: toInput }); }} className="kj-card-hov" style={{ ...card(14), display:'flex', alignItems:'center', gap:12, cursor:'pointer' }}>
-                            <div style={{ width:44, height:44, borderRadius:12, flexShrink:0, background:`linear-gradient(135deg,${col}cc,${col})`, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:SANS, fontWeight:800, fontSize:13 }}>{initials}</div>
+                          <div onClick={()=>{ trackBusSearch(r.id, r.name); onNav('bus-detail', { busId: r.id, from: fromInput, to: toInput }); }} className="kj-card-hov" style={{ ...card(14), display:'flex', alignItems:'center', gap:12, cursor:'pointer', opacity: r.active === false ? 0.6 : 1 }}>
+                            <div style={{ width:44, height:44, borderRadius:12, flexShrink:0, background: r.active === false ? '#9ca3af' : `linear-gradient(135deg,${col}cc,${col})`, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:SANS, fontWeight:800, fontSize:13 }}>{initials}</div>
                             <div style={{ flex:1, minWidth:0 }}>
                               <div style={{ display:'flex', alignItems:'center', gap:6, flexWrap:'wrap' }}>
                                 <span style={{ fontFamily:BEN, fontWeight:700, fontSize:14, color:tk.text }}>{lang==='bn'?r.bnName:r.name}</span>
                                 {r.type==='AC' && <Pill tk={tk} tone="primary">AC</Pill>}
+                                {r.active === false && (
+                                  <span style={{ fontFamily:SANS, fontSize:10, fontWeight:700, background:'#ef444420', color:'#ef4444', border:'1px solid #ef444440', borderRadius:6, padding:'1px 6px' }}>
+                                    {T(lang, 'বন্ধ', 'Inactive')}
+                                  </span>
+                                )}
                               </div>
                               <div style={{ fontFamily:BEN, fontSize:12, color:tk.textDim, marginTop:2 }}>{r.routeString}</div>
                               <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:4 }}>

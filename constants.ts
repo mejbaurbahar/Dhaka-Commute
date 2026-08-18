@@ -415,6 +415,7 @@ export const STATIONS: Record<string, Station> = {
   jahangirnagar_university: { id: 'jahangirnagar_university', name: '  Jahangirnagar University', bnName: 'জাহাঙ্গীরনগর বিশ্ববিদ্যালয়', lat: 23.8813, lng: 90.2660 },
   nsu: { id: 'nsu', name: 'North South University', bnName: 'নর্থ সাউথ বিশ্ববিদ্যালয়', lat: 23.8120, lng: 90.4250 },
   brac_university: { id: 'brac_university', name: 'BRAC University', bnName: 'ব্র্যাক বিশ্ববিদ্যালয়', lat: 23.7808, lng: 90.4067 },
+  brac_square: { id: 'brac_square', name: 'BRAC/Square', bnName: 'ব্র্যাক/স্কয়ার', lat: 23.7815, lng: 90.4075 },
   iub: { id: 'iub', name: 'Independent University Bangladesh', bnName: 'ইন্ডিপেন্ডেন্ট ইউনিভার্সিটি', lat: 23.8119, lng: 90.4252 },
   aiub: { id: 'aiub', name: 'AIUB', bnName: 'এআইইউবি', lat: 23.7504, lng: 90.3919 },
   uttara_university: { id: 'uttara_university', name: 'Uttara University', bnName: 'উত্তরা বিশ্ববিদ্যালয়', lat: 23.8697, lng: 90.3870 },
@@ -973,6 +974,7 @@ export const BUS_DATA: BusRoute[] = [
     id: 'agradut', // Overwriting/Updating existing if duplicate ID
     name: 'Agradut',
     bnName: 'অগ্রদূত',
+    active: false,
     routeString: 'Savar ⇄ Notun Bazar',
     stops: ['savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'mohakhali_flyover', 'wireless', 'gulshan1', 'badda_link_road', 'bashtola', 'shahjadpur', 'uttar_badda', 'notun_bazar'],
     type: 'Semi-Sitting',
@@ -1099,6 +1101,7 @@ export const BUS_DATA: BusRoute[] = [
     id: 'arnob',
     name: 'Arnob',
     bnName: 'অরনব',
+    active: false,
     routeString: 'Hemayetpur ⇄ Demra',
     stops: ['hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'badda_link_road', 'madhya_badda', 'merul', 'rampura', 'banasree', 'demra'],
     type: 'Semi-Sitting',
@@ -1163,7 +1166,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Baishakhi Paribahan',
     bnName: 'বৈশাখী পরিবহন',
     routeString: 'Savar ⇄ Notun Bazar',
-    stops: ['savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'taltola', 'zia_uddyan', 'bijoy_sarani', 'tejgaon', 'jahangir_gate', 'mohakhali', 'mohakhali_flyover', 'wireless', 'gulshan1', 'badda_link_road', 'bashtola', 'shahjadpur', 'uttar_badda', 'notun_bazar'],
+    stops: ['savar', 'nabinagar_savar', 'bank_town', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'agargaon', 'taltola', 'zia_uddyan', 'bijoy_sarani', 'jahangir_gate', 'mohakhali', 'mohakhali_flyover', 'wireless', 'brac_square', 'post_office_gulshan', 'gulshan1', 'badda_link_road', 'bashtola', 'shahjadpur', 'uttar_badda', 'notun_bazar'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM',
   },
@@ -5070,6 +5073,163 @@ export const METRO_STATIONS: Record<string, MetroStation> = {
     lng: 90.4132,
     distanceFromStart: 17.5,
     description: "Dhaka's central business district, headquarters of major banks, corporate offices, shopping malls, financial institutions, and restaurants"
+  },
+
+  // MRT Line 5 North (Hemayetpur ↔ Bhatara) — planned, under construction
+  'mrt5n_hemayetpur': {
+    id: 'mrt5n_hemayetpur',
+    name: 'Hemayetpur MRT-5 Station',
+    bnName: 'হেমায়েতপুর এমআরটি-৫',
+    lat: 23.792779,
+    lng: 90.269631,
+    distanceFromStart: 0.0,
+    description: 'Planned MRT Line 5 North western terminus near Hemayetpur, Amin Bazar bridge area, connecting Savar to central Dhaka'
+  },
+  'mrt5n_amin_bazar': {
+    id: 'mrt5n_amin_bazar',
+    name: 'Amin Bazar MRT-5 Station',
+    bnName: 'আমিনবাজার এমআরটি-৫',
+    lat: 23.804,
+    lng: 90.299,
+    distanceFromStart: 3.2,
+    description: 'Planned MRT Line 5 North station at Amin Bazar bridge area'
+  },
+  'mrt5n_gabtoli': {
+    id: 'mrt5n_gabtoli',
+    name: 'Gabtoli MRT-5 Station',
+    bnName: 'গাবতলী এমআরটি-৫',
+    lat: 23.783479,
+    lng: 90.343815,
+    distanceFromStart: 7.1,
+    description: 'Planned MRT Line 5 North station at Gabtoli bus terminal, major interchange hub'
+  },
+  'mrt5n_technical': {
+    id: 'mrt5n_technical',
+    name: 'Technical MRT-5 Station',
+    bnName: 'টেকনিক্যাল এমআরটি-৫',
+    lat: 23.781468,
+    lng: 90.351741,
+    distanceFromStart: 8.4,
+    description: 'Planned MRT Line 5 North station at Technical roundabout, Mirpur'
+  },
+  'mrt5n_mirpur1': {
+    id: 'mrt5n_mirpur1',
+    name: 'Mirpur 1 MRT-5 Station',
+    bnName: 'মিরপুর ১ এমআরটি-৫',
+    lat: 23.7930,
+    lng: 90.3530,
+    distanceFromStart: 9.8,
+    description: 'Planned MRT Line 5 North station near Mirpur 1 roundabout and Shia Masjid'
+  },
+  'mrt5n_mirpur10': {
+    id: 'mrt5n_mirpur10',
+    name: 'Mirpur 10 MRT-5 Station',
+    bnName: 'মিরপুর ১০ এমআরটি-৫',
+    lat: 23.8075,
+    lng: 90.3685,
+    distanceFromStart: 11.5,
+    description: 'Planned MRT Line 5 North station at Mirpur 10 roundabout — interchange with MRT Line 6'
+  },
+  'mrt5n_mirpur14': {
+    id: 'mrt5n_mirpur14',
+    name: 'Mirpur 14 MRT-5 Station',
+    bnName: 'মিরপুর ১৪ এমআরটি-৫',
+    lat: 23.8120,
+    lng: 90.3750,
+    distanceFromStart: 13.0,
+    description: 'Planned MRT Line 5 North station near Mirpur Section 14'
+  },
+  'mrt5n_kochukhet': {
+    id: 'mrt5n_kochukhet',
+    name: 'Kochukhet MRT-5 Station',
+    bnName: 'কচুক্ষেত এমআরটি-৫',
+    lat: 23.8230,
+    lng: 90.3900,
+    distanceFromStart: 15.1,
+    description: 'Planned MRT Line 5 North station at Kochukhet, north Dhaka'
+  },
+  'mrt5n_boromoghbazar': {
+    id: 'mrt5n_boromoghbazar',
+    name: 'Boromoghbazar MRT-5 Station',
+    bnName: 'বড় মোগবাজার এমআরটি-৫',
+    lat: 23.8260,
+    lng: 90.4060,
+    distanceFromStart: 17.0,
+    description: 'Planned MRT Line 5 North station at Boromoghbazar area'
+  },
+  'mrt5n_bashundhara': {
+    id: 'mrt5n_bashundhara',
+    name: 'Bashundhara MRT-5 Station',
+    bnName: 'বসুন্ধরা এমআরটি-৫',
+    lat: 23.8120,
+    lng: 90.4250,
+    distanceFromStart: 18.6,
+    description: 'Planned MRT Line 5 North station near Bashundhara City and residential area'
+  },
+  'mrt5n_bhatara': {
+    id: 'mrt5n_bhatara',
+    name: 'Bhatara MRT-5 Station',
+    bnName: 'ভাটারা এমআরটি-৫',
+    lat: 23.8050,
+    lng: 90.4430,
+    distanceFromStart: 20.1,
+    description: 'Planned eastern terminus of MRT Line 5 North at Bhatara, Vatara area'
+  },
+
+  // MRT Line 5 South (Gabtoli ↔ Dasherkandi) — planned
+  'mrt5s_gabtoli': {
+    id: 'mrt5s_gabtoli',
+    name: 'Gabtoli MRT-5 South Station',
+    bnName: 'গাবতলী এমআরটি-৫ দক্ষিণ',
+    lat: 23.783479,
+    lng: 90.343815,
+    distanceFromStart: 0.0,
+    description: 'Planned MRT Line 5 South western terminus at Gabtoli bus terminal'
+  },
+  'mrt5s_shyamoli': {
+    id: 'mrt5s_shyamoli',
+    name: 'Shyamoli MRT-5 Station',
+    bnName: 'শ্যামলী এমআরটি-৫',
+    lat: 23.775211,
+    lng: 90.365503,
+    distanceFromStart: 3.5,
+    description: 'Planned MRT Line 5 South station at Shyamoli, near Mohammadpur'
+  },
+  'mrt5s_mohammadpur': {
+    id: 'mrt5s_mohammadpur',
+    name: 'Mohammadpur MRT-5 Station',
+    bnName: 'মোহাম্মদপুর এমআরটি-৫',
+    lat: 23.7629,
+    lng: 90.3614,
+    distanceFromStart: 5.0,
+    description: 'Planned MRT Line 5 South station near Mohammadpur bus stand'
+  },
+  'mrt5s_hazaribagh': {
+    id: 'mrt5s_hazaribagh',
+    name: 'Hazaribagh MRT-5 Station',
+    bnName: 'হাজারীবাগ এমআরটি-৫',
+    lat: 23.7358,
+    lng: 90.3686,
+    distanceFromStart: 7.8,
+    description: 'Planned MRT Line 5 South station at Hazaribagh industrial area'
+  },
+  'mrt5s_jatrabari': {
+    id: 'mrt5s_jatrabari',
+    name: 'Jatrabari MRT-5 Station',
+    bnName: 'যাত্রাবাড়ী এমআরটি-৫',
+    lat: 23.710488,
+    lng: 90.433803,
+    distanceFromStart: 12.4,
+    description: 'Planned MRT Line 5 South station at Jatrabari, major transport interchange'
+  },
+  'mrt5s_dasherkandi': {
+    id: 'mrt5s_dasherkandi',
+    name: 'Dasherkandi MRT-5 Station',
+    bnName: 'দাশেরকান্দি এমআরটি-৫',
+    lat: 23.6774,
+    lng: 90.4604,
+    distanceFromStart: 16.4,
+    description: 'Planned eastern terminus of MRT Line 5 South at Dasherkandi, Demra area'
   }
 };
 
@@ -5097,7 +5257,40 @@ export const METRO_LINES: Record<string, MetroLine> = {
       'bangladesh_secretariat',
       'motijheel'
     ],
-    color: '#00A651' // Metro green color
+    color: '#00A651'
+  },
+  'mrt5n': {
+    id: 'mrt5n',
+    name: 'MRT Line 5 North',
+    bnName: 'এমআরটি লাইন ৫ উত্তর',
+    stations: [
+      'mrt5n_hemayetpur',
+      'mrt5n_amin_bazar',
+      'mrt5n_gabtoli',
+      'mrt5n_technical',
+      'mrt5n_mirpur1',
+      'mrt5n_mirpur10',
+      'mrt5n_mirpur14',
+      'mrt5n_kochukhet',
+      'mrt5n_boromoghbazar',
+      'mrt5n_bashundhara',
+      'mrt5n_bhatara'
+    ],
+    color: '#E8463A'
+  },
+  'mrt5s': {
+    id: 'mrt5s',
+    name: 'MRT Line 5 South',
+    bnName: 'এমআরটি লাইন ৫ দক্ষিণ',
+    stations: [
+      'mrt5s_gabtoli',
+      'mrt5s_shyamoli',
+      'mrt5s_mohammadpur',
+      'mrt5s_hazaribagh',
+      'mrt5s_jatrabari',
+      'mrt5s_dasherkandi'
+    ],
+    color: '#E8463A'
   }
 };
 
