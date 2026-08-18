@@ -119,9 +119,13 @@ function buildRealDataContext(userText: string): string {
     const m1 = userText.match(FROM_TO_RE);
     const m2 = userText.match(BN_FROM_TO_RE);
     const m3 = userText.match(ARROW_RE);
+    // Bangla verb-final: "ami X jeta chai" / "ami X jabo"
+    const BN_DEST_ONLY_RE = /(?:ami\s+|আমি\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,30?}?)\s+(?:jeta\s+chai|jete\s+chai|jaite\s+chai|jabo|যেতে\s+চাই|যাবো?)(?:\s*$|\s*[?।,])/i;
+    const m4 = userText.match(BN_DEST_ONLY_RE);
     if (m1) { fromTok = m1[1].trim(); toTok = m1[2].trim(); }
     else if (m2) { fromTok = m2[1].trim(); toTok = m2[2].trim(); }
     else if (m3) { fromTok = m3[1].trim(); toTok = m3[2].trim(); }
+    else if (m4) { toTok = m4[1].trim(); } // fromTok stays null; transit plan needs area from send()
   }
 
   if (fromTok && toTok) {
@@ -160,7 +164,7 @@ function buildRealDataContext(userText: string): string {
 
   // ── 4. Metro context injection ─────────────────────────────────────────────
   const isMetroQuery = lower.includes('metro') || lower.includes('মেট্রো') || lower.includes('mrt') || lower.includes('subway');
-  const isJourneyQuery = !!(fromTok && toTok) || lower.includes(' to ') || lower.includes('theke') || lower.includes('থেকে') || lower.includes('jabo') || lower.includes('যাব');
+  const isJourneyQuery = !!(fromTok && toTok) || lower.includes(' to ') || lower.includes('theke') || lower.includes('থেকে') || lower.includes('jabo') || lower.includes('যাব') || lower.includes('jeta chai') || lower.includes('jete chai') || lower.includes('যেতে চাই');
   if (isMetroQuery || isJourneyQuery) {
     sections.push(
       '[MRT-6 METRO — REAL STATIONS ONLY]\n' +
@@ -222,7 +226,8 @@ function buildRealDataContext(userText: string): string {
   const isInterCityQuery = lower.includes('intercity') || lower.includes('inter-city') ||
     lower.includes('how to go') || lower.includes('how to reach') || lower.includes('কিভাবে যাব') ||
     lower.includes('যেতে চাই') || lower.includes('jabo') || lower.includes('যাবো') ||
-    lower.includes('bus fare') || lower.includes('ভাড়া') || lower.includes('দূরত্ব');
+    lower.includes('bus fare') || lower.includes('ভাড়া') || lower.includes('দূরত্ব') ||
+    lower.includes('jeta chai') || lower.includes('jete chai') || lower.includes('যেতে চাই');
 
   const mentionsChittagong = lower.includes('chittagong') || lower.includes('chattogram') || lower.includes('চট্টগ্রাম');
   const mentionsSylhet = lower.includes('sylhet') || lower.includes('সিলেট');
@@ -492,7 +497,9 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
       function extractGoToDest(q: string): string | null {
         const m = q.match(
           /(?:how\s+(?:to\s+)?(?:go|get)\s+(?:to\s+)?|route\s+to\s+|reach\s+|take\s+me\s+to\s+|go\s+to\s+|directions?\s+to\s+|best\s+(?:bus|way)\s+(?:to|for)\s+|nearest\s+way\s+to\s+|how\s+can\s+i\s+(?:get\s+to|reach)\s+|(?:i\s+)?want\s+to\s+go(?:\s+to)?\s+|(?:i\s+)?want\s+to\s+visit\s+|(?:i\s+)?need\s+to\s+go(?:\s+to)?\s+|(?:i\s+)?(?:am|m)\s+going(?:\s+to)?\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s']{1,40})(?:\?|।|,|$)/i
-        ) || q.match(/(?:কিভাবে\s+যাব[োে]?\s+|যেতে\s+চাই\s+|যাবো?\s+কিভাবে\s+|জেতে\s+চাই\s+|jeta\s+chai\s*,?\s*|jabo\s+|jete\s+chai\s+|jaite\s+chai\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s']{1,40})(?:\?|।|,|$)/i);
+        ) || q.match(/(?:কিভাবে\s+যাব[োে]?\s+|যেতে\s+চাই\s+|যাবো?\s+কিভাবে\s+|জেতে\s+চাই\s+|jeta\s+chai\s*,?\s*|jabo\s+|jete\s+chai\s+|jaite\s+chai\s+)([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s']{1,40})(?:\?|।|,|$)/i)
+          // Bangla verb-final word order: "ami X jeta chai" / "ami X jabo"
+          || q.match(/(?:ami\s+|আমি\s+)?([a-zA-Zঀ-৿][a-zA-Zঀ-৿\s]{2,30?}?)\s+(?:jeta\s+chai|jete\s+chai|jaite\s+chai|jabo|যেতে\s+চাই|যাবো?)(?:\s*$|\s*[?।,])/i);
         return m ? m[1].trim().replace(/[?।,]$/, '').trim() : null;
       }
 
@@ -527,7 +534,10 @@ export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
 
       // Ground the answer in KoyJabo's real dataset — never let the model
       // invent routes/fares. Injected as authoritative context.
-      const realData = buildRealDataContext(userText);
+      // When nav intent is detected, feed the enriched "from X to Y" form so
+      // buildRealDataContext can extract proper from/to tokens for transit planning.
+      const dataContextQuery = (area && goToDest) ? `from ${area} to ${goToDest}` : userText;
+      const realData = buildRealDataContext(dataContextQuery);
       const groundedMessage = realData
         ? `${userText}\n\n[REAL BUS DATA from koyjabo.com — authoritative. Answer ONLY from this list and the data in your instructions; never invent a bus, stop, or fare not listed here. If nothing in this list matches, say you're not sure.]\n${realData}`
         : userText;

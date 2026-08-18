@@ -127,7 +127,7 @@ export function LocalBusPage(props: Props) {
       return out;
     };
 
-    if (!hasSearched) return applyQuick(BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10));
+    if (!hasSearched) return applyQuick(BUS_DATA.filter(r => r.name.length > 3).slice(0, 12));
     const q = searchQuery.trim();
     const f = fromInput.trim();
     const t = toInput.trim();
@@ -174,7 +174,7 @@ export function LocalBusPage(props: Props) {
       }
       return applyQuick(BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 20));
     }
-    return applyQuick(BUS_DATA.filter(r => r.active !== false && r.name.length > 3).slice(0, 10));
+    return applyQuick(BUS_DATA.filter(r => r.name.length > 3).slice(0, 12));
   }, [searchQuery, fromInput, toInput, hasSearched, searchAttr, quickFastest, quickAC]);
 
   const DTCA_TERMS = ['dhakar chaka','dhaka chaka','chaka','ঢাকার চাকা','ঢাকা চাকা','gulshan chaka','গুলশান চাকা'];
