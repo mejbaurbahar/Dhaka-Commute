@@ -295,7 +295,18 @@ function buildRealDataContext(userText: string): string {
       '• Dhaka→Chandpur: departs 8:00 AM & 2:00 PM | 3-4 hrs (daytime) | Deck ৳120-200, Cabin ৳300-500\n' +
       '  Launches: MV Ostrich, MV Rocket (paddle steamer), MV Meghna-1\n' +
       '• Dhaka→Khulna: overnight ~10-12 hrs\n' +
+      '• Day services (verified): Green Line Water Bus 8:00 AM (5.5h, Deck ৳700, Business ৳1000); Adventure 5 AC catamaran 8:30 AM (4.5h, Deck ৳600, VIP cabin ৳1200)\n' +
+      '• Rocket paddle steamer (BIWTC): Dhaka 6:30 PM → Barishal, daily except Fri, 2-bed cabin ৳2320\n' +
       'RULE: For Barishal/Bhola/Patuakhali — always mention launch as the scenic overnight option alongside bus.'
+    );
+  }
+
+  if (mentionsLaunch) {
+    sections.push(
+      '[FERRY CROSSINGS — VERIFIED]\n' +
+      '• Paturia (Manikganj) ⇄ Daulatdia (Rajbari): ACTIVE, ~24h continuous, crossing 25-40 min — key Dhaka→Rajshahi/Khulna corridor\n' +
+      '• Mawa ⇄ Shimulia: DISCONTINUED PERMANENTLY since Padma Bridge (June 2022) — never suggest this ferry; use Padma Bridge road route\n' +
+      'RULE: If user asks about Mawa-Shimulia ferry, tell them it is closed and buses/cars use Padma Bridge.'
     );
   }
 

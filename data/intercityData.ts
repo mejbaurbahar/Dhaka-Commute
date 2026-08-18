@@ -540,3 +540,35 @@ export const searchBusOperator = (query: string): IntercityBusOperator[] => {
         operator.primaryRoute.toLowerCase().includes(lowerQuery)
     );
 };
+
+// ── Ferry crossings (verified Aug 2026) ──────────────────────────────
+export interface FerryCrossing {
+  from: { en: string; bn: string };
+  to: { en: string; bn: string };
+  status: 'active' | 'discontinued';
+  crossingMin: string;
+  schedule: string;
+  note: string;
+  src: string;
+}
+
+export const FERRY_CROSSINGS: FerryCrossing[] = [
+  {
+    from: { en: 'Paturia Ghat (Manikganj)', bn: 'পাটুরিয়া ঘাট (মানিকগঞ্জ)' },
+    to: { en: 'Daulatdia Ghat (Rajbari)', bn: 'দৌলতদিয়া ঘাট (রাজবাড়ী)' },
+    status: 'active',
+    crossingMin: '25-40 min (3.5 nautical miles)',
+    schedule: 'Runs ~24 hours continuously, no fixed timetable; ~18 BIWTC ferries; frequent overnight suspensions in dense fog',
+    note: 'Key Dhaka→Rajshahi/Khulna corridor crossing. Passenger/vehicle fares not published in public sources.',
+    src: 'thedailystar.net/city/holidaymakers-worried-about-traffic-congestion-1586551; bssnews.net/others/345623',
+  },
+  {
+    from: { en: 'Mawa Ghat (Munshiganj)', bn: 'মাওয়া ঘাট (মুন্সিগঞ্জ)' },
+    to: { en: 'Shimulia Ghat (Madaripur)', bn: 'শিমুলিয়া ঘাট (মাদারীপুর)' },
+    status: 'discontinued',
+    crossingMin: '30-45 min (historical)',
+    schedule: 'PERMANENTLY STOPPED — Padma Bridge opened June 2022; State Minister for Shipping confirmed closure Aug 2022',
+    note: 'Do NOT route users via Mawa-Shimulia ferry. Vehicles use Padma Bridge; launches no longer run this corridor.',
+    src: 'thedailystar.net/news/bangladesh/transport/news/shimulia-majhikandi-ferry-routes-closed-today-over-padma-bridge-inauguration-3055736',
+  },
+];

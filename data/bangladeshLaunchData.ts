@@ -14,6 +14,8 @@ export interface LaunchRoute {
   col: string;
   overnight: boolean;
   type: 'express' | 'mail' | 'local';
+  /** Source citation for verified entries; absent = legacy data */
+  src?: string;
 }
 
 export const LAUNCH_TERMINALS = [
@@ -30,6 +32,8 @@ export const LAUNCH_TERMINALS = [
   { id: 'borguna', en: 'Borguna Ghat', bn: 'বরগুনা ঘাট', lat: 22.1502, lng: 90.1127 },
   { id: 'morrelganj', en: 'Morrelganj Ghat', bn: 'মোড়েলগঞ্জ ঘাট', lat: 22.5350, lng: 89.8620 },
   { id: 'jhalkathi', en: 'Jhalkathi Ghat', bn: 'ঝালকাঠি ঘাট', lat: 22.6402, lng: 90.1993 },
+  { id: 'pirojpur', en: 'Pirojpur Ghat', bn: 'পিরোজপুর ঘাট', lat: 22.5796, lng: 89.9758 },
+  { id: 'shariatpur', en: 'Shariatpur Ghat', bn: 'শরীয়তপুর ঘাট', lat: 23.2133, lng: 90.3850 },
 ];
 
 export const LAUNCH_ROUTES: LaunchRoute[] = [
@@ -455,5 +459,36 @@ export const LAUNCH_ROUTES: LaunchRoute[] = [
     dep: '8:00 AM', arr: '10:00 AM', dur: '2h 0m',
     deck: 80, cabin: 200, vip: 400,
     rating: 3.4, col: '#6b6b3d', overnight: false, type: 'local',
+  },
+  // ── Verified additions (sources in src field, Aug 2026) ──
+  {
+    id: 'greenline-water-bus-day',
+    name: { en: 'Green Line Water Bus (Day)', bn: 'গ্রিন লাইন ওয়াটার বাস (দিন)' },
+    operator: { en: 'Green Line Water Service', bn: 'গ্রিন লাইন ওয়াটার সার্ভিস' },
+    from: 'sadarghat', to: 'barisal',
+    dep: '8:00 AM', arr: '1:30 PM', dur: '5h 30m',
+    deck: 700, cabin: 1000, vip: 1200,
+    rating: 4.6, col: '#1a8a2d', overnight: false, type: 'express',
+    src: 'bangladeshfact.com/greenline-water-bus — 600-pax AC vessel, not bookable online; return Barishal 3 PM',
+  },
+  {
+    id: 'adventure-5-day',
+    name: { en: 'Adventure 5 (AC Catamaran)', bn: 'অ্যাডভেঞ্চার ৫ (এসি ক্যাটামারান)' },
+    operator: { en: 'Adventure Launch', bn: 'অ্যাডভেঞ্চার লঞ্চ' },
+    from: 'sadarghat', to: 'barisal',
+    dep: '8:30 AM', arr: '1:00 PM', dur: '4h 30m',
+    deck: 600, cabin: 900, vip: 1200,
+    rating: 4.4, col: '#c47a1e', overnight: false, type: 'express',
+    src: 'bdbusinessfinder.com/dhaka-to-barishal-launch — contacts: 01783-613947 (Barishal), 01747-686962 (Dhaka); return 3:30 PM',
+  },
+  {
+    id: 'rocket-paddle-barisal',
+    name: { en: 'MV Rocket (Paddle Steamer → Barishal)', bn: 'এমভি রকেট (প্যাডেল স্টিমার → বরিশাল)' },
+    operator: { en: 'BIWTC Government', bn: 'বিআইডব্লিউটিসি সরকারি' },
+    from: 'sadarghat', to: 'barisal',
+    dep: '6:30 PM', arr: '6:30 AM', dur: '12h 0m',
+    deck: 200, cabin: 1160, vip: 1160,
+    rating: 4.7, col: '#1a4a8a', overnight: true, type: 'mail',
+    src: 'trip2bangladesh.com/rocket-steamer-trip — daily except Fri; 2-bed cabin ৳2320; book BIWTC 02-9559779, 20 days ahead',
   },
 ];
