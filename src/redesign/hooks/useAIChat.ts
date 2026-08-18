@@ -185,7 +185,8 @@ function buildRealDataContext(userText: string): string {
           return `  ${i + 1}. ${t.name} (${t.bnName}) — ${t.distKm.toFixed(1)} km${star}`;
         }).join('\n') +
         `\nRECOMMENDATION: ${rec.name} (${rec.distKm.toFixed(1)} km from user) — ${recNote}.` +
-        '\nRULE: Never send the user to a famous-but-far terminal when a closer one serves the destination.'
+        '\nRULE: Never send the user to a famous-but-far terminal when a closer one serves the destination.' +
+        '\nCRITICAL: The terminal marked "← BEST" is the ONLY boarding point to recommend for this intercity trip. Never pick a different terminal, and never invent one. Every intercity bus/train leg you mention must come from the intercity/train sections of this context — if a leg is not listed there, it does not exist. Example: no intercity bus to Benapole departs from Kamalapur Railway Station — buses to Benapole leave from Gabtoli/Kallyanpur (Shyamoli, Hanif, Shohagh, Tungipara).'
       );
     }
   }
@@ -200,7 +201,8 @@ function buildRealDataContext(userText: string): string {
       'Fare: ৳20–100 | Hours (Mon-Thu, Sat-Sun): First train 6:30 AM, Last 9:50 PM | FRIDAY: starts 2:30 PM (NOT closed, delayed start)\n' +
       'NO metro in: Gulshan, Banani, Dhanmondi, Mohammadpur, Savar, Jatrabari, Tejgaon, Rayer Bazar\n' +
       'Shaheed Minar = 500m walk from Shahbag Metro. Central Shaheed Minar → nearest metro: Shahbag (5 min walk).\n' +
-      'RULE: Only suggest metro if origin or destination is within 1km of an MRT-6 station above.'
+      'RULE: Only suggest metro if origin or destination is within 1km of an MRT-6 station above.\n' +
+      'CRITICAL: MRT-5 (North/South), MRT-1, MRT-2, MRT-4 are PLANNED/UNDER CONSTRUCTION — NOT OPERATIONAL as of 2026. NEVER suggest them for travel, never give their fares or times. Only MRT-6 is open.'
     );
   }
 
