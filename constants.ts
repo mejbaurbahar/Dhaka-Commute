@@ -71,6 +71,13 @@ export const STATIONS: Record<string, Station> = {
   'amin_bazar': { id: 'amin_bazar', name: 'Amin Bazar', bnName: 'আমিন বাজার', lat: 23.786368, lng: 90.329233 },
   'boliarpur': { id: 'boliarpur', name: 'Boliarpur', bnName: 'বলিয়ারপুর', lat: 23.7953, lng: 90.2903 },
   'modhumoti': { id: 'modhumoti', name: 'Modhumoti', bnName: 'মধুমত', lat: 23.7920, lng: 90.3100 },
+  'bilamalia': { id: 'bilamalia', name: 'Bilamalia', bnName: 'বিলামালিয়া', lat: 23.8023, lng: 90.2819 },
+  'alomnagar': { id: 'alomnagar', name: 'Alomnagar', bnName: 'আলমনগর', lat: 23.7956, lng: 90.2759 },
+  'joynabari': { id: 'joynabari', name: 'Joynabari', bnName: 'জয়নাবাড়ি', lat: 23.7942, lng: 90.2686 },
+  'bangladesh_betar': { id: 'bangladesh_betar', name: 'Bangladesh Betar', bnName: 'বাংলাদেশ বেতার', lat: 23.7752, lng: 90.3719 },
+  'titumir_college': { id: 'titumir_college', name: 'Titumir College', bnName: 'তিতুমীর কলেজ', lat: 23.7795, lng: 90.3988 },
+  'shaheen_college': { id: 'shaheen_college', name: 'Shaheen College', bnName: 'শাহীন কলেজ', lat: 23.7740, lng: 90.3960 },
+  'mohakhali_rail_gate': { id: 'mohakhali_rail_gate', name: 'Mohakhali Rail Gate', bnName: 'মহাখালী রেল গেট', lat: 23.7774, lng: 90.3991 },
   'parbat': { id: 'parbat', name: 'Parbat', bnName: 'পর্বত', lat: 23.783689, lng: 90.337466 },
   'mazar_road': { id: 'mazar_road', name: 'Mazar Road', bnName: 'মাজার রোড', lat: 23.783079, lng: 90.346950 },
   'amtola': { id: 'amtola', name: 'Amtola', bnName: 'আমতলা', lat: 23.781141, lng: 90.398561 },
@@ -1436,7 +1443,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'D Link',
     bnName: 'ডি লিংক',
     routeString: 'Fulbaria ⇄ Dhamrai',
-    stops: ['fulbaria', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'dhamrai'],
+    stops: ['fulbaria', 'chankhar_pul', 'bakshi_bazar', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'bilamalia', 'boliarpur', 'alomnagar', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'dhamrai'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -1445,7 +1452,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'D One Transport',
     bnName: 'ডি ওয়ান',
     routeString: 'Motijheel ⇄ Dhamrai',
-    stops: ['motijheel', 'dainik_bangla_moor', 'paltan', 'press_club', 'matsya_bhaban', 'high_court', 'shahbag', 'bangla_motor', 'kawran_bazar', 'bot_tola', 'farmgate', 'khamar_bari', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'nobinagar', 'dhamrai'],
+    stops: ['motijheel', 'dainik_bangla_moor', 'paltan', 'press_club', 'matsya_bhaban', 'high_court', 'shahbag', 'bangla_motor', 'kawran_bazar', 'bot_tola', 'farmgate', 'khamar_bari', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'bilamalia', 'boliarpur', 'alomnagar', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'nobinagar', 'dhamrai'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -4926,6 +4933,150 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['sadarghat', 'ray_saheb_bazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'house_building', 'diabari'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:30 PM'
+  },
+  {
+    id: 'welcome_transport',
+    name: 'Welcome Transport',
+    bnName: 'ওয়েলকাম ট্রান্সপোর্ট',
+    routeString: 'Gulshan 1 → Hemayetpur',
+    stops: ['gulshan1', 'wireless', 'mohakhali_flyover', 'mohakhali', 'jahangir_gate', 'bijoy_sarani', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'savar_paribahan_hemayetpur',
+    name: 'Savar Paribahan',
+    bnName: 'সাভার পরিবহন',
+    routeString: 'Motijheel → Hemayetpur → Savar',
+    stops: ['motijheel', 'gulistan', 'paltan', 'shahbag', 'farmgate', 'jahangir_gate', 'mohakhali', 'mohakhali_flyover', 'wireless', 'gulshan1', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'alomnagar', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'rajdhani_super_hemayetpur',
+    name: 'Rajdhani Super',
+    bnName: 'রাজধানী সুপার',
+    routeString: 'Gulshan 1 → Hemayetpur',
+    stops: ['gulshan1', 'wireless', 'mohakhali_flyover', 'mohakhali', 'jahangir_gate', 'bijoy_sarani', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'alomnagar', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'ashulia_express',
+    name: 'Ashulia Express',
+    bnName: 'আশুলিয়া এক্সপ্রেস',
+    routeString: 'Motijheel → Ashulia',
+    stops: ['motijheel', 'gulistan', 'shahbag', 'farmgate', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'baipayl', 'zirabo', 'ashulia'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'druto_paribahan',
+    name: 'Druto Paribahan',
+    bnName: 'দ্রুতো পরিবহন',
+    routeString: 'Gulshan → Hemayetpur',
+    stops: ['gulshan1', 'wireless', 'mohakhali', 'jahangir_gate', 'bijoy_sarani', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'green_bangla',
+    name: 'Green Bangla',
+    bnName: 'গ্রিন বাংলা',
+    routeString: 'Motijheel → Hemayetpur',
+    stops: ['motijheel', 'gulistan', 'shahbag', 'farmgate', 'bijoy_sarani', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'city_bandhan',
+    name: 'City Bandhan',
+    bnName: 'সিটি বন্ধন',
+    routeString: 'Motijheel → Hemayetpur',
+    stops: ['motijheel', 'gulistan', 'shahbag', 'farmgate', 'jahangir_gate', 'mohakhali', 'wireless', 'gulshan1', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'malancha_transport',
+    name: 'Malancha Transport',
+    bnName: 'মালঞ্চ ট্রান্সপোর্ট',
+    routeString: 'Gulshan → Hemayetpur',
+    stops: ['gulshan1', 'wireless', 'mohakhali', 'jahangir_gate', 'bijoy_sarani', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'elish_paribahan',
+    name: 'Elish Paribahan',
+    bnName: 'ইলিশ পরিবহন',
+    routeString: 'Motijheel → Hemayetpur',
+    stops: ['motijheel', 'gulistan', 'shahbag', 'farmgate', 'bijoy_sarani', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'ranimahal',
+    name: 'Ranimahal',
+    bnName: 'রানীমহল',
+    routeString: 'Mirpur → Hemayetpur',
+    stops: ['mirpur14', 'mirpur10', 'mirpur2', 'mirpur1', 'ansar_camp', 'bangla_college', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar', 'nobinagar'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'naf_express',
+    name: 'Naf Express',
+    bnName: 'নাফ এক্সপ্রেস',
+    routeString: 'Gulshan → Hemayetpur',
+    stops: ['gulshan1', 'wireless', 'mohakhali', 'jahangir_gate', 'bijoy_sarani', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'gausia_express',
+    name: 'Gausia Express',
+    bnName: 'গাউছিয়া এক্সপ্রেস',
+    routeString: 'Gulshan → Hemayetpur',
+    stops: ['gulshan1', 'wireless', 'mohakhali', 'jahangir_gate', 'bijoy_sarani', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'aram_paribahan',
+    name: 'Aram Paribahan',
+    bnName: 'আরাম পরিবহন',
+    routeString: 'Gabtoli → Hemayetpur → Savar',
+    stops: ['gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'alomnagar', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'projapoti_transport',
+    name: 'Projapoti Transport',
+    bnName: 'প্রজাপতি ট্রান্সপোর্ট',
+    routeString: 'Mirpur → Hemayetpur → Savar',
+    stops: ['mirpur12', 'mirpur11', 'mirpur10', 'mirpur2', 'mirpur1', 'ansar_camp', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'bhuiyan_paribahan',
+    name: 'Bhuiyan Paribahan',
+    bnName: 'ভুঁইয়া পরিবহন',
+    routeString: 'Gabtoli → Hemayetpur',
+    stops: ['gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'alomnagar', 'hemayetpur', 'bank_town', 'nabinagar_savar', 'savar'],
+    type: 'Local',
+    hours: '6am-10pm'
+  },
+  {
+    id: 'basumoti_hemayetpur',
+    name: 'Basumoti Paribahan',
+    bnName: 'বসুমতী পরিবহন',
+    routeString: 'Motijheel → Hemayetpur',
+    stops: ['motijheel', 'gulistan', 'paltan', 'shahbag', 'farmgate', 'bijoy_sarani', 'agargaon', 'shishu_mela', 'shyamoli', 'kallyanpur', 'technical', 'mazar_road', 'gabtoli', 'parbat', 'amin_bazar', 'modhumoti', 'boliarpur', 'hemayetpur'],
+    type: 'Local',
+    hours: '6am-10pm'
   }
 ];
 
