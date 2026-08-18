@@ -27,7 +27,6 @@ import { getFavoriteBusIds } from '../utils/favorites';
 import { getUserHistory, splitRouteKey } from '../../../services/analyticsService';
 import { enhancedBusSearch } from '../../../services/searchService';
 import { inHours, trackPushEvent } from '../../services/pushService';
-import { useAuth } from '../../contexts/AuthContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1916,8 +1915,6 @@ export function HomePage({
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const font = lang === 'bn' ? BEN : SANS;
-  const { user: authUser } = useAuth();
-  const firstName = authUser?.displayName?.split(' ')[0] || authUser?.username || null;
   const [homeSearchMode, setHomeSearchMode] = useState<SearchModeId>('bus');
   const installPromptRef = useRef<{ prompt(): void } | null>(null);
 
@@ -1993,22 +1990,6 @@ export function HomePage({
               <div>
                 {/* Location bar — real area when enabled, enable-button otherwise */}
                 <LocationChip tk={tk} lang={lang} />
-                {/* Account entry — profile chip, only when signed in */}
-                {authUser && (
-                  <button
-                    onClick={() => onNav('profile')}
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 8,
-                      background: `${tk.accent}12`,
-                      border: `1px solid ${tk.accent}44`,
-                      borderRadius: 999, padding: '5px 12px', cursor: 'pointer',
-                      fontFamily: lang === 'bn' ? 'inherit' : SANS, fontSize: 12, fontWeight: 600,
-                      color: tk.accent, marginBottom: 10,
-                    }}
-                  >
-                    {firstName ? `👤 ${firstName}` : '👤 প্রোফাইল'}
-                  </button>
-                )}
                 <h1
                   style={{
                     margin: '0 0 8px',
@@ -2023,9 +2004,7 @@ export function HomePage({
                     textWrap: 'balance' as any,
                   }}
                 >
-                  {firstName
-                    ? T(lang, `কোথায় যেতে চান, ${firstName}?`, `Where are you headed, ${firstName}?`)
-                    : T(lang, 'কোথায় যেতে চান?', 'Where are you headed?')}
+                  {T(lang, 'কোথায় যেতে চান?', 'Where are you headed?')}
                 </h1>
                 <p
                   style={{

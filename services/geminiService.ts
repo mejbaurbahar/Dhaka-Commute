@@ -2004,6 +2004,10 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
           const bn = s.bnName || '';
           if (safeMatch(lowerQ, sn)) return true;
           if (bn && safeMatch(lowerQ, bn)) return true;
+          // "গুলশান ১" (bnName with numeral) must match a plain "গুলশান" query.
+          // The digit-safe guard below still blocks "মিরপুর ১" inside "মিরপুর ১০".
+          const bnNoNum = bn.replace(/[০-৯]/g, '').trim();
+          if (bnNoNum.length >= 4 && bnNoNum !== bn && safeMatch(lowerQ, bnNoNum)) return true;
           // Base-name reverse match: "Gulshan" in query → matches "Gulshan 1"
           const baseEn = sn.replace(/\s+\d+$/, '');
           if (baseEn !== sn && baseEn.length >= 4) {
@@ -2013,11 +2017,17 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
           return false;
         });
 
-        // Deduplicate same-base stations: "Gulshan 1" + "Gulshan 2" → keep only "Gulshan 1"
+        // Deduplicate same-base stations: "Gulshan 1" + "Gulshan 2" → keep only "Gulshan 1".
+        // ALSO dedupe by id — STATIONS.motijheel and METRO_STATIONS.motijheel share the id
+        // 'motijheel' but have different names, and keeping both would assign the same
+        // station to from AND to ("motijheel → motijheel").
         const seenBase = new Set<string>();
+        const seenId = new Set<string>();
         const mentionedDeduped = mentioned.filter(s => {
+          if (seenId.has(s.id)) return false;
           const base = s.name.toLowerCase().replace(/\s+\d+$/, '');
           if (seenBase.has(base)) return false;
+          seenId.add(s.id);
           seenBase.add(base);
           return true;
         });

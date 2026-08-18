@@ -1,6 +1,7 @@
 // Analytics Service - Tracks user activity and global statistics
 // History data: localStorage (per-user key) + synced to private GitHub repo
 // Global stats (visits): stored in GitHub koyjabo repo, updated via GitHub Actions
+import { enqueueEvent } from './offlineEventsService';
 
 export interface CommunityFeatureRecord {
     feature: string;
@@ -422,6 +423,7 @@ export const trackBusSearch = (busId: string, busName: string): void => {
     if (!history.todayBuses.includes(busId)) history.todayBuses.push(busId);
     if (history.busSearches.length > 100) history.busSearches = history.busSearches.slice(-100);
     saveUserHistory(history);
+    enqueueEvent('bus_search', { busId, busName });
 };
 
 export const trackRouteSearch = (from: string, to: string): void => {
@@ -434,6 +436,7 @@ export const trackRouteSearch = (from: string, to: string): void => {
     if (!history.todayRoutes.includes(routeKey)) history.todayRoutes.push(routeKey);
     if (history.routeSearches.length > 100) history.routeSearches = history.routeSearches.slice(-100);
     saveUserHistory(history);
+    enqueueEvent('route_search', { from, to });
 };
 
 export const trackIntercitySearch = (from: string, to: string, transportType: string): void => {
@@ -449,6 +452,7 @@ export const trackIntercitySearch = (from: string, to: string, transportType: st
     if (!history.todayIntercity.includes(routeKey)) history.todayIntercity.push(routeKey);
     if (history.intercitySearches.length > 100) history.intercitySearches = history.intercitySearches.slice(-100);
     saveUserHistory(history);
+    enqueueEvent('intercity_search', { from, to, transportType });
 };
 
 export const trackTrainSearch = (
@@ -466,6 +470,7 @@ export const trackTrainSearch = (
     if (!history.todayTrains.includes(trainId)) history.todayTrains.push(trainId);
     if (history.trainSearches.length > 100) history.trainSearches = history.trainSearches.slice(-100);
     saveUserHistory(history);
+    enqueueEvent('train_search', { trainId, trainName, trainNumber, from, to });
 };
 
 export const trackFeatureUsage = (feature: string): void => {
@@ -484,6 +489,7 @@ export const trackFeatureUsage = (feature: string): void => {
         history.communityFeatureHistory = history.communityFeatureHistory.slice(-200);
     }
     saveUserHistory(history);
+    enqueueEvent('feature_open', { feature });
 };
 
 export const trackMetroSearch = (from: string, to: string, fare: number): void => {
@@ -494,6 +500,7 @@ export const trackMetroSearch = (from: string, to: string, fare: number): void =
     history.metroSearches.push({ from, to, fare, timestamp: Date.now(), date: today });
     if (history.metroSearches.length > 100) history.metroSearches = history.metroSearches.slice(-100);
     saveUserHistory(history);
+    enqueueEvent('metro_search', { from, to, fare });
 };
 
 export const trackFlightSearch = (from: string, to: string): void => {
@@ -504,6 +511,7 @@ export const trackFlightSearch = (from: string, to: string): void => {
     history.flightSearches.push({ from, to, timestamp: Date.now(), date: today });
     if (history.flightSearches.length > 100) history.flightSearches = history.flightSearches.slice(-100);
     saveUserHistory(history);
+    enqueueEvent('flight_search', { from, to });
 };
 
 export const trackLaunchSearch = (from: string, to: string, nameSearch: string): void => {
@@ -514,6 +522,7 @@ export const trackLaunchSearch = (from: string, to: string, nameSearch: string):
     history.launchSearches.push({ from, to, nameSearch, timestamp: Date.now(), date: today });
     if (history.launchSearches.length > 100) history.launchSearches = history.launchSearches.slice(-100);
     saveUserHistory(history);
+    enqueueEvent('launch_search', { from, to, nameSearch });
 };
 
 export const trackTruckSearch = (from: string, to: string): void => {
@@ -524,6 +533,7 @@ export const trackTruckSearch = (from: string, to: string): void => {
     history.truckSearches.push({ from, to, timestamp: Date.now(), date: today });
     if (history.truckSearches.length > 100) history.truckSearches = history.truckSearches.slice(-100);
     saveUserHistory(history);
+    enqueueEvent('truck_search', { from, to });
 };
 
 export const trackFareCalc = (from: string, to: string, mode: string, fare: number): void => {
@@ -534,6 +544,7 @@ export const trackFareCalc = (from: string, to: string, mode: string, fare: numb
     history.fareCalcSearches.push({ from, to, mode, fare, timestamp: Date.now(), date: today });
     if (history.fareCalcSearches.length > 100) history.fareCalcSearches = history.fareCalcSearches.slice(-100);
     saveUserHistory(history);
+    enqueueEvent('fare_calc', { from, to, mode, fare });
 };
 
 export const getMostUsedBuses = (limit: number = 5): Array<{ busId: string; count: number }> => {

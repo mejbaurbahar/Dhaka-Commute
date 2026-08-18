@@ -39,7 +39,6 @@ const MetroPassPage = React.lazy(() => import('./screens/MetroPassPage').then(m 
 const FavoritesPage = React.lazy(() => import('./screens/FavoritesPage').then(m => ({ default: m.FavoritesPage })));
 const HistoryPage = React.lazy(() => import('./screens/HistoryPage').then(m => ({ default: m.HistoryPage })));
 const SettingsPage = React.lazy(() => import('./screens/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const DevicesPage = React.lazy(() => import('./screens/DevicesPage').then(m => ({ default: m.DevicesPage })));
 const WhyPage = React.lazy(() => import('./screens/WhyPage').then(m => ({ default: m.WhyPage })));
 const AboutPage = React.lazy(() => import('./screens/AboutPage').then(m => ({ default: m.AboutPage })));
 const BlogsPage = React.lazy(() => import('./screens/BlogsPage').then(m => ({ default: m.BlogsPage })));
@@ -53,12 +52,6 @@ const InstallPage = React.lazy(() => import('./screens/InstallPage').then(m => (
 const AdvertisePage = React.lazy(() => import('./screens/AdvertisePage').then(m => ({ default: m.AdvertisePage })));
 const DTCABusDetailPage = React.lazy(() => import('./screens/DTCABusDetailPage').then(m => ({ default: m.DTCABusDetailPage })));
 const BusLiveMapPage = React.lazy(() => import('./screens/BusLiveMapPage').then(m => ({ default: m.BusLiveMapPage })));
-const SignInPage = React.lazy(() => import('./screens/SignInPage').then(m => ({ default: m.SignInPage })));
-const SignUpPage = React.lazy(() => import('./screens/SignUpPage').then(m => ({ default: m.SignUpPage })));
-const ProfilePage = React.lazy(() => import('./screens/ProfilePage').then(m => ({ default: m.ProfilePage })));
-const EditProfilePage = React.lazy(() => import('./screens/EditProfilePage').then(m => ({ default: m.EditProfilePage })));
-const ForgotPasswordPage = React.lazy(() => import('./screens/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
-const PasswordPage = React.lazy(() => import('./screens/PasswordPage').then(m => ({ default: m.PasswordPage })));
 
 const LazyFallback = () => <div style={{ minHeight: '60vh' }} />;
 import { claimDailyBonus } from './utils/koyCoinService';
@@ -73,8 +66,6 @@ import { ConfigBanner } from './components/ConfigBanner';
 import { initRemoteConfig } from '../services/remoteConfigService';
 import { SideRailAd, AnchorAd, VignetteAd } from './components/AdComponents';
 import { BUS_DATA, STATIONS } from '../../constants';
-import { useAuth } from '../contexts/AuthContext';
-
 type Route = string;
 
 interface StackEntry {
@@ -94,7 +85,7 @@ const SHOW_BACK_ROUTES = new Set([
   // detail / leaf pages
   'bus-detail', 'from-to-bus', 'train-detail', 'metro-detail', 'intercity-detail', 'vehicle',
   'rate-review', 'metro-token', 'metro-pass', 'blog-detail',
-  'devices', 'results', 'install', 'flight-detail', 'dtca-bus-detail', 'bus-live-map',
+  'results', 'install', 'flight-detail', 'dtca-bus-detail', 'bus-live-map',
   // transport search / hub pages
   'bus-hub', 'metro-hub', 'train-hub', 'launch-hub', 'flights-hub', 'truck-hub',
   'intercity', 'fare',
@@ -129,12 +120,6 @@ const ROUTE_PATHS: Record<string, string> = {
   install: '/install',
   advertise: '/advertise',
   'daily-journey': '/daily-journey',
-  profile: '/profile',
-  'edit-profile': '/edit-profile',
-  password: '/password',
-  signin: '/signin',
-  signup: '/signup',
-  'forgot-password': '/forgot-password',
 };
 
 // Must mirror scripts/generate-sitemap.mjs slugify() exactly — it strips
@@ -270,7 +255,6 @@ function toggleTheme(t: Theme): Theme {
 }
 
 export function KoyJaboApp() {
-  const { user, logout } = useAuth();
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const [lang, setLang] = useState<Lang>(getInitialLang);
   const [forceDesktop, setForceDesktop] = useState(false); // phone user can request desktop view
@@ -574,13 +558,6 @@ export function KoyJaboApp() {
       case 'favorites': return <FavoritesPage {...p}/>;
       case 'history': return <HistoryPage {...p}/>;
       case 'settings': return <SettingsPage {...p}/>;
-      case 'devices': return <DevicesPage {...p}/>;
-      case 'profile': return <ProfilePage {...p}/>;
-      case 'edit-profile': return <EditProfilePage {...p}/>;
-      case 'password': return <PasswordPage {...p}/>;
-      case 'signin': return <SignInPage {...p}/>;
-      case 'signup': return <SignUpPage {...p}/>;
-      case 'forgot-password': return <ForgotPasswordPage {...p}/>;
       case 'why': return <WhyPage {...p}/>;
       case 'about': return <AboutPage {...p}/>;
       case 'blogs': return <BlogsPage {...p}/>;
@@ -692,8 +669,6 @@ export function KoyJaboApp() {
         onNav={nav} onLang={toggleLang}
         onTheme={() => setTheme(toggleTheme)}
         onMenu={() => setMenuOpen(true)}
-        user={user}
-        onLogout={() => { logout(); nav('home'); }}
       />
       {/* Remote Config maintenance/announcement bar — below TopBar, above content */}
       <ConfigBanner lang={lang} />
@@ -713,7 +688,6 @@ export function KoyJaboApp() {
       <NavDrawer
         open={menuOpen} theme={theme} lang={lang}
         activeRoute={top.route}
-        isLoggedIn={!!user}
         onClose={() => setMenuOpen(false)}
         onNav={(r) => { setMenuOpen(false); nav(r); }}
       />

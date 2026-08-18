@@ -111,7 +111,7 @@ export function TermsPage(props: Props) {
     },
     {
       h: lbl('9. KoyCoins reward program', '৯. KoyCoins রিওয়ার্ড প্রোগ্রাম'),
-      body: lbl('KoyCoins are loyalty points earned by using KoyJabo features (searches, AI chat, sign-up). They:', 'KoyCoins হল কই যাবোর ফিচার ব্যবহার করে অর্জিত লয়্যালটি পয়েন্ট (সার্চ, AI চ্যাট, সাইন-আপ)। এগুলো:'),
+      body: lbl('KoyCoins are loyalty points earned by using KoyJabo features (searches, AI chat, daily use). They:', 'KoyCoins হল কই যাবোর ফিচার ব্যবহার করে অর্জিত লয়্যালটি পয়েন্ট (সার্চ, AI চ্যাট, দৈনিক ব্যবহার)। এগুলো:'),
       bullets: [
         lbl('Have no monetary value and cannot be redeemed for cash.', 'আর্থিক মূল্য নেই এবং নগদে রিডিম করা যায় না।'),
         lbl('Are non-transferable between accounts.', 'অ্যাকাউন্টের মধ্যে স্থানান্তরযোগ্য নয়।'),

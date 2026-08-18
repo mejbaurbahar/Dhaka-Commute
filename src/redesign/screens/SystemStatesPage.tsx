@@ -80,7 +80,7 @@ export function ErrorPage403({ theme, lang }: SystemProps) {
   return <SystemScreen theme={theme} lang={lang} tone={KJ_TOKENS[theme].amber} icon="🔒" status="403"
     titleBn="প্রবেশাধিকার নেই" titleEn="Access Denied"
     bodyBn="এই পেজে প্রবেশের অনুমতি আপনার নেই।" bodyEn="You don't have permission for this page."
-    buttons={[{labelBn:'সাইন ইন করুন',labelEn:'Sign In',primary:true},{labelBn:'হোমে যান',labelEn:'Go Home'}]}/>;
+    buttons={[{labelBn:'হোমে যান',labelEn:'Go Home',primary:true}]}/>;
 }
 
 export function OfflinePage({ theme, lang }: SystemProps) {

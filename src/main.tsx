@@ -69,8 +69,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 import AntiScraping from '../components/AntiScraping';
 import { ToastProvider } from '../contexts/ToastContext';
 import { LanguageProvider } from '../contexts/LanguageContext';
-import { AuthProvider } from './contexts/AuthContext';
 import { initPush } from './services/pushService';
+import { initOfflineEventsSync } from '../services/offlineEventsService';
 import { killConsoleInProd, installAntiDevtools } from './utils/security';
 killConsoleInProd();
 installAntiDevtools();
@@ -81,13 +81,11 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
       <ErrorBoundary>
-        <AuthProvider>
-          <LanguageProvider>
-            <ToastProvider>
-              <KoyJaboApp />
-            </ToastProvider>
-          </LanguageProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <ToastProvider>
+            <KoyJaboApp />
+          </ToastProvider>
+        </LanguageProvider>
       </ErrorBoundary>
     </React.StrictMode>
   );
@@ -154,6 +152,9 @@ void registerPWAWorker();
 // Push notifications: sync subscription + install-reminder lifecycle.
 // No-op unless VITE_PUSH_API_URL is configured (see scripts/push-worker/README.md).
 void initPush();
+
+// Offline events: queue user actions offline, flush on reconnect.
+void initOfflineEventsSync();
 
 // Backup: if the SW controller changes (new SW took over), reload immediately.
 // This catches the case where skipWaiting activates a new SW mid-session.

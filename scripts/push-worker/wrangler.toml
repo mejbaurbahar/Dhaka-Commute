@@ -2,7 +2,7 @@
 #
 # Deploy steps (full details in README.md):
 #   1. wrangler kv namespace create PUSH_SUBS   → paste id below
-#   2. wrangler secret put VAPID_PRIVATE_KEY    → value from .env (VITE_VAPID_PRIVATE_KEY)
+#   2. wrangler secret put VAPID_PRIVATE_KEY    → value from .env (VAPID_PRIVATE_KEY — non-VITE_, stays out of client bundles)
 #   3. wrangler deploy
 #   4. Set VITE_PUSH_API_URL in .env to the printed workers.dev URL
 
