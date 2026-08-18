@@ -97,30 +97,20 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
             aria-label={T(lang, tab.bn, tab.en)}
             aria-current={active ? 'page' : undefined}
           >
-            {/* Floating pill indicator */}
-            {active && (
-              <div
-                key={`pill-${animKey}`}
-                style={{
-                  position: 'absolute',
-                  top: 8,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: 44,
-                  height: 32,
-                  borderRadius: 12,
-                  background: tk.primarySoft,
-                  animation: 'kjTabPop .22s cubic-bezier(.2,.7,.25,1) both',
-                }}
-              />
-            )}
-
-            {/* Icon — scales up when active */}
+            {/* Icon — pill wraps the icon exactly (bg always aligned with button content) */}
             <div style={{
               position: 'relative',
               zIndex: 1,
               transform: active ? 'scale(1.12)' : 'scale(1)',
               transition: 'transform 0.2s cubic-bezier(.2,.7,.25,1)',
+              padding: '0 10px',
+              height: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 12,
+              background: active ? tk.primarySoft : 'transparent',
+              animation: active ? 'kjTabPop .22s cubic-bezier(.2,.7,.25,1) both' : undefined,
             }}>
               <IconComp s={active ? 22 : 21} />
             </div>
@@ -161,26 +151,19 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
         }}
         aria-label={T(lang, 'আরও', 'More')}
       >
-        {moreActive && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 8,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 44,
-              height: 32,
-              borderRadius: 12,
-              background: tk.primarySoft,
-              animation: 'kjTabPop .22s cubic-bezier(.2,.7,.25,1) both',
-            }}
-          />
-        )}
         <div style={{
           position: 'relative',
           zIndex: 1,
           transform: moreActive ? 'scale(1.12)' : 'scale(1)',
           transition: 'transform 0.2s cubic-bezier(.2,.7,.25,1)',
+          padding: '0 10px',
+          height: 32,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 12,
+          background: moreActive ? tk.primarySoft : 'transparent',
+          animation: moreActive ? 'kjTabPop .22s cubic-bezier(.2,.7,.25,1) both' : undefined,
         }}>
           <Icon.menu s={moreActive ? 22 : 21} />
         </div>

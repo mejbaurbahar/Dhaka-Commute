@@ -30,7 +30,9 @@ export function SuggestionDropdown({ suggestions, onSelect, onDismiss, tk, lang,
       if (!anchorRef.current) return;
       const r = anchorRef.current.getBoundingClientRect();
       const vh = window.innerHeight;
-      const GAP = 6;
+      // GAP 0 + square top corners: the list reads as an extension of the
+      // input field, not a detached floating card (mobile feel fix).
+      const GAP = 0;
       const MIN_H = 120;
       const MAX_H = 320;
       // Always show below; cap height to available space (first measurement only)
@@ -67,7 +69,9 @@ export function SuggestionDropdown({ suggestions, onSelect, onDismiss, tk, lang,
         zIndex: 99999,
         background: tk.panelSolid,
         border: `1px solid ${tk.line}`,
-        borderRadius: 14,
+        // Square top corners + no top border → visually continuous with the field
+        borderRadius: '0 0 14px 14px',
+        borderTop: 'none',
         overflow: 'hidden auto',
         boxShadow: tk.shadowLg,
         maxHeight: coords.maxH,

@@ -2,6 +2,7 @@ import React from 'react';
 import { Tokens, Lang, Theme, SANS, BEN, T } from '../tokens';
 import { Logo } from './Logo';
 import { Icon } from './Icons';
+import { isNativePlatform } from '../../utils/platformDetect';
 
 type Device = 'auto' | 'mobile' | 'desktop';
 
@@ -345,9 +346,11 @@ export function TopBar({
               <button onClick={onTheme} style={iconBtn} aria-label="Toggle theme">
                 {theme === 'dark' ? <Icon.sun s={16} /> : <Icon.moon s={16} />}
               </button>
-              <button onClick={() => onNav('install')} style={{ ...iconBtn, background: tk.text, color: tk.bg, border: 'none' }} title={T(lang, 'অ্যাপ ইনস্টল', 'Install app')}>
-                <Icon.download s={16} />
-              </button>
+              {!isNativePlatform() && (
+                <button onClick={() => onNav('install')} style={{ ...iconBtn, background: tk.text, color: tk.bg, border: 'none' }} title={T(lang, 'অ্যাপ ইনস্টল', 'Install app')}>
+                  <Icon.download s={16} />
+                </button>
+              )}
             </div>
           </>
         )}

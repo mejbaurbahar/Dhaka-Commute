@@ -13,6 +13,7 @@ import { LocationChip } from '../components/LocationChip';
 import { Bus3D, MiniVehicle, TravelHeroScene } from '../components/Vehicles3D';
 import { KJFooter as KJFooterComponent } from '../components/KJFooter';
 import { AffiliateBanner } from '../components/AffiliateBanner';
+import { isNativePlatform } from '../../utils/platformDetect';
 import { NativeAdSection as NativeAdSectionReal } from '../components/AdComponents';
 import { STATIONS, BUS_DATA, METRO_STATIONS as REAL_METRO_STATIONS } from '../../../constants';
 import { setCanonicalUrl, setMetaTag, setPropertyMetaTag } from '../utils/useDocumentTitle';
@@ -1838,6 +1839,8 @@ function OfflinePWACard({ tk, lang, onNav, installPromptRef }: { tk: Tokens; lan
       onNav('install');
     }
   };
+  // Users already inside the native app don't need an install card
+  if (isNativePlatform()) return null;
   return (
     <div
       style={{
