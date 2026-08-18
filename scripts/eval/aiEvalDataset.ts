@@ -9,7 +9,7 @@
  * Sources noted per entry; most were re-verified Aug 2026 (see commit history).
  */
 import { recommendBoardingTerminal, terminalsServing } from '../../src/redesign/utils/intercityBoarding';
-import { INTERCITY_BUS_ROUTES, MAJOR_TRANSPORT_HUBS, FERRY_CROSSINGS, searchIntercityBus } from '../../data/intercityData';
+import { INTERCITY_BUS_ROUTES, MAJOR_TRANSPORT_HUBS, FERRY_CROSSINGS, searchIntercityBus, searchTrainRoute } from '../../data/intercityData';
 import { DOMESTIC_ROUTES } from '../../data/bangladeshFlightData';
 import { LAUNCH_ROUTES } from '../../data/bangladeshLaunchData';
 import { BD_TRAIN_ROUTES, TRAIN_STATIONS } from '../../data/bangladeshTrainData';
@@ -229,6 +229,32 @@ export const assertions: EvalAssertion[] = [
     category: 'coverage',
     check: () => {
       return { pass: Object.keys(STATIONS).length >= 700, detail: `${Object.keys(STATIONS).length} stations` };
+    },
+  },
+
+  // Search alias normalization (fixes: 'Chittagong', 'চট্টগ্রাম', 'dhaka to sylhet')
+  {
+    name: 'searchIntercityBus chittagong matches Chattogram data',
+    category: 'intercity',
+    check: () => {
+      const r = searchIntercityBus('chittagong');
+      return { pass: r.length > 0, detail: `${r.length} hits` };
+    },
+  },
+  {
+    name: 'searchTrainRoute Bangla চট্টগ্রাম finds trains',
+    category: 'train',
+    check: () => {
+      const r = searchTrainRoute('চট্টগ্রাম');
+      return { pass: r.length > 0, detail: `${r.length} hits` };
+    },
+  },
+  {
+    name: 'searchIntercityBus multi-word dhaka to sylhet',
+    category: 'intercity',
+    check: () => {
+      const r = searchIntercityBus('dhaka to sylhet');
+      return { pass: r.length > 0, detail: `${r.length} hits` };
     },
   },
 ];

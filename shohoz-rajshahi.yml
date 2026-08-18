@@ -1,0 +1,111 @@
+- generic [ref=f56e3]:
+  - generic [ref=f56e8]:
+    - generic [ref=f56e9]:
+      - generic [ref=f56e10]:
+        - link [ref=f56e11] [cursor=pointer]:
+          - /url: /
+          - img "Logo" [ref=f56e12]
+        - generic [ref=f56e13]:
+          - link "Bus" [ref=f56e14] [cursor=pointer]:
+            - /url: /bus-tickets
+          - link "Air" [ref=f56e21] [cursor=pointer]:
+            - /url: /air-tickets
+          - link "Train" [ref=f56e26] [cursor=pointer]:
+            - /url: https://train.shohoz.com
+          - link "Launch" [ref=f56e32] [cursor=pointer]:
+            - /url: /launch-tickets
+          - link "Event" [ref=f56e42] [cursor=pointer]:
+            - /url: /event-tickets
+          - link "Park Beta" [ref=f56e48] [cursor=pointer]:
+            - /url: /park-tickets
+            - generic [ref=f56e52]: Park
+            - generic [ref=f56e53]: Beta
+      - link " 1 6 3 7 4" [ref=f56e55] [cursor=pointer]:
+        - /url: tel:1 6 3 7 4
+        - generic [ref=f56e56]: 
+        - text: 1 6 3 7 4
+    - link "Login" [ref=f56e58] [cursor=pointer]:
+      - /url: https://www.shohoz.com/login
+  - generic [ref=f56e64]:
+    - textbox [ref=f56e71]:
+      - /placeholder: From
+      - text: Dhaka
+    - button "Swap Stations" [ref=f56e73] [cursor=pointer]
+    - textbox [ref=f56e82]:
+      - /placeholder: To
+      - text: Mymensingh
+    - generic [ref=f56e84]:
+      - textbox [ref=f56e87]:
+        - /placeholder: Pick a date
+        - text: 18 Aug, 2026
+      - button "+ Add Return" [ref=f56e89] [cursor=pointer]
+    - button "Search" [ref=f56e91] [cursor=pointer]
+  - generic [ref=f56e97]:
+    - paragraph [ref=f56e99]: Choose Departing Ticket
+    - generic [ref=f56e100]:
+      - generic [ref=f56e101]: 
+      - paragraph [ref=f56e102]: Passenger Details
+    - generic [ref=f56e103]:
+      - generic [ref=f56e104]: 
+      - paragraph [ref=f56e105]: Review & Pay
+  - generic [ref=f56e108]:
+    - img "trip festival" [ref=f56e110]
+    - paragraph [ref=f56e112]:
+      - text: No bus found for selected dates or cities. Please try different dates or cities. For support call our call centre @
+      - link "16374" [ref=f56e113] [cursor=pointer]:
+        - /url: tel:16374
+      - text: and we might arrange the tickets for you.
+  - generic [ref=f56e116]:
+    - generic [ref=f56e117]:
+      - generic [ref=f56e118]:
+        - img "Shohoz" [ref=f56e119]
+        - paragraph [ref=f56e120]: Shohoz, owned and operated by Shohoj Limited, is Bangladesh's largest online ticket destination, which is committed to making your life convenient, easier and smarter.
+      - generic [ref=f56e121]:
+        - generic [ref=f56e122]:
+          - paragraph [ref=f56e123]: Quick Links
+          - link "Home" [ref=f56e124] [cursor=pointer]:
+            - /url: /
+          - link "About Us" [ref=f56e125] [cursor=pointer]:
+            - /url: /about-us
+          - link "Contact Us" [ref=f56e126] [cursor=pointer]:
+            - /url: /contact-us
+          - link "Deals and Offer" [ref=f56e127] [cursor=pointer]:
+            - /url: /deals-and-offers
+          - link "Insurance Claim" [ref=f56e128] [cursor=pointer]:
+            - /url: /insurance-claim
+          - link "Cancel Ticket" [ref=f56e129] [cursor=pointer]:
+            - /url: /bus-tickets/booking/ticket/cancel
+          - link "Bus Reservation" [ref=f56e130] [cursor=pointer]:
+            - /url: /bus-tickets/booking/bus-reservation
+          - link "Blog" [ref=f56e131] [cursor=pointer]:
+            - /url: /blogs
+        - generic [ref=f56e132]:
+          - paragraph [ref=f56e133]: Services
+          - link "Bus Tickets" [ref=f56e134] [cursor=pointer]:
+            - /url: /bus-tickets
+          - link "Air Tickets" [ref=f56e135] [cursor=pointer]:
+            - /url: /air-tickets
+          - link "Train Tickets" [ref=f56e136] [cursor=pointer]:
+            - /url: https://train.shohoz.com
+          - link "Launch Tickets" [ref=f56e137] [cursor=pointer]:
+            - /url: /launch-tickets
+          - link "Event Tickets" [ref=f56e138] [cursor=pointer]:
+            - /url: /event-tickets
+          - link "Park Tickets" [ref=f56e139] [cursor=pointer]:
+            - /url: /park-tickets
+        - generic [ref=f56e140]:
+          - paragraph [ref=f56e141]: Information
+          - link "Privacy Policy" [ref=f56e142] [cursor=pointer]:
+            - /url: /privacy-policy
+          - link "Terms & Conditions" [ref=f56e143] [cursor=pointer]:
+            - /url: /terms-of-use
+    - generic [ref=f56e144]:
+      - paragraph [ref=f56e145]: Copyright © 2015 - 2026 Shohoj Ltd. All Rights Reserved.
+      - generic [ref=f56e146]:
+        - link "Facebook" [ref=f56e147] [cursor=pointer]:
+          - /url: https://www.facebook.com/shohoz
+        - link "Instagram" [ref=f56e150] [cursor=pointer]:
+          - /url: https://www.instagram.com/shohoz.bd
+        - link "LinkedIn" [ref=f56e153] [cursor=pointer]:
+          - /url: https://www.linkedin.com/company/shohoz/
+          - img "LinkedIn Social Icon" [ref=f56e154]

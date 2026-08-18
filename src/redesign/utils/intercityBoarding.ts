@@ -75,6 +75,9 @@ const BN_DISTRICT: Record<string, string> = {
   'কুয়াকাটা': 'Kuakata', 'সাভার': 'Savar',
 };
 
+/** Same map, exported for search functions — avoids duplicate copies. */
+export const BN_DISTRICT_MAP: Record<string, string> = BN_DISTRICT;
+
 /** Districts/hubs known to KoyJabo intercity data. Accepts English or Bangla. */
 export function intercityRouteFor(destination: string) {
   const target = (BN_DISTRICT[destination.trim()] ?? destination).toLowerCase().trim();

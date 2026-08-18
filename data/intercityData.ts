@@ -1,6 +1,47 @@
 // Complete Inter-City Bus and Train Data for Bangladesh (All 64 Districts)
 // This data includes bus operators, routes, costs, and train schedules
 
+/** English spelling/alias normalization + Bangla → English for search functions. */
+const PLACE_ALIASES: Record<string, string> = {
+    chittagong: 'chattogram', chittagang: 'chattogram', chatogram: 'chattogram',
+    'cox’s bazar': "cox's bazar", coxsbazar: "cox's bazar", 'cox bazar': "cox's bazar",
+    'cox`s bazar': "cox's bazar",
+    jessore: 'jashore', jesore: 'jashore',
+    barisal: 'barishal', borishal: 'barishal',
+    kalyanpur: 'kallyanpur', syedabad: 'sayedabad',
+    'bogra': 'bogura', dinajpur: 'dinajpur',
+    'chapainawabganj': 'chapai nawabganj', 'nawabganj': 'chapai nawabganj',
+    khulna: 'khulna', mymensingh: 'mymensingh', 'coxs': "cox's bazar",
+};
+
+const BN_DISTRICT_MAP: Record<string, string> = {
+    'ঢাকা': 'dhaka', 'গাজীপুর': 'gazipur', 'নারায়ণগঞ্জ': 'narayanganj', 'নরসিংদী': 'narsingdi',
+    'মানিকগঞ্জ': 'manikganj', 'মুন্সিগঞ্জ': 'munshiganj', 'টাঙ্গাইল': 'tangail', 'ফরিদপুর': 'faridpur',
+    'গোপালগঞ্জ': 'gopalganj', 'মাদারীপুর': 'madaripur', 'রাজবাড়ী': 'rajbari', 'শরীয়তপুর': 'shariatpur',
+    'কিশোরগঞ্জ': 'kishoreganj', 'চট্টগ্রাম': 'chattogram', 'কক্সবাজার': "cox's bazar",
+    'কুমিল্লা': 'cumilla', 'ব্রাহ্মণবাড়িয়া': 'brahmanbaria', 'চাঁদপুর': 'chandpur', 'ফেনী': 'feni',
+    'নোয়াখালী': 'noakhali', 'লক্ষ্মীপুর': 'lakshmipur', 'খাগড়াছড়ি': 'khagrachhari',
+    'রাঙ্গামাটি': 'rangamati', 'বান্দরবান': 'bandarban', 'রাজশাহী': 'rajshahi',
+    'চাঁপাইনবাবগঞ্জ': 'chapai nawabganj', 'নাটোর': 'natore', 'নওগাঁ': 'naogaon', 'পাবনা': 'pabna',
+    'সিরাজগঞ্জ': 'sirajganj', 'বগুড়া': 'bogura', 'জয়পুরহাট': 'joypurhat', 'খুলনা': 'khulna',
+    'বাগেরহাট': 'bagerhat', 'সাতক্ষীরা': 'satkhira', 'যশোর': 'jashore', 'ঝিনাইদহ': 'jhenaidah',
+    'মাগুরা': 'magura', 'নড়াইল': 'narail', 'কুষ্টিয়া': 'kushtia', 'চুয়াডাঙ্গা': 'chuadanga',
+    'মেহেরপুর': 'meherpur', 'বরিশাল': 'barishal', 'ভোলা': 'bhola', 'ঝালকাঠি': 'jhalokathi',
+    'পিরোজপুর': 'pirojpur', 'পটুয়াখালী': 'patuakhali', 'বরগুনা': 'barguna', 'সিলেট': 'sylhet',
+    'মৌলভীবাজার': 'moulvibazar', 'হবিগঞ্জ': 'habiganj', 'সুনামগঞ্জ': 'sunamganj',
+    'রংপুর': 'rangpur', 'দিনাজপুর': 'dinajpur', 'ঠাকুরগাঁও': 'thakurgaon', 'পঞ্চগড়': 'panchagarh',
+    'নীলফামারী': 'nilphamari', 'কুড়িগ্রাম': 'kurigram', 'লালমনিরহাট': 'lalmonirhat',
+    'গাইবান্ধা': 'gaibandha', 'ময়মনসিংহ': 'mymensingh', 'জামালপুর': 'jamalpur',
+    'শেরপুর': 'sherpur', 'নেত্রকোণা': 'netrokona', 'বেনাপোল': 'benapole', 'টেকনাফ': 'teknaf',
+    'কুয়াকাটা': 'kuakata', 'সাভার': 'savar',
+};
+
+/** Normalize a search query: Bangla → English, alias fix, lowercase, trimmed. */
+export function normalizeSearchQuery(query: string): string {
+    const trimmed = query.trim().toLowerCase();
+    return PLACE_ALIASES[trimmed] ?? BN_DISTRICT_MAP[trimmed] ?? PLACE_ALIASES[trimmed.replace(/’|`/g, "'")] ?? trimmed;
+}
+
 export interface IntercityBusRoute {
     district: string;
     division: string;
@@ -514,31 +555,40 @@ export const BUS_OPERATORS: IntercityBusOperator[] = [
 ];
 
 // Helper functions to search intercity data
+// Queries are token-normalized: Bangla → English, 'Chittagong' → 'Chattogram',
+// 'Jessore' → 'Jashore' etc., so user spellings always match the data.
+const SEARCH_STOPWORDS = new Set(['to', 'from', 'how', 'go', 'jabo', 'যাব', 'থেকে', 'হয়ে', 'কি', 'কী', 'bus', 'busfare', 'via', 'the', 'a']);
+const tokenize = (q: string): string[] =>
+    q.toLowerCase().split(/[^a-z0-9'’`ঀ-৿]+/).filter(Boolean).map(t =>
+        PLACE_ALIASES[t.replace(/’|`/g, "'")] ?? BN_DISTRICT_MAP[t] ?? t
+    ).filter(t => !SEARCH_STOPWORDS.has(t));
+
 export const searchIntercityBus = (query: string): IntercityBusRoute[] => {
-    const lowerQuery = query.toLowerCase();
-    return INTERCITY_BUS_ROUTES.filter(route =>
-        route.district.toLowerCase().includes(lowerQuery) ||
-        route.division.toLowerCase().includes(lowerQuery) ||
-        route.busOperators.some(op => op.toLowerCase().includes(lowerQuery)) ||
-        route.route.toLowerCase().includes(lowerQuery)
-    );
+    const tokens = tokenize(query);
+    if (!tokens.length) return [];
+    return INTERCITY_BUS_ROUTES.filter(route => {
+        const haystack = [route.district, route.division, route.route, ...route.busOperators]
+            .join(' ').toLowerCase();
+        return tokens.every(tok => haystack.includes(tok));
+    });
 };
 
 export const searchTrainRoute = (query: string): TrainRoute[] => {
-    const lowerQuery = query.toLowerCase();
-    return TRAIN_ROUTES.filter(train =>
-        train.trainName.toLowerCase().includes(lowerQuery) ||
-        train.route.toLowerCase().includes(lowerQuery) ||
-        (train.routeNotes && train.routeNotes.toLowerCase().includes(lowerQuery))
-    );
+    const tokens = tokenize(query);
+    if (!tokens.length) return [];
+    return TRAIN_ROUTES.filter(train => {
+        const haystack = [train.trainName, train.route, train.routeNotes ?? ''].join(' ').toLowerCase();
+        return tokens.every(tok => haystack.includes(tok));
+    });
 };
 
 export const searchBusOperator = (query: string): IntercityBusOperator[] => {
-    const lowerQuery = query.toLowerCase();
-    return BUS_OPERATORS.filter(operator =>
-        operator.name.toLowerCase().includes(lowerQuery) ||
-        operator.primaryRoute.toLowerCase().includes(lowerQuery)
-    );
+    const tokens = tokenize(query);
+    if (!tokens.length) return [];
+    return BUS_OPERATORS.filter(operator => {
+        const haystack = [operator.name, operator.primaryRoute].join(' ').toLowerCase();
+        return tokens.every(tok => haystack.includes(tok));
+    });
 };
 
 // ── Ferry crossings (verified Aug 2026) ──────────────────────────────
