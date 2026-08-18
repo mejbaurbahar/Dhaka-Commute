@@ -7,6 +7,7 @@ import { getAllSessions, getSession, saveChatMessage, deleteSession } from '../.
 import { getAuthUser } from '../../../services/communityDataService';
 import { ALL_PLACES } from '../../../data/bangladeshPlaces';
 import { findTransitRoutes, fuzzyMatchStop, formatTransitPlan } from '../../../services/transitPlanner';
+import { intercityRouteFor, nearestBoardingTerminals, terminalsServing } from '../utils/intercityBoarding';
 
 export type Msg = { id: number; isUser: boolean; text: string; rich?: string };
 export const INIT_MESSAGES: Msg[] = [{ id: 1, isUser: false, text: 'hello', rich: 'greeting' }];
@@ -159,6 +160,32 @@ function buildRealDataContext(userText: string): string {
         `These buses serve BOTH stops in order. Board at ${fromTok}, alight at ${toTok}:\n` +
         directBuses.slice(0, 5).map(b => `- ${b.name} (${b.bnName ?? b.name}): ${b.routeString} • ${b.type}`).join('\n') +
         '\nTell the user EXACTLY these buses go from one to the other directly.'
+      );
+    }
+  }
+
+  // ── 3c. Nearest-useful boarding for intercity journeys ─────────────────────
+  // If the query is "user area → intercity destination", rank Dhaka boarding
+  // terminals by distance from the user AND whether they serve the destination.
+  // Never force a famous-but-far terminal when a closer useful one exists.
+  if (fromTok && toTok && intercityRouteFor(toTok)) {
+    const ranked = nearestBoardingTerminals(fromTok);
+    if (ranked.length > 0) {
+      const servingIds = new Set(terminalsServing(toTok));
+      const nearestServing = ranked.find(t => servingIds.has(t.terminalId));
+      const rec = nearestServing ?? ranked[0];
+      const recNote = nearestServing
+        ? `nearest terminal that actually serves ${toTok}`
+        : `no data lists a direct boarding point for ${toTok} — nearest terminal; verify at counter`;
+      sections.push(
+        `[USER AT ${fromTok.toUpperCase()} — NEAREST USEFUL BOARDING FOR ${toTok.toUpperCase()}]\n` +
+        'Intercity boarding points ranked by distance from the user:\n' +
+        ranked.map((t, i) => {
+          const star = t.terminalId === rec.terminalId ? ' ← BEST for ' + toTok : (servingIds.has(t.terminalId) ? ` (serves ${toTok})` : '');
+          return `  ${i + 1}. ${t.name} (${t.bnName}) — ${t.distKm.toFixed(1)} km${star}`;
+        }).join('\n') +
+        `\nRECOMMENDATION: ${rec.name} (${rec.distKm.toFixed(1)} km from user) — ${recNote}.` +
+        '\nRULE: Never send the user to a famous-but-far terminal when a closer one serves the destination.'
       );
     }
   }
