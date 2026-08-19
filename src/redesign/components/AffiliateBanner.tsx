@@ -231,7 +231,7 @@ function AffiliateSlider({ tk, lang }: { tk: Tokens; lang: Lang }) {
                   borderRadius: 4,
                 }}
               >
-                {c.badge}
+                {T(lang, c.badge, c.badge)}
               </span>
             </div>
 
@@ -403,7 +403,7 @@ function GlassStack({ tk, lang }: { tk: Tokens; lang: Lang }) {
                 letterSpacing: 0.8,
               }}
             >
-              {course.badge} · {course.rating}
+              {T(lang, course.badge, course.badge)} · {course.rating}
             </span>
             <div
               style={{

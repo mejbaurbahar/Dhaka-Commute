@@ -128,7 +128,7 @@ export function ItineraryPage({ theme, lang, ...rest }: Props) {
                 border: `1px solid ${days === d ? 'transparent' : tk.line}`,
               }}
             >
-              {T(lang, `${d} দিন`, `${d} days`)}
+              {T(lang, `${d} দিন`, d === 1 ? '1 day' : `${d} days`)}
             </button>
           ))}
         </div>
