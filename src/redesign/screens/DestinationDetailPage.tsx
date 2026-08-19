@@ -8,7 +8,7 @@ import { DestinationPhotoGallery } from '../components/DestinationPhotoGallery';
 import { ALL_PLACES, Place } from '../../../data/bangladeshPlaces';
 import { DESTINATION_ENRICHMENT } from '../../../data/destinationEnrichment';
 import { DESTINATION_THINGS_TO_DO } from '../../../data/destinationThingsToDo';
-import { buildLegOptions, ItineraryLeg } from '../../../services/itineraryEngine';
+import { buildLegOptions, ItineraryLeg, destinationSearchParams, nearestHubDistrict, DISTRICT_BN as DISTRICT_BN_LOCAL } from '../../../services/itineraryEngine';
 import { trackDestinationView } from '../../../services/analyticsService';
 import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag, setJsonLd } from '../utils/useDocumentTitle';
 
@@ -47,6 +47,15 @@ const TABS: { key: string; icon: string; bn: string; en: string }[] = [
 function fmtDur(min: number, lang: Lang): string {
   if (min >= 60) return T(lang, `${Math.floor(min / 60)}ঘ ${min % 60}মি`, `${Math.floor(min / 60)}h ${min % 60}m`);
   return `${min}m`;
+}
+
+function Fact({ tk, font, label, value }: { tk: Tokens; font: string; label: string; value: string }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
+      <span style={{ fontFamily: SANS, fontSize: 10.5, fontWeight: 600, color: tk.textFaint, textTransform: 'uppercase', letterSpacing: 0.4 }}>{label}</span>
+      <span style={{ fontFamily: font, fontSize: 13, fontWeight: 600, color: tk.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{value}</span>
+    </div>
+  );
 }
 
 function LegRow({ leg, tk, lang, onOptionClick }: { leg: ItineraryLeg; tk: Tokens; lang: Lang; onOptionClick?: (mode: string) => void }) {
@@ -94,6 +103,10 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
   const tk: Tokens = KJ_TOKENS[theme];
   const font = lang === 'bn' ? BEN : SANS;
   const [tab, setTab] = useState('overview');
+  // Nearest hub district to the user's GPS position (default Dhaka). Resolved
+  // when the how-to-go tab opens, so we never prompt for location on page load.
+  const [fromDistrict, setFromDistrict] = useState<string>('Dhaka');
+  const [fromResolved, setFromResolved] = useState(false);
 
   const place: Place | undefined = useMemo(
     () => ALL_PLACES.find(p => p.id === params?.id) ?? ALL_PLACES.find(p => slugify(p.en) === (params?.id ?? '')),
@@ -131,6 +144,22 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
 
   useEffect(() => { setTab('overview'); }, [params?.id]);
 
+  // Resolve the user's origin once when the how-to-go tab opens. Geolocation
+  // denied/slow → Dhaka. The nearest hub (e.g. Hemayetpur → Dhaka) becomes the
+  // `from` of every click-through search.
+  useEffect(() => {
+    if (tab !== 'go' || fromResolved) return;
+    setFromResolved(true);
+    if (!('geolocation' in navigator)) { setFromDistrict('Dhaka'); return; }
+    const fallback = setTimeout(() => setFromDistrict('Dhaka'), 5000);
+    navigator.geolocation.getCurrentPosition(
+      pos => { clearTimeout(fallback); setFromDistrict(nearestHubDistrict(pos.coords.latitude, pos.coords.longitude)); },
+      () => { clearTimeout(fallback); setFromDistrict('Dhaka'); },
+      { enableHighAccuracy: false, timeout: 4000, maximumAge: 15 * 60 * 1000 }
+    );
+    return () => clearTimeout(fallback);
+  }, [tab, fromResolved]);
+
   const related = useMemo(() => {
     if (!place) return [];
     return ALL_PLACES
@@ -144,6 +173,14 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
     if (!dhakaHub) return null;
     return buildLegOptions(dhakaHub.id, place.id);
   }, [place]);
+
+  // Click-through endpoints for the how-to-go rows: `to` is always the place's
+  // district hub per mode (station / IATA / terminal / city) — the raw place
+  // name like "Inani Beach" has no station, airport or terminal.
+  const searchParams = useMemo(
+    () => (place ? destinationSearchParams(place, fromDistrict) : null),
+    [place, fromDistrict]
+  );
 
   if (!place) {
     return (
@@ -241,6 +278,64 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
               <p style={{ color: tk.text, fontSize: 15, lineHeight: 1.8, margin: 0 }}>
                 {lang === 'bn' ? (place.descriptionBn ?? place.description ?? '') : (place.description ?? place.descriptionBn ?? '')}
               </p>
+
+              {/* Quick facts */}
+              <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 14px' }}>
+                <p style={{ fontFamily: font, fontSize: 13.5, fontWeight: 700, color: tk.text, margin: '0 0 10px' }}>
+                  {T(lang, '📌 দ্রুত তথ্য', '📌 Quick facts')}
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 12px' }}>
+                  {place.district && (
+                    <Fact tk={tk} font={font} label={T(lang, 'জেলা', 'District')} value={lang === 'bn' ? (DISTRICT_BN_LOCAL[place.district.split('/')[0]] ?? place.district) : place.district} />
+                  )}
+                  {place.division && <Fact tk={tk} font={font} label={T(lang, 'বিভাগ', 'Division')} value={place.division} />}
+                  {TYPE_LABEL[place.type] && <Fact tk={tk} font={font} label={T(lang, 'ধরন', 'Type')} value={T(lang, TYPE_LABEL[place.type][0], TYPE_LABEL[place.type][1])} />}
+                  {place.entryFee && <Fact tk={tk} font={font} label={T(lang, 'প্রবেশমূল্য', 'Entry fee')} value={place.entryFee} />}
+                  {enr?.gmHours && <Fact tk={tk} font={font} label={T(lang, 'খোলা থাকে', 'Open hours')} value={enr.gmHours} />}
+                  {enr?.gmRating && (
+                    <Fact tk={tk} font={font} label={T(lang, 'রেটিং', 'Rating')}
+                      value={`★ ${enr.gmRating.toFixed(1)}${enr.gmReviewCount ? ` (${enr.gmReviewCount.toLocaleString('en-US')})` : ''}`} />
+                  )}
+                </div>
+              </div>
+
+              {/* How to go shortcut */}
+              <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                <p style={{ fontFamily: font, fontSize: 13, fontWeight: 700, color: tk.text, margin: 0 }}>
+                  {T(lang, '🚌 কীভাবে যাবেন — আসল ভাড়া ও সময়', '🚌 How to go — real fares & times')}
+                </p>
+                <button onClick={() => setTab('go')} style={{
+                  fontFamily: font, fontSize: 12.5, fontWeight: 700, cursor: 'pointer',
+                  padding: '7px 14px', borderRadius: 999,
+                  border: 'none', background: tk.primary, color: tk.primaryInk,
+                  display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+                }}>
+                  {T(lang, 'দেখুন ›', 'View ›')}
+                </button>
+              </div>
+
+              {/* Things to do preview */}
+              {things && things.length > 0 && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <p style={{ fontFamily: font, fontSize: 14, fontWeight: 700, color: tk.text, margin: 0 }}>
+                      {T(lang, '🎯 কী করবেন', '🎯 Things to do')}
+                    </p>
+                    <button onClick={() => setTab('things')} style={{ fontFamily: font, fontSize: 12, fontWeight: 600, color: tk.primary, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                      {T(lang, 'সব দেখুন ›', 'See all ›')}
+                    </button>
+                  </div>
+                  {things.slice(0, 3).map((t, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: '8px 4px', borderBottom: i < Math.min(3, things.length) - 1 ? `1px solid ${tk.line}` : 'none' }}>
+                      <span style={{ fontSize: 14, marginTop: 1 }}>{i + 1}.</span>
+                      <p style={{ fontFamily: font, fontSize: 13.5, color: tk.text, margin: 0, lineHeight: 1.6 }}>
+                        {lang === 'bn' ? t.bn : t.en}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                 <p style={{ fontFamily: font, fontSize: 13, fontWeight: 700, color: tk.text, margin: 0 }}>
                   {T(lang, '📍 অবস্থান', '📍 Location')}
@@ -272,7 +367,9 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
           {tab === 'go' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <p style={{ color: tk.textDim, fontSize: 13, lineHeight: 1.7, margin: 0 }}>
-                {T(lang, 'ঢাকা থেকে কীভাবে যাবেন — আসল ভাড়া ও সময় (২০২৬)।', 'How to go from Dhaka — real fares & durations (2026).')}
+                {fromDistrict !== 'Dhaka'
+                  ? T(lang, `${DISTRICT_BN_LOCAL[fromDistrict] ?? fromDistrict} থেকে কীভাবে যাবেন — আসল ভাড়া ও সময় (২০২৬)। আপনার অবস্থান থেকে নিকটতম হাবটি শুরুর পয়েন্ট হিসেবে নেওয়া হয়েছে।`, `How to go from ${fromDistrict} — real fares & durations (2026). Your nearest hub is used as the starting point.`)
+                  : T(lang, 'ঢাকা থেকে কীভাবে যাবেন — আসল ভাড়া ও সময় (২০২৬)।', 'How to go from Dhaka — real fares & durations (2026).')}
               </p>
               {leg ? (
                 <LegRow
@@ -281,16 +378,14 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
                   lang={lang}
                   onOptionClick={mode => {
                     // Click-through: jump straight to the matching search page with
-                    // Dhaka → this place pre-filled; hubs auto-search on params and
-                    // back always returns here (both routes are in SHOW_BACK_ROUTES).
-                    const to = place?.en ?? '';
-                    const p = mode === 'flight'
-                      ? { from: 'DAC', to }
-                      : { from: 'Dhaka', to };
-                    if (mode === 'bus') rest.onNav('results', p);
-                    else if (mode === 'train') rest.onNav('train-hub', p);
-                    else if (mode === 'launch') rest.onNav('launch-hub', p);
-                    else if (mode === 'flight') rest.onNav('flights-hub', p);
+                    // the user's nearest hub → the place's district hub pre-filled;
+                    // hubs auto-search on params and back always returns here.
+                    const sp = searchParams;
+                    if (!sp) return;
+                    if (mode === 'bus') rest.onNav('results', { from: sp.fromCity, to: sp.toCity });
+                    else if (mode === 'train') rest.onNav('train-hub', { from: sp.fromTrain, to: sp.toTrain });
+                    else if (mode === 'launch') rest.onNav('launch-hub', { from: sp.fromTerminal, to: sp.toTerminal });
+                    else if (mode === 'flight') rest.onNav('flights-hub', { from: sp.fromIATA, to: sp.toIATA });
                   }}
                 />
               ) : (

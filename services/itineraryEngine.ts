@@ -98,13 +98,100 @@ const DISTRICT_LAUNCH_TERMINAL: Record<string, string> = {
   Noakhali: 'hatiya', Shariatpur: 'shariatpur',
 };
 
-const DISTRICT_BN: Record<string, string> = {
+export const DISTRICT_BN: Record<string, string> = {
   Dhaka: 'ঢাকা', Sylhet: 'সিলেট', "Cox's Bazar": 'কক্সবাজার', Chattogram: 'চট্টগ্রাম',
   Khulna: 'খুলনা', Rajshahi: 'রাজশাহী', Patuakhali: 'পটুয়াখালী', Bandarban: 'বান্দরবান',
   Rangamati: 'রাঙ্গামাটি', Cumilla: 'কুমিল্লা', Moulvibazar: 'মৌলভীবাজার', Bagerhat: 'বাগেরহাট',
   Naogaon: 'নওগাঁ', Bogura: 'বগুড়া', Dinajpur: 'দিনাজপুর', Noakhali: 'নোয়াখালী',
   Satkhira: 'সাতক্ষীরা', Jashore: 'যশোর', Barishal: 'বরিশাল', Mymensingh: 'ময়মনসিংহ',
 };
+
+// ── Origin / destination search helpers ──────────────────────────────────────
+// "How to go" click-through: from = nearest hub to the user's GPS position
+// (default Dhaka), to = the place's *district hub* per mode. Passing the raw
+// place name (e.g. "Inani Beach") as a train/airport destination returns
+// nothing — Inani has no station. Data is Dhaka-centric, so bus/flight/launch
+// origins stay Dhaka/Sadarghat/DAC; train can start from any hub with a station.
+
+/** District hub city centers, for nearest-origin detection from GPS coords. */
+const HUB_COORDS: Record<string, [number, number]> = {
+  Dhaka: [23.8103, 90.4125], "Cox's Bazar": [21.4272, 92.0058], Sylhet: [24.8949, 91.8687],
+  Chattogram: [22.3569, 91.7832], Khulna: [22.8456, 89.5403], Rajshahi: [24.3745, 88.6042],
+  Barishal: [22.701, 90.3535], Mymensingh: [24.7471, 90.4203], Cumilla: [23.4607, 91.1809],
+  Patuakhali: [22.3596, 90.3292], Bandarban: [22.1953, 92.2184], Rangamati: [22.6473, 92.1903],
+  Jashore: [23.1673, 89.2081], Bogura: [24.8465, 89.3773], Dinajpur: [25.6278, 88.6338],
+  Noakhali: [22.8696, 91.0991], Satkhira: [22.7185, 89.0705], Moulvibazar: [24.4824, 91.7774],
+  Bagerhat: [22.6602, 89.7895], Naogaon: [24.7856, 88.9302], Rangpur: [25.7439, 89.2752],
+  Jamalpur: [24.8987, 89.9417], Kishoreganj: [24.4443, 90.7786], Faridpur: [23.607, 89.8429],
+  Tangail: [24.2513, 89.9171], Habiganj: [24.3747, 91.4165], Thakurgaon: [26.03, 88.45],
+  Sirajganj: [24.4536, 89.7006],
+};
+
+/** District hubs with a railway station — search term for train origin. */
+const DISTRICT_TRAIN_FROM: Record<string, string> = {
+  Dhaka: 'Dhaka', Chattogram: 'Chattogram', Sylhet: 'Sylhet', Mymensingh: 'Mymensingh',
+  Rajshahi: 'Rajshahi', Khulna: 'Khulna', Noakhali: 'Noakhali', Dinajpur: 'Dinajpur',
+  Rangpur: 'Rangpur', Bogura: 'Bogura', Faridpur: 'Faridpur', Tangail: 'Tangail',
+  Moulvibazar: 'Moulvibazar', Habiganj: 'Habiganj', Jamalpur: 'Jamalpur',
+  Kishoreganj: 'Kishoreganj', Naogaon: 'Naogaon', Thakurgaon: 'Thakurgaon',
+  Sirajganj: 'Sirajganj', Jashore: 'Jashore', "Cox's Bazar": "Cox's Bazar",
+  Cumilla: 'Comilla', // station spelled with o
+};
+
+/** Train destination search term when district spelling ≠ station name. */
+const DISTRICT_TRAIN_TO: Record<string, string> = { Cumilla: 'Comilla' };
+
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const r = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return 2 * r * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
+/** Nearest hub district to a GPS position (fallback 'Dhaka'). */
+export function nearestHubDistrict(lat: number, lng: number): string {
+  let best = 'Dhaka';
+  let bestKm = Infinity;
+  for (const [d, [hlat, hlng]] of Object.entries(HUB_COORDS)) {
+    const km = haversineKm(lat, lng, hlat, hlng);
+    if (km < bestKm) { bestKm = km; best = d; }
+  }
+  return best;
+}
+
+export interface DestinationSearchParams {
+  fromCity: string;     // bus origin (Dhaka-centric data)
+  fromTrain: string;    // train origin (nearest hub station, else Dhaka)
+  fromIATA: string;     // flight origin (DAC — only DAC→district routes exist)
+  fromTerminal: string; // launch origin (Sadarghat)
+  toCity: string;       // bus destination (district city)
+  toTrain: string;      // train destination (station name)
+  toIATA: string;       // flight destination IATA
+  toTerminal: string;   // launch terminal id
+  hasFlight: boolean;
+  hasLaunch: boolean;
+}
+
+/** Search endpoints for "how to go" click-through — district hub as `to`, never the raw place name. */
+export function destinationSearchParams(place: Place, fromDistrict?: string): DestinationSearchParams {
+  const district = (place.district ?? '').split('/')[0] || '';
+  const from = fromDistrict && HUB_COORDS[fromDistrict] ? fromDistrict : 'Dhaka';
+  const toIATA = DISTRICT_IATA[district] ?? '';
+  const toTerminal = DISTRICT_LAUNCH_TERMINAL[district] ?? '';
+  return {
+    fromCity: 'Dhaka',
+    fromTrain: DISTRICT_TRAIN_FROM[from] ?? 'Dhaka',
+    fromIATA: 'DAC',
+    fromTerminal: 'sadarghat',
+    toCity: district,
+    toTrain: DISTRICT_TRAIN_TO[district] ?? district,
+    toIATA,
+    toTerminal,
+    hasFlight: !!toIATA && DOMESTIC_ROUTES.some(r => r.from === 'DAC' && r.to === toIATA),
+    hasLaunch: !!toTerminal && LAUNCH_ROUTES.some(r => r.from === 'sadarghat' && r.to === toTerminal),
+  };
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
