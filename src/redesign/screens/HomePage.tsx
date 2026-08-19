@@ -258,6 +258,7 @@ function SearchPanel({
     cursor: 'pointer',
     border: 'none',
     whiteSpace: 'nowrap',
+    flexShrink: 0,
     transition: 'all 0.18s ease',
   };
 

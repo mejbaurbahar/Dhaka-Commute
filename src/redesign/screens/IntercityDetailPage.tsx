@@ -708,12 +708,11 @@ export function IntercityDetailPage(props: Props) {
                 onClick={() => setActiveTab(tab.id)}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
-                  padding: '10px 14px', whiteSpace: 'nowrap',
+                  padding: '10px 14px', whiteSpace: 'nowrap', flexShrink: 0,
                   fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, fontWeight: activeTab === tab.id ? 700 : 500,
                   color: activeTab === tab.id ? tk.primary : tk.textDim,
                   borderBottom: `2px solid ${activeTab === tab.id ? tk.primary : 'transparent'}`,
                   transition: 'all 0.15s ease',
-                  flexShrink: 0,
                 }}
               >
                 {lbl(tab.en, tab.bn)}

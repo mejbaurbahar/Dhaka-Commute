@@ -263,7 +263,7 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
                   whiteSpace: 'nowrap', fontFamily: font, fontSize: 13, fontWeight: 700, cursor: 'pointer',
                   padding: '8px 14px', borderRadius: 999, border: `1px solid ${active ? 'transparent' : tk.line}`,
                   background: active ? tk.primary : tk.panel, color: active ? tk.primaryInk : tk.textDim,
-                  transition: 'all .18s',
+                  flexShrink: 0, transition: 'all .18s',
                 }}
               >
                 {t.icon} {T(lang, t.bn, t.en)}
