@@ -119,7 +119,8 @@ export default function BusRating({ busId, busName, onBack, onSuccess }: Props) 
     setSubmitting(true);
     const tagString = activeTags.join(', ');
     const fullComment = [comment.trim(), tagString].filter(Boolean).join(' · ');
-    const ok = await submitBusRating(busId, stars, fullComment);
+    const status = await submitBusRating(busId, stars, fullComment);
+    const ok = status !== 'failed';
     if (ok) {
       const fresh = await getBusRatings(busId);
       setSummary(fresh);
@@ -128,7 +129,7 @@ export default function BusRating({ busId, busName, onBack, onSuccess }: Props) 
       setStars(5);
       setActiveTags([]);
       setAspectStars({});
-      showToast(t('community.ratingSubmitted') || 'Rating saved!', 'success');
+      showToast(status === 'queued' ? lbl('Saved offline — will sync when online', 'অফলাইনে সংরক্ষিত — ইন্টারনেট পেলে সিঙ্ক হবে') : (t('community.ratingSubmitted') || 'Rating saved!'), 'success');
       onSuccess?.();
     } else {
       showToast(t('community.submitError') || 'Failed to save. Please try again.', 'error');
@@ -138,8 +139,10 @@ export default function BusRating({ busId, busName, onBack, onSuccess }: Props) 
 
   const handleDelete = async () => {
     setSubmitting(true);
-    const ok = await deleteBusRating(busId);
-    if (ok) {
+    const status = await deleteBusRating(busId);
+    if (status === 'failed') {
+      showToast(t('community.submitError') || 'Failed. Please try again.', 'error');
+    } else {
       const fresh = await getBusRatings(busId);
       setSummary(fresh);
       setShowForm(false);
@@ -147,9 +150,7 @@ export default function BusRating({ busId, busName, onBack, onSuccess }: Props) 
       setStars(5);
       setActiveTags([]);
       setAspectStars({});
-      showToast(t('community.ratingDeleted') || 'Rating removed.', 'success');
-    } else {
-      showToast(t('community.submitError') || 'Failed. Please try again.', 'error');
+      showToast(status === 'queued' ? lbl('Saved offline — will sync when online', 'অফলাইনে সংরক্ষিত — ইন্টারনেট পেলে সিঙ্ক হবে') : (t('community.ratingDeleted') || 'Rating removed.'), 'success');
     }
     setShowDeleteModal(false);
     setSubmitting(false);

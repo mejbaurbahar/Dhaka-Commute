@@ -123,13 +123,14 @@ export default function RoadAlerts({ onBack }: Props) {
     e.preventDefault();
     if (!form.location.trim() || !form.description.trim()) return;
     setSubmitting(true);
-    const ok = await submitTrafficReport(form.location, form.type, form.severity, form.description);
+    const status = await submitTrafficReport(form.location, form.type, form.severity, form.description);
+    const ok = status !== 'failed';
     if (ok) {
       setShowForm(false);
       setForm({ location: '', type: 'heavy_traffic', severity: 'medium', description: '' });
       const fresh = await getTodayTrafficReports();
       setReports(fresh);
-      showToast(t('roadAlerts.reportSuccess'), 'success');
+      showToast(status === 'queued' ? lbl('Saved offline — will sync when online', 'অফলাইনে সংরক্ষিত — ইন্টারনেট পেলে সিঙ্ক হবে') : t('roadAlerts.reportSuccess'), 'success');
     } else {
       showToast(t('community.submitError'), 'error');
     }

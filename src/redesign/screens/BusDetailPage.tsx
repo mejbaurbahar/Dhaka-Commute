@@ -9,7 +9,9 @@ import { BUS_DATA, STATIONS } from '../../../constants';
 import BusRating from '../../../components/BusRating';
 import BusPhotoGallery from '../../../components/BusPhotoGallery';
 import EmergencyHelplineModal from '../../../components/EmergencyHelplineModal';
-import { getBusRatings, BusRatingSummary, submitBusPlate, PLATE_REGEX } from '../../../services/communityDataService';
+import { getBusRatings, BusRatingSummary, getPendingPhotoCount, flushPendingPhotosWithToken } from '../../../services/communityDataService';
+import { BusPlateCard } from '../components/BusPlateCard';
+import { Turnstile } from '../components/Turnstile';
 import { getBuses as getCommunityBuses, getSharingState, getNearestStopName, type CommunityBus } from '../../../services/busLiveService';
 import { resolveStationIds } from '../../../services/searchService';
 import { findTransitRoutes, getBusesForLeg } from '../../../services/transitPlanner';
@@ -137,9 +139,9 @@ export function BusDetailPage(props: Props) {
   const [showRating, setShowRating] = useState(false);
   const [showPhotos, setShowPhotos] = useState(false);
   const [showHelpline, setShowHelpline] = useState(false);
-  const [plateInput, setPlateInput] = useState('');
-  const [plateSubmitting, setPlateSubmitting] = useState(false);
-  const [plateFeedback, setPlateFeedback] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [pendingPhotoCount, setPendingPhotoCount] = useState(0);
+  const [verifyOpen, setVerifyOpen] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   // Rating / photo views swap the page content in place — reset scroll so the
   // user lands at the top instead of keeping the detail page's scroll position.
@@ -186,6 +188,19 @@ export function BusDetailPage(props: Props) {
     if (!bus) return;
     getBusRatings(bus.id).then(setRatingSummary).catch(() => setRatingSummary(null));
   }, [bus]);
+
+  // Offline photo uploads wait in the device queue — show a verify panel when
+  // any are pending so the user can supply a fresh Turnstile token.
+  useEffect(() => {
+    const refresh = () => setPendingPhotoCount(getPendingPhotoCount());
+    refresh();
+    window.addEventListener('online', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.removeEventListener('online', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, []);
 
   // Community live buses on this route (koyjabo-bus-live worker) — 30s poll
   useEffect(() => {
@@ -605,80 +620,45 @@ export function BusDetailPage(props: Props) {
               <button onClick={() => setShowPhotos(true)} style={{ ...chipBtn(tk),width:'100%',justifyContent:'center' }}>
                 {T(lang,'ছবি দেখুন / আপলোড','Photos / upload')}
               </button>
-            </div>
-
-            {/* ── Bus Plate Numbers ───────────────────────────────────── */}
-            {bus && (() => {
-              const plates: string[] = (bus as unknown as { plates?: string[] }).plates ?? [];
-              const hasPlates = plates.length > 0;
-              const plateValid = PLATE_REGEX.test(plateInput.trim());
-              const handlePlateSubmit = async () => {
-                if (!plateValid || plateSubmitting) return;
-                setPlateSubmitting(true);
-                setPlateFeedback(null);
-                const result = await submitBusPlate(bus.id, bus.name, plateInput.trim());
-                setPlateSubmitting(false);
-                if (result.ok) {
-                  setPlateFeedback({ ok: true, msg: T(lang, 'ধন্যবাদ! আপনার প্লেট নম্বর জমা হয়েছে।', 'Thanks! Plate submitted for review.') });
-                  setPlateInput('');
-                } else {
-                  setPlateFeedback({ ok: false, msg: result.error ?? T(lang, 'জমা দেওয়া যায়নি। আবার চেষ্টা করুন।', 'Could not submit. Try again.') });
-                }
-              };
-              return (
-                <div className="kj-enter-3" style={card(16)}>
-                  <div style={{ display:'flex',alignItems:'center',gap:8,marginBottom:10 }}>
-                    <span style={{ fontSize:16 }}>🚍</span>
-                    <div style={{ fontFamily:BEN,fontWeight:700,fontSize:15,color:tk.text }}>
-                      {T(lang,'বাসের প্লেট নম্বর','Bus Plate Numbers')}
-                    </div>
-                  </div>
-                  {hasPlates ? (
-                    <div style={{ display:'flex',flexWrap:'wrap',gap:6,marginBottom:12 }}>
-                      {plates.map(p => (
-                        <span key={p} style={{ background:`${tk.primary}18`,border:`1px solid ${tk.primary}44`,borderRadius:8,padding:'4px 10px',fontFamily:SANS,fontWeight:700,fontSize:12,color:tk.primary,letterSpacing:0.5 }}>
-                          DMB {p}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <div style={{ fontFamily:BEN,fontSize:12,color:tk.textFaint,marginBottom:10 }}>
-                      {T(lang,'এই বাসের প্লেট নম্বর এখনো যোগ হয়নি।','No plate numbers added yet for this bus.')}
-                    </div>
-                  )}
-                  <div style={{ fontFamily:BEN,fontSize:12,color:tk.textDim,marginBottom:8 }}>
-                    {T(lang,'আপনার বাসের প্লেট দেখুন এবং যোগ করুন:','Spot a bus? Add its plate:')}
-                  </div>
-                  <div style={{ display:'flex',gap:8 }}>
-                    <input
-                      value={plateInput}
-                      onChange={e => { setPlateInput(e.target.value.toUpperCase()); setPlateFeedback(null); }}
-                      onKeyDown={e => { if (e.key === 'Enter') void handlePlateSubmit(); }}
-                      placeholder="DMB 12-3814"
-                      maxLength={12}
-                      style={{ flex:1,background:tk.panelMuted,border:`1.5px solid ${plateInput&&!plateValid?'#ef4444':tk.line}`,borderRadius:10,padding:'9px 12px',fontFamily:SANS,fontSize:13,color:tk.text,outline:'none' }}
-                    />
-                    <button
-                      onClick={() => void handlePlateSubmit()}
-                      disabled={!plateValid || plateSubmitting}
-                      style={{ background:plateValid&&!plateSubmitting?tk.primary:tk.line,color:'#fff',border:'none',borderRadius:10,padding:'9px 14px',fontFamily:SANS,fontWeight:700,fontSize:13,cursor:plateValid&&!plateSubmitting?'pointer':'not-allowed',flexShrink:0,transition:'background 0.2s' }}
-                    >
-                      {plateSubmitting ? '...' : T(lang,'যোগ করুন','Add')}
+              {pendingPhotoCount > 0 && (
+                <div style={{ marginTop: 8, border: `1px solid ${tk.line}`, borderRadius: 10, padding: 10 }}>
+                  {!verifyOpen ? (
+                    <button onClick={() => setVerifyOpen(true)} style={{ background:'none',border:'none',cursor:'pointer',padding:0,textAlign:'left',width:'100%' }}>
+                      <div style={{ fontFamily:BEN,fontSize:12,color:tk.text }}>
+                        {T(lang,`${N(pendingPhotoCount, lang)}টি ছবি আপলোডের অপেক্ষায় — ভেরিফাই করুন`,'photos pending upload — tap to verify')}
+                      </div>
+                      <div style={{ fontFamily:BEN,fontSize:11,color:tk.textFaint,marginTop:2 }}>
+                        {T(lang,'অফলাইনে সংরক্ষিত ছবিগুলো পাঠাতে ট্যাপ করুন','Tap to send photos saved offline')}
+                      </div>
                     </button>
-                  </div>
-                  {plateInput && !plateValid && (
-                    <div style={{ fontFamily:SANS,fontSize:11,color:'#ef4444',marginTop:4 }}>
-                      {T(lang,'ফরম্যাট: DMB 12-3814','Format: DMB 12-3814')}
-                    </div>
-                  )}
-                  {plateFeedback && (
-                    <div style={{ fontFamily:BEN,fontSize:12,color:plateFeedback.ok?'#10b981':'#ef4444',marginTop:6,padding:'6px 10px',background:plateFeedback.ok?'rgba(16,185,129,0.1)':'rgba(239,68,68,0.1)',borderRadius:8 }}>
-                      {plateFeedback.msg}
+                  ) : (
+                    <div>
+                      <div style={{ fontFamily:BEN,fontSize:11,color:tk.textFaint,marginBottom:6 }}>
+                        {T(lang,'নিরাপত্তা যাচাই সম্পূর্ণ করুন','Complete the security check')}
+                      </div>
+                      <Turnstile
+                        theme={theme}
+                        onVerify={async token => {
+                          if (!token) return;
+                          setVerifying(true);
+                          try {
+                            const done = await flushPendingPhotosWithToken(token);
+                            setPendingPhotoCount(getPendingPhotoCount());
+                            setVerifyOpen(done > 0 || getPendingPhotoCount() > 0);
+                          } catch { /* keep panel open */ }
+                          setVerifying(false);
+                        }}
+                        onExpire={() => setVerifyOpen(true)}
+                      />
+                      {verifying && <div style={{ fontFamily:BEN,fontSize:11,color:tk.textFaint,textAlign:'center' }}>{T(lang,'পাঠানো হচ্ছে…','Uploading…')}</div>}
                     </div>
                   )}
                 </div>
-              );
-            })()}
+              )}
+            </div>
+
+            {/* ── Bus Plate Numbers ───────────────────────────────────── */}
+            {bus && <BusPlateCard bus={{ id: bus.id, name: bus.name }} plates={(bus as unknown as { plates?: string[] }).plates ?? []} tk={tk} lang={lang} />}
 
             <NativeAdCard
               tk={tk}

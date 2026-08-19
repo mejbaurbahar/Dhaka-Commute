@@ -137,7 +137,8 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
     e.preventDefault();
     if (!previewUrl) return;
     setSubmitting(true);
-    const ok = await submitBusPhoto(busId, busName, caption, previewUrl, cfToken);
+    const status = await submitBusPhoto(busId, busName, caption, previewUrl, cfToken);
+    const ok = status !== 'failed';
     if (ok) {
       const fresh = await getBusPhotos(busId);
       setPhotos(fresh);
@@ -145,7 +146,7 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
       setCaption('');
       setPreviewUrl(null);
       setCfToken('');
-      showToast(t('community.photoUploaded') || 'Photo uploaded!', 'success');
+      showToast(status === 'queued' ? lbl('Saved offline — will sync when online', 'অফলাইনে সংরক্ষিত — ইন্টারনেট পেলে সিঙ্ক হবে') : (t('community.photoUploaded') || 'Photo uploaded!'), 'success');
       onSuccess?.();
     } else {
       showToast(t('community.submitError') || 'Failed to upload. Please try again.', 'error');
@@ -157,13 +158,13 @@ export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onS
     if (!deleteTarget) return;
     setDeleting(true);
     const ok = await deleteBusPhoto(busId, deleteTarget.id);
-    if (ok) {
+    if (ok === 'failed') {
+      showToast(t('community.submitError') || 'Failed to delete photo. Please try again.', 'error');
+    } else {
       const fresh = await getBusPhotos(busId);
       setPhotos(fresh);
       if (lightbox?.id === deleteTarget.id) setLightbox(null);
       showToast(t('community.photoDeleted') || 'Photo deleted.', 'success');
-    } else {
-      showToast(t('community.submitError') || 'Failed to delete photo. Please try again.', 'error');
     }
     setDeleteTarget(null);
     setDeleting(false);

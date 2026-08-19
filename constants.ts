@@ -1958,7 +1958,8 @@ export const BUS_DATA: BusRoute[] = [
     routeString: 'Savar ⇄ Signboard',
     stops: ['savar', 'hemayetpur', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'shishu_mela', 'college_gate', 'asad_gate', 'khamar_bari', 'farmgate', 'kawran_bazar', 'bot_tola', 'bangla_motor', 'mogbazar', 'mouchak', 'malibagh', 'mugdapara', 'rajarbag', 'khilgaon_flyover', 'khidma_hospital', 'bashabo', 'maniknagar', 'golapbagh', 'sayedabad', 'janapath_moor', 'jatrabari', 'kazla', 'shonir_akhra', 'rayerbag', 'matuail', 'signboard'],
     type: 'Sitting',
-    hours: '6:00 AM - 10:00 PM'
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['11-9991']
   },
   {
     id: 'modhumoti_2',
@@ -2210,7 +2211,8 @@ export const BUS_DATA: BusRoute[] = [
     routeString: 'Hemayetpur ⇄ Demra',
     stops: ['hemayetpur', 'yearpur', 'dhamsona', 'tetuljhora', 'boliarpur', 'modhumoti', 'amin_bazar', 'parbat', 'gabtoli', 'mazar_road', 'technical', 'ansar_camp', 'mirpur1', 'sony_cinema', 'mirpur2', 'mirpur10', 'mirpur11', 'purobi', 'kalshi', 'ecb', 'mes', 'shewra', 'kuril', 'jamuna_future_park', 'bashundhara', 'nadda', 'notun_bazar', 'bashtola', 'shahjadpur', 'uttar_badda', 'badda', 'madhya_badda', 'merul', 'rampura', 'banasree', 'demra'],
     type: 'Semi-Sitting',
-    hours: '6:00 AM - 10:00 PM'
+    hours: '6:00 AM - 10:00 PM',
+    plates: ['15-6099', '15-7011', '15-6982']
   },
   {
     id: 'ramjan',
@@ -4752,7 +4754,7 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['gabtoli', 'mazar_road', 'technical', 'kallyanpur', 'shyamoli', 'college_gate', 'asad_gate', 'dhanmondi27', 'dhanmondi32', 'kalabagan', 'science_lab', 'katabon', 'shahbag', 'matsya_bhaban', 'high_court', 'press_club', 'paltan', 'gulistan', 'motijheel'],
     type: 'Local',
     hours: '6:00 AM - 10:00 PM',
-    plates: ['12-0668', '12-3624', '15-0524', '11-9467']
+    plates: ['12-0668', '12-3624', '15-0524', '11-9467', '11-9522']
   },
   {
     id: 'bosumoti_mowa_gabtoli',
@@ -4772,7 +4774,7 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['gabtoli', 'mazar_road', 'technical', 'mirpur1', 'mirpur10', 'pallabi', 'purobi', 'ecb', 'kuril_flyover', 'tongi', 'tongi_college_gate', 'gazipur'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM',
-    plates: ['11-7340']
+    plates: ['11-7340', '11-7642', '11-6992']
   },
   {
     id: 'moumita_dmb',

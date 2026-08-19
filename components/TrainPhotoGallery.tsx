@@ -56,8 +56,8 @@ export default function TrainPhotoGallery({ trainId, trainName, onBack }: Props)
   const handleDeletePhoto = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
-    const ok = await deleteTrainPhoto(trainId, deleteTarget.id);
-    if (ok) {
+    const status = await deleteTrainPhoto(trainId, deleteTarget.id);
+    if (status !== 'failed') {
       const fresh = await getTrainPhotos(trainId);
       setPhotos(fresh);
       if (lightbox?.id === deleteTarget.id) setLightbox(null);
