@@ -120,7 +120,7 @@ export function TrainDetailPage(props: Props) {
             <span style={{ fontSize:28 }}>🚆</span>
             <div>
               <div style={{ fontFamily:SANS, fontWeight:700, fontSize:12, opacity:0.8, letterSpacing:1 }}>
-                BANGLADESH RAILWAY · #{train.number}
+                {T(lang, 'বাংলাদেশ রেলওয়ে', 'BANGLADESH RAILWAY')} · #{train.number}
               </div>
               <h2 style={{ fontFamily:BEN, fontWeight:700, fontSize:isMobile?20:26, margin:0 }}>
                 {T(lang, train.bnName, train.name)}

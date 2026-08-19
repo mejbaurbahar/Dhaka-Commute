@@ -12,6 +12,7 @@ import {
   DtcaLiveLocationData,
   DtcaRouteDetailsData,
 } from '../../../services/dtcaTrackerService';
+import { CHAKA_BUS_SNAPSHOT } from '../../../data/chakaBuses';
 
 type LiveSource = 'live' | 'vehicle-list' | null;
 
@@ -32,6 +33,22 @@ interface Props {
 
 const DHAKA_CENTER: [number, number] = [23.8103, 90.4125];
 const POLL_MS = 10000;
+
+const LIVE_BUS_ICON = L.divIcon({
+  className: '',
+  html: `<div style="width:36px;height:36px;background:#10b981;border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3);margin:-18px 0 0 -18px">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/></svg>
+  </div>`,
+  iconSize: [36, 36],
+  iconAnchor: [18, 18],
+});
+
+const SNAPSHOT_BUS_ICON = L.divIcon({
+  className: '',
+  html: `<div style="width:30px;height:30px;background:#f59e0b;border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3);margin:-15px 0 0 -15px;font-size:13px">🚌</div>`,
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+});
 
 function statusColor(status: string): string {
   if (status === 'moving') return '#10b981';
@@ -62,6 +79,12 @@ export function DTCABusDetailPage(props: Props) {
 
   const identifier = params?.identifier ?? '';
   const initialVrn = params?.vrn ?? '';
+
+  // Last-known DTCA snapshot entry for this bus — shown when the live feed is down
+  const snapBus = useMemo(
+    () => CHAKA_BUS_SNAPSHOT.buses.find(b => b.id === identifier),
+    [identifier],
+  );
 
   const [liveData, setLiveData] = useState<DtcaLiveLocationData | null>(null);
   const [routeData, setRouteData] = useState<DtcaRouteDetailsData | null>(null);
@@ -261,6 +284,24 @@ export function DTCABusDetailPage(props: Props) {
     }
   }, [liveData, routeData, userLatLng]);
 
+  // Snapshot fallback — when the live feed is down (upstream 403), show the
+  // last known DTCA position from CHAKA_BUS_SNAPSHOT as an amber marker so the
+  // user still sees WHERE the bus was last seen, instead of an empty map.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !liveUnavailable) return;
+    const snap = CHAKA_BUS_SNAPSHOT.buses.find(b => b.id === identifier);
+    if (!snap || snap.lat == null || snap.lng == null) return;
+    const latLng: [number, number] = [snap.lat, snap.lng];
+    if (busMarkerRef.current) {
+      busMarkerRef.current.setLatLng(latLng);
+      busMarkerRef.current.setIcon(SNAPSHOT_BUS_ICON);
+    } else {
+      busMarkerRef.current = L.marker(latLng, { icon: SNAPSHOT_BUS_ICON }).addTo(map);
+    }
+    map.flyTo(latLng, 15, { duration: 1 });
+  }, [liveUnavailable, identifier]);
+
   // Update bus marker on live data
   useEffect(() => {
     const map = mapRef.current;
@@ -268,16 +309,9 @@ export function DTCABusDetailPage(props: Props) {
     const latLng: [number, number] = [liveData.latitude, liveData.longitude];
     if (busMarkerRef.current) {
       busMarkerRef.current.setLatLng(latLng);
+      busMarkerRef.current.setIcon(LIVE_BUS_ICON);
     } else {
-      const icon = L.divIcon({
-        className: '',
-        html: `<div style="width:36px;height:36px;background:#10b981;border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3);margin:-18px 0 0 -18px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/></svg>
-        </div>`,
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
-      });
-      busMarkerRef.current = L.marker(latLng, { icon }).addTo(map);
+      busMarkerRef.current = L.marker(latLng, { icon: LIVE_BUS_ICON }).addTo(map);
       map.flyTo(latLng, 15, { duration: 1 });
     }
   }, [liveData]);
@@ -287,9 +321,9 @@ export function DTCABusDetailPage(props: Props) {
   const stoppages = routeData?.stoppages ?? [];
   const passedIds = new Set(liveData?.passedStoppageIds ?? []);
   const nextId = liveData?.nextStoppage?.id;
-  const speed = liveData?.speedKph ?? 0;
+  const speed = liveData?.speedKph ?? snapBus?.speedKmh ?? 0;
   const busStatus = liveData?.status ?? '';
-  const nextStopName = liveData?.nextStoppage?.name ?? T(lang, 'তথ্য নেই', 'N/A');
+  const nextStopName = liveData?.nextStoppage?.name ?? snapBus?.landmark ?? T(lang, 'তথ্য নেই', 'N/A');
   const etaMins = liveData?.estimatedArrivalMinutes;
   const remaining = liveData?.remainingStoppages ?? 0;
 
@@ -336,8 +370,15 @@ export function DTCABusDetailPage(props: Props) {
                 {T(lang, 'এই মুহূর্তে লাইভ অবস্থান পাওয়া যাচ্ছে না', 'Live location not available right now')}
               </div>
               <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>
-                {T(lang, 'বাসটি অফলাইন বা পার্ক করা থাকতে পারে', 'Bus may be offline or parked')}
+                {snapBus?.landmark
+                  ? T(lang, `শেষ দেখা: ${snapBus.landmark} (${snapBus.lastSeen})`, `Last seen: ${snapBus.landmark} (${snapBus.lastSeen})`)
+                  : T(lang, 'বাসটি অফলাইন বা পার্ক করা থাকতে পারে', 'Bus may be offline or parked')}
               </div>
+              {snapBus && (
+                <div style={{ fontFamily: SANS, fontSize: 11, color: '#f59e0b', marginTop: 6, background: '#f59e0b18', borderRadius: 8, padding: '5px 10px', display: 'inline-block' }}>
+                  📌 {T(lang, 'ম্যাপে শেষ দেখা অবস্থান দেখানো হচ্ছে', 'Showing last known position on map')}
+                </div>
+              )}
             </div>
           )}
 
@@ -374,6 +415,11 @@ export function DTCABusDetailPage(props: Props) {
                 {liveSource === 'vehicle-list' && (
                   <div style={{ background: '#f59e0b22', color: '#f59e0b', borderRadius: 6, padding: '2px 8px', fontFamily: SANS, fontWeight: 700, fontSize: 10 }}>
                     ⚡ {T(lang, 'লোকেশন ট্র্যাক', 'GPS Track')}
+                  </div>
+                )}
+                {liveUnavailable && snapBus && (
+                  <div style={{ background: '#f59e0b22', color: '#f59e0b', borderRadius: 6, padding: '2px 8px', fontFamily: SANS, fontWeight: 700, fontSize: 10, textAlign: 'right' }}>
+                    📌 {T(lang, `শেষ দেখা ${snapBus.lastSeen}`, `Last seen ${snapBus.lastSeen}`)}
                   </div>
                 )}
               </div>

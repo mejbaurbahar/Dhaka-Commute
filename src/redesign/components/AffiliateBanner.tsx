@@ -465,7 +465,7 @@ function SpotlightShowcase({ tk, lang }: { tk: Tokens; lang: Lang }) {
         />
         <div>
           <span style={{ color: '#ff9900', fontSize: 10, fontWeight: 900, fontFamily: SANS }}>
-            🔥 FEATURED TRAVEL PRODUCT
+            {T(lang, '🔥 প্রস্তাবিত ভ্রমণ পণ্য', '🔥 FEATURED TRAVEL PRODUCT')}
           </span>
           <h3 style={{ fontFamily: BEN, fontWeight: 800, fontSize: 17, color: '#fff', margin: '2px 0' }}>
             {T(lang, course.titleBn, course.titleEn)}

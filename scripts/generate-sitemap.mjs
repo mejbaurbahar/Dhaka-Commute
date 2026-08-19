@@ -114,8 +114,11 @@ function fileLastmod(file) {
   }
 }
 
+const LANG_CODES = ['bn', 'en', 'hi', 'ja', 'ko', 'zh', 'fr', 'de', 'es', 'ar'];
+
 const staticPages = [
   urlEntry(pageUrl('/'), TODAY, 'daily', '1.0'),
+  ...LANG_CODES.map(c => urlEntry(pageUrl(`/${c}/`), TODAY, 'monthly', '0.6')),
   urlEntry(pageUrl('/intercity'), TODAY, 'daily', '0.9'),
   urlEntry(pageUrl('/ai'), TODAY, 'weekly', '0.8'),
   urlEntry(pageUrl('/blog'), TODAY, 'daily', '0.8'),

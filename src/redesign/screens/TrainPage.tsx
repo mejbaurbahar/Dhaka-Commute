@@ -379,9 +379,9 @@ export function TrainPage(props: Props) {
                         <span style={{ fontFamily:BEN, fontWeight: isFirst||isLast||hasHalt ? 700 : 400, fontSize: isFirst||isLast ? 14 : 13, color: isFirst||isLast ? tk.text : hasHalt ? tk.text : tk.textDim }}>
                           {stop.label || stationName(stop.city)}
                         </span>
-                        {isFirst && <span style={{ background:`${routeMapTrain.col[0]}22`, color:routeMapTrain.col[0], fontFamily:SANS, fontSize:9, fontWeight:700, padding:'1px 6px', borderRadius:4 }}>START</span>}
-                        {isLast && <span style={{ background:`${routeMapTrain.col[1]}22`, color:routeMapTrain.col[1], fontFamily:SANS, fontSize:9, fontWeight:700, padding:'1px 6px', borderRadius:4 }}>END</span>}
-                        {hasHalt && !isFirst && !isLast && <span style={{ background:`${routeMapTrain.col[0]}18`, color:routeMapTrain.col[0], fontFamily:SANS, fontSize:9, fontWeight:600, padding:'1px 5px', borderRadius:4 }}>{stop.halt}m halt</span>}
+                        {isFirst && <span style={{ background:`${routeMapTrain.col[0]}22`, color:routeMapTrain.col[0], fontFamily:SANS, fontSize:9, fontWeight:700, padding:'1px 6px', borderRadius:4 }}>{T(lang,'শুরু','START')}</span>}
+                        {isLast && <span style={{ background:`${routeMapTrain.col[1]}22`, color:routeMapTrain.col[1], fontFamily:SANS, fontSize:9, fontWeight:700, padding:'1px 6px', borderRadius:4 }}>{T(lang,'শেষ','END')}</span>}
+                        {hasHalt && !isFirst && !isLast && <span style={{ background:`${routeMapTrain.col[0]}18`, color:routeMapTrain.col[0], fontFamily:SANS, fontSize:9, fontWeight:600, padding:'1px 5px', borderRadius:4 }}>{T(lang, `${stop.halt}মি বিরতি`, `${stop.halt}m halt`)}</span>}
                       </div>
                       {stop.duration && stop.duration !== '---' && !isFirst && (
                         <div style={{ fontFamily:SANS, fontSize:10, color:tk.textFaint, marginTop:1 }}>

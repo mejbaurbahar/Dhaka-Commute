@@ -4,6 +4,7 @@ import type { Lang } from '../tokens';
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, N } from '../tokens';
 import { PageShell } from './PageShell';
+import { LiveBusMap } from '../components/LiveBusMap';
 import { BUS_DATA, STATIONS } from '../../../constants';
 import { resolveStationIds } from '../../../services/searchService';
 import {
@@ -54,7 +55,11 @@ function statusLabel(status: string, lang: Lang): string {
 
 export function BusLiveMapPage(props: Props) {
   const { theme, device, lang, params } = props;
-  const busId = params?.busId ?? '';
+  // Menu link ('bus-live-map' without params) and direct URL hits land here with
+  // no busId — fall back to the first route that has BRTA plate data so the page
+  // is never a blank shell.
+  const DEFAULT_LIVE_BUS_ID = (BUS_DATA.find(b => (b.plates?.length ?? 0) > 0) ?? BUS_DATA[0])?.id ?? '';
+  const busId = params?.busId ?? DEFAULT_LIVE_BUS_ID;
   const prefillNumber = params?.busNumber ?? '';
   useDocumentTitle(T(lang, 'লাইভ বাস', 'Live Bus'));
   const tk = KJ_TOKENS[theme];
@@ -244,6 +249,25 @@ export function BusLiveMapPage(props: Props) {
             <button onClick={onStartSharing} style={btn(tk.primary, '#fff')}>
               {T(lang, 'শেয়ার করা শুরু করুন', 'Start sharing')}
             </button>
+          </div>
+        )}
+
+        {/* Live map — route polyline + live bus markers (same map as bus detail) */}
+        {routeStops.length > 1 && (
+          <div style={{ height: isMobile ? 320 : 430, borderRadius: 16, overflow: 'hidden', position: 'relative', marginBottom: 14, background: '#0a1f14', border: `1px solid ${tk.line}` }}>
+            <LiveBusMap
+              tk={tk}
+              lang={lang}
+              isMobile={isMobile}
+              height={isMobile ? 320 : 430}
+              routeStops={routeStops.filter(s => s && typeof s.lat === 'number' && typeof s.lng === 'number').map(s => ({ lat: s.lat as number, lng: s.lng as number, name: s.name, bnName: s.bnName }))}
+              stopIds={stopIds}
+              buses={buses}
+              selectedNumber={selectedNumber}
+              sharingBusNumber={getSharingState()?.busNumber ?? null}
+              onMarkerClick={setSelectedNumber}
+              userProximity={null}
+            />
           </div>
         )}
 

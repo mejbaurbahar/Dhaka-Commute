@@ -43,7 +43,7 @@ export function QAPage(props: Props) {
           <div style={{ position:'absolute',inset:0,pointerEvents:'none',backgroundImage:'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',backgroundSize:'28px 28px',maskImage:'linear-gradient(135deg,transparent 0%,rgba(0,0,0,0.45) 100%)',WebkitMaskImage:'linear-gradient(135deg,transparent 0%,rgba(0,0,0,0.45) 100%)'}}/>
           <div style={{ position:'absolute',right:-40,top:-40,width:180,height:180,borderRadius:999,background:'rgba(255,255,255,0.07)',pointerEvents:'none'}}/>
           <div style={{ position:'relative',zIndex:1 }}>
-            <span style={{ fontFamily:SANS,fontSize:10,fontWeight:800,letterSpacing:1.8,opacity:0.72,textTransform:'uppercase',display:'block',marginBottom:8 }}>❓ FAQ</span>
+            <span style={{ fontFamily:SANS,fontSize:10,fontWeight:800,letterSpacing:1.8,opacity:0.72,textTransform:'uppercase',display:'block',marginBottom:8 }}>{T(lang,'❓ প্রায়শই জিজ্ঞাসিত','❓ FAQ')}</span>
             <h1 style={{ fontFamily:BEN,fontWeight:800,fontSize:isMobile?24:32,margin:'0 0 6px',lineHeight:1.2 }}>{T(lang,'প্রশ্নোত্তর','Q & A')}</h1>
             <p style={{ fontFamily:BEN,fontSize:13,opacity:0.85,margin:0 }}>{T(lang,'সাধারণ প্রশ্নের উত্তর','Answers to common questions')}</p>
           </div>

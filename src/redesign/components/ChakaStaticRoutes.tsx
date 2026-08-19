@@ -96,10 +96,11 @@ export function ChakaStaticRoutes({ tk, lang, onBusClick, onDtcaBusClick }: Prop
               {r.routeString}
             </div>
           </div>
-          <div style={{ flexShrink: 0 }}>
-            <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint, background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 6, padding: '3px 8px' }}>
+          <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint, background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 6, padding: '3px 8px', whiteSpace: 'nowrap' }}>
               {r.type} · {r.hours}
             </span>
+            <span style={{ color: tk.textFaint, fontSize: 15 }}>›</span>
           </div>
         </button>
       ))}
@@ -137,36 +138,52 @@ export function ChakaStaticRoutes({ tk, lang, onBusClick, onDtcaBusClick }: Prop
                 </div>
                 {planBuses.map((bus, i) => {
                   const col = busStatusColor(bus);
+                  const statusLabel = bus.speedKmh > 0
+                    ? T(lang, 'চলমান', 'Moving')
+                    : bus.engineOn ? T(lang, 'ইঞ্জিন চালু', 'Engine on') : T(lang, 'বন্ধ', 'Stopped');
                   return (
                     <button
                       key={bus.id}
                       onClick={() => onDtcaBusClick?.(bus.id, bus.vrn)}
                       style={{
                         width: '100%',
-                        background: 'none',
-                        border: 'none',
-                        borderTop: i ? `1px dashed ${tk.line}` : 'none',
-                        padding: '8px 0',
+                        background: tk.panelMuted,
+                        border: `1px solid ${tk.line}`,
+                        borderRadius: 12,
+                        padding: '10px 12px',
+                        marginTop: 8,
                         display: 'flex',
                         alignItems: 'center',
                         gap: 10,
                         cursor: onDtcaBusClick ? 'pointer' : 'default',
                         textAlign: 'left' as const,
+                        transition: 'border-color .15s',
                       }}
                     >
-                      <div style={{ width: 8, height: 8, borderRadius: 999, background: col, boxShadow: `0 0 0 3px ${col}22`, flexShrink: 0 }} />
+                      <div style={{ width: 10, height: 10, borderRadius: 999, background: col, boxShadow: `0 0 0 4px ${col}22`, flexShrink: 0 }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 12, color: tk.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {bus.vrn}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+                          <span style={{ fontFamily: SANS, fontWeight: 800, fontSize: 13, color: tk.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {bus.vrn}
+                          </span>
+                          <span style={{ fontFamily: SANS, fontSize: 9, fontWeight: 700, color: col, background: `${col}1a`, borderRadius: 999, padding: '2px 8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                            {statusLabel}
+                          </span>
                         </div>
                         {bus.landmark ? (
-                          <div style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>
+                          <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 3 }}>
                             📍 {bus.landmark}
                           </div>
                         ) : null}
+                        <div style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint, marginTop: 1 }}>
+                          {T(lang, `শেষ দেখা: ${bus.lastSeen}`, `Last seen: ${bus.lastSeen}`)}
+                        </div>
                       </div>
-                      <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 11, color: col, flexShrink: 0 }}>
-                        {N(bus.speedKmh, lang)} {T(lang, 'কিমি/ঘ', 'km/h')}
+                      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontFamily: SANS, fontWeight: 800, fontSize: 11, color: col, background: `${col}14`, borderRadius: 8, padding: '4px 8px', whiteSpace: 'nowrap' }}>
+                          {N(bus.speedKmh, lang)} {T(lang, 'কিমি/ঘ', 'km/h')}
+                        </span>
+                        <span style={{ color: tk.textFaint, fontSize: 16 }}>›</span>
                       </div>
                     </button>
                   );

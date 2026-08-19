@@ -1,6 +1,8 @@
 import React from 'react';
+import { T } from './tokens';
 
 export function SplashScreen() {
+  const lang = (typeof localStorage !== 'undefined' ? localStorage.getItem('kj-lang-override') : null) === 'bn' ? 'bn' : 'en';
   return (
     <div
       id="kj-splash-react"
@@ -58,7 +60,7 @@ export function SplashScreen() {
         <div style={{
           fontFamily: "'Inter', sans-serif", fontSize: 11,
           color: '#8b98b0', marginTop: 14,
-        }}>Loading your routes…</div>
+        }}>{T(lang, 'রুট লোড হচ্ছে…', 'Loading your routes…')}</div>
       </div>
     </div>
   );

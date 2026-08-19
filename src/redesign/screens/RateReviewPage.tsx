@@ -50,7 +50,7 @@ export function RateReviewPage(props: Props) {
           <div style={{ fontFamily:BEN,fontWeight:700,fontSize:14,color:tk.text,marginBottom:12 }}>{T(lang,'বিস্তারিত রেটিং','Aspect ratings')}</div>
           {Object.keys(aspects).map(aspect=>(
             <div key={aspect} style={{ display:'flex',alignItems:'center',gap:10,marginBottom:10 }}>
-              <span style={{ fontFamily:SANS,fontSize:12,color:tk.textDim,width:90,flexShrink:0 }}>{aspect}</span>
+              <span style={{ fontFamily:SANS,fontSize:12,color:tk.textDim,width:90,flexShrink:0 }}>{T(lang, { Comfort:'আরাম', Punctuality:'সময়ানুবর্তিতা', Cleanliness:'পরিচ্ছন্নতা', Value:'মূল্য', Safety:'নিরাপত্তা' }[aspect] ?? '', aspect)}</span>
               <div style={{ display:'flex',gap:4 }}>
                 {[1,2,3,4,5].map(s=>(
                   <span key={s} onClick={()=>setAspects(a=>({...a,[aspect]:s}))}

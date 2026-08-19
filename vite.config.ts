@@ -1,9 +1,23 @@
 import path from 'path';
 import { writeFileSync } from 'fs';
+import { execSync } from 'child_process';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+// Plugin: after build, generate localized landing pages (dist/{lang}/index.html)
+// for the 10 UI languages — the hreflang targets for cross-language SEO.
+const langPagesPlugin = {
+  name: 'generate-lang-pages',
+  closeBundle() {
+    try {
+      execSync('node scripts/generate-lang-pages.mjs', { stdio: 'inherit', cwd: process.cwd() });
+    } catch (e) {
+      console.error('lang pages generation failed:', e);
+    }
+  },
+};
 
 // Plugin: after build, replace intercity/index.html with a redirect to main app
 const intercityRedirectPlugin = {
@@ -65,6 +79,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       intercityRedirectPlugin,
+      langPagesPlugin,
       stripWebAdsPlugin(env.VITE_PLATFORM === 'android'),
 
       viteStaticCopy({
@@ -151,6 +166,10 @@ export default defineConfig(({ mode }) => {
             // non-ASCII paths (seen in app logs). Runtime CacheFirst route handles them
             // on first view instead; also keeps the precache manifest smaller.
             'buses-image/**',
+            // Destination photos — 35MB total, too heavy to precache on install.
+            // Cached at runtime (images-cache, CacheFirst) after first view;
+            // bundled into the Android app so they work offline there regardless.
+            'destination-photos/**',
             // Push service worker — subpath-scoped (/push/), registered directly
             // by pushService.ts. Never precache it (separate registration).
             'push/push-sw.js',
@@ -165,7 +184,7 @@ export default defineConfig(({ mode }) => {
           skipWaiting: true,
           clientsClaim: true,
           // Cache versioning for proper updates
-          cacheId: 'dhaka-commute-v125',
+          cacheId: 'dhaka-commute-v127',
           maximumFileSizeToCacheInBytes: 10485760, // 10 MB
 
           runtimeCaching: [
@@ -231,14 +250,18 @@ export default defineConfig(({ mode }) => {
                 }
               }
             },
-            // Static Assets - Cache First (Offline First Strategy)
+            // Images - Cache First (Offline First Strategy).
+            // Match by request.destination (not URL extension) because most
+            // destination photos are extensionless Google usercontent URLs
+            // (...=w800-h600) that the old extension regex never matched,
+            // so they were never cached and broke offline.
             {
-              urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
+              urlPattern: ({ request }) => request.destination === 'image',
               handler: 'CacheFirst',
               options: {
                 cacheName: 'images-cache',
                 expiration: {
-                  maxEntries: 60,
+                  maxEntries: 500,
                   maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
                 },
                 cacheableResponse: {
@@ -425,9 +448,12 @@ export default defineConfig(({ mode }) => {
                 },
               }
             },
-            // Map Tiles - Cache Heavy (Offline Maps)
+            // Map Tiles - Cache Heavy (Offline Maps).
+            // DestinationMap uses bare https://tile.openstreetmap.org/... (no
+            // subdomain) — the old regex required a subdomain so those tiles
+            // were never cached and the map went blank offline.
             {
-              urlPattern: /^https:\/\/(?:.*\.tile\.openstreetmap\.org|.*\.google\.com\/vt|.*\.basemaps\.cartocdn\.com)\/.*/i,
+              urlPattern: /^https:\/\/(?:(?:[\w-]+\.)?tile\.openstreetmap\.org|(?:[\w-]+\.)*basemaps\.cartocdn\.com|[a-z]+\.tile\.osmand\.net|[\w-]*\.tiles\.mapbox\.com)\/.*/i,
               handler: 'CacheFirst',
               options: {
                 cacheName: 'map-tiles-cache',

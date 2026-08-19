@@ -114,27 +114,39 @@ export function DTCABusListSection({ tk, lang, onBusClick }: Props) {
 
       {state === 'loaded' && buses.map((bus, i) => {
         const col = busStatusColor(bus.path);
-        const speed = bus.path?.[0]?.speed_status ?? 0;
-        const loc = bus.path?.[0]?.nearby_l_name ?? '';
+        const p = bus.path?.[0];
+        const speed = p?.speed_status ?? 0;
+        const loc = p?.nearby_l_name ?? '';
+        const statusLabel = p?.engine_status && p.speed_status > 0
+          ? T(lang, 'চলমান', 'Moving')
+          : p?.engine_status ? T(lang, 'ইঞ্জিন চালু', 'Engine on') : T(lang, 'বন্ধ', 'Stopped');
         return (
           <div
             key={bus.id ?? i}
             onClick={() => onBusClick(bus.v_identifier, bus.v_vrn)}
-            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0', borderTop: i ? `1px dashed ${tk.line}` : '', cursor: 'pointer' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderTop: i ? `1px dashed ${tk.line}` : '', cursor: 'pointer' }}
           >
-            <div style={{ width: 8, height: 8, borderRadius: 999, background: col, boxShadow: `0 0 0 3px ${col}22`, flexShrink: 0 }} />
+            <div style={{ width: 10, height: 10, borderRadius: 999, background: col, boxShadow: `0 0 0 4px ${col}22`, flexShrink: 0 }} />
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 11, color: tk.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {bus.v_vrn || bus.v_identifier}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+                <span style={{ fontFamily: SANS, fontWeight: 800, fontSize: 12, color: tk.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {bus.v_vrn || bus.v_identifier}
+                </span>
+                <span style={{ fontFamily: SANS, fontSize: 9, fontWeight: 700, color: col, background: `${col}1a`, borderRadius: 999, padding: '2px 8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                  {statusLabel}
+                </span>
               </div>
               {loc ? (
-                <div style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>
-                  {loc}
+                <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 3 }}>
+                  📍 {loc}
                 </div>
               ) : null}
             </div>
-            <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 12, color: col, flexShrink: 0 }}>
-              {N(speed, lang)} {T(lang, 'কিমি/ঘ', 'km/h')}
+            <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontFamily: SANS, fontWeight: 800, fontSize: 11, color: col, background: `${col}14`, borderRadius: 8, padding: '4px 8px', whiteSpace: 'nowrap' }}>
+                {N(speed, lang)} {T(lang, 'কিমি/ঘ', 'km/h')}
+              </span>
+              <span style={{ color: tk.textFaint, fontSize: 16 }}>›</span>
             </div>
           </div>
         );

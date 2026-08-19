@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
-import { useAIChat, SUGGESTIONS } from '../hooks/useAIChat';
+import { useAIChat } from '../hooks/useAIChat';
 import { Icon } from './Icons';
 import { ChatHistoryDrawer } from './ChatHistoryDrawer';
 
@@ -223,17 +223,6 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput, hideHisto
           )}
           <div ref={bottomRef} style={{ height: 1, flexShrink: 0 }} />
         </div>
-
-        {/* Mobile suggestion chips */}
-        {isMobile && (
-          <div style={{ flexShrink: 0, display: 'flex', gap: 6, padding: '8px 12px', overflowX: 'auto', background: tk.panel, borderTop: `1px solid ${tk.line}`, scrollbarWidth: 'none' } as React.CSSProperties}>
-            {SUGGESTIONS.slice(0, 4).map((s, i) => (
-              <button key={i} onClick={() => chat.setInput(T(lang, s.bn, s.en))} style={{ flexShrink: 0, background: tk.primarySoft, border: `1px solid ${tk.primary}30`, borderRadius: 999, padding: '6px 14px', fontFamily: BEN, fontSize: 11, fontWeight: 600, color: tk.primary, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                {T(lang, s.bn, s.en)}
-              </button>
-            ))}
-          </div>
-        )}
 
         {/* Input bar — sticky on mobile so it always floats above the page
             scroll (page scrolls 60+px on small screens; input must stay visible).
