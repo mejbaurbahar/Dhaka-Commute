@@ -103,6 +103,10 @@ For multi-step tasks, state a brief plan:
 - After adding new static assets, bump `cacheId` in `vite.config.ts`
 - Notification scheduling lives in `TripReminders.tsx`; re-schedule on `visibilitychange`
 
+### Destination photos
+
+- **Never add any photo containing people** (no men/women in frame) — show the location only. Before adding/scraping destination photos, run the Vision human-detection sweep (`swift /tmp/kj-people2.swift <files>`, flags ≥0.5 confidence) and drop flagged images. Existing 81 flagged images removed Aug 2026; `public/destination-photos/` holds only people-free shots.
+
 ### Code Style
 
 - Functional React components only
