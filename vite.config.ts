@@ -1,9 +1,23 @@
 import path from 'path';
 import { writeFileSync } from 'fs';
+import { execSync } from 'child_process';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+// Plugin: after build, generate localized landing pages (dist/{lang}/index.html)
+// for the 10 UI languages — the hreflang targets for cross-language SEO.
+const langPagesPlugin = {
+  name: 'generate-lang-pages',
+  closeBundle() {
+    try {
+      execSync('node scripts/generate-lang-pages.mjs', { stdio: 'inherit', cwd: process.cwd() });
+    } catch (e) {
+      console.error('lang pages generation failed:', e);
+    }
+  },
+};
 
 // Plugin: after build, replace intercity/index.html with a redirect to main app
 const intercityRedirectPlugin = {
@@ -65,6 +79,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       intercityRedirectPlugin,
+      langPagesPlugin,
       stripWebAdsPlugin(env.VITE_PLATFORM === 'android'),
 
       viteStaticCopy({
@@ -165,7 +180,7 @@ export default defineConfig(({ mode }) => {
           skipWaiting: true,
           clientsClaim: true,
           // Cache versioning for proper updates
-          cacheId: 'dhaka-commute-v125',
+          cacheId: 'dhaka-commute-v126',
           maximumFileSizeToCacheInBytes: 10485760, // 10 MB
 
           runtimeCaching: [
