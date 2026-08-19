@@ -21,7 +21,7 @@ const QA = (lang:'bn'|'en') => [
 
 export function QAPage(props: Props) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'প্রশ্নোত্তর' : 'FAQ');
+  useDocumentTitle(T(lang, 'প্রশ্নোত্তর', 'FAQ'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const [open, setOpen] = useState<number|null>(null);

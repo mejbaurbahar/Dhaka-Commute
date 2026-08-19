@@ -74,8 +74,8 @@ const MAJOR_STATIONS = Object.values(TRAIN_STATIONS).slice(0, 12);
 
 export function TrainPage(props: Props) {
   const { theme, device, lang, onNav, params } = props;
-  useDocumentTitle(lang === 'bn' ? 'বাংলাদেশ ট্রেনের সময়সূচী ও ভাড়া ২০২৬' : 'Bangladesh Train Schedule & Fares 2026');
-  setMetaTag('description', lang === 'bn' ? 'সব আন্তঃনগর ট্রেনের সময়সূচী, ভাড়া ও টিকেট তথ্য — বাংলায়।' : 'Every intercity train schedule, fare and ticket info for Bangladesh Railway.');
+  useDocumentTitle(T(lang, 'বাংলাদেশ ট্রেনের সময়সূচী ও ভাড়া ২০২৬', 'Bangladesh Train Schedule & Fares 2026'));
+  setMetaTag('description', T(lang, 'সব আন্তঃনগর ট্রেনের সময়সূচী, ভাড়া ও টিকেট তথ্য — বাংলায়।', 'Every intercity train schedule, fare and ticket info for Bangladesh Railway.'));
   setCanonicalUrl('/train');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';

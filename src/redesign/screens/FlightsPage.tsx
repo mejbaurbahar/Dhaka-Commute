@@ -34,8 +34,8 @@ const CABINS = [
 
 export function FlightsPage(props: Props) {
   const { theme, device, lang, onNav, params } = props;
-  useDocumentTitle(lang === 'bn' ? 'বাংলাদেশ অভ্যন্তরীণ ফ্লাইট রুট ও ভাড়া' : 'Bangladesh Domestic Flight Routes & Fares');
-  setMetaTag('description', lang === 'bn' ? 'ঢাকা থেকে সব জেলায় ফ্লাইট রুট, এয়ারলাইন ও ভাড়া।' : 'Flights from Dhaka to every region — airlines, routes and fares.');
+  useDocumentTitle(T(lang, 'বাংলাদেশ অভ্যন্তরীণ ফ্লাইট রুট ও ভাড়া', 'Bangladesh Domestic Flight Routes & Fares'));
+  setMetaTag('description', T(lang, 'ঢাকা থেকে সব জেলায় ফ্লাইট রুট, এয়ারলাইন ও ভাড়া।', 'Flights from Dhaka to every region — airlines, routes and fares.'));
   setCanonicalUrl('/flights');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';

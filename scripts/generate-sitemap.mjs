@@ -138,7 +138,30 @@ const staticPages = [
   urlEntry(pageUrl('/truck'), TODAY, 'weekly', '0.7'),
   urlEntry(pageUrl('/advertise'), TODAY, 'monthly', '0.5'),
   urlEntry(pageUrl('/fare'), TODAY, 'monthly', '0.6'),
+  urlEntry(pageUrl('/discover'), TODAY, 'weekly', '0.8'),
+  urlEntry(pageUrl('/itinerary'), TODAY, 'weekly', '0.7'),
 ];
+
+// Destination detail pages: /places/<slug>/ from bangladeshPlaces.ts (tourist/historical/landmark only)
+const destEntries = [];
+{
+  const content = fs.readFileSync(path.join(root, 'data', 'bangladeshPlaces.ts'), 'utf8');
+  // Order-tolerant: parse each `{ id: ..., ... type: ... }` block separately,
+  // because fields (district/division/desc) appear in varying order between id and type.
+  const blockRe = /{([^{}]*)}/g;
+  let m;
+  while ((m = blockRe.exec(content)) !== null) {
+    const block = m[1];
+    const idM = block.match(/id:\s*'([^']+)'/);
+    const typeM = block.match(/type:\s*'(tourist|historical|landmark)'/);
+    if (!idM || !typeM) continue;
+    const enM = block.match(/en:\s*(?:'([^']+)'|"([^"]+)")/);
+    // Drop apostrophes first (matches the app's destSlug): coxs-bazar-beach, not cox-s-bazar-beach.
+    const slug = slugify(enM ? (enM[1] || enM[2]) : idM[1]).replace(/['’]/g, '').replace(/-+/g, '-');
+    destEntries.push(urlEntry(pageUrl(`/places/${slug}/`), fileLastmod('data/bangladeshPlaces.ts'), 'weekly', '0.7'));
+  }
+}
+console.log(`... plus ${destEntries.length} destination pages`);
 
 const blogPages = blogEntries.map(({ slug, date }) =>
   urlEntry(pageUrl(`/blog/${slug}`), date, 'monthly', '0.8')
@@ -189,12 +212,15 @@ const xml = [
   `  <!-- Interchange Routes (${interchangePages.length}) -->`,
   ...interchangePages,
   '',
+  `  <!-- Destinations (${destEntries.length}) -->`,
+  ...destEntries,
+  '',
   '</urlset>',
 ].join('\n');
 
 const out = path.join(root, 'public', 'sitemap.xml');
 fs.writeFileSync(out, xml, 'utf8');
-console.log(`✅ sitemap.xml written — ${staticPages.length} static, ${blogPages.length} blog, ${busPages.length} bus, ${trainPages.length} train, ${operatorPages.length} operator entries`);
+console.log(`✅ sitemap.xml written — ${staticPages.length} static, ${blogPages.length} blog, ${busPages.length} bus, ${trainPages.length} train, ${operatorPages.length} operator, ${destEntries.length} destination entries`);
 
 // Generate /version.json — used by main.tsx to detect new deploys and
 // silently reload long-lived tabs (no manual hard-refresh needed).

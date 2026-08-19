@@ -1,4 +1,5 @@
 import React from 'react';
+import { T } from '../src/redesign/tokens';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AppView } from '../types';
 import KoyJaboLogo from './KoyJaboLogo';
@@ -9,7 +10,7 @@ interface GlobalFooterProps {
 
 const GlobalFooter: React.FC<GlobalFooterProps> = ({ setView }) => {
   const { t, language } = useLanguage();
-  const lbl = (en: string, bn: string) => (language === 'bn' ? bn : en);
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const isDarkMode = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
 
   const links: { href: string; label: string; onClick?: (e: React.MouseEvent) => void }[] = [

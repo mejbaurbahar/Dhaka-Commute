@@ -3,6 +3,7 @@
  * Looks like a real sponsored feature card, not a text widget.
  */
 import React, { useState, useEffect, useRef } from 'react';
+import { T } from '../tokens';
 import { Lang, SANS, BEN } from '../tokens';
 
 // ── Inject keyframes once ────────────────────────────────────────────────────
@@ -461,7 +462,7 @@ function BannerSlide({ cfg, lang, height }: { cfg: BannerCfg; lang: Lang; height
             }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: cfg.accent, animation: 'govPulse 2s ease-in-out infinite' }} />
               <span style={{ fontFamily: SANS, fontSize: 8.5, fontWeight: 700, color: cfg.accent, letterSpacing: 0.6, textTransform: 'uppercase' }}>
-                {isBn ? cfg.badgeBn : cfg.badgeEn}
+                {T(lang, cfg.badgeBn, cfg.badgeEn)}
               </span>
             </div>
 
@@ -485,10 +486,10 @@ function BannerSlide({ cfg, lang, height }: { cfg: BannerCfg; lang: Lang; height
                   textShadow: '0 2px 8px rgba(0,0,0,0.4)',
                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}>
-                  {isBn ? cfg.nameBn : cfg.nameEn}
+                  {T(lang, cfg.nameBn, cfg.nameEn)}
                 </div>
                 <div style={{ fontFamily: SANS, fontSize: 9, fontWeight: 600, letterSpacing: 0.3, color: cfg.accent, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {isBn ? cfg.tagBn : cfg.tagEn}
+                  {T(lang, cfg.tagBn, cfg.tagEn)}
                 </div>
               </div>
             </div>
@@ -503,7 +504,7 @@ function BannerSlide({ cfg, lang, height }: { cfg: BannerCfg; lang: Lang; height
                 color: 'rgba(255,255,255,0.75)', lineHeight: 1.55,
                 display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
               }}>
-                {isBn ? cfg.descBn : cfg.descEn}
+                {T(lang, cfg.descBn, cfg.descEn)}
               </p>
             )}
           </div>
@@ -521,7 +522,7 @@ function BannerSlide({ cfg, lang, height }: { cfg: BannerCfg; lang: Lang; height
                 }}>
                   <span style={{ fontSize: 10 }}>{c.icon}</span>
                   <span style={{ fontFamily: SANS, fontSize: 9, fontWeight: 600, color: 'rgba(255,255,255,0.72)', whiteSpace: 'nowrap' }}>
-                    {isBn ? c.bn : c.en}
+                    {T(lang, c.bn, c.en)}
                   </span>
                 </div>
               ))}
@@ -643,7 +644,7 @@ export function GovAdBanner({
           fontFamily: SANS, fontSize: 8, fontWeight: 700,
           color: 'rgba(255,255,255,0.3)', letterSpacing: 1.2, textTransform: 'uppercase',
         }}>
-          {lang === 'bn' ? 'সরকারি' : 'GOV · AD'}
+          {T(lang, 'সরকারি', 'GOV · AD')}
         </div>
       </div>
 

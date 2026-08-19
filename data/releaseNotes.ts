@@ -12,6 +12,51 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '2.2.0',
+    date: '2026-08-19',
+    type: 'major',
+    features: [
+      'Discover Bangladesh — 70+ destination pages with Google Maps ratings, photos, hours, how-to-go fares, things to do, reviews and map',
+      'Itinerary Planner — pick your day count (1/2/3/4/5/7) and get a full multi-day plan with real bus/train/flight/launch legs and budget',
+      'AI trip tips for every itinerary day (online), works fully offline without AI too',
+      '10 UI languages: বাংলা, English, हिन्दी, 日本語, 한국어, 中文, Français, Deutsch, Español, العربية — auto-detected from your phone language & IP (Bangladeshis get Bangla, foreigners get their own language), Arabic gets full RTL layout',
+      'Language picker in Settings — switch anytime, your choice is remembered',
+      'Play Store download banner on phone web — hidden automatically for users who already installed the app',
+      'Bus plate number scanner & lookup',
+      'No signup needed — everything works anonymously',
+    ],
+    bnFeatures: [
+      'ডিসকভার বাংলাদেশ — ৭০+ গন্তব্য পেজ: গুগল ম্যাপস রেটিং, ছবি, খোলার সময়, কীভাবে যাবেন (ভাড়া), কী করবেন, রিভিউ ও ম্যাপ',
+      'ইটিনারারি প্ল্যানার — দিন সংখ্যা বাছুন (১/২/৩/৪/৫/৭) এবং আসল বাস/ট্রেন/ফ্লাইট/লঞ্চ লেগ ও বাজেটসহ পূর্ণ বহুদিনের পরিকল্পনা পান',
+      'প্রতিটি দিনের জন্য AI ট্রিপ টিপস (অনলাইনে), ইন্টারনেট ছাড়াও সম্পূর্ণ কাজ করে',
+      '১০টি UI ভাষা: বাংলা, English, हिन्दी, 日本語, 한국어, 中文, Français, Deutsch, Español, العربية — ফোনের ভাষা ও IP থেকে স্বয়ংক্রিয় শনাক্ত (বাংলাদেশি → বাংলা, বিদেশি → নিজের ভাষা), আরবিতে সম্পূর্ণ RTL লেআউট',
+      'সেটিংসে ভাষা পিকার — যেকোনো সময় বদলান, পছন্দ মনে রাখা হয়',
+      'ফোন ওয়েবে প্লে স্টোর ডাউনলোড ব্যানার — যারা অ্যাপ বসিয়েছেন তাদের কাছে দেখা যায় না',
+      'বাসের প্লেট নম্বর স্ক্যান ও খোঁজ',
+      'সাইনআপ লাগবে না — সবকিছু বেনামে কাজ করে',
+    ],
+    fixes: [
+      'Fixed wrong train numbers, Ruposhi Bangla direction and Cox\'s Bazar fares in AI answers',
+      'Fixed mobile bus Save/Rate buttons and live-bus translations',
+      'Removed signup/signin everywhere — anonymous only',
+      'Fixed destination deep links (e.g. /places/coxs-bazar-beach/) matching sitemap URLs',
+    ],
+    bnFixes: [
+      'AI উত্তরে ভুল ট্রেন নম্বর, রূপসী বাংলা দিক ও কক্সবাজার ভাড়া ঠিক করা হয়েছে',
+      'মোবাইলে বাস সেভ/রেট বাটন ও লাইভ-বাস অনুবাদ ঠিক করা হয়েছে',
+      'সবখান থেকে সাইনআপ/সাইনইন সরানো হয়েছে — শুধু বেনামি',
+      'গন্তব্য ডিরেক্ট লিংক ঠিক করা হয়েছে (যেমন /places/coxs-bazar-beach/) — সাইটম্যাপ URL-এর সাথে মিলে',
+    ],
+    improvements: [
+      'Google Maps enrichment data for 70 destinations (ratings, photos, hours, coordinates)',
+      'PWA cache bumped — fresh assets served immediately',
+    ],
+    bnImprovements: [
+      '৭০টি গন্তব্যের গুগল ম্যাপস ডেটা (রেটিং, ছবি, সময়, কোঅর্ডিনেট)',
+      'PWA ক্যাশে আপগ্রেড — নতুন পরিবর্তন সাথে সাথে লোড হয়',
+    ],
+  },
+  {
     version: '2.1.0',
     date: '2026-08-06',
     type: 'minor',

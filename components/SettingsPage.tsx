@@ -1,4 +1,5 @@
 import React from 'react';
+import { T } from '../src/redesign/tokens';
 import { ChevronRight, LogOut, Smartphone } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import SponsoredAdSlot from './SponsoredAdSlot';
@@ -41,7 +42,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     onReleaseNotesClick, onInstallClick, embedded = false
 }) => {
     const { language, setLanguage } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
 
     type RowRight =
         | { kind: 'toggle'; on: boolean }
@@ -99,7 +100,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 {
                     emoji: '🌐',
                     label: lbl('Language', 'ভাষা'),
-                    sub: language === 'bn' ? 'বাংলা' : 'English',
+                    sub: T(language, 'বাংলা', 'English'),
                     action: () => setLanguage(language === 'bn' ? 'en' : 'bn'),
                     right: { kind: 'arrow' },
                 },

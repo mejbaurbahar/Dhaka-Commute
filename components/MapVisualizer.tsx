@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { T } from '../src/redesign/tokens';
 import { BusRoute, UserLocation } from '../types';
 import { STATIONS, METRO_STATIONS, RAILWAY_STATIONS, AIRPORTS } from '../constants';
 import { findNearestStation, getDistance } from '../services/locationService';
@@ -33,7 +34,7 @@ const MapVisualizer: React.FC<MapVisualizerProps> = ({
   tripTransferPoint
 }) => {
   const { t, language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const [simulationStep, setSimulationStep] = useState(0);
 
   // Layer visibility toggles - Metro off by default, others off

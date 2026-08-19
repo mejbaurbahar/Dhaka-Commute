@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import type { Lang } from '../tokens';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { STATIONS } from '../../../constants';
 import { KJ_TOKENS, T, SANS, BEN, Tokens } from '../tokens';
+import { LANG_META } from '../i18n/languageDetect';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { ConfirmModal } from '../components/ConfirmModal';
+import { LanguagePicker } from '../components/LanguagePicker';
 import { Icon } from '../components/Icons';
 import { enablePush, disablePush, pushEnabled, pushSupported } from '../../services/pushService';
 import { clearUserHistory } from '../../../services/analyticsService';
@@ -13,12 +16,13 @@ import { clearUserHistory } from '../../../services/analyticsService';
 interface ScreenProps {
   theme: 'dark' | 'light';
   device: 'desktop' | 'mobile';
-  lang: 'bn' | 'en';
+  lang: Lang;
   route: string;
   canBack: boolean;
   onNav: (r: string) => void;
   onBack: () => void;
   onLang: () => void;
+  onLangTo?: (l: Lang) => void;
   onTheme: () => void;
   onMenu: () => void;
 }
@@ -32,8 +36,8 @@ function Toggle({ on, onChange, tk }: { on: boolean; onChange: () => void; tk: T
 }
 
 export function SettingsPage(props: ScreenProps) {
-  const { theme, device, lang, onNav, onTheme, onLang } = props;
-  useDocumentTitle(lang === 'bn' ? 'সেটিংস' : 'Settings');
+  const { theme, device, lang, onNav, onTheme, onLang, onLangTo } = props;
+  useDocumentTitle(T(lang, 'সেটিংস', 'Settings'));
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);
@@ -104,6 +108,7 @@ export function SettingsPage(props: ScreenProps) {
     }
   }
   const [confirmClear, setConfirmClear] = useState(false);
+  const [langPickerOpen, setLangPickerOpen] = useState(false);
 
   const card: React.CSSProperties = {
     background: tk.panel,
@@ -183,7 +188,7 @@ export function SettingsPage(props: ScreenProps) {
       title: lbl('Appearance', 'চেহারা'),
       items: [
         { icon: '🎨', label: lbl('Theme', 'থিম'), sub: theme === 'dark' ? lbl('Dark', 'অন্ধকার') : lbl('Light', 'আলো'), right: <Toggle on={theme === 'dark'} onChange={onTheme} tk={tk} />, onClick: undefined },
-        { icon: '🌐', label: lbl('Language', 'ভাষা'), sub: lang === 'bn' ? 'বাংলা' : 'English', right: <Toggle on={lang === 'bn'} onChange={onLang} tk={tk} />, onClick: undefined },
+        { icon: '🌐', label: lbl('Language', 'ভাষা'), sub: `${LANG_META[lang].flag} ${LANG_META[lang].native}`, right: null, onClick: () => setLangPickerOpen(true) },
       ],
     },
     {
@@ -276,6 +281,8 @@ export function SettingsPage(props: ScreenProps) {
 
       <ConfirmModal tk={tk} lang={lang} open={confirmClear} title={lbl('Clear search history?', 'অনুসন্ধান ইতিহাস মুছবেন?')} message={lbl('All your search history will be permanently deleted.', 'আপনার সমস্ত অনুসন্ধান ইতিহাস স্থায়ীভাবে মুছে যাবে।')} confirmLabel={lbl('Clear', 'মুছুন')} onConfirm={() => { clearUserHistory(); setConfirmClear(false); }} onClose={() => setConfirmClear(false)} />
           <AdCluster tk={tk} lang={lang} count={3} isMobile={isMobile}/>
+      {/* Language picker — 10 UI languages; Arabic flips the app to RTL */}
+      <LanguagePicker open={langPickerOpen} onClose={() => setLangPickerOpen(false)} onLangTo={l => onLangTo?.(l)} tk={tk} lang={lang} font={font} />
     </PageShell>
   );
 }

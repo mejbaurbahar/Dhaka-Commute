@@ -39,7 +39,7 @@ const releases = [...UI_RELEASES, ...DATA_RELEASES].sort((a, b) => {
 
 export function ReleasePage(props: Props) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'আপডেট লগ' : 'Release Notes');
+  useDocumentTitle(T(lang, 'আপডেট লগ', 'Release Notes'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
 

@@ -18,6 +18,10 @@ const ROUTE_ICONS: Record<string, string> = {
   'truck-hub': '🚛',
   fare: '💰',
   ai: '🤖',
+  discover: '🧭',
+  itinerary: '🗓️',
+  'bus-live-map': '🛰️',
+  install: '📲',
   favorites: '❤️',
   history: '🕐',
   settings: '⚙️',
@@ -27,6 +31,7 @@ const ROUTE_ICONS: Record<string, string> = {
   qa: '❓',
   contact: '✉️',
   release: '🆕',
+  advertise: '📣',
   privacy: '🔒',
   terms: '📋',
 };
@@ -46,6 +51,10 @@ const GROUPS: { heading: { bn: string; en: string }; links: DrawerLink[]; color?
       { bn: 'ট্রাক', en: 'Truck', route: 'truck-hub' },
       { bn: 'ভাড়া', en: 'Fare', route: 'fare' },
       { bn: 'AI সহায়ক', en: 'AI Assistant', route: 'ai' },
+      { bn: 'ডিসকভার বাংলাদেশ', en: 'Discover Bangladesh', route: 'discover' },
+      { bn: 'ভ্রমণ পরিকল্পনা', en: 'Itinerary', route: 'itinerary' },
+      { bn: 'লাইভ বাস ম্যাপ', en: 'Live Bus Map', route: 'bus-live-map' },
+      { bn: 'অ্যাপ ইনস্টল', en: 'Install App', route: 'install' },
     ],
   },
   {
@@ -67,6 +76,7 @@ const GROUPS: { heading: { bn: string; en: string }; links: DrawerLink[]; color?
       { bn: 'প্রশ্নোত্তর', en: 'Q&A', route: 'qa' },
       { bn: 'যোগাযোগ', en: 'Contact', route: 'contact' },
       { bn: 'রিলিজ', en: 'Release', route: 'release' },
+      { bn: 'বিজ্ঞাপন', en: 'Advertise', route: 'advertise' },
     ],
   },
   {
@@ -95,6 +105,10 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
     onNav(route);
     onClose();
   };
+
+  // Flat index across groups → staggered slide-in when the drawer opens
+  let flatIdx = -1;
+  const nextIdx = () => { flatIdx += 1; return flatIdx; };
 
   return (
     <>
@@ -220,6 +234,7 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
               {group.links.map((link) => {
                 const isActive = activeRoute === link.route;
                 const emoji = ROUTE_ICONS[link.route] ?? '→';
+                const idx = nextIdx();
                 return (
                   <button
                     key={link.route}
@@ -235,7 +250,10 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
                       gap: 12,
                       cursor: 'pointer',
                       textAlign: 'left',
-                      transition: 'background 0.13s',
+                      transition: 'background 0.13s, transform 0.3s cubic-bezier(.2,.8,.2,1), opacity 0.3s',
+                      transform: open ? 'translateX(0)' : 'translateX(18px)',
+                      opacity: open ? 1 : 0,
+                      transitionDelay: open ? `${Math.min(idx, 14) * 24}ms` : '0ms',
                     }}
                   >
                     {/* Emoji icon chip */}
@@ -291,7 +309,7 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
           flexShrink: 0,
         }}>
           <Logo tk={tk} size={16} />
-          KoyJabo · v2.0 · koyjabo.com
+          KoyJabo · v2.2 · koyjabo.com
         </div>
       </div>
       </div>

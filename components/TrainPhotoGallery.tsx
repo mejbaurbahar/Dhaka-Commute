@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { T } from '../src/redesign/tokens';
 import { ArrowLeft, Camera, Trash2, Train, ChevronLeft, ChevronRight, X, Upload } from 'lucide-react';
 import { getTrainPhotos, deleteTrainPhoto, TrainPhoto, getCommunityUser } from '../services/communityDataService';
 import { trackFeatureUsage } from '../services/analyticsService';
@@ -34,7 +35,7 @@ function PhotoSkeleton() {
 export default function TrainPhotoGallery({ trainId, trainName, onBack }: Props) {
   const user = getCommunityUser();
   const { t, formatNumber, language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const [photos, setPhotos] = useState<TrainPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<TrainPhoto | null>(null);
@@ -56,8 +57,8 @@ export default function TrainPhotoGallery({ trainId, trainName, onBack }: Props)
   const handleDeletePhoto = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
-    const ok = await deleteTrainPhoto(trainId, deleteTarget.id);
-    if (ok) {
+    const status = await deleteTrainPhoto(trainId, deleteTarget.id);
+    if (status !== 'failed') {
       const fresh = await getTrainPhotos(trainId);
       setPhotos(fresh);
       if (lightbox?.id === deleteTarget.id) setLightbox(null);

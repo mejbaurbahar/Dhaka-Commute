@@ -58,7 +58,7 @@ export function FloatingControls({
       {canBack && (
         <button
           onClick={onBack}
-          aria-label="Go back"
+          aria-label='Go back'
           style={{
             ...pillBase,
             width: 40,

@@ -6,7 +6,7 @@ import { ChatHistoryDrawer } from './ChatHistoryDrawer';
 
 interface AIChatModalProps {
   theme: 'dark' | 'light';
-  lang: 'bn' | 'en';
+  lang: Lang;
   isMobile: boolean;
   onClose: () => void;
   initialQ?: string;

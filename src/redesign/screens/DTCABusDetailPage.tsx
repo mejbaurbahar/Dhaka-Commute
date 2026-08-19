@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import type { Lang } from '../tokens';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import L from 'leaflet';
@@ -17,7 +18,7 @@ type LiveSource = 'live' | 'vehicle-list' | null;
 interface Props {
   theme: 'dark' | 'light';
   device: 'desktop' | 'mobile';
-  lang: 'bn' | 'en';
+  lang: Lang;
   route: string;
   canBack: boolean;
   onNav: (r: string, p?: Record<string, string>) => void;
@@ -38,7 +39,7 @@ function statusColor(status: string): string {
   return '#9ca3af';
 }
 
-function statusLabel(status: string, lang: 'bn' | 'en'): string {
+function statusLabel(status: string, lang: Lang): string {
   if (status === 'moving') return T(lang, 'চলছে', 'Moving');
   if (status === 'engine_off') return T(lang, 'ইঞ্জিন বন্ধ', 'Engine Off');
   if (status === 'idle') return T(lang, 'অপেক্ষায়', 'Idle');
@@ -55,7 +56,7 @@ function distKm(lat1: number, lon1: number, lat2: number, lon2: number): number 
 
 export function DTCABusDetailPage(props: Props) {
   const { theme, device, lang, params } = props;
-  useDocumentTitle(lang === 'bn' ? 'লাইভ বাস ট্র্যাকিং' : 'Live Bus Tracking');
+  useDocumentTitle(T(lang, 'লাইভ বাস ট্র্যাকিং', 'Live Bus Tracking'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
 

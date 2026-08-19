@@ -10,7 +10,7 @@ interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en
 
 export function InstallPage(props: Props) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'অ্যাপ ইনস্টল' : 'Install the App');
+  useDocumentTitle(T(lang, 'অ্যাপ ইনস্টল', 'Install the App'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });

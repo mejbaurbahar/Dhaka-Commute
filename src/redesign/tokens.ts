@@ -1,4 +1,5 @@
 // KoyJabo Design Tokens — exact values from KoyJabo App Standalone.html
+import { DICT } from './i18n/dictionary';
 export const KJ_TOKENS = {
   light: {
     bg: '#eef3f7',
@@ -53,7 +54,8 @@ export const KJ_TOKENS = {
 } as const;
 
 export type Theme = 'dark' | 'light';
-export type Lang = 'bn' | 'en';
+import type { UiLang as Lang } from './i18n/languageDetect';
+export type { UiLang as Lang } from './i18n/languageDetect';
 export type Device = 'auto' | 'mobile' | 'desktop';
 // Wide type: accepts both light and dark themes
 export type Tokens = { [K in keyof typeof KJ_TOKENS.dark]: string };
@@ -61,7 +63,11 @@ export type Tokens = { [K in keyof typeof KJ_TOKENS.dark]: string };
 export const SANS = "'Inter', system-ui, -apple-system, sans-serif";
 export const BEN = "'Hind Siliguri', 'Inter', system-ui, sans-serif";
 
-export const T = (lang: Lang, bn: string, en: string): string => lang === 'bn' ? bn : en;
+export const T = (lang: Lang, bn: string, en: string): string => {
+  if (lang === 'bn') return bn;
+  if (lang === 'en') return en;
+  return DICT[lang]?.[en] ?? en;
+};
 
 const BN_DIGITS = '০১২৩৪৫৬৭৮৯';
 /** Convert digits to Bengali numerals when lang === 'bn' */

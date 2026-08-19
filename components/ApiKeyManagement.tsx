@@ -1,4 +1,5 @@
 import React from 'react';
+import { T } from '../src/redesign/tokens';
 import { X, Bot, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -8,7 +9,7 @@ interface ApiKeyManagementProps {
 
 const ApiKeyManagement: React.FC<ApiKeyManagementProps> = ({ onClose }) => {
     const { language } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
             <div className="bg-kj-panel rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative">

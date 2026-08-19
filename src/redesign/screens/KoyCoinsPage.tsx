@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import type { Lang } from '../tokens';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, N } from '../tokens';
@@ -40,13 +41,13 @@ function fmtTime(ms: number): string {
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
-function fmtDate(ts: number, lang: 'bn' | 'en'): string {
-  return new Date(ts).toLocaleString(lang === 'bn' ? 'bn-BD' : 'en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:false });
+function fmtDate(ts: number, lang: Lang): string {
+  return new Date(ts).toLocaleString(T(lang, 'bn-BD', 'en-GB'), { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:false });
 }
 
 export function KoyCoinsPage(props: Props) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'কই কয়েন' : 'Koy Coins');
+  useDocumentTitle(T(lang, 'কই কয়েন', 'Koy Coins'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
 

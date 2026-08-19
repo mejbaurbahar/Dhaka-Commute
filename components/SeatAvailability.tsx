@@ -1,4 +1,5 @@
 import SponsoredAdSlot from './SponsoredAdSlot';
+import { T } from '../src/redesign/tokens';
 import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowLeft, Ticket, ExternalLink, Train, Search, ChevronLeft, Star } from 'lucide-react';
 import { BD_TRAIN_ROUTES, BDTrainRoute } from '../data/bangladeshTrainData';
@@ -34,7 +35,7 @@ export default function SeatAvailability({ onBack }: Props) {
     );
   }, [search]);
 
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();

@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import type { Lang } from '../tokens';
 import { T, SANS, BEN, N } from '../tokens';
 import { getDtcaAllVehicleLocationCached, DtcaVehicleLocation } from '../../../services/dtcaTrackerService';
 
 interface Props {
   tk: any;
-  lang: 'bn' | 'en';
+  lang: Lang;
   onBusClick: (identifier: string, vrn: string) => void;
 }
 

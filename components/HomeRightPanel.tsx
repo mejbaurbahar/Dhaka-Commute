@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { T } from '../src/redesign/tokens';
 import { Bus, Zap, Bot, Sparkles, ArrowRight, Heart, Phone } from 'lucide-react';
 import DTCApanel from './DTCApanel';
 import { MiniVehicle, type VehicleKind } from './design/Vehicles3D';
@@ -44,7 +45,7 @@ const SectionHeader: React.FC<{ title: string; action?: string; onAction?: () =>
 const HomeRightPanel: React.FC<HomeRightPanelProps> = ({
   language, isDarkMode, onNavigate, onIntercity, onEmergency, favorites,
 }) => {
-  const lbl = (en: string, bn: string) => (language === 'bn' ? bn : en);
+  const lbl = (en: string, bn: string) => T(language, bn, en);
 
   const favoriteBuses: BusRoute[] = React.useMemo(
     () => favorites.map(id => BUS_DATA.find(b => b.id === id)).filter((b): b is BusRoute => !!b).slice(0, 8),
@@ -331,7 +332,7 @@ const HomeRightPanel: React.FC<HomeRightPanelProps> = ({
 
 // ── KoyJabo Story — 4-scene animation ────────────────────────────────────────
 const KoyJaboStory: React.FC<{ language: 'en' | 'bn'; onNavigate: (v: string) => void; isDarkMode: boolean }> = ({ language, onNavigate, isDarkMode }) => {
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const [scene, setScene] = useState(0);
 
   useEffect(() => {

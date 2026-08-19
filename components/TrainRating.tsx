@@ -1,4 +1,5 @@
 import SponsoredAdSlot from './SponsoredAdSlot';
+import { T } from '../src/redesign/tokens';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Star, Train } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -78,7 +79,7 @@ function RatingSkeleton() {
 export default function TrainRating({ trainId, trainName, onBack }: Props) {
   const user = getCommunityUser();
   const { t, language, formatNumber } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const [summary, setSummary] = useState<TrainRatingSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -109,7 +110,8 @@ export default function TrainRating({ trainId, trainName, onBack }: Props) {
     setSubmitting(true);
     const tagString = activeTags.join(', ');
     const fullComment = [comment.trim(), tagString].filter(Boolean).join(' · ');
-    const ok = await submitTrainRating(trainId, trainName, stars, fullComment);
+    const status = await submitTrainRating(trainId, trainName, stars, fullComment);
+    const ok = status !== 'failed';
     if (ok) {
       const fresh = await getTrainRatings(trainId);
       setSummary(fresh);
@@ -118,7 +120,7 @@ export default function TrainRating({ trainId, trainName, onBack }: Props) {
       setStars(5);
       setActiveTags([]);
       setAspectStars({});
-      showToast(t('community.ratingSubmitted') || 'Rating saved!', 'success');
+      showToast(status === 'queued' ? lbl('Saved offline — will sync when online', 'অফলাইনে সংরক্ষিত — ইন্টারনেট পেলে সিঙ্ক হবে') : (t('community.ratingSubmitted') || 'Rating saved!'), 'success');
     } else {
       showToast(t('community.submitError') || 'Failed to save. Please try again.', 'error');
     }
@@ -127,8 +129,10 @@ export default function TrainRating({ trainId, trainName, onBack }: Props) {
 
   const handleDelete = async () => {
     setSubmitting(true);
-    const ok = await deleteTrainRating(trainId);
-    if (ok) {
+    const status = await deleteTrainRating(trainId);
+    if (status === 'failed') {
+      showToast(t('community.submitError') || 'Failed. Please try again.', 'error');
+    } else {
       const fresh = await getTrainRatings(trainId);
       setSummary(fresh);
       setShowForm(false);
@@ -136,9 +140,7 @@ export default function TrainRating({ trainId, trainName, onBack }: Props) {
       setStars(5);
       setActiveTags([]);
       setAspectStars({});
-      showToast(t('community.ratingDeleted') || 'Rating removed.', 'success');
-    } else {
-      showToast(t('community.submitError') || 'Failed. Please try again.', 'error');
+      showToast(status === 'queued' ? lbl('Saved offline — will sync when online', 'অফলাইনে সংরক্ষিত — ইন্টারনেট পেলে সিঙ্ক হবে') : (t('community.ratingDeleted') || 'Rating removed.'), 'success');
     }
     setShowDeleteModal(false);
     setSubmitting(false);

@@ -1,4 +1,5 @@
 import GlobalFooter from './GlobalFooter';
+import { T } from '../src/redesign/tokens';
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -8,7 +9,7 @@ import SponsoredAdSlot from './SponsoredAdSlot';
 interface ReleaseNotesProps { setView?: (view: AppView) => void; }
 const ReleaseNotes: React.FC<ReleaseNotesProps> = ({ setView }) => {
   const { language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
 
   type TagType = 'NEW' | 'FIX' | 'IMP' | 'PERF';
 

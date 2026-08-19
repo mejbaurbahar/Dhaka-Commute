@@ -33,7 +33,7 @@ const STATS = [
 
 export function AdvertisePage(props: PageShellProps) {
   const { theme, lang, device } = props;
-  useDocumentTitle(lang === 'bn' ? 'অ্যাডভার্টাইজ' : 'Advertise with KoyJabo');
+  useDocumentTitle(T(lang, 'অ্যাডভার্টাইজ', 'Advertise with KoyJabo'));
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

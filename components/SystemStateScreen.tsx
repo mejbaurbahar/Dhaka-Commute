@@ -1,4 +1,5 @@
 import React from 'react';
+import { T } from '../src/redesign/tokens';
 import { useLanguage } from '../contexts/LanguageContext';
 
 type Tone = 'primary' | 'accent' | 'amber';
@@ -76,7 +77,7 @@ const SystemStateScreen: React.FC<SystemStateConfig> = ({
   footerBn, footerEn, footerLinkBn, footerLinkEn, onFooterLink,
 }) => {
   const { language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
 
   const toneVar = tone === 'accent' ? 'var(--kj-accent)' : tone === 'amber' ? 'var(--kj-amber)' : 'var(--kj-primary)';
   const toneSoftVar = tone === 'accent' ? 'var(--kj-accent-soft)' : tone === 'amber' ? 'var(--kj-amber-soft)' : 'var(--kj-primary-soft)';

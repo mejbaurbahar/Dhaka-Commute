@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Bot, Search, X } from 'lucide-react';
 import PlatformAd from '../src/ads/PlatformAd';
+import { T } from '../src/redesign/tokens';
 
 // Build-time platform check — Vite statically replaces this with a literal.
 const NATIVE_BUILD = import.meta.env.VITE_PLATFORM === 'android';
 
 type Language = 'en' | 'bn';
 
-const lbl = (language: Language, en: string, bn: string) => (language === 'bn' ? bn : en);
+const lbl = (language: Language, en: string, bn: string) => T(language, bn, en);
 
 export const AdLabel: React.FC<{ language: Language; light?: boolean }> = () => null;
 

@@ -208,7 +208,7 @@ function QuickChips({ defs, lang, tk }: { defs: ServiceDef[]; lang: Lang; tk: To
             width: 64, overflow: 'hidden', display: '-webkit-box',
             WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
           } as React.CSSProperties}>
-            {isBn ? d.nameBn : d.nameEn}
+            {T(lang, d.nameBn, d.nameEn)}
           </span>
         </a>
       ))}
@@ -254,7 +254,7 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
             color: tk.text, lineHeight: 1.2,
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>
-            {isBn ? d.nameBn : d.nameEn}
+            {T(lang, d.nameBn, d.nameEn)}
           </div>
           <div style={{
             display: 'inline-flex', alignItems: 'center', marginTop: 4,
@@ -265,7 +265,7 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
               fontFamily: SANS, fontSize: 9.5, fontWeight: 600,
               color: d.color, letterSpacing: 0.2,
             }}>
-              {isBn ? d.tagBn : d.tagEn}
+              {T(lang, d.tagBn, d.tagEn)}
             </span>
           </div>
         </div>
@@ -273,7 +273,7 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
 
       {/* Features */}
       <ul style={{ margin: '12px 0 0', padding: '0 16px', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {(isBn ? d.featuresBn : d.featuresEn).map((f, i) => (
+        {d.featuresEn.map((f, i) => (
           <li key={i} style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
             <div style={{
               width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
@@ -282,7 +282,7 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
             <span style={{
               fontFamily: font, fontSize: 12, color: tk.textDim, lineHeight: 1.4,
             }}>
-              {f}
+              {T(lang, d.featuresBn[i] ?? f, f)}
             </span>
           </li>
         ))}
@@ -306,7 +306,7 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
             whiteSpace: 'nowrap',
           }}
         >
-          {isBn ? d.ctaBn : d.ctaEn}
+          {T(lang, d.ctaBn, d.ctaEn)}
           <span style={{ fontSize: 13, opacity: 0.85 }}>→</span>
         </a>
         {d.secondUrl && (
@@ -324,7 +324,7 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
               whiteSpace: 'nowrap',
             }}
           >
-            {isBn ? d.secondBn : d.secondEn}
+            {T(lang, d.secondBn, d.secondEn)}
           </a>
         )}
       </div>
@@ -631,11 +631,9 @@ export function GovServiceCarousel({
             const c = d.color;
             const art = `radial-gradient(120% 90% at 85% 10%, ${c}59 0%, transparent 55%), linear-gradient(165deg, ${c}ad 0%, ${c}40 50%, #0b1322 100%)`;
             const thumbBg = `linear-gradient(160deg, ${c}dd 0%, ${c}55 100%)`;
-            const descText = isBn
-              ? `${d.tagBn} · ${d.featuresBn.slice(0, 2).join(' · ')}`
-              : `${d.tagEn} · ${d.featuresEn.slice(0, 2).join(' · ')}`;
-            const name = isBn ? d.nameBn : d.nameEn;
-            const cta = isBn ? d.ctaBn : d.ctaEn;
+            const descText = `${T(lang, d.tagBn, d.tagEn)} · ${d.featuresEn.slice(0, 2).map((f, i) => T(lang, d.featuresBn[i] ?? f, f)).join(' · ')}`;
+            const name = T(lang, d.nameBn, d.nameEn);
+            const cta = T(lang, d.ctaBn, d.ctaEn);
             return (
               <div
                 key={d.id}

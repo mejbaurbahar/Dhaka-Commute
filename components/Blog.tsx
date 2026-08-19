@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { T } from '../src/redesign/tokens';
 import { Clock, ArrowLeft, Search, X } from 'lucide-react';
 import { BLOG_POSTS } from '../data/blogPosts';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -36,7 +37,7 @@ function getCatColors(cat: string): [string, string] {
 
 const Blog: React.FC<BlogProps> = ({ onBack, onSelectPost, language }) => {
     const { t } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -171,7 +172,7 @@ const Blog: React.FC<BlogProps> = ({ onBack, onSelectPost, language }) => {
                                     </span>
                                     <span className="text-[11px] text-kj-text-faint ml-auto">
                                         {new Date(featuredPost.publishDate).toLocaleDateString(
-                                            language === 'bn' ? 'bn-BD' : 'en-US',
+                                            T(language, 'bn-BD', 'en-US'),
                                             { year: 'numeric', month: 'short', day: 'numeric' }
                                         )}
                                     </span>
@@ -223,7 +224,7 @@ const Blog: React.FC<BlogProps> = ({ onBack, onSelectPost, language }) => {
                                             </span>
                                             <span className="text-[10px] text-kj-text-faint ml-auto">
                                                 {new Date(post.publishDate).toLocaleDateString(
-                                                    language === 'bn' ? 'bn-BD' : 'en-US',
+                                                    T(language, 'bn-BD', 'en-US'),
                                                     { month: 'short', day: 'numeric' }
                                                 )}
                                             </span>

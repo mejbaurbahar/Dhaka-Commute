@@ -9,7 +9,7 @@ import { Train3D } from '../components/Vehicles3D';
 interface ScreenProps {
   theme: 'dark' | 'light';
   device: 'desktop' | 'mobile';
-  lang: 'bn' | 'en';
+  lang: Lang;
   route: string;
   canBack: boolean;
   onNav: (r: string) => void;
@@ -60,7 +60,7 @@ const HISTOGRAM = [
 
 export function MetroDetailPage(props: ScreenProps) {
   const { theme, device, lang, onNav } = props;
-  useDocumentTitle(lang === 'bn' ? 'মেট্রো স্টেশন' : 'Metro Station');
+  useDocumentTitle(T(lang, 'মেট্রো স্টেশন', 'Metro Station'));
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

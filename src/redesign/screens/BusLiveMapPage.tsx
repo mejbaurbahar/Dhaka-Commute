@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import type { Lang } from '../tokens';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, N } from '../tokens';
@@ -24,7 +25,7 @@ import {
 interface Props {
   theme: 'dark' | 'light';
   device: 'desktop' | 'mobile';
-  lang: 'bn' | 'en';
+  lang: Lang;
   route: string;
   canBack: boolean;
   onNav: (r: string, p?: Record<string, string>) => void;
@@ -45,7 +46,7 @@ function statusColor(status: string): string {
   return '#9ca3af';
 }
 
-function statusLabel(status: string, lang: 'bn' | 'en'): string {
+function statusLabel(status: string, lang: Lang): string {
   if (status === 'moving') return T(lang, 'চলছে', 'Moving');
   if (status === 'idle') return T(lang, 'অপেক্ষায়', 'Idle');
   return T(lang, 'পুরনো ডেটা', 'Stale');
@@ -116,7 +117,7 @@ export function BusLiveMapPage(props: Props) {
     setSharingCallbacks({
       onApproach: stopId => {
         const s = STATIONS[stopId];
-        setApproachBanner(s ? (lang === 'bn' ? `আপনি ${s.bnName} এর কাছে — নামার প্রস্তুতি নিন` : `Approaching ${s.name} — get ready to get off`) : '');
+        setApproachBanner(s ? (T(lang, `আপনি ${s.bnName} এর কাছে — নামার প্রস্তুতি নিন`, `Approaching ${s.name} — get ready to get off`)) : '');
       },
     });
   }, [lang]);

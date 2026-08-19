@@ -1,4 +1,5 @@
 import HowKoyJaboHelps from './HowKoyJaboHelps';
+import { T } from '../src/redesign/tokens';
 import React, { useState, useMemo, useEffect } from 'react';
 import SponsoredAdSlot from './SponsoredAdSlot';
 import GlobalFooter from './GlobalFooter';
@@ -545,7 +546,7 @@ const TrainListPage: React.FC<TrainListPageProps> = ({ userLocation, onBack, emb
   const [favoriteTrainIds, setFavoriteTrainIds] = useState<string[]>(getStoredTrainFavorites);
   const bn = language === 'bn';
 
-  const lbl = (en: string, bnStr: string) => language === 'bn' ? bnStr : en;
+  const lbl = (en: string, bnStr: string) => T(language, bnStr, en);
 
   useEffect(() => { trackFeatureUsage('train_list'); }, []);
 

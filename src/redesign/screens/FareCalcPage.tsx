@@ -56,8 +56,8 @@ function calcTime(mode: Mode, stationsApart: number): string {
 
 export function FareCalcPage(props: Props) {
   const { theme, device, lang, onNav } = props;
-  useDocumentTitle(lang === 'bn' ? 'বাস ভাড়া ক্যালকুলেটর — বাংলাদেশ' : 'Bus Fare Calculator Bangladesh');
-  setMetaTag('description', lang === 'bn' ? 'BRTA নিয়ম অনুযায়ী বাস ও মেট্রো ভাড়া হিসাব করুন।' : 'Calculate bus and metro fares by official BRTA rates.');
+  useDocumentTitle(T(lang, 'বাস ভাড়া ক্যালকুলেটর — বাংলাদেশ', 'Bus Fare Calculator Bangladesh'));
+  setMetaTag('description', T(lang, 'BRTA নিয়ম অনুযায়ী বাস ও মেট্রো ভাড়া হিসাব করুন।', 'Calculate bus and metro fares by official BRTA rates.'));
   setCanonicalUrl('/fare');
   const isMobile = device === 'mobile';
   const tk: Tokens = KJ_TOKENS[theme];

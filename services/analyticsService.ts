@@ -31,6 +31,22 @@ export interface UserHistory {
     lastResetDate: string; // ISO date string for daily reset
     communityFeatureUsage: Record<string, number>; // feature -> total open count
     communityFeatureHistory: CommunityFeatureRecord[]; // per-open log
+    destinationViews?: DestinationViewRecord[]; // discover feature (Phase 4+)
+    itineraryGenerated?: ItineraryGenerateRecord[]; // plan generator
+}
+
+export interface DestinationViewRecord {
+    destId: string;
+    destName: string;
+    timestamp: number;
+    date: string; // YYYY-MM-DD
+}
+
+export interface ItineraryGenerateRecord {
+    dayCount: number;
+    variantId: string;
+    timestamp: number;
+    date: string; // YYYY-MM-DD
 }
 
 export interface BusSearchRecord {
@@ -433,6 +449,28 @@ export const trackFeatureUsage = (feature: string): void => {
     }
     saveUserHistory(history);
     enqueueEvent('feature_open', { feature });
+};
+
+export const trackDestinationView = (destId: string, destName: string): void => {
+    const history = getUserHistory();
+    const today = getTodayDate();
+    ga4('destination_view', { destination_id: destId, destination_name: destName });
+    history.destinationViews = history.destinationViews || [];
+    history.destinationViews.push({ destId, destName, timestamp: Date.now(), date: today });
+    if (history.destinationViews.length > 200) history.destinationViews = history.destinationViews.slice(-200);
+    saveUserHistory(history);
+    enqueueEvent('destination_view', { destId, destName });
+};
+
+export const trackItineraryGenerate = (dayCount: number, variantId: string): void => {
+    const history = getUserHistory();
+    const today = getTodayDate();
+    ga4('itinerary_generate', { days: dayCount, variant: variantId });
+    history.itineraryGenerated = history.itineraryGenerated || [];
+    history.itineraryGenerated.push({ dayCount, variantId, timestamp: Date.now(), date: today });
+    if (history.itineraryGenerated.length > 100) history.itineraryGenerated = history.itineraryGenerated.slice(-100);
+    saveUserHistory(history);
+    enqueueEvent('itinerary_generate', { days: dayCount, variant: variantId });
 };
 
 export const trackMetroSearch = (from: string, to: string, fare: number): void => {

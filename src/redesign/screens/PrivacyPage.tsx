@@ -15,11 +15,11 @@ interface Section {
 
 export function PrivacyPage(props: Props) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy');
+  useDocumentTitle(T(lang, 'গোপনীয়তা নীতি', 'Privacy Policy'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });
-  const lbl = (en: string, bn: string) => lang === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(lang, bn, en);
 
   const sections: Section[] = [
     {

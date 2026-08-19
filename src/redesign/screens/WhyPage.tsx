@@ -54,7 +54,7 @@ const STATS = [
 
 export function WhyPage(props: PageShellProps) {
   const { theme, lang, device } = props;
-  useDocumentTitle(lang === 'bn' ? 'কেন কই যাবো' : 'Why KoyJabo');
+  useDocumentTitle(T(lang, 'কেন কই যাবো', 'Why KoyJabo'));
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);
