@@ -384,7 +384,7 @@ const GOV_SLIDER_CSS = `
 }
 .kj-gov-slider .track::-webkit-scrollbar { display: none; }
 .kj-gov-slider .project-card {
-  position: relative; flex: 0 0 var(--closed); height: 26rem;
+  position: relative; flex: 0 0 var(--closed); min-height: 26rem;
   border-radius: 1rem; overflow: hidden; cursor: pointer;
   scroll-snap-align: center;
   transition: flex-basis var(--speed), transform var(--speed);

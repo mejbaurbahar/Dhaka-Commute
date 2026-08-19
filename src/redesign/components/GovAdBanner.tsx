@@ -512,7 +512,7 @@ function BannerSlide({ cfg, lang, height }: { cfg: BannerCfg; lang: Lang; height
           {/* Bottom: chips + CTA */}
           <div>
             {/* Chips */}
-            <div style={{ display: 'flex', gap: 5, marginBottom: 10, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', gap: 5, marginBottom: 10, flexWrap: 'wrap', overflow: 'hidden' }}>
               {cfg.chips.map((c, i) => (
                 <div key={i} style={{
                   display: 'flex', alignItems: 'center', gap: 4,
@@ -661,7 +661,7 @@ export function GovAdBanner({
                 borderRadius: '50%', border: 'none', padding: 9, cursor: 'pointer',
                 // Hit area is a full 24px (WCAG 2.5.5) regardless of box-sizing;
                 // backgroundClip keeps the visible dot ~6px in the content box.
-                background: i === active ? cfg.accent : 'rgba(128,128,128,0.32)',
+                backgroundColor: i === active ? cfg.accent : 'rgba(128,128,128,0.32)',
                 backgroundClip: 'content-box',
                 transform: i === active ? 'scale(1.25)' : 'scale(1)',
                 transition: 'background 0.35s ease, transform 0.35s ease',

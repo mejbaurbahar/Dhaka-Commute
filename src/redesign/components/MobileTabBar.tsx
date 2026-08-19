@@ -4,12 +4,14 @@ import { Icon } from './Icons';
 
 // Section groups — a tab is "active" if activeRoute matches any of its routes.
 // 5 tabs: every major mode reachable in one tap; everything else lives in More.
+// Discover sits in the middle — styled with Bangladesh flag colors (green+red)
+// so foreign visitors spot the exploration entry instantly.
 const TABS = [
   {
     bn: 'হোম', en: 'Home',
     route: 'home' as const,
     icon: 'home' as const,
-    routes: ['home', 'discover', 'itinerary', 'destination-detail'],
+    routes: ['home', 'itinerary'],
   },
   {
     bn: 'বাস', en: 'Bus',
@@ -18,18 +20,22 @@ const TABS = [
     routes: ['bus-hub', 'results', 'bus-detail', 'from-to-bus', 'bus-live-map', 'dtca-bus-detail'],
   },
   {
+    bn: 'আবিষ্কার', en: 'Discover',
+    route: 'discover' as const,
+    icon: 'compass' as const,
+    routes: ['discover', 'destination-detail'],
+  },
+  {
     bn: 'ট্রেন', en: 'Train',
     route: 'train-hub' as const,
     icon: 'train' as const,
     routes: ['train-hub', 'train-detail'],
   },
-  {
-    bn: 'সেভড', en: 'Saved',
-    route: 'favorites' as const,
-    icon: 'star' as const,
-    routes: ['favorites'],
-  },
 ] as const;
+
+// Bangladesh flag colors for the Discover (middle) tab
+const BD_GREEN = '#006a4e';
+const BD_RED = '#f42a41';
 
 interface MobileTabBarProps {
   tk: Tokens;
@@ -81,6 +87,13 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
       {TABS.map((tab, idx) => {
         const active = (tab.routes as readonly string[]).includes(activeRoute ?? '');
         const IconComp = Icon[tab.icon];
+        const isDiscover = tab.route === 'discover';
+        // Discover = Bangladesh flag colors: green field, red circle
+        const pillBg = active ? (isDiscover ? BD_GREEN : tk.primarySoft)
+          : (isDiscover ? `${BD_GREEN}1f` : 'transparent');
+        const iconColor = active ? (isDiscover ? '#fff' : tk.primary)
+          : (isDiscover ? BD_GREEN : tk.textFaint);
+        const glowColor = active ? (isDiscover ? BD_RED : tk.primary) : 'transparent';
 
         return (
           <button
@@ -96,7 +109,7 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
               justifyContent: 'center',
               gap: 3,
               padding: '10px 0 8px',
-              color: active ? tk.primary : tk.textFaint,
+              color: active ? (isDiscover ? BD_GREEN : tk.primary) : (isDiscover ? BD_GREEN : tk.textFaint),
               position: 'relative',
               minHeight: 54,
               WebkitTapHighlightColor: 'transparent',
@@ -104,11 +117,11 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
             aria-label={T(lang, tab.bn, tab.en)}
             aria-current={active ? 'page' : undefined}
           >
-            {/* Active glow dot above the icon */}
+            {/* Active glow dot above the icon — red dot on Discover (flag circle) */}
             <span style={{
               position: 'absolute', top: 5, width: 4, height: 4, borderRadius: 999,
-              background: active ? tk.primary : 'transparent',
-              boxShadow: active ? `0 0 8px ${tk.primary}` : 'none',
+              background: glowColor,
+              boxShadow: glowColor !== 'transparent' ? `0 0 8px ${glowColor}` : 'none',
               transition: 'background 0.2s, box-shadow 0.2s',
             }} />
             {/* Icon — pill wraps the icon exactly (bg always aligned with button content) */}
@@ -123,7 +136,9 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: 12,
-              background: active ? tk.primarySoft : 'transparent',
+              background: pillBg,
+              color: active && isDiscover ? BD_RED : undefined, // red circle on green field
+              boxShadow: active && isDiscover ? `0 0 14px ${BD_GREEN}66, inset 0 0 0 1.5px ${BD_RED}55` : undefined,
               animation: active ? 'kjTabPop .22s cubic-bezier(.2,.7,.25,1) both' : undefined,
             }}>
               <IconComp s={active ? 22 : 21} />

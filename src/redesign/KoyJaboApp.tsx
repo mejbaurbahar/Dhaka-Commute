@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { App as CapApp } from '@capacitor/app';
 import { KJ_TOKENS, Theme, Lang, Device } from './tokens';
-import { SUPPORTED_LANGS, LANG_META, storedOverride, browserLanguage, resolveInitialLanguage } from './i18n/languageDetect';
+import { SUPPORTED_LANGS, LANG_META, storedOverride, browserLanguage, resolveInitialLanguage, geoCountryCode } from './i18n/languageDetect';
 import { injectGlobalStyles } from './globalStyles';
 import { findPair, findInterchange } from './busPairs';
 import { SplashScreen } from './SplashScreen';
@@ -447,6 +447,22 @@ export function KoyJaboApp() {
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
+  // Outside Bangladesh → land on Discover so foreign visitors can explore the
+  // country directly. Fires only on a fresh root-path load, never after the
+  // user has tapped a tab or opened a deep link.
+  const userTabRef = useRef(false);
+  useEffect(() => {
+    const top = stackRef.current[stackRef.current.length - 1];
+    if (top?.route !== 'home' || window.location.pathname.replace(/\/+$/, '') !== '') return;
+    let cancelled = false;
+    geoCountryCode().then(cc => {
+      if (cancelled || userTabRef.current) return;
+      if (cc && cc !== 'BD') navTab('discover');
+    }).catch(() => { /* offline — stay on home */ });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Resolve actual device — forceDesktop lets phone users request web layout
   const resolvedDevice: 'desktop' | 'mobile' = (vw < 1024 && !forceDesktop) ? 'mobile' : 'desktop';
 
@@ -737,7 +753,7 @@ export function KoyJaboApp() {
         <MobileTabBar
           tk={tk} lang={lang}
           activeRoute={top.route}
-          onNav={navTab}
+          onNav={(r) => { userTabRef.current = true; navTab(r); }}
           onMenu={() => setMenuOpen(true)}
         />
       )}

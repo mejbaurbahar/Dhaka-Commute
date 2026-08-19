@@ -59,24 +59,29 @@ export function browserLanguage(): UiLang | null {
   return null;
 }
 
-/** IP geolocation → supported language, cached for 30 days. */
-export async function geoLanguage(): Promise<UiLang | null> {
+/** IP geolocation → country code, cached for 30 days. Null when offline/blocked. */
+export async function geoCountryCode(): Promise<string | null> {
   try {
     const cached = localStorage.getItem(GEO_CACHE_KEY);
     if (cached) {
-      const { lang, at } = JSON.parse(cached) as { lang: UiLang | null; at: number };
-      if (Date.now() - at < 30 * 24 * 3600 * 1000) return lang;
+      const { cc, at } = JSON.parse(cached) as { cc: string | null; at: number };
+      if (typeof cc === 'string' && Date.now() - at < 30 * 24 * 3600 * 1000) return cc;
     }
     const res = await fetch('https://ipwho.is/', { signal: AbortSignal.timeout(6000) });
     if (!res.ok) return null;
     const data = await res.json() as { success?: boolean; country_code?: string };
     const cc = data.success !== false ? (data.country_code ?? '') : '';
-    const lang = cc ? (COUNTRY_LANG[cc.toUpperCase()] ?? null) : null;
-    try { localStorage.setItem(GEO_CACHE_KEY, JSON.stringify({ lang, at: Date.now() })); } catch { /* private mode */ }
-    return lang;
+    try { localStorage.setItem(GEO_CACHE_KEY, JSON.stringify({ cc, at: Date.now() })); } catch { /* private mode */ }
+    return cc || null;
   } catch {
     return null; // offline — caller falls back to default
   }
+}
+
+/** IP geolocation → supported language (Bangladeshi in BD → bn), cached 30 days. */
+export async function geoLanguage(): Promise<UiLang | null> {
+  const cc = await geoCountryCode();
+  return cc ? (COUNTRY_LANG[cc.toUpperCase()] ?? null) : null;
 }
 
 /**
