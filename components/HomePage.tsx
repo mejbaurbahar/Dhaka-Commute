@@ -1,4 +1,5 @@
 import React from 'react';
+import { T } from '../src/redesign/tokens';
 import { Bus, Heart, Wifi } from 'lucide-react';
 import HomeSearchPanel, { HomeSearchPanelProps, TransportSearchMode } from './HomeSearchPanel';
 import HomeRightPanel from './HomeRightPanel';
@@ -27,7 +28,7 @@ interface HomePageProps extends Omit<HomeSearchPanelProps, 'onSuggestionSelect'>
 }
 
 const PWABanner: React.FC<{ language: 'en' | 'bn'; onInstall: () => void }> = ({ language, onInstall }) => {
-  const lbl = (en: string, bn: string) => (language === 'bn' ? bn : en);
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const [show, setShow] = React.useState(false);
   React.useEffect(() => {
     setShow(!window.matchMedia('(display-mode: standalone)').matches);
@@ -145,7 +146,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     scrollContainerRef, ...searchProps
   } = props;
 
-  const lbl = (en: string, bn: string) => (language === 'bn' ? bn : en);
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const hasSearch = transportMode === 'LOCAL' && Boolean(searchQuery || (searchMode === 'ROUTE' && fromStation && toStation));
 
   const greeting = user

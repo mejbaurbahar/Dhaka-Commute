@@ -1,4 +1,5 @@
 import GlobalFooter from './GlobalFooter';
+import { T } from '../src/redesign/tokens';
 import React from 'react';
 import { ArrowLeft, Mail } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -12,7 +13,7 @@ interface PrivacyPolicyProps {
 
 const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ view, setView }) => {
     const { t, language } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
 
     const toc = [
         { num: '01', en: 'Information We Collect', bn: 'তথ্য সংগ্রহ' },

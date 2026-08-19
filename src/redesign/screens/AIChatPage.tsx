@@ -6,12 +6,12 @@ import { useAIChat, SUGGESTIONS } from '../hooks/useAIChat';
 import { AIChatBody } from '../components/AIChatBody';
 import { formatChatTimestamp } from '../../../services/chatHistoryManager';
 
-interface Props { theme: 'dark' | 'light'; device: 'desktop' | 'mobile'; lang: 'bn' | 'en'; route: string; canBack: boolean; onNav: (r: string) => void; onNavTab?: (r: string) => void; onBack: () => void; onLang: () => void; onTheme: () => void; onMenu: () => void; params?: Record<string, string>; }
+interface Props { theme: 'dark' | 'light'; device: 'desktop' | 'mobile'; lang: Lang; route: string; canBack: boolean; onNav: (r: string) => void; onNavTab?: (r: string) => void; onBack: () => void; onLang: () => void; onTheme: () => void; onMenu: () => void; params?: Record<string, string>; }
 
 export function AIChatPage(props: Props) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'কই যাবো AI — যাতায়াত সহায়ক চ্যাট' : 'KoyJabo AI — Transport Chat Assistant');
-  setMetaTag('description', lang === 'bn' ? 'বাংলা বা ইংরেজিতে রুট, ভাড়া ও যাতায়াত প্রশ্নের জবাব দেয় কই যাবো AI।' : 'Ask KoyJabo AI about routes, fares and travel in English or Bengali.');
+  useDocumentTitle(T(lang, 'কই যাবো AI — যাতায়াত সহায়ক চ্যাট', 'KoyJabo AI — Transport Chat Assistant'));
+  setMetaTag('description', T(lang, 'বাংলা বা ইংরেজিতে রুট, ভাড়া ও যাতায়াত প্রশ্নের জবাব দেয় কই যাবো AI।', 'Ask KoyJabo AI about routes, fares and travel in English or Bengali.'));
   setCanonicalUrl('/ai');
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';

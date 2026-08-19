@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { T } from '../src/redesign/tokens';
 import { Mail, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -10,7 +11,7 @@ const STORAGE_KEY = 'kj_newsletter_v1';
 
 export default function NewsletterBanner({ className = '' }: Props) {
     const { language } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
 
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');

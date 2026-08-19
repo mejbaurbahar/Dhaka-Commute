@@ -51,7 +51,7 @@ function BlogCard({
   onNav: (r: string, p?: Record<string, string>) => void;
 }) {
   const lbl = (en: string, bn: string) => T(lang, bn, en);
-  const dateStr = new Date(blog.dateTs).toLocaleDateString(lang === 'bn' ? 'bn-BD' : 'en-US', { month: 'short', day: 'numeric' });
+  const dateStr = new Date(blog.dateTs).toLocaleDateString(T(lang, 'bn-BD', 'en-US'), { month: 'short', day: 'numeric' });
   return (
     <div
       onClick={() => onNav('blog-detail', { slug: blog.id })}
@@ -170,7 +170,7 @@ function BlogCard({
 
 export function BlogsPage(props: PageShellProps) {
   const { theme, lang, device } = props;
-  useDocumentTitle(lang === 'bn' ? 'পরিবহন ব্লগ' : 'Transport Blog');
+  useDocumentTitle(T(lang, 'পরিবহন ব্লগ', 'Transport Blog'));
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

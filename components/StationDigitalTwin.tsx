@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { T } from '../src/redesign/tokens';
 import * as GSPLAT from 'gsplat';
 import { X, Maximize, RotateCcw, Move, Smartphone, Info, Loader2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -17,7 +18,7 @@ const StationDigitalTwin: React.FC<StationDigitalTwinProps> = ({
     splatUrl = 'https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/bonsai/bonsai-7k.ply'
 }) => {
     const { language } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isLoading, setIsLoading] = useState(true);

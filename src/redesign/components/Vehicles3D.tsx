@@ -804,7 +804,7 @@ export function Chatbot3D({
       viewBox={`0 0 ${w} ${h}`}
       overflow="visible"
       role="img"
-      aria-label="AI chatbot"
+      aria-label='AI chatbot'
     >
       <defs>
         <linearGradient id="cb-body" x1="0" y1="0" x2="0" y2="1">

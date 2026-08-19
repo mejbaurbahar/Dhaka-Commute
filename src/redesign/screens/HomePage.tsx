@@ -22,6 +22,9 @@ import { INTERCITY_BUS_ROUTES, MAJOR_TRANSPORT_HUBS } from '../../../data/interc
 import { AIRPORTS_DATA } from '../../../data/bangladeshFlightData';
 import { LAUNCH_TERMINALS as LAUNCH_TERMINALS_DATA } from '../../../data/bangladeshLaunchData';
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
+import { DestinationCard } from '../components/DestinationCard';
+import { ALL_PLACES } from '../../../data/bangladeshPlaces';
+import { DESTINATION_ENRICHMENT } from '../../../data/destinationEnrichment';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { getFavoriteBusIds } from '../utils/favorites';
 import { getUserHistory, splitRouteKey } from '../../../services/analyticsService';
@@ -33,9 +36,9 @@ import { inHours, trackPushEvent } from '../../services/pushService';
 interface HomePageProps {
   theme: 'dark' | 'light';
   device: 'desktop' | 'mobile';
-  lang: 'bn' | 'en';
+  lang: Lang;
   route: string;
-  onNav: (route: string) => void;
+  onNav: (route: string, params?: Record<string, string>) => void;
   onBack: () => void;
   canBack: boolean;
   onLang: () => void;
@@ -564,6 +567,7 @@ const TILES: TileData[] = [
   { grad: 'linear-gradient(135deg, #8b5cf6, #5b21b6)', label: { bn: 'অভ্যন্তরীণ ফ্লাইট', en: 'Flights' }, sub: { bn: '৪ এয়ারলাইন · ৮ বিমানবন্দর', en: '4 airlines · 8 airports' }, badge: { bn: 'নতুন', en: 'New' }, route: 'flights-hub', mode: 'flights', vehicleKind: 'plane' },
   { grad: 'linear-gradient(135deg, #ef4444, #7f1d1d)', label: { bn: 'ট্রাক ও পণ্য', en: 'Truck & Freight' }, sub: { bn: '৬৪ জেলা · ১৬ ধরনের গাড়ি', en: '64 districts · 16 vehicle types' }, badge: { bn: 'নতুন', en: 'New' }, route: 'truck-hub', mode: 'truck', vehicleKind: 'truck' },
   { grad: 'linear-gradient(135deg, #ef4444, #b91c1c)', label: { bn: 'AI সহায়ক', en: 'AI Assistant' }, sub: { bn: 'বাংলায় জিজ্ঞেস করুন', en: 'Ask in Bangla' }, badge: { bn: 'নতুন', en: 'New' }, route: 'ai', mode: 'bus', vehicleKind: 'chatbot' },
+  { grad: 'linear-gradient(135deg, #00b8d9, #0064a8)', label: { bn: 'ডিসকভার বাংলাদেশ', en: 'Discover Bangladesh' }, sub: { bn: 'কোথায় ঘুরবেন?', en: 'Where to go?' }, badge: { bn: 'নতুন', en: 'New' }, route: 'discover', mode: 'intercity', vehicleKind: 'plane' },
 ];
 
 function ModeTile({
@@ -740,7 +744,7 @@ function KoyJaboStory({
 }: {
   tk: Tokens;
   lang: Lang;
-  onNav: (r: string) => void;
+  onNav: (r: string, params?: Record<string, string>) => void;
 }) {
   const [scene, setScene] = useState(0);
 
@@ -1062,7 +1066,7 @@ function KoyJaboStory({
               flex: 1,
             }}
           >
-            {lang === 'bn' ? STORY_CAPTIONS[scene].bn : STORY_CAPTIONS[scene].en}
+            {T(lang, STORY_CAPTIONS[scene].bn, STORY_CAPTIONS[scene].en)}
           </p>
           {scene === 3 && (
             <button
@@ -1914,6 +1918,14 @@ export function HomePage({
 }: HomePageProps) {
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
+
+  // Top-rated destinations for the Discover section (enriched first, fallback lat order)
+  const topDestinations = useMemo(() => {
+    const spots = ALL_PLACES.filter(p => p.type === 'tourist' || p.type === 'historical' || p.type === 'landmark');
+    return [...spots].sort(
+      (a, b) => (DESTINATION_ENRICHMENT[b.id]?.gmRating ?? 0) - (DESTINATION_ENRICHMENT[a.id]?.gmRating ?? 0)
+    );
+  }, []);
   const font = lang === 'bn' ? BEN : SANS;
   const [homeSearchMode, setHomeSearchMode] = useState<SearchModeId>('bus');
   const installPromptRef = useRef<{ prompt(): void } | null>(null);
@@ -2135,6 +2147,36 @@ export function HomePage({
                 onClick={() => {
                   onNav(tile.route);
                 }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* ── Discover Bangladesh ── */}
+        <div style={section}>
+          <SectionHeader
+            tk={tk}
+            lang={lang}
+            title={T(lang, 'ঘুরতে যাবেন কোথায়? 🏖️', 'Where to go? 🏖️')}
+            action={T(lang, 'সব দেখুন', 'See all')}
+            onAction={() => onNav('discover')}
+          />
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(160px, 1fr))',
+              gap: 12,
+              minWidth: 0,
+              width: '100%',
+            }}
+          >
+            {topDestinations.slice(0, 6).map(p => (
+              <DestinationCard
+                key={p.id}
+                place={p}
+                theme={theme}
+                lang={lang}
+                onClick={() => onNav('destination-detail', { id: p.id })}
               />
             ))}
           </div>

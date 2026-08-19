@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { T } from '../src/redesign/tokens';
 import { ArrowLeft, MapPin, Bus, Search, ChevronLeft, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { trackFeatureUsage } from '../services/analyticsService';
@@ -644,7 +645,7 @@ const MERGED_GUIDES: GuideEntry[] = [
 
 export default function NeighbourhoodGuides({ onBack }: Props) {
   const { language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<typeof GUIDES[0] | null>(null);
   const [expandedDivisions, setExpandedDivisions] = useState<Set<string>>(new Set());

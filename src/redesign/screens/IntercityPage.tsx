@@ -105,8 +105,8 @@ const ALL_INTERCITY_LOCATIONS = [...INTERCITY_BUS_ROUTES, ...MAJOR_TRANSPORT_HUB
 
 export function IntercityPage(props: Props) {
   const { theme, device, lang, onNav, params } = props;
-  useDocumentTitle(lang === 'bn' ? 'আন্তঃজেলা বাস, ট্রেন, ফ্লাইট ও লঞ্চ' : 'Intercity Bus, Train, Flight & Launch BD');
-  setMetaTag('description', lang === 'bn' ? '৬৪ জেলায় বাস, ট্রেন, ফ্লাইট ও লঞ্চ রুট ও ভাড়া — এক জায়গায়।' : 'Bus, train, flight and launch routes to all 64 districts — fares included.');
+  useDocumentTitle(T(lang, 'আন্তঃজেলা বাস, ট্রেন, ফ্লাইট ও লঞ্চ', 'Intercity Bus, Train, Flight & Launch BD'));
+  setMetaTag('description', T(lang, '৬৪ জেলায় বাস, ট্রেন, ফ্লাইট ও লঞ্চ রুট ও ভাড়া — এক জায়গায়।', 'Bus, train, flight and launch routes to all 64 districts — fares included.'));
   setCanonicalUrl('/intercity');
   const isMobile = device === 'mobile';
   const tk: Tokens = KJ_TOKENS[theme];

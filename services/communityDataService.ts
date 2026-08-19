@@ -879,3 +879,118 @@ export async function submitBusPlate(busId: string, busName: string, plate: stri
   const status = await repoPutOrQueue(`data/plate-suggestions/${busId}.json`, existing, `plate-suggest: ${busName} ${normalised}`, cfToken);
   return { ok: status !== 'failed', status };
 }
+
+// ── Destination Ratings ─────────────────────────────────────────────────────────
+// Paths use the `dest-` prefix so they share the worker's existing
+// data/ratings + data/photos write rules without colliding with bus ids.
+
+export interface DestinationRating {
+  userId: string;
+  displayName: string;
+  destId: string;
+  stars: number;       // 1–5
+  comment: string;
+  timestamp: number;
+  upvotes?: string[];  // userId[] who marked this review helpful
+}
+
+export interface DestinationRatingSummary {
+  destId: string;
+  average: number;
+  count: number;
+  ratings: DestinationRating[];
+}
+
+const destRatingPath = (destId: string) => `data/ratings/dest-${destId}.json`;
+const destPhotoPath = (destId: string) => `data/photos/dest-${destId}.json`;
+
+export async function getDestinationRatings(destId: string): Promise<DestinationRatingSummary | null> {
+  return repoGet<DestinationRatingSummary>(destRatingPath(destId));
+}
+
+export async function submitDestinationRating(destId: string, stars: number, comment: string): Promise<WriteStatus> {
+  const user = getCommunityUser();
+  if (!user) return 'failed';
+  const normalizedComment = (comment ?? '').trim();
+  const persistedComment = normalizedComment.length > 0 ? normalizedComment : ' ';
+  const existing = await getDestinationRatings(destId) || { destId, average: 0, count: 0, ratings: [] };
+  const filtered = existing.ratings.filter(r => r.userId !== user.id);
+  const newRating: DestinationRating = { userId: user.id, displayName: user.displayName, destId, stars, comment: persistedComment, timestamp: Date.now() };
+  const ratings = [...filtered, newRating];
+  const average = ratings.length ? ratings.reduce((s, r) => s + r.stars, 0) / ratings.length : 0;
+  return repoPutOrQueue(destRatingPath(destId), { destId, average: Math.round(average * 10) / 10, count: ratings.length, ratings }, `dest-rating: ${destId}`);
+}
+
+export async function deleteDestinationRating(destId: string): Promise<WriteStatus> {
+  const user = getCommunityUser();
+  if (!user) return 'failed';
+  const existing = await getDestinationRatings(destId);
+  if (!existing) return 'failed';
+  const ratings = existing.ratings.filter(r => r.userId !== user.id);
+  const average = ratings.length ? ratings.reduce((s, r) => s + r.stars, 0) / ratings.length : 0;
+  return repoPutOrQueue(
+    destRatingPath(destId),
+    { destId, average: Math.round(average * 10) / 10, count: ratings.length, ratings },
+    `dest-rating-delete: ${destId}`,
+    undefined,
+    true
+  );
+}
+
+export async function toggleDestinationRatingUpvote(destId: string, ratingTimestamp: number): Promise<DestinationRating | null> {
+  const voterId = getDeviceId();
+  const existing = await getDestinationRatings(destId);
+  if (!existing) return null;
+  const target = existing.ratings.find(r => r.timestamp === ratingTimestamp);
+  if (!target) return null;
+  const upvotes = target.upvotes ?? [];
+  const next = upvotes.includes(voterId) ? upvotes.filter(id => id !== voterId) : [...upvotes, voterId];
+  const updated = { ...target, upvotes: next };
+  const ratings = existing.ratings.map(r => (r.timestamp === ratingTimestamp ? updated : r));
+  const status = await repoPutOrQueue(destRatingPath(destId), { ...existing, ratings }, `dest-upvote: ${destId}`);
+  return status === 'failed' ? null : updated;
+}
+
+// ── Destination Photos ──────────────────────────────────────────────────────────
+
+export interface DestinationPhoto {
+  id: string;
+  userId: string;
+  displayName: string;
+  destId: string;
+  destName: string;
+  caption: string;
+  dataUrl: string;   // base64 — kept small (max 300KB after compress)
+  timestamp: number;
+}
+
+export interface DestinationPhotoCollection {
+  destId: string;
+  photos: DestinationPhoto[];
+}
+
+export async function getDestinationPhotos(destId: string): Promise<DestinationPhoto[]> {
+  const data = await repoGet<DestinationPhotoCollection>(destPhotoPath(destId));
+  return data?.photos ?? [];
+}
+
+export async function submitDestinationPhoto(destId: string, destName: string, caption: string, dataUrl: string, cfToken?: string): Promise<WriteStatus> {
+  const user = getCommunityUser();
+  if (!user) return 'failed';
+  const existing = await repoGet<DestinationPhotoCollection>(destPhotoPath(destId)) || { destId, photos: [] };
+  const photo: DestinationPhoto = { id: crypto.randomUUID(), userId: user.id, displayName: user.displayName, destId, destName, caption, dataUrl, timestamp: Date.now() };
+  existing.photos.unshift(photo);
+  if (existing.photos.length > 50) existing.photos = existing.photos.slice(0, 50);
+  return repoPutOrQueue(destPhotoPath(destId), existing, `dest-photo: ${destName}`, cfToken);
+}
+
+export async function deleteDestinationPhoto(destId: string, photoId: string): Promise<WriteStatus> {
+  const user = getCommunityUser();
+  if (!user) return 'failed';
+  const existing = await repoGet<DestinationPhotoCollection>(destPhotoPath(destId));
+  if (!existing) return 'failed';
+  const before = existing.photos.length;
+  existing.photos = existing.photos.filter(p => !(p.id === photoId && p.userId === user.id));
+  if (existing.photos.length === before) return 'failed';
+  return repoPutOrQueue(destPhotoPath(destId), existing, `dest-photo-delete: ${photoId}`, undefined, true);
+}

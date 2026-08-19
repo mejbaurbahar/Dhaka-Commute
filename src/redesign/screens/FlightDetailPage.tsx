@@ -65,7 +65,7 @@ type TabKey = 'info' | 'cabins' | 'amenities' | 'book';
 
 export function FlightDetailPage(props: Props) {
   const { theme, device, lang, params, onNav } = props;
-  useDocumentTitle(lang === 'bn' ? 'ফ্লাইট তথ্য' : 'Flight Information');
+  useDocumentTitle(T(lang, 'ফ্লাইট তথ্য', 'Flight Information'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const code = params?.code ?? 'BS';

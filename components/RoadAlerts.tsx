@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { T } from '../src/redesign/tokens';
 import { ArrowLeft, AlertTriangle, Clock, ChevronDown, ChevronUp, Plus, ExternalLink, Map, Flag } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useToast } from '../contexts/ToastContext';
@@ -78,7 +79,7 @@ function severityBadgeClass(s: string) {
 
 export default function RoadAlerts({ onBack }: Props) {
   const { t, language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const { showToast } = useToast();
   const user = getCommunityUser();
   const [reports, setReports] = useState<TrafficReport[]>([]);

@@ -1,4 +1,5 @@
 import HowKoyJaboHelps from './HowKoyJaboHelps';
+import { T } from '../src/redesign/tokens';
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Calculator, TrendingDown, Trash2, Plus } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -39,7 +40,7 @@ type Period = 'daily' | 'monthly' | 'yearly';
 
 export default function CommuteCostCalculator({ onBack }: Props) {
   const { language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
 
   const [legs, setLegs] = useState<Leg[]>([]);
   const [workDays, setWorkDays] = useState(22);

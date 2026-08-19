@@ -1,4 +1,5 @@
 import React from 'react';
+import { T } from '../src/redesign/tokens';
 import { Search, X, ArrowLeftRight, MapPin, Flag, Clock, Zap, Banknote } from 'lucide-react';
 import { SearchableSelect } from './SearchableSelect';
 import { AppView } from '../types';
@@ -66,8 +67,8 @@ const HomeSearchPanel: React.FC<HomeSearchPanelProps> = (props) => {
     onSuggestionSelect, formatBusName, formatNumber,
   } = props;
 
-  const lbl = (en: string, bn: string) => (language === 'bn' ? bn : en);
-  const leaveTime = new Date().toLocaleTimeString(language === 'bn' ? 'bn-BD' : 'en-US', {
+  const lbl = (en: string, bn: string) => T(language, bn, en);
+  const leaveTime = new Date().toLocaleTimeString(T(language, 'bn-BD', 'en-US'), {
     hour: 'numeric',
     minute: '2-digit',
   });

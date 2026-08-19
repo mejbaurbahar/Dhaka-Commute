@@ -1,4 +1,5 @@
 import SponsoredAdSlot from './SponsoredAdSlot';
+import { T } from '../src/redesign/tokens';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Star, Train } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -78,7 +79,7 @@ function RatingSkeleton() {
 export default function TrainRating({ trainId, trainName, onBack }: Props) {
   const user = getCommunityUser();
   const { t, language, formatNumber } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const [summary, setSummary] = useState<TrainRatingSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

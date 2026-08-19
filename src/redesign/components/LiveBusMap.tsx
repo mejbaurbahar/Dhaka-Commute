@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import type { Lang } from '../tokens';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { T, N } from '../tokens';
@@ -13,7 +14,7 @@ function statusColor(status: string): string {
   return '#9ca3af';
 }
 
-function statusLabel(status: string, lang: 'bn' | 'en'): string {
+function statusLabel(status: string, lang: Lang): string {
   if (status === 'moving') return T(lang, 'চলছে', 'Moving');
   if (status === 'idle') return T(lang, 'অপেক্ষায়', 'Idle');
   return T(lang, 'পুরনো ডেটা', 'Stale');
@@ -31,7 +32,7 @@ function busIconHtml(color: string, highlighted: boolean): string {
 
 interface Props {
   tk: Record<string, string>;
-  lang: 'bn' | 'en';
+  lang: Lang;
   isMobile: boolean;
   height?: number;
   routeStops: Array<{ lat: number; lng: number; name: string; bnName: string }>;
@@ -109,7 +110,7 @@ export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, bu
           })
             .bindTooltip(
               isTransfer
-                ? `<b>🔀 ${lang === 'bn' ? stop.bnName : stop.name}</b><br><small>${lang === 'bn' ? 'ট্রানজিট পয়েন্ট' : 'Transit point'}</small>`
+                ? `<b>🔀 ${lang === 'bn' ? stop.bnName : stop.name}</b><br><small>${T(lang, 'ট্রানজিট পয়েন্ট', 'Transit point')}</small>`
                 : `<b>${lang === 'bn' ? stop.bnName : stop.name}</b>`,
               { permanent: false, direction: 'top', offset: [0, -8] }
             )
@@ -154,7 +155,7 @@ export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, bu
         `<div style="font-weight:800;font-size:15px;margin-bottom:4px">🚌 ${b.busNumber || ''}</div>` +
         `<div style="font-size:12px;color:#555;line-height:1.7">📍 ${locationName}<br/>` +
         `${statusLabel(b.status, lang)} · ${b.speed > 1 ? `${Math.round(b.speed * 3.6)} km/h` : '0 km/h'}` +
-        `${b.contributors > 1 ? ` · 👥 ${N(b.contributors, lang)}` : ''} · ${ago(b.updatedAt)} ${lang === 'bn' ? 'আগে' : 'ago'}</div>` +
+        `${b.contributors > 1 ? ` · 👥 ${N(b.contributors, lang)}` : ''} · ${ago(b.updatedAt)} ${T(lang, 'আগে', 'ago')}</div>` +
         `</div>`;
       L.marker([b.lat, b.lng], { icon })
         .bindTooltip(label, { permanent: false, direction: 'top', offset: [0, -10] })
@@ -180,7 +181,7 @@ export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, bu
     const { lat, lng, stopIndex, distanceKm } = userProximity;
     const stop = routeStops[stopIndex];
     if (stop) {
-      const kmText = `${N(distanceKm.toFixed(1), lang)} ${lang === 'bn' ? 'কিমি' : 'km'}`;
+      const kmText = `${N(distanceKm.toFixed(1), lang)} ${T(lang, 'কিমি', 'km')}`;
       L.polyline([[lat, lng], [stop.lat, stop.lng]], {
         color: '#ef4444',
         weight: 3,

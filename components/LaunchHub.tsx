@@ -1,4 +1,5 @@
 import HowKoyJaboHelps from './HowKoyJaboHelps';
+import { T } from '../src/redesign/tokens';
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   ArrowLeft, Search, Ship, MapPin, Star, Shield, Phone,
@@ -227,7 +228,7 @@ const SAFETY_TIPS = [
 ];
 
 export default function LaunchHub({ onBack, language }: LaunchHubProps) {
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
 
   const [searchQuery, setSearchQuery] = useState(() => {
     const saved = localStorage.getItem('koyjabo_prefill_launch_search') || '';

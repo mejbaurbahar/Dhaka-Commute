@@ -19,7 +19,7 @@ function Vehicle3D({ kind, size }: { kind: VehicleKind; size: number }) {
 
 export function VehicleDetailPage(props: Props) {
   const { theme, device, lang, params } = props;
-  useDocumentTitle(lang === 'bn' ? 'যানবাহনের তথ্য' : 'Vehicle Details');
+  useDocumentTitle(T(lang, 'যানবাহনের তথ্য', 'Vehicle Details'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const kind = (params?.kind || 'bus') as VehicleKind;

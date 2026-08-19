@@ -355,7 +355,7 @@ export function BusDetailPage(props: Props) {
                                   {li + 1}. {lang === 'bn' ? leg.busBn : leg.bus}
                                 </span>
                                 <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text }}>
-                                  {lang === 'bn' ? `${leg.fromBn} → ${leg.toBn}` : `${leg.from} → ${leg.to}`}
+                                  {T(lang, `${leg.fromBn} → ${leg.toBn}`, `${leg.from} → ${leg.to}`)}
                                 </span>
                                 {leg.stopsBetween > 0 && (
                                   <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, background: tk.panelMuted, borderRadius: 4, padding: '2px 6px' }}>

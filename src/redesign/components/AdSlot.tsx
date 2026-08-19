@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tokens, Lang, SANS, BEN } from '../tokens';
+import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 import PlatformAd from '../../ads/PlatformAd';
 
 // Build-time platform check — Vite statically replaces this with a literal.
@@ -265,8 +265,8 @@ export function AdCluster({
           tk={tk}
           lang={lang}
           kind={s.kind}
-          title={lang === 'bn' ? s.titleBn : s.titleEn}
-          subtitle={s.subBn ? (lang === 'bn' ? s.subBn : s.subEn) : undefined}
+          title={T(lang, s.titleBn, s.titleEn)}
+          subtitle={s.subBn ? T(lang, s.subBn, s.subEn ?? '') : undefined}
           icon={s.icon}
           compact={s.compact}
         />

@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { T } from '../src/redesign/tokens';
 import { BusRoute, UserLocation, Station } from '../types';
 import { getCurrentLocation, findNearestStation, getDistance } from '../services/locationService';
 import { liveBusService } from '../services/liveBusService';
@@ -19,8 +20,8 @@ interface LiveTrackerProps {
 }
 
 const LiveTracker: React.FC<LiveTrackerProps> = ({ bus, highlightStartIdx, highlightEndIdx, userLocation: propUserLocation, speed: propSpeed, onBack, onViewLiveMap }) => {
-  const { t, formatNumber } = useLanguage();
-  const lbl = (en: string, bn: string) => en; // language hook available via t(); inline helper for new strings
+  const { t, formatNumber, language } = useLanguage();
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const location = propUserLocation;
   const speed = propSpeed;
   const [error, setError] = useState<string | null>(null);

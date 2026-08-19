@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { T } from '../src/redesign/tokens';
 import { ArrowLeft, Plus, Trash2, ChevronRight, MapPin, Navigation } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { trackFeatureUsage } from '../services/analyticsService';
@@ -185,7 +186,7 @@ const DOT_COLORS = [
 
 export default function MultiStopPlanner({ onBack }: Props) {
   const { language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
 
   useEffect(() => { trackFeatureUsage('multi_stop_planner'); }, []);
 

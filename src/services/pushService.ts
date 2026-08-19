@@ -12,6 +12,7 @@
  */
 
 import { isNativePlatform } from '../utils/platformDetect';
+import type { Lang } from '../redesign/tokens';
 
 const VAPID_PUBLIC_KEY =
   'BPWRfKooYJr8MkcJaOFw2PF3g5OBlikB5uZCcEiS1kGbhOXKTiG-_0rTau28lT2K0tluU4eQ6NByPsnT00sSEV8';
@@ -69,7 +70,7 @@ function apiBase(): string {
   }
 }
 
-function currentLang(): 'bn' | 'en' {
+function currentLang(): Lang {
   try {
     // The redesign stores language as 'kj-language'; the legacy screens write
     // 'app-language'. Reading both keeps pushes in the user's actual language.

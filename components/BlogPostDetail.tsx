@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { T } from '../src/redesign/tokens';
 import { ArrowLeft, Clock, Tag, Copy, Check, ArrowUp } from 'lucide-react';
 import { BLOG_POSTS } from '../data/blogPosts';
 import ReactMarkdown from 'react-markdown';
@@ -28,7 +29,7 @@ interface BlogPostProps {
 
 const BlogPostDetail: React.FC<BlogPostProps> = ({ postSlug, onBack, onGoHome, onSelectPost, language }) => {
     const { t } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
     const post = BLOG_POSTS.find(p => p.slug === postSlug);
     const [copied, setCopied] = useState(false);
     const [showScrollTop, setShowScrollTop] = useState(false);
@@ -75,7 +76,7 @@ const BlogPostDetail: React.FC<BlogPostProps> = ({ postSlug, onBack, onGoHome, o
             dateModified: post.publishDate,
             keywords: post.keywords.join(', '),
             articleSection: post.category,
-            inLanguage: language === 'bn' ? 'bn-BD' : 'en-US',
+            inLanguage: T(language, 'bn-BD', 'en-US'),
             url: `https://koyjabo.com/blog/${post.slug}`,
             mainEntityOfPage: { '@type': 'WebPage', '@id': `https://koyjabo.com/blog/${post.slug}` },
         });
@@ -182,7 +183,7 @@ const BlogPostDetail: React.FC<BlogPostProps> = ({ postSlug, onBack, onGoHome, o
                         </span>
                         <span className="text-xs text-kj-text-faint">
                             {new Date(post.publishDate).toLocaleDateString(
-                                language === 'bn' ? 'bn-BD' : 'en-US',
+                                T(language, 'bn-BD', 'en-US'),
                                 { year: 'numeric', month: 'short', day: 'numeric' }
                             )}
                         </span>
@@ -205,7 +206,7 @@ const BlogPostDetail: React.FC<BlogPostProps> = ({ postSlug, onBack, onGoHome, o
                             <p className="font-bengali font-bold text-kj-text text-sm leading-none">{post.author}</p>
                             <p className="text-kj-text-faint text-[11px] mt-0.5">
                                 {new Date(post.publishDate).toLocaleDateString(
-                                    language === 'bn' ? 'bn-BD' : 'en-US',
+                                    T(language, 'bn-BD', 'en-US'),
                                     { year: 'numeric', month: 'long', day: 'numeric' }
                                 )}
                             </p>

@@ -76,7 +76,7 @@ const TOP_OPERATORS = (() => {
 
 export function RouteResultsV2Page(props: Props) {
   const { theme, device, lang, onNav, params } = props;
-  useDocumentTitle(lang === 'bn' ? 'রুট ফলাফল' : 'Route Results');
+  useDocumentTitle(T(lang, 'রুট ফলাফল', 'Route Results'));
   const isMobile = device === 'mobile';
   const tk: Tokens = KJ_TOKENS[theme];
   const lbl = (en: string, bn: string) => T(lang, bn, en);
@@ -529,7 +529,7 @@ export function RouteResultsV2Page(props: Props) {
                           {r.legs.length === 1 ? (
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                               <span style={{ background: tk.primary, color: '#fff', borderRadius: 6, padding: '3px 10px', fontFamily: SANS, fontSize: 12, fontWeight: 700 }}>{leg1.bus}</span>
-                              <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text }}>{lang === 'bn' ? `${leg1.fromBn} → ${leg1.toBn}` : `${leg1.from} → ${leg1.to}`}</span>
+                              <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text }}>{T(lang, `${leg1.fromBn} → ${leg1.toBn}`, `${leg1.from} → ${leg1.to}`)}</span>
                               <span style={{ fontFamily: SANS, fontSize: 11, color: '#10b981', marginLeft: 'auto', fontWeight: 700 }}>{lbl('Direct ›', 'সরাসরি ›')}</span>
                             </div>
                           ) : (
@@ -546,7 +546,7 @@ export function RouteResultsV2Page(props: Props) {
                                     {li === 0 ? '①' : '②'} {lang === 'bn' ? leg.busBn : leg.bus}
                                   </span>
                                   <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text }}>
-                                    {lang === 'bn' ? `${leg.fromBn} → ${leg.toBn}` : `${leg.from} → ${leg.to}`}
+                                    {T(lang, `${leg.fromBn} → ${leg.toBn}`, `${leg.from} → ${leg.to}`)}
                                   </span>
                                   {leg.stopsBetween > 0 && (
                                     <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, background: tk.panelMuted, borderRadius: 4, padding: '2px 6px' }}>{leg.stopsBetween} {lbl('stops', 'স্টপ')}</span>

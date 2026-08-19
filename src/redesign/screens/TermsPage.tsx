@@ -15,11 +15,11 @@ interface Section {
 
 export function TermsPage(props: Props) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'সেবার শর্তাবলী' : 'Terms of Service');
+  useDocumentTitle(T(lang, 'সেবার শর্তাবলী', 'Terms of Service'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });
-  const lbl = (en: string, bn: string) => lang === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(lang, bn, en);
 
   const sections: Section[] = [
     {

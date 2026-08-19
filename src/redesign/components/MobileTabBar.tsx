@@ -2,19 +2,26 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 import { Icon } from './Icons';
 
-// Section groups — a tab is "active" if activeRoute matches any of its routes
+// Section groups — a tab is "active" if activeRoute matches any of its routes.
+// 5 tabs: every major mode reachable in one tap; everything else lives in More.
 const TABS = [
   {
     bn: 'হোম', en: 'Home',
     route: 'home' as const,
     icon: 'home' as const,
-    routes: ['home'],
+    routes: ['home', 'discover', 'itinerary', 'destination-detail'],
   },
   {
     bn: 'বাস', en: 'Bus',
     route: 'bus-hub' as const,
     icon: 'bus' as const,
     routes: ['bus-hub', 'results', 'bus-detail', 'from-to-bus', 'bus-live-map', 'dtca-bus-detail'],
+  },
+  {
+    bn: 'ট্রেন', en: 'Train',
+    route: 'train-hub' as const,
+    icon: 'train' as const,
+    routes: ['train-hub', 'train-detail'],
   },
   {
     bn: 'সেভড', en: 'Saved',
@@ -65,7 +72,7 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
         padding: '0 4px',
         paddingBottom: 'env(safe-area-inset-bottom)',
         display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
+        gridTemplateColumns: 'repeat(5, 1fr)',
         width: '100%',
         boxSizing: 'border-box',
         minHeight: 58,
@@ -97,6 +104,13 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
             aria-label={T(lang, tab.bn, tab.en)}
             aria-current={active ? 'page' : undefined}
           >
+            {/* Active glow dot above the icon */}
+            <span style={{
+              position: 'absolute', top: 5, width: 4, height: 4, borderRadius: 999,
+              background: active ? tk.primary : 'transparent',
+              boxShadow: active ? `0 0 8px ${tk.primary}` : 'none',
+              transition: 'background 0.2s, box-shadow 0.2s',
+            }} />
             {/* Icon — pill wraps the icon exactly (bg always aligned with button content) */}
             <div style={{
               position: 'relative',

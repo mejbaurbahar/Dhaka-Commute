@@ -1,4 +1,5 @@
 import SponsoredAdSlot from './SponsoredAdSlot';
+import { T } from '../src/redesign/tokens';
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Star } from 'lucide-react';
 import { getBusRatings, submitBusRating, deleteBusRating, toggleRatingUpvote, BusRatingSummary, getCommunityUser } from '../services/communityDataService';
@@ -79,7 +80,7 @@ function RatingSkeleton() {
 export default function BusRating({ busId, busName, onBack, onSuccess }: Props) {
   const user = getCommunityUser();
   const { t, language, formatNumber } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const [summary, setSummary] = useState<BusRatingSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

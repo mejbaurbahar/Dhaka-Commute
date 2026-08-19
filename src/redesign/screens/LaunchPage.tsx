@@ -36,14 +36,14 @@ const CABINS = [
 
 export function LaunchPage(props: Props) {
   const { theme, device, lang, onNav, params } = props;
-  useDocumentTitle(lang === 'bn' ? 'লঞ্চ ও নৌপথ রুট — সদরঘাট' : 'Bangladesh Launch & Ferry Routes');
-  setMetaTag('description', lang === 'bn' ? 'সদরঘাট থেকে সব লঞ্চ রুট, ভাড়া ও সময়সূচী — বরিশাল, ভোলা, খুলনা ও আরও।' : 'All launch and ferry routes from Dhaka Sadarghat — Barisal, Bhola, Khulna and more.');
+  useDocumentTitle(T(lang, 'লঞ্চ ও নৌপথ রুট — সদরঘাট', 'Bangladesh Launch & Ferry Routes'));
+  setMetaTag('description', T(lang, 'সদরঘাট থেকে সব লঞ্চ রুট, ভাড়া ও সময়সূচী — বরিশাল, ভোলা, খুলনা ও আরও।', 'All launch and ferry routes from Dhaka Sadarghat — Barisal, Bhola, Khulna and more.'));
   setCanonicalUrl('/launch');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (p=16): React.CSSProperties => ({ background:tk.panel, border:`1px solid ${tk.line}`, borderRadius:16, padding:p });
 
-  const lbl = (en: string, bn: string) => lang === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(lang, bn, en);
 
   const [fromTerminal, setFromTerminal] = useState(params?.from ?? '');
   const [toTerminal, setToTerminal] = useState(params?.to ?? '');

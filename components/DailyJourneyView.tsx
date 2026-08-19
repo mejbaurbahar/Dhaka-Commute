@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { T } from '../src/redesign/tokens';
 import {
     Clock,
     MapPin,
@@ -37,7 +38,7 @@ const TODAY_DATES = Array.from({ length: 7 }, (_, i) => {
 
 const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
     const { t, formatNumber, language } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
     const [todayJourney, setTodayJourney] = useState<DailyJourney | null>(null);
     const [history, setHistory] = useState<DailyJourney[]>([]);
     const [refreshKey, setRefreshKey] = useState(0);
@@ -62,7 +63,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
 
     const formatTime = (timestamp: number) => {
         const date = new Date(timestamp);
-        return date.toLocaleTimeString(language === 'bn' ? 'bn-BD' : 'en-US', {
+        return date.toLocaleTimeString(T(language, 'bn-BD', 'en-US'), {
             hour: 'numeric',
             minute: '2-digit',
             hour12: true,
@@ -76,7 +77,7 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
         yesterday.setDate(yesterday.getDate() - 1);
         if (dateStr === today.toISOString().split('T')[0]) return t('journey.today');
         if (dateStr === yesterday.toISOString().split('T')[0]) return t('journey.yesterday');
-        return date.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', { month: 'short', day: 'numeric' });
+        return date.toLocaleDateString(T(language, 'bn-BD', 'en-US'), { month: 'short', day: 'numeric' });
     };
 
     const todayStr = new Date().toISOString().split('T')[0];
@@ -131,8 +132,8 @@ const DailyJourneyView: React.FC<DailyJourneyViewProps> = ({ onBack }) => {
                     {TODAY_DATES.map((d) => {
                         const iso = d.toISOString().split('T')[0];
                         const isActive = selectedDate === iso;
-                        const dayName = d.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', { weekday: 'short' });
-                        const dayNum = d.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', { day: 'numeric' });
+                        const dayName = d.toLocaleDateString(T(language, 'bn-BD', 'en-US'), { weekday: 'short' });
+                        const dayNum = d.toLocaleDateString(T(language, 'bn-BD', 'en-US'), { day: 'numeric' });
                         return (
                             <button
                                 key={iso}

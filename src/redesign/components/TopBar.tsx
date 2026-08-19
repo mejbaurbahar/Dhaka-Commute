@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tokens, Lang, Theme, SANS, BEN, T } from '../tokens';
+import { LANG_META } from '../i18n/languageDetect';
 import { Logo } from './Logo';
 import { Icon } from './Icons';
+import { LanguagePicker } from './LanguagePicker';
 import { isNativePlatform } from '../../utils/platformDetect';
 
 type Device = 'auto' | 'mobile' | 'desktop';
@@ -64,7 +66,7 @@ interface TopBarProps {
   device: Device;
   activeRoute?: string;
   onNav: (route: string) => void;
-  onLang: () => void;
+  onLangTo: (l: Lang) => void;
   onTheme: () => void;
   onMenu: () => void;
   canBack?: boolean;
@@ -79,13 +81,14 @@ export function TopBar({
   device,
   activeRoute,
   onNav,
-  onLang,
+  onLangTo,
   onTheme,
   onMenu,
   canBack,
   onBack,
 }: TopBarProps) {
   const isMobile = device === 'mobile';
+  const [langPickerOpen, setLangPickerOpen] = useState(false);
 
   const controlBtn: React.CSSProperties = {
     background: tk.panelMuted,
@@ -118,6 +121,7 @@ export function TopBar({
   };
 
   return (
+    <>
     <div
       style={{
         position: 'fixed',
@@ -237,10 +241,10 @@ export function TopBar({
 
             <div style={{ flex: 1 }} />
 
-            {/* Lang toggle */}
-            <button onClick={onLang} style={{ ...controlBtn, marginRight: 4 }}>
+            {/* Language button — opens the language list picker */}
+            <button onClick={() => setLangPickerOpen(true)} aria-label={T(lang, 'ভাষা নির্বাচন', 'Choose language')} style={{ ...controlBtn, marginRight: 4 }}>
               <Icon.globe s={13}/>
-              <span>{lang === 'bn' ? 'বাং' : 'EN'}</span>
+              <span>{LANG_META[lang].flag}</span>
             </button>
 
             {/* Theme toggle */}
@@ -332,9 +336,9 @@ export function TopBar({
 
             {/* Desktop right controls */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-              <button onClick={onMenu} style={iconBtn} title="Menu"><Icon.menu s={18} /></button>
-              <button onClick={onLang} style={controlBtn}><Icon.globe s={14}/><span>{lang === 'bn' ? 'বাং' : 'EN'}</span></button>
-              <button onClick={onTheme} style={iconBtn} aria-label="Toggle theme">
+              <button onClick={onMenu} style={iconBtn} title={T(lang, 'মেনু', 'Menu')}><Icon.menu s={18} /></button>
+              <button onClick={() => setLangPickerOpen(true)} style={controlBtn} title={T(lang, 'ভাষা নির্বাচন', 'Choose language')}><Icon.globe s={14}/><span>{LANG_META[lang].flag}</span></button>
+              <button onClick={onTheme} style={iconBtn} aria-label={T(lang, 'থিম পরিবর্তন', 'Toggle theme')}>
                 {theme === 'dark' ? <Icon.sun s={16} /> : <Icon.moon s={16} />}
               </button>
               {!isNativePlatform() && (
@@ -347,5 +351,8 @@ export function TopBar({
         )}
       </div>
     </div>
+    {/* Language list picker — outside the TopBar (backdropFilter containment breaks position:fixed) */}
+    <LanguagePicker open={langPickerOpen} onClose={() => setLangPickerOpen(false)} onLangTo={onLangTo} tk={tk} lang={lang} />
+    </>
   );
 }

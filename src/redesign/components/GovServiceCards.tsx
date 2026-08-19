@@ -162,7 +162,7 @@ function GovCardItem({
                 color: tk.text,
               }}
             >
-              {lang === 'bn' ? card.nameBn : card.nameEn}
+              {T(lang, card.nameBn, card.nameEn)}
             </span>
             <span
               style={{

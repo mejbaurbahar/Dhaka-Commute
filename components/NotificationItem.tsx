@@ -1,4 +1,5 @@
 import React from 'react';
+import { T } from '../src/redesign/tokens';
 import { Info, CheckCircle, AlertTriangle, AlertCircle, Sparkles, ExternalLink } from 'lucide-react';
 import { Notification } from '../types/notification';
 import { useNotifications } from '../contexts/NotificationContext';
@@ -89,7 +90,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
             if (diffMins < 60) return `${formatNumber(diffMins)}${t('notifications.m')} ${t('notifications.ago')}`;
             if (diffHours < 24) return `${formatNumber(diffHours)}${t('notifications.h')} ${t('notifications.ago')}`;
             if (diffDays < 7) return `${formatNumber(diffDays)}${t('notifications.d')} ${t('notifications.ago')}`;
-            return date.toLocaleDateString(language === 'bn' ? 'bn-BD' : 'en-US', { month: 'short', day: 'numeric' });
+            return date.toLocaleDateString(T(language, 'bn-BD', 'en-US'), { month: 'short', day: 'numeric' });
         } catch {
             return '';
         }

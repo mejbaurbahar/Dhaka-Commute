@@ -1,4 +1,5 @@
 import GlobalFooter from './GlobalFooter';
+import { T } from '../src/redesign/tokens';
 import React, { useState } from 'react';
 import { ArrowLeft, MessageSquare, Mail, Phone, Github, Send } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -12,7 +13,7 @@ interface ContactUsProps {
 
 const ContactUs: React.FC<ContactUsProps> = ({ view, setView }) => {
     const { language } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
     const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
 
     const contactMethods = [

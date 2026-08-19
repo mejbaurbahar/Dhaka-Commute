@@ -9,7 +9,7 @@ interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en
 
 export function MetroPassPage(props: Props) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'মেট্রো পাস' : 'Metro Pass');
+  useDocumentTitle(T(lang, 'মেট্রো পাস', 'Metro Pass'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });

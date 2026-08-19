@@ -72,8 +72,8 @@ function buildTopOperators(): Array<{ l: string; n: string; c: string; busId: st
 
 export function LocalBusPage(props: Props) {
   const { theme, device, lang, onNav } = props;
-  useDocumentTitle(lang === 'bn' ? 'ঢাকা লোকাল বাস রুট ও ভাড়া ২০২৬' : 'Dhaka Local Bus Routes & Fares 2026');
-  setMetaTag('description', lang === 'bn' ? 'ঢাকার ২০০+ লোকাল বাসের রুট, স্টপ ও ভাড়া খুঁজুন বাংলা ও ইংরেজিতে — ফ্রি, অফলাইনে চলে।' : 'Find 200+ Dhaka local bus routes, stops and fares in English or বাংলা. Free and works offline.');
+  useDocumentTitle(T(lang, 'ঢাকা লোকাল বাস রুট ও ভাড়া ২০২৬', 'Dhaka Local Bus Routes & Fares 2026'));
+  setMetaTag('description', T(lang, 'ঢাকার ২০০+ লোকাল বাসের রুট, স্টপ ও ভাড়া খুঁজুন বাংলা ও ইংরেজিতে — ফ্রি, অফলাইনে চলে।', 'Find 200+ Dhaka local bus routes, stops and fares in English or বাংলা. Free and works offline.'));
   setCanonicalUrl('/local-bus');
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';

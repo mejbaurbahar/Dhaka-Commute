@@ -163,7 +163,7 @@ export function FromToBusPage(props: Props) {
               ~৳{group.approxFare}
             </span>
             <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim, background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, padding: '3px 8px' }}>
-              ~{group.approxMinutes}{lang === 'bn' ? 'মি' : 'm'}
+              ~{group.approxMinutes}{T(lang, 'মি', 'm')}
             </span>
           </div>
         </div>
@@ -179,7 +179,7 @@ export function FromToBusPage(props: Props) {
             {group.leg1Buses.slice(0, 8).map(bus => busChip(bus, from, group.viaId))}
             {group.leg1Buses.length > 8 && (
               <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, alignSelf: 'center' }}>
-                +{group.leg1Buses.length - 8} {lang === 'bn' ? 'আরও' : 'more'}
+                +{group.leg1Buses.length - 8} {T(lang, 'আরও', 'more')}
               </span>
             )}
           </div>
@@ -210,7 +210,7 @@ export function FromToBusPage(props: Props) {
             {group.leg2Buses.slice(0, 8).map(bus => busChip(bus, group.viaId, to))}
             {group.leg2Buses.length > 8 && (
               <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, alignSelf: 'center' }}>
-                +{group.leg2Buses.length - 8} {lang === 'bn' ? 'আরও' : 'more'}
+                +{group.leg2Buses.length - 8} {T(lang, 'আরও', 'more')}
               </span>
             )}
           </div>
@@ -225,7 +225,7 @@ export function FromToBusPage(props: Props) {
           <div style={card()}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
               <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 22, fontWeight: 800 }}>
-                {lang === 'bn' ? `${fromName.bn} → ${toName.bn}` : `${fromName.en} → ${toName.en}`}
+                {T(lang, `${fromName.bn} → ${toName.bn}`, `${fromName.en} → ${toName.en}`)}
               </span>
               <span style={{ color: tk.textDim, fontSize: 13 }}>
                 {T(lang, 'সরাসরি বাস নেই — বাস বদল করুন', 'No direct bus — change buses')}
@@ -259,7 +259,7 @@ export function FromToBusPage(props: Props) {
                 <a key={`${p.from}-${p.to}`} href={pairPath(p)}
                   onClick={(e) => { e.preventDefault(); onNav('from-to-bus', { from: p.from, to: p.to }); }}
                   style={{ ...card(12), textDecoration: 'none', color: tk.text, fontSize: 13, fontWeight: 600 }}>
-                  {lang === 'bn' ? `${p.fromBn} → ${p.toBn}` : `${p.fromEn} → ${p.toEn}`}
+                  {T(lang, `${p.fromBn} → ${p.toBn}`, `${p.fromEn} → ${p.toEn}`)}
                 </a>
               ))}
             </div>
@@ -278,7 +278,7 @@ export function FromToBusPage(props: Props) {
         </div>
         {list.length === 0 && (
           <div style={{ color: tk.textDim, fontSize: 13, marginBottom: 8 }}>
-            {lang === 'bn' ? 'কোনো সরাসরি বাস পাওয়া যায়নি।' : 'No direct bus found.'}
+            {T(lang, 'কোনো সরাসরি বাস পাওয়া যায়নি।', 'No direct bus found.')}
           </div>
         )}
         {list.map(bus => {
@@ -295,7 +295,7 @@ export function FromToBusPage(props: Props) {
                 </span>
               </div>
               <div style={{ fontSize: 13, color: tk.textDim, marginTop: 6 }}>
-                {lang === 'bn' ? `${stopDisplay(bus.stops[0]).bn} ⇄ ${stopDisplay(bus.stops[bus.stops.length - 1]).bn}` : `${stopDisplay(bus.stops[0]).en} ⇄ ${stopDisplay(bus.stops[bus.stops.length - 1]).en}`}
+                {T(lang, `${stopDisplay(bus.stops[0]).bn} ⇄ ${stopDisplay(bus.stops[bus.stops.length - 1]).bn}`, `${stopDisplay(bus.stops[0]).en} ⇄ ${stopDisplay(bus.stops[bus.stops.length - 1]).en}`)}
                 <span style={{ marginLeft: 8, fontSize: 11 }}>{bus.type} · {bus.hours}</span>
               </div>
             </button>
@@ -309,7 +309,7 @@ export function FromToBusPage(props: Props) {
           <div style={card()}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
               <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 22, fontWeight: 800 }}>
-                {lang === 'bn' ? `${fromName.bn} → ${toName.bn}` : `${fromName.en} → ${toName.en}`}
+                {T(lang, `${fromName.bn} → ${toName.bn}`, `${fromName.en} → ${toName.en}`)}
               </span>
               <span style={{ color: tk.textDim, fontSize: 13 }}>
                 {T(lang, 'সরাসরি বাস নেই — বাস বদল করুন', 'No direct bus — change buses')}
@@ -324,7 +324,7 @@ export function FromToBusPage(props: Props) {
 
           <div style={{ marginTop: 16 }}>
             {leg(
-              lang === 'bn' ? `ধাপ ১: ${fromName.bn} → ${viaName.bn} (${N(leg1Buses.length, lang)}টি বাস)` : `Step 1: ${fromName.en} → ${viaName.en} (${N(leg1Buses.length, lang)} buses)`,
+              T(lang, `ধাপ ১: ${fromName.bn} → ${viaName.bn} (${N(leg1Buses.length, lang)}টি বাস)`, `Step 1: ${fromName.en} → ${viaName.en} (${N(leg1Buses.length, lang)} buses)`),
               leg1Buses, fromName, viaName, interchange.from, interchange.via
             )}
             <div style={{ ...card(12), marginBottom: 10, background: `${tk.primary}10`, borderColor: `${tk.primary}40` }}>
@@ -335,7 +335,7 @@ export function FromToBusPage(props: Props) {
               </span>
             </div>
             {leg(
-              lang === 'bn' ? `ধাপ ২: ${viaName.bn} → ${toName.bn} (${N(leg2Buses.length, lang)}টি বাস)` : `Step 2: ${viaName.en} → ${toName.en} (${N(leg2Buses.length, lang)} buses)`,
+              T(lang, `ধাপ ২: ${viaName.bn} → ${toName.bn} (${N(leg2Buses.length, lang)}টি বাস)`, `Step 2: ${viaName.en} → ${toName.en} (${N(leg2Buses.length, lang)} buses)`),
               leg2Buses, viaName, toName, interchange.via, interchange.to
             )}
           </div>
@@ -350,7 +350,7 @@ export function FromToBusPage(props: Props) {
             </h2>
             <div style={{ ...card(12), marginBottom: 10 }}>
               <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>
-                {lang === 'bn' ? `${fromName.bn} থেকে ${toName.bn} সরাসরি বাস আছে কি?` : `Is there a direct bus from ${fromName.en} to ${toName.en}?`}
+                {T(lang, `${fromName.bn} থেকে ${toName.bn} সরাসরি বাস আছে কি?`, `Is there a direct bus from ${fromName.en} to ${toName.en}?`)}
               </div>
               <div style={{ color: tk.textDim, fontSize: 13 }}>
                 {lang === 'bn'
@@ -360,7 +360,7 @@ export function FromToBusPage(props: Props) {
             </div>
             <div style={{ ...card(12), marginBottom: 10 }}>
               <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>
-                {lang === 'bn' ? `${fromName.bn} থেকে ${toName.bn} বাস ভাড়া কত?` : `How much is the bus fare from ${fromName.en} to ${toName.en}?`}
+                {T(lang, `${fromName.bn} থেকে ${toName.bn} বাস ভাড়া কত?`, `How much is the bus fare from ${fromName.en} to ${toName.en}?`)}
               </div>
               <div style={{ color: tk.textDim, fontSize: 13 }}>
                 {lang === 'bn'
@@ -379,7 +379,7 @@ export function FromToBusPage(props: Props) {
                 <a key={`${p.from}-${p.to}`} href={pairPath(p)}
                   onClick={(e) => { e.preventDefault(); onNav('from-to-bus', { from: p.from, to: p.to }); }}
                   style={{ ...card(12), textDecoration: 'none', color: tk.text, fontSize: 13, fontWeight: 600 }}>
-                  {lang === 'bn' ? `${p.fromBn} → ${p.toBn}` : `${p.fromEn} → ${p.toEn}`}
+                  {T(lang, `${p.fromBn} → ${p.toBn}`, `${p.fromEn} → ${p.toEn}`)}
                 </a>
               ))}
             </div>
@@ -403,7 +403,7 @@ export function FromToBusPage(props: Props) {
                 onClick={(e) => { e.preventDefault(); onNav('from-to-bus', { from: p.from, to: p.to }); }}
                 style={{ ...card(14), textDecoration: 'none', color: tk.text, display: 'block' }}>
                 <span style={{ fontWeight: 700, fontFamily: lang === 'bn' ? BEN : SANS }}>
-                  {lang === 'bn' ? `${p.fromBn} → ${p.toBn}` : `${p.fromEn} → ${p.toEn}`}
+                  {T(lang, `${p.fromBn} → ${p.toBn}`, `${p.fromEn} → ${p.toEn}`)}
                 </span>
                 <span style={{ color: tk.textDim, fontSize: 12 }}> — {T(lang, 'কোন বাসে যাবেন', 'which bus')}</span>
               </a>
@@ -420,7 +420,7 @@ export function FromToBusPage(props: Props) {
         <div style={card()}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 24, fontWeight: 800 }}>
-              {lang === 'bn' ? `${fromName.bn} → ${toName.bn}` : `${fromName.en} → ${toName.en}`}
+              {T(lang, `${fromName.bn} → ${toName.bn}`, `${fromName.en} → ${toName.en}`)}
             </span>
             <span style={{ color: tk.textDim, fontSize: 13 }}>
               {T(lang, `${N(buses.length, lang)}টি বাস এই রুটে চলাচল করে`, `${N(buses.length, lang)} bus${buses.length === 1 ? '' : 'es'} on this route`)}
@@ -450,7 +450,7 @@ export function FromToBusPage(props: Props) {
                   </span>
                 </div>
                 <div style={{ fontSize: 13, color: tk.textDim, marginTop: 6 }}>
-                  {lang === 'bn' ? `${startName.bn} ⇄ ${endName.bn}` : `${startName.en} ⇄ ${endName.en}`}
+                  {T(lang, `${startName.bn} ⇄ ${endName.bn}`, `${startName.en} ⇄ ${endName.en}`)}
                   <span style={{ marginLeft: 8, fontSize: 11 }}>{bus.type} · {bus.hours}</span>
                 </div>
               </button>
@@ -471,7 +471,7 @@ export function FromToBusPage(props: Props) {
               <a key={`${p.from}-${p.to}`} href={pairPath(p)}
                 onClick={(e) => { e.preventDefault(); onNav('from-to-bus', { from: p.from, to: p.to }); }}
                 style={{ ...card(12), textDecoration: 'none', color: tk.text, fontSize: 13, fontWeight: 600 }}>
-                {lang === 'bn' ? `${p.fromBn} → ${p.toBn}` : `${p.fromEn} → ${p.toEn}`}
+                {T(lang, `${p.fromBn} → ${p.toBn}`, `${p.fromEn} → ${p.toEn}`)}
               </a>
             ))}
           </div>

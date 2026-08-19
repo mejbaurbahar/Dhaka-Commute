@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { T } from '../src/redesign/tokens';
 import { ArrowLeft, Camera, X, Upload, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getBusPhotos, submitBusPhoto, deleteBusPhoto, BusPhoto, getCommunityUser } from '../services/communityDataService';
 import { trackFeatureUsage } from '../services/analyticsService';
@@ -73,7 +74,7 @@ function PhotoSkeleton() {
 export default function BusPhotoGallery({ busId, busName, busBnName, onBack, onSuccess }: Props) {
   const user = getCommunityUser();
   const { t, formatNumber, language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const [photos, setPhotos] = useState<BusPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);

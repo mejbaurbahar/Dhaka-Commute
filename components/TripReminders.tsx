@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { T } from '../src/redesign/tokens';
 import { ArrowLeft, Bell, Plus, Trash2, Clock, AlertCircle } from 'lucide-react';
 import { getLocalReminders, saveLocalReminders, syncReminders, pullReminders, TripReminder, getAuthUser } from '../services/communityDataService';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -64,7 +65,7 @@ function scheduleNextAlarm(reminder: TripReminder, getLang: () => string) {
 
 export default function TripReminders({ onBack }: Props) {
   const { language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
   const DAY_LABELS = language === 'bn' ? DAY_LABELS_BN : DAY_LABELS_EN;
   const user = getAuthUser();
   const langRef = useRef(language);

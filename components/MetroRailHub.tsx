@@ -1,4 +1,5 @@
 import SponsoredAdSlot from "./SponsoredAdSlot";
+import { T } from '../src/redesign/tokens';
 import HowKoyJaboHelps from "./HowKoyJaboHelps";
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Train, CreditCard, MapPin, Clock, Zap, Calendar } from 'lucide-react';
@@ -9,8 +10,7 @@ interface Props {
   language: 'en' | 'bn';
 }
 
-const lbl = (language: 'en' | 'bn', en: string, bn: string) =>
-  language === 'bn' ? bn : en;
+const lbl = (language: 'en' | 'bn', en: string, bn: string) => T(language, bn, en);
 
 const STATIONS = [
   { name: 'Uttara North', bn: 'উত্তরা উত্তর', fare: 20 },

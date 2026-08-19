@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import type { Lang } from '../tokens';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, N, Tokens } from '../tokens';
@@ -12,7 +13,7 @@ import { getJourneyHistory, getTodayJourney } from '../../../services/journeyTra
 interface ScreenProps {
   theme: 'dark' | 'light';
   device: 'desktop' | 'mobile';
-  lang: 'bn' | 'en';
+  lang: Lang;
   route: string;
   canBack: boolean;
   onNav: (r: string) => void;
@@ -22,8 +23,8 @@ interface ScreenProps {
   onMenu: () => void;
 }
 
-function formatDate(timestamp: number, lang: 'bn' | 'en') {
-  return new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : 'en-US', {
+function formatDate(timestamp: number, lang: Lang) {
+  return new Intl.DateTimeFormat(T(lang, 'bn-BD', 'en-US'), {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
@@ -33,7 +34,7 @@ function formatDate(timestamp: number, lang: 'bn' | 'en') {
 
 export function HistoryPage(props: ScreenProps) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'সার্চ ইতিহাস' : 'Search History');
+  useDocumentTitle(T(lang, 'সার্চ ইতিহাস', 'Search History'));
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

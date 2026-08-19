@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { App as CapApp } from '@capacitor/app';
 import { KJ_TOKENS, Theme, Lang, Device } from './tokens';
+import { SUPPORTED_LANGS, LANG_META, storedOverride, browserLanguage, resolveInitialLanguage } from './i18n/languageDetect';
 import { injectGlobalStyles } from './globalStyles';
 import { findPair, findInterchange } from './busPairs';
 import { SplashScreen } from './SplashScreen';
@@ -52,6 +53,9 @@ const InstallPage = React.lazy(() => import('./screens/InstallPage').then(m => (
 const AdvertisePage = React.lazy(() => import('./screens/AdvertisePage').then(m => ({ default: m.AdvertisePage })));
 const DTCABusDetailPage = React.lazy(() => import('./screens/DTCABusDetailPage').then(m => ({ default: m.DTCABusDetailPage })));
 const BusLiveMapPage = React.lazy(() => import('./screens/BusLiveMapPage').then(m => ({ default: m.BusLiveMapPage })));
+const DiscoverPage = React.lazy(() => import('./screens/DiscoverPage').then(m => ({ default: m.DiscoverPage })));
+const DestinationDetailPage = React.lazy(() => import('./screens/DestinationDetailPage').then(m => ({ default: m.DestinationDetailPage })));
+const ItineraryPage = React.lazy(() => import('./screens/ItineraryPage').then(m => ({ default: m.ItineraryPage })));
 
 const LazyFallback = () => <div style={{ minHeight: '60vh' }} />;
 import { claimDailyBonus } from './utils/koyCoinService';
@@ -59,6 +63,7 @@ import { NavDrawer } from './components/NavDrawer';
 // FloatingControls removed per user request
 import { AIFab } from './components/AIFab';
 import { AppUpdateDialog } from './components/AppUpdateDialog';
+import { PlayStoreBanner } from './components/PlayStoreBanner';
 const AIChatModal = React.lazy(() => import('./components/AIChatModal').then(m => ({ default: m.AIChatModal })));
 import { TopBar } from './components/TopBar';
 import { MobileTabBar } from './components/MobileTabBar';
@@ -92,6 +97,7 @@ const SHOW_BACK_ROUTES = new Set([
   // utility / info pages
   'favorites', 'history', 'ai', 'settings',
   'why', 'about', 'blogs', 'qa', 'faq', 'contact', 'release', 'privacy', 'terms', 'advertise',
+  'discover', 'destination-detail', 'itinerary',
 ]);
 
 const ROUTE_PATHS: Record<string, string> = {
@@ -120,6 +126,8 @@ const ROUTE_PATHS: Record<string, string> = {
   install: '/install',
   advertise: '/advertise',
   'daily-journey': '/daily-journey',
+  discover: '/discover',
+  itinerary: '/itinerary',
 };
 
 // Must mirror scripts/generate-sitemap.mjs slugify() exactly — it strips
@@ -127,6 +135,18 @@ const ROUTE_PATHS: Record<string, string> = {
 // is kept only for resolving legacy deep links.
 const slugify = (value: string) => value.toLowerCase().trim().replace(/paribahan/g, '').replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const slugifyKeepParibahan = (value: string) => value.toLowerCase().trim().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// Mirror of scripts/generate-sitemap.mjs slugify — destination URLs must match sitemap slugs
+const destSlug = (value: string) => (value || '')
+  .toLowerCase()
+  .replace(/paribahan/g, '')
+  .replace(/&/g, ' and ')
+  .replace(/['’]/g, '')
+  .normalize('NFKD')
+  .replace(/[^\w\sঀ-৿-]/g, ' ')
+  .trim()
+  .replace(/\s+/g, '-')
+  .replace(/-+/g, '-')
+  .replace(/^-|-$/g, '');
 
 function busSlug(busId?: string) {
   const bus = BUS_DATA.find(item => item.id === busId);
@@ -139,6 +159,8 @@ function detailPath(route: string, params: Record<string, string> = {}) {
   if (params.to) query.set('to', slugify(params.to));
   const suffix = query.toString() ? `?${query.toString()}` : '';
   if (route === 'blog-detail') return `/blog/${params.slug || 'post'}`;
+  // Destination slugs must match scripts/generate-sitemap.mjs (apostrophes dropped, not dashed)
+  if (route === 'destination-detail') return `/places/${params.slug || destSlug(params.id || 'place')}/`;
   if (route === 'bus-detail') return `/bus/${busSlug(params.busId)}${suffix}`;
   if (route === 'bus-live-map') return `/bus/${busSlug(params.busId)}/live${suffix}`;
   if (route === 'from-to-bus') return params.via ? `/bus/${params.from}-to-${params.to}-via-${params.via}/` : `/bus/${params.from}-to-${params.to}/`;
@@ -166,7 +188,7 @@ function detailPath(route: string, params: Record<string, string> = {}) {
 }
 
 function pathForEntry(entry: StackEntry) {
-  if (['bus-detail', 'bus-live-map', 'from-to-bus', 'metro-detail', 'train-detail', 'intercity-detail', 'vehicle', 'flight-detail', 'blog-detail', 'dtca-bus-detail'].includes(entry.route)) {
+  if (['bus-detail', 'bus-live-map', 'from-to-bus', 'metro-detail', 'train-detail', 'intercity-detail', 'vehicle', 'flight-detail', 'blog-detail', 'dtca-bus-detail', 'destination-detail'].includes(entry.route)) {
     return detailPath(entry.route, entry.params || {});
   }
   if (entry.route === 'results') {
@@ -223,6 +245,9 @@ function entryFromLocation(): StackEntry {
   if (path.startsWith('/launch/') && path !== '/launch') return { route: 'vehicle', params: { ...params, id: path.split('/')[2] || '' } };
   if ((path.startsWith('/live-bus/') || path.startsWith('/dtca/')) && path !== '/live-bus' && path !== '/dtca') return { route: 'dtca-bus-detail', params: { ...params, identifier: decodeURIComponent(path.split('/')[2] || '') } };
   if (path.startsWith('/air/') && path !== '/air') return { route: 'flight-detail', params: { ...params, code: (path.split('/')[2] || '').toUpperCase() } };
+  if (path.startsWith('/places/') && path !== '/places') {
+    return { route: 'destination-detail', params: { ...params, id: path.split('/')[2] || '' } };
+  }
   if ((path.startsWith('/blog/') || path.startsWith('/blogs/')) && path !== '/blog' && path !== '/blogs') {
     return { route: 'blog-detail', params: { ...params, slug: path.split('/')[2] || '' } };
   }
@@ -231,9 +256,11 @@ function entryFromLocation(): StackEntry {
 }
 
 function getInitialLang(): Lang {
-  if (typeof window === 'undefined') return 'bn';
-  const stored = localStorage.getItem('kj-language');
-  return stored === 'en' ? 'en' : 'bn';
+  // Sync first paint: explicit override wins, then browser UI language
+  // (Saudi visitor's Arabic phone → Arabic; foreigner in BD → en, never bn),
+  // then Bangla as the Bangladeshi default. IP geolocation resolves async
+  // after mount in the effect below.
+  return storedOverride() ?? browserLanguage() ?? 'bn';
 }
 
 /** Theme persists per device in localStorage ('theme' key — the same key the
@@ -509,18 +536,43 @@ export function KoyJaboApp() {
   const showBack = SHOW_BACK_ROUTES.has(top.route) && (canBack || top.route === 'bus-live-map');
 
   const toggleLang = useCallback(() => {
+    // Cycles through all 10 UI languages; Arabic flips the document to RTL.
     setLang(l => {
-      const next = l === 'bn' ? 'en' : 'bn';
+      const i = SUPPORTED_LANGS.indexOf(l);
+      const next = SUPPORTED_LANGS[(i + 1) % SUPPORTED_LANGS.length];
       localStorage.setItem('kj-language', next);
       return next;
     });
   }, []);
+
+  // Auto-detect on first visit: no stored override → IP geolocation
+  // (BD → Bangla, Saudi Arabia → Arabic, India → Hindi, else English).
+  useEffect(() => {
+    if (storedOverride()) return;
+    let cancelled = false;
+    resolveInitialLanguage().then(resolved => {
+      if (cancelled) return;
+      setLang(prev => {
+        if (prev === resolved) return prev;
+        try { localStorage.setItem('kj-language', resolved); } catch { /* private mode */ }
+        return resolved;
+      });
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  // RTL document direction for Arabic (flex layouts mirror automatically)
+  useEffect(() => {
+    document.documentElement.dir = LANG_META[lang]?.rtl ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   const sharedProps = {
     theme, device: resolvedDevice, lang,
     route: top.route, params: top.params ?? {},
     canBack: showBack, onBack: back, onNav: nav, onNavTab: navTab,
     onLang: toggleLang,
+    onLangTo: (l: Lang) => { try { localStorage.setItem('kj-language', l); } catch { /* private mode */ } setLang(l); },
     onTheme: () => setTheme(toggleTheme),
     onMenu: () => setMenuOpen(true),
   } as any; // typed via each screen's Props interface
@@ -574,6 +626,9 @@ export function KoyJaboApp() {
       case 'install': return <InstallPage {...p}/>;
       case 'advertise': return <AdvertisePage {...p}/>;
       case 'daily-journey': return <HomePage {...p}/>;
+      case 'discover': return <DiscoverPage {...p}/>;
+      case 'destination-detail': return <DestinationDetailPage {...p}/>;
+      case 'itinerary': return <ItineraryPage {...p}/>;
       case '500': return <ErrorPage500 theme={theme} lang={lang}/>;
       case 'offline': return <OfflinePage theme={theme} lang={lang}/>;
       case 'maintenance': return <MaintenancePage theme={theme} lang={lang}/>;
@@ -669,12 +724,14 @@ export function KoyJaboApp() {
         device={resolvedDevice}
         activeRoute={top.route}
         canBack={showBack} onBack={back}
-        onNav={nav} onLang={toggleLang}
+        onNav={nav} onLangTo={sharedProps.onLangTo}
         onTheme={() => setTheme(toggleTheme)}
         onMenu={() => setMenuOpen(true)}
       />
       {/* Remote Config maintenance/announcement bar — below TopBar, above content */}
       <ConfigBanner lang={lang} />
+      {/* Play Store download bar — phone web only, hidden for installed/native users */}
+      {isPhone && !NATIVE_BUILD && <PlayStoreBanner tk={tk} lang={lang} />}
       {/* Mobile tab bar — outside scroller too */}
       {isPhone && (
         <MobileTabBar

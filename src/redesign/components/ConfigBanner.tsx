@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import type { Lang } from '../tokens';
 import { subscribeRemoteFlags, getRemoteFlags, RemoteFlags } from '../../services/remoteConfigService';
 import { T } from '../tokens';
 
 interface Props {
-  lang: 'bn' | 'en';
+  lang: Lang;
 }
 
 /** Top-of-app bars driven by Firebase Remote Config (maintenance + announcement). */

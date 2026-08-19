@@ -1,4 +1,5 @@
 import React from 'react';
+import { T } from '../src/redesign/tokens';
 import { SuggestedRoute, RouteStep } from '../services/routePlanner';
 import { Bus, Train, Navigation, Clock, Coins, ArrowRight, MapPin, TrendingUp, Zap, Award } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -26,7 +27,7 @@ const RouteStepIcon: React.FC<{ type: RouteStep['type'] }> = ({ type }) => {
 
 const RouteTypeBadge: React.FC<{ type: SuggestedRoute['routeType'] }> = ({ type }) => {
     const { language } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
     const badges = {
         'fastest': { icon: Zap, text: lbl('Fastest', 'সবচেয়ে দ্রুত'), color: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' },
         'direct': { icon: TrendingUp, text: lbl('Direct', 'সরাসরি'), color: 'bg-kj-primary-soft text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800' },
@@ -47,7 +48,7 @@ const RouteTypeBadge: React.FC<{ type: SuggestedRoute['routeType'] }> = ({ type 
 
 const RouteSuggestions: React.FC<RouteSuggestionsProps> = ({ routes, onSelectRoute, currentLocation }) => {
     const { formatNumber, language } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
     if (routes.length === 0) {
         return (
             <div className="text-center py-8 text-kj-text-faint">

@@ -9,7 +9,7 @@ interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en
 
 export function RateReviewPage(props: Props) {
   const { theme, device, lang } = props;
-  useDocumentTitle(lang === 'bn' ? 'রেটিং ও রিভিউ' : 'Rate & Review');
+  useDocumentTitle(T(lang, 'রেটিং ও রিভিউ', 'Rate & Review'));
   const tk = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const [stars, setStars] = useState(0);

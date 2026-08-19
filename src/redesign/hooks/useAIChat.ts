@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
+import type { Lang } from '../tokens';
 import { STATIONS, BUS_DATA } from '../../../constants';
 import { T } from '../tokens';
 import { askGeminiRoute, ChatMessage } from '../../../services/geminiService';
@@ -6,6 +7,7 @@ import { askGitHubModels } from '../../../services/githubModelsService';
 import { getAllSessions, getSession, saveChatMessage, deleteSession } from '../../../services/chatHistoryManager';
 import { getAuthUser } from '../../../services/communityDataService';
 import { ALL_PLACES } from '../../../data/bangladeshPlaces';
+import { generateItinerary, itineraryToText } from '../../../services/itineraryEngine';
 import { findTransitRoutes, fuzzyMatchStop, formatTransitPlan } from '../../../services/transitPlanner';
 import { intercityRouteFor, nearestBoardingTerminals, terminalsServing } from '../utils/intercityBoarding';
 
@@ -398,6 +400,19 @@ function buildRealDataContext(userText: string): string {
   }
 
   if (sections.length === 0) return '';
+  // ── 0. Day-plan queries ("5 days in Bangladesh", "৩ দিনের প্ল্যান") ──────
+  // Detect before transit matching (no from/to tokens involved). Inject the
+  // full real itinerary so the model answers with actual fares & routes.
+  const dayPlan = lower.match(/(\d+)\s*(?:-?\s*)?(?:day|days|দিন(?:\s*ের)?\s*(?:প্ল্যান|ভ্রমণ|ট্যুর)?)/);
+  const hasFromTo = /(?:from\s+\w|থেকে|→|at\s+\w+.*(?:how|যাব|jabo))/i.test(userText);
+  if (dayPlan && !hasFromTo) {
+    const n = Math.min(7, Math.max(1, +dayPlan[1]));
+    const it = generateItinerary(n);
+    if (it) {
+      sections.push('[ITINERARY PLAN]\n' + itineraryToText(it, 'en'));
+    }
+  }
+
   return sections.join('\n\n');
 }
 
@@ -425,7 +440,7 @@ export const SUGGESTIONS = [
  * Owns messages, session persistence, GPS-aware "from" detection and the send
  * pipeline. DOM-only concerns (auto-scroll, input element) live in AIChatBody.
  */
-export function useAIChat(lang: 'bn' | 'en', initialQ?: string) {
+export function useAIChat(lang: Lang, initialQ?: string) {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Msg[]>(INIT_MESSAGES);
   const [isLoading, setIsLoading] = useState(false);

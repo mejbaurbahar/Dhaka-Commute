@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import type { Lang } from '../tokens';
 
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { KJ_TOKENS, T, SANS, BEN, N, Tokens } from '../tokens';
@@ -13,7 +14,7 @@ import { getFavoriteBusIds, setFavoriteBusIds } from '../utils/favorites';
 interface ScreenProps {
   theme: 'dark' | 'light';
   device: 'desktop' | 'mobile';
-  lang: 'bn' | 'en';
+  lang: Lang;
   route: string;
   canBack: boolean;
   onNav: (r: string, p?: Record<string, string>) => void;
@@ -27,7 +28,7 @@ type FilterMode = 'All' | 'Bus';
 
 export function FavoritesPage(props: ScreenProps) {
   const { theme, device, lang, onNav } = props;
-  useDocumentTitle(lang === 'bn' ? 'পছন্দের তালিকা' : 'Favorites');
+  useDocumentTitle(T(lang, 'পছন্দের তালিকা', 'Favorites'));
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
   const lbl = (en: string, bn: string) => T(lang, bn, en);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { T } from '../src/redesign/tokens';
 import { X } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import PlatformAd from '../src/ads/PlatformAd';
@@ -63,7 +64,7 @@ const FloatingAdBanner: React.FC<FloatingAdBannerProps> = ({ bottomOffset = 0 })
         {/* Top bar with label + dismiss */}
         <div className="flex items-center justify-between px-3 py-1" style={{ minHeight: 22 }}>
           <span className="text-[9px] font-bold uppercase tracking-[1.2px]" style={{ color: 'var(--kj-text-faint)' }}>
-            {language === 'bn' ? 'বিজ্ঞাপন' : 'Advertisement'}
+            {T(language, 'বিজ্ঞাপন', 'Advertisement')}
           </span>
           <button
             onClick={dismiss}

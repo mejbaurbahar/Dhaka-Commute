@@ -1,4 +1,5 @@
 import React from 'react';
+import { T } from '../src/redesign/tokens';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -35,7 +36,7 @@ const STEPS = [
 
 export const HowKoyJaboHelps: React.FC<Props> = ({ onTryNow }) => {
   const { language } = useLanguage();
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
 
   return (
     <div className="dc-card rounded-[22px] p-5 space-y-4">

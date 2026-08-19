@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { T } from '../src/redesign/tokens';
 import { ArrowLeft, MapPin, Navigation, RefreshCw, Radio } from 'lucide-react';
 import { getBusLiveLocation, reportBusLocation, BusLocationReport, getAuthUser } from '../services/communityDataService';
 import { trackFeatureUsage } from '../services/analyticsService';
@@ -68,7 +69,7 @@ export default function BusLiveTracking({ busId, busName, stops = [], onBack }: 
   };
 
   const latest = reports[reports.length - 1];
-  const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+  const lbl = (en: string, bn: string) => T(language, bn, en);
 
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-kj-bg overflow-hidden">

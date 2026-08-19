@@ -9,10 +9,10 @@ import { AffiliateBanner } from '../components/AffiliateBanner';
 export interface PageShellProps {
   theme: 'dark' | 'light';
   device: 'desktop' | 'mobile';
-  lang: 'bn' | 'en';
+  lang: Lang;
   route: string;
   canBack: boolean;
-  onNav: (r: string) => void;
+  onNav: (r: string, params?: Record<string, string>) => void;
   onBack: () => void;
   onLang: () => void;
   onTheme: () => void;

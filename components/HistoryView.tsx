@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { T } from '../src/redesign/tokens';
 import { Clock, TrendingUp, Users, Eye, Trash2, Bus, MapPin, ArrowRight, Activity, Train, Zap, Leaf, ChevronRight } from 'lucide-react';
 import {
     getUserHistory,
@@ -238,7 +239,7 @@ const HeatmapGrid: React.FC<{ data: number[][] }> = ({ data }) => {
 
 const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onTrainSelect, onViewJourney, embedded = false }) => {
     const { t, formatNumber, language } = useLanguage();
-    const lbl = (en: string, bn: string) => language === 'bn' ? bn : en;
+    const lbl = (en: string, bn: string) => T(language, bn, en);
     const [activeTab, setActiveTab] = useState<'personal' | 'global'>('personal');
     const [globalStats, setGlobalStats] = useState<GlobalStats>(getGlobalStats());
     const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -506,7 +507,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ onBack, onBusSelect, onTrainS
                             }} />
                             <div className="relative z-10">
                                 <p className="text-[10px] font-bold uppercase tracking-[1.6px] text-white/70 font-sans mb-1">
-                                    {new Date().toLocaleString(language === 'bn' ? 'bn-BD' : 'en-US', { month: 'long', year: 'numeric' }) + ' · ' + lbl('Summary', 'সারসংক্ষেপ')}
+                                    {new Date().toLocaleString(T(language, 'bn-BD', 'en-US'), { month: 'long', year: 'numeric' }) + ' · ' + lbl('Summary', 'সারসংক্ষেপ')}
                                 </p>
                                 <h2 className="text-2xl md:text-3xl font-black text-white leading-tight font-sans mb-1">
                                     {totalSearches > 0
