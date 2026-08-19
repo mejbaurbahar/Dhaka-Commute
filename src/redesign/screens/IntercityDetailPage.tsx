@@ -651,8 +651,8 @@ export function IntercityDetailPage(props: Props) {
             flexWrap: isMobile ? 'wrap' : 'nowrap',
           }}>
             <div style={{ textAlign: 'center', flex: 1 }}>
-              <div style={{ fontFamily: SANS, fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{routeText.split('⇄')[0]?.trim() || 'Dhaka'}</div>
-              <div style={{ fontFamily: SANS, fontSize: 20, fontWeight: 800, color: '#fff' }}>{displayCounters.split('/')[0]?.trim() || 'Counter'}</div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{routeText.split('⇄')[0]?.trim() || lbl('Dhaka', 'ঢাকা')}</div>
+              <div style={{ fontFamily: SANS, fontSize: 20, fontWeight: 800, color: '#fff' }}>{displayCounters.split('/')[0]?.trim() || lbl('Counter', 'কাউন্টার')}</div>
               <div style={{ fontFamily: SANS, fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{lbl('Boarding point', 'বোর্ডিং পয়েন্ট')}</div>
             </div>
             <div style={{ textAlign: 'center', flexShrink: 0 }}>
@@ -664,9 +664,9 @@ export function IntercityDetailPage(props: Props) {
               </div>
             </div>
             <div style={{ textAlign: 'center', flex: 1 }}>
-              <div style={{ fontFamily: SANS, fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{routeText.split('⇄')[1]?.trim() || "Destination"}</div>
+              <div style={{ fontFamily: SANS, fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{routeText.split('⇄')[1]?.trim() || lbl('Destination', 'গন্তব্য')}</div>
               <div style={{ fontFamily: SANS, fontSize: 20, fontWeight: 800, color: '#fff' }}>{displayFareNonAC}</div>
-              {displayFareAC && <div style={{ fontFamily: SANS, fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>AC: {displayFareAC}</div>}
+              {displayFareAC && <div style={{ fontFamily: SANS, fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{lbl('AC', 'এসি')}: {displayFareAC}</div>}
             </div>
           </div>
 

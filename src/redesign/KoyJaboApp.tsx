@@ -746,8 +746,8 @@ export function KoyJaboApp() {
       />
       {/* Remote Config maintenance/announcement bar — below TopBar, above content */}
       <ConfigBanner lang={lang} />
-      {/* Play Store download bar — phone web only, hidden for installed/native users */}
-      {isPhone && !NATIVE_BUILD && <PlayStoreBanner tk={tk} lang={lang} />}
+      {/* Play Store download bar — all web widths, hidden for installed/native users */}
+      {!NATIVE_BUILD && <PlayStoreBanner tk={tk} lang={lang} />}
       {/* Mobile tab bar — outside scroller too */}
       {isPhone && (
         <MobileTabBar

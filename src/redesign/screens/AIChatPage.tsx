@@ -2,7 +2,7 @@ import React from 'react';
 import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
 import { PageShell } from './PageShell';
 import { useDocumentTitle, setMetaTag, setCanonicalUrl } from '../utils/useDocumentTitle';
-import { useAIChat, SUGGESTIONS } from '../hooks/useAIChat';
+import { useAIChat } from '../hooks/useAIChat';
 import { AIChatBody } from '../components/AIChatBody';
 import { formatChatTimestamp } from '../../../services/chatHistoryManager';
 
@@ -35,7 +35,7 @@ export function AIChatPage(props: Props) {
                   <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 800 }}>
                     <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>Koy</span><span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}>Jabo</span> <span style={{ color: tk.text }}>AI</span>
                   </div>
-                  <div style={{ fontFamily: BEN, fontSize: 10, color: tk.textDim }}>পরিবহন সহায়ক • Transport Assistant</div>
+                  <div style={{ fontFamily: BEN, fontSize: 10, color: tk.textDim }}>{T(lang, 'পরিবহন সহায়ক', 'Transport Assistant')}</div>
                 </div>
               </div>
               <button onClick={chat.startNew} style={{ width: '100%', padding: '7px 12px', borderRadius: 10, border: `1px solid ${tk.primary}40`, background: tk.primarySoft, color: tk.primary, fontFamily: BEN, fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
@@ -78,20 +78,6 @@ export function AIChatPage(props: Props) {
               )}
             </div>
 
-            {/* Suggestions */}
-            <div style={{ padding: '12px', borderTop: `1px solid ${tk.line}` }}>
-              <div style={{ fontFamily: SANS, fontSize: 9, fontWeight: 700, color: tk.textFaint, letterSpacing: 1.4, textTransform: 'uppercase', marginBottom: 8, paddingLeft: 4 }}>
-                {T(lang, 'দ্রুত প্রশ্ন', 'Quick questions')}
-              </div>
-              {SUGGESTIONS.map((s, i) => (
-                <button key={i} onClick={() => chat.setInput(T(lang, s.bn, s.en))} style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', textAlign: 'left', padding: '8px 10px', borderRadius: 10, border: `1px solid ${tk.line}`, background: 'transparent', color: tk.text, fontFamily: BEN, fontSize: 12, cursor: 'pointer', marginBottom: 5, transition: 'background 0.12s' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = tk.chipBg)}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                  <span style={{ color: tk.primary, flexShrink: 0 }}>→</span>
-                  {T(lang, s.bn, s.en)}
-                </button>
-              ))}
-            </div>
           </div>
         )}
 

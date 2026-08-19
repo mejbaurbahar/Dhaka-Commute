@@ -713,7 +713,7 @@ export function IntercityPage(props: Props) {
                         </div>
                         <div style={{ textAlign: 'right', flexShrink: 0 }}>
                           <div style={{ fontFamily: SANS, fontSize: 14, fontWeight: 700, color: tk.text }}>{c.costNonAC}</div>
-                          {hasAC && <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim }}>AC: {c.costAC}</div>}
+                          {hasAC && <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim }}>{lbl('AC', 'এসি')}: {c.costAC}</div>}
                           {c.contact && <div style={{ fontFamily: SANS, fontSize: 10, color: tk.primary, marginTop: 4 }}>📞 {c.contact.split(',')[0]}</div>}
                         </div>
                       </button>
@@ -743,7 +743,7 @@ export function IntercityPage(props: Props) {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontFamily: SANS, fontSize: 14, fontWeight: 700, color: tk.text }}>{r.name} <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>#{r.number}</span></div>
                       <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textDim, marginTop: 2 }}>{r.bnName}</div>
-                      <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginTop: 2 }}>Off day: {r.offDay}</div>
+                      <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginTop: 2 }}>{lbl('Off day', 'অফ ডে')}: {r.offDay}</div>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 700, color: tk.text }}>{r.dhakaDepart}</div>
@@ -787,7 +787,7 @@ export function IntercityPage(props: Props) {
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 700, color: tk.text }}>{Fare(r.deck, lang)}</div>
-                      <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim }}>Cabin: {Fare(r.cabin, lang)}</div>
+                      <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim }}>{lbl('Cabin', 'কেবিন')}: {Fare(r.cabin, lang)}</div>
                     </div>
                   </button>
                 );

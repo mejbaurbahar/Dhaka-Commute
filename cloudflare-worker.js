@@ -631,6 +631,9 @@ export default {
 
       const message = String(body.message || '').slice(0, 500);
       const history = Array.isArray(body.history) ? body.history.slice(-6) : [];
+      // App-language override from the client (bn/en/hi/ja/ko/zh/fr/de/es/ar).
+      // The AI must reply in the user's SELECTED app language, not guess from script.
+      const lang = String(body.lang || '').slice(0, 10);
       if (!message) {
         return new Response(JSON.stringify({ error: 'Missing message' }), {
           status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
@@ -638,9 +641,14 @@ export default {
       }
 
       const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      const LANG_NAMES = { bn: 'Bangla', en: 'English', hi: 'Hindi', ja: 'Japanese', ko: 'Korean', zh: 'Chinese', fr: 'French', de: 'German', es: 'Spanish', ar: 'Arabic' };
+      const langName = LANG_NAMES[lang] || '';
+      const langRule = langName
+        ? `The user has selected ${langName} (${lang}) as their app language. Respond ONLY in ${langName}. Ignore the script the user typed — always answer in ${langName}.`
+        : `Respond in Bangla if the user writes in Bangla script. English or Banglish otherwise.`;
       const SYSTEM_PROMPT = `You are KoyJabo AI (কই যাবো AI), Bangladesh's smartest transport assistant. Built by Mejbaur Bahar Fagun for koyjabo.com. Today is ${today}.
 
-LANGUAGE: Respond in Bangla if user writes in Bangla script. English or Banglish otherwise.
+LANGUAGE: ${langRule}
 
 CONVERSATIONAL HANDLING (read first, before scope rules):
 - If the user expresses frustration, complaints, or says things like "why didn't you tell me?", "you should have said that", "আগে বলো নাই কেন?", "pagol" (crazy), "hut" (get lost), "kharap" (bad), or other casual emotional expressions — respond naturally and briefly in a friendly, apologetic tone. DO NOT trigger the out-of-scope reply. Example: if user says "then why didn't you mention that earlier?", reply "দুঃখিত! আগেই দুটো ট্রেনের কথা বলা উচিত ছিল। আর কোনো সাহায্য করতে পারি?" and move on.

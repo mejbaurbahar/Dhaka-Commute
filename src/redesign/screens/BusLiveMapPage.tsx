@@ -54,7 +54,11 @@ function statusLabel(status: string, lang: Lang): string {
 
 export function BusLiveMapPage(props: Props) {
   const { theme, device, lang, params } = props;
-  const busId = params?.busId ?? '';
+  // Menu link ('bus-live-map' without params) and direct URL hits land here with
+  // no busId — fall back to the first route that has BRTA plate data so the page
+  // is never a blank shell.
+  const DEFAULT_LIVE_BUS_ID = (BUS_DATA.find(b => (b.plates?.length ?? 0) > 0) ?? BUS_DATA[0])?.id ?? '';
+  const busId = params?.busId ?? DEFAULT_LIVE_BUS_ID;
   const prefillNumber = params?.busNumber ?? '';
   useDocumentTitle(T(lang, 'লাইভ বাস', 'Live Bus'));
   const tk = KJ_TOKENS[theme];

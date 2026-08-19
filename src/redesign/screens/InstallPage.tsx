@@ -54,7 +54,7 @@ export function InstallPage(props: Props) {
           {(['android','ios','desktop'] as const).map(p=>(
             <button key={p} onClick={()=>setPlatform(p)} style={{ flex:1,padding:'10px',border:0,borderRadius:10,background:platform===p?tk.panel:'transparent',color:platform===p?tk.text:tk.textDim,fontFamily:SANS,fontWeight:600,fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6 }}>
               {p==='android'?'🤖':p==='ios'?'🍎':'💻'}
-              {p==='android'?'Android':p==='ios'?'iPhone':'Desktop'}
+              {p==='android'?T(lang,'অ্যান্ড্রয়েড','Android'):p==='ios'?T(lang,'আইফোন','iPhone'):T(lang,'ডেস্কটপ','Desktop')}
             </button>
           ))}
         </div>

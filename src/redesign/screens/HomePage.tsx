@@ -527,6 +527,7 @@ function SearchPanel({
             color: '#15803d', // green-700 — 5.02:1 on panel (was #22c55e @ 2.13:1)
             whiteSpace: 'nowrap',
             flexShrink: 0,
+            ...(isMobile ? { display: 'none' } : {}), // badge would clip at screen edge on small phones
           }}
         >
           <span
@@ -1526,7 +1527,7 @@ function AICard({ tk, lang, onNav }: { tk: Tokens; lang: Lang; onNav: (r: string
             fontWeight: 700,
           }}
         >
-          Beta
+          {T(lang, 'বিটা', 'Beta')}
         </span>
       </div>
 

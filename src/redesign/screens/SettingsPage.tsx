@@ -267,7 +267,7 @@ export function SettingsPage(props: ScreenProps) {
         />
 
         <div style={{ textAlign: 'center', marginTop: 16, fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>
-          KoyJabo · v1.5.2 · Build 2026.06.18
+          {T(lang, 'কই যাবো · v1.5.2 · বিল্ড 2026.06.18', 'KoyJabo · v1.5.2 · Build 2026.06.18')}
         </div>
           <NativeAdCard
             tk={tk}

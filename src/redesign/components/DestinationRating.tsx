@@ -215,9 +215,9 @@ export function DestinationRating({ destId, destName, theme, lang }: Props) {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontFamily: font, fontSize: 13, fontWeight: 700, color: tk.text, margin: 0 }}>
-                    {r.displayName || 'User'}
+                    {r.displayName || T(lang, 'ব্যবহারকারী', 'User')}
                     {r.userId === user?.id && (
-                      <span style={{ marginLeft: 6, fontSize: 9, background: tk.primarySoft, color: tk.primary, padding: '1px 6px', borderRadius: 99 }}>YOU</span>
+                      <span style={{ marginLeft: 6, fontSize: 9, background: tk.primarySoft, color: tk.primary, padding: '1px 6px', borderRadius: 99 }}>{T(lang, 'আপনি', 'YOU')}</span>
                     )}
                   </p>
                   <div style={{ marginTop: 2 }}>{renderStars(r.stars, 11)}</div>

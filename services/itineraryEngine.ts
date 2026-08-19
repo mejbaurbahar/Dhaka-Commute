@@ -444,6 +444,95 @@ export function generateItinerary(dayCount: number, variantId?: string): Itinera
   };
 }
 
+/**
+ * Custom plan: user picks places (any district) + day count. Day 1 is Dhaka
+ * (origin); remaining places are grouped by district and chained with real
+ * transport legs (Dhaka → district 1 → district 2 …). Returns null when no
+ * places are picked.
+ */
+export function buildCustomItinerary(placeIds: string[], dayCount: number): Itinerary | null {
+  const picks = placeIds.map(placeById).filter((p): p is Place => !!p);
+  if (!picks.length) return null;
+  const days = Math.max(1, Math.min(dayCount || 1, 10));
+
+  const dhakaPicks = picks.filter(p => (p.district ?? '').split('/')[0] === 'Dhaka');
+  const travelPicks = picks.filter(p => (p.district ?? '').split('/')[0] !== 'Dhaka');
+  const travelDays = Math.max(1, days - 1);
+
+  // Cluster travel picks by district, keep the user's pick order.
+  const byDistrict = new Map<string, Place[]>();
+  for (const p of travelPicks) {
+    const d = p.district.split('/')[0];
+    if (!byDistrict.has(d)) byDistrict.set(d, []);
+    byDistrict.get(d)!.push(p);
+  }
+  const ordered = [...byDistrict.keys()];
+
+  // Spread districts across travel days — one district per day, or sequential
+  // chunks when there are more districts than days.
+  const groups: Place[][] = Array.from({ length: travelDays }, () => []);
+  if (ordered.length > travelDays) {
+    const chunk = Math.ceil(ordered.length / travelDays);
+    ordered.forEach((d, i) => groups[Math.min(travelDays - 1, Math.floor(i / chunk))].push(...byDistrict.get(d)!));
+  } else {
+    ordered.forEach((d, i) => groups[i].push(...byDistrict.get(d)!));
+  }
+
+  // Day 1 = Dhaka base; the user's Dhaka picks land here.
+  const day1: ItineraryDay = {
+    day: 1,
+    hubId: 'ahsan_manzil',
+    titleEn: 'Dhaka', titleBn: 'ঢাকা',
+    placeIds: dhakaPicks.map(p => p.id),
+    legs: [],
+    notesEn: dhakaPicks.length ? undefined : 'Start your journey in Dhaka — you picked no Dhaka spots.',
+    notesBn: dhakaPicks.length ? undefined : 'ঢাকায় যাত্রা শুরু করুন — আপনি কোনো ঢাকার স্থান বাছেননি।',
+  };
+
+  const daysArr: ItineraryDay[] = [day1];
+  groups.forEach(group => {
+    if (!group.length) return; // more days than districts — no empty days
+    const prevHub = daysArr[daysArr.length - 1].hubId;
+    const legs: ItineraryLeg[] = [];
+    if (prevHub !== group[0].id) legs.push(buildLegOptions(prevHub, group[0].id));
+    const hub = group[0];
+    daysArr.push({
+      day: daysArr.length + 1,
+      hubId: hub.id,
+      titleEn: hub.en.split(' (')[0], titleBn: hub.bn || hub.en,
+      placeIds: group.map(p => p.id),
+      legs,
+    });
+  });
+
+  // Budget — same formula as the template plans (fares + lodging + food).
+  let budgetMin = 0, budgetMax = 0;
+  for (const d of daysArr) {
+    for (const leg of d.legs) {
+      if (!leg.options.length) continue;
+      budgetMin += Math.min(...leg.options.map(o => o.fareMin));
+      budgetMax += Math.max(...leg.options.map(o => o.fareMax));
+    }
+  }
+  const nights = Math.max(0, daysArr.length - 1);
+  budgetMin += nights * 1500 + daysArr.length * 800;
+  budgetMax += nights * 4000 + daysArr.length * 800;
+
+  const titleEn = picks.map(p => p.en.split(' (')[0]).slice(0, 4).join(' + ');
+  const titleBn = picks.map(p => p.bn || p.en).slice(0, 4).join(' + ');
+  return {
+    id: `custom-${Date.now()}`,
+    dayCount: daysArr.length,
+    variantId: `custom-${placeIds.join('-')}-${days}`,
+    titleEn: titleEn || 'Custom plan',
+    titleBn: titleBn || 'কাস্টম প্ল্যান',
+    summaryEn: `Your custom ${days}-day plan`,
+    summaryBn: `আপনার কাস্টম ${days}-দিনের প্ল্যান`,
+    days: daysArr,
+    budgetMin, budgetMax,
+  };
+}
+
 // ── AI enrichment ────────────────────────────────────────────────────────────
 
 const TIPS_CACHE_PREFIX = 'kj_itinerary_tips:';

@@ -428,13 +428,6 @@ export function nearestArea(lat: number, lng: number): string {
   return best?.name || 'Dhaka';
 }
 
-export const SUGGESTIONS = [
-  { bn: 'কোন বাস গুলশান থেকে মতিঝিল?', en: 'Bus Gulshan to Motijheel?' },
-  { bn: 'বিমানবন্দর → ফার্মগেট', en: 'Airport → Farmgate' },
-  { bn: 'সদরঘাট লঞ্চ সময়', en: 'Sadarghat launch times' },
-  { bn: 'মেট্রো সময়সূচি', en: 'Metro schedule' },
-];
-
 /**
  * Shared AI chat state: used by the full /ai page and by the global chat modal.
  * Owns messages, session persistence, GPS-aware "from" detection and the send
@@ -611,7 +604,7 @@ export function useAIChat(lang: Lang, initialQ?: string) {
 
       let response: string;
       try {
-        response = await askGitHubModels(groundedMessage, chatHistory);
+        response = await askGitHubModels(groundedMessage, chatHistory, lang);
       } catch {
         // Greet by the logged-in user's real name — never a hardcoded one
         const chatUserName = chatUser?.displayName || chatUser?.username || undefined;

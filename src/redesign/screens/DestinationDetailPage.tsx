@@ -49,7 +49,7 @@ function fmtDur(min: number, lang: Lang): string {
   return `${min}m`;
 }
 
-function LegRow({ leg, tk, lang }: { leg: ItineraryLeg; tk: Tokens; lang: Lang }) {
+function LegRow({ leg, tk, lang, onOptionClick }: { leg: ItineraryLeg; tk: Tokens; lang: Lang; onOptionClick?: (mode: string) => void }) {
   const font = lang === 'bn' ? BEN : SANS;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -57,7 +57,11 @@ function LegRow({ leg, tk, lang }: { leg: ItineraryLeg; tk: Tokens; lang: Lang }
         {T(lang, `${leg.fromLabelBn} → ${leg.toLabelBn}`, `${leg.fromLabelEn} → ${leg.toLabelEn}`)}
       </p>
       {leg.options.map((o, i) => (
-        <div key={i} style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 14, padding: '12px 14px' }}>
+        <div
+          key={i}
+          onClick={onOptionClick ? () => onOptionClick(o.mode) : undefined}
+          style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 14, padding: '12px 14px', ...(onOptionClick ? { cursor: 'pointer' } : {}) }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 18 }}>{MODE_ICON[o.mode] ?? '🚌'}</span>
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -73,9 +77,15 @@ function LegRow({ leg, tk, lang }: { leg: ItineraryLeg; tk: Tokens; lang: Lang }
             <span style={{ fontFamily: SANS, fontSize: 14, fontWeight: 700, color: tk.primary, whiteSpace: 'nowrap' }}>
               {lang === 'bn' ? o.fareLabelBn : o.fareLabelEn}
             </span>
+            {onOptionClick && <span style={{ color: tk.textFaint, fontSize: 16 }}>›</span>}
           </div>
         </div>
       ))}
+      {onOptionClick && (
+        <p style={{ fontFamily: font, fontSize: 10, color: tk.textFaint, margin: 0, textAlign: 'center' }}>
+          {T(lang, 'ভাড়া দেখতে একটি অপশনে ক্লিক করুন', 'Tap an option to see fares')}
+        </p>
+      )}
     </div>
   );
 }
@@ -202,15 +212,6 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
               🕐 {enr.gmHours}
             </span>
           )}
-          {enr?.gmUrl && (
-            <a
-              href={`https://www.google.com/maps/place/${encodeURIComponent(enr.gmUrl)}`}
-              target="_blank" rel="noreferrer"
-              style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 999, padding: '6px 12px', fontSize: 12, fontWeight: 600, color: tk.primary, fontFamily: SANS, textDecoration: 'none' }}
-            >
-              Google Maps ↗
-            </a>
-          )}
         </div>
 
         {/* Tabs */}
@@ -274,7 +275,24 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
                 {T(lang, 'ঢাকা থেকে কীভাবে যাবেন — আসল ভাড়া ও সময় (২০২৬)।', 'How to go from Dhaka — real fares & durations (2026).')}
               </p>
               {leg ? (
-                <LegRow leg={leg} tk={tk} lang={lang} />
+                <LegRow
+                  leg={leg}
+                  tk={tk}
+                  lang={lang}
+                  onOptionClick={mode => {
+                    // Click-through: jump straight to the matching search page with
+                    // Dhaka → this place pre-filled; hubs auto-search on params and
+                    // back always returns here (both routes are in SHOW_BACK_ROUTES).
+                    const to = place?.en ?? '';
+                    const p = mode === 'flight'
+                      ? { from: 'DAC', to }
+                      : { from: 'Dhaka', to };
+                    if (mode === 'bus') rest.onNav('results', p);
+                    else if (mode === 'train') rest.onNav('train-hub', p);
+                    else if (mode === 'launch') rest.onNav('launch-hub', p);
+                    else if (mode === 'flight') rest.onNav('flights-hub', p);
+                  }}
+                />
               ) : (
                 <p style={{ color: tk.textFaint, fontSize: 13 }}>{T(lang, 'রুট তথ্য পাওয়া যায়নি', 'Route info unavailable')}</p>
               )}
@@ -302,9 +320,9 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
               {enr && enr.photos.length > 1 && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
                   {enr.photos.slice(1).map((src, i) => (
-                    <a key={i} href={enr.gmUrl ? `https://www.google.com/maps/place/${encodeURIComponent(enr.gmUrl)}` : undefined} target="_blank" rel="noreferrer">
+                    <div key={i}>
                       <img src={src} alt={`${place.en} ${i + 2}`} loading="lazy" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', borderRadius: 10 }} />
-                    </a>
+                    </div>
                   ))}
                 </div>
               )}
@@ -325,14 +343,9 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
                   <div>
                     <p style={{ fontFamily: SANS, fontSize: 15, fontWeight: 700, color: tk.text, margin: 0 }}>
                       ★ {enr.gmRating.toFixed(1)} <span style={{ color: tk.textFaint, fontWeight: 400 }}>
-                        {T(lang, `Google-এ ${enr.gmReviewCount ?? 0}টি রিভিউ`, `${enr.gmReviewCount ?? 0} reviews on Google`)}
+                        {T(lang, `${enr.gmReviewCount ?? 0}টি রিভিউ`, `${enr.gmReviewCount ?? 0} reviews`)}
                       </span>
                     </p>
-                    {enr.gmUrl && (
-                      <a href={`https://www.google.com/maps/place/${encodeURIComponent(enr.gmUrl)}`} target="_blank" rel="noreferrer" style={{ color: tk.primary, fontSize: 12, fontFamily: SANS, textDecoration: 'none' }}>
-                        {T(lang, 'Google-এ রিভিউ দেখুন ↗', 'See reviews on Google ↗')}
-                      </a>
-                    )}
                   </div>
                 </div>
               )}
@@ -350,13 +363,6 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
                 theme={theme}
                 lang={lang}
               />
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lng}`}
-                target="_blank" rel="noreferrer"
-                style={{ ...chipBtn(tk), background: tk.primary, color: tk.primaryInk, border: 'none', borderRadius: 12, padding: '12px 0', fontWeight: 700, fontSize: 14, textAlign: 'center', textDecoration: 'none', fontFamily: font }}
-              >
-                {T(lang, '🧭 গুগল ম্যাপে রুট দেখুন', '🧭 Get directions (Google Maps)')}
-              </a>
             </div>
           )}
         </div>
