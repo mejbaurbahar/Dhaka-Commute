@@ -891,6 +891,24 @@ export const STATIONS: Record<string, Station> = {
   moulvibazar:    { id: 'moulvibazar',    name: 'Moulvibazar',           bnName: 'মৌলভীবাজার',              lat: 24.482564, lng: 91.777826 },
   sreemangal:     { id: 'sreemangal',     name: 'Sreemangal',            bnName: 'শ্রীমঙ্গল',               lat: 24.301953, lng: 91.726270 },
   paksey:         { id: 'paksey',         name: 'Paksey',                bnName: 'পাকশী',                   lat: 24.011995, lng: 89.024927 },
+
+  // ── Missing Dhaka city stops (sourced from dhakatc.com / dhakabusroute) ──
+  chalantika_moor:  { id: 'chalantika_moor',  name: 'Chalantika Moor',       bnName: 'চলন্তিকা মোড় (মিরপুর ৬)',  lat: 23.808400, lng: 90.357100 },
+  fakirapul:        { id: 'fakirapul',         name: 'Fakirapul',             bnName: 'ফকিরাপুল',                 lat: 23.734200, lng: 90.416500 },
+  rayer_bazar:      { id: 'rayer_bazar',       name: 'Rayer Bazar',           bnName: 'রায়ের বাজার',              lat: 23.753500, lng: 90.362000 },
+  panthopoth:       { id: 'panthopoth',        name: 'Panthopath',            bnName: 'পান্থপথ',                  lat: 23.748000, lng: 90.387200 },
+  dia_bari:         { id: 'dia_bari',          name: 'Dia Bari',              bnName: 'দিয়াবাড়ি',                 lat: 23.899800, lng: 90.363400 },
+  narshinghapur:    { id: 'narshinghapur',     name: 'Narshinghapur',         bnName: 'নরসিংহপুর',                lat: 23.961000, lng: 90.307400 },
+  kashimpur:        { id: 'kashimpur',         name: 'Kashimpur',             bnName: 'কাশিমপুর',                 lat: 23.966000, lng: 90.319600 },
+  ghatarchor:       { id: 'ghatarchor',        name: 'Ghatarchar',            bnName: 'ঘাটারচর',                  lat: 23.762000, lng: 90.337300 },
+  songsod_bhaban:   { id: 'songsod_bhaban',    name: 'Sangsad Bhaban',        bnName: 'সংসদ ভবন',                 lat: 23.760100, lng: 90.387500 },
+  khejur_bagan:     { id: 'khejur_bagan',      name: 'Khejur Bagan',          bnName: 'খেজুর বাগান',              lat: 23.757600, lng: 90.389100 },
+  mitford_ghat:     { id: 'mitford_ghat',      name: 'Mitford Ghat',          bnName: 'মিটফোর্ড ঘাট',             lat: 23.711200, lng: 90.404100 },
+  nawabganj:        { id: 'nawabganj',         name: 'Nawabganj',             bnName: 'নবাবগঞ্জ',                 lat: 23.712000, lng: 90.401000 },
+  sanarpar:         { id: 'sanarpar',          name: 'Sanarpar',              bnName: 'সনারপাড়',                 lat: 23.672000, lng: 90.501000 },
+  manik_nagar:      { id: 'manik_nagar',       name: 'Manik Nagar',           bnName: 'মানিকনগর',                 lat: 23.725500, lng: 90.432200 },
+  balughat:         { id: 'balughat',          name: 'Balughat',              bnName: 'বালুঘাট',                  lat: 23.819800, lng: 90.393000 },
+  golapbagh_chowrasta: { id: 'golapbagh_chowrasta', name: 'Golapbagh Chowrasta', bnName: 'গোলাপবাগ চৌরাস্তা',  lat: 23.720100, lng: 90.429900 },
 };
 
 
