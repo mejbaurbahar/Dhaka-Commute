@@ -12,6 +12,27 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '2.2.1',
+    date: '2026-08-20',
+    type: 'patch',
+    features: [
+      'Bus plate number community submission — tap + to add a plate, auto-verified if our passenger GPS data already confirms it',
+      'Verified plates show ✓ badge, pending plates show ⏳ badge',
+    ],
+    bnFeatures: [
+      'বাস প্লেট নম্বর যোগ করুন — + চাপুন, GPS ডেটায় নিশ্চিত হলে স্বয়ংক্রিয়ভাবে যাচাই হবে',
+      'যাচাই হওয়া প্লেটে ✓ এবং অপেক্ষমাণ প্লেটে ⏳ দেখাবে',
+    ],
+    fixes: [
+      'Reverse bus route search now works — searching "Gulshan 1 to Hemayetpur" returns correct buses (previously only forward direction worked)',
+    ],
+    bnFixes: [
+      'উল্টো রুট সার্চ ঠিক হয়েছে — "গুলশান ১ থেকে হেমায়েতপুর" সার্চ করলে এখন সঠিক বাস দেখায়',
+    ],
+    improvements: [],
+    bnImprovements: [],
+  },
+  {
     version: '2.2.0',
     date: '2026-08-19',
     type: 'major',
