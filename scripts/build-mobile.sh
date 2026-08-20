@@ -9,6 +9,9 @@ echo "→ Building intercity widget..."
 
 echo "→ Generating sitemap + BUILD_VERSION..."
 export BUILD_VERSION=$(node -e 'process.stdout.write(String(Date.now()))')
+# Keep version.json's androidVersionCode in sync with the Play Store release
+# (AndroidManifest versionCode lives in android/app/build.gradle).
+export ANDROID_VERSION_CODE=$(grep -o 'versionCode [0-9]*' android/app/build.gradle | head -1 | grep -o '[0-9]*')
 node scripts/generate-sitemap.mjs
 
 echo "→ Building web app for Android (VITE_PLATFORM=android)..."
