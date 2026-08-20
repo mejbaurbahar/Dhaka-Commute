@@ -207,6 +207,31 @@ async function handleBusNumbers(env, busId) {
   return Response.json({ ok: true, entries: out });
 }
 
+async function handleVerifyPlate(env, params) {
+  const raw = params.get('plate') || '';
+  const busId = params.get('busId') || '';
+  const plate = normalizeBusNumber(raw);
+  if (!plate) return Response.json({ ok: false, verified: false, error: 'no plate' }, { status: 400 });
+
+  // Look up passenger-reported registry first (most reliable source).
+  const rec = await env.BUS_LIVE.get(`reg:bus:${plate}`, { type: 'json' }).catch(() => null);
+  if (rec) {
+    const busMatch = !busId || rec.busId === busId;
+    return Response.json({
+      ok: true,
+      verified: busMatch,
+      source: 'passenger_registry',
+      busId: rec.busId,
+      operatorName: rec.operatorName || '',
+      reportCount: rec.reportCount || 1,
+      reason: busMatch ? 'registry_match' : 'busid_mismatch',
+    });
+  }
+
+  // Not in registry yet — plate format is valid but unconfirmed.
+  return Response.json({ ok: true, verified: false, reason: 'not_in_registry' });
+}
+
 async function handleCheckin(env, body) {
   const chk = validateCheckin(body);
   if (chk.error) {
@@ -287,6 +312,9 @@ export default {
     }
     if (url.pathname === '/api/bus-numbers') {
       return cors(await handleBusNumbers(env, url.searchParams.get('busId') || ''));
+    }
+    if (url.pathname === '/api/verify-plate') {
+      return cors(await handleVerifyPlate(env, url.searchParams));
     }
     if (request.method !== 'POST') {
       return cors(Response.json({ ok: false, error: 'method not allowed' }, { status: 405 }));
