@@ -73,12 +73,16 @@ jobs:
           echo "Sanitized. Remaining files: $(find dist -type f | wc -l)"
 
       - name: Clone Dhaka-Commute gh-pages branch (deploy target)
+        # The source repo IS Dhaka-Commute now (renamed 2026-08-19) — the
+        # built-in GITHUB_TOKEN can write its own gh-pages branch. The old
+        # DATA_GITHUB_TOKEN PAT was scoped to the deleted repo name and
+        # 401s every deploy since the rename.
         env:
-          DATA_GITHUB_TOKEN: ${{ secrets.DATA_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git clone \
             --branch gh-pages \
-            "https://x-access-token:${DATA_GITHUB_TOKEN}@github.com/mejbaurbahar/Dhaka-Commute.git" \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" \
             deploy-repo
 
       - name: Swap dist content (preserve workflows)
@@ -108,14 +112,14 @@ jobs:
       - name: Commit and push to gh-pages
         id: commit
         env:
-          DATA_GITHUB_TOKEN: ${{ secrets.DATA_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd deploy-repo
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin \
-            "https://x-access-token:${DATA_GITHUB_TOKEN}@github.com/mejbaurbahar/Dhaka-Commute.git"
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
 
           git add -A
 
