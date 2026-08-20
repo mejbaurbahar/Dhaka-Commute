@@ -335,13 +335,6 @@ export function TrainDetailPage(props: Props) {
               </p>
             </div>
 
-            <button
-              onClick={() => window.open('https://eticket.railway.gov.bd', '_blank')}
-              style={{ background:'linear-gradient(135deg,#5b21b6,#7c3aed)', color:'#fff', border:0, borderRadius:14, padding:'14px', fontFamily:SANS, fontWeight:700, fontSize:14, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8, boxShadow:'0 8px 22px -10px #7c3aed' }}
-            >
-              🎫 {T(lang,'অনলাইনে টিকেট বুক করুন','Book Ticket Online')}
-            </button>
-
             {/* Senior citizen discount */}
             <div style={{ ...card(14), background:'linear-gradient(135deg,#065f4622,#10b98122)', borderColor:'#10b98144' }}>
               <div style={{ fontFamily:BEN, fontWeight:700, fontSize:13, color:tk.text, marginBottom:8 }}>

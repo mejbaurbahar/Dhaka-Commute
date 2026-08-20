@@ -827,8 +827,16 @@ export async function deleteTrainPhoto(trainId: string, photoId: string): Promis
 }
 
 // ── Bus Plate Suggestions ─────────────────────────────────────────────────────
-// Format validation: DMB XX-XXXX (e.g. DMB 12-3814)
-export const PLATE_REGEX = /^DMB\s+\d{2}-\d{4}$/i;
+// Real-world BD plates: "DMB 12-3814", "DHAKA-BA 12-3814", "DHAKA METRO-GA 12-3814",
+// "ঢাকা মেট্রো-গ ১২-৩৮১৪", "চট্টগ্রাম-থ ২৩-৪৫৬৭". Accept any
+// [district]-[series] prefix (Latin or Bengali) + NN-NNNN digits (either script).
+const BN_DIGITS = '০১২৩৪৫৬৭৮৯';
+export const toLatinDigits = (s: string): string => s.replace(/[০-৯]/g, d => String(BN_DIGITS.indexOf(d)));
+
+export const normalizePlate = (plate: string): string =>
+  toLatinDigits(plate).toUpperCase().replace(/\s+/g, ' ').trim();
+
+export const PLATE_REGEX = /^(?:DMB|[A-Z][A-Z ]+-[A-Z]{1,3}|[ঀ-৿][ঀ-৿ ]+-[ঀ-৿]{1,2})\s+\d{2}-\d{4}$/;
 
 export type PlateSuggestion = {
   id: string;
@@ -852,9 +860,9 @@ export async function getBusPlatesuggestons(busId: string): Promise<PlateSuggest
 }
 
 export async function submitBusPlate(busId: string, busName: string, plate: string, cfToken?: string): Promise<{ ok: boolean; error?: string; status?: WriteStatus }> {
-  const normalised = plate.toUpperCase().replace(/\s+/g, ' ').trim();
+  const normalised = normalizePlate(plate);
   if (!PLATE_REGEX.test(normalised)) {
-    return { ok: false, error: 'Invalid format. Use: DMB 12-3814', status: 'failed' };
+    return { ok: false, error: 'Invalid format. Use: DMB 12-3814 or DHAKA-BA 12-3814', status: 'failed' };
   }
   const user = getCommunityUser();
   if (!user) return { ok: false, error: 'Sign in to submit a plate', status: 'failed' };

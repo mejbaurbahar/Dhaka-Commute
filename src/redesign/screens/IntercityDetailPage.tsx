@@ -99,41 +99,8 @@ const SEAT_LABEL_MAP: Record<SeatState, { en: string; bn: string }> = {
   ladies:    { en: "Ladies'",   bn: 'মহিলা' },
 };
 
-// Set to true once Shohoz/BusBD/Bdtickets affiliate approvals are final
-const AFFILIATE_APPROVED = false;
-
-const TICKET_PLATFORMS = [
-  {
-    id: 'shohoz',
-    name: 'Shohoz',
-    nameBn: 'শহজ',
-    color: '#e11d48',
-    icon: '🎟️',
-    tagline: 'Book bus tickets online',
-    taglineBn: 'অনলাইনে বাস টিকেট বুক করুন',
-    url: 'https://www.shohoz.com/bus?utm_source=koyjabo&utm_medium=affiliate&utm_campaign=intercity',
-  },
-  {
-    id: 'busbd',
-    name: 'BusBD',
-    nameBn: 'বাসবিডি',
-    color: '#2563eb',
-    icon: '🚌',
-    tagline: 'Compare & book bus seats',
-    taglineBn: 'বাস সিট তুলনা করে বুক করুন',
-    url: 'https://www.busbd.com.bd/?utm_source=koyjabo&utm_medium=affiliate&utm_campaign=intercity',
-  },
-  {
-    id: 'bdtickets',
-    name: 'Bdtickets',
-    nameBn: 'বিডিটিকেটস',
-    color: '#7c3aed',
-    icon: '📲',
-    tagline: 'Fast online ticket booking',
-    taglineBn: 'দ্রুত অনলাইন টিকেট বুকিং',
-    url: 'https://bdtickets.com/?utm_source=koyjabo&utm_medium=affiliate&utm_campaign=intercity',
-  },
-];
+// KoyJabo is info-only — no ticket selling. Any future booking features must
+// link out to official platforms, never sell in-app.
 
 const SPONSORED_CARDS = [
   {
@@ -736,41 +703,6 @@ export function IntercityDetailPage(props: Props) {
             />
           </div>
 
-          {/* Book Online — affiliate ticket platforms (hidden until partner approval) */}
-          {AFFILIATE_APPROVED && (
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ fontFamily: SANS, fontSize: 13, fontWeight: 700, color: tk.text, marginBottom: 12 }}>
-              🎟️ {lbl('Book Ticket Online', 'অনলাইনে টিকেট বুক করুন')}
-            </div>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const }}>
-              {TICKET_PLATFORMS.map((p) => (
-                <a
-                  key={p.id}
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  style={{
-                    flex: '1 1 140px', minWidth: 130,
-                    background: `${p.color}12`, border: `1.5px solid ${p.color}44`,
-                    borderRadius: 14, padding: '14px 12px', textDecoration: 'none',
-                    display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 6,
-                    cursor: 'pointer', transition: 'all 0.15s',
-                  }}
-                >
-                  <span style={{ fontSize: 28 }}>{p.icon}</span>
-                  <span style={{ fontFamily: SANS, fontSize: 13, fontWeight: 800, color: p.color }}>{p.name}</span>
-                  <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 11, color: tk.textDim, textAlign: 'center' as const, lineHeight: 1.4 }}>
-                    {lbl(p.tagline, p.taglineBn)}
-                  </span>
-                </a>
-              ))}
-            </div>
-            <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 11, color: tk.textFaint, marginTop: 8 }}>
-              ℹ️ {lbl('KoyJabo links to partner platforms · prices may vary', 'KoyJabo পার্টনার প্ল্যাটফর্মে লিঙ্ক করে · দাম ভিন্ন হতে পারে')}
-            </div>
-          </div>
-          )}
-
           {/* Sponsored native cards */}
           <div style={{ marginBottom: 24 }}>
             <div style={{ fontFamily: SANS, fontSize: 11, fontWeight: 700, letterSpacing: 0.8, textTransform: 'uppercase', color: tk.textFaint, marginBottom: 12 }}>
@@ -862,42 +794,13 @@ export function IntercityDetailPage(props: Props) {
                 </div>
               ))}
 
-              {AFFILIATE_APPROVED && (
-              <div style={{ marginTop: 14 }}>
-                <div style={{ fontFamily: SANS, fontSize: 11, fontWeight: 700, color: tk.textFaint, marginBottom: 8 }}>
-                  {lbl('Book Online', 'অনলাইনে বুক করুন')}
-                </div>
-                {TICKET_PLATFORMS.map((p) => (
-                  <a
-                    key={p.id}
-                    href={p.url}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,
-                      background: `${p.color}10`, border: `1px solid ${p.color}33`,
-                      borderRadius: 8, padding: '8px 10px', textDecoration: 'none',
-                    }}
-                  >
-                    <span style={{ fontSize: 16 }}>{p.icon}</span>
-                    <span style={{ fontFamily: SANS, fontSize: 13, fontWeight: 700, color: p.color }}>{p.name}</span>
-                    <span style={{ marginLeft: 'auto', fontFamily: SANS, fontSize: 12, color: tk.textFaint }}>›</span>
-                  </a>
-                ))}
-                <div style={{ fontFamily: SANS, fontSize: 10, color: tk.textFaint, lineHeight: 1.4 }}>
-                  ℹ️ {lbl('Partner links · info only', 'পার্টনার লিঙ্ক · শুধু তথ্য')}
-                </div>
+              <div style={{
+                marginTop: 14, background: tk.amberSoft, border: `1px solid ${tk.amber}`,
+                borderRadius: 10, padding: '8px 10px',
+                fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 11, color: tk.textDim, lineHeight: 1.5,
+              }}>
+                ℹ {lbl("KoyJabo doesn't sell tickets · info only", 'KoyJabo টিকেট বিক্রি করে না · শুধু তথ্য')}
               </div>
-              )}
-              {!AFFILIATE_APPROVED && (
-                <div style={{
-                  marginTop: 14, background: tk.amberSoft, border: `1px solid ${tk.amber}`,
-                  borderRadius: 10, padding: '8px 10px',
-                  fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 11, color: tk.textDim, lineHeight: 1.5,
-                }}>
-                  ℹ {lbl("KoyJabo doesn't sell tickets · info only", 'KoyJabo টিকেট বিক্রি করে না · শুধু তথ্য')}
-                </div>
-              )}
             </div>
           </div>
         )}

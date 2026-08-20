@@ -60,8 +60,8 @@ export type Device = 'auto' | 'mobile' | 'desktop';
 // Wide type: accepts both light and dark themes
 export type Tokens = { [K in keyof typeof KJ_TOKENS.dark]: string };
 
-export const SANS = "'Inter', system-ui, -apple-system, sans-serif";
-export const BEN = "'Hind Siliguri', 'Inter', system-ui, sans-serif";
+export const SANS = "'Noto Sans Arabic', 'Inter', system-ui, -apple-system, sans-serif";
+export const BEN = "'Noto Sans Arabic', 'Hind Siliguri', 'Inter', system-ui, sans-serif";
 
 export const T = (lang: Lang, bn: string, en: string): string => {
   if (lang === 'bn') return bn;

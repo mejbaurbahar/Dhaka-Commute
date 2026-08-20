@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
-import PlatformAd, { AdPlacement } from '../../ads/PlatformAd';
+import type { AdPlacement } from '../../ads/PlatformAd';
 
 // Build-time platform check — Vite statically replaces this with a literal.
 const NATIVE_BUILD = import.meta.env.VITE_PLATFORM === 'android';
@@ -105,11 +105,17 @@ function AdsenseUnitWeb({ slot, format = 'auto', layout, onFillResult, immediate
   );
 }
 
-// Native (Android): AdMob banner — one per app, first mounted wins.
+// Native (Android): no ads — collapse immediately so wrappers (AnchorAd,
+// SideRailAd, NativeAdCard) unmount instead of showing a stuck skeleton.
 // Expression ternary so rollup folds it and drops the web branch in the app build.
+function NoAdNative({ onFillResult }: { onFillResult?: (filled: boolean) => void }) {
+  useEffect(() => { onFillResult?.(false); }, [onFillResult]);
+  return null;
+}
+
 function AdsenseUnit({ placement, slot, format = 'auto', layout, onFillResult, immediate = false }: { placement: AdPlacement; slot: string; format?: string; layout?: string; onFillResult?: (filled: boolean) => void; immediate?: boolean }) {
   return NATIVE_BUILD ? (
-    <PlatformAd placement={placement} onFilled={onFillResult} />
+    <NoAdNative onFillResult={onFillResult} />
   ) : (
     <AdsenseUnitWeb slot={slot} format={format} layout={layout} onFillResult={onFillResult} immediate={immediate} />
   );

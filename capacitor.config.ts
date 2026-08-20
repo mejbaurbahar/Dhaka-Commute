@@ -33,9 +33,6 @@ const config: CapacitorConfig = {
       splashFullScreen: true,
       splashImmersive: true,
     },
-    AdMob: {
-      appId: 'ca-app-pub-8425219156685369~9332750440',
-    },
   },
 };
 

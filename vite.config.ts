@@ -184,7 +184,7 @@ export default defineConfig(({ mode }) => {
           skipWaiting: true,
           clientsClaim: true,
           // Cache versioning for proper updates
-          cacheId: 'dhaka-commute-v128',
+          cacheId: 'dhaka-commute-v131',
           maximumFileSizeToCacheInBytes: 10485760, // 10 MB
 
           runtimeCaching: [
@@ -249,6 +249,26 @@ export default defineConfig(({ mode }) => {
                   statuses: [0, 200]
                 }
               }
+            },
+            // deals.json (promo banners) — NetworkFirst: fresh when online,
+            // cached for offline so the home/vehicle pages never lose promos.
+            // ignoreSearch: the app fetches /deals.json?v=<timestamp> — a new
+            // timestamp every load would miss the cached entry offline.
+            {
+              urlPattern: ({ url }) => url.pathname === '/deals.json',
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'deals-cache',
+                networkTimeoutSeconds: 5,
+                matchOptions: { ignoreSearch: true },
+                expiration: {
+                  maxEntries: 5,
+                  maxAgeSeconds: 24 * 60 * 60,
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
             },
             // Images - Cache First (Offline First Strategy).
             // Match by request.destination (not URL extension) because most
