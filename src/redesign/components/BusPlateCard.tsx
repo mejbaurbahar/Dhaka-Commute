@@ -1,22 +1,31 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Tokens, Lang, T, SANS, BEN } from '../tokens';
 import { SuggestionDropdown } from './SuggestionDropdown';
-import { submitBusPlate, getBusPlatesuggestons, PLATE_REGEX, type PlateSuggestion } from '../../../services/communityDataService';
+import { submitBusPlate, getBusPlatesuggestons, normalizePlate, PLATE_REGEX, type PlateSuggestion } from '../../../services/communityDataService';
 import { useNetworkStatus } from '../../../utils/networkStatus';
 
 /**
- * Auto-format plate input: user types digits only, we build `DMB 11-1111`.
- * First 2 digits → district, last 4 → serial.
+ * Auto-format plate input:
+ * - digits only ("121814") → built `DMB 12-1814` (fast-path for most users)
+ * - anything with letters ("DHAKA-BA 12-3814", "ঢাকা মেট্রো-গ ১২-৩৮১৪") is kept
+ *   as typed — real plates must survive verbatim.
  */
 const formatPlateInput = (raw: string): string => {
-  const digits = raw.replace(/\D/g, '').slice(0, 6);
+  const latin = normalizePlate(raw);
+  if (/[A-Zঀ-৿]/.test(latin)) {
+    return latin.replace(/[^A-Zঀ-৿0-9\s-]/g, '').slice(0, 24);
+  }
+  const digits = latin.replace(/\D/g, '').slice(0, 6);
   if (!digits) return '';
   const part1 = digits.slice(0, 2);
   const part2 = digits.slice(2, 6);
   return `DMB ${part1}${part2 ? '-' + part2 : ''}`;
 };
 const digitsOnly = (p: string) => p.replace(/\D/g, '');
-const showPlate = (short: string) => `DMB ${short.toUpperCase()}`;
+const showPlate = (p: string) => {
+  const up = p.toUpperCase();
+  return /^\d{2}-\d{4}$/.test(up) ? `DMB ${up}` : up;
+};
 
 interface Props {
   bus: { id: string; name: string };
@@ -44,14 +53,15 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
     return () => { alive = false; };
   }, [bus.id]);
 
-  const known = useMemo(() => {
+  const allPlates = useMemo(() => {
     const fromConst = plates.map(p => p.toUpperCase());
     const fromCommunity = community
       .map(s => s.plate.toUpperCase())
       .filter(p => !fromConst.includes(p));
-    const dedup = [...fromConst, ...fromCommunity].filter((p, i, a) => a.indexOf(p) === i);
-    return dedup.map(p => ({ id: p, label: showPlate(p) }));
+    return [...fromConst, ...fromCommunity].filter((p, i, a) => a.indexOf(p) === i);
   }, [plates, community]);
+
+  const known = useMemo(() => allPlates.map(p => ({ id: p, label: showPlate(p) })), [allPlates]);
 
   const inputDigits = digitsOnly(input);
   const filtered = known.filter(k => !inputDigits || digitsOnly(k.id).includes(inputDigits));
@@ -60,7 +70,7 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
     ? [{ id: 'add-new', label: T(lang, 'কোনো বাস নম্বর পাওয়া যায়নি — এখনই যোগ করুন', 'No bus number found — add now') }]
     : filtered;
 
-  const valid = PLATE_REGEX.test(input.trim());
+  const valid = PLATE_REGEX.test(normalizePlate(input));
 
   const handleSave = async () => {
     if (!valid || submitting) return;
@@ -92,7 +102,9 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
       inputRef.current?.focus();
       return;
     }
-    setInput(formatPlateInput(s.id));
+    // Preserve the stored plate verbatim — reformatting would rewrite
+    // "DHAKA METRO-GA 12-3814" into the wrong "DMB 12-3814".
+    setInput(s.id);
     setFeedback(null);
   };
 
@@ -105,9 +117,9 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
         </div>
       </div>
 
-      {plates.length > 0 ? (
+      {allPlates.length > 0 ? (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
-          {plates.map(p => (
+          {allPlates.map(p => (
             <span key={p} style={{ background: `${tk.primary}18`, border: `1px solid ${tk.primary}44`, borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 12, color: tk.primary, letterSpacing: 0.5 }}>
               {showPlate(p)}
             </span>
@@ -131,8 +143,8 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
           onKeyDown={e => { if (e.key === 'Enter') void handleSave(); }}
-          placeholder="DMB 12-3814"
-          maxLength={11}
+          placeholder={lang === 'bn' ? 'যেমন: DMB 12-3814 বা DHAKA-BA 12-3814' : 'e.g. DMB 12-3814 or DHAKA-BA 12-3814'}
+          maxLength={24}
           style={{ flex: 1, background: tk.panelMuted, border: `1.5px solid ${input && !valid ? '#ef4444' : tk.line}`, borderRadius: 10, padding: '9px 12px', fontFamily: SANS, fontSize: 13, color: tk.text, outline: 'none' }}
         />
         <button
@@ -147,7 +159,7 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
 
       {input && !valid && (
         <div style={{ fontFamily: SANS, fontSize: 11, color: '#ef4444', marginTop: 4 }}>
-          {T(lang, 'ফরম্যাট: DMB 12-3814', 'Format: DMB 12-3814')}
+          {T(lang, 'ফরম্যাট: DMB 12-3814 বা DHAKA-BA 12-3814', 'Format: DMB 12-3814 or DHAKA-BA 12-3814')}
         </div>
       )}
       {!online && (

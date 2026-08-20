@@ -96,13 +96,17 @@ export function getDeviceId(): string {
 }
 
 export function normalizeBusNumber(raw: string): string {
-  return String(raw || '').toUpperCase().replace(/\s+/g, ' ').trim();
+  // Latinize Bengali digits (১২-৩৮১৪ → 12-3814) so validation + storage are
+  // consistent no matter which script the user typed.
+  const latin = String(raw || '').replace(/[০-৯]/g, d => String('০১২৩৪৫৬৭৮৯'.indexOf(d)));
+  return latin.toUpperCase().replace(/\s+/g, ' ').trim();
 }
 
 export function isBusNumberValid(raw: string): boolean {
-  // BD plate: optional district (DA/DHA/CHA…) + series letter + class digits + 2-4-digit number.
-  // e.g. "DA M 12-0080", "M 12-2467", "12-2467". Trailing junk like "DA M 12-0080NHB HB" fails.
-  return /^([A-Z]{1,5} )?([A-Z] )?\d{1,2}[- ]\d{2,4}$/.test(normalizeBusNumber(raw));
+  // BD plate: optional district (DA/DHA/CHA/DHAKA…) + series (M / METRO-GA) + number.
+  // e.g. "DA M 12-0080", "M 12-2467", "12-2467", "DHAKA METRO-GA 12-3814",
+  // "DHAKA-BA 12-3814". Trailing junk like "DA M 12-0080NHB HB" fails.
+  return /^(([A-Z]{1,10}(-[A-Z]{1,3})?)( ([A-Z]{1,10}(-[A-Z]{1,3})?))? )?\d{1,2}[- ]\d{2,4}$/.test(normalizeBusNumber(raw));
 }
 
 function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number): number {

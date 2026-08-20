@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
 
+// Build-time platform check — Vite statically replaces this with a literal.
+const NATIVE_BUILD = import.meta.env.VITE_PLATFORM === 'android';
+
 export type AffiliateCourseId = 'spoken-english' | 'vocabulary' | 'deer-scooter' | 'oneplus-headphone' | 'riversong-watch';
 
 export interface CourseData {
@@ -560,6 +563,9 @@ export function AffiliateBanner({
   compact = false,
   className = '',
 }: AffiliateBannerProps) {
+  // No ads in the Android app — web/AdSense only. Tree-shaken by rollup in the app build.
+  if (NATIVE_BUILD) return null;
+
   // Determine effective variant when 'auto' is passed
   let resolvedVariant = variant;
   if (resolvedVariant === 'auto') {

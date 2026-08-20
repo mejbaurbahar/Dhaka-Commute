@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Tokens, Lang, SANS, BEN, T } from '../tokens';
-import PlatformAd from '../../ads/PlatformAd';
 
 // Build-time platform check — Vite statically replaces this with a literal.
 const NATIVE_BUILD = import.meta.env.VITE_PLATFORM === 'android';
@@ -136,8 +135,14 @@ function RealAdWeb({
   );
 }
 
-// Native (Android): AdMob banner — one per app, first mounted wins.
+// Native (Android): no ads — collapse immediately so AdSlot/NativeAdCard
+// unmount instead of showing a stuck skeleton. Web/AdSense unaffected.
 // Expression ternary so rollup folds it and drops the web branch in the app build.
+function NoAdNative({ onFillResult }: { onFillResult: (filled: boolean) => void }) {
+  useEffect(() => { onFillResult(false); }, [onFillResult]);
+  return null;
+}
+
 function RealAd({
   kind,
   format,
@@ -152,7 +157,7 @@ function RealAd({
   onFillResult: (filled: boolean) => void;
 }) {
   return NATIVE_BUILD ? (
-    <PlatformAd placement={kind} onFilled={onFillResult} />
+    <NoAdNative onFillResult={onFillResult} />
   ) : (
     <RealAdWeb format={format} slot={slot} layout={layout} onFillResult={onFillResult} />
   );

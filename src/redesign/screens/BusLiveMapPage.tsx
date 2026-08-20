@@ -7,6 +7,7 @@ import { PageShell } from './PageShell';
 import { LiveBusMap } from '../components/LiveBusMap';
 import { BUS_DATA, STATIONS } from '../../../constants';
 import { resolveStationIds } from '../../../services/searchService';
+import { getBusPlatesuggestons } from '../../../services/communityDataService';
 import {
   CommunityBus,
   getBuses,
@@ -84,6 +85,7 @@ export function BusLiveMapPage(props: Props) {
   const [approachBanner, setApproachBanner] = useState<string | null>(null);
   const [busNumberInput, setBusNumberInput] = useState(prefillNumber);
   const [knownNumbers, setKnownNumbers] = useState<string[]>([]);
+  const [communityPlates, setCommunityPlates] = useState<string[]>([]);
   const [selectedNumber, setSelectedNumber] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
 
@@ -111,6 +113,16 @@ export function BusLiveMapPage(props: Props) {
     void getBusNumbers(busId).then(entries => {
       if (alive) setKnownNumbers(entries.map(e => e.busNumber).filter(Boolean));
     });
+    return () => { alive = false; };
+  }, [busId]);
+
+  // ── community-suggested plate numbers for this bus (saved via plate card) ──
+  useEffect(() => {
+    if (!busId) return;
+    let alive = true;
+    void getBusPlatesuggestons(busId)
+      .then(list => { if (alive) setCommunityPlates(list.filter(s => s.status !== 'rejected').map(s => s.plate)); })
+      .catch(() => { /* offline — live numbers still work */ });
     return () => { alive = false; };
   }, [busId]);
 
@@ -237,8 +249,12 @@ export function BusLiveMapPage(props: Props) {
               {((bus as unknown as { plates?: string[] })?.plates ?? []).map(p => (
                 <option key={`plate-${p}`} value={p} />
               ))}
+              {/* Community-suggested plates (saved on the bus plate card) */}
+              {communityPlates.filter(n => !((bus as unknown as { plates?: string[] })?.plates ?? []).includes(n)).map(n => (
+                <option key={`cplate-${n}`} value={n} />
+              ))}
               {/* Numbers from live community sharing */}
-              {knownNumbers.filter(n => !((bus as unknown as { plates?: string[] })?.plates ?? []).includes(n)).map(n => (
+              {knownNumbers.filter(n => !((bus as unknown as { plates?: string[] })?.plates ?? []).includes(n) && !communityPlates.includes(n)).map(n => (
                 <option key={n} value={n} />
               ))}
             </datalist>

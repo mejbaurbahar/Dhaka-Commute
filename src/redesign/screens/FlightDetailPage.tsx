@@ -90,7 +90,7 @@ export function FlightDetailPage(props: Props) {
     {key:'info',bn:'ফ্লাইট তথ্য',en:'Flight info'},
     {key:'cabins',bn:'কেবিন ক্লাস',en:'Cabin classes'},
     {key:'amenities',bn:'সুবিধা',en:'Amenities'},
-    {key:'book',bn:'টিকিট কিনুন',en:'Book ticket'},
+    {key:'book',bn:'টিকিট তথ্য',en:'Ticket info'},
   ];
 
   const heroGrad = `linear-gradient(135deg,${a.col[0]},${a.col[1]})`;
