@@ -859,7 +859,27 @@ export async function getBusPlatesuggestons(busId: string): Promise<PlateSuggest
   return data?.suggestions ?? [];
 }
 
-export async function submitBusPlate(busId: string, busName: string, plate: string, cfToken?: string): Promise<{ ok: boolean; error?: string; status?: WriteStatus }> {
+const BUS_LIVE_API = (() => {
+  try {
+    const base = (import.meta as any).env?.VITE_BUS_LIVE_URL as string | undefined;
+    if (base) return base.replace(/\/$/, '');
+  } catch { /* ignore */ }
+  return 'https://koyjabo-bus-live.fagun115946.workers.dev';
+})();
+
+async function verifyPlateViaRegistry(plate: string, busId: string): Promise<'verified' | 'pending'> {
+  try {
+    const res = await fetch(
+      `${BUS_LIVE_API}/api/verify-plate?plate=${encodeURIComponent(plate)}&busId=${encodeURIComponent(busId)}`,
+      { signal: AbortSignal.timeout(4000) }
+    );
+    if (!res.ok) return 'pending';
+    const data = await res.json() as { verified?: boolean };
+    return data.verified ? 'verified' : 'pending';
+  } catch { return 'pending'; }
+}
+
+export async function submitBusPlate(busId: string, busName: string, plate: string, cfToken?: string): Promise<{ ok: boolean; error?: string; status?: WriteStatus; plateStatus?: PlateSuggestion['status'] }> {
   const normalised = normalizePlate(plate);
   if (!PLATE_REGEX.test(normalised)) {
     return { ok: false, error: 'Invalid format. Use: DMB 12-3814 or DHAKA-BA 12-3814', status: 'failed' };
@@ -871,6 +891,9 @@ export async function submitBusPlate(busId: string, busName: string, plate: stri
   const duplicate = existing.suggestions.some(s => s.plate === normalised && s.status !== 'rejected');
   if (duplicate) return { ok: false, error: 'This plate is already submitted', status: 'failed' };
 
+  // Auto-verify if passenger GPS registry already confirmed this plate on this bus.
+  const plateStatus = await verifyPlateViaRegistry(normalised, busId);
+
   const entry: PlateSuggestion = {
     id: crypto.randomUUID(),
     busId,
@@ -879,13 +902,13 @@ export async function submitBusPlate(busId: string, busName: string, plate: stri
     userId: user.id,
     displayName: user.displayName,
     timestamp: Date.now(),
-    status: 'pending',
+    status: plateStatus,
   };
   existing.suggestions.unshift(entry);
   if (existing.suggestions.length > 100) existing.suggestions = existing.suggestions.slice(0, 100);
 
-  const status = await repoPutOrQueue(`data/plate-suggestions/${busId}.json`, existing, `plate-suggest: ${busName} ${normalised}`, cfToken);
-  return { ok: status !== 'failed', status };
+  const writeStatus = await repoPutOrQueue(`data/plate-suggestions/${busId}.json`, existing, `plate-suggest: ${busName} ${normalised}`, cfToken);
+  return { ok: writeStatus !== 'failed', status: writeStatus, plateStatus };
 }
 
 // ── Destination Ratings ─────────────────────────────────────────────────────────

@@ -425,22 +425,7 @@ export const enhancedBusSearch = (query: string): SearchResult => {
                 const hasToStop = bus.stops.some(stopId => toStationIds.includes(stopId));
 
                 if (hasFromStop && hasToStop) {
-                    // Check if the route goes from "from" to "to" in the correct order
-                    const fromIndices = bus.stops
-                        .map((stopId, idx) => fromStationIds.includes(stopId) ? idx : -1)
-                        .filter(idx => idx !== -1);
-                    const toIndices = bus.stops
-                        .map((stopId, idx) => toStationIds.includes(stopId) ? idx : -1)
-                        .filter(idx => idx !== -1);
-
-                    // Check if any "from" stop comes before any "to" stop
-                    const validRoute = fromIndices.some(fromIdx =>
-                        toIndices.some(toIdx => fromIdx < toIdx)
-                    );
-
-                    if (validRoute) {
-                        connectingBuses.push(bus);
-                    }
+                    connectingBuses.push(bus);
                 }
             });
 
@@ -470,21 +455,7 @@ export const enhancedBusSearch = (query: string): SearchResult => {
                     const hasNearbyToStop = bus.stops.some(stopId => allDestinationIds.includes(stopId));
 
                     if (hasFromStop && hasNearbyToStop) {
-                        // Check route direction
-                        const fromIndices = bus.stops
-                            .map((stopId, idx) => fromStationIds.includes(stopId) ? idx : -1)
-                            .filter(idx => idx !== -1);
-                        const toIndices = bus.stops
-                            .map((stopId, idx) => allDestinationIds.includes(stopId) ? idx : -1)
-                            .filter(idx => idx !== -1);
-
-                        const validRoute = fromIndices.some(fromIdx =>
-                            toIndices.some(toIdx => fromIdx < toIdx)
-                        );
-
-                        if (validRoute) {
-                            nearbyConnectingBuses.push(bus);
-                        }
+                        nearbyConnectingBuses.push(bus);
                     }
                 });
 

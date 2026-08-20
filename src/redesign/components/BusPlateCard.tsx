@@ -53,6 +53,7 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
     return () => { alive = false; };
   }, [bus.id]);
 
+  // plates from constants = admin-confirmed; community plates carry status
   const allPlates = useMemo(() => {
     const fromConst = plates.map(p => p.toUpperCase());
     const fromCommunity = community
@@ -60,6 +61,12 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
       .filter(p => !fromConst.includes(p));
     return [...fromConst, ...fromCommunity].filter((p, i, a) => a.indexOf(p) === i);
   }, [plates, community]);
+
+  const statusOf = (plate: string): 'admin' | 'verified' | 'pending' => {
+    if (plates.map(p => p.toUpperCase()).includes(plate)) return 'admin';
+    const s = community.find(c => c.plate.toUpperCase() === plate);
+    return s?.status === 'verified' ? 'verified' : 'pending';
+  };
 
   const known = useMemo(() => allPlates.map(p => ({ id: p, label: showPlate(p) })), [allPlates]);
 
@@ -83,14 +90,19 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
       setInput('');
       setFocused(false);
     } else if (result.ok) {
-      setFeedback({ ok: true, msg: T(lang, 'ধন্যবাদ! আপনার প্লেট নম্বর জমা হয়েছে।', 'Thanks! Plate submitted for review.') });
+      const verified = result.plateStatus === 'verified';
+      setFeedback({
+        ok: true,
+        msg: verified
+          ? T(lang, 'প্লেট যাচাই হয়েছে ✓', 'Plate verified ✓')
+          : T(lang, 'ধন্যবাদ! আপনার প্লেট নম্বর জমা হয়েছে — যাচাইয়ের অপেক্ষায়।', 'Thanks! Plate submitted — pending verification.'),
+      });
       setInput('');
       setFocused(false);
-      // Reflect the new plate in the dropdown immediately (remote sync happens on flush).
-      const plate = input.trim().toUpperCase();
+      const plate = normalizePlate(input.trim());
       setCommunity(prev => prev.some(s => s.plate.toUpperCase() === plate)
         ? prev
-        : [{ id: `local-${Date.now()}`, busId: bus.id, busName: bus.name, plate, userId: 'local', displayName: 'Passenger', timestamp: Date.now(), status: 'pending' }, ...prev]);
+        : [{ id: `local-${Date.now()}`, busId: bus.id, busName: bus.name, plate, userId: 'local', displayName: 'Passenger', timestamp: Date.now(), status: result.plateStatus ?? 'pending' }, ...prev]);
     } else {
       setFeedback({ ok: false, msg: result.error ?? T(lang, 'জমা দেওয়া যায়নি। আবার চেষ্টা করুন।', 'Could not submit. Try again.') });
     }
@@ -118,16 +130,32 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
       </div>
 
       {allPlates.length > 0 ? (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
-          {allPlates.map(p => (
-            <span key={p} style={{ background: `${tk.primary}18`, border: `1px solid ${tk.primary}44`, borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 12, color: tk.primary, letterSpacing: 0.5 }}>
-              {showPlate(p)}
-            </span>
-          ))}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12, alignItems: 'center' }}>
+          {allPlates.map(p => {
+            const st = statusOf(p);
+            const badge = st === 'verified' ? { label: '✓', color: '#10b981' } : st === 'pending' ? { label: '⏳', color: '#f59e0b' } : null;
+            return (
+              <span key={p} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: `${tk.primary}18`, border: `1px solid ${tk.primary}44`, borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 12, color: tk.primary, letterSpacing: 0.5 }}>
+                {showPlate(p)}
+                {badge && <span style={{ fontSize: 10, color: badge.color }}>{badge.label}</span>}
+              </span>
+            );
+          })}
+          <button
+            onClick={() => { setFocused(true); setTimeout(() => inputRef.current?.focus(), 50); }}
+            style={{ background: `${tk.primary}18`, border: `1.5px dashed ${tk.primary}66`, borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 13, color: tk.primary, cursor: 'pointer', lineHeight: 1.2 }}
+            title={T(lang, 'নতুন প্লেট যোগ করুন', 'Add new plate')}
+          >+</button>
         </div>
       ) : (
-        <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textFaint, marginBottom: 10 }}>
-          {T(lang, 'এই বাসের প্লেট নম্বর এখনো যোগ হয়নি।', 'No plate numbers added yet for this bus.')}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+          <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textFaint }}>
+            {T(lang, 'এই বাসের প্লেট নম্বর এখনো যোগ হয়নি।', 'No plate numbers added yet.')}
+          </div>
+          <button
+            onClick={() => { setFocused(true); setTimeout(() => inputRef.current?.focus(), 50); }}
+            style={{ background: tk.primary, border: 'none', borderRadius: 8, padding: '4px 12px', fontFamily: SANS, fontWeight: 700, fontSize: 13, color: '#fff', cursor: 'pointer' }}
+          >{T(lang, '+ যোগ করুন', '+ Add')}</button>
         </div>
       )}
 
