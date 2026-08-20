@@ -200,17 +200,7 @@ export const getBusImagePath = (busName: string, busBnName?: string): string | n
         return '/default-bus.svg';
     }
 
-    // Return the full path to the image
-    // Handle specific extensions for known files
-    const pngBuses = ['ডি লিংক বাস', 'পল্লবী সুপার', 'শিকড় পরিবহন বাস'];
-    const jpegBuses = ['বিকল্প বাস সিটি সুপার সার্ভিস'];
-
-    if (pngBuses.includes(imageName)) {
-        return `/buses-image/${imageName}.png`;
-    }
-    if (jpegBuses.includes(imageName)) {
-        return `/buses-image/${imageName}.jpeg`;
-    }
-
-    return `/buses-image/${imageName}.jpg`;
+    // Return the full path to the image — all bus photos are WebP now
+    // (converted 2026-08-20 to cut the offline bundle ~2.4x).
+    return `/buses-image/${imageName}.webp`;
 };

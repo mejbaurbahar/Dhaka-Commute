@@ -25,13 +25,17 @@ const hash = (u) => {
 let ok = 0, fail = 0;
 const map = {};
 for (const u of urls) {
-  const name = `${hash(u)}.jpg`;
+  const name = `${hash(u)}.webp`;
   const dest = join(OUT, name);
   if (!existsSync(dest)) {
     try {
-      execSync(`curl -s -o "${dest}" -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36" -e "https://www.google.com/" --max-time 20 "${u}"`, { timeout: 30000 });
-      const size = existsSync(dest) ? execSync(`wc -c < "${dest}"`).toString().trim() : '0';
-      if (+size < 1000) { execSync(`rm -f "${dest}"`); throw new Error('too small'); }
+      const tmp = join(OUT, `${hash(u)}.tmp.jpg`);
+      execSync(`curl -s -o "${tmp}" -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36" -e "https://www.google.com/" --max-time 20 "${u}"`, { timeout: 30000 });
+      const size = existsSync(tmp) ? execSync(`wc -c < "${tmp}"`).toString().trim() : '0';
+      if (+size < 1000) { execSync(`rm -f "${tmp}"`); throw new Error('too small'); }
+      // WebP — ~3x smaller than JPEG, keeps the offline bundle lean.
+      execSync(`cwebp -quiet -q 80 "${tmp}" -o "${dest}"`, { timeout: 30000 });
+      execSync(`rm -f "${tmp}"`);
       ok++;
     } catch (e) { fail++; continue; }
   } else ok++;
