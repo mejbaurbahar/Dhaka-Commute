@@ -24,18 +24,31 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PLACES_SRC = path.join(__dirname, '../data/bangladeshPlaces.ts');
 const OUT_FILE = path.join(__dirname, '../data/generated/destination-enrichment-raw.json');
 
-const PLACE_RE = /{\s*id: '([^']+)',\s*en: (?:'([^']+)'|"([^"]+)"),\s*bn: (?:'[^']+'|"[^"]+"),\s*type: '([^']+)',[^}]*?(?:district: (?:'([^']+)'|"([^"]+)"),)?[^}]*?lat: ([\d.]+), lng: ([\d.-]+),/g;
+const PLACE_RE = /{\s*id: '([^']+)',\s*en: (?:'([^']+)'|"([^"]+)"),\s*bn: (?:'([^']+)'|"([^"]+)"),\s*type: '([^']+)',[^}]*?lat: ([\d.]+), lng: ([\d.-]+),/g;
 
 function parsePlaces() {
   const src = fs.readFileSync(PLACES_SRC, 'utf8');
   const places = [];
+  // A lone (?:district: ...)? group is unreachable between two [^}]*? segments —
+  // the engine always lets the second segment absorb the district text. Match
+  // districts separately and pair them to entries by offset instead.
+  const DRE = /district: (?:'([^']+)'|"([^"]+)")/g;
+  const districts = [];
+  let dm;
+  while ((dm = DRE.exec(src)) !== null) districts.push({ off: dm.index, name: dm[1] || dm[2] });
   let m;
   while ((m = PLACE_RE.exec(src)) !== null) {
+    const end = m.index + m[0].length;
+    let district = '';
+    for (const d of districts) {
+      if (d.off >= m.index && d.off < end) { district = d.name; break; }
+    }
     places.push({
       id: m[1],
       en: m[2] || m[3],
-      type: m[4],
-      district: m[5] || m[6] || '',
+      bn: m[4] || m[5],
+      type: m[6],
+      district,
       lat: +m[7],
       lng: +m[8],
     });
@@ -158,9 +171,36 @@ async function extractFromPage(page, place) {
     return haversineKm(c.lat, c.lng, place.lat, place.lng) <= 2;
   };
 
+  // Google can redirect to a place page whose coords differ from our
+  // hand-authored ones by 2+ km (we've seen 2.36km for Himchari). A match
+  // between the place-page URL slug and the place's en/bn name is stronger
+  // evidence of the right entity than coordinates — accept those too, but
+  // only when the page isn't hundreds of km away (short generic names like
+  // "Nilachal" can redirect to a same-named entity in another district).
+  // Google renames some places ("Chittagong Zoo" → "Chattogram Zoo"); apply
+  // aliases on both sides so slug↔name matching tolerates them.
+  const ALIASES = { chittagong: 'chattogram', chattogram: 'chittagong' };
+  const norm = (s) => {
+    // NFKC: precomposed Bangla letters (ড় U+09DC) decompose to base+nukta
+    // (ড় U+09A1+U+09BC), so spelling variants match.
+    let n = (s || '').normalize('NFKC').toLowerCase().replace(/[\s+_\-/.'"()[\]]/g, '');
+    for (const [a, b] of Object.entries(ALIASES)) n = n.replaceAll(a, b);
+    return n;
+  };
+  const nameMatches = (u) => {
+    const slug = decodeURIComponent((u.split('/maps/place/')[1] || '').split('/')[0] || '');
+    const n = norm(slug);
+    if (!n) return false;
+    const en = norm(place.en), bn = norm(place.bn);
+    const nameOk = (en && (n.includes(en) || en.includes(n))) || (bn && (n.includes(bn) || bn.includes(n)));
+    if (!nameOk) return false;
+    const c = parseCoordsFromUrl(u);
+    return !c || !place.lat || haversineKm(c.lat, c.lng, place.lat, place.lng) < 30;
+  };
+
   // 1) Name search — may auto-redirect to the place page
   await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await page.waitForTimeout(6000); // let Maps settle / auto-redirect
+  await page.waitForTimeout(10000); // let Maps settle / auto-redirect
   if (await checkBlocked(page)) return { blocked: true };
   finalUrl = page.url();
   coords = parseCoordsFromUrl(finalUrl);
@@ -170,8 +210,12 @@ async function extractFromPage(page, place) {
     const exact = coords && haversineKm(coords.lat, coords.lng, place.lat, place.lng) < 0.25;
     // Accept when coords match and the entity either has a rating (2km) or is
     // within 250m of our known position — rating-less pages are usually admin
-    // areas (thana/upazila) that share the same name.
-    if (matchesKnown(coords) && (parsed || exact)) {
+    // areas (thana/upazila) that share the same name. Name matches (URL slug
+    // vs en/bn) are accepted regardless of distance. A rated page within 30km
+    // is also accepted — Bangla spellings differ across sources (সেমেট্রি vs
+    // সিমেট্রি) so the name check can miss the right redirect.
+    const nearRated = parsed && coords && haversineKm(coords.lat, coords.lng, place.lat, place.lng) < 30;
+    if ((matchesKnown(coords) && (parsed || exact)) || nameMatches(finalUrl) || nearRated) {
       result.gmRating = parsed?.rating;
       result.gmReviewCount = parsed?.reviews;
       await fillResult(result, page, finalUrl);
@@ -184,9 +228,51 @@ async function extractFromPage(page, place) {
   await page.waitForTimeout(4000);
   if (await checkBlocked(page)) return { blocked: true };
 
-  const cards = page.locator('a[href*="/maps/place/"]');
+  let cards = page.locator('a[href*="/maps/place/"]');
   let cardCount = 0;
   try { cardCount = await cards.count(); } catch { cardCount = 0; }
+  // Name-only query returned nothing (throttle or overly-ambiguous name) —
+  // retry once with district + country appended before giving up.
+  if (cardCount === 0 && place.district) {
+    const scoped = `${place.en} ${place.district} Bangladesh`;
+    console.log(`    (name-only empty — retrying with: "${scoped}")`);
+    await page.goto('https://www.google.com/maps/search/' + encodeURIComponent(scoped), { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForTimeout(10000);
+    if (await checkBlocked(page)) return { blocked: true };
+    try { cardCount = await cards.count(); } catch { cardCount = 0; }
+  }
+  // Google intermittently serves an empty result list (soft throttle) — wait
+  // and retry once before giving up.
+  if (cardCount === 0) {
+    await sleep(jitter(15000, 20000));
+    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForTimeout(8000);
+    if (await checkBlocked(page)) return { blocked: true };
+    finalUrl = page.url();
+    if (finalUrl.includes('/maps/place/') && nameMatches(finalUrl)) {
+      const parsed = parseRatingFromBody(await page.evaluate(() => document.body?.innerText || ''));
+      if (parsed) { result.gmRating = parsed.rating; result.gmReviewCount = parsed.reviews; }
+      await fillResult(result, page, finalUrl);
+      return result;
+    }
+    try { cardCount = await cards.count(); } catch { cardCount = 0; }
+  }
+  // Last resort: the Bangla name often redirects where the English one gets
+  // an empty list (Google's canonical entry is bn-titled).
+  if (cardCount === 0 && place.bn && norm(place.bn) !== norm(place.en)) {
+    console.log(`    (retrying with bn: "${place.bn}")`);
+    await page.goto('https://www.google.com/maps/search/' + encodeURIComponent(place.bn), { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForTimeout(9000);
+    if (await checkBlocked(page)) return { blocked: true };
+    finalUrl = page.url();
+    if (finalUrl.includes('/maps/place/') && nameMatches(finalUrl)) {
+      const parsed = parseRatingFromBody(await page.evaluate(() => document.body?.innerText || ''));
+      if (parsed) { result.gmRating = parsed.rating; result.gmReviewCount = parsed.reviews; }
+      await fillResult(result, page, finalUrl);
+      return result;
+    }
+    try { cardCount = await cards.count(); } catch { cardCount = 0; }
+  }
   if (cardCount === 0) return { error: 'no-result' };
 
   for (let i = 0; i < Math.min(cardCount, 6); i++) {
@@ -202,10 +288,13 @@ async function extractFromPage(page, place) {
     const bodyParsed = parseRatingFromBody(await page.evaluate(() => document.body?.innerText || '').catch(() => ''));
     const effective = parsed || bodyParsed;
     // Accept when the entity sits near our known position (3km — Maps URL
-    // coords are the viewport anchor and can sit a little off the POI pin).
-    if (coords && effective && haversineKm(coords.lat, coords.lng, place.lat, place.lng) < 3) {
-      result.gmRating = effective.rating;
-      result.gmReviewCount = effective.reviews;
+    // coords are the viewport anchor and can sit a little off the POI pin),
+    // when the card's place-page URL slug matches the place name, or when a
+    // rated page sits within 30km (Bangla spelling variants defeat slug match).
+    const near = coords && effective && haversineKm(coords.lat, coords.lng, place.lat, place.lng);
+    if ((near !== false && near < 30) || nameMatches(finalUrl)) {
+      result.gmRating = effective?.rating;
+      result.gmReviewCount = effective?.reviews;
       await fillResult(result, page, finalUrl);
       return result;
     }
@@ -233,16 +322,30 @@ async function main() {
   console.log(`Places ${startIdx}-${endIdx - 1} of ${places.length} (${chunk.length} to scrape)`);
 
   const raw = loadRaw();
-  const browser = await chromium.launch({
-    channel: 'chrome', // uses installed Google Chrome — no download, better bot evasion
-    headless: true,
-    args: ['--disable-blink-features=AutomationControlled', '--no-sandbox'],
-  });
-  const context = await browser.newContext({
-    viewport: { width: 1280, height: 800 },
-    locale: 'en-US',
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-  });
+  // KJ_CDP: attach to a real (headed) Chrome via CDP — Google soft-throttles
+  // headless Chrome on Maps search (empty result lists, no captcha). Real
+  // Chrome auto-redirects to place pages and returns cards normally.
+  let browser;
+  let context;
+  if (process.env.KJ_CDP) {
+    browser = await chromium.connectOverCDP(process.env.KJ_CDP);
+    context = browser.contexts()[0] ?? await browser.newContext({
+      viewport: { width: 1280, height: 800 },
+      locale: 'en-US',
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36',
+    });
+  } else {
+    browser = await chromium.launch({
+      channel: 'chrome', // uses installed Google Chrome — no download, better bot evasion
+      headless: true,
+      args: ['--disable-blink-features=AutomationControlled', '--no-sandbox'],
+    });
+    context = await browser.newContext({
+      viewport: { width: 1280, height: 800 },
+      locale: 'en-US',
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+    });
+  }
   const page = await context.newPage();
 
   let done = 0;
