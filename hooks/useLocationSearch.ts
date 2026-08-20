@@ -24,6 +24,16 @@ export interface LocationSuggestion {
   category: string;
 }
 
+// ── Normalisation helper (module-level, shared by all callers) ───────────────
+
+const _STRIP = /\s*(bus stand|bus stop|bus station|bus terminal|railway station|rail station|train station|station|ghat|terminal|bazar|bazaar|stand|bus|\d+|[-#])$/i;
+function normBase(s: string): string {
+  let r = s.toLowerCase().trim();
+  let prev: string;
+  do { prev = r; r = r.replace(_STRIP, '').trim(); } while (r !== prev);
+  return r.replace(/[\s\-\.,'()]+/g, '');
+}
+
 // ── Static lookup tables (built once) ────────────────────────────────────────
 
 let _staticList: LocationSuggestion[] | null = null;
@@ -153,10 +163,6 @@ export function useLocationSearch(
       s.sub.includes(query)
     );
 
-    // Strip common transport suffixes before normalizing — prevents "Hemayetpur" vs "Hemayetpur Bus Stand"
-    const STRIP_SUFFIXES = /\s*(bus stand|bus stop|bus station|bus terminal|railway station|rail station|train station|station|ghat|terminal|bazar|bazaar|stand|\d+)$/i;
-    const normBase = (s: string) => s.toLowerCase().replace(STRIP_SUFFIXES, '').replace(/[\s\-\.,'()]+/g, '');
-
     const seenNames = new Set<string>(staticMatches.map(s => normBase(s.label)));
     const staticIds = new Set(staticMatches.map(s => s.id));
 
@@ -191,8 +197,6 @@ export function searchAllLocations(query: string, limit = 20): LocationSuggestio
   if (!query.trim()) return staticList.slice(0, limit);
 
   const q = query.toLowerCase().trim();
-  const STRIP = /\s*(bus stand|bus stop|bus station|bus terminal|railway station|rail station|train station|station|ghat|terminal|bazar|bazaar|stand|\d+)$/i;
-  const normBase = (s: string) => s.toLowerCase().replace(STRIP, '').replace(/[\s\-\.,'()]+/g, '');
   const staticMatches = staticList.filter(s =>
     s.label.toLowerCase().includes(q) ||
     s.sub.toLowerCase().includes(q)
