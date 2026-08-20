@@ -1851,4 +1851,9 @@ export const DE_DICT: Record<string, string> = {
   "BESTSELLER": "BESTSELLER",
   "POPULAR": "BELIEBT",
   "TRENDING": "IM TREND",
+  "Could not enable notifications — try from Settings": "Benachrichtigungen konnten nicht aktiviert werden — versuchen Sie es in den Einstellungen",
+  "We will notify you 5 min before arrival!": "Wir benachrichtigen Sie 5 Min. vor der Ankunft!",
+  "Reminder cancelled": "Erinnerung abgebrochen",
+  "ETA reminder set — notification ~5 min before arrival": "ETA-Erinnerung gesetzt — ~5 Min. vor Ankunft",
+  "Set reminder": "Erinnerung setzen",
 };

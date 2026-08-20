@@ -9,7 +9,8 @@ import { ALL_PLACES, Place } from '../../../data/bangladeshPlaces';
 import { DESTINATION_ENRICHMENT } from '../../../data/destinationEnrichment';
 import { DESTINATION_THINGS_TO_DO } from '../../../data/destinationThingsToDo';
 import { buildLegOptions, ItineraryLeg, destinationSearchParams, nearestHubDistrict, DISTRICT_BN as DISTRICT_BN_LOCAL } from '../../../services/itineraryEngine';
-import { trackDestinationView } from '../../../services/analyticsService';
+import { trackDestinationView, trackFeatureUsage } from '../../../services/analyticsService';
+import { pushEnabled, enablePush, scheduleTripEta, cancelTripEta } from '../../../src/services/pushService';
 import { useDocumentTitle, setCanonicalUrl, setMetaTag, setPropertyMetaTag, setJsonLd } from '../utils/useDocumentTitle';
 
 type Props = Omit<PageShellProps, 'children'> & { params?: Record<string, string> };
@@ -174,6 +175,64 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
     return buildLegOptions(dhakaHub.id, place.id);
   }, [place]);
 
+  // Fastest road/rail/flight time to this place (minutes). Dhaka-city spots
+  // have no intercity legs — assume a short local trip.
+  const etaMin = useMemo(() => {
+    if (!leg || leg.options.length === 0) return 25;
+    return Math.min(...leg.options.map(l => l.durationMin));
+  }, [leg]);
+
+  // "Remind me 5 min before arrival" — one pending reminder per device, stored
+  // locally so the chip survives navigation; server side it is keyed by type.
+  const [tripEta, setTripEta] = useState<{ id: string; fireAt: number } | null>(null);
+  const [toast, setToast] = useState('');
+  const [etaBusy, setEtaBusy] = useState(false);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('kj_trip_eta');
+      if (!raw) { setTripEta(null); return; }
+      const v = JSON.parse(raw) as { id?: string; fireAt?: number };
+      if (v.id === place?.id && v.fireAt && v.fireAt > Date.now()) setTripEta({ id: v.id, fireAt: v.fireAt });
+      else setTripEta(null);
+    } catch {
+      setTripEta(null);
+    }
+  }, [place?.id]);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 3000);
+  };
+
+  const handleEtaRemind = async () => {
+    if (!place || etaBusy) return;
+    setEtaBusy(true);
+    try {
+      if (!pushEnabled()) {
+        const ok = await enablePush(); // user gesture → permission prompt is allowed
+        if (!ok) {
+          showToast(T(lang, 'নোটিফিকেশন চালু করা যায়নি — সেটিংস থেকে চেষ্টা করুন', 'Could not enable notifications — try from Settings'));
+          return;
+        }
+      }
+      scheduleTripEta(place.en, `/places/${slug}`, etaMin);
+      const rec = { id: place.id, fireAt: Date.now() + Math.max(2, etaMin - 5) * 60_000 };
+      try { localStorage.setItem('kj_trip_eta', JSON.stringify(rec)); } catch { /* private mode */ }
+      setTripEta(rec);
+      trackFeatureUsage('trip-eta-reminder');
+      showToast(T(lang, '🔔 পৌঁছানোর ৫ মিনিট আগে জানিয়ে দেবো!', 'We will notify you 5 min before arrival!'));
+    } finally {
+      setEtaBusy(false);
+    }
+  };
+
+  const handleEtaCancel = () => {
+    cancelTripEta();
+    try { localStorage.removeItem('kj_trip_eta'); } catch { /* private mode */ }
+    setTripEta(null);
+    showToast(T(lang, 'রিমাইন্ডার বাতিল করা হয়েছে', 'Reminder cancelled'));
+  };
+
   // Click-through endpoints for the how-to-go rows: `to` is always the place's
   // district hub per mode (station / IATA / terminal / city) — the raw place
   // name like "Inani Beach" has no station, airport or terminal.
@@ -206,6 +265,11 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
 
   return (
     <PageShell {...rest} theme={theme} lang={lang}>
+      {toast && (
+        <div style={{ position: 'fixed', top: 72, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: tk.primary, color: tk.primaryInk, padding: '10px 20px', borderRadius: 999, fontFamily: SANS, fontWeight: 700, fontSize: 13, boxShadow: tk.shadowLg, whiteSpace: 'nowrap', maxWidth: '90vw', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {toast}
+        </div>
+      )}
       <div style={{ maxWidth: 760, margin: '0 auto', paddingBottom: 64, fontFamily: font }}>
         {/* Hero */}
         <div style={{ position: 'relative', height: 220, background: tk.panelMuted, overflow: 'hidden' }}>
@@ -371,6 +435,30 @@ export function DestinationDetailPage({ theme, lang, params, ...rest }: Props) {
                   ? T(lang, `${DISTRICT_BN_LOCAL[fromDistrict] ?? fromDistrict} থেকে কীভাবে যাবেন — আসল ভাড়া ও সময় (২০২৬)। আপনার অবস্থান থেকে নিকটতম হাবটি শুরুর পয়েন্ট হিসেবে নেওয়া হয়েছে।`, `How to go from ${fromDistrict} — real fares & durations (2026). Your nearest hub is used as the starting point.`)
                   : T(lang, 'ঢাকা থেকে কীভাবে যাবেন — আসল ভাড়া ও সময় (২০২৬)।', 'How to go from Dhaka — real fares & durations (2026).')}
               </p>
+
+              {/* Arrival reminder — push fires ~5 min before ETA */}
+              <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                {tripEta ? (
+                  <>
+                    <span style={{ fontFamily: font, fontSize: 13, fontWeight: 700, color: tk.text, flex: 1, minWidth: 0 }}>
+                      🔔 {T(lang, 'ETA রিমাইন্ডার চালু আছে — পৌঁছানোর ৫ মিনিট আগে নোটিফিকেশন আসবে', 'ETA reminder set — notification ~5 min before arrival')}
+                    </span>
+                    <button onClick={handleEtaCancel} style={{ fontFamily: font, fontSize: 12.5, fontWeight: 700, cursor: 'pointer', padding: '7px 14px', borderRadius: 999, border: `1px solid ${tk.line}`, background: 'transparent', color: tk.textDim, whiteSpace: 'nowrap' }}>
+                      {T(lang, 'বাতিল করুন', 'Cancel')}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ fontFamily: font, fontSize: 13, fontWeight: 700, color: tk.text, flex: 1, minWidth: 0 }}>
+                      🚀 {T(lang, `পৌঁছানোর প্রায় ${Math.max(2, etaMin - 5)} মিনিট আগে নোটিফিকেশন পাবেন (প্রায় ${fmtDur(etaMin, lang)} যাত্রা)`, `Get notified ~${Math.max(2, etaMin - 5)} min before arrival (~${fmtDur(etaMin, lang)} trip)`) }
+                    </span>
+                    <button onClick={handleEtaRemind} disabled={etaBusy} style={{ fontFamily: font, fontSize: 12.5, fontWeight: 700, cursor: etaBusy ? 'default' : 'pointer', padding: '7px 14px', borderRadius: 999, border: 'none', background: tk.primary, color: tk.primaryInk, whiteSpace: 'nowrap', opacity: etaBusy ? 0.6 : 1 }}>
+                      {T(lang, '🔔 রিমাইন্ডার সেট করুন', 'Set reminder')}
+                    </button>
+                  </>
+                )}
+              </div>
+
               {leg ? (
                 <LegRow
                   leg={leg}

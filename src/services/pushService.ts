@@ -25,7 +25,7 @@ const KEY_SERVER_CONFIRMED = 'koyjabo_push_server_confirmed';
 const KEY_FIRST_VISIT = 'koyjabo_first_visit_at';
 const KEY_INSTALL_SCHEDULED = 'koyjabo_install_reminder_scheduled';
 
-export type PushEventType = 'install' | 'search-check' | 'search-tomorrow' | 'save' | 'dormant' | 'search-start' | 'route-view';
+export type PushEventType = 'install' | 'search-check' | 'search-tomorrow' | 'save' | 'dormant' | 'search-start' | 'route-view' | 'trip-eta';
 
 /** Diagnostic log — silent unless a worker URL is configured (offline-first design). */
 function logPush(...args: unknown[]): void {
@@ -302,6 +302,23 @@ export function cancelPushEvent(type: PushEventType): void {
   const endpoint = localStorage.getItem(KEY_ENDPOINT);
   if (!endpoint) return;
   post('/api/cancel', { endpoint, type });
+}
+
+// ── Trip ETA reminder ("~5 minutes to reach") ─────────────────────
+
+/**
+ * "Almost there!" reminder — fires ~5 minutes before the user reaches a
+ * destination (earlier for very short trips, clamped to min 2 minutes).
+ * Same type replaces any previous trip-eta for this device.
+ */
+export function scheduleTripEta(name: string, url: string, etaMinutes: number): void {
+  const minutes = Math.max(2, etaMinutes - 5);
+  trackPushEvent('trip-eta', { name, url, minutes: '5' }, Date.now() + minutes * 60_000);
+}
+
+/** Cancel the pending arrival reminder for this device. */
+export function cancelTripEta(): void {
+  cancelPushEvent('trip-eta');
 }
 
 // ── SW ↔ page sync (C2) ───────────────────────────────────────────

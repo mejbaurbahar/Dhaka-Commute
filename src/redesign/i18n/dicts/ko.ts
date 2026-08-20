@@ -1851,4 +1851,9 @@ export const KO_DICT: Record<string, string> = {
   "BESTSELLER": "베스트셀러",
   "POPULAR": "인기",
   "TRENDING": "트렌딩",
+  "Could not enable notifications — try from Settings": "알림을 켤 수 없습니다 — 설정에서 시도하세요",
+  "We will notify you 5 min before arrival!": "도착 5분 전에 알려드릴게요!",
+  "Reminder cancelled": "알림이 취소되었습니다",
+  "ETA reminder set — notification ~5 min before arrival": "ETA 알림 설정됨 — 도착 약 5분 전",
+  "Set reminder": "알림 설정",
 };

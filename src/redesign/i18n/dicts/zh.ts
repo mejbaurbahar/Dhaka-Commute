@@ -1851,4 +1851,9 @@ export const ZH_DICT: Record<string, string> = {
   "BESTSELLER": "畅销",
   "POPULAR": "热门",
   "TRENDING": "热门",
+  "Could not enable notifications — try from Settings": "无法启用通知 — 请在设置中尝试",
+  "We will notify you 5 min before arrival!": "我们将在到达前5分钟通知您!",
+  "Reminder cancelled": "提醒已取消",
+  "ETA reminder set — notification ~5 min before arrival": "ETA提醒已设置 — 到达前约5分钟",
+  "Set reminder": "设置提醒",
 };

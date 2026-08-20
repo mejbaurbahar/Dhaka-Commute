@@ -1851,4 +1851,9 @@ export const HI_DICT: Record<string, string> = {
   "BESTSELLER": "बेस्टसेलर",
   "POPULAR": "लोकप्रिय",
   "TRENDING": "ट्रेंडिंग",
+  "Could not enable notifications — try from Settings": "सूचनाएं चालू नहीं हो सकीं — सेटिंग्स से प्रयास करें",
+  "We will notify you 5 min before arrival!": "हम आगमन से 5 मिनट पहले सूचित करेंगे!",
+  "Reminder cancelled": "अनुस्मारक रद्द किया गया",
+  "ETA reminder set — notification ~5 min before arrival": "ETA अनुस्मारक सेट — आगमन से ~5 मिनट पहले",
+  "Set reminder": "अनुस्मारक सेट करें",
 };
