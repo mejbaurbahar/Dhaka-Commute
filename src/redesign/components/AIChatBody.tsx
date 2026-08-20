@@ -23,7 +23,7 @@ export function ChatBubble({ msg, tk, lang, userAvatarUrl, userInitials }: { msg
     return (
       <div style={{ display: 'flex', gap: 10, alignSelf: 'flex-start', maxWidth: '80%' }}>
         <AvatarAI tk={tk} />
-        <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', color: tk.text }}>
+        <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', color: tk.text, unicodeBidi: 'plaintext' }}>
           <div style={{ fontFamily: BEN, fontSize: 14, lineHeight: 1.6 }}>
             {T(lang, 'হ্যালো! আমি কই যাবো AI। বাংলাদেশের যেকোনো পরিবহন সম্পর্কে জিজ্ঞেস করুন।', 'Hello! I\'m KoyJabo AI. Ask me anything about transport in Bangladesh.')}
           </div>
@@ -36,7 +36,7 @@ export function ChatBubble({ msg, tk, lang, userAvatarUrl, userInitials }: { msg
       <div style={{ display: 'flex', gap: 10, alignSelf: 'flex-start', maxWidth: '90%' }}>
         <AvatarAI tk={tk} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', color: tk.text, fontFamily: BEN, fontSize: 14, lineHeight: 1.6 }}>
+          <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', color: tk.text, fontFamily: BEN, fontSize: 14, lineHeight: 1.6, unicodeBidi: 'plaintext' }}>
             {T(lang, 'গুলশান → মতিঝিল রুটে ৩টি বিকল্প আছে:', 'Gulshan → Motijheel has 3 options:')}
           </div>
           <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, overflow: 'hidden' }}>
@@ -77,7 +77,7 @@ export function ChatBubble({ msg, tk, lang, userAvatarUrl, userInitials }: { msg
     return (
       <div style={{ display: 'flex', gap: 10, alignSelf: 'flex-start', maxWidth: '85%' }}>
         <AvatarAI tk={tk} />
-        <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', color: tk.text, fontFamily: BEN, fontSize: 14, lineHeight: 1.7 }}>
+        <div style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', color: tk.text, fontFamily: BEN, fontSize: 14, lineHeight: 1.7, unicodeBidi: 'plaintext' }}>
           {T(lang,
             "কক্সবাজার যাওয়ার ৩টি উপায়:\n\n🚌 বাস (গ্রীন লাইন/হানিফ): ৳৯০০–২৫০০, রাতে ছাড়ে, ১০–১২ ঘণ্টা\n🚆 ট্রেন (কক্সবাজার এক্সপ্রেস): ৳২০০–১২০০, রাত ১০টায় ছাড়ে, ৯ ঘণ্টা\n✈️ ফ্লাইট (বিমান/ইউএস বাংলা): ৳৪৫০০+, ৫৫ মিনিট",
             "3 ways to reach Cox's Bazar:\n\n🚌 Bus (Green Line/Hanif): ৳900–2500, overnight, 10–12h\n🚆 Train (Cox's Bazar Express): ৳200–1200, 10PM, 9h\n✈️ Flight (Biman/US-Bangla): ৳4500+, 55 min"
@@ -93,7 +93,7 @@ export function ChatBubble({ msg, tk, lang, userAvatarUrl, userInitials }: { msg
         ? <img src={userAvatarUrl} alt={userInitials} style={{ width: 32, height: 32, borderRadius: 999, objectFit: 'cover', flexShrink: 0, border: `1.5px solid ${tk.primarySoft}` }} />
         : <div style={{ width: 32, height: 32, borderRadius: 999, background: tk.accentSoft, color: tk.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: SANS, fontWeight: 700, fontSize: 12 }}>{userInitials || 'KJ'}</div>
       )}
-      <div style={{ background: isUser ? tk.primary : tk.panel, color: isUser ? tk.primaryInk : tk.text, border: isUser ? 0 : `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', fontFamily: BEN, fontSize: 14, lineHeight: 1.6 }}>
+      <div style={{ background: isUser ? tk.primary : tk.panel, color: isUser ? tk.primaryInk : tk.text, border: isUser ? 0 : `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', fontFamily: BEN, fontSize: 14, lineHeight: 1.6, unicodeBidi: 'plaintext' }}>
         {isUser ? msg.text : renderMd(msg.text, tk)}
       </div>
     </div>
@@ -244,7 +244,7 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput, hideHisto
               onFocus={() => setTimeout(() => inputRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' }), 300)}
               placeholder={T(lang, 'পরিবহন সম্পর্কে জিজ্ঞেস করুন...', 'Ask about transport in Bangladesh...')}
               autoFocus={autoFocusInput}
-              style={{ flex: 1, background: 'transparent', border: 'none', padding: isMobile ? '14px 0' : '12px 0', fontFamily: BEN, fontSize: isMobile ? 16 : 14, color: tk.text, outline: 'none', minWidth: 0 }}
+              style={{ flex: 1, background: 'transparent', border: 'none', padding: isMobile ? '14px 0' : '12px 0', fontFamily: BEN, fontSize: isMobile ? 16 : 14, color: tk.text, outline: 'none', minWidth: 0, unicodeBidi: 'plaintext' }}
             />
           </div>
           <button onClick={() => chat.send()} disabled={chat.isLoading} aria-label={T(lang, 'পাঠান', 'Send message')} style={{ width: isMobile ? 46 : 48, height: isMobile ? 46 : 48, borderRadius: 999, background: chat.isLoading ? tk.panelMuted : `linear-gradient(135deg,${tk.primary},${tk.accent})`, color: '#fff', border: 0, cursor: chat.isLoading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: chat.isLoading ? 'none' : `0 4px 14px ${tk.primary}55`, transition: 'all 0.2s' }}>
