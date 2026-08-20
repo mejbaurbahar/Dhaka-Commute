@@ -397,22 +397,30 @@ export function IntercityPage(props: Props) {
       const toStations = toQ ? resolveStations(toQ) : [];
       return BD_TRAIN_ROUTES.filter(r => {
         const allStopIds = [r.from, r.to, ...(r.stops || [])];
+        const orderedStops = [r.from, ...(r.stops || []), r.to];
         const nameText = (r.name + ' ' + r.bnName).toLowerCase();
-        // Search filter
         if (sq && !loosematch(nameText, sq)) return false;
-        // From filter: station ID match OR loose name match in stops list
         const fromOk = !fromQ || (
           fromStations.length > 0
             ? fromStations.some(s => allStopIds.includes(s))
             : allStopIds.some(id => loosematch(id, fromQ)) || loosematch(nameText, fromQ)
         );
-        // To filter
         const toOk = !toQ || (
           toStations.length > 0
             ? toStations.some(s => allStopIds.includes(s))
             : allStopIds.some(id => loosematch(id, toQ)) || loosematch(nameText, toQ)
         );
-        return fromOk && toOk;
+        if (!fromOk || !toOk) return false;
+        if (fromQ && toQ) {
+          const fi = orderedStops.findIndex(s =>
+            fromStations.length > 0 ? fromStations.includes(s) : loosematch(s, fromQ)
+          );
+          const ti = orderedStops.findIndex(s =>
+            toStations.length > 0 ? toStations.includes(s) : loosematch(s, toQ)
+          );
+          if (fi !== -1 && ti !== -1) return fi < ti;
+        }
+        return true;
       });
     }
 

@@ -47,8 +47,8 @@ function busMatchesRoute(r: typeof BUS_DATA[0], from: string, to: string): boole
   const matchF = !from || r.routeString.toLowerCase().includes(from.toLowerCase()) || r.stops.some(s=>normQ(s).includes(rf));
   const matchT = !to || r.routeString.toLowerCase().includes(to.toLowerCase()) || r.stops.some(s=>normQ(s).includes(rt));
   if (!matchF || !matchT) return false;
-  // When both endpoints match, verify from comes before to in stop order
-  if (from && to) {
+  // For bidirectional routes (⇄), both directions are valid — skip order check
+  if (from && to && !r.routeString.includes('⇄')) {
     const fi = r.stops.findIndex(s => normQ(s).includes(rf) || normQ(STATIONS[s]?.name ?? '').includes(rf));
     const ti = r.stops.findIndex(s => normQ(s).includes(rt) || normQ(STATIONS[s]?.name ?? '').includes(rt));
     if (fi !== -1 && ti !== -1) return fi < ti;

@@ -116,7 +116,18 @@ export function TrainPage(props: Props) {
         .filter((t): t is typeof TRAINS[number] => !!t);
       return featured.length ? featured : TRAINS.slice(0, 5);
     }
-    return TRAINS.filter(r => routeIncludes(r.source, fromQ) && routeIncludes(r.source, toQ));
+    return TRAINS.filter(r => {
+      if (!routeIncludes(r.source, fromQ) || !routeIncludes(r.source, toQ)) return false;
+      if (fromQ && toQ) {
+        const stopsText = r.source.stops.map(id =>
+          [id, stationName(id), stationBnName(id)].join(' ').toLowerCase()
+        );
+        const fi = stopsText.findIndex(t => t.includes(fromQ));
+        const ti = stopsText.findIndex(t => t.includes(toQ));
+        if (fi !== -1 && ti !== -1) return fi < ti;
+      }
+      return true;
+    });
   }, [fromStation, toStation, hasSearched]);
 
   // Top search bar: filter by name/number
