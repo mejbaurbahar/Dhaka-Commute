@@ -678,6 +678,10 @@
   <!-- Preconnect to critical origins for faster resource loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Bundled Arabic font (self-hosted, offline-safe) — preloaded so the first
+       Arabic render never stalls on font load/shaping (was: seconds of black
+       screen when switching Bangla→Arabic in the Android app). -->
+  <link rel="preload" href="/fonts/noto-sans-arabic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preconnect" href="https://aistudiocdn.com" crossorigin>
   <link rel="dns-prefetch" href="https://api.open-meteo.com">
   <!-- Preconnect for live bus page (Leaflet map tiles + DTCA proxy) -->
@@ -735,17 +739,17 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-NNR2RDVF');</script>
   <!-- End Google Tag Manager -->
-    <script type="module" crossorigin src="/assets/index-C38hk-4q.js"></script>
+    <script type="module" crossorigin src="/assets/index-Dea6Kjw0.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/train-data-0ghMMhsj.js">
-    <link rel="modulepreload" crossorigin href="/assets/intercity-data-DvpRWVIB.js">
-    <link rel="modulepreload" crossorigin href="/assets/ai-service-DIT5OrZz.js">
+    <link rel="modulepreload" crossorigin href="/assets/intercity-data-Bjy-IpqJ.js">
+    <link rel="modulepreload" crossorigin href="/assets/ai-service-BvEMLWsc.js">
     <link rel="modulepreload" crossorigin href="/assets/leaflet-BdVKSRIn.js">
     <link rel="modulepreload" crossorigin href="/assets/react-USqSMMEU.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-BefEoCg9.js">
-    <link rel="modulepreload" crossorigin href="/assets/react-dom-iwy3Vco2.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-CHDSV6vR.js">
+    <link rel="modulepreload" crossorigin href="/assets/react-dom-DelGJEM3.js">
     <link rel="modulepreload" crossorigin href="/assets/lucide-isqBP3Jz.js">
     <link rel="stylesheet" crossorigin href="/assets/leaflet-Dgihpmma.css">
-    <link rel="stylesheet" crossorigin href="/assets/index-CA5_uaEc.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-Db3VVczp.css">
   <link rel="manifest" href="/manifest.webmanifest">  <script type="application/ld+json" data-static-seo="route">{"@context":"https://schema.org","@type":"WebPage","name":"Al Madina Plus One Bus Route","url":"https://koyjabo.com/bus/al-madina-plus-one/","description":"Al Madina Plus One bus route in Dhaka.","about":{"@type":"BusTrip","name":"Al Madina Plus One Bus Route"}}</script>
   <script type="application/ld+json" data-static-seo="faq">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the route of the Al Madina Plus One bus in Dhaka?","acceptedAnswer":{"@type":"Answer","text":"The Al Madina Plus One bus route is listed on KoyJabo with its full stop list, route map and fare guidance for Dhaka."}},{"@type":"Question","name":"What is the fare of the Al Madina Plus One bus?","acceptedAnswer":{"@type":"Answer","text":"The Al Madina Plus One bus fare is distance-based (approx ৳30 full route). Use the KoyJabo fare calculator to find the exact fare between any two stops."}}]}</script>
 </head>
@@ -944,10 +948,16 @@
        deferred until after the app has painted and the main thread is idle.
        This protects LCP / TBT — the single biggest Core Web Vital on this site.
        Auto Ads are enabled by the adsbygoogle.js client param (no meta tag, no
-       enable_page_level_ads push — either causes TagError "Only one ... allowed per page"). -->
+       enable_page_level_ads push — either causes TagError "Only one ... allowed per page").
+       Web only: AdSense/Funding Choices/Daamdekhi are all skipped in the Android app
+       (KoyJabo shows no ads in-app — Play policy; AdSense TOS forbids app usage). -->
   <script>
     (function () {
-      var SCRIPTS = [
+      var isNative = false;
+      try {
+        isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || window.location.protocol === 'capacitor:';
+      } catch (e) { /* default to web */ }
+      var SCRIPTS = isNative ? [] : [
         // GA4 removed here — now handled by GTM (GTM-NNR2RDVF) in head
         { src: 'https://fundingchoicesmessages.google.com/i/pub-8425219156685369?ers=1' },
         { src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8425219156685369' },
@@ -974,7 +984,21 @@
       }
     })();
   </script>
-  <img src="https://shop.daamdekhi.com/aeo/tag/collect.gif?site=MVZPpZlR" height="1" width="1" alt="" style="position:absolute;left:-9999px;" referrerpolicy="no-referrer" />
+  <script>
+    (function () {
+      try {
+        var isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || window.location.protocol === 'capacitor:';
+        if (isNative) return;
+      } catch (e) { /* default to web */ }
+      var i = document.createElement('img');
+      i.src = 'https://shop.daamdekhi.com/aeo/tag/collect.gif?site=MVZPpZlR';
+      i.height = 1; i.width = 1;
+      i.alt = '';
+      i.style.position = 'absolute'; i.style.left = '-9999px';
+      i.referrerPolicy = 'no-referrer';
+      document.body.appendChild(i);
+    })();
+  </script>
 
   <!-- Messenger Chat Plugin — Koy Jabo Page (web only; skipped in Capacitor app) -->
   <script>
