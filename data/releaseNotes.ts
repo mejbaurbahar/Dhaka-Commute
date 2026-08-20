@@ -12,6 +12,25 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '2.2.2',
+    date: '2026-08-20',
+    type: 'patch',
+    features: [],
+    bnFeatures: [],
+    fixes: [
+      'Removed 16 incorrect bus routes that were wrongly shown for Gulshan 1 → Hemayetpur (only Baishakhi Paribahan correctly serves this corridor)',
+      'Bus, train and intercity search now strictly enforces direction — reverse results no longer appear',
+      'Search dropdown no longer shows duplicate stoppage names (e.g. "Hemayetpur bus stop" and "Hemayetpur Bus Stand-2" now collapse into one "Hemayetpur" entry)',
+    ],
+    bnFixes: [
+      'গুলশান ১ → হেমায়েতপুর রুটে ১৬টি ভুল বাস এন্ট্রি সরানো হয়েছে (শুধু বৈশাখী পরিবহন এই রুটে সঠিকভাবে চলে)',
+      'বাস, ট্রেন ও আন্তঃনগর সার্চে এখন শুধু সঠিক দিকের ফলাফল আসবে — উল্টো দিকের বাস/ট্রেন আর দেখাবে না',
+      'সার্চ ড্রপডাউনে একই স্টপেজের নকল নাম আর দেখাবে না (যেমন "Hemayetpur bus stop" ও "Hemayetpur Bus Stand-2" এখন একটি "Hemayetpur" হিসেবে দেখাবে)',
+    ],
+    improvements: [],
+    bnImprovements: [],
+  },
+  {
     version: '2.2.1',
     date: '2026-08-20',
     type: 'patch',
