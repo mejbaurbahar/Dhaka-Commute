@@ -1851,4 +1851,9 @@ export const JA_DICT: Record<string, string> = {
   "BESTSELLER": "ベストセラー",
   "POPULAR": "人気",
   "TRENDING": "注目",
+  "Could not enable notifications — try from Settings": "通知を有効にできませんでした — 設定からお試しください",
+  "We will notify you 5 min before arrival!": "到着5分前にお知らせします!",
+  "Reminder cancelled": "リマインダーをキャンセルしました",
+  "ETA reminder set — notification ~5 min before arrival": "ETAリマインダー設定済み — 到着の約5分前",
+  "Set reminder": "リマインダーを設定",
 };

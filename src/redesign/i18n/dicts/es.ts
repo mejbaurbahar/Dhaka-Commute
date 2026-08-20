@@ -1851,4 +1851,9 @@ export const ES_DICT: Record<string, string> = {
   "BESTSELLER": "MÁS VENDIDO",
   "POPULAR": "POPULAR",
   "TRENDING": "TENDENCIA",
+  "Could not enable notifications — try from Settings": "No se pudieron activar las notificaciones — inténtelo desde Configuración",
+  "We will notify you 5 min before arrival!": "¡Te avisaremos 5 minutos antes de llegar!",
+  "Reminder cancelled": "Recordatorio cancelado",
+  "ETA reminder set — notification ~5 min before arrival": "Recordatorio ETA configurado — ~5 min antes de llegar",
+  "Set reminder": "Establecer recordatorio",
 };

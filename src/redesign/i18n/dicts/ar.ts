@@ -1851,5 +1851,10 @@ export const AR_DICT: Record<string, string> = {
   "BESTSELLER": "الأكثر مبيعًا",
   "POPULAR": "شائع",
   "TRENDING": "رائج",
+  "Could not enable notifications — try from Settings": "تعذر تفعيل الإشعارات — جرّب من الإعدادات",
+  "We will notify you 5 min before arrival!": "سنخبرك قبل الوصول بـ5 دقائق!",
+  "Reminder cancelled": "تم إلغاء التذكير",
+  "ETA reminder set — notification ~5 min before arrival": "تم ضبط تذكير الوصول — قبل ~5 دقائق",
+  "Set reminder": "ضبط تذكير",
 };
 

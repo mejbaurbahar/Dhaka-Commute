@@ -23,7 +23,7 @@
  */
 
 const SUB_PREFIX = 'sub:';
-const TYPES = ['install', 'search-check', 'search-tomorrow', 'save', 'dormant', 'search-start', 'route-view'];
+const TYPES = ['install', 'search-check', 'search-tomorrow', 'save', 'dormant', 'search-start', 'route-view', 'trip-eta'];
 const MAX_EVENTS = 10;
 const DORMANT_MAX_NUDGES = 5; // "forgot KoyJabo" fires at most 5 times (every 48h of silence)
 
@@ -138,6 +138,24 @@ const NOTIFICATIONS = {
         d && d.name
           ? `You viewed the ${d.name} route. Open KoyJabo when it's time to travel!`
           : 'You viewed a route — check it again before you travel!',
+      url: (d) => (d && d.url) || '/',
+    },
+  },
+  'trip-eta': {
+    bn: {
+      title: 'প্রায় পৌঁছে গেছেন!',
+      body: (d) =>
+        d && d.name
+          ? `আর মাত্র ~${(d && d.minutes) || 5} মিনিট — ${d.name} পৌঁছে যাচ্ছেন!`
+          : 'আপনার গন্তব্য প্রায় পৌঁছে গেছেন!',
+      url: (d) => (d && d.url) || '/',
+    },
+    en: {
+      title: 'Almost there!',
+      body: (d) =>
+        d && d.name
+          ? `Only ~${(d && d.minutes) || 5} minutes to ${d.name}!`
+          : 'You are almost at your destination!',
       url: (d) => (d && d.url) || '/',
     },
   },
@@ -565,6 +583,12 @@ async function processSub(name, now) {
         sub.events = [
           ...(sub.events || []).filter((e) => e !== event),
           { type: 'dormant', fireAt: now + 2 * DAY, data: { ...(event.data || {}), nudges: nudges + 1 }, createdAt: now },
+        ];
+      } else if (event.type === 'install' && nudges < 1) {
+        // Installed but still not used — one more nudge 48h later, then stop.
+        sub.events = [
+          ...(sub.events || []).filter((e) => e !== event),
+          { type: 'install', fireAt: now + 2 * DAY, data: { nudges: 1 }, createdAt: now },
         ];
       } else {
         sub.events = (sub.events || []).filter((e) => e !== event);
