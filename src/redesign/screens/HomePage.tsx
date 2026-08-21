@@ -721,6 +721,17 @@ function ModeTile({
 
 // ─── KoyJaboStory ─────────────────────────────────────────────────────────────
 
+const KJ_STARS: Array<[number, number, number, number]> = [
+  [8, 5, 2, 0], [12, 18, 1.5, 0.5], [6, 30, 1.5, 1.0], [15, 42, 2, 0.3],
+  [9, 55, 1.5, 0.8], [5, 65, 2, 0.2], [14, 75, 1.5, 1.1], [7, 85, 2, 0.6],
+  [18, 92, 1.5, 0.4], [22, 25, 1, 0.9], [20, 70, 1, 0.7], [25, 48, 1, 1.3],
+]; // [top%, left%, sizePx, delayS]
+
+const KJ_BLDGS: Array<[number, number, number]> = [
+  [0, 7, 70], [6, 5, 90], [10, 9, 58], [18, 6, 80], [23, 4.5, 65], [28, 7, 52],
+  [60, 7, 68], [66, 4.5, 88], [70, 8, 60], [77, 6, 78], [82, 5, 55], [87, 7, 70], [93, 5, 85],
+]; // [left%, width%, height]
+
 const STORY_CAPTIONS = [
   {
     bn: 'লোকাল বাসস্ট্যান্ডে — কোন বাসে উঠবো? সব তো একরকম! 😕',
@@ -750,87 +761,102 @@ function KoyJaboStory({
   onNav: (r: string, params?: Record<string, string>) => void;
 }) {
   const [scene, setScene] = useState(0);
+  const [prev, setPrev] = useState<number | null>(null);
+  const prevRef = useRef(0);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
     const id = setInterval(() => setScene((s) => (s + 1) % 4), 3600);
     return () => clearInterval(id);
   }, []);
 
-  const sceneContent = [
-    // Scene 0: confused at chaotic bus stop
-    <div key="s0" className="kj-story-scene" style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', animation: 'kjStoryIn 0.4s ease both' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #0a1929 0%, #0d1b2e 55%, #111a0f 100%)' }} />
-      {/* Stars */}
-      {([{t:'8%',l:'14%'},{t:'11%',l:'44%'},{t:'5%',l:'68%'},{t:'17%',l:'80%'},{t:'9%',l:'27%'}] as {t:string,l:string}[]).map((s,i)=>(
-        <div key={i} style={{position:'absolute',top:s.t,left:s.l,width:2,height:2,borderRadius:'50%',background:'#fff',opacity:0.55,animation:`kjSpark ${1.4+i*0.35}s ease-in-out infinite`,animationDelay:`${i*0.4}s`}}/>
+  useEffect(() => {
+    if (!mountedRef.current) { mountedRef.current = true; return; }
+    setPrev(prevRef.current);
+    prevRef.current = scene;
+    const t = setTimeout(() => setPrev(null), 600);
+    return () => clearTimeout(t);
+  }, [scene]);
+
+  // Shared city background — rendered once beneath all scenes
+  const cityBg = (
+    <>
+      <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg, #07111f 0%, #0c1a30 60%, #0e2035 100%)' }} />
+      {KJ_STARS.map(([top, left, size, delay], i) => (
+        <div key={i} style={{ position:'absolute', width:size, height:size, borderRadius:'50%', background:'#fff', top:`${top}%`, left:`${left}%`, opacity:0.72, animation:`kjSpark ${1.4+(i%3)*0.6}s ease-in-out infinite`, animationDelay:`${delay}s` }} />
       ))}
-      {/* Road */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 65, background: '#111827' }} />
-      <div style={{ position: 'absolute', bottom: 30, left: 0, right: 0, height: 3, background: 'repeating-linear-gradient(90deg, #fde68a 0, #fde68a 22px, transparent 22px, transparent 44px)', opacity: 0.4 }} />
-      {/* Bus stop sign */}
-      <div style={{ position: 'absolute', bottom: 63, left: '30%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div style={{ background: '#1d4ed8', color: 'white', padding: '3px 8px', borderRadius: 4, fontFamily: BEN, fontSize: 9, fontWeight: 700, boxShadow: '0 0 10px rgba(29,78,216,0.55)' }}>বাস স্টপ</div>
-        <div style={{ width: 3, height: 46, background: '#6b7280' }} />
+      {/* Moon */}
+      <div style={{ position:'absolute', top:'6%', right:'8%', width:24, height:24, borderRadius:'50%', background:'radial-gradient(circle at 38% 38%, #fef9c3 0%, #fde68a 100%)', boxShadow:'0 0 18px rgba(253,230,138,0.45)', animation:'kjSpark 4s ease-in-out infinite' }} />
+      {/* City building silhouettes */}
+      {KJ_BLDGS.map(([left, width, height], i) => (
+        <div key={i} style={{ position:'absolute', bottom:63, left:`${left}%`, width:`${width}%`, height:height, background:'#091624', borderTop:'1px solid rgba(60,100,160,0.18)' }}>
+          {i % 3 !== 2 && <div style={{ position:'absolute', top:Math.floor(height*0.22), left:'22%', width:'22%', height:3.5, background:'#fde68a', opacity:0.38, boxShadow:'0 0 4px rgba(253,230,138,0.5)' }} />}
+          {i % 2 === 0 && <div style={{ position:'absolute', top:Math.floor(height*0.55), left:'55%', width:'22%', height:3.5, background:'#93c5fd', opacity:0.28 }} />}
+        </div>
+      ))}
+      {/* Street lamp */}
+      <div style={{ position:'absolute', bottom:63, left:'26%' }}>
+        <div style={{ width:2, height:28, background:'#4b5563', margin:'0 auto' }} />
+        <div style={{ position:'absolute', top:0, left:-7, width:10, height:2, background:'#4b5563', borderRadius:1 }} />
+        <div style={{ position:'absolute', top:-5, left:-10, width:8, height:5, borderRadius:'50%', background:'#fde68a', opacity:0.85, boxShadow:'0 0 12px rgba(253,230,138,0.7)' }} />
       </div>
-      {/* Confused person */}
-      <div style={{ position: 'absolute', bottom: 61, left: '43%', fontSize: 36, animation: 'kjBobY 1.4s ease-in-out infinite' }}>😰</div>
-      {/* Floating question marks */}
+      {/* Road */}
+      <div style={{ position:'absolute', bottom:0, left:0, right:0, height:65, background:'linear-gradient(180deg, #141c2a 0%, #0f1520 100%)' }} />
+      <div style={{ position:'absolute', bottom:29, left:0, right:0, height:3, background:'repeating-linear-gradient(90deg, #fde68a 0, #fde68a 18px, transparent 18px, transparent 42px)', opacity:0.3 }} />
+    </>
+  );
+
+  // Scene 0: confused at chaotic bus stop
+  const s0 = (
+    <>
+      <div style={{ position:'absolute', bottom:61, left:'30%', display:'flex', flexDirection:'column', alignItems:'center' }}>
+        <div style={{ background:'#1d4ed8', color:'white', padding:'3px 8px', borderRadius:4, fontFamily:BEN, fontSize:9, fontWeight:700, boxShadow:'0 0 10px rgba(29,78,216,0.55)' }}>বাস স্টপ</div>
+        <div style={{ width:3, height:46, background:'#6b7280' }} />
+      </div>
+      <div style={{ position:'absolute', bottom:61, left:'43%', fontSize:36, animation:'kjBobY 1.4s ease-in-out infinite' }}>😰</div>
       {(['?','?','?'] as string[]).map((q,i) => (
         <div key={i} style={{ position:'absolute', bottom:`${50+i*13}%`, left:`${52+i*7}%`, fontFamily:BEN, fontSize:16-i*2, fontWeight:900, color:'#fbbf24', animation:`kjFloatY ${1.3+i*0.5}s ease-in-out infinite`, animationDelay:`${i*0.35}s`, opacity:0.85 }}>{q}</div>
       ))}
-      {/* Thought bubble */}
       <div style={{ position:'absolute', bottom:'54%', left:'54%', background:'rgba(255,255,255,0.94)', borderRadius:12, padding:'4px 10px', fontFamily:BEN, fontSize:11, color:'#1f2937', fontWeight:700, boxShadow:'0 2px 14px rgba(0,0,0,0.28)', whiteSpace:'nowrap' }}>রুট ৮? নাকি ১২? 😵</div>
-      {/* 3 buses at different speeds */}
       <div className="kj-anim-drive" style={{ position:'absolute', bottom:42, left:0, width:'28%', animationDuration:'5s' }}><Bus3D size={60} /></div>
       <div className="kj-anim-drive" style={{ position:'absolute', bottom:42, left:'-60%', width:'28%', animationDuration:'7.5s', animationDelay:'2.2s' }}><Bus3D size={60} /></div>
       <div className="kj-anim-drive" style={{ position:'absolute', bottom:42, left:'-25%', width:'22%', animationDuration:'9s', animationDelay:'0.8s' }}><Bus3D size={48} /></div>
-    </div>,
+    </>
+  );
 
-    // Scene 1: typing destination on phone
-    <div key="s1" className="kj-story-scene" style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', animation: 'kjStoryIn 0.4s ease both' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #0a1929 0%, #0d1b2e 55%, #111a0f 100%)' }} />
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 65, background: '#111827' }} />
-      {/* Person holding phone */}
-      <div style={{ position: 'absolute', bottom: 61, left: '35%', fontSize: 34 }}>🧑</div>
-      {/* Phone - larger, detailed */}
+  // Scene 1: typing destination on phone
+  const s1 = (
+    <>
+      <div style={{ position:'absolute', bottom:61, left:'35%', fontSize:34 }}>🧑</div>
       <div style={{ position:'absolute', bottom:'27%', left:'47%', width:88, borderRadius:14, background:'#060d18', border:'2px solid rgba(0,245,255,0.6)', overflow:'hidden', boxShadow:'0 0 26px rgba(0,245,255,0.35), 0 0 60px rgba(0,245,255,0.1)', animation:'kjBobY 2.4s ease-in-out infinite' }}>
-        {/* Header */}
         <div style={{ background:'rgba(0,245,255,0.12)', padding:'4px 6px 3px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <div style={{ fontFamily:BEN, fontSize:7, fontWeight:800 }}>
-            <span style={{ color:'#FF5A6E' }}>Koy</span><span style={{ color:'#00C081' }}>Jabo</span>
-          </div>
+          <div style={{ fontFamily:BEN, fontSize:7, fontWeight:800 }}><span style={{ color:'#FF5A6E' }}>Koy</span><span style={{ color:'#00C081' }}>Jabo</span></div>
           <div style={{ fontSize:7, opacity:0.5 }}>📶</div>
         </div>
-        {/* Search fields */}
         <div style={{ padding:'5px 6px', display:'flex', flexDirection:'column', gap:4 }}>
-          {/* From */}
           <div style={{ background:'rgba(255,255,255,0.07)', borderRadius:5, padding:'3px 6px', display:'flex', alignItems:'center', gap:3 }}>
             <span style={{ fontSize:7 }}>🟢</span>
-            <span style={{ fontFamily:BEN, fontSize:7, color:'rgba(255,255,255,0.55)' }}>গুলিস্তান</span>
+            <span style={{ fontFamily:BEN, fontSize:7, color:'rgba(255,255,255,0.9)' }}>হেমায়েতপুর</span>
           </div>
-          {/* To - active with blinking cursor */}
-          <div style={{ background:'rgba(0,245,255,0.08)', border:'1px solid rgba(0,245,255,0.45)', borderRadius:5, padding:'3px 6px', display:'flex', alignItems:'center', gap:3 }}>
-            <span style={{ fontSize:7 }}>🔴</span>
-            <span style={{ fontFamily:BEN, fontSize:7, color:'#00f5ff', fontWeight:600 }}>মতিঝিল</span>
-            <span style={{ display:'inline-block', width:1.5, height:9, background:'#00f5ff', animation:'kj-blink 0.8s ease-in-out infinite', marginLeft:1 }}/>
+          <div style={{ background:'rgba(0,245,255,0.08)', border:'1px solid rgba(0,245,255,0.45)', borderRadius:5, padding:'3px 6px', display:'flex', alignItems:'center', gap:3, overflow:'hidden' }}>
+            <span style={{ fontSize:7, flexShrink:0 }}>🔴</span>
+            <span style={{ display:'inline-block', maxWidth:0, overflow:'hidden', fontFamily:BEN, fontSize:7, color:'#00f5ff', fontWeight:600, whiteSpace:'nowrap', animation:'kjTypeW 1.4s steps(7,end) 0.5s both', verticalAlign:'middle' }}>গুলশান ১</span>
+            <span style={{ display:'inline-block', width:1.5, height:9, background:'#00f5ff', animation:'kj-blink 0.8s ease-in-out infinite', flexShrink:0 }}/>
           </div>
-          {/* Search button */}
           <div style={{ background:'linear-gradient(90deg,#00c081,#00f5ff)', borderRadius:5, padding:'4px 6px', textAlign:'center' }}>
             <span style={{ fontFamily:BEN, fontSize:7, fontWeight:700, color:'#001a10' }}>🔍 রুট খুঁজুন</span>
           </div>
         </div>
       </div>
-      {/* Sparkles around phone */}
       <div style={{ position:'absolute', bottom:'70%', left:'64%', fontSize:16, animation:'kjSpark 1.2s ease-in-out infinite' }}>✨</div>
       <div style={{ position:'absolute', bottom:'50%', left:'40%', fontSize:11, animation:'kjSpark 1.9s ease-in-out infinite', animationDelay:'0.6s' }}>⭐</div>
-    </div>,
+    </>
+  );
 
-    // Scene 2: results with fare info
-    <div key="s2" className="kj-story-scene" style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', animation: 'kjStoryIn 0.4s ease both' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #0a1929 0%, #0d1b2e 55%, #111a0f 100%)' }} />
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 65, background: '#111827' }} />
-      <div style={{ position: 'absolute', bottom: 61, left: '32%', fontSize: 32 }}>🧑</div>
-      {/* Phone with results */}
+  // Scene 2: route results with fare
+  const s2 = (
+    <>
+      <div style={{ position:'absolute', bottom:61, left:'32%', fontSize:32 }}>🧑</div>
       <div style={{ position:'absolute', bottom:'24%', left:'45%', width:96, borderRadius:14, background:'#060d18', border:'2px solid rgba(0,245,255,0.5)', overflow:'hidden', boxShadow:'0 0 28px rgba(0,245,255,0.3)' }}>
         <div style={{ background:'rgba(0,245,255,0.12)', padding:'4px 6px' }}>
           <div style={{ fontFamily:BEN, fontSize:7, fontWeight:800, color:'#00f5ff' }}>৩টি রুট পাওয়া গেছে ✅</div>
@@ -852,103 +878,62 @@ function KoyJaboStory({
           </div>
         ))}
       </div>
-    </div>,
+    </>
+  );
 
-    // Scene 3: correct bus arrives, happy boarding
-    <div key="s3" className="kj-story-scene" style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', animation: 'kjStoryIn 0.4s ease both' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #0a1929 0%, #0d1b2e 55%, #111a0f 100%)' }} />
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 65, background: '#111827' }} />
-      <div style={{ position: 'absolute', bottom: 30, left: 0, right: 0, height: 3, background: 'repeating-linear-gradient(90deg, #fde68a 0, #fde68a 22px, transparent 22px, transparent 44px)', opacity: 0.4 }} />
-      {/* Celebrating person */}
+  // Scene 3: correct bus arrives
+  const s3 = (
+    <>
       <div style={{ position:'absolute', bottom:61, left:'60%', fontSize:36, animation:'kjBobY 0.9s ease-in-out infinite' }}>🙌</div>
-      {/* Bus rolling in with route label */}
       <div style={{ position:'absolute', bottom:42, left:'5%', animation:'kjRollIn 1.0s cubic-bezier(.15,.8,.2,1) both' }}>
         <div style={{ position:'relative', display:'inline-block' }}>
           <Bus3D size={88} />
           <div style={{ position:'absolute', top:6, left:7, background:'#10b981', color:'white', fontFamily:BEN, fontSize:6, fontWeight:700, padding:'1px 4px', borderRadius:2 }}>গ্রীন লাইন</div>
         </div>
       </div>
-      {/* Green checkmark badge */}
       <div style={{ position:'absolute', bottom:'67%', left:'30%', width:30, height:30, borderRadius:'50%', background:'linear-gradient(135deg,#10b981,#22c55e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, animation:'kjPopIn 0.5s cubic-bezier(.2,.7,.25,1) both', animationDelay:'0.9s', opacity:0, boxShadow:'0 0 18px rgba(16,185,129,0.65)' }}>✓</div>
-      {/* Celebration particles */}
       {(['🎉','✨','⭐','🎊','✨'] as string[]).map((e,i) => (
         <div key={i} style={{ position:'absolute', fontSize:i%2===0?18:13, top:`${12+i*10}%`, left:`${55+(i%3)*10}%`, animation:`kjSpark ${0.85+i*0.35}s ease-in-out infinite`, animationDelay:`${i*0.25}s` }}>{e}</div>
       ))}
-    </div>,
-  ];
+    </>
+  );
+
+  const allScenes = [s0, s1, s2, s3];
 
   return (
-    <div
-      style={{
-        borderRadius: 22,
-        overflow: 'hidden',
-        border: `1px solid ${tk.line}`,
-        background: tk.panel,
-      }}
-    >
+    <div style={{ borderRadius:22, overflow:'hidden', border:`1px solid ${tk.line}`, background:tk.panel }}>
       {/* Scene stage */}
-      <div style={{ height: 260, position: 'relative', background: '#0d1b2e' }}>
-        {sceneContent[scene]}
+      <div style={{ height:260, position:'relative', background:'#07111f' }}>
+        {cityBg}
+        {prev !== null && (
+          <div key={`p${prev}`} style={{ position:'absolute', inset:0, animation:'kjFadeOut 0.55s ease forwards', pointerEvents:'none' }}>
+            {allScenes[prev]}
+          </div>
+        )}
+        <div key={`s${scene}`} style={{ position:'absolute', inset:0, animation:'kjStoryIn 0.55s cubic-bezier(.2,.7,.25,1) both' }}>
+          {allScenes[scene]}
+        </div>
       </div>
 
       {/* Caption bar */}
-      <div style={{ padding: '14px 18px', background: tk.panel }}>
-        {/* Progress bars */}
-        <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
-          {[0, 1, 2, 3].map((i) => (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                height: 3,
-                borderRadius: 999,
-                background: i === scene ? tk.primary : tk.line,
-                transition: 'background 0.4s ease',
-                overflow: 'hidden',
-              }}
-            >
+      <div style={{ padding:'14px 18px', background:tk.panel }}>
+        <div style={{ display:'flex', gap:6, marginBottom:12 }}>
+          {[0,1,2,3].map((i) => (
+            <div key={i} style={{ flex:1, height:3, borderRadius:999, background:i<scene?tk.primary:tk.line, overflow:'hidden', transition:'background 0.4s ease' }}>
               {i === scene && (
-                <div
-                  style={{
-                    height: '100%',
-                    background: tk.primary,
-                    animation: 'kjLoadBar 3.6s linear forwards',
-                    borderRadius: 999,
-                  }}
-                />
+                <div style={{ height:'100%', background:tk.primary, animation:'kjLoadBar 3.6s linear forwards', borderRadius:999 }} />
               )}
             </div>
           ))}
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <p
-            style={{
-              margin: 0,
-              fontFamily: lang === 'bn' ? BEN : SANS,
-              fontSize: 13,
-              color: tk.text,
-              lineHeight: 1.5,
-              flex: 1,
-            }}
-          >
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
+          <p style={{ margin:0, fontFamily:lang==='bn'?BEN:SANS, fontSize:13, color:tk.text, lineHeight:1.5, flex:1 }}>
             {T(lang, STORY_CAPTIONS[scene].bn, STORY_CAPTIONS[scene].en)}
           </p>
           {scene === 3 && (
             <button
               onClick={() => onNav('bus-hub')}
-              style={{
-                background: tk.primary,
-                color: tk.primaryInk,
-                border: 'none',
-                borderRadius: 999,
-                padding: '7px 16px',
-                fontFamily: lang === 'bn' ? BEN : SANS,
-                fontSize: 12,
-                fontWeight: 700,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
+              style={{ background:tk.primary, color:tk.primaryInk, border:'none', borderRadius:999, padding:'7px 16px', fontFamily:lang==='bn'?BEN:SANS, fontSize:12, fontWeight:700, cursor:'pointer', whiteSpace:'nowrap' }}
             >
               {T(lang, 'এখনই চেষ্টা করুন', 'Try it now')}
             </button>
