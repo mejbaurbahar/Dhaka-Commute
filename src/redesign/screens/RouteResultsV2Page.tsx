@@ -408,7 +408,7 @@ export function RouteResultsV2Page(props: Props) {
             <button onClick={() => { const t = editFrom; setEditFrom(editTo); setEditTo(t); }} aria-label={lbl('Swap origin and destination', 'যাত্রা শুরু ও গন্তব্য অদলবদল')}
               style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '8px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}><Icon.swap s={16} /></button>
             <button
-              onClick={() => { if (editFrom.trim() || editTo.trim()) onNav('results', { from: editFrom.trim(), to: editTo.trim(), search: editFrom.trim() || editTo.trim() }); }}
+              onClick={() => { if (editFrom.trim() || editTo.trim()) onNav('results', { from: editFrom.trim(), to: editTo.trim() }); }}
               style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', border: 'none', borderRadius: 10, padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: SANS, fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0, whiteSpace: 'nowrap' }}>
               🔍 {lbl('Search', 'খুঁজুন')}
             </button>
