@@ -904,7 +904,7 @@ export const STATIONS: Record<string, Station> = {
   songsod_bhaban:   { id: 'songsod_bhaban',    name: 'Sangsad Bhaban',        bnName: 'সংসদ ভবন',                 lat: 23.760100, lng: 90.387500 },
   khejur_bagan:     { id: 'khejur_bagan',      name: 'Khejur Bagan',          bnName: 'খেজুর বাগান',              lat: 23.757600, lng: 90.389100 },
   mitford_ghat:     { id: 'mitford_ghat',      name: 'Mitford Ghat',          bnName: 'মিটফোর্ড ঘাট',             lat: 23.711200, lng: 90.404100 },
-  nawabganj:        { id: 'nawabganj',         name: 'Nawabganj',             bnName: 'নবাবগঞ্জ',                 lat: 23.712000, lng: 90.401000 },
+  nawabganj_dhaka:  { id: 'nawabganj_dhaka',   name: 'Nawabganj',             bnName: 'নবাবগঞ্জ',                 lat: 23.712000, lng: 90.401000 },
   sanarpar:         { id: 'sanarpar',          name: 'Sanarpar',              bnName: 'সনারপাড়',                 lat: 23.672000, lng: 90.501000 },
   manik_nagar:      { id: 'manik_nagar',       name: 'Manik Nagar',           bnName: 'মানিকনগর',                 lat: 23.725500, lng: 90.432200 },
   balughat:         { id: 'balughat',          name: 'Balughat',              bnName: 'বালুঘাট',                  lat: 23.819800, lng: 90.393000 },
@@ -1821,7 +1821,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Janjabil',
     bnName: 'জানযাবিল',
     routeString: 'Gabtoli ⇄ Babubazar',
-    stops: ['gabtoli', 'beribadh', 'sikder_medical', 'hazaribag', 'kamrangirchar', 'showari_ghat', 'babubazar'],
+    stops: ['gabtoli', 'beribadh', 'rayer_bazar', 'sikder_medical', 'hazaribag', 'nawabganj_dhaka', 'kamrangirchar', 'showari_ghat', 'mitford_ghat', 'babubazar'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -2164,7 +2164,7 @@ export const BUS_DATA: BusRoute[] = [
     name: 'Prattay',
     bnName: 'প্রত্যয়',
     routeString: 'Gabtoli ⇄ Babubazar',
-    stops: ['gabtoli', 'mazar_road', 'beribadh', 'sikder_medical', 'hazaribag', 'kamrangirchar', 'showari_ghat', 'babubazar'],
+    stops: ['gabtoli', 'mazar_road', 'beribadh', 'rayer_bazar', 'sikder_medical', 'hazaribag', 'nawabganj_dhaka', 'kamrangirchar', 'showari_ghat', 'mitford_ghat', 'babubazar'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:00 PM'
   },
@@ -3964,8 +3964,8 @@ export const BUS_DATA: BusRoute[] = [
     id: 'thikana',
     name: 'Thikana Paribahan',
     bnName: 'ঠিকানা পরিবহন',
-    routeString: 'Sayedabad ⇄ Savar',
-    stops: ['sayedabad', 'jatrabari', 'gulistan', 'shahbag', 'science_lab', 'kallyanpur', 'gabtoli', 'savar'],
+    routeString: 'Sign Board ⇄ Chandra',
+    stops: ['signboard', 'matuail', 'rayerbag', 'shanir_akhra', 'jatrabari', 'sayedabad', 'gulistan', 'chankhar_pul', 'bakshi_bazar', 'dhakeshwari', 'azimpur', 'nilkhet', 'newmarket', 'city_college', 'kalabagan', 'dhanmondi32', 'dhanmondi27', 'asad_gate', 'college_gate', 'shishu_mela', 'shyamoli', 'kallyanpur', 'darussalam', 'technical', 'gabtoli', 'amin_bazar', 'hemayetpur', 'savar', 'baipayl', 'zirani_bazar', 'nandan_park', 'chandra'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:30 PM'
   },
