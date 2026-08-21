@@ -94,6 +94,8 @@ export function injectGlobalStyles() {
     @keyframes kj-wake    { 0% { transform: scaleX(0.4); opacity: 0.7; } 100% { transform: scaleX(1.6); opacity: 0; } }
     @keyframes kj-spark   { 0%, 92%, 100% { opacity: 0; } 95% { opacity: 1; } }
     @keyframes kj-prop    { from { transform: scaleX(1); opacity: 0.5; } 50% { transform: scaleX(0.15); opacity: 0.9; } to { transform: scaleX(1); opacity: 0.5; } }
+    @keyframes kj-bird    { 0% { transform: translateX(140%); } 100% { transform: translateX(-140%); } }
+    @keyframes kj-sunray  { 0%,100% { opacity: 0.22; } 50% { opacity: 0.48; } }
     .kj-anim-drive   { animation: kj-drive 9s linear infinite; transform-origin: center; }
     .kj-anim-fly     { animation: kj-fly 11s ease-in-out infinite; }
     .kj-anim-train   { animation: kj-train 7s linear infinite; }

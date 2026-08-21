@@ -1055,170 +1055,207 @@ export function TravelHeroScene({
   height?: number;
 }) {
   const isDark = tk.bg === '#040814' || tk.primary === '#00f5ff';
-  const skyStart = isDark ? '#001a12' : '#c8f0e8';
-  const skyEnd = isDark ? 'transparent' : '#eef9f4';
-  const buildingFill = isDark ? '#1d3b30' : '#a9c9b6';
-  const roadColor = isDark ? '#0a1a12' : '#2d4a38';
+
+  // Sky palette — warm realistic sunrise/afternoon
+  const skyGrad = isDark
+    ? 'linear-gradient(180deg,#001428 0%,#001f12 35%,#0a0f00 65%,#180800 85%,#0d0400 100%)'
+    : 'linear-gradient(180deg,#3a9bd0 0%,#6bbde8 25%,#b0dff8 52%,#ffecc0 76%,#ffd590 90%,#ffbf70 100%)';
+
+  const cloudFill = isDark ? '#0a2a18' : '#ffffff';
+  const cloudOp  = isDark ? 0.22 : 0.88;
+  const buildFill  = isDark ? '#0a2218' : '#1e5c3a';
+  const buildGlow  = isDark ? '#1a5a35' : '#3daf72';
+  const hillFar  = isDark ? '#051208' : '#5ea870';
+  const hillNear = isDark ? '#041008' : '#3d7a50';
+  const roadBg   = isDark ? '#061410' : '#2d4e38';
+
+  // Window lights: % of windows that appear lit
+  const BUILDINGS = [
+    { x: 15, w: 44, h: 88 }, { x: 68, w: 56, h: 64 }, { x: 132, w: 38, h: 96 },
+    { x: 178, w: 52, h: 58 },
+    // right cluster
+    { x: 570, w: 54, h: 80 }, { x: 632, w: 40, h: 100 }, { x: 680, w: 62, h: 70 },
+    { x: 750, w: 46, h: 90 },
+  ];
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: '100%',
-        height,
-        overflow: 'hidden',
-        background: `linear-gradient(180deg, ${skyStart} 0%, ${skyEnd} 100%)`,
-      }}
-    >
-      {/* Sun */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 18,
-          right: 32,
-          width: 48,
-          height: 48,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, #fffde0 30%, #fbbf24 70%, transparent 100%)',
-          opacity: 0.85,
-        }}
-      />
+    <div style={{ position: 'relative', width: '100%', height, overflow: 'hidden', background: skyGrad }}>
 
-      {/* City skyline SVG */}
-      <svg
-        style={{ position: 'absolute', bottom: height * 0.22, left: 0, width: '100%' }}
-        viewBox="0 0 800 100"
-        preserveAspectRatio="none"
-        height={Math.round(height * 0.35)}
-      >
-        {[
-          { x: 20, w: 40, h: 80 },
-          { x: 70, w: 55, h: 60 },
-          { x: 134, w: 36, h: 90 },
-          { x: 178, w: 48, h: 55 },
-          { x: 580, w: 52, h: 75 },
-          { x: 640, w: 38, h: 95 },
-          { x: 686, w: 60, h: 65 },
-          { x: 754, w: 44, h: 85 },
-        ].map(({ x, w, h }, i) => (
-          <rect key={i} x={x} y={100 - h} width={w} height={h} fill={buildingFill} opacity={0.88} rx={2} />
+      {/* ── Stars (dark only) ─────────────────────────────────────── */}
+      {isDark && (
+        <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '60%', pointerEvents: 'none' }}
+          viewBox="0 0 800 180" preserveAspectRatio="xMidYMid slice">
+          {[60,180,300,420,540,660,120,250,380,500,620,740,90,200,340,460,580,700].map((x, i) => {
+            const y = [20,35,12,28,15,40,55,45,60,35,55,25,80,75,90,68,80,72][i];
+            return (
+              <circle key={i} cx={x} cy={y} r={i % 4 === 0 ? 1.8 : 1.1} fill="#ffffff"
+                style={{ animation: `kj-blink ${1.5 + (i % 5) * 0.4}s ease-in-out infinite`, animationDelay: `${i * 0.17}s` }} />
+            );
+          })}
+        </svg>
+      )}
+
+      {/* ── Sun / Moon ────────────────────────────────────────────── */}
+      <div style={{
+        position: 'absolute', top: Math.round(height * 0.065), right: '14%',
+        width: 52, height: 52, borderRadius: '50%',
+        background: isDark
+          ? 'radial-gradient(circle at 38% 38%,#ddeeff 0%,#9bbce0 50%,transparent 100%)'
+          : 'radial-gradient(circle at 38% 38%,#fffde0 15%,#fde08a 55%,#fbbf24 78%,transparent 100%)',
+        boxShadow: isDark
+          ? '0 0 28px 8px rgba(180,210,255,0.2)'
+          : '0 0 40px 16px rgba(251,191,36,0.45),0 0 80px 28px rgba(253,200,100,0.18)',
+        opacity: isDark ? 0.72 : 0.95,
+      }} />
+
+      {/* Sun rays (light only) */}
+      {!isDark && (
+        <svg style={{ position: 'absolute', top: 0, right: 0, width: '30%', pointerEvents: 'none', overflow: 'visible' }}
+          viewBox="0 0 200 120" height={Math.round(height * 0.55)}>
+          {[0,30,60,90,120,150,180,210,240,270,300,330].map((deg, i) => {
+            const rad = (deg - 90) * Math.PI / 180;
+            const len = 46 + (i % 3) * 12;
+            return (
+              <line key={deg}
+                x1={152} y1={19}
+                x2={152 + Math.cos(rad) * len}
+                y2={19 + Math.sin(rad) * len}
+                stroke="#fde08a" strokeWidth={i % 3 === 0 ? 2.2 : 1.2} strokeOpacity={0.38}
+                style={{ animation: `kj-sunray ${3.2 + i * 0.22}s ease-in-out infinite`, animationDelay: `${i * 0.14}s` }} />
+            );
+          })}
+        </svg>
+      )}
+
+      {/* ── Clouds — 3 parallax layers ────────────────────────────── */}
+      {/* Far small — fastest */}
+      <svg style={{ position: 'absolute', top: Math.round(height * 0.04), left: 0, width: '100%', pointerEvents: 'none' }}
+        viewBox="0 0 800 55" preserveAspectRatio="xMidYMid slice" height={Math.round(height * 0.24)}>
+        <g style={{ animation: 'kj-drive 17s linear infinite' }} opacity={cloudOp * 0.52}>
+          <ellipse cx={100} cy={28} rx={36} ry={12} fill={cloudFill} />
+          <ellipse cx={122} cy={21} rx={24} ry={10} fill={cloudFill} />
+          <ellipse cx={78} cy={24} rx={20} ry={8} fill={cloudFill} />
+        </g>
+        <g style={{ animation: 'kj-drive 17s linear infinite', animationDelay: '-8.5s' }} opacity={cloudOp * 0.44}>
+          <ellipse cx={500} cy={18} rx={28} ry={9} fill={cloudFill} />
+          <ellipse cx={518} cy={13} rx={18} ry={8} fill={cloudFill} />
+        </g>
+      </svg>
+      {/* Mid */}
+      <svg style={{ position: 'absolute', top: Math.round(height * 0.08), left: 0, width: '100%', pointerEvents: 'none' }}
+        viewBox="0 0 800 75" preserveAspectRatio="xMidYMid slice" height={Math.round(height * 0.28)}>
+        <g style={{ animation: 'kj-drive 31s linear infinite' }} opacity={cloudOp * 0.72}>
+          <ellipse cx={240} cy={35} rx={55} ry={17} fill={cloudFill} />
+          <ellipse cx={268} cy={24} rx={38} ry={14} fill={cloudFill} />
+          <ellipse cx={212} cy={28} rx={30} ry={11} fill={cloudFill} />
+        </g>
+        <g style={{ animation: 'kj-drive 31s linear infinite', animationDelay: '-15.5s' }} opacity={cloudOp * 0.58}>
+          <ellipse cx={640} cy={42} rx={44} ry={14} fill={cloudFill} />
+          <ellipse cx={662} cy={31} rx={30} ry={12} fill={cloudFill} />
+        </g>
+      </svg>
+      {/* Near large — slowest */}
+      <svg style={{ position: 'absolute', top: Math.round(height * 0.02), left: 0, width: '100%', pointerEvents: 'none' }}
+        viewBox="0 0 800 95" preserveAspectRatio="xMidYMid slice" height={Math.round(height * 0.38)}>
+        <g style={{ animation: 'kj-drive 50s linear infinite', animationDelay: '-20s' }} opacity={cloudOp * 0.9}>
+          <ellipse cx={380} cy={55} rx={75} ry={22} fill={cloudFill} />
+          <ellipse cx={415} cy={40} rx={50} ry={18} fill={cloudFill} />
+          <ellipse cx={345} cy={44} rx={42} ry={16} fill={cloudFill} />
+        </g>
+      </svg>
+
+      {/* ── Birds (flock, right-to-left) ──────────────────────────── */}
+      <svg style={{ position: 'absolute', top: Math.round(height * 0.22), left: 0, width: '100%', height: Math.round(height * 0.2), pointerEvents: 'none' }}
+        viewBox="0 0 800 55" preserveAspectRatio="xMidYMid slice">
+        <g style={{ animation: 'kj-bird 22s linear infinite' }} opacity={isDark ? 0.45 : 0.65}
+          stroke={isDark ? '#8abfaa' : '#1e5c3a'} strokeLinecap="round" fill="none">
+          <path d="M500 20 Q506 15 512 20 Q518 15 524 20" strokeWidth={1.8} />
+          <path d="M528 32 Q533 28 537 32 Q542 28 547 32" strokeWidth={1.5} />
+          <path d="M514 43 Q518 40 521 43 Q525 40 529 43" strokeWidth={1.3} />
+          <path d="M542 22 Q545 19 548 22 Q551 19 554 22" strokeWidth={1.2} />
+        </g>
+      </svg>
+
+      {/* ── Distant hills ─────────────────────────────────────────── */}
+      <svg style={{ position: 'absolute', bottom: Math.round(height * 0.3), left: 0, width: '100%' }}
+        viewBox="0 0 800 80" preserveAspectRatio="none" height={Math.round(height * 0.32)}>
+        <path d="M0 80 Q200 0 400 30 Q600 58 800 18 L800 80 Z" fill={hillFar} opacity={0.55} />
+        <path d="M0 80 Q150 20 320 44 Q480 65 640 24 Q720 8 800 38 L800 80 Z" fill={hillNear} opacity={0.72} />
+      </svg>
+
+      {/* ── City skyline with windows ─────────────────────────────── */}
+      <svg style={{ position: 'absolute', bottom: Math.round(height * 0.22), left: 0, width: '100%' }}
+        viewBox="0 0 800 110" preserveAspectRatio="none" height={Math.round(height * 0.4)}>
+        {BUILDINGS.map(({ x, w, h }, bi) => (
+          <g key={bi}>
+            <rect x={x} y={110 - h} width={w} height={h} fill={buildFill} opacity={0.92} rx={2} />
+            {/* Window grid */}
+            {Array.from({ length: Math.floor(h / 14) }).map((_, row) =>
+              Array.from({ length: Math.floor(w / 12) }).map((_, col) => (
+                <rect key={`${row}-${col}`}
+                  x={x + 4 + col * 12} y={110 - h + 6 + row * 14}
+                  width={6} height={7} rx={1}
+                  fill={buildGlow}
+                  opacity={(bi + row + col) % 3 === 0 ? 0.9 : 0.22} />
+              ))
+            )}
+            {/* Antenna on tall buildings */}
+            {h > 82 && <line x1={x + w / 2} y1={110 - h} x2={x + w / 2} y2={110 - h - 12} stroke="#888" strokeWidth={1.5} strokeOpacity={0.6} />}
+          </g>
         ))}
       </svg>
 
-      {/* Drifting clouds */}
-      <svg
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
-        viewBox="0 0 800 200"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <ellipse
-          cx={200}
-          cy={55}
-          rx={70}
-          ry={22}
-          fill="#ffffff"
-          opacity={isDark ? 0.06 : 0.55}
-          style={{ animation: 'kj-drive 28s linear infinite', animationDelay: '0s' }}
-        />
-        <ellipse
-          cx={560}
-          cy={38}
-          rx={55}
-          ry={16}
-          fill="#ffffff"
-          opacity={isDark ? 0.04 : 0.4}
-          style={{ animation: 'kj-drive 44s linear infinite', animationDelay: '-12s' }}
-        />
-      </svg>
+      {/* ── Horizon atmospheric haze ──────────────────────────────── */}
+      <div style={{
+        position: 'absolute', bottom: Math.round(height * 0.2), left: 0, right: 0,
+        height: Math.round(height * 0.1), pointerEvents: 'none',
+        background: isDark
+          ? 'linear-gradient(to top,rgba(0,0,0,0.38) 0%,transparent 100%)'
+          : 'linear-gradient(to top,rgba(255,215,130,0.32) 0%,transparent 100%)',
+      }} />
 
-      {/* Animated road */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: height * 0.22,
-          background: roadColor,
-          opacity: 0.9,
-        }}
-      >
-        {/* Dashed center line */}
-        <svg
-          style={{ position: 'absolute', top: '40%', left: 0, width: '100%' }}
-          height={4}
-          viewBox="0 0 800 4"
-          preserveAspectRatio="none"
-        >
-          <line
-            x1={0}
-            y1={2}
-            x2={800}
-            y2={2}
-            stroke="#ffffff"
-            strokeWidth={2.5}
-            strokeOpacity={0.28}
-            className="kj-anim-dash"
-          />
+      {/* ── Road ─────────────────────────────────────────────────── */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.round(height * 0.22), background: roadBg }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.16)' }} />
+        <svg style={{ position: 'absolute', top: '38%', left: 0, width: '100%' }} height={4} viewBox="0 0 800 4" preserveAspectRatio="none">
+          <line x1={0} y1={2} x2={800} y2={2} stroke="#ffffff" strokeWidth={2.8} strokeOpacity={0.22} className="kj-anim-dash" />
         </svg>
       </div>
 
-      {/* Bus driving across bottom */}
-      <div
-        className="kj-anim-drive"
-        style={{
-          position: 'absolute',
-          bottom: height * 0.04,
-          left: 0,
-          display: 'inline-block',
-        }}
-      >
+      {/* ── Vehicles ─────────────────────────────────────────────── */}
+      {/* Far bus — smaller, slower = depth illusion */}
+      <div style={{
+        position: 'absolute', bottom: Math.round(height * 0.09), left: 0,
+        display: 'inline-block',
+        animation: 'kj-drive 15s linear -6s infinite',
+        filter: isDark ? 'brightness(0.45)' : 'brightness(0.7) saturate(0.75)',
+        opacity: 0.75,
+      }}>
+        <Bus3D size={90} />
+      </div>
+
+      {/* Near bus */}
+      <div className="kj-anim-drive" style={{ position: 'absolute', bottom: Math.round(height * 0.03), left: 0, display: 'inline-block' }}>
         <Bus3D size={160} />
       </div>
 
-      {/* Plane flying across top */}
-      <div
-        className="kj-anim-fly"
-        style={{
-          position: 'absolute',
-          top: height * 0.06,
-          left: 0,
-          display: 'inline-block',
-        }}
-      >
+      {/* Plane */}
+      <div className="kj-anim-fly" style={{ position: 'absolute', top: Math.round(height * 0.06), left: 0, display: 'inline-block' }}>
         <Plane3D size={120} />
       </div>
 
-      {/* LIVE · DHAKA badge */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 12,
-          left: 16,
-          background: isDark ? 'rgba(0,245,255,0.18)' : 'rgba(0,184,217,0.18)',
-          border: `1px solid ${isDark ? 'rgba(0,245,255,0.4)' : 'rgba(0,184,217,0.4)'}`,
-          borderRadius: 999,
-          padding: '4px 12px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          fontFamily: "'Inter', system-ui, sans-serif",
-          fontWeight: 700,
-          fontSize: 11,
-          color: isDark ? '#00f5ff' : '#0070ad',
-          letterSpacing: '0.08em',
-        }}
-        className="kj-anim-blink"
-      >
-        <span
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: isDark ? '#00f5ff' : '#0070ad',
-            display: 'inline-block',
-          }}
-        />
+      {/* ── LIVE · DHAKA badge ───────────────────────────────────── */}
+      <div style={{
+        position: 'absolute', top: 12, left: 16,
+        background: isDark ? 'rgba(0,245,255,0.18)' : 'rgba(0,184,217,0.18)',
+        border: `1px solid ${isDark ? 'rgba(0,245,255,0.4)' : 'rgba(0,184,217,0.4)'}`,
+        borderRadius: 999, padding: '4px 12px',
+        display: 'flex', alignItems: 'center', gap: 6,
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontWeight: 700, fontSize: 11,
+        color: isDark ? '#00f5ff' : '#0070ad', letterSpacing: '0.08em',
+      }} className="kj-anim-blink">
+        <span style={{ width: 6, height: 6, borderRadius: '50%', background: isDark ? '#00f5ff' : '#0070ad', display: 'inline-block' }} />
         LIVE · DHAKA
       </div>
     </div>
