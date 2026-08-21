@@ -26,6 +26,14 @@ export function DestinationMap({ lat, lng, nameEn, nameBn, theme, lang, height =
     let map: L.Map | undefined;
     try {
       map = L.map(ref.current, { center: [lat, lng], zoom: 13, scrollWheelZoom: false });
+      if ('ontouchstart' in window) {
+        map.dragging.disable();
+        const el = ref.current!;
+        const onTouchStart = (e: TouchEvent) => { if (e.touches.length >= 2) map!.dragging.enable(); };
+        const onTouchEnd = () => map!.dragging.disable();
+        el.addEventListener('touchstart', onTouchStart, { passive: true });
+        el.addEventListener('touchend', onTouchEnd, { passive: true });
+      }
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
       }).addTo(map);

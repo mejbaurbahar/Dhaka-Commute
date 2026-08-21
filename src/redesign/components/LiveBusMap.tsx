@@ -85,6 +85,16 @@ export function LiveBusMap({ tk, lang, isMobile, height, routeStops, stopIds, bu
       userLayerRef.current = L.layerGroup().addTo(map);
       setTimeout(() => map.invalidateSize(), 300);
 
+      // Two-finger pan on touch devices
+      if ('ontouchstart' in window) {
+        map.dragging.disable();
+        const el = mapContainerRef.current!;
+        const onTouchStart = (e: TouchEvent) => { if (e.touches.length >= 2) map.dragging.enable(); };
+        const onTouchEnd = () => map.dragging.disable();
+        el.addEventListener('touchstart', onTouchStart, { passive: true });
+        el.addEventListener('touchend', onTouchEnd, { passive: true });
+      }
+
       if (routeStops.length > 1) {
         const coords: [number, number][] = routeStops.map(s => [s.lat, s.lng]);
         if (transferStopIndex !== undefined && transferStopIndex > 0 && transferStopIndex < routeStops.length) {
