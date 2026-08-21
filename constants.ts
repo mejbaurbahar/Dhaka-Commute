@@ -2777,6 +2777,15 @@ export const BUS_DATA: BusRoute[] = [
     hours: '6:00 AM - 10:00 PM'
   },
   {
+    id: 'torongo_plus',
+    name: 'Torongo Plus',
+    bnName: 'তরঙ্গ প্লাস',
+    routeString: 'Mohammadpur ⇄ South Banasree',
+    stops: ['mohammadpur', 'shankar', 'star_kabab', 'dhanmondi15', 'jigatola', 'city_college', 'science_lab', 'katabon', 'shahbag', 'matsya_bhaban', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'rampura_bazar', 'rampura', 'south_banasree'],
+    type: 'Semi-Sitting',
+    hours: '6:00 AM - 10:00 PM'
+  },
+  {
     id: 'volvo_2',
     name: 'Volvo 2',
     bnName: 'ভলভো ২',
