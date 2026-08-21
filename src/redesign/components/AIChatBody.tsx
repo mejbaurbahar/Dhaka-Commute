@@ -229,17 +229,15 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput, hideHisto
             bottom: kbPad lifts it above the on-screen keyboard. */}
         <div style={{
           flexShrink: 0,
-          paddingTop: isMobile ? 10 : 14,
-          paddingLeft: isMobile ? 12 : 20,
-          paddingRight: isMobile ? 'max(16px, calc(env(safe-area-inset-right, 0px) + 12px))' : 20,
+          padding: isMobile ? '10px 12px' : '14px 20px',
           paddingBottom: isMobile ? 'calc(10px + env(safe-area-inset-bottom, 0px))' : 14,
           borderTop: `1px solid ${tk.line}`,
           background: tk.panel,
-          display: 'flex', gap: 8, alignItems: 'center',
           boxSizing: 'border-box' as const,
           ...(isMobile ? { position: 'sticky', bottom: kbPad, zIndex: 5, boxShadow: '0 -10px 24px rgba(0,0,0,0.10)', transition: 'bottom 0.15s ease' } : {}),
         }}>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: tk.inputBg, border: `1.5px solid ${tk.line}`, borderRadius: 999, padding: '0 16px', gap: 8, transition: 'border-color 0.2s' }}>
+          {/* Send button lives INSIDE the pill — can never overflow the container */}
+          <div style={{ display: 'flex', alignItems: 'center', background: tk.inputBg, border: `1.5px solid ${tk.line}`, borderRadius: 999, padding: '0 6px 0 16px', gap: 8, transition: 'border-color 0.2s' }}>
             <span style={{ fontSize: 16, flexShrink: 0 }}>🔍</span>
             <input
               ref={inputRef}
@@ -249,10 +247,10 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput, hideHisto
               autoFocus={autoFocusInput}
               style={{ flex: 1, background: 'transparent', border: 'none', padding: isMobile ? '14px 0' : '12px 0', fontFamily: BEN, fontSize: isMobile ? 16 : 14, color: tk.text, outline: 'none', minWidth: 0, unicodeBidi: 'plaintext' }}
             />
+            <button onClick={() => chat.send()} disabled={chat.isLoading} aria-label={T(lang, 'পাঠান', 'Send message')} style={{ width: 38, height: 38, borderRadius: 999, background: chat.isLoading ? tk.panelMuted : `linear-gradient(135deg,${tk.primary},${tk.accent})`, color: '#fff', border: 0, cursor: chat.isLoading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: chat.isLoading ? 'none' : `0 4px 14px ${tk.primary}55`, transition: 'all 0.2s' }}>
+              <Icon.arrowR s={18} />
+            </button>
           </div>
-          <button onClick={() => chat.send()} disabled={chat.isLoading} aria-label={T(lang, 'পাঠান', 'Send message')} style={{ width: isMobile ? 46 : 48, height: isMobile ? 46 : 48, borderRadius: 999, background: chat.isLoading ? tk.panelMuted : `linear-gradient(135deg,${tk.primary},${tk.accent})`, color: '#fff', border: 0, cursor: chat.isLoading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: chat.isLoading ? 'none' : `0 4px 14px ${tk.primary}55`, transition: 'all 0.2s' }}>
-            <Icon.arrowR s={18} />
-          </button>
         </div>
       </div>
       <ChatHistoryDrawer tk={tk} lang={lang} chat={chat} open={historyOpen} onClose={() => setHistoryOpen(false)} />
