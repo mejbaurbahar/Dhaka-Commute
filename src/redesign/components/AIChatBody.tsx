@@ -229,11 +229,14 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput, hideHisto
             bottom: kbPad lifts it above the on-screen keyboard. */}
         <div style={{
           flexShrink: 0,
-          padding: isMobile ? '10px 12px' : '14px 20px',
-          paddingBottom: isMobile ? 'calc(10px + env(safe-area-inset-bottom, 0px))' : '14px',
+          paddingTop: isMobile ? 10 : 14,
+          paddingLeft: isMobile ? 12 : 20,
+          paddingRight: isMobile ? 'max(16px, calc(env(safe-area-inset-right, 0px) + 12px))' : 20,
+          paddingBottom: isMobile ? 'calc(10px + env(safe-area-inset-bottom, 0px))' : 14,
           borderTop: `1px solid ${tk.line}`,
           background: tk.panel,
           display: 'flex', gap: 8, alignItems: 'center',
+          boxSizing: 'border-box' as const,
           ...(isMobile ? { position: 'sticky', bottom: kbPad, zIndex: 5, boxShadow: '0 -10px 24px rgba(0,0,0,0.10)', transition: 'bottom 0.15s ease' } : {}),
         }}>
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: tk.inputBg, border: `1.5px solid ${tk.line}`, borderRadius: 999, padding: '0 16px', gap: 8, transition: 'border-color 0.2s' }}>
