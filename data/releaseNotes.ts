@@ -12,6 +12,29 @@ export interface ReleaseNote {
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    version: '2.22',
+    date: '2026-08-22',
+    type: 'minor',
+    features: [
+      '13 BRTC Pink Bus (গোলাপি বাস) routes added — Dhaka (10 routes), Bogura (2), Chittagong Kalurghat–Patenga (1)',
+      'Live train position tracking on Leaflet map via trainkothai.com — shows 🚆 icon moving in real time every 5 minutes',
+      'Train station map now uses real OpenStreetMap with 261 verified stations and correct GPS coordinates',
+    ],
+    bnFeatures: [
+      '১৩টি বিআরটিসি গোলাপি বাস রুট যোগ হয়েছে — ঢাকা (১০টি), বগুড়া (২টি), চট্টগ্রাম কালুরঘাট–পতেঙ্গা (১টি)',
+      'ট্রেন লাইভ পজিশন ট্র্যাকিং যোগ হয়েছে — ম্যাপে 🚆 আইকন প্রতি ৫ মিনিটে আপডেট হয়',
+      'ট্রেনের স্টেশন ম্যাপ এখন রিয়েল OpenStreetMap দিয়ে, ২৬১টি স্টেশনের সঠিক GPS কো-অর্ডিনেট সহ',
+    ],
+    fixes: [
+      'Fixed 12 train station GPS coordinates: Singia, Narail, Bhanga, Mubarakganj, Kalukhali, Lohagora, Kashiani, Shaistaganj, Bhanugach, Kulaura, Maijgaon, Sreemangal — all corrected via Google Maps',
+    ],
+    bnFixes: [
+      '১২টি ট্রেন স্টেশনের ভুল GPS ঠিক করা হয়েছে: সিংগাইর, নড়াইল, ভাঙ্গা, মোবারকগঞ্জ, কালুখালী, লোহাগড়া, কাশিয়ানী, শায়েস্তাগঞ্জ, ভানুগাছ, কুলাউড়া, মাইজগাঁও, শ্রীমঙ্গল',
+    ],
+    improvements: [],
+    bnImprovements: [],
+  },
+  {
     version: '2.2.2',
     date: '2026-08-20',
     type: 'patch',

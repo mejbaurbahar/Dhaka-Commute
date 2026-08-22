@@ -113,7 +113,7 @@ export const TRAIN_STATIONS: Record<string, BDTrainStation> = {
   kurigram:      {id:'kurigram',      name:'Kurigram',                bnName:'কুড়িগ্রাম',         lat:25.8052,lng:89.6360},
   burimari:      {id:'burimari',      name:'Burimari',                bnName:'বুড়িমারী',          lat:25.8817,lng:89.3442},
   rohanpur:      {id:'rohanpur',      name:'Rohanpur',                bnName:'রোহনপুর',            lat:24.8650,lng:88.3200},
-  abdulpur:      {id:'abdulpur',      name:'Abdulpur',                bnName:'আব্দুলপুর',          lat:24.5200,lng:89.0200},
+  abdulpur:      {id:'abdulpur',      name:'Abdulpur Junction',       bnName:'আব্দুলপুর জংশন',    lat:24.2598,lng:88.9716},
   khulna:        {id:'khulna',        name:'Khulna',                  bnName:'খুলনা',              lat:22.8228,lng:89.5497},
   jessore:       {id:'jessore',       name:'Jashore (Jessore)',        bnName:'যশোর',              lat:23.1673,lng:89.2081},
   benapole:      {id:'benapole',      name:'Benapole',                bnName:'বেনাপোল',            lat:23.0283,lng:88.9326},
