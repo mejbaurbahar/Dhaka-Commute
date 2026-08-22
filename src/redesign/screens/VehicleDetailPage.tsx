@@ -5,10 +5,133 @@ import { KJ_TOKENS, T, SANS, BEN } from '../tokens';
 import { PageShell } from './PageShell';
 import { AdSlot, NativeAdCard, AdCluster } from '../components/AdSlot';
 import { Bus3D, Train3D, Plane3D, Launch3D } from '../components/Vehicles3D';
+import { LAUNCH_ROUTES, LAUNCH_TERMINALS } from '../../../data/bangladeshLaunchData';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
 type VehicleKind = 'bus'|'train'|'plane'|'launch';
+
+function LaunchVesselIllustration({ col, name }: { col: string; name: string }) {
+  const DECK = '#e8e8e0';
+  const LIT = '#fff5c0';
+  const DIM = '#b09060';
+  const stars: [number,number][] = [
+    [42,18],[95,32],[147,8],[213,42],[289,15],[362,28],[447,9],[521,38],
+    [598,12],[672,35],[731,19],[765,45],[38,60],[122,72],[198,55],[271,78],
+    [345,62],[412,85],[489,48],[563,75],[637,58],[708,88],[750,35],
+  ];
+  return (
+    <svg viewBox="0 0 800 450" style={{ width:'100%',display:'block',borderRadius:12 }}>
+      <defs>
+        <linearGradient id="lvSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#010a18"/>
+          <stop offset="100%" stopColor="#102545"/>
+        </linearGradient>
+        <linearGradient id="lvWater" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#0c1e35"/>
+          <stop offset="100%" stopColor="#020c18"/>
+        </linearGradient>
+        <filter id="lvGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="lvSoft" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="6"/>
+        </filter>
+      </defs>
+
+      {/* Sky */}
+      <rect width="800" height="295" fill="url(#lvSky)"/>
+
+      {/* Stars */}
+      {stars.map(([x,y],i) => (
+        <circle key={i} cx={x} cy={y} r={0.8+(i%3)*0.5} fill="white" opacity={0.3+(i%5)*0.14}/>
+      ))}
+
+      {/* Moon */}
+      <circle cx="700" cy="65" r="28" fill="#fff9e0" opacity="0.9"/>
+      <circle cx="710" cy="58" r="24" fill="#010a18" opacity="0.95"/>
+
+      {/* Water */}
+      <rect y="285" width="800" height="165" fill="url(#lvWater)"/>
+      <line x1="0" y1="305" x2="800" y2="305" stroke="#1a4070" strokeWidth="1" opacity="0.4"/>
+      <line x1="0" y1="328" x2="800" y2="328" stroke="#1a4070" strokeWidth="1" opacity="0.28"/>
+      <line x1="0" y1="355" x2="800" y2="355" stroke="#1a4070" strokeWidth="1" opacity="0.18"/>
+
+      {/* Vessel ambient glow */}
+      <ellipse cx="400" cy="292" rx="310" ry="22" fill={col} opacity="0.13" filter="url(#lvSoft)"/>
+
+      {/* Hull */}
+      <path d="M 88,252 Q 90,285 60,285 L 735,285 Q 718,268 718,246 Z" fill={col}/>
+      <rect x="88" y="246" width="630" height="7" fill="white" opacity="0.45"/>
+
+      {/* Lower passenger deck */}
+      <rect x="96" y="193" width="617" height="53" rx="3" fill={DECK}/>
+      {[...Array(14)].map((_,i) => (
+        <rect key={i} x={113+i*41} y="204" width="24" height="16" rx="3"
+          fill={i%5===3 ? DIM : LIT} opacity="0.95"/>
+      ))}
+      <rect x="96" y="191" width="617" height="4" rx="1" fill={col} opacity="0.75"/>
+
+      {/* Upper passenger deck */}
+      <rect x="112" y="147" width="582" height="46" rx="3" fill={DECK} opacity="0.95"/>
+      {[...Array(13)].map((_,i) => (
+        <rect key={i} x={128+i*42} y="157" width="23" height="14" rx="3"
+          fill={i%4===2 ? DIM : LIT} opacity="0.9"/>
+      ))}
+      <rect x="112" y="145" width="582" height="4" rx="1" fill={col} opacity="0.65"/>
+
+      {/* Bridge / wheelhouse */}
+      <rect x="286" y="104" width="218" height="43" rx="5" fill={DECK} opacity="0.9"/>
+      {[0,1,2,3,4].map(i => (
+        <rect key={i} x={301+i*38} y="114" width="24" height="14" rx="2" fill={LIT} opacity="0.95"/>
+      ))}
+      <rect x="286" y="102" width="218" height="3" rx="1" fill={col} opacity="0.6"/>
+
+      {/* Funnel at stern */}
+      <rect x="612" y="67" width="46" height="82" rx="5" fill={col}/>
+      <rect x="607" y="64" width="56" height="12" rx="3" fill="#111"/>
+      <rect x="612" y="89" width="46" height="5" fill="white" opacity="0.45"/>
+      <ellipse cx="635" cy="55" rx="9" ry="11" fill="#22243a" opacity="0.22"/>
+      <ellipse cx="630" cy="40" rx="13" ry="13" fill="#22243a" opacity="0.13"/>
+
+      {/* Bow mast */}
+      <line x1="118" y1="193" x2="118" y2="93" stroke="#aaa" strokeWidth="2.5"/>
+      {/* Bangladesh flag */}
+      <rect x="118" y="93" width="24" height="15" fill="#006a4e"/>
+      <circle cx="130" cy="100" r="4.5" fill="#f42a41"/>
+
+      {/* Railing posts */}
+      {[116,156,196,236,276,316,356,396,436,476,516,556,596,636,676].map((x,i) => (
+        <line key={i} x1={x} y1="191" x2={x} y2="246" stroke={col} strokeWidth="1" opacity="0.45"/>
+      ))}
+
+      {/* Deck lights */}
+      {[140,202,264,326,388,450,512,574,636].map((x,i) => (
+        <g key={i}>
+          <circle cx={x} cy="191" r="3.5" fill="#ffd080" opacity="0.75"/>
+          <circle cx={x} cy="191" r="7" fill="#ffd080" opacity="0.18"/>
+        </g>
+      ))}
+
+      {/* Navigation lights */}
+      <circle cx="90" cy="238" r="5" fill="#00ff66" opacity="0.9" filter="url(#lvGlow)"/>
+      <circle cx="720" cy="238" r="5" fill="#ff3333" opacity="0.9" filter="url(#lvGlow)"/>
+
+      {/* Vessel name on hull */}
+      <text x="400" y="271" textAnchor="middle" fontFamily="Arial, sans-serif"
+        fontSize="13" fontWeight="bold" fill="white" opacity="0.72" letterSpacing="2">
+        {name.toUpperCase()}
+      </text>
+
+      {/* Water light reflection */}
+      <rect x="96" y="285" width="617" height="28" fill={col} opacity="0.07"/>
+      {[0,1,2].map(i => (
+        <rect key={i} x={96+i*30} y={291+i*9} width={617-i*60} height="3" fill={LIT} opacity={0.04-i*0.01}/>
+      ))}
+    </svg>
+  );
+}
 
 function Vehicle3D({ kind, size }: { kind: VehicleKind; size: number }) {
   if (kind==='bus') return <Bus3D size={size}/>;
@@ -26,23 +149,39 @@ export function VehicleDetailPage(props: Props) {
   const [tab, setTab] = useState<'stops'|'seats'|'amenities'|'photos'|'reviews'>('stops');
   const card = (r=16): React.CSSProperties => ({ background:tk.panel,border:`1px solid ${tk.line}`,borderRadius:r,padding:16 });
 
-  // Build launch meta from passed params if available
-  const launchMeta = kind === 'launch' && params?.name ? {
-    hero: `linear-gradient(135deg,${params.col || '#0c1a2e'},${params.col || '#0369a1'}aa)`,
-    title: params.name,
-    titleBn: params.nameBn || params.name,
-    route: `${params.from || 'Sadarghat'} → ${params.to || 'Barisal'}`,
-    routeBn: `${params.from || 'সদরঘাট'} → ${params.to || 'বরিশাল'}`,
-    dep: params.dep || '8:00 PM',
-    arr: params.arr || '6:00 AM',
-    dur: params.dur || '10h',
-    stats: [
-      ['৳'+(params.deck||'300'),T(lang,'ডেক','deck')],
-      ['৳'+(params.cabin||'1200'),T(lang,'কেবিন','cabin')],
-      ['৳'+(params.vip||'4000'),'VIP'],
-      [(params.rating||'4.1')+'★',T(lang,'রেটিং','rating')],
-    ] as [string,string][],
-  } : null;
+  // Build launch meta — prefer URL params, fall back to data lookup by id
+  const launchDataById = kind === 'launch' && !params?.name && params?.id
+    ? LAUNCH_ROUTES.find(r => r.id === params.id)
+    : undefined;
+  const terminalName = (id: string) => LAUNCH_TERMINALS.find(t => t.id === id)?.en ?? id;
+  const terminalBnName = (id: string) => LAUNCH_TERMINALS.find(t => t.id === id)?.bn ?? id;
+  const launchMeta = kind === 'launch' ? (() => {
+    const ld = launchDataById;
+    const col = params?.col || ld?.col || '#0c1a2e';
+    const name = params?.name || (ld ? T(lang, ld.name.bn, ld.name.en) : 'MV Launch');
+    const nameBn = params?.nameBn || ld?.name.bn || name;
+    const fromLabel = params?.from || (ld ? terminalName(ld.from) : 'Sadarghat');
+    const toLabel = params?.to || (ld ? terminalName(ld.to) : 'Barisal');
+    const fromBn = ld ? terminalBnName(ld.from) : 'সদরঘাট';
+    const toBn = ld ? terminalBnName(ld.to) : 'বরিশাল';
+    return {
+      hero: `linear-gradient(135deg,${col},${col}aa)`,
+      title: name,
+      titleBn: nameBn,
+      route: `${fromLabel} → ${toLabel}`,
+      routeBn: `${fromBn} → ${toBn}`,
+      dep: params?.dep || ld?.dep || '8:00 PM',
+      arr: params?.arr || ld?.arr || '6:00 AM',
+      dur: params?.dur || ld?.dur || '10h',
+      col,
+      stats: [
+        ['৳'+(params?.deck||ld?.deck||'300'),T(lang,'ডেক','deck')],
+        ['৳'+(params?.cabin||ld?.cabin||'1200'),T(lang,'কেবিন','cabin')],
+        ['৳'+(params?.vip||ld?.vip||'4000'),'VIP'],
+        [(params?.rating||String(ld?.rating||'4.1'))+'★',T(lang,'রেটিং','rating')],
+      ] as [string,string][],
+    };
+  })() : null;
 
   const meta: Record<VehicleKind,{hero:string,title:string,titleBn:string,route:string,routeBn:string,dep:string,arr:string,dur:string,stats:[string,string][]}>  = {
     bus:{ hero:'linear-gradient(135deg,#064e3b,#10b981)', title:'Green Line Paribahan',titleBn:'গ্রীন লাইন পরিবহন',route:'Gulshan → Motijheel',routeBn:'গুলশান → মতিঝিল',dep:'4:22 PM',arr:'5:10 PM',dur:'48 min',stats:[['12','stops'],['৳60','fare'],['AC','type'],['4.2★','rating']] },
@@ -184,12 +323,22 @@ export function VehicleDetailPage(props: Props) {
               <div style={{ ...card(18),marginBottom:16 }}>
                 {tab==='photos' ? (
                   <div>
-                    <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8 }}>
-                      {[['#10b981','#064e3b'],['#3b82f6','#1e3a8a'],['#f59e0b','#b45309'],['#ef4444','#991b1b']].map(([c1,c2],i)=>(
-                        <div key={i} style={{ aspectRatio:'4/3',borderRadius:12,background:`linear-gradient(135deg,${c1},${c2})` }}/>
-                      ))}
-                      <div style={{ aspectRatio:'4/3',borderRadius:12,background:tk.panelMuted,border:`2px dashed ${tk.line}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,cursor:'pointer' }}>+</div>
-                    </div>
+                    {kind==='launch' && params?.photos && params.photos.length > 0 ? (
+                      <div style={{ display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:8 }}>
+                        {params.photos.split('|').filter(Boolean).map((src,i)=>(
+                          <img key={i} src={src} alt={params?.name||'launch'} style={{ width:'100%',aspectRatio:'4/3',objectFit:'cover',borderRadius:12,display:'block' }} loading="lazy" />
+                        ))}
+                      </div>
+                    ) : kind==='launch' ? (
+                      <LaunchVesselIllustration col={launchMeta?.col||params?.col||'#1a6b3c'} name={launchMeta?.title||params?.name||'MV Launch'}/>
+                    ) : (
+                      <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8 }}>
+                        {[['#10b981','#064e3b'],['#3b82f6','#1e3a8a'],['#f59e0b','#b45309'],['#ef4444','#991b1b']].map(([c1,c2],i)=>(
+                          <div key={i} style={{ aspectRatio:'4/3',borderRadius:12,background:`linear-gradient(135deg,${c1},${c2})` }}/>
+                        ))}
+                        <div style={{ aspectRatio:'4/3',borderRadius:12,background:tk.panelMuted,border:`2px dashed ${tk.line}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,cursor:'pointer' }}>+</div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div>

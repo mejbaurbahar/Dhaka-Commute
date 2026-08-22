@@ -912,6 +912,56 @@ export const STATIONS: Record<string, Station> = {
   manik_nagar:      { id: 'manik_nagar',       name: 'Manik Nagar',           bnName: 'মানিকনগর',                 lat: 23.725500, lng: 90.432200 },
   balughat:         { id: 'balughat',          name: 'Balughat',              bnName: 'বালুঘাট',                  lat: 23.819800, lng: 90.393000 },
   golapbagh_chowrasta: { id: 'golapbagh_chowrasta', name: 'Golapbagh Chowrasta', bnName: 'গোলাপবাগ চৌরাস্তা',  lat: 23.720100, lng: 90.429900 },
+  // Pink Bus stops — Dhaka
+  coca_cola:           { id: 'coca_cola',           name: 'Coca-Cola Gate',              bnName: 'কোকাকোলা গেট',             lat: 23.795200, lng: 90.432100 },
+  abul_hotel:          { id: 'abul_hotel',          name: 'Abul Hotel',                  bnName: 'আবুল হোটেল',                lat: 23.752000, lng: 90.419000 },
+  taltalaa:            { id: 'taltalaa',            name: 'Taltalaa',                    bnName: 'তালতলা',                    lat: 23.748000, lng: 90.429000 },
+  khilgaon_railgate:   { id: 'khilgaon_railgate',   name: 'Khilgaon Rail Gate',          bnName: 'খিলগাঁও রেলগেট',           lat: 23.752000, lng: 90.431000 },
+  baudh_mandir:        { id: 'baudh_mandir',        name: 'Baudh Mandir',                bnName: 'বৌদ্ধ মন্দির',              lat: 23.748000, lng: 90.427000 },
+  shapla_chattar_dhaka: { id: 'shapla_chattar_dhaka', name: 'Shapla Chattar (Motijheel)', bnName: 'শাপলা চত্বর (মতিঝিল)',     lat: 23.730000, lng: 90.412000 },
+  sachivalaya:         { id: 'sachivalaya',         name: 'Sachivalaya',                 bnName: 'সচিবালয়',                  lat: 23.731000, lng: 90.406000 },
+  demra_staff:         { id: 'demra_staff',         name: 'Demra Staff Quarter',         bnName: 'ডেমরা স্টাফ কোয়ার্টার',   lat: 23.706000, lng: 90.479000 },
+  bansherpool:         { id: 'bansherpool',         name: 'Bansherpool',                 bnName: 'বাঁশের পুল',                lat: 23.716000, lng: 90.463000 },
+  wari:                { id: 'wari',                name: 'Wari',                        bnName: 'ওয়ারী',                    lat: 23.720000, lng: 90.413000 },
+  kurmitola:           { id: 'kurmitola',           name: 'Kurmitola',                   bnName: 'কুর্মিটোলা',                lat: 23.847000, lng: 90.400000 },
+  bishwa_road:         { id: 'bishwa_road',         name: 'Biswa Road',                  bnName: 'বিশ্বরোড',                  lat: 23.836000, lng: 90.416000 },
+  elephant_road:       { id: 'elephant_road',       name: 'Elephant Road',               bnName: 'এলিফ্যান্ট রোড',           lat: 23.740000, lng: 90.389000 },
+  stadium_nr:          { id: 'stadium_nr',          name: 'Stadium (Narayanganj)',        bnName: 'স্টেডিয়াম (নারায়ণগঞ্জ)', lat: 23.625000, lng: 90.500000 },
+  kalkuri:             { id: 'kalkuri',             name: 'Kalkuri',                     bnName: 'কালকুড়ি',                  lat: 23.645000, lng: 90.499000 },
+  bhuighor:            { id: 'bhuighor',            name: 'Bhuighor',                    bnName: 'ভূঁইগড়',                   lat: 23.657000, lng: 90.492000 },
+  gazipur_shibbaari:   { id: 'gazipur_shibbaari',   name: 'Gazipur Shibbaari',           bnName: 'গাজীপুর শিববাড়ী',         lat: 24.007000, lng: 90.390000 },
+  maleker_baari:       { id: 'maleker_baari',       name: 'Maleker Baari',               bnName: 'মালেকের বাড়ি',             lat: 23.967000, lng: 90.394000 },
+  gazipura:            { id: 'gazipura',            name: 'Gazipura',                    bnName: 'গাজীপুরা',                  lat: 23.952000, lng: 90.398000 },
+  college_gate_gz:     { id: 'college_gate_gz',     name: 'College Gate (Gazipur)',      bnName: 'কলেজ গেট (গাজীপুর)',        lat: 23.945000, lng: 90.403000 },
+  // Pink Bus stops — Bogura
+  rda_school:          { id: 'rda_school',          name: 'RDA School',                  bnName: 'আরডিএ স্কুল',              lat: 24.842000, lng: 89.349000 },
+  noy_mail_moor:       { id: 'noy_mail_moor',       name: 'Noy Mail Moor',               bnName: 'নয়মাইল মোড়',               lat: 24.837000, lng: 89.357000 },
+  shajanpur:           { id: 'shajanpur',           name: 'Shajanpur',                   bnName: 'শাজানপুর',                  lat: 24.839000, lng: 89.364000 },
+  b_block_majhira:     { id: 'b_block_majhira',     name: 'B Block Majhira',             bnName: 'বি-ব্লক মাঝিরা',           lat: 24.841000, lng: 89.369000 },
+  banani_bogura:       { id: 'banani_bogura',       name: 'Banani (Bogura)',              bnName: 'বনানী (বগুড়া)',             lat: 24.845000, lng: 89.366000 },
+  satmatha:            { id: 'satmatha',            name: 'Satmatha',                    bnName: 'সাতমাথা',                   lat: 24.848000, lng: 89.375000 },
+  mohila_college:      { id: 'mohila_college',      name: 'Mohila College',              bnName: 'মহিলা কলেজ',               lat: 24.851000, lng: 89.381000 },
+  matidali:            { id: 'matidali',            name: 'Matidali',                    bnName: 'মাটিডালি',                  lat: 24.854000, lng: 89.388000 },
+  matidali_moor:       { id: 'matidali_moor',       name: 'Matidali Moor',               bnName: 'মাটিডালি মোড়',              lat: 24.853000, lng: 89.387000 },
+  tmss_hospital:       { id: 'tmss_hospital',       name: 'TMSS Hospital',               bnName: 'টিএমএসএস হাসপাতাল',        lat: 24.858000, lng: 89.393000 },
+  mahasthan_bazar:     { id: 'mahasthan_bazar',     name: 'Mahasthan Bazar',             bnName: 'মহাস্থান বাজার',            lat: 24.887000, lng: 89.376000 },
+  mokamatola:          { id: 'mokamatola',          name: 'Mokamatola',                  bnName: 'মোকামতলা',                  lat: 24.899000, lng: 89.367000 },
+  // Pink Bus stops — Chittagong
+  kaluraghat:          { id: 'kaluraghat',          name: 'Kalurghat',                   bnName: 'কালুরঘাট',                  lat: 22.316000, lng: 91.839000 },
+  kaptai_rasta:        { id: 'kaptai_rasta',        name: 'Kaptai Road',                 bnName: 'কাপ্তাই রাস্তার মাথা',     lat: 22.330000, lng: 91.842000 },
+  bohaddharhat:        { id: 'bohaddharhat',        name: 'Bahaddarhat',                 bnName: 'বহদ্দারহাট',                lat: 22.348000, lng: 91.838000 },
+  muradpur_ctg:        { id: 'muradpur_ctg',        name: 'Muradpur (Ctg)',              bnName: 'মুরাদপুর',                  lat: 22.362000, lng: 91.832000 },
+  two_gate:            { id: 'two_gate',            name: '2 No Gate',                   bnName: '২ নম্বর গেট',               lat: 22.379000, lng: 91.817000 },
+  gec_moor:            { id: 'gec_moor',            name: 'GEC Moor',                    bnName: 'জিইসি মোড়',                 lat: 22.374000, lng: 91.815000 },
+  lalkan_bazar:        { id: 'lalkan_bazar',        name: 'Lalkan Bazar',                bnName: 'লালখান বাজার',              lat: 22.382000, lng: 91.808000 },
+  tigerpass:           { id: 'tigerpass',           name: 'Tiger Pass',                  bnName: 'টাইগারপাস',                 lat: 22.342000, lng: 91.829000 },
+  dewanhat:            { id: 'dewanhat',            name: 'Dewanhat',                    bnName: 'দেওয়ানহাট',                lat: 22.337000, lng: 91.825000 },
+  chowmuhuni_ctg:      { id: 'chowmuhuni_ctg',      name: 'Chowmuhuni (Ctg)',            bnName: 'চৌমুহনী',                   lat: 22.332000, lng: 91.820000 },
+  agrabad:             { id: 'agrabad',             name: 'Agrabad',                     bnName: 'আগ্রাবাদ',                  lat: 22.328000, lng: 91.813000 },
+  barek_building:      { id: 'barek_building',      name: 'Barek Building',              bnName: 'বারেক বিল্ডিং',             lat: 22.322000, lng: 91.807000 },
+  free_port:           { id: 'free_port',           name: 'Free Port',                   bnName: 'ফ্রি পোর্ট',                lat: 22.316000, lng: 91.799000 },
+  kathgor:             { id: 'kathgor',             name: 'Kathgor',                     bnName: 'কাঠগড়',                    lat: 22.304000, lng: 91.782000 },
+  patenga:             { id: 'patenga',             name: 'Patenga',                     bnName: 'পতেঙ্গা',                   lat: 22.254000, lng: 91.760000 },
 };
 
 
@@ -4965,6 +5015,124 @@ export const BUS_DATA: BusRoute[] = [
     stops: ['sadarghat', 'ray_saheb_bazar', 'naya_bazar', 'golap_shah_mazar', 'gpo', 'paltan', 'kakrail', 'shantinagar', 'malibagh', 'mouchak', 'malibagh_railgate', 'hazipara', 'rampura_bazar', 'rampura', 'merul', 'badda', 'shahjadpur', 'bashtola', 'notun_bazar', 'nadda', 'bashundhara', 'jamuna_future_park', 'kuril', 'khilkhet', 'airport', 'jashimuddin', 'rajlakshmi', 'azampur', 'house_building', 'diabari'],
     type: 'Semi-Sitting',
     hours: '6:00 AM - 10:30 PM'
+  },
+  // BRTC Pink Bus (গোলাপি বাস) — women-only service
+  {
+    id: 'pink_bus_cocacola_motijheel',
+    name: 'BRTC Pink Bus (Coca-Cola → Motijheel)',
+    bnName: 'বিআরটিসি গোলাপি বাস (কোকাকোলা → মতিঝিল)',
+    routeString: 'Coca-Cola Gate ⇄ Motijheel',
+    stops: ['coca_cola', 'notun_bazar', 'uttar_badda', 'madhya_badda', 'merul', 'rampura', 'abul_hotel', 'malibagh', 'kakrail', 'paltan', 'gulistan', 'motijheel'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_taltalaa_sachivalaya',
+    name: 'BRTC Pink Bus (Taltalaa → Sachivalaya)',
+    bnName: 'বিআরটিসি গোলাপি বাস (তালতলা → সচিবালয়)',
+    routeString: 'Taltalaa ⇄ Sachivalaya',
+    stops: ['taltalaa', 'khilgaon_railgate', 'basabo', 'baudh_mandir', 'mugda', 'kamalapur', 'arambagh', 'shapla_chattar_dhaka', 'sachivalaya'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_demra_matsya',
+    name: 'BRTC Pink Bus (Demra Staff Quarter → Matsya Bhaban)',
+    bnName: 'বিআরটিসি গোলাপি বাস (ডেমরা স্টাফ কোয়ার্টার → মৎস্য ভবন)',
+    routeString: 'Demra Staff Quarter ⇄ Matsya Bhaban',
+    stops: ['demra_staff', 'bansherpool', 'kazla', 'jatrabari', 'janapath_moor', 'wari', 'gulistan', 'paltan', 'sachivalaya', 'matsya_bhaban'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_mirpur10_motijheel',
+    name: 'BRTC Pink Bus (Mirpur-10 → Motijheel)',
+    bnName: 'বিআরটিসি গোলাপি বাস (মিরপুর-১০ → মতিঝিল)',
+    routeString: 'Mirpur-10 ⇄ Motijheel',
+    stops: ['mirpur10', 'technical', 'kallyanpur', 'shyamoli', 'asad_gate', 'kalabagan', 'shahbag', 'paltan', 'motijheel'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_mirpur12_motijheel_v1',
+    name: 'BRTC Pink Bus (Mirpur-12 → Motijheel via Mirpur-1)',
+    bnName: 'বিআরটিসি গোলাপি বাস (মিরপুর-১২ → মতিঝিল)',
+    routeString: 'Mirpur-12 ⇄ Motijheel',
+    stops: ['mirpur12', 'mirpur10', 'mirpur1', 'technical', 'shyamoli', 'farmgate', 'shahbag', 'gulistan', 'motijheel'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_mirpur12_motijheel_v2',
+    name: 'BRTC Pink Bus (Mirpur-12 → Motijheel via Kazipara)',
+    bnName: 'বিআরটিসি গোলাপি বাস (মিরপুর-১২ → মতিঝিল, কাজীপাড়া হয়ে)',
+    routeString: 'Mirpur-12 ⇄ Motijheel (via Kazipara)',
+    stops: ['mirpur12', 'mirpur11', 'mirpur10', 'kazipara', 'shewrapara', 'farmgate', 'shahbag', 'press_club', 'gulistan', 'motijheel'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_narayanganj_motijheel',
+    name: 'BRTC Pink Bus (Narayanganj → Motijheel)',
+    bnName: 'বিআরটিসি গোলাপি বাস (নারায়ণগঞ্জ → মতিঝিল)',
+    routeString: 'Narayanganj ⇄ Motijheel',
+    stops: ['chashara', 'shibu_market', 'stadium_nr', 'kalkuri', 'bhuighor', 'signboard', 'rayerbag', 'shonir_akhra', 'tikatuli', 'gulistan', 'motijheel'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_mohammadpur_kamalapur',
+    name: 'BRTC Pink Bus (Mohammadpur → Kamalapur)',
+    bnName: 'বিআরটিসি গোলাপি বাস (মোহাম্মদপুর → কমলাপুর)',
+    routeString: 'Mohammadpur ⇄ Kamalapur',
+    stops: ['mohammadpur', 'shankar', 'jigatola', 'dhanmondi15', 'city_college', 'newmarket', 'elephant_road', 'shahbag', 'paltan', 'motijheel', 'kamalapur'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_abdullahpur_motijheel',
+    name: 'BRTC Pink Bus (Abdullahpur → Motijheel)',
+    bnName: 'বিআরটিসি গোলাপি বাস (আব্দুল্লাহপুর → মতিঝিল)',
+    routeString: 'Abdullahpur ⇄ Motijheel',
+    stops: ['abdullahpur', 'azampur', 'airport', 'khilkhet', 'bishwa_road', 'kurmitola', 'banani', 'mohakhali', 'farmgate', 'shahbag', 'matsya_bhaban', 'press_club', 'gulistan', 'motijheel'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_gazipur_airport',
+    name: 'BRTC Pink Bus (Gazipur → Airport)',
+    bnName: 'বিআরটিসি গোলাপি বাস (গাজীপুর → বিমানবন্দর)',
+    routeString: 'Gazipur Shibbaari ⇄ Airport',
+    stops: ['gazipur_shibbaari', 'gazipur', 'maleker_baari', 'board_bazar', 'gazipura', 'college_gate_gz', 'station_road', 'abdullahpur', 'azampur', 'airport'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_bogura_rda_matidali',
+    name: 'BRTC Pink Bus Bogura (Sherpur → Matidali)',
+    bnName: 'বিআরটিসি গোলাপি বাস বগুড়া (শেরপুর → মাটিডালি)',
+    routeString: 'Sherpur (RDA) ⇄ Matidali',
+    stops: ['rda_school', 'noy_mail_moor', 'shajanpur', 'b_block_majhira', 'banani_bogura', 'satmatha', 'mohila_college', 'matidali'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_bogura_banani_mokamatola',
+    name: 'BRTC Pink Bus Bogura (Banani → Mokamatola)',
+    bnName: 'বিআরটিসি গোলাপি বাস বগুড়া (বনানী → মোকামতলা)',
+    routeString: 'Banani (Bogura) ⇄ Mokamatola',
+    stops: ['banani_bogura', 'satmatha', 'mohila_college', 'matidali_moor', 'tmss_hospital', 'mahasthan_bazar', 'mokamatola'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
+  },
+  {
+    id: 'pink_bus_ctg_kaluraghat_patenga',
+    name: 'BRTC Pink Bus Chittagong (Kalurghat → Patenga)',
+    bnName: 'বিআরটিসি গোলাপি বাস চট্টগ্রাম (কালুরঘাট → পতেঙ্গা)',
+    routeString: 'Kalurghat ⇄ Patenga',
+    stops: ['kaluraghat', 'kaptai_rasta', 'bohaddharhat', 'muradpur_ctg', 'two_gate', 'gec_moor', 'lalkan_bazar', 'tigerpass', 'dewanhat', 'chowmuhuni_ctg', 'agrabad', 'barek_building', 'free_port', 'kathgor', 'patenga'],
+    type: 'Pink Bus',
+    hours: '6:00 AM - 9:00 PM'
   },
 ];
 

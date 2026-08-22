@@ -785,7 +785,7 @@ export function IntercityPage(props: Props) {
                 const fromT = LAUNCH_TERMINALS.find((t: any) => t.id === r.from);
                 const toT = LAUNCH_TERMINALS.find((t: any) => t.id === r.to);
                 return (
-                  <button key={r.id + i} onClick={() => onNav('vehicle', { kind:'launch', id:r.id, name:r.name.en, nameBn:r.name.bn, from:fromT?.en||r.from, to:toT?.en||r.to, dep:r.dep, arr:r.arr, dur:r.dur, deck:String(r.deck), cabin:String(r.cabin), vip:String(r.vip), operator:r.operator.en, operatorBn:r.operator.bn, rating:String(r.rating), col:'#0369a1' })}
+                  <button key={r.id + i} onClick={() => onNav('vehicle', { kind:'launch', id:r.id, name:r.name.en, nameBn:r.name.bn, from:fromT?.en||r.from, to:toT?.en||r.to, dep:r.dep, arr:r.arr, dur:r.dur, deck:String(r.deck), cabin:String(r.cabin), vip:String(r.vip), operator:r.operator.en, operatorBn:r.operator.bn, rating:String(r.rating), col:'#0369a1', photos:(r.photos||[]).join('|') })}
                     style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 14, padding: '12px 14px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 44, height: 44, borderRadius: 10, background: 'linear-gradient(135deg,#0c1a2e,#0369a1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>⛴️</div>
                     <div style={{ flex: 1, minWidth: 0 }}>

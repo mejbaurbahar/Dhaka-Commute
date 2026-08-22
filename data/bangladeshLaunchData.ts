@@ -16,6 +16,8 @@ export interface LaunchRoute {
   type: 'express' | 'mail' | 'local';
   /** Source citation for verified entries; absent = legacy data */
   src?: string;
+  /** Local paths to people-free vessel photos e.g. ["/launch-photos/abc.webp"] */
+  photos?: string[];
 }
 
 export const LAUNCH_TERMINALS = [

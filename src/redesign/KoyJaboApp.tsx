@@ -242,7 +242,7 @@ function entryFromLocation(): StackEntry {
   if (path.startsWith('/metro/') && path !== '/metro') return { route: 'metro-detail', params: { ...params, stationId: path.split('/')[2] || '' } };
   if (path.startsWith('/train/') && path !== '/train') return { route: 'train-detail', params: { ...params, trainId: path.split('/')[2] || '' } };
   if (path.startsWith('/intercity/') && path !== '/intercity') return { route: 'intercity-detail', params: { ...params, id: path.split('/')[2] || '' } };
-  if (path.startsWith('/launch/') && path !== '/launch') return { route: 'vehicle', params: { ...params, id: path.split('/')[2] || '' } };
+  if (path.startsWith('/launch/') && path !== '/launch') return { route: 'vehicle', params: { ...params, kind: 'launch', id: path.split('/')[2] || '' } };
   if ((path.startsWith('/live-bus/') || path.startsWith('/dtca/')) && path !== '/live-bus' && path !== '/dtca') return { route: 'dtca-bus-detail', params: { ...params, identifier: decodeURIComponent(path.split('/')[2] || '') } };
   if (path.startsWith('/air/') && path !== '/air') return { route: 'flight-detail', params: { ...params, code: (path.split('/')[2] || '').toUpperCase() } };
   if (path.startsWith('/places/') && path !== '/places') {

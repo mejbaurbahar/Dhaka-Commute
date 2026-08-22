@@ -8,6 +8,7 @@
  *   POST /api/event       { endpoint, type, fireAt, data, lang }   types: install | search-check | search-tomorrow | save | dormant
  *   POST /api/cancel      { endpoint, type }
  *   GET  /api/health
+ *   GET  /api/train-position?number={trainNo}   (trainkothai.com proxy, 5-min KV cache)
  *
  * Cron (every 10 minutes): delivers due events from KV. One push per subscription
  * per tick (anti-spam); a 404/410 from the push service deletes the sub.
@@ -614,6 +615,87 @@ async function processSub(name, now) {
     await saveSub(sub);
 }
 
+// ── train position proxy (trainkothai.com) ────────────────────────
+
+const TRAIN_POS_TTL = 300; // 5 minutes
+
+// Validate coordinates are inside Bangladesh
+function inBD(lat, lng) {
+  return lat >= 20.5 && lat <= 26.8 && lng >= 87.9 && lng <= 92.8;
+}
+
+function extractTrainPosition(html) {
+  // trainkothai.com is Next.js App Router SSR — strip tags to get clean text
+  const clean = html
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Progress % — inline style on the progress indicator: style="left: 46%;...accent-warn"
+  const progM = html.match(/style="left:\s*(\d+)%;[^"]*accent-warn/);
+  const progress = progM ? Number(progM[1]) : null;
+
+  // Speed: "95 km/h" in clean text
+  const speedM = clean.match(/([\d.]+)\s*km\/h/i);
+  const speed = speedM ? Number(speedM[1]) : 0;
+
+  // Delay: "Delayed · +11min"
+  const delayM = clean.match(/[Dd]elayed\s*[·•·]\s*\+(\d+)\s*min/i);
+  const delay = delayM ? Number(delayM[1]) : 0;
+
+  // Next station + last station: "Next station 75 % Muksudpur 16 km from Bhanga ·"
+  const nextM = clean.match(/Next station\s+\d+\s*%\s+([A-Za-z ]+?)\s+\d+\s*km from\s+([A-Za-z ]+?)\s*[·•·]/i);
+  const nextStation = nextM ? nextM[1].trim() : null;
+  const lastStation = nextM ? nextM[2].trim() : null;
+
+  const running = speed > 0 && progress !== null;
+  if (progress === null && !running) return null;
+  return { running, progress: progress ?? 0, speed, delay, nextStation, lastStation };
+}
+
+async function handleTrainPosition(request) {
+  const url = new URL(request.url);
+  const number = url.searchParams.get('number') || '';
+  if (!number || !/^\d{3,5}$/.test(number)) {
+    return cors(Response.json({ ok: false, error: 'bad number' }, { status: 400 }));
+  }
+  const cacheKey = `train-pos:${number}`;
+  try {
+    const cached = await CFG.PUSH_SUBS.get(cacheKey, 'json');
+    if (cached && (Date.now() - (cached.cachedAt || 0)) < TRAIN_POS_TTL * 1000) {
+      return cors(Response.json({ ok: true, ...cached, fromCache: true }));
+    }
+  } catch {}
+
+  const candidates = [
+    `https://trainkothai.com/track/${number}`,
+  ];
+  for (const fetchUrl of candidates) {
+    try {
+      const resp = await fetch(fetchUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml',
+          'Accept-Language': 'bn-BD,bn;q=0.9,en;q=0.8',
+        },
+        redirect: 'follow',
+        cf: { cacheTtl: 0 },
+      });
+      if (!resp.ok) continue;
+      const html = await resp.text();
+      const pos = extractTrainPosition(html);
+      if (pos !== null) {
+        const result = { ...pos, cachedAt: Date.now(), source: 'trainkothai' };
+        await CFG.PUSH_SUBS.put(cacheKey, JSON.stringify(result), { expirationTtl: TRAIN_POS_TTL + 60 });
+        return cors(Response.json({ ok: true, ...result }));
+      }
+    } catch {}
+  }
+  return cors(Response.json({ ok: false, error: 'no data' }, { status: 404 }));
+}
+
 // ── router ────────────────────────────────────────────────────────
 
 const ORIGIN_ALLOWLIST = new Set([
@@ -652,6 +734,9 @@ export default {
     }
     if (url.pathname === '/api/health') {
       return cors(Response.json({ ok: true }));
+    }
+    if (url.pathname === '/api/train-position' && request.method === 'GET') {
+      return handleTrainPosition(request);
     }
     if (request.method !== 'POST') {
       return cors(Response.json({ ok: false, error: 'method not allowed' }, { status: 405 }));

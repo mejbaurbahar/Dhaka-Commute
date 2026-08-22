@@ -27,6 +27,7 @@ function routeColor(type: string): string {
   if (type === 'AC') return '#7c3aed';
   if (type === 'Local') return '#10b981';
   if (type === 'Double-Decker') return '#3b82f6';
+  if (type === 'Pink Bus') return '#ec4899';
   return '#f59e0b';
 }
 
@@ -89,6 +90,7 @@ export function LocalBusPage(props: Props) {
   const [searchAttr, setSearchAttr] = useState<'name' | 'route' | 'type'>('name');
   const [quickFastest, setQuickFastest] = useState(false);
   const [quickAC, setQuickAC] = useState(false);
+  const [quickPink, setQuickPink] = useState(false);
   const fromRef = useRef<HTMLDivElement>(null);
   const toRef = useRef<HTMLDivElement>(null);
 
@@ -123,6 +125,7 @@ export function LocalBusPage(props: Props) {
     const applyQuick = (list: typeof BUS_DATA) => {
       let out = [...list];
       if (quickAC) out = out.filter(r => r.type === 'AC');
+      if (quickPink) out = out.filter(r => r.type === 'Pink Bus');
       if (quickFastest) out = out.sort((a, b) => a.stops.length - b.stops.length);
       // Active buses always before inactive
       out.sort((a, b) => (a.active === false ? 1 : 0) - (b.active === false ? 1 : 0));
@@ -177,7 +180,7 @@ export function LocalBusPage(props: Props) {
       return applyQuick(BUS_DATA.filter(r => matchesStation(r, t)).slice(0, 20));
     }
     return applyQuick(BUS_DATA.filter(r => r.name.length > 3).slice(0, 12));
-  }, [searchQuery, fromInput, toInput, hasSearched, searchAttr, quickFastest, quickAC]);
+  }, [searchQuery, fromInput, toInput, hasSearched, searchAttr, quickFastest, quickAC, quickPink]);
 
   const DTCA_TERMS = ['dhakar chaka','dhaka chaka','chaka','ঢাকার চাকা','ঢাকা চাকা','gulshan chaka','গুলশান চাকা'];
   const DTCA_STOPPAGES = ['agora','banani','dcc','gulshan 1','gulshan 2','gulshan1','gulshan2','nabisco mor','notun bazar','natun bazar','police plaza','shanta tower'];
@@ -285,13 +288,14 @@ export function LocalBusPage(props: Props) {
               {[
                 { id: 'fastest' as const, l: '⚡ ' + T(lang, 'দ্রুততম', 'Fastest') },
                 { id: 'ac' as const, l: '❄️ AC' },
+                { id: 'pink' as const, l: '🌸 ' + T(lang, 'গোলাপি বাস', 'Pink Bus') },
               ].map((c) => {
-                const on = c.id === 'fastest' ? quickFastest : quickAC;
+                const on = c.id === 'fastest' ? quickFastest : c.id === 'ac' ? quickAC : quickPink;
                 return (
                   <button
                     key={c.id}
-                    onClick={() => { if (c.id === 'fastest') setQuickFastest(v => !v); else setQuickAC(v => !v); }}
-                    style={{ ...chipBtn(tk), background: on ? tk.text : tk.panelMuted, color: on ? tk.bg : tk.text, borderColor: on ? tk.text : tk.line, fontWeight: on ? 700 : 500 }}
+                    onClick={() => { if (c.id === 'fastest') setQuickFastest(v => !v); else if (c.id === 'ac') setQuickAC(v => !v); else setQuickPink(v => !v); }}
+                    style={{ ...chipBtn(tk), background: on ? (c.id === 'pink' ? '#ec4899' : tk.text) : tk.panelMuted, color: on ? '#fff' : tk.text, borderColor: on ? (c.id === 'pink' ? '#ec4899' : tk.text) : tk.line, fontWeight: on ? 700 : 500 }}
                   >
                     {c.l}
                   </button>
@@ -366,6 +370,7 @@ export function LocalBusPage(props: Props) {
                               <div style={{ display:'flex', alignItems:'center', gap:6, flexWrap:'wrap' }}>
                                 <span style={{ fontFamily:BEN, fontWeight:700, fontSize:14, color:tk.text }}>{lang==='bn'?r.bnName:r.name}</span>
                                 {r.type==='AC' && <Pill tk={tk} tone="primary">AC</Pill>}
+                                {r.type==='Pink Bus' && <span style={{ fontFamily:'sans-serif', fontSize:10, fontWeight:700, background:'#ec489920', color:'#ec4899', border:'1px solid #ec489960', borderRadius:6, padding:'1px 6px' }}>{T(lang, 'গোলাপি বাস', 'Pink Bus')}</span>}
                                 {r.active === false && (
                                   <span style={{ fontFamily:SANS, fontSize:10, fontWeight:700, background:'#ef444420', color:'#ef4444', border:'1px solid #ef444440', borderRadius:6, padding:'1px 6px' }}>
                                     {T(lang, 'বন্ধ', 'Inactive')}
