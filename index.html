@@ -104,12 +104,18 @@
   <meta property="article:published_time" content="2022-01-01T00:00:00+06:00" />
   <meta property="article:modified_time" content="2026-08-16T00:00:00+06:00" />
 
-  <!-- Google Analytics 4 (Measurement ID: G-7L601M5G9R) — configured via Google Tag Manager (GTM-NNR2RDVF).
-       The dataLayer stub below keeps gtag() event calls in app code working: calls made before
-       GTM's gtag.js loads are queued in dataLayer, and GTM's GA4 tag flushes them. -->
+  <!-- Google Analytics 4 (Measurement ID: G-7L601M5G9R).
+       gtag.js is loaded DIRECTLY in standalone mode (no GTM). GTM only forwards gtag()
+       event calls to GA4 when an explicit GA4 Event tag exists; page-level gtag('event')
+       calls were being dropped under GTM, and GTM's container-mode gtag.js also interfered
+       with direct loading. Standalone gtag.js makes every gtag('event') in app code hit
+       GA4 immediately (web + Android Capacitor WebView). -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7L601M5G9R"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-7L601M5G9R');
   </script>
 
   <!-- Google Search Console: verified via sc-domain:koyjabo.com (DNS) -->
@@ -736,21 +742,9 @@
     @keyframes kjWheel { from { transform: rotate(0); } to { transform: rotate(360deg); } }
   </style>
 
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-NNR2RDVF');</script>
-  <!-- End Google Tag Manager -->
   </head>
 
 <body style="margin:0;padding:0;background:#05060b">
-
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NNR2RDVF"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
 
   <div id="kj-splash" role="status" aria-live="polite">
     <div class="kj-splash-col">
@@ -934,7 +928,7 @@
         isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || window.location.protocol === 'capacitor:';
       } catch (e) { /* default to web */ }
       var SCRIPTS = isNative ? [] : [
-        // GA4 removed here — now handled by GTM (GTM-NNR2RDVF) in head
+        // GA4 handled in head (direct gtag.js load, no longer via GTM only)
         { src: 'https://fundingchoicesmessages.google.com/i/pub-8425219156685369?ers=1' },
         { src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8425219156685369', crossOrigin: 'anonymous' },
         { src: 'https://shop.daamdekhi.com/aeo/tag.js', dataset: { site: 'MVZPpZlR' } }

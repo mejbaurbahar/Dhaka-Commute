@@ -44,6 +44,14 @@ function page(l) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Google Analytics 4 (direct gtag.js — Measurement ID G-7L601M5G9R) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7L601M5G9R"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-7L601M5G9R');
+  </script>
   <title>${l.title}</title>
   <meta name="description" content="${l.desc}" />
   <link rel="canonical" href="https://koyjabo.com/${l.code}/" />
