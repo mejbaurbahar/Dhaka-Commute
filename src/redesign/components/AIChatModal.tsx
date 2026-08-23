@@ -10,6 +10,7 @@ interface AIChatModalProps {
   isMobile: boolean;
   onClose: () => void;
   initialQ?: string;
+  onNav?: (r: string, params?: Record<string, string>) => void;
 }
 
 /**
@@ -17,7 +18,7 @@ interface AIChatModalProps {
  * Mobile: full-screen overlay. Desktop: centered dialog card.
  * Close via × button, Escape key, or backdrop click.
  */
-export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChatModalProps) {
+export function AIChatModal({ theme, lang, isMobile, onClose, initialQ, onNav }: AIChatModalProps) {
   const tk: Tokens = KJ_TOKENS[theme];
   const chat = useAIChat(lang, initialQ);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -137,7 +138,7 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ }: AIChat
       >
         {header}
         {/* No autoFocus — let the user see the modal first, then tap the input */}
-        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} hideHistoryBtn />
+        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} hideHistoryBtn onNav={onNav} />
         {historyOpen && (
           <ChatHistoryDrawer
             open={historyOpen}

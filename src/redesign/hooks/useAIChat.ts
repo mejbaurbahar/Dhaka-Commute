@@ -10,8 +10,11 @@ import { ALL_PLACES } from '../../../data/bangladeshPlaces';
 import { generateItinerary, itineraryToText } from '../../../services/itineraryEngine';
 import { findTransitRoutes, fuzzyMatchStop, formatTransitPlan } from '../../../services/transitPlanner';
 import { intercityRouteFor, nearestBoardingTerminals, terminalsServing } from '../utils/intercityBoarding';
+import { extractFromTo, buildTransportCards } from '../utils/aiTransportCards';
+import { trackRouteSearch, trackFeatureUsage } from '../../../services/analyticsService';
+import type { TransportCardData } from '../../../types';
 
-export type Msg = { id: number; isUser: boolean; text: string; rich?: string };
+export type Msg = { id: number; isUser: boolean; text: string; rich?: string; cards?: TransportCardData[] };
 export const INIT_MESSAGES: Msg[] = [{ id: 1, isUser: false, text: 'hello', rich: 'greeting' }];
 export type RecentSession = { id: string; title: string; lastUpdated: number };
 
@@ -508,7 +511,7 @@ export function useAIChat(lang: Lang, initialQ?: string) {
     const session = getSession(id, historyUid);
     if (!session) return;
     setSessionId(id);
-    const msgs: Msg[] = session.messages.map((m, i) => ({ id: i, isUser: m.role === 'user', text: m.text }));
+    const msgs: Msg[] = session.messages.map((m, i) => ({ id: i, isUser: m.role === 'user', text: m.text, cards: m.cards }));
     setMessages(msgs.length ? msgs : INIT_MESSAGES);
   }
 
@@ -582,6 +585,16 @@ export function useAIChat(lang: Lang, initialQ?: string) {
         return;
       }
 
+      // Transport result cards: explicit "from X to Y" in the query wins;
+      // otherwise use GPS area + detected destination (nav intent).
+      let cardFromTo: { from: string; to: string } | null = null;
+      const explicitFromTo = extractFromTo(userText);
+      if (explicitFromTo) {
+        cardFromTo = explicitFromTo;
+      } else if (area && goToDest) {
+        cardFromTo = { from: area, to: goToDest };
+      }
+
       let queryForOffline: string;
       if (area && goToDest) {
         // Build unambiguous "FROM to DEST" — prevents positional reversal
@@ -617,8 +630,20 @@ export function useAIChat(lang: Lang, initialQ?: string) {
           response = prefix + response;
         }
       }
-      saveChatMessage({ role: 'assistant', text: response, timestamp: Date.now() } as any, nextSessionId, historyUid);
-      setMessages(m => [...m, { id: Date.now() + 1, isUser: false, text: response }]);
+      // Verified transport cards — built by real engines, never the LLM.
+      const ft = cardFromTo;
+      const cards = ft ? buildTransportCards(ft.from, ft.to) : null;
+      const cardsData = cards && cards.length > 0 ? cards : undefined;
+      if (cardsData && ft) {
+        trackRouteSearch(ft.from, ft.to);
+        trackFeatureUsage('ai_route_cards');
+        const header = lang === 'bn'
+          ? `🏆 **${ft.from} → ${ft.to}** এর জন্য সেরা বিকল্প:\n\n`
+          : `🏆 **Best options for ${ft.from} → ${ft.to}:**\n\n`;
+        response = header + response;
+      }
+      saveChatMessage({ role: 'assistant', text: response, timestamp: Date.now(), cards: cardsData } as any, nextSessionId, historyUid);
+      setMessages(m => [...m, { id: Date.now() + 1, isUser: false, text: response, cards: cardsData }]);
     } catch {
       setMessages(m => [...m, { id: Date.now() + 1, isUser: false, text: T(lang, 'দুঃখিত, একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'Sorry, something went wrong. Please try again.') }]);
     } finally {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang, N, Fare } from '../tokens';
 import { AdSlot, NativeAdCard } from '../components/AdSlot';
 import { trackIntercitySearch } from '../../../services/analyticsService';
@@ -18,6 +18,8 @@ import { LAUNCH_ROUTES, LAUNCH_TERMINALS } from '../../../data/bangladeshLaunchD
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { earnCoins } from '../utils/koyCoinService';
+import { searchTransit, type TransitSortKey, type TransitSearchResult } from '../../../services/intercityTransitService';
+import { TransitJourneyList } from '../components/TransitJourneyList';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:Lang; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -91,6 +93,7 @@ const CHIPS = [
   { label: 'Train', labelBn: 'ট্রেন', icon: '🚆' },
   { label: 'Flight', labelBn: 'ফ্লাইট', icon: '✈️' },
   { label: 'Launch', labelBn: 'লঞ্চ', icon: '⛴️' },
+  { label: 'Transit', labelBn: 'ট্রানজিট', icon: '🔀' },
 ];
 
 const STATS = [
@@ -110,11 +113,12 @@ export function IntercityPage(props: Props) {
   setCanonicalUrl('/intercity');
   const isMobile = device === 'mobile';
   const tk: Tokens = KJ_TOKENS[theme];
-  const [activeChip, setActiveChip] = useState(params?.mode === 'flights' ? 'Flight' : 'Bus');
+  const [activeChip, setActiveChip] = useState(params?.chip === 'Transit' ? 'Transit' : params?.mode === 'flights' ? 'Flight' : 'Bus');
   const [nameSearch, setNameSearch] = useState(params?.search ?? '');
   const [from, setFrom] = useState(params?.from ?? '');
   const [to, setTo] = useState(params?.to ?? '');
   const [hasSearched, setHasSearched] = useState(!!(params?.from || params?.to || params?.search));
+  const [transitSort, setTransitSort] = useState<TransitSortKey>('recommended');
 
   const lbl = (en: string, bn: string) => T(lang, bn, en);
   const [fromFocus, setFromFocus] = useState(false);
@@ -474,6 +478,20 @@ export function IntercityPage(props: Props) {
     });
   }, [nameSearch, from, to, activeChip]);
 
+  // Transit chip: district-level multi-mode journey search (direct → 1 → 2 transfers)
+  const transitResult: TransitSearchResult | null = useMemo(() =>
+    activeChip === 'Transit' && hasSearched ? searchTransit(from, to) : null,
+  [from, to, activeChip, hasSearched]);
+
+  // Auto-select the sort pill that best matches the result: direct routes found →
+  // Direct (direct-first), transfer-only results → Fewest transfers, else Recommended.
+  useEffect(() => {
+    if (!transitResult || transitResult.kind !== 'ok') return;
+    const t = transitResult.journeys;
+    if (t.some(j => j.transfers === 0)) setTransitSort('direct');
+    else if (t.length > 0) setTransitSort('fewest');
+  }, [transitResult]);
+
   const DIVISION_COLORS: Record<string, string> = {
     Dhaka: '#3b82f6', Chattogram: '#10b981', Sylhet: '#a855f7',
     Khulna: '#06b6d4', Rajshahi: '#f59e0b', Barishal: '#ec4899',
@@ -672,8 +690,10 @@ export function IntercityPage(props: Props) {
 
         {hasSearched && (
         <div id="intercity-results" style={{ marginTop: 32 }}>
-          {/* For bus: expand into per-operator cards */}
-          {activeChip === 'Bus' ? (() => {
+          {/* Transit: multi-mode journey sections */}
+          {activeChip === 'Transit' ? (
+            <TransitJourneyList result={transitResult} sort={transitSort} onSort={setTransitSort} tk={tk} lang={lang} isMobile={isMobile} />
+          ) : activeChip === 'Bus' ? (() => {
             // Flatten all operators from all matched routes into individual cards
             const operatorCards: { opName: string; route: string; district: string; division: string; costNonAC: string; costAC: string; contact: string }[] = [];
             for (const r of filteredResults as any[]) {

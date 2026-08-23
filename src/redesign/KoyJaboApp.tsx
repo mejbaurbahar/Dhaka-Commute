@@ -759,7 +759,7 @@ export function KoyJaboApp() {
       )}
       <main>{stage}</main>
       {aiFab}
-      {aiOpen && <Suspense fallback={<LazyFallback />}><AIChatModal theme={theme} lang={lang} isMobile={isPhone} initialQ={aiQ} onClose={() => setAiOpen(false)} /></Suspense>}
+      {aiOpen && <Suspense fallback={<LazyFallback />}><AIChatModal theme={theme} lang={lang} isMobile={isPhone} initialQ={aiQ} onClose={() => setAiOpen(false)} onNav={nav} /></Suspense>}
       {/* Desktop view toggle removed — mobile users always get mobile layout */}
       <NavDrawer
         open={menuOpen} theme={theme} lang={lang}

@@ -6,7 +6,7 @@ import { useAIChat } from '../hooks/useAIChat';
 import { AIChatBody } from '../components/AIChatBody';
 import { formatChatTimestamp } from '../../../services/chatHistoryManager';
 
-interface Props { theme: 'dark' | 'light'; device: 'desktop' | 'mobile'; lang: Lang; route: string; canBack: boolean; onNav: (r: string) => void; onNavTab?: (r: string) => void; onBack: () => void; onLang: () => void; onTheme: () => void; onMenu: () => void; params?: Record<string, string>; }
+interface Props { theme: 'dark' | 'light'; device: 'desktop' | 'mobile'; lang: Lang; route: string; canBack: boolean; onNav: (r: string, params?: Record<string, string>) => void; onNavTab?: (r: string) => void; onBack: () => void; onLang: () => void; onTheme: () => void; onMenu: () => void; params?: Record<string, string>; }
 
 export function AIChatPage(props: Props) {
   const { theme, device, lang } = props;
@@ -82,7 +82,7 @@ export function AIChatPage(props: Props) {
         )}
 
         {/* ── Main chat column ── */}
-        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} />
+        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} onNav={props.onNav} />
       </div>
     </PageShell>
   );

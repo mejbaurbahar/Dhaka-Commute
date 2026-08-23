@@ -14,7 +14,7 @@ const PLACE_ALIASES: Record<string, string> = {
     khulna: 'khulna', mymensingh: 'mymensingh', 'coxs': "cox's bazar",
 };
 
-const BN_DISTRICT_MAP: Record<string, string> = {
+export const BN_DISTRICT_MAP: Record<string, string> = {
     'ঢাকা': 'dhaka', 'গাজীপুর': 'gazipur', 'নারায়ণগঞ্জ': 'narayanganj', 'নরসিংদী': 'narsingdi',
     'মানিকগঞ্জ': 'manikganj', 'মুন্সিগঞ্জ': 'munshiganj', 'টাঙ্গাইল': 'tangail', 'ফরিদপুর': 'faridpur',
     'গোপালগঞ্জ': 'gopalganj', 'মাদারীপুর': 'madaripur', 'রাজবাড়ী': 'rajbari', 'শরীয়তপুর': 'shariatpur',

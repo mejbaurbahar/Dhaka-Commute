@@ -112,11 +112,48 @@ export enum AppView {
   INTERCITY_HUB = 'INTERCITY_HUB',
 }
 
+/**
+ * AI chat transport result card — built by real transport engines
+ * (localBusRouting / intercityTransitService), never invented by the LLM.
+ * Plain data only (JSON-serializable) so it persists in chat history.
+ */
+export type TransportCardData =
+  | {
+      kind: 'bus';
+      busId: string;
+      nameEn: string;
+      nameBn: string;
+      from: string;
+      to: string;
+      durationMin: number;
+      fare: number;
+      transfers: number;
+    }
+  | {
+      kind: 'transit';
+      from: string;
+      to: string;
+      legs: {
+        mode: 'bus' | 'train' | 'flight' | 'launch';
+        nameEn: string;
+        nameBn: string;
+        from: string;
+        to: string;
+        durationMin: number;
+        fare: number;
+        estimated: boolean;
+      }[];
+      totalMin: number;
+      totalFare: number;
+      transfers: number;
+    };
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   text: string;
   timestamp: number;
+  cards?: TransportCardData[];
 }
 
 export interface ChatSession {

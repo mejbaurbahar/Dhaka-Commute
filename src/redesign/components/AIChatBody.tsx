@@ -3,6 +3,9 @@ import { KJ_TOKENS, T, SANS, BEN, Tokens, Lang } from '../tokens';
 import { useAIChat } from '../hooks/useAIChat';
 import { Icon } from './Icons';
 import { ChatHistoryDrawer } from './ChatHistoryDrawer';
+import { TransportResultCard } from './TransportResultCard';
+
+type NavFn = (r: string, params?: Record<string, string>) => void;
 
 export function AvatarAI({ tk }: { tk: Tokens }) {
   return (
@@ -17,7 +20,7 @@ export function AvatarAI({ tk }: { tk: Tokens }) {
   );
 }
 
-export function ChatBubble({ msg, tk, lang, userAvatarUrl, userInitials }: { msg: any; tk: Tokens; lang: Lang; userAvatarUrl?: string; userInitials?: string }) {
+export function ChatBubble({ msg, tk, lang, userAvatarUrl, userInitials, onNav }: { msg: any; tk: Tokens; lang: Lang; userAvatarUrl?: string; userInitials?: string; onNav?: NavFn }) {
   const isUser = msg.isUser;
   if (msg.rich === 'greeting') {
     return (
@@ -86,15 +89,44 @@ export function ChatBubble({ msg, tk, lang, userAvatarUrl, userInitials }: { msg
       </div>
     );
   }
+  const cards = !isUser && msg.cards && msg.cards.length > 0 ? msg.cards : undefined;
   return (
-    <div style={{ display: 'flex', gap: 10, alignSelf: isUser ? 'flex-end' : 'flex-start', maxWidth: '80%', flexDirection: isUser ? 'row-reverse' : 'row' }}>
+    <div style={{ display: 'flex', gap: 10, alignSelf: isUser ? 'flex-end' : 'flex-start', maxWidth: isUser ? '80%' : '92%', flexDirection: isUser ? 'row-reverse' : 'row' }}>
       {!isUser && <AvatarAI tk={tk} />}
       {isUser && (userAvatarUrl
         ? <img src={userAvatarUrl} alt={userInitials} style={{ width: 32, height: 32, borderRadius: 999, objectFit: 'cover', flexShrink: 0, border: `1.5px solid ${tk.primarySoft}` }} />
         : <div style={{ width: 32, height: 32, borderRadius: 999, background: tk.accentSoft, color: tk.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: SANS, fontWeight: 700, fontSize: 12 }}>{userInitials || 'KJ'}</div>
       )}
-      <div style={{ background: isUser ? tk.primary : tk.panel, color: isUser ? tk.primaryInk : tk.text, border: isUser ? 0 : `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', fontFamily: BEN, fontSize: 14, lineHeight: 1.6, unicodeBidi: 'plaintext' }}>
-        {isUser ? msg.text : renderMd(msg.text, tk)}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0, flex: 1, maxWidth: 480 }}>
+        <div style={{ background: isUser ? tk.primary : tk.panel, color: isUser ? tk.primaryInk : tk.text, border: isUser ? 0 : `1px solid ${tk.line}`, borderRadius: 16, padding: '12px 16px', fontFamily: BEN, fontSize: 14, lineHeight: 1.6, unicodeBidi: 'plaintext' }}>
+          {isUser ? msg.text : renderMd(msg.text, tk)}
+        </div>
+        {cards && (
+          <>
+            <div style={{ fontFamily: SANS, fontSize: 10, fontWeight: 700, letterSpacing: 0.6, textTransform: 'uppercase', color: tk.textFaint, paddingLeft: 2 }}>
+              ✓ {T(lang, 'যাচাইকৃত রুট', 'Verified routes')}
+            </div>
+            {cards.map((c, i) => (
+              <TransportResultCard key={i} card={c} tk={tk} lang={lang} onNav={onNav} />
+            ))}
+            <button
+              onClick={() => {
+                const c0 = cards[0];
+                const intercity = c0.kind === 'transit' && c0.legs.some(l => l.mode !== 'bus');
+                onNav?.(intercity ? 'intercity' : 'results', intercity
+                  ? { from: c0.from, to: c0.to, chip: 'Transit' }
+                  : { from: c0.from, to: c0.to });
+              }}
+              style={{
+                alignSelf: 'flex-start', background: 'transparent', border: `1px solid ${tk.line}`,
+                borderRadius: 999, padding: '7px 14px', cursor: 'pointer',
+                fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 11, fontWeight: 700, color: tk.primary,
+              }}
+            >
+              {T(lang, 'সব রুট দেখুন', 'See all routes')} →
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -156,10 +188,11 @@ interface AIChatBodyProps {
   chat: ReturnType<typeof useAIChat>;
   autoFocusInput?: boolean;
   hideHistoryBtn?: boolean;
+  onNav?: NavFn;
 }
 
 /** Messages + suggestion chips + input bar. Parent owns height (page flex or modal). */
-export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput, hideHistoryBtn }: AIChatBodyProps) {
+export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput, hideHistoryBtn, onNav }: AIChatBodyProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [kbPad, setKbPad] = useState(0);
@@ -212,7 +245,7 @@ export function AIChatBody({ tk, lang, isMobile, chat, autoFocusInput, hideHisto
               )}
             </button>
           )}
-          {chat.messages.map(msg => <ChatBubble key={msg.id} msg={msg} tk={tk} lang={lang} userAvatarUrl={chat.userAvatarUrl} userInitials={chat.userInitials} />)}
+          {chat.messages.map(msg => <ChatBubble key={msg.id} msg={msg} tk={tk} lang={lang} userAvatarUrl={chat.userAvatarUrl} userInitials={chat.userInitials} onNav={onNav} />)}
           {chat.isLoading && (
             <div style={{ display: 'flex', gap: 10, alignSelf: 'flex-start', maxWidth: '80%' }}>
               <AvatarAI tk={tk} />
