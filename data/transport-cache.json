@@ -13,7 +13,7 @@
     "fareMax": 100,
     "topSpeedKmh": 100,
     "stations": 17,
-    "fetchedAt": "2026-08-16T14:25:34.715Z",
+    "fetchedAt": "2026-08-23T14:14:18.119Z",
     "source": "dmtcl.gov.bd (static schedule)"
   },
   "brtaFares": {
@@ -23,7 +23,7 @@
     "minimumFare": 10,
     "effectiveDate": "2026-04-23",
     "source": "BRTA circular dated 23 April 2026",
-    "fetchedAt": "2026-08-16T14:25:34.715Z"
+    "fetchedAt": "2026-08-23T14:14:18.119Z"
   },
   "launchRoutes": {
     "routes": [
@@ -109,7 +109,7 @@
       }
     ],
     "totalRoutes": 67,
-    "fetchedAt": "2026-08-16T14:25:34.715Z",
+    "fetchedAt": "2026-08-23T14:14:18.119Z",
     "source": "biwtc.gov.bd"
   },
   "trainFaresSpotCheck": {
@@ -119,13 +119,13 @@
     "maxTicketsPerOrder": 4,
     "tripSearchDayLimit": 10,
     "totalStations": 263,
-    "totalTrainNames": 150,
+    "totalTrainNames": 149,
     "seniorCitizenDiscount": 25,
     "seniorCitizenAge": 65,
-    "fetchedAt": "2026-08-16T14:25:35.601Z",
+    "fetchedAt": "2026-08-23T14:14:18.960Z",
     "source": "railspaapi.shohoz.com/handshake"
   },
-  "_refreshedAt": "2026-08-16T14:25:41.508Z",
+  "_refreshedAt": "2026-08-23T14:14:25.051Z",
   "trainRoutes": {
     "routes": [
       {
@@ -3274,7 +3274,7 @@
       },
       {
         "number": "779",
-        "name": "OLD_DHALARCHAR EXPRESS",
+        "name": "DHALARCHAR EXPRESS",
         "from": "Dhalarchar",
         "to": "Rajshahi",
         "zone": "WEST",
@@ -3286,25 +3286,20 @@
           "Tue",
           "Wed"
         ],
-        "totalDuration": "03:55",
+        "totalDuration": "05:20",
         "stops": [
           "Dhalarchar",
-          "Badherhat",
-          "Kashinathpur",
-          "Sathia_Rajapur",
-          "Tantibandha",
-          "Dublia",
-          "Raghabpur",
           "Pabna",
-          "Tebunia",
-          "Dashuria",
-          "Majhgram",
           "Ishwardi Bypass",
           "Azim Nagar",
           "Abdulpur",
           "Arani",
           "Sardah_Road",
-          "Rajshahi"
+          "Rajshahi",
+          "Kakonhat",
+          "Lolitnagar",
+          "Amnura_Bypass",
+          "Chapainawabganj"
         ]
       },
       {
@@ -3958,29 +3953,6 @@
         ]
       },
       {
-        "number": "109",
-        "name": "CHAPAINAWABGANJ SHUTTLE",
-        "from": "Rajshahi",
-        "to": "Chapainawabganj",
-        "zone": "WEST",
-        "runningDays": [
-          "Fri",
-          "Sat",
-          "Sun",
-          "Mon",
-          "Tue",
-          "Wed"
-        ],
-        "totalDuration": "01:15",
-        "stops": [
-          "Rajshahi",
-          "Kakonhat",
-          "Lolitnagar",
-          "Amnura_Bypass",
-          "Chapainawabganj"
-        ]
-      },
-      {
         "number": "110",
         "name": "CHAPAINAWABGANJ SHUTTLE",
         "from": "Chapainawabganj",
@@ -4191,7 +4163,7 @@
       }
     ],
     "totalTrains": 134,
-    "fetchedAt": "2026-08-16T14:25:41.508Z",
+    "fetchedAt": "2026-08-23T14:14:25.051Z",
     "source": "railspaapi.shohoz.com"
   }
 }
