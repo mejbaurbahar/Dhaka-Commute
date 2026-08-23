@@ -478,9 +478,11 @@ export function IntercityPage(props: Props) {
     });
   }, [nameSearch, from, to, activeChip]);
 
-  // Transit chip: district-level multi-mode journey search (direct → 1 → 2 transfers)
+  // District-level multi-mode journey search (direct → 1 → 2 transfers).
+  // Computed for Transit chip AND as a Bus-tab fallback when a non-Dhaka pair
+  // has no direct bus operators (e.g. Benapole → Cox's Bazar).
   const transitResult: TransitSearchResult | null = useMemo(() =>
-    activeChip === 'Transit' && hasSearched ? searchTransit(from, to) : null,
+    hasSearched && (activeChip === 'Transit' || activeChip === 'Bus') ? searchTransit(from, to) : null,
   [from, to, activeChip, hasSearched]);
 
   // Auto-select the sort pill that best matches the result: direct routes found →
@@ -716,9 +718,11 @@ export function IntercityPage(props: Props) {
             }
             return (
               <>
+                {operatorCards.length > 0 && (
                 <div style={{ fontFamily: SANS, fontSize: 11, fontWeight: 700, letterSpacing: 0.8, textTransform: 'uppercase', color: tk.textFaint, marginBottom: 16 }}>
                   {lbl(`${N(operatorCards.length,lang)} bus operators found`, `${N(operatorCards.length,lang)}টি বাস অপারেটর পাওয়া গেছে`)}
                 </div>
+                )}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {operatorCards.slice(0, 40).map((c, i) => {
                     const col = DIVISION_COLORS[c.division] || '#6b7280';
@@ -749,9 +753,18 @@ export function IntercityPage(props: Props) {
                   })}
                 </div>
                 {operatorCards.length === 0 && (
+                  transitResult && transitResult.kind === 'ok' && transitResult.journeys.length > 0 ? (
+                    <div>
+                      <div style={{ fontFamily: SANS, fontSize: 12, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase', color: tk.primary, margin: '8px 0 12px' }}>
+                        {lbl('No direct buses — multi-mode journeys found', 'সরাসরি বাস নেই — মাল্টি-মোড যাত্রা পাওয়া গেছে')}
+                      </div>
+                      <TransitJourneyList result={transitResult} sort={transitSort} onSort={setTransitSort} tk={tk} lang={lang} isMobile={isMobile} />
+                    </div>
+                  ) : (
                   <div style={{ textAlign: 'center', padding: '32px 16px', color: tk.textFaint, fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 14 }}>
                     {lbl('No bus operators found. Try different locations.', 'কোনো বাস পাওয়া যায়নি।')}
                   </div>
+                  )
                 )}
               </>
             );

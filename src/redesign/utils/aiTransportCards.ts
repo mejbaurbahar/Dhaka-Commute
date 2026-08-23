@@ -23,6 +23,11 @@ export function extractFromTo(text: string): { from: string; to: string } | null
   if (m) return pair(m[1], m[2]);
   m = t.match(/(.{2,40}?)\s+theke\s+(.{2,40}?)(?=[.?।!,]|$)/i);
   if (m) return pair(m[1], m[2]);
+  // Verb-phrase pair: "how to go X to Y", "how can i get to X to Y",
+  // "want to go X to Y" — the leading verb phrase is consumed, never captured.
+  // Single-dest nav ("how to go to Cox's Bazar") has no second " to " → no match.
+  m = t.match(/(?:(?:how\s+(?:to\s+)?|how\s+(?:can|do)\s+i\s+|want\s+to\s+|need\s+to\s+|i(?:'m|\s+am)\s+going\s+to\s+)?(?:go|get|reach|travel)\s+(?:to\s+)?)(.{2,40}?)\s+to\s+(.{2,40}?)(?=[.?।!,]|$)/i);
+  if (m) return pair(m[1], m[2]);
   // Plain "X to Y" — reject queries that start with a question/verb word so
   // "how to go to Cox's Bazar" never matches with from="how".
   m = t.match(/^(.{2,40}?)\s+to\s+(.{2,40}?)(?=[.?।!,]|$)/i);
