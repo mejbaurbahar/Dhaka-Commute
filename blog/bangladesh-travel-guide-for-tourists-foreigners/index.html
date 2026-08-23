@@ -108,12 +108,11 @@
        calls were being dropped under GTM, and GTM's container-mode gtag.js also interfered
        with direct loading. Standalone gtag.js makes every gtag('event') in app code hit
        GA4 immediately (web + Android Capacitor WebView). -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7L601M5G9R"></script>
   <script>
+    // gtag dataLayer stub — the gtag.js script itself loads in the bottom idle
+    // loader (deferred past first paint; page_view fires there).
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-7L601M5G9R');
   </script>
 
   <!-- Google Search Console: verified via sc-domain:koyjabo.com (DNS) -->
@@ -684,10 +683,9 @@
   <!-- Preconnect to critical origins for faster resource loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Bundled Arabic font (self-hosted, offline-safe) — preloaded so the first
-       Arabic render never stalls on font load/shaping (was: seconds of black
-       screen when switching Bangla→Arabic in the Android app). -->
-  <link rel="preload" href="/fonts/noto-sans-arabic.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Bundled Arabic font (self-hosted, offline-safe). No preload: the
+       @font-face unicode-range (src/index.css) downloads it only for Arabic
+       text — a preload here costs 164KiB for every non-Arabic user. -->
   <link rel="preconnect" href="https://aistudiocdn.com" crossorigin>
   <link rel="dns-prefetch" href="https://api.open-meteo.com">
   <!-- Preconnect for live bus page (Leaflet map tiles + DTCA proxy) -->
@@ -738,14 +736,15 @@
     @keyframes kjWheel { from { transform: rotate(0); } to { transform: rotate(360deg); } }
   </style>
 
-    <script type="module" crossorigin src="/assets/index-VI8GR98r.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/train-data-Bk_O_VQt.js">
-    <link rel="modulepreload" crossorigin href="/assets/intercity-data-D0DeKZve.js">
-    <link rel="modulepreload" crossorigin href="/assets/ai-service-Ds0a91_V.js">
+    <script type="module" crossorigin src="/assets/index-CWEfvHDI.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/preload-helper-uXat0MnT.js">
     <link rel="modulepreload" crossorigin href="/assets/leaflet-BdVKSRIn.js">
     <link rel="modulepreload" crossorigin href="/assets/react-USqSMMEU.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-DgrOju8p.js">
-    <link rel="modulepreload" crossorigin href="/assets/react-dom-Dt146Fde.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-BzJDXfFR.js">
+    <link rel="modulepreload" crossorigin href="/assets/react-dom-qmcSNf9I.js">
+    <link rel="modulepreload" crossorigin href="/assets/constants-D5XzEqsI.js">
+    <link rel="modulepreload" crossorigin href="/assets/location-service-CWVEB1nw.js">
+    <link rel="modulepreload" crossorigin href="/assets/private-data-UGkPEcAS.js">
     <link rel="modulepreload" crossorigin href="/assets/lucide-isqBP3Jz.js">
     <link rel="stylesheet" crossorigin href="/assets/leaflet-Dgihpmma.css">
     <link rel="stylesheet" crossorigin href="/assets/index-DZDfvueO.css">
@@ -1034,16 +1033,15 @@
 
 
 
-  <!-- Cloudflare Turnstile — loaded only when auth pages are visited -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
-  <!-- Third-party scripts (GA4, Funding Choices, AdSense, Daamdekhi) are loaded here,
-       deferred until after the app has painted and the main thread is idle.
-       This protects LCP / TBT — the single biggest Core Web Vital on this site.
+  <!-- Third-party scripts (GA4, Turnstile, Funding Choices, AdSense, Daamdekhi)
+       are loaded here, deferred until after the app has painted and the main
+       thread is idle. This protects LCP / TBT — the single biggest Core Web
+       Vital on this site.
        Auto Ads are enabled by the adsbygoogle.js client param (no meta tag, no
        enable_page_level_ads push — either causes TagError "Only one ... allowed per page").
-       Web only: AdSense/Funding Choices/Daamdekhi are all skipped in the Android app
-       (KoyJabo shows no ads in-app — Play policy; AdSense TOS forbids app usage). -->
+       Web only: AdSense/Funding Choices/Daamdekhi/Turnstile are all skipped in the
+       Android app (KoyJabo shows no ads in-app — Play policy; AdSense TOS forbids
+       app usage). -->
   <script>
     (function () {
       var isNative = false;
@@ -1051,10 +1049,13 @@
         isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || window.location.protocol === 'capacitor:';
       } catch (e) { /* default to web */ }
       var SCRIPTS = isNative ? [] : [
-        // GA4 handled in head (direct gtag.js load, no longer via GTM only)
+        // GA4 (direct gtag.js, no GTM) — page_view fires when this loader runs
+        { src: 'https://www.googletagmanager.com/gtag/js?id=G-7L601M5G9R', onload: function () { gtag('js', new Date()); gtag('config', 'G-7L601M5G9R'); } },
         { src: 'https://fundingchoicesmessages.google.com/i/pub-8425219156685369?ers=1' },
         { src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8425219156685369', crossOrigin: 'anonymous' },
-        { src: 'https://shop.daamdekhi.com/aeo/tag.js', dataset: { site: 'MVZPpZlR' } }
+        { src: 'https://shop.daamdekhi.com/aeo/tag.js', dataset: { site: 'MVZPpZlR' } },
+        // Cloudflare Turnstile (community-write protection) — deferred here too
+        { src: 'https://challenges.cloudflare.com/turnstile/v0/api.js' }
       ];
       var loaded = false;
       var loadAll = function () {
@@ -1071,9 +1072,9 @@
         });
       };
       if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(loadAll, { timeout: 3000 });
+        window.requestIdleCallback(loadAll, { timeout: 5000 });
       } else {
-        window.addEventListener('load', function () { setTimeout(loadAll, 500); });
+        window.addEventListener('load', function () { setTimeout(loadAll, 1500); });
       }
     })();
   </script>
