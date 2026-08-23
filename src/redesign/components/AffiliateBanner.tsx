@@ -30,7 +30,7 @@ export const COURSES: CourseData[] = [
     subBn: 'Grammar শেখা ছাড়াই ইংরেজি বলার উপায় — by মুনজেরিন শহীদ',
     subEn: 'Speak English without learning grammar — by Munzereen Shahid',
     url: 'https://rkmri.co/00oMTAyRMISe/',
-    localImg: '/images/spoken-english-affiliate.jpg',
+    localImg: '/images/spoken-english-affiliate.webp',
     fallbackImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7ggR7qjHddhAVpSNO0vzd3EFe8z1eguVWSBoxogYKZg&s=10',
     badge: 'BESTSELLER',
     rating: '4.9 ★',
@@ -45,7 +45,7 @@ export const COURSES: CourseData[] = [
     subBn: 'মুখস্থ করা ছাড়াই Vocabulary শিখুন — by মুনজেরিন শহীদ',
     subEn: 'Learn Vocabulary without memorizing — by Munzereen Shahid',
     url: 'https://rkmri.co/pol0oM0MEoey/',
-    localImg: '/images/vocabulary-affiliate.jpg',
+    localImg: '/images/vocabulary-affiliate.webp',
     fallbackImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNmXmgbu_8kA5DQ4ZrPpxxIEeUDlJM0kbdJzobzNa3kw&s=10',
     badge: 'POPULAR',
     rating: '4.8 ★',
@@ -60,7 +60,7 @@ export const COURSES: CourseData[] = [
     subBn: 'Brand: DEER — আরামদায়ক ও নিরাপদ ট্রাভেল স্কুটার',
     subEn: 'Brand: DEER — Comfortable & Safe Travel Scooter',
     url: 'https://rkmri.co/meoyI5TNe0Al/',
-    localImg: '/images/pogo-scooter-affiliate.png',
+    localImg: '/images/pogo-scooter-affiliate.webp',
     fallbackImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/DEER_Pogo_Scooter_Slip_Resistance-DEER-a941a-285145.png',
     badge: 'HOT DEAL',
     rating: '4.9 ★',
@@ -75,7 +75,7 @@ export const COURSES: CourseData[] = [
     subBn: 'Brand: OnePlus — Beyond Bassic Acoustic Red',
     subEn: 'Brand: OnePlus — Beyond Bassic Acoustic Red',
     url: 'https://rkmri.co/EeMNl2epReyl/',
-    localImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/OnePlus_Bullets_Wireless_Z2_In_Ear_Headp-OnePlus-c05a7-274115.jpg',
+    localImg: '/images/oneplus-headphone-affiliate.webp',
     fallbackImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/OnePlus_Bullets_Wireless_Z2_In_Ear_Headp-OnePlus-c05a7-274115.jpg',
     badge: 'NEW',
     rating: '4.7 ★',
@@ -90,7 +90,7 @@ export const COURSES: CourseData[] = [
     subBn: 'Brand: Riversong — Waterproof Smart Watch Black',
     subEn: 'Brand: Riversong — Waterproof Smart Watch Black',
     url: 'https://rkmri.co/lp0R2EESARoo/',
-    localImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/RIVERSONG_Motive_3_PRO_SW46_Waterproof_S-Riversong-eaa15-274341.png',
+    localImg: '/images/riversong-watch-affiliate.webp',
     fallbackImg: 'https://rokbucket.rokomari.io/ProductNew20190903/45X64/RIVERSONG_Motive_3_PRO_SW46_Waterproof_S-Riversong-eaa15-274341.png',
     badge: 'TRENDING',
     rating: '4.8 ★',
@@ -460,6 +460,7 @@ function SpotlightShowcase({ tk, lang }: { tk: Tokens; lang: Lang }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: '1 1 240px' }}>
         <img
           src={course.localImg}
+          loading="lazy"
           onError={(e) => {
             (e.target as HTMLImageElement).src = course.fallbackImg;
           }}
@@ -521,6 +522,7 @@ function SlimStrip({ tk, lang }: { tk: Tokens; lang: Lang }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
         <img
           src={course.localImg}
+          loading="lazy"
           onError={(e) => {
             (e.target as HTMLImageElement).src = course.fallbackImg;
           }}

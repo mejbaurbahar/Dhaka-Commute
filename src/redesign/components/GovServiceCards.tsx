@@ -144,6 +144,7 @@ function GovCardItem({
           <img
             src={card.logo}
             alt={card.nameEn}
+            loading="lazy"
             style={{
               width: '74%',
               height: '74%',

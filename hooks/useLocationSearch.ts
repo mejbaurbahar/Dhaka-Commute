@@ -10,10 +10,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { STATIONS } from '../constants';
-import { TRAIN_STATIONS } from '../data/bangladeshTrainData';
 import { LAUNCH_TERMINALS } from '../data/bangladeshLaunchData';
 import { AIRPORTS_DATA } from '../data/bangladeshFlightData';
 import { searchLocationsSync, preloadLocations, type LocationResult } from '../services/locationSearchService';
+import type { BDTrainStation } from '../data/bangladeshTrainData';
 
 export interface LocationSuggestion {
   id: string;
@@ -38,6 +38,10 @@ function normBase(s: string): string {
 
 let _staticList: LocationSuggestion[] | null = null;
 
+// Train stations (316KB data) load lazily on first search — populated by the
+// hook below; until then railway suggestions simply aren't shown.
+let _trainStations: Record<string, BDTrainStation> | null = null;
+
 function getStaticLocations(): LocationSuggestion[] {
   if (_staticList) return _staticList;
 
@@ -53,11 +57,13 @@ function getStaticLocations(): LocationSuggestion[] {
 
   // Nationwide train stations
   // Use 'rail_' prefix when id conflicts with a bus stop (e.g. 'kamalapur')
-  for (const [id, t] of Object.entries(TRAIN_STATIONS)) {
-    const safeId = seen.has(id) ? `rail_${id}` : id;
-    if (seen.has(safeId)) continue;
-    seen.add(safeId);
-    list.push({ id: safeId, label: t.name, sub: t.bnName || '', lat: t.lat, lng: t.lng, category: 'railway_station' });
+  if (_trainStations) {
+    for (const [id, t] of Object.entries(_trainStations)) {
+      const safeId = seen.has(id) ? `rail_${id}` : id;
+      if (seen.has(safeId)) continue;
+      seen.add(safeId);
+      list.push({ id: safeId, label: t.name, sub: t.bnName || '', lat: t.lat, lng: t.lng, category: 'railway_station' });
+    }
   }
 
   // Launch terminals
@@ -95,18 +101,29 @@ export function useLocationSearch(
   const { limit = 20, categories, includeOSM = true } = options;
   const [osmResults, setOsmResults] = useState<LocationResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [trainReady, setTrainReady] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Preload OSM data only after browser is idle — avoids blocking initial paint
+  // Preload OSM data on first focus into any search field — not at boot
   useEffect(() => {
     if (!includeOSM) return;
-    if (typeof requestIdleCallback !== 'undefined') {
-      const id = requestIdleCallback(() => preloadLocations(), { timeout: 5000 });
-      return () => cancelIdleCallback(id);
-    }
-    const t = setTimeout(preloadLocations, 4000);
-    return () => clearTimeout(t);
+    const onFocus = () => {
+      preloadLocations();
+      document.removeEventListener('focusin', onFocus);
+    };
+    document.addEventListener('focusin', onFocus);
+    return () => document.removeEventListener('focusin', onFocus);
   }, [includeOSM]);
+
+  // Train stations load lazily on the first non-empty query (316KB chunk)
+  useEffect(() => {
+    if (_trainStations || !query.trim()) return;
+    import('../data/bangladeshTrainData').then(m => {
+      _trainStations = m.TRAIN_STATIONS as Record<string, BDTrainStation>;
+      _staticList = null; // rebuild static cache with railway stations
+      setTrainReady(true);
+    }).catch(() => { /* offline — railway suggestions unavailable */ });
+  }, [query]);
 
   // Debounced OSM search
   useEffect(() => {
@@ -186,7 +203,7 @@ export function useLocationSearch(
     const merged = [...staticMatches, ...osmMapped];
     const filtered = categories ? merged.filter(s => categories.includes(s.category)) : merged;
     return filtered.slice(0, limit);
-  }, [query, osmResults, limit, categories]);
+  }, [query, osmResults, limit, categories, trainReady]);
 
   return { suggestions: suggestions(), loading };
 }

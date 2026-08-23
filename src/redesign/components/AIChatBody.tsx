@@ -68,8 +68,12 @@ export function ChatBubble({ msg, tk, lang, userAvatarUrl, userInitials, onNav }
             </table>
           </div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {[T(lang, '🗺 রুট দেখুন', '🗺 See route'), T(lang, '📊 তুলনা', '📊 Compare'), T(lang, '⭐ রিভিউ', '⭐ Reviews')].map((c, i) => (
-              <button key={i} style={{ border: 'none', background: tk.primarySoft, color: tk.primary, borderRadius: 999, padding: '6px 12px', fontFamily: BEN, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>{c}</button>
+            {[
+              { label: T(lang, '🗺 রুট দেখুন', '🗺 See route'), go: () => onNav?.('results', { from: 'Gulshan', to: 'Motijheel' }) },
+              { label: T(lang, '📊 তুলনা', '📊 Compare'), go: () => onNav?.('intercity', { from: 'Gulshan', to: 'Motijheel', chip: 'Transit' }) },
+              { label: T(lang, '⭐ রিভিউ', '⭐ Reviews'), go: () => onNav?.('results', { from: 'Gulshan', to: 'Motijheel' }) },
+            ].map((b, i) => (
+              <button key={i} onClick={b.go} style={{ border: 'none', background: tk.primarySoft, color: tk.primary, borderRadius: 999, padding: '6px 12px', fontFamily: BEN, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>{b.label}</button>
             ))}
           </div>
         </div>

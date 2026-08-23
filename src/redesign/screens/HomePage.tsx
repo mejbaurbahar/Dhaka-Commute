@@ -17,20 +17,35 @@ import { isNativePlatform } from '../../utils/platformDetect';
 import { NativeAdSection as NativeAdSectionReal } from '../components/AdComponents';
 import { STATIONS, BUS_DATA, METRO_STATIONS as REAL_METRO_STATIONS } from '../../../constants';
 import { setCanonicalUrl, setMetaTag, setPropertyMetaTag } from '../utils/useDocumentTitle';
-import { BD_TRAIN_ROUTES, TRAIN_STATIONS } from '../../../data/bangladeshTrainData';
-import { INTERCITY_BUS_ROUTES, MAJOR_TRANSPORT_HUBS } from '../../../data/intercityData';
-import { AIRPORTS_DATA } from '../../../data/bangladeshFlightData';
-import { LAUNCH_TERMINALS as LAUNCH_TERMINALS_DATA } from '../../../data/bangladeshLaunchData';
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
 import { DestinationCard } from '../components/DestinationCard';
-import { ALL_PLACES } from '../../../data/bangladeshPlaces';
-import { DESTINATION_ENRICHMENT } from '../../../data/destinationEnrichment';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { getFavoriteBusIds } from '../utils/favorites';
 import { getUserHistory, splitRouteKey } from '../../../services/analyticsService';
 import { enhancedBusSearch } from '../../../services/searchService';
 import { inHours, trackPushEvent } from '../../services/pushService';
-import { MetroMapView } from '../components/MetroMapView';
+
+// ─── Lazy below-fold data + map ──────────────────────────────────────────────
+// Train / intercity / destinations / metro map are below the fold on the
+// homepage — loaded on mount as dynamic chunks so first paint doesn't parse
+// them. Each section renders empty (then fills in) instead of blocking.
+const loadTrainData = () => import('../../../data/bangladeshTrainData');
+const loadIntercityData = () => import('../../../data/intercityData');
+const loadPlacesData = () => import('../../../data/bangladeshPlaces');
+const loadEnrichmentData = () => import('../../../data/destinationEnrichment');
+const loadFlightData = () => import('../../../data/bangladeshFlightData');
+const loadLaunchData = () => import('../../../data/bangladeshLaunchData');
+const MetroMapView = React.lazy(() => import('../components/MetroMapView').then(m => ({ default: m.MetroMapView })));
+
+function useLazyData<T>(loader: () => Promise<T>): T | null {
+  const [data, setData] = useState<T | null>(null);
+  useEffect(() => {
+    let live = true;
+    loader().then(m => { if (live) setData(m); }).catch(() => { /* non-critical — section stays empty */ });
+    return () => { live = false; };
+  }, [loader]);
+  return data;
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -85,6 +100,10 @@ function SearchPanel({
   onNav,
   activeMode,
   setActiveMode,
+  trainData,
+  intercityData,
+  launchData,
+  flightData,
 }: {
   tk: Tokens;
   lang: Lang;
@@ -92,6 +111,10 @@ function SearchPanel({
   onNav: (r: string, params?: Record<string, string>) => void;
   activeMode: SearchModeId;
   setActiveMode: (m: SearchModeId) => void;
+  trainData: ReturnType<typeof loadTrainData> extends Promise<infer T> ? T : never;
+  intercityData: ReturnType<typeof loadIntercityData> extends Promise<infer T> ? T : never;
+  launchData: ReturnType<typeof loadLaunchData> extends Promise<infer T> ? T : never;
+  flightData: ReturnType<typeof loadFlightData> extends Promise<infer T> ? T : never;
 }) {
   const [searchQ, setSearchQ] = useState('');
   const [from, setFrom] = useState('');
@@ -151,24 +174,25 @@ function SearchPanel({
       return Object.values(REAL_METRO_STATIONS).map(s => ({ id: s.id, label: s.name, sub: s.bnName }));
     }
     if (activeMode === 'train') {
-      return Object.values(TRAIN_STATIONS).slice(0, 20).map(s => ({ id: s.id, label: s.name, sub: s.bnName }));
+      return trainData ? Object.values(trainData.TRAIN_STATIONS).slice(0, 20).map(s => ({ id: s.id, label: s.name, sub: s.bnName })) : [];
     }
     if (activeMode === 'launch') {
-      return LAUNCH_TERMINALS_DATA.map(t => ({ id: t.id, label: t.en, sub: t.bn }));
+      return launchData ? launchData.LAUNCH_TERMINALS.map(t => ({ id: t.id, label: t.en, sub: t.bn })) : [];
     }
     if (activeMode === 'flights') {
-      return AIRPORTS_DATA.map(a => ({ id: a.iata, label: a.en, sub: a.bn }));
+      return flightData ? flightData.AIRPORTS_DATA.map(a => ({ id: a.iata, label: a.en, sub: a.bn })) : [];
     }
     if (activeMode === 'intercity') {
+      if (!intercityData) return [];
       const seen = new Set<string>();
-      return [...INTERCITY_BUS_ROUTES, ...MAJOR_TRANSPORT_HUBS]
+      return [...intercityData.INTERCITY_BUS_ROUTES, ...intercityData.MAJOR_TRANSPORT_HUBS]
         .filter(r => { if (seen.has(r.district)) return false; seen.add(r.district); return true; })
         .sort((a, b) => a.district.localeCompare(b.district))
         .map(r => ({ id: r.district, label: r.district, sub: r.busOperators.slice(0, 2).join(', ') }));
     }
     // bus — popular Dhaka stops
     return Object.values(STATIONS).slice(0, 20).map(s => ({ id: s.id, label: s.name, sub: s.bnName }));
-  }, [activeMode]);
+  }, [activeMode, trainData, launchData, flightData, intercityData]);
 
   const filterModeOptions = (q: string, side: 'from' | 'to'): Suggestion[] => {
     if (!q.trim()) return emptyDefaultsForMode;
@@ -234,14 +258,16 @@ function SearchPanel({
         .map(r => ({ id: r.id, label: r.name, sub: r.routeString }));
     }
     if (activeMode === 'train') {
-      const trains = BD_TRAIN_ROUTES
-        .filter(r => r.name.toLowerCase().includes(q) || r.bnName.includes(debouncedQ) || r.number.includes(q))
-        .slice(0, 5)
-        .map(r => ({ id: r.id, label: `${r.name} (${r.number})`, sub: r.bnName }));
+      const trains = trainData
+        ? trainData.BD_TRAIN_ROUTES
+            .filter(r => r.name.toLowerCase().includes(q) || r.bnName.includes(debouncedQ) || r.number.includes(q))
+            .slice(0, 5)
+            .map(r => ({ id: r.id, label: `${r.name} (${r.number})`, sub: r.bnName }))
+        : [];
       return [...trains, ...filterModeOptions(debouncedQ, 'from')].slice(0, 15);
     }
     return filterModeOptions(debouncedQ, 'from');
-  }, [activeMode, debouncedQ, fromSuggestionsHook]);
+  }, [activeMode, debouncedQ, fromSuggestionsHook, trainData]);
 
   const changeMode = (mode: SearchModeId) => {
     setActiveMode(mode);
@@ -1770,13 +1796,22 @@ export function HomePage({
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
 
+  // Below-fold data loads as separate chunks after mount (see useLazyData)
+  const trainData = useLazyData(loadTrainData);
+  const intercityData = useLazyData(loadIntercityData);
+  const placesData = useLazyData(loadPlacesData);
+  const enrichmentData = useLazyData(loadEnrichmentData);
+  const flightData = useLazyData(loadFlightData);
+  const launchData = useLazyData(loadLaunchData);
+
   // Top-rated destinations for the Discover section (enriched first, fallback lat order)
   const topDestinations = useMemo(() => {
-    const spots = ALL_PLACES.filter(p => p.type === 'tourist' || p.type === 'historical' || p.type === 'landmark');
+    if (!placesData) return [];
+    const spots = placesData.ALL_PLACES.filter(p => p.type === 'tourist' || p.type === 'historical' || p.type === 'landmark');
     return [...spots].sort(
-      (a, b) => (DESTINATION_ENRICHMENT[b.id]?.gmRating ?? 0) - (DESTINATION_ENRICHMENT[a.id]?.gmRating ?? 0)
+      (a, b) => (enrichmentData?.DESTINATION_ENRICHMENT[b.id]?.gmRating ?? 0) - (enrichmentData?.DESTINATION_ENRICHMENT[a.id]?.gmRating ?? 0)
     );
-  }, []);
+  }, [placesData, enrichmentData]);
   const font = lang === 'bn' ? BEN : SANS;
   const [homeSearchMode, setHomeSearchMode] = useState<SearchModeId>('bus');
   const installPromptRef = useRef<{ prompt(): void } | null>(null);
@@ -1891,6 +1926,10 @@ export function HomePage({
                 onNav={onNav as (r: string, p?: Record<string, string>) => void}
                 activeMode={homeSearchMode}
                 setActiveMode={setHomeSearchMode}
+                trainData={trainData}
+                intercityData={intercityData}
+                launchData={launchData}
+                flightData={flightData}
               />
               {/* Gov ad banner — fills empty left-column space below search */}
               <GovAdBanner lang={lang} height={isMobile ? 200 : 240} />
@@ -2057,7 +2096,9 @@ export function HomePage({
             action={T(lang, 'ভাড়া ও তথ্য', 'Fares & info')}
             onAction={() => onNav('metro-hub')}
           />
-          <MetroMapView tk={tk} lang={lang} theme={theme} isMobile={isMobile} />
+          <React.Suspense fallback={<div style={{ minHeight: 260 }} />}>
+            <MetroMapView tk={tk} lang={lang} theme={theme} isMobile={isMobile} />
+          </React.Suspense>
         </div>
 
         {/* ── Middle Affiliate Slider Banner ── */}

@@ -4,14 +4,7 @@ import { noVerifiedDataMessage, VERIFIED_FACTS } from './transportKnowledge';
 import { BD_TRAIN_ROUTES, TRAIN_STATIONS } from '../data/bangladeshTrainData';
 import { INTERCITY_BUS_ROUTES, MAJOR_TRANSPORT_HUBS } from '../data/intercityData';
 import { getOfflineIntercityData } from '../intercity/offlineService';
-import {
-  classifyIntent, buildSmartResponse, generateComparisonResponse,
-  generateFareResponse, generateDurationResponse, generateDistanceResponse,
-  estimateDistanceKm, fuzzyMatchLocation,
-} from './travelAI';
-import { checkLearnedAnswer, recordAndLearn, warmUpCache } from './aiLearning';
 import { findRoutesBetweenStations, SuggestedRoute } from './routePlanner';
-import { planAndFormat, resolveLocation, findRoutes, formatRoutes } from './graphEngine';
 
 import {
   FARE_DATA,
@@ -29,8 +22,33 @@ import {
   getSmartSuggestions,
   getWeatherRecommendations
 } from './onlineLearningService';
-import { ADVANCED_QA_DATA } from '../data/advancedQaData';
 import { getAdvancedKnowledgeAnswer, setExtraKnowledgeData } from './advancedQaKnowledge';
+
+// Heavy AI modules (travelAI / aiLearning / graphEngine / advancedQaData) load
+// lazily on the first real AI query so the homepage never downloads the
+// ~460KB ai-service chunk. Cached after first load; resolved once per session.
+type HeavyAi = typeof import('./travelAI') &
+  typeof import('./aiLearning') &
+  typeof import('./graphEngine') & {
+    ADVANCED_QA_DATA: typeof import('../data/advancedQaData').ADVANCED_QA_DATA;
+  };
+let heavyAiPromise: Promise<HeavyAi> | null = null;
+function getHeavyAi(): Promise<HeavyAi> {
+  if (!heavyAiPromise) {
+    heavyAiPromise = Promise.all([
+      import('./travelAI'),
+      import('./aiLearning'),
+      import('./graphEngine'),
+      import('../data/advancedQaData'),
+    ]).then(([t, a, g, adv]) => ({
+      ...t,
+      ...a,
+      ...g,
+      ADVANCED_QA_DATA: adv.ADVANCED_QA_DATA,
+    }));
+  }
+  return heavyAiPromise;
+}
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -1574,8 +1592,12 @@ function findLocationAwareTransitRoute(query: string, fromArea: string, isBn: bo
 
 // --- MAIN AI LOGIC ---
 learningSystem.loadFromStorage();
-setTimeout(warmUpCache, 0);
-setExtraKnowledgeData(ADVANCED_QA_DATA);
+// Heavy modules arrive on demand — warm the learned-answer cache + QA data
+// as soon as they land (non-blocking; first query triggers the import).
+void getHeavyAi().then(h => {
+  setTimeout(() => h.warmUpCache(), 0);
+  setExtraKnowledgeData(h.ADVANCED_QA_DATA);
+});
 
 // ══════════════════════════════════════════════════════════════════════════════
 // KOYJABO AI — SYSTEM IDENTITY & BEHAVIOURAL GUIDELINES
@@ -1745,7 +1767,8 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
   }
 
   // === Learned Answer Cache — check before all heavy processing ===
-  const learnedAnswer = checkLearnedAnswer(query);
+  const heavy = await getHeavyAi();
+  const learnedAnswer = heavy.checkLearnedAnswer(query);
   if (learnedAnswer) return learnedAnswer;
 
   // === FAQ Database Check ===
@@ -1972,7 +1995,7 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
 
     if (isRouteIntent) {
       // First try intercity classification
-      const gIntent = classifyIntent(query);
+      const gIntent = heavy.classifyIntent(query);
       let fromLoc = gIntent.from;
       let toLoc = gIntent.to;
 
@@ -2070,14 +2093,14 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
           const hasNavToIntent = /(?:how\s+(?:to\s+)?(?:go|get)|route\s+to|reach|go\s+to|directions?\s+to|nearest\s+way)/i.test(lowerQ);
           if (hasNavToIntent) {
             toLoc = mentionedDeduped[0].id;
-            fromLoc = resolveLocation(_gpsDistrict) ?? undefined;
+            fromLoc = heavy.resolveLocation(_gpsDistrict) ?? undefined;
           }
         }
       }
 
       if (fromLoc && toLoc) {
         try {
-          const graphResult = await planAndFormat(fromLoc, toLoc, isBn);
+          const graphResult = await heavy.planAndFormat(fromLoc, toLoc, isBn);
           if (graphResult && !graphResult.startsWith('🤔') && graphResult.length > 60) {
             const extraDirect = BUS_DATA.filter(b => {
               if (b.active === false) return false;
@@ -2116,10 +2139,10 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
             const locMatch = ctxText.match(/User is (?:in|near)\s+([^(]+)/i);
             const locName = locMatch ? locMatch[1].trim() : '';
             if (locName) {
-              const fromLocId = resolveLocation(locName);
+              const fromLocId = heavy.resolveLocation(locName);
               if (fromLocId && fromLocId !== destStation.id) {
                 try {
-                  const graphResult = await planAndFormat(fromLocId, destStation.id, isBn);
+                  const graphResult = await heavy.planAndFormat(fromLocId, destStation.id, isBn);
                   if (graphResult && !graphResult.startsWith('🤔') && graphResult.length > 60) {
                     const prefix = isBn
                       ? `📍 আপনার বর্তমান অবস্থান **(${locName})** থেকে:\n\n`
@@ -2230,13 +2253,13 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
 
   // ── Smart AI enhancement ────────────────────────────────────────────────────
   // Provides distance/fare/duration/comparison responses the base engine lacks.
-  const travelIntent = classifyIntent(query);
+  const travelIntent = heavy.classifyIntent(query);
   const needsSmartAI = responseParts.length === 0
     || travelIntent.type === 'comparison'
     || travelIntent.type === 'distance'
     || travelIntent.type === 'duration';
   if (needsSmartAI && (travelIntent.from || travelIntent.to)) {
-    const smartResult = buildSmartResponse(query);
+    const smartResult = heavy.buildSmartResponse(query);
     if (smartResult && !responseParts.some(p => p.includes(smartResult.substring(0, 20)))) {
       // Resolve correct from/to for the header:
       // classifyIntent sets from=undefined when nav-intent ("how to go X") is detected —
@@ -2364,7 +2387,7 @@ export const askGeminiRoute = async (userQuery: string, _userApiKey?: string, ch
 
   // Log query + response for learning (non-blocking)
   learningSystem.logQuery(query, true);
-  recordAndLearn(query, finalResponse);
+  heavy.recordAndLearn(query, finalResponse);
 
   return finalResponse;
   } catch (_err) {

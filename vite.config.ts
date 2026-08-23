@@ -184,7 +184,7 @@ export default defineConfig(({ mode }) => {
           skipWaiting: true,
           clientsClaim: true,
           // Cache versioning for proper updates
-          cacheId: 'dhaka-commute-v135',
+          cacheId: 'dhaka-commute-v136',
           maximumFileSizeToCacheInBytes: 10485760, // 10 MB
 
           runtimeCaching: [
@@ -503,6 +503,10 @@ export default defineConfig(({ mode }) => {
       sourcemap: false,
       minify: 'esbuild',
       emptyOutDir: true,
+      // All supported browsers have native modulepreload — the injected
+      // polyfill is a shared chunk that would otherwise be hoisted into
+      // ai-service and force it to download on first paint.
+      modulePreload: { polyfill: false },
         rollupOptions: {
           output: {
             assetFileNames: 'assets/[name]-[hash].[ext]',
@@ -512,6 +516,13 @@ export default defineConfig(({ mode }) => {
               if (id.includes('geminiService') || id.includes('travelAI') || id.includes('advancedQaData') || id.includes('aiLearning')) return 'ai-service';
               if (id.includes('intercityData') || id.includes('offlineService')) return 'intercity-data';
               if (id.includes('blogPosts')) return 'blog-data';
+              // Shared modules both the eager app and lazy chunks import — they
+              // must NOT be hoisted into ai-service/intercity-data (that would
+              // force the whole heavy chunk to download on first paint).
+              if (id.includes('/services/locationService.')) return 'location-service';
+              if (id.includes('/services/privateDataService.')) return 'private-data';
+              if (id.includes('/constants.')) return 'constants';
+              if (id.includes('modulepreload') || id.includes('preload-helper')) return 'preload-helper';
               if (id.includes('node_modules/leaflet')) return 'leaflet';
               if (id.includes('node_modules/react-dom')) return 'react-dom';
               if (id.includes('node_modules/react/')) return 'react';
