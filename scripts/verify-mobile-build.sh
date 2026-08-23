@@ -18,15 +18,13 @@ if grep -rl "ca-pub-" dist/assets/*.js >/dev/null 2>&1; then
 else
   echo "✓ No AdSense client ID in mobile bundle"
 fi
+# AdMob was removed from app builds on 2026-08-20 (web keeps ads) — assert ABSENCE.
+# AdMob was removed from app builds on 2026-08-20 (web keeps ads) — assert ABSENCE.
+# (vendor-*.js is the React vendor split from manualChunks — not AdMob.)
 if grep -rl "kj-admob-host" dist/assets/*.js >/dev/null 2>&1; then
-  echo "✓ AdMob banner component present"
+  echo "✗ AdMob code (kj-admob-host) in mobile bundle"; FAIL=1
 else
-  echo "✗ kj-admob-host missing from mobile bundle"; FAIL=1
-fi
-if ls dist/assets/vendor-*.js >/dev/null 2>&1; then
-  echo "✓ Vendor chunks present (AdMob plugin dynamic chunk)"
-else
-  echo "✗ No vendor chunks found"; FAIL=1
+  echo "✓ No AdMob code in mobile bundle"
 fi
 
 echo "── index.html checks (mobile) ──"
