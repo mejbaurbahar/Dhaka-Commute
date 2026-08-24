@@ -90,7 +90,9 @@ export function buildCardsAnswer(cards: TransportCardData[], from: string, to: s
     // transit card — one or more legs (bus/train/launch/flight/metro)
     const firstLeg = c.legs[0];
     const headName = bn ? (firstLeg.nameBn || firstLeg.nameEn) : firstLeg.nameEn;
-    lines.push(`${num}${MODE_ICON[firstLeg.mode] ?? '🚌'} **${headName}**`);
+    const badge = c.badge === 'fastest' ? (bn ? ' ⚡ দ্রুততম' : ' ⚡ Fastest')
+      : c.badge === 'cheapest' ? (bn ? ' 💰 সস্তা' : ' 💰 Cheapest') : '';
+    lines.push(`${num}${MODE_ICON[firstLeg.mode] ?? '🚌'} **${headName}**${badge}`);
     for (const leg of c.legs) {
       const legName = bn ? (leg.nameBn || leg.nameEn) : leg.nameEn;
       lines.push(`   ${MODE_ICON[leg.mode] ?? '🚌'} ${legName} (${leg.from} → ${leg.to})${leg.fare !== undefined ? ` · 💰 ৳${leg.fare}` : ''}`);
@@ -154,7 +156,8 @@ export function buildTransportCards(fromQ: string, toQ: string): TransportCardDa
   const interResult = searchTransit(fromQ, toQ);
   const interValid = interResult.kind === 'ok' && interResult.fromDistrict !== interResult.toDistrict;
   if (interValid && interResult.journeys.length > 0) {
-    return interResult.journeys.slice(0, 3).map(j => ({
+    type TransitCard = Extract<TransportCardData, { kind: 'transit' }>;
+    const toCard = (j: (typeof interResult.journeys)[number]): TransitCard => ({
       kind: 'transit' as const,
       from: interResult.fromDistrict,
       to: interResult.toDistrict,
@@ -171,7 +174,25 @@ export function buildTransportCards(fromQ: string, toQ: string): TransportCardDa
       totalMin: j.totalMin,
       totalFare: j.totalFare,
       transfers: j.transfers,
-    }));
+      journeyId: j.id,
+    });
+    const all = interResult.journeys.slice(0, 6).map(toCard);
+    // Always present fastest + cheapest first (user's explicit ask), then the
+    // rest in engine score order, deduped by journey id, capped at 3 cards.
+    const fastest = [...all].sort((a, b) => a.totalMin - b.totalMin)[0];
+    const cheapest = [...all].sort((a, b) => a.totalFare - b.totalFare)[0];
+    const ordered: TransitCard[] = [];
+    const push = (c?: TransitCard) => {
+      if (c && !ordered.some(o => o.journeyId === c.journeyId)) ordered.push(c);
+    };
+    push(fastest);
+    if (cheapest !== fastest) push(cheapest);
+    for (const c of all) push(c);
+    const cards = ordered.slice(0, 3);
+    if (cards[0]) cards[0] = { ...cards[0], badge: 'fastest' };
+    const cheapestIdx = cards.findIndex(c => c.journeyId === cheapest?.journeyId && c !== cards[0]);
+    if (cheapestIdx > 0) cards[cheapestIdx] = { ...cards[cheapestIdx], badge: 'cheapest' };
+    return cards;
   }
 
   // ── Metro (MRT-6 operating line, station-level) ───────────────────────────

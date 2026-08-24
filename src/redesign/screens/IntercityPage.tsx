@@ -694,7 +694,7 @@ export function IntercityPage(props: Props) {
         <div id="intercity-results" style={{ marginTop: 32 }}>
           {/* Transit: multi-mode journey sections */}
           {activeChip === 'Transit' ? (
-            <TransitJourneyList result={transitResult} sort={transitSort} onSort={setTransitSort} tk={tk} lang={lang} isMobile={isMobile} />
+            <TransitJourneyList result={transitResult} sort={transitSort} onSort={setTransitSort} tk={tk} lang={lang} isMobile={isMobile} focusJourneyId={params?.journeyId} />
           ) : activeChip === 'Bus' ? (() => {
             // Flatten all operators from all matched routes into individual cards
             const operatorCards: { opName: string; route: string; district: string; division: string; costNonAC: string; costAC: string; contact: string }[] = [];
@@ -758,7 +758,7 @@ export function IntercityPage(props: Props) {
                       <div style={{ fontFamily: SANS, fontSize: 12, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase', color: tk.primary, margin: '8px 0 12px' }}>
                         {lbl('No direct buses — multi-mode journeys found', 'সরাসরি বাস নেই — মাল্টি-মোড যাত্রা পাওয়া গেছে')}
                       </div>
-                      <TransitJourneyList result={transitResult} sort={transitSort} onSort={setTransitSort} tk={tk} lang={lang} isMobile={isMobile} />
+                      <TransitJourneyList result={transitResult} sort={transitSort} onSort={setTransitSort} tk={tk} lang={lang} isMobile={isMobile} focusJourneyId={params?.journeyId} />
                     </div>
                   ) : (
                   <div style={{ textAlign: 'center', padding: '32px 16px', color: tk.textFaint, fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 14 }}>

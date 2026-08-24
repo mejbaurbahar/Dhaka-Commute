@@ -20,6 +20,8 @@ interface Props {
   tk: Tokens;
   lang: Lang;
   isMobile: boolean;
+  /** Journey to auto-expand + scroll into view (deep-link from AI chat cards). */
+  focusJourneyId?: string;
 }
 
 const SORT_KEYS: { key: TransitSortKey; en: string; bn: string }[] = [
@@ -70,14 +72,14 @@ function LegRow({ leg, tk, lang, last }: { leg: JourneyLeg; tk: Tokens; lang: La
   );
 }
 
-function JourneyCard({ j, tk, lang, isBest, open, onToggle }: { j: Journey; tk: Tokens; lang: Lang; isBest: boolean; open: boolean; onToggle: () => void }) {
+function JourneyCard({ j, tk, lang, isBest, open, onToggle, elId }: { j: Journey; tk: Tokens; lang: Lang; isBest: boolean; open: boolean; onToggle: () => void; elId?: string }) {
   const lbl = (en: string, bn: string) => T(lang, bn, en);
   const fromLabel = j.legs[0].fromLabelEn;
   const toLabel = j.legs[j.legs.length - 1].toLabelEn;
   const fromLabelBn = j.legs[0].fromLabelBn;
   const toLabelBn = j.legs[j.legs.length - 1].toLabelBn;
   return (
-    <div style={{
+    <div id={elId} style={{
       background: tk.panel, border: `1px solid ${isBest ? tk.primary : tk.line}`,
       borderRadius: 14, padding: '12px 14px', boxShadow: isBest ? `0 0 0 1px ${tk.primary}22, ${tk.shadow}` : tk.shadow,
     }}>
@@ -143,10 +145,19 @@ function JourneyCard({ j, tk, lang, isBest, open, onToggle }: { j: Journey; tk: 
   );
 }
 
-export function TransitJourneyList({ result, sort, onSort, tk, lang, isMobile }: Props) {
+export function TransitJourneyList({ result, sort, onSort, tk, lang, isMobile, focusJourneyId }: Props) {
   const lbl = (en: string, bn: string) => T(lang, bn, en);
   // Single-open accordion: only one journey expanded at a time
   const [openId, setOpenId] = useState<string | null>(null);
+
+  // Deep-link from AI chat: auto-expand the specific journey and scroll to it.
+  React.useEffect(() => {
+    if (!focusJourneyId || !result || result.kind === 'notfound' || result.kind === 'same') return;
+    if (!result.journeys.some(j => j.id === focusJourneyId)) return;
+    setOpenId(focusJourneyId);
+    const el = document.getElementById(`journey-${focusJourneyId}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [focusJourneyId, result]);
 
   // ── States ─────────────────────────────────────────────────────────────────
   if (!result || result.kind === 'notfound') {
@@ -232,6 +243,7 @@ export function TransitJourneyList({ result, sort, onSort, tk, lang, isMobile }:
                   isBest={j.id === bestId}
                   open={openId === j.id}
                   onToggle={() => setOpenId(openId === j.id ? null : j.id)}
+                  elId={`journey-${j.id}`}
                 />
               ))}
             </div>
