@@ -10,7 +10,7 @@ import { ALL_PLACES } from '../../../data/bangladeshPlaces';
 import { generateItinerary, itineraryToText } from '../../../services/itineraryEngine';
 import { findTransitRoutes, fuzzyMatchStop, formatTransitPlan } from '../../../services/transitPlanner';
 import { intercityRouteFor, nearestBoardingTerminals, terminalsServing } from '../utils/intercityBoarding';
-import { extractFromTo, buildTransportCards } from '../utils/aiTransportCards';
+import { extractFromTo, buildTransportCards, buildCardsAnswer } from '../utils/aiTransportCards';
 import { trackRouteSearch, trackFeatureUsage } from '../../../services/analyticsService';
 import type { TransportCardData } from '../../../types';
 
@@ -515,6 +515,17 @@ export function useAIChat(lang: Lang, initialQ?: string) {
     setMessages(msgs.length ? msgs : INIT_MESSAGES);
   }
 
+  // Reopening the modal remounts the hook — restore the latest conversation
+  // instead of silently starting a fresh chat (unless a question was passed).
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current) return;
+    restoredRef.current = true;
+    if (initialQ) return;
+    const sessions = getAllSessions(historyUid).slice().sort((a, b) => b.lastUpdated - a.lastUpdated);
+    if (sessions.length) loadSession(sessions[0].id);
+  }, []);
+
   function handleDeleteSession(id: string, e: React.MouseEvent) {
     e.stopPropagation();
     deleteSession(id, historyUid);
@@ -569,14 +580,24 @@ export function useAIChat(lang: Lang, initialQ?: string) {
       const goToDest = !hasFrom ? extractGoToDest(userText) : null;
       const isNavIntent = !hasFrom && goToDest !== null;
 
+      // "how to go hemayetpur to gulshan 1" — the dest regex swallows the
+      // " to X" tail; recover the real origin/destination pair from it.
+      let navFromTo: { from: string; to: string } | null = null;
+      if (goToDest && /\s+to\s+/i.test(goToDest)) {
+        const parts = goToDest.split(/\s+to\s+/i);
+        const dest = parts.pop()!.trim();
+        const origin = parts.join(' to ').trim();
+        if (dest && origin) navFromTo = { from: origin, to: dest };
+      }
+
       // When nav-intent is detected and no cached area, proactively fetch GPS now.
       let area = userAreaRef.current;
-      if (isNavIntent && !area) {
+      if (isNavIntent && !area && !navFromTo) {
         area = await getOrFetchArea() ?? '';
       }
 
       // If still no area after GPS attempt, ask user to specify origin
-      if (isNavIntent && !area && goToDest) {
+      if (isNavIntent && !area && goToDest && !navFromTo) {
         const noLocMsg = lang === 'bn'
           ? `📍 আপনার বর্তমান অবস্থান জানতে পারছি না।\n\n**${goToDest}** যেতে চান, কিন্তু আপনি কোথা থেকে যাচ্ছেন? একটু বলুন — যেমন: 'মিরপুর থেকে ${goToDest}' বা 'ফার্মগেট থেকে ${goToDest}'।`
           : `📍 I couldn't detect your current location.\n\nYou want to go to **${goToDest}** — where are you starting from? Try: 'Mirpur to ${goToDest}' or 'Farmgate to ${goToDest}'.`;
@@ -585,19 +606,32 @@ export function useAIChat(lang: Lang, initialQ?: string) {
         return;
       }
 
-      // Transport result cards: explicit "from X to Y" in the query wins;
-      // otherwise use GPS area + detected destination (nav intent).
+      // Transport result cards: explicit "from X to Y" in the query wins,
+      // then the recovered nav pair, then GPS area + detected destination.
       let cardFromTo: { from: string; to: string } | null = null;
-      const explicitFromTo = extractFromTo(userText);
+      const explicitFromTo = extractFromTo(userText) || navFromTo;
       if (explicitFromTo) {
         cardFromTo = explicitFromTo;
       } else if (area && goToDest) {
         cardFromTo = { from: area, to: goToDest };
       }
 
+      // Verified transport cards — built by real engines (bus/train/metro/
+      // launch/flight), never the LLM. When the database answers, the LLM is
+      // skipped entirely so no hallucinated bus/stop/fare can appear.
+      const ft = cardFromTo;
+      const cards = ft ? buildTransportCards(ft.from, ft.to) : null;
+      const cardsData = cards && cards.length > 0 ? cards : undefined;
+      if (cardsData && ft) {
+        trackRouteSearch(ft.from, ft.to);
+        trackFeatureUsage('ai_route_cards');
+      }
+
       let queryForOffline: string;
-      if (area && goToDest) {
+      if (explicitFromTo) {
         // Build unambiguous "FROM to DEST" — prevents positional reversal
+        queryForOffline = `${explicitFromTo.from} to ${explicitFromTo.to}`;
+      } else if (area && goToDest) {
         queryForOffline = `${area} to ${goToDest} [Context: User is in ${area} area]`;
       } else if (!hasFrom && area) {
         queryForOffline = `${userText} from ${area} [Context: User is in ${area} area]`;
@@ -607,40 +641,38 @@ export function useAIChat(lang: Lang, initialQ?: string) {
 
       // Ground the answer in KoyJabo's real dataset — never let the model
       // invent routes/fares. Injected as authoritative context.
-      // When nav intent is detected, feed the enriched "from X to Y" form so
+      // When a from/to pair is known, feed the enriched "from X to Y" form so
       // buildRealDataContext can extract proper from/to tokens for transit planning.
-      const dataContextQuery = (area && goToDest) ? `from ${area} to ${goToDest}` : userText;
+      const dataContextQuery = explicitFromTo
+        ? `from ${explicitFromTo.from} to ${explicitFromTo.to}`
+        : (area && goToDest) ? `from ${area} to ${goToDest}` : userText;
       const realData = buildRealDataContext(dataContextQuery);
       const groundedMessage = realData
         ? `${userText}\n\n[REAL BUS DATA from koyjabo.com — authoritative. Answer ONLY from this list and the data in your instructions; never invent a bus, stop, or fare not listed here. If nothing in this list matches, say you're not sure.]\n${realData}`
-        : userText;
+        : (ft || isNavIntent)
+          ? `${userText}\n\n[This route is NOT in the koyjabo.com database. Do NOT invent any bus, train, stop, or fare. Say you couldn't find this route and suggest using the app's route search.]`
+          : userText;
 
       let response: string;
-      try {
-        response = await askGitHubModels(groundedMessage, chatHistory, lang);
-      } catch {
-        // Greet by the logged-in user's real name — never a hardcoded one
-        const chatUserName = chatUser?.displayName || chatUser?.username || undefined;
-        response = await askGeminiRoute(queryForOffline, undefined, chatHistory, chatUserName);
-        // Prepend "Your current location" when GPS was injected and area not already in response
-        if (!hasFrom && area && response && !response.includes(area)) {
-          const prefix = lang === 'bn'
-            ? `📍 **আপনার বর্তমান অবস্থান:** ${area}\n\n`
-            : `📍 **Your current location:** ${area}\n\n`;
-          response = prefix + response;
-        }
-      }
-      // Verified transport cards — built by real engines, never the LLM.
-      const ft = cardFromTo;
-      const cards = ft ? buildTransportCards(ft.from, ft.to) : null;
-      const cardsData = cards && cards.length > 0 ? cards : undefined;
       if (cardsData && ft) {
-        trackRouteSearch(ft.from, ft.to);
-        trackFeatureUsage('ai_route_cards');
-        const header = lang === 'bn'
-          ? `🏆 **${ft.from} → ${ft.to}** এর জন্য সেরা বিকল্প:\n\n`
-          : `🏆 **Best options for ${ft.from} → ${ft.to}:**\n\n`;
-        response = header + response;
+        // Database-first: deterministic answer from verified engine data.
+        response = buildCardsAnswer(cardsData, ft.from, ft.to, lang);
+      } else {
+        try {
+          response = await askGitHubModels(groundedMessage, chatHistory, lang);
+        } catch {
+          // Greet by the logged-in user's real name — never a hardcoded one
+          const chatUserName = chatUser?.displayName || chatUser?.username || undefined;
+          response = await askGeminiRoute(queryForOffline, undefined, chatHistory, chatUserName);
+          // Prepend "Your current location" when GPS was injected and area not already in response
+          // (skip when the query itself named the origin — no GPS context needed)
+          if (!explicitFromTo && !hasFrom && area && response && !response.includes(area)) {
+            const prefix = lang === 'bn'
+              ? `📍 **আপনার বর্তমান অবস্থান:** ${area}\n\n`
+              : `📍 **Your current location:** ${area}\n\n`;
+            response = prefix + response;
+          }
+        }
       }
       saveChatMessage({ role: 'assistant', text: response, timestamp: Date.now(), cards: cardsData } as any, nextSessionId, historyUid);
       setMessages(m => [...m, { id: Date.now() + 1, isUser: false, text: response, cards: cardsData }]);

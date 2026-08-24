@@ -231,6 +231,16 @@ console.log(`✅ sitemap.xml written — ${staticPages.length} static, ${blogPag
 // whenever a new Android build is published (see android/app/build.gradle).
 const versionOut = path.join(root, 'public', 'version.json');
 const buildVersion = process.env.BUILD_VERSION || `${Date.now()}`;
-const androidVersionCode = Number(process.env.ANDROID_VERSION_CODE || 30);
+// Single source of truth: android/app/build.gradle. The Android build script
+// can still override via ANDROID_VERSION_CODE; plain web builds must NOT
+// silently regress the committed versionCode (was hardcoded 30 before).
+let androidVersionCode = Number(process.env.ANDROID_VERSION_CODE || 30);
+try {
+  const gradle = fs.readFileSync(path.join(root, 'android', 'app', 'build.gradle'), 'utf8');
+  const m = gradle.match(/versionCode\s+(\d+)/);
+  if (m) androidVersionCode = Number(m[1]);
+} catch {
+  // no android dir (fresh clone without android/) — keep env or default
+}
 fs.writeFileSync(versionOut, JSON.stringify({ version: buildVersion, builtAt: new Date().toISOString(), androidVersionCode }, null, 2), 'utf8');
 console.log(`✅ version.json written — ${buildVersion} (androidVersionCode ${androidVersionCode})`);

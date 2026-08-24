@@ -33,7 +33,7 @@ jobs:
         run: npm ci
 
       - name: Build project (dev mode)
-        run: npm run build
+        run: ANDROID_VERSION_CODE=$(grep -o 'versionCode [0-9]*' android/app/build.gradle | head -1 | grep -o '[0-9]*') npm run build
         env:
           NODE_ENV: production
           GENERATE_SOURCEMAP: false

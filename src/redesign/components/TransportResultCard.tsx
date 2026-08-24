@@ -10,10 +10,16 @@ interface Props {
   onNav: (r: string, params?: Record<string, string>) => void;
 }
 
-const MODE_ICONS: Record<string, string> = { bus: '🚌', train: '🚆', flight: '✈️', launch: '⛴️' };
+const MODE_ICONS: Record<string, string> = { bus: '🚌', train: '🚆', flight: '✈️', launch: '⛴️', metro: '🚇' };
 
 function isIntercity(card: TransportCardData): boolean {
-  return card.kind === 'transit' && card.legs.some(l => l.mode !== 'bus');
+  return card.kind === 'transit' && (
+    // Intercity cards always carry a graph journeyId — even a direct-bus
+    // journey (Dhaka → Benapole bus) must deep-link to the intercity Transit
+    // view, never the local-bus results screen.
+    card.journeyId !== undefined ||
+    card.legs.some(l => l.mode !== 'bus' && l.mode !== 'metro')
+  );
 }
 
 /**
@@ -52,8 +58,20 @@ export function TransportResultCard({ card, tk, lang, onNav }: Props) {
       >
         <div style={{ fontSize: 16, flexShrink: 0 }}>{legModeIcons}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, fontWeight: 700, color: tk.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {lbl(titleEn, titleBn)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+            <span style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, fontWeight: 700, color: tk.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {lbl(titleEn, titleBn)}
+            </span>
+            {card.kind === 'transit' && card.badge === 'fastest' && (
+              <span style={{ fontFamily: SANS, fontSize: 8, fontWeight: 800, color: '#047857', background: '#d1fae5', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
+                ⚡ {lbl('FASTEST', 'দ্রুততম')}
+              </span>
+            )}
+            {card.kind === 'transit' && card.badge === 'cheapest' && (
+              <span style={{ fontFamily: SANS, fontSize: 8, fontWeight: 800, color: '#b45309', background: '#fef3c7', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
+                💰 {lbl('CHEAPEST', 'সস্তা')}
+              </span>
+            )}
           </div>
           <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, marginTop: 1 }}>
             {transfers > 0 ? `${lbl('Transfers', 'বদল')}: ${N(transfers, lang)}` : lbl('Direct', 'সরাসরি')}
@@ -105,7 +123,7 @@ export function TransportResultCard({ card, tk, lang, onNav }: Props) {
         <button
           onClick={() => {
             if (card.kind === 'bus') onNav('bus-detail', { busId: card.busId, from: card.from, to: card.to });
-            else if (intercity) onNav('intercity', { from: card.from, to: card.to, chip: 'Transit' });
+            else if (intercity && card.kind === 'transit') onNav('intercity', { from: card.from, to: card.to, chip: 'Transit', journeyId: card.journeyId });
             else onNav('results', { from: card.from, to: card.to });
           }}
           style={{
@@ -118,7 +136,7 @@ export function TransportResultCard({ card, tk, lang, onNav }: Props) {
         </button>
         <button
           onClick={() => {
-            if (intercity) onNav('intercity', { from: card.from, to: card.to, chip: 'Transit' });
+            if (intercity && card.kind === 'transit') onNav('intercity', { from: card.from, to: card.to, chip: 'Transit', journeyId: card.journeyId });
             else onNav('results', { from: card.from, to: card.to });
           }}
           style={{

@@ -71,9 +71,11 @@ import { ToastProvider } from '../contexts/ToastContext';
 import { LanguageProvider } from '../contexts/LanguageContext';
 import { initPush } from './services/pushService';
 import { initOfflineEventsSync } from '../services/offlineEventsService';
+import { initPostHog } from '../services/posthogService';
 import { killConsoleInProd, installAntiDevtools } from './utils/security';
 killConsoleInProd();
 installAntiDevtools();
+initPostHog();
 
 const rootElement = document.getElementById('root');
 if (rootElement) {

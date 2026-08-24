@@ -252,7 +252,9 @@ function entryFromLocation(): StackEntry {
     return { route: 'blog-detail', params: { ...params, slug: path.split('/')[2] || '' } };
   }
   const match = Object.entries(ROUTE_PATHS).find(([, routePath]) => routePath === path);
-  return { route: match?.[0] || 'home' };
+  // Pass URL query params through (e.g. /intercity?from=Benapole&to=Cox%27s+Bazar&chip=Transit)
+  // so deep links restore the search — pages ignore params they don't use.
+  return { route: match?.[0] || 'home', params };
 }
 
 function getInitialLang(): Lang {

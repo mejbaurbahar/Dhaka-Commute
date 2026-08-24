@@ -1,6 +1,109 @@
 import type { TransportCardData } from '../../../types';
-import { planLocalBusTransit } from './localBusRouting';
+import { METRO_STATIONS, METRO_LINES } from '../../../constants';
+import { normalizePlace, planLocalBusTransit } from './localBusRouting';
 import { searchTransit } from '../../../services/intercityTransitService';
+
+const MODE_ICON: Record<string, string> = {
+  bus: '🚌', train: '🚆', launch: '⛴️', flight: '✈️', metro: '🚇', walk: '🚶',
+};
+
+function fmtDuration(min: number, bn: boolean): string {
+  const h = Math.floor(min / 60), m = min % 60;
+  if (h > 0) return bn ? `${h}ঘ ${m}মি` : `${h}h ${m}m`;
+  return bn ? `${m}মি` : `${m}m`;
+}
+
+/** MRT-6 fare by station index from Uttara North — same table as MetroPage. */
+function metroFareAt(index: number): number {
+  return index === 0 ? 0 : Math.min(20 + Math.floor(index / 2) * 10, 100);
+}
+
+/**
+ * Metro routing — MRT-6 only (the single operating line, matches MetroPage).
+ * Both endpoints must resolve to stations on the line; real station data from
+ * METRO_STATIONS/METRO_LINES. Returns null when either side is not a metro stop.
+ */
+function planMetroTransit(fromQ: string, toQ: string): TransportCardData[] | null {
+  const line = METRO_LINES['mrt6'];
+  if (!line) return null;
+  const fromKey = normalizePlace(fromQ);
+  const toKey = normalizePlace(toQ);
+  let fromIdx = -1, toIdx = -1;
+  let fromName = '', toName = '';
+  line.stations.forEach((id, i) => {
+    const s = METRO_STATIONS[id];
+    if (!s) return;
+    const nameKey = normalizePlace(s.name.replace(' Metro Station', ''));
+    const bnKey = normalizePlace(s.bnName);
+    if (fromIdx === -1 && (nameKey === fromKey || bnKey === fromKey)) {
+      fromIdx = i;
+      fromName = s.name.replace(' Metro Station', '');
+    }
+    if (toIdx === -1 && (nameKey === toKey || bnKey === toKey)) {
+      toIdx = i;
+      toName = s.name.replace(' Metro Station', '');
+    }
+  });
+  if (fromIdx === -1 || toIdx === -1 || fromIdx === toIdx) return null;
+  const lo = Math.min(fromIdx, toIdx), hi = Math.max(fromIdx, toIdx);
+  const fare = Math.abs(metroFareAt(fromIdx) - metroFareAt(toIdx));
+  const durationMin = (hi - lo) * 3; // ~3 min per station hop
+  return [{
+    kind: 'transit' as const,
+    from: fromQ,
+    to: toQ,
+    legs: [{
+      mode: 'metro' as const,
+      nameEn: 'MRT-6 (Metro Rail)',
+      nameBn: 'এমআরটি-৬ (মেট্রো রেল)',
+      from: fromName,
+      to: toName,
+      durationMin,
+      fare,
+      estimated: false,
+    }],
+    totalMin: durationMin,
+    totalFare: fare,
+    transfers: 0,
+  }];
+}
+
+/**
+ * Deterministic answer text built from verified engine cards — the ONLY text
+ * used when transport cards exist. Never touches the LLM, so it can never
+ * invent a bus, stop, or fare. bn/en via lang flag.
+ */
+export function buildCardsAnswer(cards: TransportCardData[], from: string, to: string, lang: string): string {
+  const bn = lang === 'bn';
+  const lines: string[] = [bn
+    ? `🏆 **${from} → ${to}** এর জন্য সেরা বিকল্প:`
+    : `🏆 **Best options for ${from} → ${to}:**`];
+  cards.forEach((c, i) => {
+    const num = `${i + 1}. `;
+    if (c.kind === 'bus') {
+      const name = bn ? (c.nameBn || c.nameEn) : c.nameEn;
+      const direct = bn ? 'সরাসরি বাস, কোনো বদল নেই' : 'direct bus, no transfer';
+      lines.push(`${num}🚌 **${name}** — ${direct}`);
+      lines.push(`   ${c.from} → ${c.to} · ⏱️ ~${fmtDuration(c.durationMin, bn)} · 💰 ৳${c.fare}`);
+      return;
+    }
+    // transit card — one or more legs (bus/train/launch/flight/metro)
+    const firstLeg = c.legs[0];
+    const headName = bn ? (firstLeg.nameBn || firstLeg.nameEn) : firstLeg.nameEn;
+    const badge = c.badge === 'fastest' ? (bn ? ' ⚡ দ্রুততম' : ' ⚡ Fastest')
+      : c.badge === 'cheapest' ? (bn ? ' 💰 সস্তা' : ' 💰 Cheapest') : '';
+    lines.push(`${num}${MODE_ICON[firstLeg.mode] ?? '🚌'} **${headName}**${badge}`);
+    for (const leg of c.legs) {
+      const legName = bn ? (leg.nameBn || leg.nameEn) : leg.nameEn;
+      lines.push(`   ${MODE_ICON[leg.mode] ?? '🚌'} ${legName} (${leg.from} → ${leg.to})${leg.fare !== undefined ? ` · 💰 ৳${leg.fare}` : ''}`);
+    }
+    const via = c.transfers > 0
+      ? (bn ? `~${fmtDuration(c.totalMin, bn)} · মোট ৳${c.totalFare} · ${c.transfers}টি বদল` : `~${fmtDuration(c.totalMin, bn)} · total ৳${c.totalFare} · ${c.transfers} transfer${c.transfers > 1 ? 's' : ''}`)
+      : (bn ? `~${fmtDuration(c.totalMin, bn)} · ৳${c.totalFare} · কোনো বদল নেই` : `~${fmtDuration(c.totalMin, bn)} · ৳${c.totalFare} · no transfer`);
+    lines.push(`   ${c.from} → ${c.to} · ${via}`);
+  });
+  return lines.join('\n');
+}
 
 /** Strip trailing travel verbs off a captured place name ("কক্সবাজার যাবো" → "কক্সবাজার"). */
 function cutVerb(s: string): string {
@@ -22,6 +125,11 @@ export function extractFromTo(text: string): { from: string; to: string } | null
   m = t.match(/(.{2,40}?)\s+থেকে\s+(.{2,40}?)(?=[.?।!,]|$)/);
   if (m) return pair(m[1], m[2]);
   m = t.match(/(.{2,40}?)\s+theke\s+(.{2,40}?)(?=[.?।!,]|$)/i);
+  if (m) return pair(m[1], m[2]);
+  // Verb-phrase pair: "how to go X to Y", "how can i get to X to Y",
+  // "want to go X to Y" — the leading verb phrase is consumed, never captured.
+  // Single-dest nav ("how to go to Cox's Bazar") has no second " to " → no match.
+  m = t.match(/(?:(?:how\s+(?:to\s+)?|how\s+(?:can|do)\s+i\s+|want\s+to\s+|need\s+to\s+|i(?:'m|\s+am)\s+going\s+to\s+)?(?:go|get|reach|travel)\s+(?:to\s+)?)(.{2,40}?)\s+to\s+(.{2,40}?)(?=[.?।!,]|$)/i);
   if (m) return pair(m[1], m[2]);
   // Plain "X to Y" — reject queries that start with a question/verb word so
   // "how to go to Cox's Bazar" never matches with from="how".
@@ -48,7 +156,8 @@ export function buildTransportCards(fromQ: string, toQ: string): TransportCardDa
   const interResult = searchTransit(fromQ, toQ);
   const interValid = interResult.kind === 'ok' && interResult.fromDistrict !== interResult.toDistrict;
   if (interValid && interResult.journeys.length > 0) {
-    return interResult.journeys.slice(0, 3).map(j => ({
+    type TransitCard = Extract<TransportCardData, { kind: 'transit' }>;
+    const toCard = (j: (typeof interResult.journeys)[number]): TransitCard => ({
       kind: 'transit' as const,
       from: interResult.fromDistrict,
       to: interResult.toDistrict,
@@ -65,8 +174,30 @@ export function buildTransportCards(fromQ: string, toQ: string): TransportCardDa
       totalMin: j.totalMin,
       totalFare: j.totalFare,
       transfers: j.transfers,
-    }));
+      journeyId: j.id,
+    });
+    const all = interResult.journeys.slice(0, 6).map(toCard);
+    // Always present fastest + cheapest first (user's explicit ask), then the
+    // rest in engine score order, deduped by journey id, capped at 3 cards.
+    const fastest = [...all].sort((a, b) => a.totalMin - b.totalMin)[0];
+    const cheapest = [...all].sort((a, b) => a.totalFare - b.totalFare)[0];
+    const ordered: TransitCard[] = [];
+    const push = (c?: TransitCard) => {
+      if (c && !ordered.some(o => o.journeyId === c.journeyId)) ordered.push(c);
+    };
+    push(fastest);
+    if (cheapest !== fastest) push(cheapest);
+    for (const c of all) push(c);
+    const cards = ordered.slice(0, 3);
+    if (cards[0]) cards[0] = { ...cards[0], badge: 'fastest' };
+    const cheapestIdx = cards.findIndex(c => c.journeyId === cheapest?.journeyId && c !== cards[0]);
+    if (cheapestIdx > 0) cards[cheapestIdx] = { ...cards[cheapestIdx], badge: 'cheapest' };
+    return cards;
   }
+
+  // ── Metro (MRT-6 operating line, station-level) ───────────────────────────
+  const metro = planMetroTransit(fromQ, toQ);
+  if (metro) return metro;
 
   // ── Dhaka-local (station-level bus graph) ─────────────────────────────────
   const local = planLocalBusTransit(fromQ, toQ, 6);

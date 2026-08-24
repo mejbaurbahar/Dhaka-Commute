@@ -116,9 +116,9 @@ export function ChatBubble({ msg, tk, lang, userAvatarUrl, userInitials, onNav }
             <button
               onClick={() => {
                 const c0 = cards[0];
-                const intercity = c0.kind === 'transit' && c0.legs.some(l => l.mode !== 'bus');
+                const intercity = c0.kind === 'transit' && (c0.journeyId !== undefined || c0.legs.some(l => l.mode !== 'bus'));
                 onNav?.(intercity ? 'intercity' : 'results', intercity
-                  ? { from: c0.from, to: c0.to, chip: 'Transit' }
+                  ? { from: c0.from, to: c0.to, chip: 'Transit', journeyId: c0.journeyId }
                   : { from: c0.from, to: c0.to });
               }}
               style={{

@@ -121,7 +121,9 @@ const DISTRICT_BN: Record<string, string> = (() => {
 
 const DISTRICT_KEYS: string[] = Object.keys(DISTRICT_DISPLAY);
 
-/** Non-district place → parent district (city areas, tourist spots, ports). */
+/** Non-district place → parent district (city areas, tourist spots, ports).
+ *  Includes Bangla keys — Bangla locality names never hit the English
+ *  substring scan, so without these "মিরপুর" would resolve to null. */
 const NEAREST_DISTRICT: Record<string, string> = {
   gulshan: 'dhaka', banani: 'dhaka', uttara: 'dhaka', mirpur: 'dhaka', dhanmondi: 'dhaka',
   mohammadpur: 'dhaka', farmgate: 'dhaka', motijheel: 'dhaka', 'old dhaka': 'dhaka',
@@ -135,6 +137,30 @@ const NEAREST_DISTRICT: Record<string, string> = {
   jaflong: 'sylhet', ratargul: 'sylhet', 'payra port': 'patuakhali', hatiya: 'noakhali',
   morrelganj: 'bagerhat', chaumuhani: 'noakhali', paksey: 'pabna', santahar: 'bogura',
   'maijdi court': 'noakhali', 'maijdi': 'noakhali', saidpur: 'nilphamari',
+  // Bangla keys (localities + spots) — Bangla names never match the English
+  // substring scan, so every key here is what makes Bangla queries work.
+  // Dhaka metro areas
+  মিরপুর: 'dhaka', গুলশান: 'dhaka', বনানী: 'dhaka', উত্তরা: 'dhaka', ধানমন্ডি: 'dhaka',
+  মোহাম্মদপুর: 'dhaka', ফার্মগেট: 'dhaka', মতিঝিল: 'dhaka', 'পুরান ঢাকা': 'dhaka', বাড্ডা: 'dhaka',
+  খিলগাঁও: 'dhaka', রামপুরা: 'dhaka', মোহাখালী: 'dhaka', তেজগাঁও: 'dhaka', শাহবাগ: 'dhaka',
+  পল্লবী: 'dhaka', কলাবাগান: 'dhaka', লালমাটিয়া: 'dhaka', আজিমপুর: 'dhaka', শ্যামলী: 'dhaka',
+  আসাদগেট: 'dhaka', বিজয়: 'dhaka', আগারগাঁও: 'dhaka', নাখালপাড়া: 'dhaka', পল্টন: 'dhaka',
+  শান্তিনগর: 'dhaka', কাকরাইল: 'dhaka', সেগুনবাগিচা: 'dhaka', বাংলামোটর: 'dhaka', নিকুঞ্জ: 'dhaka',
+  বনশ্রী: 'dhaka', সাভার: 'dhaka', টঙ্গী: 'gazipur', গাবতলী: 'dhaka', সদরঘাট: 'dhaka',
+  কমলাপুর: 'dhaka', বিমানবন্দর: 'dhaka', এয়ারপোর্ট: 'dhaka', সায়েদাবাদ: 'dhaka',
+  // Chattogram city areas
+  আগ্রাবাদ: 'chattogram', পাহাড়তলী: 'chattogram', ষোলশহর: 'chattogram', নাসিরাবাদ: 'chattogram',
+  চান্দগাঁও: 'chattogram', ঈদগাঁও: "cox's bazar", পেকুয়া: "cox's bazar", মহেশখালী: "cox's bazar",
+  // Sylhet / Rajshahi / Khulna city areas
+  জিন্দাবাজার: 'sylhet', ছাতক: 'sylhet', গোলাপগঞ্জ: 'sylhet', বিয়ানীবাজার: 'sylhet',
+  শাহপরান: 'sylhet', সোনারগাঁও: 'narayanganj', ফতুল্লা: 'narayanganj',
+  শিরোইল: 'rajshahi', 'সাহেব বাজার': 'rajshahi', দৌলতপুর: 'khulna', খালিশপুর: 'khulna',
+  সোনাডাঙ্গা: 'khulna', চান্দনা: 'gazipur', কালিয়াকৈর: 'gazipur', শ্রীপুর: 'gazipur',
+  // Tourist spots + border/port towns
+  বেনাপোল: 'jashore', টেকনাফ: "cox's bazar", কুয়াকাটা: 'patuakhali', স্রীমঙ্গল: 'moulvibazar',
+  সাজেক: 'rangamati', কাপ্তাই: 'rangamati', সুন্দরবন: 'bagerhat', মংলা: 'bagerhat',
+  ভৈরব: 'kishoreganj', জাফলং: 'sylhet', রাতারগুল: 'sylhet', হাতিয়া: 'noakhali',
+  চৌমুহনী: 'noakhali', সৈয়দপুর: 'nilphamari', সেন্টমার্টিন: "cox's bazar",
 };
 
 /** Spelling/alias variants → canonical district key. */
@@ -159,10 +185,19 @@ export function resolveDistrict(query: string): string | null {
   if (CANONICAL_ALIASES[normalized]) return CANONICAL_ALIASES[normalized];
   if (DISTRICT_DISPLAY[normalized]) return normalized;
   if (NEAREST_DISTRICT[normalized]) return NEAREST_DISTRICT[normalized];
-  // Station-style area names carry a stop number ("gulshan 1", "uttara 7") —
-  // strip it and retry the nearest-area map before falling through.
-  const stripped = normalized.replace(/\s+\d+$/, '');
+  // Station-style area names carry a stop number ("gulshan 1", "মিরপুর ১০") —
+  // strip it (ASCII + Bangla ০-৯ digits) and retry before falling through.
+  const stripped = normalized.replace(/[\s০-৯\d]+$/, '');
   if (stripped !== normalized && NEAREST_DISTRICT[stripped]) return NEAREST_DISTRICT[stripped];
+  // Token scan: "Post Office (Gulshan)" → "gulshan". Reverse-geocoded area
+  // strings and multi-word queries only resolve via a known locality/district
+  // token inside — exact known keys only, never substring noise.
+  for (const word of normalized.split(/[^\p{L}\p{N}]+/u)) {
+    if (!word) continue;
+    if (CANONICAL_ALIASES[word]) return CANONICAL_ALIASES[word];
+    if (DISTRICT_DISPLAY[word]) return word;
+    if (NEAREST_DISTRICT[word]) return NEAREST_DISTRICT[word];
+  }
   // substring scan over district keys (min 3 chars to avoid noise)
   if (normalized.length >= 3) {
     for (const key of DISTRICT_KEYS) {
@@ -310,7 +345,7 @@ const STATION_OVERRIDES: Record<string, string> = {
   bhanga: 'faridpur', boalmari_bazar: 'faridpur', madhukhali: 'rajbari', pangsha: 'rajbari',
   mawa: 'munshiganj', muktarpur: 'munshiganj', sreenagar: 'munshiganj',
   kashiani: 'gopalganj', muksudpur: 'gopalganj', chandradighalia: 'gopalganj',
-  fatullah: 'narayanganj', mahendranagar: 'narayanganj', baura: 'narayanganj',
+  fatullah: 'narayanganj', mahendranagar: 'narayanganj',
   chitoshi_road: 'chandpur', hajiganj: 'chandpur', chandpur_court: 'chandpur',
   maijdi_court: 'noakhali', choumuhani: 'noakhali', sonaimuri: 'noakhali', bajra: 'noakhali',
   choto_bahirbag: 'gopalganj', lohagara: 'chattogram', lohagora: 'narail',

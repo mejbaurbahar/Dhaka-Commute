@@ -134,7 +134,7 @@ export type TransportCardData =
       from: string;
       to: string;
       legs: {
-        mode: 'bus' | 'train' | 'flight' | 'launch';
+        mode: 'bus' | 'train' | 'flight' | 'launch' | 'metro';
         nameEn: string;
         nameBn: string;
         from: string;
@@ -146,6 +146,10 @@ export type TransportCardData =
       totalMin: number;
       totalFare: number;
       transfers: number;
+      /** Intercity graph journey id — deep-links "View Route" to that exact journey. */
+      journeyId?: string;
+      /** Highlight chip on the card: fastest / cheapest option of the set. */
+      badge?: 'fastest' | 'cheapest';
     };
 
 export interface ChatMessage {

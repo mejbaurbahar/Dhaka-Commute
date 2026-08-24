@@ -33,7 +33,7 @@ export function PrivacyPage(props: Props) {
         lbl('Search history (stored locally in your browser only) — to power favorites and recent routes.', 'সার্চ হিস্টরি (শুধু আপনার ব্রাউজারে লোকাল স্টোরেজে) — সেভড ও সাম্প্রতিক রুটের জন্য।'),
         lbl('Device info: browser type, OS, screen size — for compatibility, never linked to identity.', 'ডিভাইস তথ্য: ব্রাউজার, OS, স্ক্রিন সাইজ — কম্প্যাটিবিলিটির জন্য, পরিচয়ের সাথে যুক্ত করা হয় না।'),
         lbl('No account system — KoyJabo works fully without sign-in.', 'কোনো অ্যাকাউন্ট সিস্টেম নেই — কই যাবো লগইন ছাড়াই সম্পূর্ণ কাজ করে।'),
-        lbl('Usage analytics: anonymous page views via Google Analytics 4 (G-7L601M5G9R).', 'ব্যবহার অ্যানালিটিক্স: Google Analytics 4 (G-7L601M5G9R) দিয়ে বেনামী পেজ-ভিউ।'),
+        lbl('Usage analytics: anonymous page views via Google Analytics 4 (G-7L601M5G9R) + PostHog (us.posthog.com) for product journeys and error detection.', 'ব্যবহার অ্যানালিটিক্স: Google Analytics 4 (G-7L601M5G9R) + PostHog (us.posthog.com) দিয়ে বেনামী পেজ-ভিউ ও এরর শনাক্তকরণ।'),
       ],
     },
     {

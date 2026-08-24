@@ -2,6 +2,7 @@
 // History data: localStorage (per-user key) + synced to private GitHub repo
 // Global stats (visits): stored in GitHub koyjabo repo, updated via GitHub Actions
 import { enqueueEvent } from './offlineEventsService';
+import { phTrack } from './posthogService';
 
 export interface CommunityFeatureRecord {
     feature: string;
@@ -369,9 +370,11 @@ const saveUserHistory = (history: UserHistory): void => {
     }
 };
 
-// Fire a GA4 custom event if GA4 is configured (window.gtag exists)
+// Fire a GA4 custom event if GA4 is configured (window.gtag exists).
+// Every tracked action also mirrors into PostHog (journeys + funnels).
 const ga4 = (eventName: string, params: Record<string, string | number>) => {
     try { (window as any).gtag?.('event', eventName, params); } catch { /**/ }
+    phTrack(eventName, params);
 };
 
 export const trackBusSearch = (busId: string, busName: string): void => {
