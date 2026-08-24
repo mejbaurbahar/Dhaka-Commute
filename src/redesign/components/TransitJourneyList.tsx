@@ -161,7 +161,7 @@ export function TransitJourneyList({ result, sort, onSort, tk, lang, isMobile, f
 
   // ── States ─────────────────────────────────────────────────────────────────
   if (!result || result.kind === 'notfound') {
-    const q = result?.query ?? '';
+    const q = result && result.kind === 'notfound' ? result.query : '';
     return (
       <div style={{ textAlign: 'center', padding: '32px 16px', color: tk.textFaint, fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 14 }}>
         {result ? (
