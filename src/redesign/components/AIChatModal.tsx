@@ -45,6 +45,13 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ, onNav }:
     return () => window.visualViewport!.removeEventListener('resize', onVp);
   }, [isMobile]);
 
+  // Route-card actions (View Route / Use This) navigate the app — the modal
+  // must close so the user lands on the route screen, not under the overlay.
+  const handleNav = (r: string, params?: Record<string, string>) => {
+    onNav?.(r, params);
+    onClose();
+  };
+
   const header = (
     <div style={{
       flexShrink: 0, display: 'flex', alignItems: 'center', gap: 10,
@@ -138,7 +145,7 @@ export function AIChatModal({ theme, lang, isMobile, onClose, initialQ, onNav }:
       >
         {header}
         {/* No autoFocus — let the user see the modal first, then tap the input */}
-        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} hideHistoryBtn onNav={onNav} />
+        <AIChatBody tk={tk} lang={lang} isMobile={isMobile} chat={chat} hideHistoryBtn onNav={handleNav} />
         {historyOpen && (
           <ChatHistoryDrawer
             open={historyOpen}
