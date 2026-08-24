@@ -10,10 +10,10 @@ interface Props {
   onNav: (r: string, params?: Record<string, string>) => void;
 }
 
-const MODE_ICONS: Record<string, string> = { bus: '🚌', train: '🚆', flight: '✈️', launch: '⛴️' };
+const MODE_ICONS: Record<string, string> = { bus: '🚌', train: '🚆', flight: '✈️', launch: '⛴️', metro: '🚇' };
 
 function isIntercity(card: TransportCardData): boolean {
-  return card.kind === 'transit' && card.legs.some(l => l.mode !== 'bus');
+  return card.kind === 'transit' && card.legs.some(l => l.mode !== 'bus' && l.mode !== 'metro');
 }
 
 /**

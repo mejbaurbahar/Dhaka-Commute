@@ -134,7 +134,7 @@ export type TransportCardData =
       from: string;
       to: string;
       legs: {
-        mode: 'bus' | 'train' | 'flight' | 'launch';
+        mode: 'bus' | 'train' | 'flight' | 'launch' | 'metro';
         nameEn: string;
         nameBn: string;
         from: string;

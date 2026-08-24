@@ -10,7 +10,7 @@ import { ALL_PLACES } from '../../../data/bangladeshPlaces';
 import { generateItinerary, itineraryToText } from '../../../services/itineraryEngine';
 import { findTransitRoutes, fuzzyMatchStop, formatTransitPlan } from '../../../services/transitPlanner';
 import { intercityRouteFor, nearestBoardingTerminals, terminalsServing } from '../utils/intercityBoarding';
-import { extractFromTo, buildTransportCards } from '../utils/aiTransportCards';
+import { extractFromTo, buildTransportCards, buildCardsAnswer } from '../utils/aiTransportCards';
 import { trackRouteSearch, trackFeatureUsage } from '../../../services/analyticsService';
 import type { TransportCardData } from '../../../types';
 
@@ -616,6 +616,17 @@ export function useAIChat(lang: Lang, initialQ?: string) {
         cardFromTo = { from: area, to: goToDest };
       }
 
+      // Verified transport cards — built by real engines (bus/train/metro/
+      // launch/flight), never the LLM. When the database answers, the LLM is
+      // skipped entirely so no hallucinated bus/stop/fare can appear.
+      const ft = cardFromTo;
+      const cards = ft ? buildTransportCards(ft.from, ft.to) : null;
+      const cardsData = cards && cards.length > 0 ? cards : undefined;
+      if (cardsData && ft) {
+        trackRouteSearch(ft.from, ft.to);
+        trackFeatureUsage('ai_route_cards');
+      }
+
       let queryForOffline: string;
       if (explicitFromTo) {
         // Build unambiguous "FROM to DEST" — prevents positional reversal
@@ -638,35 +649,30 @@ export function useAIChat(lang: Lang, initialQ?: string) {
       const realData = buildRealDataContext(dataContextQuery);
       const groundedMessage = realData
         ? `${userText}\n\n[REAL BUS DATA from koyjabo.com — authoritative. Answer ONLY from this list and the data in your instructions; never invent a bus, stop, or fare not listed here. If nothing in this list matches, say you're not sure.]\n${realData}`
-        : userText;
+        : (ft || isNavIntent)
+          ? `${userText}\n\n[This route is NOT in the koyjabo.com database. Do NOT invent any bus, train, stop, or fare. Say you couldn't find this route and suggest using the app's route search.]`
+          : userText;
 
       let response: string;
-      try {
-        response = await askGitHubModels(groundedMessage, chatHistory, lang);
-      } catch {
-        // Greet by the logged-in user's real name — never a hardcoded one
-        const chatUserName = chatUser?.displayName || chatUser?.username || undefined;
-        response = await askGeminiRoute(queryForOffline, undefined, chatHistory, chatUserName);
-        // Prepend "Your current location" when GPS was injected and area not already in response
-        // (skip when the query itself named the origin — no GPS context needed)
-        if (!explicitFromTo && !hasFrom && area && response && !response.includes(area)) {
-          const prefix = lang === 'bn'
-            ? `📍 **আপনার বর্তমান অবস্থান:** ${area}\n\n`
-            : `📍 **Your current location:** ${area}\n\n`;
-          response = prefix + response;
-        }
-      }
-      // Verified transport cards — built by real engines, never the LLM.
-      const ft = cardFromTo;
-      const cards = ft ? buildTransportCards(ft.from, ft.to) : null;
-      const cardsData = cards && cards.length > 0 ? cards : undefined;
       if (cardsData && ft) {
-        trackRouteSearch(ft.from, ft.to);
-        trackFeatureUsage('ai_route_cards');
-        const header = lang === 'bn'
-          ? `🏆 **${ft.from} → ${ft.to}** এর জন্য সেরা বিকল্প:\n\n`
-          : `🏆 **Best options for ${ft.from} → ${ft.to}:**\n\n`;
-        response = header + response;
+        // Database-first: deterministic answer from verified engine data.
+        response = buildCardsAnswer(cardsData, ft.from, ft.to, lang);
+      } else {
+        try {
+          response = await askGitHubModels(groundedMessage, chatHistory, lang);
+        } catch {
+          // Greet by the logged-in user's real name — never a hardcoded one
+          const chatUserName = chatUser?.displayName || chatUser?.username || undefined;
+          response = await askGeminiRoute(queryForOffline, undefined, chatHistory, chatUserName);
+          // Prepend "Your current location" when GPS was injected and area not already in response
+          // (skip when the query itself named the origin — no GPS context needed)
+          if (!explicitFromTo && !hasFrom && area && response && !response.includes(area)) {
+            const prefix = lang === 'bn'
+              ? `📍 **আপনার বর্তমান অবস্থান:** ${area}\n\n`
+              : `📍 **Your current location:** ${area}\n\n`;
+            response = prefix + response;
+          }
+        }
       }
       saveChatMessage({ role: 'assistant', text: response, timestamp: Date.now(), cards: cardsData } as any, nextSessionId, historyUid);
       setMessages(m => [...m, { id: Date.now() + 1, isUser: false, text: response, cards: cardsData }]);
