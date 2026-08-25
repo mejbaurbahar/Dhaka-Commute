@@ -19,6 +19,38 @@ export function LocationChip({ tk, lang }: { tk: Tokens; lang: Lang }) {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
+  // Resolve GPS coords to the nearest bus stop (same logic as enable()).
+  const resolveArea = (lat: number, lng: number): string => {
+    type Geo = { lat: number; lng: number; name: string };
+    const stList = Object.values(STATIONS).filter((s) => Boolean((s as Geo).lat && (s as Geo).lng)) as unknown as Geo[];
+    let best = stList[0];
+    let bestD = Infinity;
+    for (const s of stList) {
+      const d = (s.lat - lat) ** 2 + (s.lng - lng) ** 2;
+      if (d < bestD) { bestD = d; best = s; }
+    }
+    return best?.name || 'Dhaka';
+  };
+
+  // Once the user has consented, keep the area in sync with their GPS —
+  // watchPosition fires continuously as they move, so the header never
+  // shows a stale area from a previous visit.
+  useEffect(() => {
+    if (consent !== 'yes' || typeof navigator === 'undefined' || !navigator.geolocation) return;
+    const watch = navigator.geolocation.watchPosition(
+      (pos) => {
+        const name = resolveArea(pos.coords.latitude, pos.coords.longitude);
+        localStorage.setItem('kj-location-area', name);
+        setArea(name);
+      },
+      () => {
+        // Permission lost / GPS unavailable — keep the last known area.
+      },
+      { timeout: 15000, maximumAge: 10000 }
+    );
+    return () => navigator.geolocation.clearWatch(watch);
+  }, [consent]);
+
   const enable = () => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
       localStorage.setItem('kj-location-consent', 'no');
@@ -30,16 +62,7 @@ export function LocationChip({ tk, lang }: { tk: Tokens; lang: Lang }) {
     setConsent('yes');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const { latitude: lat, longitude: lng } = pos.coords;
-        type Geo = { lat: number; lng: number; name: string };
-        const stList = Object.values(STATIONS).filter((s) => Boolean((s as Geo).lat && (s as Geo).lng)) as unknown as Geo[];
-        let best = stList[0];
-        let bestD = Infinity;
-        for (const s of stList) {
-          const d = (s.lat - lat) ** 2 + (s.lng - lng) ** 2;
-          if (d < bestD) { bestD = d; best = s; }
-        }
-        const name = best?.name || 'Dhaka';
+        const name = resolveArea(pos.coords.latitude, pos.coords.longitude);
         localStorage.setItem('kj-location-area', name);
         setArea(name);
         setLocating(false);
