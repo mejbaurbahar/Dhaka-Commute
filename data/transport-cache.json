@@ -13,7 +13,7 @@
     "fareMax": 100,
     "topSpeedKmh": 100,
     "stations": 17,
-    "fetchedAt": "2026-08-30T17:51:04.903Z",
+    "fetchedAt": "2026-09-06T16:35:02.672Z",
     "source": "dmtcl.gov.bd (static schedule)"
   },
   "brtaFares": {
@@ -23,7 +23,7 @@
     "minimumFare": 10,
     "effectiveDate": "2026-04-23",
     "source": "BRTA circular dated 23 April 2026",
-    "fetchedAt": "2026-08-30T17:51:04.903Z"
+    "fetchedAt": "2026-09-06T16:35:02.672Z"
   },
   "launchRoutes": {
     "routes": [
@@ -109,7 +109,7 @@
       }
     ],
     "totalRoutes": 67,
-    "fetchedAt": "2026-08-30T17:51:04.904Z",
+    "fetchedAt": "2026-09-06T16:35:02.673Z",
     "source": "biwtc.gov.bd"
   },
   "trainFaresSpotCheck": {
@@ -122,10 +122,10 @@
     "totalTrainNames": 149,
     "seniorCitizenDiscount": 25,
     "seniorCitizenAge": 65,
-    "fetchedAt": "2026-08-30T17:51:05.697Z",
+    "fetchedAt": "2026-09-06T16:35:03.447Z",
     "source": "railspaapi.shohoz.com/handshake"
   },
-  "_refreshedAt": "2026-08-30T17:51:12.037Z",
+  "_refreshedAt": "2026-09-06T16:35:08.843Z",
   "trainRoutes": {
     "routes": [
       {
@@ -4163,7 +4163,7 @@
       }
     ],
     "totalTrains": 134,
-    "fetchedAt": "2026-08-30T17:51:12.037Z",
+    "fetchedAt": "2026-09-06T16:35:08.843Z",
     "source": "railspaapi.shohoz.com"
   }
 }
