@@ -13,7 +13,7 @@
     "fareMax": 100,
     "topSpeedKmh": 100,
     "stations": 17,
-    "fetchedAt": "2026-09-13T17:08:49.151Z",
+    "fetchedAt": "2026-09-20T17:09:23.863Z",
     "source": "dmtcl.gov.bd (static schedule)"
   },
   "brtaFares": {
@@ -23,7 +23,7 @@
     "minimumFare": 10,
     "effectiveDate": "2026-04-23",
     "source": "BRTA circular dated 23 April 2026",
-    "fetchedAt": "2026-09-13T17:08:49.151Z"
+    "fetchedAt": "2026-09-20T17:09:23.863Z"
   },
   "launchRoutes": {
     "routes": [
@@ -109,7 +109,7 @@
       }
     ],
     "totalRoutes": 67,
-    "fetchedAt": "2026-09-13T17:08:49.152Z",
+    "fetchedAt": "2026-09-20T17:09:23.864Z",
     "source": "biwtc.gov.bd"
   },
   "trainFaresSpotCheck": {
@@ -122,10 +122,10 @@
     "totalTrainNames": 149,
     "seniorCitizenDiscount": 25,
     "seniorCitizenAge": 65,
-    "fetchedAt": "2026-09-13T17:08:49.790Z",
+    "fetchedAt": "2026-09-20T17:09:24.599Z",
     "source": "railspaapi.shohoz.com/handshake"
   },
-  "_refreshedAt": "2026-09-13T17:08:54.463Z",
+  "_refreshedAt": "2026-09-20T17:09:29.390Z",
   "trainRoutes": {
     "routes": [
       {
@@ -4076,7 +4076,7 @@
           "Rajshahi_Court",
           "Kakonhat",
           "Lolitnagar",
-          "Amnura",
+          "Amnura_Junction",
           "Nachole",
           "Rohanpur"
         ]
@@ -4099,7 +4099,7 @@
         "stops": [
           "Rohanpur",
           "Nachole",
-          "Amnura",
+          "Amnura_Junction",
           "Lolitnagar",
           "Kakonhat",
           "Rajshahi",
@@ -4131,7 +4131,7 @@
           "Rajshahi",
           "Kakonhat",
           "Lolitnagar",
-          "Amnura",
+          "Amnura_Junction",
           "Nachole",
           "Rohanpur"
         ]
@@ -4154,7 +4154,7 @@
         "stops": [
           "Rohanpur",
           "Nachole",
-          "Amnura",
+          "Amnura_Junction",
           "Lolitnagar",
           "Kakonhat",
           "Rajshahi_Court",
@@ -4163,7 +4163,7 @@
       }
     ],
     "totalTrains": 134,
-    "fetchedAt": "2026-09-13T17:08:54.463Z",
+    "fetchedAt": "2026-09-20T17:09:29.390Z",
     "source": "railspaapi.shohoz.com"
   }
 }
