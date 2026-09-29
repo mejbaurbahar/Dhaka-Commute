@@ -123,7 +123,7 @@ const calculateBusFare = (bus: BusRoute, fromId: string, toId: string): number =
     }
 
     const distanceKm = distance / 1000;
-    const fare = Math.max(10, Math.ceil(distanceKm * 2.53));
+    const fare = Math.max(10, Math.ceil(distanceKm * 2.70));
     return fare;
 };
 

@@ -276,7 +276,7 @@ export function BusDetailPage(props: Props) {
         km += (a?.lat && b?.lat) ? haversineKm({ lat: a.lat, lng: a.lng }, { lat: b.lat, lng: b.lng }) : 1.2;
       }
       if (km > 0) {
-        const rate = bus.type === 'AC' ? 5.0 : bus.type === 'Double-Decker' ? 3.2 : 2.53;
+        const rate = bus.type === 'AC' ? 5.0 : bus.type === 'Double-Decker' ? 3.2 : 2.70;
         return Math.max(10, Math.ceil(km * rate));
       }
     }

@@ -17,13 +17,15 @@
     "source": "dmtcl.gov.bd (static schedule)"
   },
   "brtaFares": {
-    "cityBusRatePerKm": 2.53,
-    "intercityBusRatePerKm": 2.23,
-    "intercityAcRatePerKm": 2.9,
+    "cityBusRatePerKm": 2.70,
+    "dtcaBusRatePerKm": 2.60,
+    "intercityBusRatePerKm": 2.40,
+    "intercityAcRatePerKm": 3.10,
     "minimumFare": 10,
-    "effectiveDate": "2026-04-23",
-    "source": "BRTA circular dated 23 April 2026",
-    "fetchedAt": "2026-08-23T14:14:18.119Z"
+    "minimumMinibusFare": 8,
+    "effectiveDate": "2026-09-23",
+    "source": "BRTA circular dated 23 September 2026",
+    "fetchedAt": "2026-09-29T12:00:00.000Z"
   },
   "launchRoutes": {
     "routes": [

@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-09-29T08:21:23.936Z",
+  "totalRuns": 2,
+  "historicalScores": [
+    {
+      "runId": "run-1790670025193",
+      "timestamp": "2026-09-29T08:20:25.193Z",
+      "overallScore": 95,
+      "functionalScore": 100,
+      "dataScore": 100,
+      "seoScore": 75,
+      "securityScore": 100,
+      "offlineScore": 100
+    },
+    {
+      "runId": "run-1790670083936",
+      "timestamp": "2026-09-29T08:21:23.936Z",
+      "overallScore": 100,
+      "functionalScore": 100,
+      "dataScore": 100,
+      "seoScore": 100,
+      "securityScore": 100,
+      "offlineScore": 100
+    }
+  ],
+  "activeRegressionRules": [
+    {
+      "id": "BRTA-2026-FARE-RATE",
+      "category": "Fare Data",
+      "description": "Ensure BRTA city bus fare rate remains updated to ৳2.70/km (and DTCA ৳2.60/km) across all calculation engines",
+      "detectionPattern": "cityBusRatePerKm === 2.70",
+      "preventiveAction": "Run multi-agent DataVerificationAgent before any staging build",
+      "firstObserved": "2026-09-29",
+      "occurrences": 1
+    },
+    {
+      "id": "BDT-GEO-COORDINATES-BOUND",
+      "category": "Geospatial",
+      "description": "Prevent stations or hubs with inverted or out-of-boundary GPS coordinates from slipping into production",
+      "detectionPattern": "lat in [20.0, 27.0] && lng in [87.5, 93.0]",
+      "preventiveAction": "Validate all station definitions against Bangladesh territorial bounding box",
+      "firstObserved": "2026-09-29",
+      "occurrences": 1
+    },
+    {
+      "id": "LLM-FACT-SYNCHRONICITY",
+      "category": "AEO",
+      "description": "Ensure llms.txt and llm-data.json stay synchronized with actual backend routing & BRTA tables",
+      "detectionPattern": "llms.txt fare rate matches transportKnowledge.ts",
+      "preventiveAction": "Automated verification check in CI/CD pipeline",
+      "firstObserved": "2026-09-29",
+      "occurrences": 1
+    }
+  ],
+  "learningInsights": [
+    "[2026-09-29T08:21:23.936Z] System operational excellence achieved: 95%+ across all 5 test domains.",
+    "Zero OWASP XSS and credential vulnerabilities verified in public bundle.",
+    "[2026-09-29T08:20:25.193Z] System operational excellence achieved: 95%+ across all 5 test domains.",
+    "Zero OWASP XSS and credential vulnerabilities verified in public bundle."
+  ]
+}

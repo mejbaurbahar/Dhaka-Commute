@@ -14,12 +14,12 @@ export interface DataSource {
 
 // Official verified sources
 const SOURCES = {
-  BRTA:     { label: 'BRTA official circular (Apr 2026)',   updated: '2026-04-23' },
+  BRTA:     { label: 'BRTA official circular (Sep 2026)',   updated: '2026-09-23' },
   DMTCL:    { label: 'DMTCL MRT-6 official schedule',       updated: '2026-06-01' },
   BR:       { label: 'Bangladesh Railway official data',     updated: '2026-05-01' },
   BIWTC:    { label: 'BIWTC launch terminal data',           updated: '2026-06-14' },
   KOYJABO:  { label: 'KoyJabo verified route database',      updated: '2026-06-20' },
-  ESTIMATE: { label: 'Calculated (BRTA ৳2.53/km rate)',      updated: '2026-04-23' },
+  ESTIMATE: { label: 'Calculated (BRTA ৳2.70/km rate)',      updated: '2026-09-23' },
   AI:       { label: 'AI-generated (not verified)',          updated: '2026-06-20' },
 };
 
@@ -51,8 +51,8 @@ export function launchConfidence(): DataSource {
 /** Calculated fare using BRTA formula */
 export function fareEstimateNote(isBn: boolean): string {
   return isBn
-    ? '📊 ভাড়া আনুমানিক (BRTA হার ৳২.৫৩/কিমি)'
-    : '📊 Fare estimated (BRTA rate ৳2.53/km)';
+    ? '📊 ভাড়া আনুমানিক (BRTA হার ৳২.৭০/কিমি)'
+    : '📊 Fare estimated (BRTA rate ৳2.70/km)';
 }
 
 /** Format confidence badge */
@@ -89,12 +89,14 @@ export const VERIFIED_FACTS = {
     source: 'DMTCL official',
   },
   brtaFares: {
-    cityBusPerKm: 2.53,
-    intercityNonAcPerKm: 2.23,
-    intercityAcPerKm: 2.90,
+    cityBusPerKm: 2.70,
+    dtcaBusPerKm: 2.60,
+    intercityNonAcPerKm: 2.40,
+    intercityAcPerKm: 3.10,
     minimumFare: 10,
-    effectiveDate: '2026-04-23',
-    source: 'BRTA circular April 2026',
+    minimumMinibusFare: 8,
+    effectiveDate: '2026-09-23',
+    source: 'BRTA circular September 2026',
   },
   launchRoutes: [
     { from: 'Sadarghat', to: 'Barisal',    hours: 9,  deckFare: 350,  vipFare: 1800 },

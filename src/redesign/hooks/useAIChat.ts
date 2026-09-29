@@ -387,10 +387,10 @@ function buildRealDataContext(userText: string): string {
   if (isLocalBusQuery) {
     sections.push(
       '[DHAKA CITY LOCAL BUS — 2026 FARE GUIDE]\n' +
-      'City bus fare (BRTA 2026): Minimum ৳10 (0-2 km), then ৳2/km\n' +
-      '• Uttara/Abdullahpur → Gulistan: ৳30-40 | 45-70 min\n' +
-      '• Mirpur 10 → Motijheel: ৳25-30 | 40-60 min\n' +
-      '• Mohakhali → Sadarghat: ৳20-25 | 30-45 min\n' +
+      'City bus fare (BRTA September 2026): Minimum ৳10 (minibus ৳8), ৳2.70/km (Dhaka/Ctg metro), ৳2.60/km (DTCA), ৳2.40/km (intercity)\n' +
+      '• Uttara/Abdullahpur → Gulistan: ৳35-45 | 45-70 min\n' +
+      '• Mirpur 10 → Motijheel: ৳30-35 | 40-60 min\n' +
+      '• Mohakhali → Sadarghat: ৳25-30 | 30-45 min\n' +
       '• Gazipur → Gulistan: ৳60-80 | 1.5-2 hrs\n' +
       '• BRTC AC buses: ৳50-100 flat | Major corridors\n' +
       'Student discount (50%): ONLY on BRTC government buses with valid student ID card\n' +
