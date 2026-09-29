@@ -455,7 +455,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Bus Routes (435) -->
+  <!-- Bus Routes (434) -->
   <url>
     <loc>https://koyjabo.com/bus/13-no/</loc>
     <lastmod>2026-09-29</lastmod>
@@ -1652,12 +1652,6 @@
   </url>
   <url>
     <loc>https://koyjabo.com/bus/torongo/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/bus/torongo-plus/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -2989,79 +2983,79 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-coca-cola-motijheel/</loc>
+    <loc>https://koyjabo.com/bus/welcome-transport/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-taltalaa-sachivalaya/</loc>
+    <loc>https://koyjabo.com/bus/ashulia-express/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-demra-staff-quarter-matsya-bhaban/</loc>
+    <loc>https://koyjabo.com/bus/druto/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-mirpur-10-motijheel/</loc>
+    <loc>https://koyjabo.com/bus/green-bangla/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-mirpur-12-motijheel-via-mirpur-1/</loc>
+    <loc>https://koyjabo.com/bus/city-bandhan/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-mirpur-12-motijheel-via-kazipara/</loc>
+    <loc>https://koyjabo.com/bus/malancha-transport/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-narayanganj-motijheel/</loc>
+    <loc>https://koyjabo.com/bus/elish/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-mohammadpur-kamalapur/</loc>
+    <loc>https://koyjabo.com/bus/ranimahal/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-abdullahpur-motijheel/</loc>
+    <loc>https://koyjabo.com/bus/naf-express/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-gazipur-airport/</loc>
+    <loc>https://koyjabo.com/bus/gausia-express/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-bogura-sherpur-matidali/</loc>
+    <loc>https://koyjabo.com/bus/aram/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-bogura-banani-mokamatola/</loc>
+    <loc>https://koyjabo.com/bus/projapoti-transport/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/brtc-pink-bus-chittagong-kalurghat-patenga/</loc>
+    <loc>https://koyjabo.com/bus/basumoti/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -3873,7 +3867,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Destinations (87) -->
+  <!-- Destinations (52) -->
   <url>
     <loc>https://koyjabo.com/places/sajek-valley/</loc>
     <lastmod>2026-09-29</lastmod>
@@ -4182,216 +4176,6 @@
   </url>
   <url>
     <loc>https://koyjabo.com/places/teknaf-wildlife-sanctuary/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/himchari-national-park/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/chera-dwip/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/nilachal/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/sonadia-island/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/chunati-wildlife-sanctuary/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/fashiakhali-wildlife-sanctuary/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/chittagong-zoo/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/chittagong-war-cemetery/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/alutila-cave/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/hanging-bridge-rangamati/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/boga-lake/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/chimbuk-hill/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/meghla-parjatan/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/suhrawardy-udyan/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/dhanmondi-lake/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/hoseni-dalan/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/bara-katra/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/bhawal-national-park/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/madhupur-national-park/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/bangabandhu-safari-park/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/idrakpur-fort/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/ramsagar-national-park/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/tajhat-palace/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/bagha-mosque/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/puthia-temple-complex/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/choto-sona-mosque/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/varendra-research-museum/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/hardinge-bridge/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/shilaidaha-kuthibari/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/durga-sagar/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/birishiri/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/hakaluki-haor/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/rema-kalenga-wildlife-sanctuary/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/satchari-national-park/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://koyjabo.com/places/mujibnagar-memorial/</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
