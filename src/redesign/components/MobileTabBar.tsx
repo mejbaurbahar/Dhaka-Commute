@@ -108,10 +108,10 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
               alignItems: 'center',
               justifyContent: 'center',
               gap: 3,
-              padding: '10px 0 8px',
-              color: active ? (isDiscover ? BD_GREEN : tk.primary) : (isDiscover ? BD_GREEN : tk.textFaint),
+              padding: '8px 0 6px',
+              color: active ? (isDiscover ? BD_GREEN : tk.primary) : (isDiscover ? BD_GREEN : tk.textDim),
               position: 'relative',
-              minHeight: 54,
+              minHeight: 52,
               WebkitTapHighlightColor: 'transparent',
             }}
             aria-label={T(lang, tab.bn, tab.en)}
@@ -119,35 +119,35 @@ export function MobileTabBar({ tk, lang, activeRoute, onNav, onMenu }: MobileTab
           >
             {/* Active glow dot above the icon — red dot on Discover (flag circle) */}
             <span style={{
-              position: 'absolute', top: 5, width: 4, height: 4, borderRadius: 999,
+              position: 'absolute', top: 4, width: 4, height: 4, borderRadius: '50%',
               background: glowColor,
-              boxShadow: glowColor !== 'transparent' ? `0 0 8px ${glowColor}` : 'none',
+              boxShadow: glowColor !== 'transparent' ? `0 0 6px ${glowColor}` : 'none',
               transition: 'background 0.2s, box-shadow 0.2s',
             }} />
             {/* Icon — pill wraps the icon exactly (bg always aligned with button content) */}
             <div style={{
               position: 'relative',
               zIndex: 1,
-              transform: active ? 'scale(1.12)' : 'scale(1)',
-              transition: 'transform 0.2s cubic-bezier(.2,.7,.25,1)',
+              transform: active ? 'scale(1.08)' : 'scale(1)',
+              transition: 'transform 0.2s cubic-bezier(.16,1,.3,1)',
               padding: '0 10px',
-              height: 32,
+              height: 30,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: 12,
               background: pillBg,
-              color: active && isDiscover ? BD_RED : undefined, // red circle on green field
+              color: active && isDiscover ? BD_RED : undefined,
               boxShadow: active && isDiscover ? `0 0 14px ${BD_GREEN}66, inset 0 0 0 1.5px ${BD_RED}55` : undefined,
-              animation: active ? 'kjTabPop .22s cubic-bezier(.2,.7,.25,1) both' : undefined,
+              animation: active ? 'kjTabPop .22s cubic-bezier(.16,1,.3,1) both' : undefined,
             }}>
-              <IconComp s={active ? 22 : 21} />
+              <IconComp s={active ? 21 : 20} />
             </div>
 
             <span style={{
               fontFamily: lang === 'bn' ? BEN : SANS,
               fontSize: 10,
-              fontWeight: active ? 700 : 400,
+              fontWeight: active ? 700 : 500,
               lineHeight: 1,
               position: 'relative',
               zIndex: 1,

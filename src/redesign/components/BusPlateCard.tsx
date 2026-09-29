@@ -1,31 +1,22 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Tokens, Lang, T, SANS, BEN } from '../tokens';
 import { SuggestionDropdown } from './SuggestionDropdown';
-import { submitBusPlate, getBusPlatesuggestons, normalizePlate, PLATE_REGEX, type PlateSuggestion } from '../../../services/communityDataService';
+import { submitBusPlate, getBusPlatesuggestons, PLATE_REGEX, type PlateSuggestion } from '../../../services/communityDataService';
 import { useNetworkStatus } from '../../../utils/networkStatus';
 
 /**
- * Auto-format plate input:
- * - digits only ("121814") → built `DMB 12-1814` (fast-path for most users)
- * - anything with letters ("DHAKA-BA 12-3814", "ঢাকা মেট্রো-গ ১২-৩৮১৪") is kept
- *   as typed — real plates must survive verbatim.
+ * Auto-format plate input: user types digits only, we build `DMB 11-1111`.
+ * First 2 digits → district, last 4 → serial.
  */
 const formatPlateInput = (raw: string): string => {
-  const latin = normalizePlate(raw);
-  if (/[A-Zঀ-৿]/.test(latin)) {
-    return latin.replace(/[^A-Zঀ-৿0-9\s-]/g, '').slice(0, 24);
-  }
-  const digits = latin.replace(/\D/g, '').slice(0, 6);
+  const digits = raw.replace(/\D/g, '').slice(0, 6);
   if (!digits) return '';
   const part1 = digits.slice(0, 2);
   const part2 = digits.slice(2, 6);
   return `DMB ${part1}${part2 ? '-' + part2 : ''}`;
 };
 const digitsOnly = (p: string) => p.replace(/\D/g, '');
-const showPlate = (p: string) => {
-  const up = p.toUpperCase();
-  return /^\d{2}-\d{4}$/.test(up) ? `DMB ${up}` : up;
-};
+const showPlate = (short: string) => `DMB ${short.toUpperCase()}`;
 
 interface Props {
   bus: { id: string; name: string };
@@ -53,22 +44,14 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
     return () => { alive = false; };
   }, [bus.id]);
 
-  // plates from constants = admin-confirmed; community plates carry status
-  const allPlates = useMemo(() => {
+  const known = useMemo(() => {
     const fromConst = plates.map(p => p.toUpperCase());
     const fromCommunity = community
       .map(s => s.plate.toUpperCase())
       .filter(p => !fromConst.includes(p));
-    return [...fromConst, ...fromCommunity].filter((p, i, a) => a.indexOf(p) === i);
+    const dedup = [...fromConst, ...fromCommunity].filter((p, i, a) => a.indexOf(p) === i);
+    return dedup.map(p => ({ id: p, label: showPlate(p) }));
   }, [plates, community]);
-
-  const statusOf = (plate: string): 'admin' | 'verified' | 'pending' => {
-    if (plates.map(p => p.toUpperCase()).includes(plate)) return 'admin';
-    const s = community.find(c => c.plate.toUpperCase() === plate);
-    return s?.status === 'verified' ? 'verified' : 'pending';
-  };
-
-  const known = useMemo(() => allPlates.map(p => ({ id: p, label: showPlate(p) })), [allPlates]);
 
   const inputDigits = digitsOnly(input);
   const filtered = known.filter(k => !inputDigits || digitsOnly(k.id).includes(inputDigits));
@@ -77,7 +60,7 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
     ? [{ id: 'add-new', label: T(lang, 'কোনো বাস নম্বর পাওয়া যায়নি — এখনই যোগ করুন', 'No bus number found — add now') }]
     : filtered;
 
-  const valid = PLATE_REGEX.test(normalizePlate(input));
+  const valid = PLATE_REGEX.test(input.trim());
 
   const handleSave = async () => {
     if (!valid || submitting) return;
@@ -90,19 +73,14 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
       setInput('');
       setFocused(false);
     } else if (result.ok) {
-      const verified = result.plateStatus === 'verified';
-      setFeedback({
-        ok: true,
-        msg: verified
-          ? T(lang, 'প্লেট যাচাই হয়েছে ✓', 'Plate verified ✓')
-          : T(lang, 'ধন্যবাদ! আপনার প্লেট নম্বর জমা হয়েছে — যাচাইয়ের অপেক্ষায়।', 'Thanks! Plate submitted — pending verification.'),
-      });
+      setFeedback({ ok: true, msg: T(lang, 'ধন্যবাদ! আপনার প্লেট নম্বর জমা হয়েছে।', 'Thanks! Plate submitted for review.') });
       setInput('');
       setFocused(false);
-      const plate = normalizePlate(input.trim());
+      // Reflect the new plate in the dropdown immediately (remote sync happens on flush).
+      const plate = input.trim().toUpperCase();
       setCommunity(prev => prev.some(s => s.plate.toUpperCase() === plate)
         ? prev
-        : [{ id: `local-${Date.now()}`, busId: bus.id, busName: bus.name, plate, userId: 'local', displayName: 'Passenger', timestamp: Date.now(), status: result.plateStatus ?? 'pending' }, ...prev]);
+        : [{ id: `local-${Date.now()}`, busId: bus.id, busName: bus.name, plate, userId: 'local', displayName: 'Passenger', timestamp: Date.now(), status: 'pending' }, ...prev]);
     } else {
       setFeedback({ ok: false, msg: result.error ?? T(lang, 'জমা দেওয়া যায়নি। আবার চেষ্টা করুন।', 'Could not submit. Try again.') });
     }
@@ -114,9 +92,7 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
       inputRef.current?.focus();
       return;
     }
-    // Preserve the stored plate verbatim — reformatting would rewrite
-    // "DHAKA METRO-GA 12-3814" into the wrong "DMB 12-3814".
-    setInput(s.id);
+    setInput(formatPlateInput(s.id));
     setFeedback(null);
   };
 
@@ -129,33 +105,17 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
         </div>
       </div>
 
-      {allPlates.length > 0 ? (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12, alignItems: 'center' }}>
-          {allPlates.map(p => {
-            const st = statusOf(p);
-            const badge = st === 'verified' ? { label: '✓', color: '#10b981' } : st === 'pending' ? { label: '⏳', color: '#f59e0b' } : null;
-            return (
-              <span key={p} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: `${tk.primary}18`, border: `1px solid ${tk.primary}44`, borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 12, color: tk.primary, letterSpacing: 0.5 }}>
-                {showPlate(p)}
-                {badge && <span style={{ fontSize: 10, color: badge.color }}>{badge.label}</span>}
-              </span>
-            );
-          })}
-          <button
-            onClick={() => { setFocused(true); setTimeout(() => inputRef.current?.focus(), 50); }}
-            style={{ background: `${tk.primary}18`, border: `1.5px dashed ${tk.primary}66`, borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 13, color: tk.primary, cursor: 'pointer', lineHeight: 1.2 }}
-            title={T(lang, 'নতুন প্লেট যোগ করুন', 'Add new plate')}
-          >+</button>
+      {plates.length > 0 ? (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+          {plates.map(p => (
+            <span key={p} style={{ background: `${tk.primary}18`, border: `1px solid ${tk.primary}44`, borderRadius: 8, padding: '4px 10px', fontFamily: SANS, fontWeight: 700, fontSize: 12, color: tk.primary, letterSpacing: 0.5 }}>
+              {showPlate(p)}
+            </span>
+          ))}
         </div>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-          <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textFaint }}>
-            {T(lang, 'এই বাসের প্লেট নম্বর এখনো যোগ হয়নি।', 'No plate numbers added yet.')}
-          </div>
-          <button
-            onClick={() => { setFocused(true); setTimeout(() => inputRef.current?.focus(), 50); }}
-            style={{ background: tk.primary, border: 'none', borderRadius: 8, padding: '4px 12px', fontFamily: SANS, fontWeight: 700, fontSize: 13, color: '#fff', cursor: 'pointer' }}
-          >{T(lang, '+ যোগ করুন', '+ Add')}</button>
+        <div style={{ fontFamily: BEN, fontSize: 12, color: tk.textFaint, marginBottom: 10 }}>
+          {T(lang, 'এই বাসের প্লেট নম্বর এখনো যোগ হয়নি।', 'No plate numbers added yet for this bus.')}
         </div>
       )}
 
@@ -171,8 +131,8 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
           onKeyDown={e => { if (e.key === 'Enter') void handleSave(); }}
-          placeholder={lang === 'bn' ? 'যেমন: DMB 12-3814 বা DHAKA-BA 12-3814' : 'e.g. DMB 12-3814 or DHAKA-BA 12-3814'}
-          maxLength={24}
+          placeholder="DMB 12-3814"
+          maxLength={11}
           style={{ flex: 1, background: tk.panelMuted, border: `1.5px solid ${input && !valid ? '#ef4444' : tk.line}`, borderRadius: 10, padding: '9px 12px', fontFamily: SANS, fontSize: 13, color: tk.text, outline: 'none' }}
         />
         <button
@@ -187,7 +147,7 @@ export function BusPlateCard({ bus, plates, tk, lang }: Props) {
 
       {input && !valid && (
         <div style={{ fontFamily: SANS, fontSize: 11, color: '#ef4444', marginTop: 4 }}>
-          {T(lang, 'ফরম্যাট: DMB 12-3814 বা DHAKA-BA 12-3814', 'Format: DMB 12-3814 or DHAKA-BA 12-3814')}
+          {T(lang, 'ফরম্যাট: DMB 12-3814', 'Format: DMB 12-3814')}
         </div>
       )}
       {!online && (

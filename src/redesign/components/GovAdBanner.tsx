@@ -630,9 +630,10 @@ export function GovAdBanner({
       {/* Card */}
       <div style={{
         width: '100%', height,
-        borderRadius: 20, overflow: 'hidden',
+        borderRadius: 24, overflow: 'hidden',
         position: 'relative',
-        boxShadow: '0 12px 40px rgba(0,0,0,0.35), 0 3px 10px rgba(0,0,0,0.2)',
+        boxShadow: '0 12px 36px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.15)',
+        border: '1px solid rgba(255,255,255,0.12)',
         opacity: fading ? 0 : 1,
         transform: fading ? 'scale(0.985)' : 'scale(1)',
         transition: 'opacity 0.35s ease, transform 0.35s ease',
@@ -640,9 +641,9 @@ export function GovAdBanner({
         <BannerSlide cfg={cfg} lang={lang} height={height} />
         {/* "GOV AD" watermark */}
         <div style={{
-          position: 'absolute', top: 10, right: 14, zIndex: 10,
-          fontFamily: SANS, fontSize: 8, fontWeight: 700,
-          color: 'rgba(255,255,255,0.3)', letterSpacing: 1.2, textTransform: 'uppercase',
+          position: 'absolute', top: 12, right: 16, zIndex: 10,
+          fontFamily: SANS, fontSize: 8.5, fontWeight: 700,
+          color: 'rgba(255,255,255,0.4)', letterSpacing: 1.2, textTransform: 'uppercase',
         }}>
           {T(lang, 'সরকারি', 'GOV · AD')}
         </div>

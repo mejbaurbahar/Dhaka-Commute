@@ -12,7 +12,6 @@ import { Icon } from '../components/Icons';
 import { ModeHero } from '../components/ModeHero';
 import { METRO_STATIONS, METRO_LINES } from '../../../constants';
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
-import { MetroMapView } from '../components/MetroMapView';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:'bn'|'en'; route:string; canBack:boolean; onNav:(r:string)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -31,8 +30,8 @@ const STATIONS = MRT6_LINE
       {id:'uttara-south',bn:'উত্তরা দক্ষিণ',en:'Uttara South',fare:20,desc:'',lat:23.8631,lng:90.3891},{id:'pallabi',bn:'পল্লবী',en:'Pallabi',fare:30,desc:'',lat:23.8268,lng:90.3654},
       {id:'mirpur-11',bn:'মিরপুর ১১',en:'Mirpur 11',fare:40,desc:'',lat:23.8190,lng:90.3659},{id:'mirpur-10',bn:'মিরপুর ১০',en:'Mirpur 10',fare:50,desc:'',lat:23.8067,lng:90.3686},
       {id:'kazipara',bn:'কাজীপাড়া',en:'Kazipara',fare:60,desc:'',lat:23.7981,lng:90.3712},{id:'shewrapara',bn:'শেওড়াপাড়া',en:'Shewrapara',fare:60,desc:'',lat:23.7904,lng:90.3752},
-      {id:'agargaon',bn:'আগারগাঁও',en:'Agargaon',fare:70,desc:'',lat:23.7783,lng:90.3808},{id:'bijoy-sarani',bn:'বিজয় সরণি',en:'Bijoy Sarani',fare:80,desc:'',lat:23.766569,lng:90.383082},
-      {id:'farmgate',bn:'ফার্মগেট',en:'Farmgate',fare:80,desc:'',lat:23.759056,lng:90.387059},{id:'karwan-bazar',bn:'কারওয়ান বাজার',en:'Karwan Bazar',fare:90,desc:'',lat:23.7516,lng:90.3930},
+      {id:'agargaon',bn:'আগারগাঁও',en:'Agargaon',fare:70,desc:'',lat:23.7783,lng:90.3808},{id:'bijoy-sarani',bn:'বিজয় সরণি',en:'Bijoy Sarani',fare:80,desc:'',lat:23.7668,lng:90.3869},
+      {id:'farmgate',bn:'ফার্মগেট',en:'Farmgate',fare:80,desc:'',lat:23.7573,lng:90.3896},{id:'karwan-bazar',bn:'কারওয়ান বাজার',en:'Karwan Bazar',fare:90,desc:'',lat:23.7516,lng:90.3930},
       {id:'shahbagh',bn:'শাহবাগ',en:'Shahbagh',fare:90,desc:'',lat:23.7384,lng:90.3957},{id:'du',bn:'ঢাবি',en:'DU',fare:90,desc:'',lat:23.7337,lng:90.3939},
       {id:'secretariat',bn:'সচিবালয়',en:'Secretariat',fare:100,desc:'',lat:23.7297,lng:90.4069},{id:'motijheel',bn:'মতিঝিল',en:'Motijheel',fare:100,desc:'',lat:23.7330,lng:90.4172},
       {id:'kamalapur',bn:'কমলাপুর',en:'Kamalapur',fare:100,desc:'',lat:23.7320,lng:90.4262},
@@ -144,8 +143,8 @@ export function MetroPage(props: Props) {
         <ModeHero tk={tk} isMobile={isMobile} lang={lang} kind="train"
           gradient="linear-gradient(135deg, #00130e 0%, #00543c 50%, #10b981 100%)"
           title={T(lang,'ঢাকা মেট্রো · MRT-6 লাইভ','Dhaka Metro · MRT-6 live')}
-          subtitle={T(lang,'উত্তরা থেকে মতিঝিল পর্যন্ত ১৬টি সক্রিয় স্টেশন · পিক সময়ে প্রতি ৩ মি ৩০ সে · ~৩৩ মিনিটে পুরো লাইন।','16 active stations from Uttara to Motijheel · trains every 3m 30s peak · ~33 min end-to-end.')}
-          stats={[{v:N(16,lang),l:T(lang,'সক্রিয় স্টেশন','Active Stations')},{v:'3m 30s',l:T(lang,'পিক ফ্রিকোয়েন্সি','Peak Frequency')},{v:'৳ '+N('20',lang)+'-'+N(100,lang),l:T(lang,'ভাড়া','Fare range')},{v:N('6:30',lang)+'–'+N('10:10',lang),l:T(lang,'চলমান','Operating')}]}
+          subtitle={T(lang,'উত্তরা থেকে কমলাপুর পর্যন্ত ১৭টি স্টেশন · প্রতি ৮ মিনিটে ট্রেন · ৪৫ মিনিটে পুরো লাইন।','17 stations from Uttara to Kamalapur · trains every 8 min · 45 min end-to-end.')}
+          stats={[{v:N(17,lang),l:T(lang,'স্টেশন','Stations')},{v:N(8,lang)+' min',l:T(lang,'ফ্রিকোয়েন্সি','Frequency')},{v:'৳ '+N('20',lang)+'-'+N(100,lang),l:T(lang,'ভাড়া','Fare range')},{v:N('7',lang)+'am–'+N(9,lang)+'pm',l:T(lang,'চলমান','Operating')}]}
         />
 
         <div style={{ padding:isMobile?'0 16px':'0 40px' }}>
@@ -182,6 +181,50 @@ export function MetroPage(props: Props) {
             </div>
           </div>
 
+          {/* Station line map */}
+          <div style={{ ...card(18), marginBottom:18, overflowX:'auto' }}>
+            <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:12, marginBottom:14, flexWrap:'wrap' }}>
+              <div style={{ fontFamily:BEN, fontWeight:700, fontSize:14, color:tk.text }}>{T(lang,'স্টেশন মানচিত্র','Station map')} · MRT-6</div>
+              <div style={{ fontFamily:BEN, fontSize:12, color: nearestMetro ? tk.primary : tk.textFaint, background: nearestMetro ? tk.primarySoft : tk.panelMuted, border:`1px solid ${nearestMetro ? tk.primary : tk.line}`, borderRadius:999, padding:'5px 10px', whiteSpace:'nowrap' }}>
+                {nearestMetro
+                  ? T(lang, `নিকটতম: ${nearestMetro.bn} · ${nearestDistance}`, `Nearest: ${nearestMetro.en} · ${nearestDistance}`)
+                  : locationStatus === 'checking'
+                    ? T(lang, 'লোকেশন দেখা হচ্ছে...', 'Checking location...')
+                    : locationStatus === 'unsupported'
+                      ? T(lang, 'এই ব্রাউজারে লোকেশন নেই', 'Location is not supported')
+                      : T(lang, 'লোকেশন অনুমতি দিলে নিকটতম স্টেশন দেখাবে', 'Allow location to mark nearest station')}
+              </div>
+            </div>
+            <div style={{ display:'flex', alignItems:'flex-start', gap:0, minWidth:isMobile?600:'auto', paddingBottom:8 }}>
+              {STATIONS.map((s,i)=>{
+                const nearestIndex = nearestMetro?.index ?? -1;
+                const isPast = nearestIndex >= 0 && i < nearestIndex;
+                const isCurrent = i === nearestIndex;
+                return (
+                  <div key={i} style={{ display:'flex', flexDirection:'column', alignItems:'center', flex:1, minWidth:0, position:'relative' }}>
+                    {i < STATIONS.length-1 && (
+                      <div style={{ position:'absolute', top:8, left:'50%', right:'-50%', height:3, background:isPast||isCurrent?tk.primary:'rgba(255,255,255,0.1)', zIndex:0 }}/>
+                    )}
+                    <div style={{ width:isCurrent?20:12, height:isCurrent?20:12, borderRadius:999, background:isCurrent?'#fff':isPast?tk.primary:'rgba(255,255,255,0.2)', border:isCurrent?`3px solid ${tk.primary}`:'none', boxShadow:isCurrent?`0 0 0 6px ${tk.primary}44`:'none', zIndex:1, marginBottom:8, flexShrink:0 }}/>
+                    <div style={{ fontFamily:BEN, fontSize:9, fontWeight:isCurrent?700:500, color:isCurrent?tk.text:tk.textFaint, textAlign:'center', transform:'rotate(-35deg)', transformOrigin:'top center', whiteSpace:'nowrap', marginTop:4 }}>
+                      {T(lang,s.bn,s.en)}
+                    </div>
+                    {isCurrent && <div style={{ fontFamily:SANS, fontSize:8, color:tk.primary, fontWeight:800, marginTop:18, whiteSpace:'nowrap' }}>{T(lang,'নিকটতম','NEAREST')} · {nearestDistance}</div>}
+                    <div style={{ fontFamily:SANS, fontSize:8, color:tk.primary, fontWeight:700, marginTop:20 }}>{Fare(s.fare, lang)}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <NativeAdCard
+            tk={tk}
+            lang={lang}
+            kind={isMobile?'mob-banner':'leaderboard'}
+            title={T(lang, 'মেট্রো যাত্রীদের জন্য অফার', 'Offers for metro riders')}
+            icon="🚇"
+          />
+
           {/* Fare calculator with real station picker */}
           <div style={{ ...card(16), marginBottom:18 }}>
             <div style={{ fontFamily:BEN, fontWeight:700, fontSize:14, color:tk.text, marginBottom:14 }}>{T(lang,'ভাড়া ক্যালকুলেটর','Fare Calculator')} 🎫</div>
@@ -216,28 +259,6 @@ export function MetroPage(props: Props) {
             {toFocus && <SuggestionDropdown suggestions={filterStations(fareTo)} onSelect={s=>{setFareTo(s.label);setToFocus(false);setHasSearched(false);}} onDismiss={()=>setToFocus(false)} tk={tk} lang={lang} anchorRef={toRef}/>}
           </div>
 
-          {/* Metro network map — below fare calc so from/to pins are visible */}
-          <div style={{ ...card(18), marginBottom:18 }}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12, marginBottom:12, flexWrap:'wrap' }}>
-              <div style={{ fontFamily:BEN, fontWeight:700, fontSize:14, color:tk.text }}>
-                {T(lang,'মেট্রো নেটওয়ার্ক ম্যাপ','Metro Network Map')}
-              </div>
-              {nearestMetro && (
-                <div style={{ fontFamily:BEN, fontSize:11, color:tk.primary, background:tk.primarySoft, border:`1px solid ${tk.primary}`, borderRadius:999, padding:'4px 10px', whiteSpace:'nowrap' }}>
-                  📍 {T(lang, `নিকটতম: ${nearestMetro.bn}`, `Nearest: ${nearestMetro.en}`)} · {nearestDistance}
-                </div>
-              )}
-            </div>
-            <MetroMapView
-              theme={theme}
-              lang={lang}
-              tk={tk}
-              isMobile={isMobile}
-              fareFromName={hasSearched && fareFrom ? fareFrom : undefined}
-              fareToName={hasSearched && fareTo ? fareTo : undefined}
-            />
-          </div>
-
           <NativeAdCard
             tk={tk}
             lang={lang}
@@ -247,17 +268,13 @@ export function MetroPage(props: Props) {
             icon="📰"
           />
 
-          {/* Info grid — DMTCL April 2026 data */}
-          <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr 1fr':'repeat(4,1fr)', gap:10, marginBottom:10 }}>
+          {/* Info grid */}
+          <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr 1fr':'repeat(4,1fr)', gap:10, marginBottom:18 }}>
             {[
-              {ic:'⏰',t:T(lang,'অপারেটিং','Operating'),v:N('6:30',lang)+' AM – '+N('10:10',lang)+' PM'},
-              {ic:'🗓',t:T(lang,'শুক্রবার','Friday'),v:N('3:00',lang)+' PM – '+N('9:40',lang)+' PM'},
+              {ic:'⏰',t:T(lang,'অপারেটিং','Operating'),v:N('7:10',lang)+' AM – '+N('9:40',lang)+' PM'},
+              {ic:'🗓',t:T(lang,'ছুটির দিন','Off day'),v:T(lang,'শুক্রবার সকাল','Fri morning')},
               {ic:'🎫',t:T(lang,'ভাড়া','Fare'),v:'৳ '+N(20,lang)+' – '+N(100,lang)},
-              {ic:'⚡',t:T(lang,'সর্বোচ্চ গতি','Top speed'),v:N(110,lang)+' km/h'},
-              {ic:'🚇',t:T(lang,'সক্রিয় স্টেশন','Active Stations'),v:N(16,lang)+' '+T(lang,'টি','')},
-              {ic:'🔄',t:T(lang,'পিক হেডওয়ে','Peak Headway'),v:'3 '+T(lang,'মি','min')+' 30 '+T(lang,'সে','sec')},
-              {ic:'🛤️',t:T(lang,'লাইনের দৈর্ঘ্য','Line Length'),v:N('21.26',lang)+' km'},
-              {ic:'💳',t:T(lang,'র‍্যাপিড পাস','Rapid Pass'),v:T(lang,'১০% ছাড়','10% off')},
+              {ic:'⚡',t:T(lang,'সর্বোচ্চ গতি','Top speed'),v:N(100,lang)+' km/h'},
             ].map((s,i)=>(
               <div key={i} style={card(14)}>
                 <div style={{ fontSize:22 }}>{s.ic}</div>
@@ -266,14 +283,6 @@ export function MetroPage(props: Props) {
               </div>
             ))}
           </div>
-
-          <NativeAdCard
-            tk={tk}
-            lang={lang}
-            kind={isMobile?'mob-banner':'leaderboard'}
-            title={T(lang, 'মেট্রো যাত্রীদের জন্য অফার', 'Offers for metro riders')}
-            icon="🚇"
-          />
 
           <PromoBanner tk={tk} lang={lang} page="metro" onNav={onNav}/>
           <NativeAdCard

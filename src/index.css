@@ -2,91 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Bundled Arabic font — self-hosted so Arabic renders instantly and
-   consistently on every device (system fallback fonts are slow to load
-   and shape on weak/old WebViews → long black screens when switching to
-   Arabic in the Android app). unicode-range keeps Latin/Bengali text on
-   Inter/Hind Siliguri. */
-@font-face {
-  font-family: 'Noto Sans Arabic';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url('/fonts/noto-sans-arabic.woff2') format('woff2');
-  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
-}
-
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", -system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 
-  /* Arabic mode (RTL): every element uses the bundled font first so no text
-     ever falls back to the slow system Arabic font (long black screens on
-     old WebViews). Bengali/Latin glyphs fall through to their own fonts. */
-  [dir="rtl"] body, [dir="rtl"] body * {
-    font-family: 'Noto Sans Arabic', 'Hind Siliguri', 'Inter', system-ui, sans-serif;
-  }
-
-  /* Futuristic light theme */
-  --kj-bg: #eef3f7;
+  /* Apple Light Theme */
+  --kj-bg: #f5f5f7;
   --kj-panel: rgba(255, 255, 255, 0.82);
-  --kj-panel-muted: rgba(232, 240, 247, 0.7);
-  --kj-line: rgba(56, 89, 122, 0.18);
-  --kj-text: #0a1626;
-  --kj-text-dim: #4a607a;
-  --kj-text-faint: #64748b;
-  --kj-chip-bg: rgba(56, 100, 160, 0.08);
-  --kj-chip-text: #1e3a5f;
-  --kj-input-bg: rgba(255, 255, 255, 0.75);
-  --kj-primary: #00b8d9;
-  --kj-primary-ink: #02161c;
-  --kj-primary-soft: rgba(0, 184, 217, 0.12);
-  --kj-primary-deep: #0070ad;
-  --kj-accent: #ff3d77;
-  --kj-accent-soft: rgba(255, 61, 119, 0.12);
-  --kj-amber: #ff8a00;
-  --kj-amber-soft: rgba(255, 138, 0, 0.12);
-  --kj-metro-bg: #001b2e;
-  --kj-shadow: 0 2px 4px rgba(0,32,64,0.04), 0 18px 40px -20px rgba(0,184,217,0.18);
-  --kj-shadow-lg: 0 4px 12px rgba(0,32,64,0.06), 0 32px 80px -30px rgba(0,184,217,0.35);
-  /* Futuristic extras */
-  --kj-neon-cyan: #00b8d9;
-  --kj-neon-magenta: #ff3d77;
-  --kj-neon-violet: #a259ff;
-  --kj-neon-amber: #ff8a00;
-  --kj-grid: rgba(0, 120, 180, 0.07);
+  --kj-panel-muted: rgba(0, 0, 0, 0.04);
+  --kj-line: rgba(0, 0, 0, 0.08);
+  --kj-text: #1d1d1f;
+  --kj-text-dim: #6e6e73;
+  --kj-text-faint: #86868b;
+  --kj-chip-bg: rgba(0, 0, 0, 0.05);
+  --kj-chip-text: #1d1d1f;
+  --kj-input-bg: rgba(255, 255, 255, 0.92);
+  --kj-primary: #0071e3;
+  --kj-primary-ink: #ffffff;
+  --kj-primary-soft: rgba(0, 113, 227, 0.10);
+  --kj-primary-deep: #005bb5;
+  --kj-accent: #ff375f;
+  --kj-accent-soft: rgba(255, 55, 95, 0.10);
+  --kj-amber: #ff9500;
+  --kj-amber-soft: rgba(255, 149, 0, 0.12);
+  --kj-metro-bg: #141416;
+  --kj-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.06);
+  --kj-shadow-lg: 0 4px 16px rgba(0,0,0,0.06), 0 24px 64px -12px rgba(0,0,0,0.12);
+  --kj-neon-cyan: #0071e3;
+  --kj-neon-magenta: #ff375f;
+  --kj-neon-violet: #af52de;
+  --kj-neon-amber: #ff9500;
+  --kj-grid: transparent;
 }
 
 .dark {
-  /* Futuristic dark theme — design handoff */
-  --kj-bg: #040814;
-  --kj-panel: rgba(13, 22, 42, 0.72);
-  --kj-panel-muted: rgba(7, 14, 28, 0.6);
-  --kj-line: rgba(0, 245, 255, 0.14);
-  --kj-text: #e0f7ff;
-  --kj-text-dim: #8da4c4;
-  --kj-text-faint: #89a4c2;
-  --kj-chip-bg: rgba(0, 245, 255, 0.08);
-  --kj-chip-text: #bde6ff;
-  --kj-input-bg: rgba(5, 12, 24, 0.7);
-  --kj-primary: #00f5ff;
-  --kj-primary-ink: #001218;
-  --kj-primary-soft: rgba(0, 245, 255, 0.14);
-  --kj-primary-deep: #00d4e6;
-  --kj-accent: #ff2a6d;
-  --kj-accent-soft: rgba(255, 42, 109, 0.14);
-  --kj-amber: #ffb800;
-  --kj-amber-soft: rgba(255, 184, 0, 0.14);
-  --kj-metro-bg: #000814;
-  --kj-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 18px 50px -20px rgba(0,245,255,0.25);
-  --kj-shadow-lg: 0 4px 12px rgba(0,0,0,0.6), 0 30px 90px -25px rgba(0,245,255,0.45);
-  /* Futuristic extras */
-  --kj-neon-cyan: #00f5ff;
-  --kj-neon-magenta: #ff2a6d;
-  --kj-neon-violet: #a259ff;
-  --kj-neon-amber: #ffb800;
-  --kj-grid: rgba(0, 245, 255, 0.07);
+  /* Apple Dark Theme */
+  --kj-bg: #000000;
+  --kj-panel: rgba(28, 28, 30, 0.82);
+  --kj-panel-muted: rgba(44, 44, 46, 0.65);
+  --kj-line: rgba(255, 255, 255, 0.12);
+  --kj-text: #f5f5f7;
+  --kj-text-dim: #a1a1a6;
+  --kj-text-faint: #86868b;
+  --kj-chip-bg: rgba(255, 255, 255, 0.08);
+  --kj-chip-text: #f5f5f7;
+  --kj-input-bg: rgba(38, 38, 42, 0.75);
+  --kj-primary: #2997ff;
+  --kj-primary-ink: #001124;
+  --kj-primary-soft: rgba(41, 151, 255, 0.16);
+  --kj-primary-deep: #0071e3;
+  --kj-accent: #ff375f;
+  --kj-accent-soft: rgba(255, 55, 95, 0.16);
+  --kj-amber: #ff9f0a;
+  --kj-amber-soft: rgba(255, 159, 10, 0.16);
+  --kj-metro-bg: #0c0c0e;
+  --kj-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 16px 40px rgba(0,0,0,0.7);
+  --kj-shadow-lg: 0 4px 20px rgba(0,0,0,0.6), 0 30px 80px rgba(0,0,0,0.85);
+  --kj-neon-cyan: #2997ff;
+  --kj-neon-magenta: #ff375f;
+  --kj-neon-violet: #bf5af2;
+  --kj-neon-amber: #ff9f0a;
+  --kj-grid: transparent;
 }
 
 
@@ -1192,7 +1172,7 @@ footer {
   50%       { opacity: 0.75; box-shadow: 0 0 6px var(--kj-neon-cyan); }
 }
 
-/* Futuristic page background overlay */
+/* Apple Ambient Page Background */
 .kj-future-bg {
   position: relative;
 }
@@ -1202,13 +1182,9 @@ footer {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image:
-    linear-gradient(var(--kj-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--kj-grid) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(ellipse at center top, #000 25%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at center top, #000 25%, transparent 80%);
-  animation: kj-grid-shift 20s linear infinite;
+  background:
+    radial-gradient(1100px circle at 50% -5%, rgba(0, 113, 227, 0.05), transparent 70%),
+    radial-gradient(900px circle at 90% 25%, rgba(255, 55, 95, 0.03), transparent 60%);
 }
 .kj-future-bg::after {
   content: '';
@@ -1217,27 +1193,24 @@ footer {
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(800px circle at 20% 0%, rgba(0,184,217,0.12), transparent 60%),
-    radial-gradient(600px circle at 85% 30%, rgba(255,61,119,0.08), transparent 60%),
-    radial-gradient(700px circle at 50% 100%, rgba(162,89,255,0.10), transparent 60%);
-  animation: kj-aurora 18s ease-in-out infinite alternate;
+    radial-gradient(1000px circle at 15% 45%, rgba(175, 82, 222, 0.03), transparent 60%),
+    radial-gradient(1200px circle at 50% 100%, rgba(0, 113, 227, 0.04), transparent 70%);
 }
 .dark .kj-future-bg::before {
-  background-image:
-    linear-gradient(var(--kj-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--kj-grid) 1px, transparent 1px);
+  background:
+    radial-gradient(1200px circle at 50% -8%, rgba(41, 151, 255, 0.09), transparent 70%),
+    radial-gradient(900px circle at 90% 25%, rgba(255, 55, 95, 0.05), transparent 60%);
 }
 .dark .kj-future-bg::after {
   background:
-    radial-gradient(800px circle at 20% 0%, rgba(0,245,255,0.10), transparent 60%),
-    radial-gradient(600px circle at 85% 30%, rgba(255,42,109,0.08), transparent 60%),
-    radial-gradient(700px circle at 50% 100%, rgba(162,89,255,0.10), transparent 60%);
+    radial-gradient(1000px circle at 15% 45%, rgba(191, 90, 242, 0.05), transparent 60%),
+    radial-gradient(1200px circle at 50% 100%, rgba(41, 151, 255, 0.06), transparent 70%);
 }
 
-/* Glassmorphism panel */
+/* Apple Liquid Glass Panel */
 .kj-glass {
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
 }
 
 /* Design handoff card shell — glass by default */
@@ -1372,8 +1345,6 @@ footer {
 @keyframes kjSpark    { 0%,100% { transform: scale(.6); opacity: .2; } 50% { transform: scale(1.1); opacity: 1; } }
 @keyframes kjRollIn   { 0% { transform: translateX(260px); } 70% { transform: translateX(-12px); } 100% { transform: translateX(0); } }
 @keyframes kjStoryIn  { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-@keyframes kjFadeOut  { from { opacity: 1; } to { opacity: 0; } }
-@keyframes kjTypeW    { from { max-width: 0; } to { max-width: 80px; } }
 .kj-story-scene { animation: kjStoryIn .5s cubic-bezier(.2,.7,.25,1) both; }
 @keyframes kj-track   { 0% { background-position: 0 0; } 100% { background-position: -40px 0; } }
 @keyframes kj-blink   { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }

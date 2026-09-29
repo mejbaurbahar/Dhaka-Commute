@@ -144,27 +144,27 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
           bottom: 0,
           width: 'min(340px, 86vw)',
           background: theme === 'dark'
-            ? 'linear-gradient(180deg, rgba(7,14,32,0.98) 0%, rgba(4,8,20,0.99) 100%)'
-            : 'linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(238,243,247,0.99) 100%)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
+            ? 'rgba(18, 18, 20, 0.88)'
+            : 'rgba(255, 255, 255, 0.88)',
+          backdropFilter: 'blur(32px) saturate(190%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(190%)',
           borderLeft: `1px solid ${tk.line}`,
           display: 'flex',
           flexDirection: 'column',
           transform: open ? 'translateX(0)' : 'translateX(105%)',
-          transition: 'transform 0.28s cubic-bezier(.2,.8,.2,1)',
+          transition: 'transform 0.36s cubic-bezier(0.16, 1, 0.3, 1)',
           height: '100dvh',
           maxHeight: '100dvh',
           overflow: 'hidden',
-          boxShadow: open ? '-24px 0 80px rgba(0,0,0,0.45)' : 'none',
+          boxShadow: open ? (theme === 'dark' ? '-16px 0 48px rgba(0,0,0,0.6)' : '-16px 0 48px rgba(0,0,0,0.12)') : 'none',
         }}
       >
         {/* Header */}
         <div
           style={{
-            padding: '14px 18px 12px',
+            padding: '16px 20px 14px',
             borderBottom: `1px solid ${tk.line}`,
-            background: `linear-gradient(135deg, ${tk.primarySoft} 0%, ${tk.accentSoft ?? tk.panelMuted} 100%)`,
+            background: 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -173,9 +173,9 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Logo tk={tk} size={32} />
-            <span style={{ fontFamily: "'Hind Siliguri', system-ui, sans-serif", fontWeight: 800, fontSize: 17 }}>
-              <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>কই</span>
-              <span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}> যাবো</span>
+            <span style={{ fontFamily: BEN, fontWeight: 700, fontSize: 17, letterSpacing: -0.2 }}>
+              <span style={{ color: theme === 'dark' ? '#ff375f' : '#d91f35' }}>কই</span>
+              <span style={{ color: theme === 'dark' ? '#30d158' : '#008355' }}> যাবো</span>
             </span>
           </div>
           <button
@@ -184,14 +184,15 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
               background: tk.panelMuted,
               border: `1px solid ${tk.line}`,
               borderRadius: 999,
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               color: tk.textDim,
-              fontSize: 16,
+              fontSize: 14,
+              transition: 'background 0.15s ease, transform 0.15s ease',
             }}
             aria-label={T(lang, 'মেনু বন্ধ করুন', 'Close menu')}
           >
@@ -201,7 +202,7 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
 
         {/* Nav groups */}
         <div style={{
-          padding: '8px 0 28px',
+          padding: '10px 8px 32px',
           flex: '1 1 auto',
           minHeight: 0,
           overflowY: 'auto',
@@ -209,24 +210,20 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
           overscrollBehavior: 'contain',
         }}>
           {GROUPS.map((group) => (
-            <div key={group.heading.en} style={{ marginBottom: 4 }}>
+            <div key={group.heading.en} style={{ marginBottom: 12 }}>
               {/* Group heading */}
               <div style={{
-                padding: '12px 20px 6px',
+                padding: '8px 12px 6px',
                 fontFamily: SANS,
-                fontSize: 10,
-                fontWeight: 800,
-                letterSpacing: 1.2,
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: 0.6,
                 textTransform: 'uppercase',
-                color: group.color ?? tk.textFaint,
+                color: tk.textDim,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8,
+                gap: 6,
               }}>
-                <div style={{
-                  width: 16, height: 2, borderRadius: 999,
-                  background: group.color ?? tk.textFaint,
-                }} />
                 {T(lang, group.heading.bn, group.heading.en)}
               </div>
 
@@ -241,34 +238,35 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
                     onClick={() => handleNav(link.route)}
                     style={{
                       width: '100%',
-                      background: isActive ? tk.primarySoft : 'none',
+                      background: isActive ? (theme === 'dark' ? 'rgba(0, 113, 227, 0.18)' : 'rgba(0, 113, 227, 0.1)') : 'transparent',
                       border: 'none',
-                      borderLeft: isActive ? `3px solid ${tk.primary}` : '3px solid transparent',
-                      padding: '9px 20px 9px 17px',
+                      borderRadius: 10,
+                      padding: '8px 12px',
+                      margin: '1px 0',
                       display: 'flex',
                       alignItems: 'center',
                       gap: 12,
                       cursor: 'pointer',
                       textAlign: 'left',
-                      transition: 'background 0.13s, transform 0.3s cubic-bezier(.2,.8,.2,1), opacity 0.3s',
-                      transform: open ? 'translateX(0)' : 'translateX(18px)',
+                      transition: 'background 0.15s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease',
+                      transform: open ? 'translateX(0)' : 'translateX(16px)',
                       opacity: open ? 1 : 0,
-                      transitionDelay: open ? `${Math.min(idx, 14) * 24}ms` : '0ms',
+                      transitionDelay: open ? `${Math.min(idx, 14) * 20}ms` : '0ms',
+                      boxSizing: 'border-box',
                     }}
                   >
                     {/* Emoji icon chip */}
                     <span style={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: 9,
-                      background: isActive ? tk.primarySoft : tk.panelMuted,
-                      border: `1px solid ${isActive ? tk.primary + '50' : tk.line}`,
+                      width: 28,
+                      height: 28,
+                      borderRadius: 8,
+                      background: isActive ? (theme === 'dark' ? 'rgba(0, 113, 227, 0.3)' : 'rgba(0, 113, 227, 0.15)') : tk.panelMuted,
+                      border: `1px solid ${isActive ? 'rgba(0, 113, 227, 0.4)' : tk.line}`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: 15,
+                      fontSize: 14,
                       flexShrink: 0,
-                      transition: 'background 0.13s',
                     }}>
                       {emoji}
                     </span>
@@ -276,16 +274,16 @@ export function NavDrawer({ open, onClose, onNav, theme, lang, activeRoute }: Na
                     <span style={{
                       flex: 1,
                       fontFamily: lang === 'bn' ? BEN : SANS,
-                      fontSize: 13,
-                      fontWeight: isActive ? 700 : 400,
+                      fontSize: 14,
+                      fontWeight: isActive ? 600 : 450,
                       color: isActive ? tk.primary : tk.text,
-                      transition: 'color 0.13s',
+                      letterSpacing: -0.1,
                     }}>
                       {T(lang, link.bn, link.en)}
                     </span>
 
                     {isActive && (
-                      <span style={{ color: tk.primary, opacity: 0.7 }}>
+                      <span style={{ color: tk.primary, opacity: 0.85 }}>
                         <Icon.arrowR s={13} />
                       </span>
                     )}

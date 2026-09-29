@@ -242,7 +242,7 @@ function entryFromLocation(): StackEntry {
   if (path.startsWith('/metro/') && path !== '/metro') return { route: 'metro-detail', params: { ...params, stationId: path.split('/')[2] || '' } };
   if (path.startsWith('/train/') && path !== '/train') return { route: 'train-detail', params: { ...params, trainId: path.split('/')[2] || '' } };
   if (path.startsWith('/intercity/') && path !== '/intercity') return { route: 'intercity-detail', params: { ...params, id: path.split('/')[2] || '' } };
-  if (path.startsWith('/launch/') && path !== '/launch') return { route: 'vehicle', params: { ...params, kind: 'launch', id: path.split('/')[2] || '' } };
+  if (path.startsWith('/launch/') && path !== '/launch') return { route: 'vehicle', params: { ...params, id: path.split('/')[2] || '' } };
   if ((path.startsWith('/live-bus/') || path.startsWith('/dtca/')) && path !== '/live-bus' && path !== '/dtca') return { route: 'dtca-bus-detail', params: { ...params, identifier: decodeURIComponent(path.split('/')[2] || '') } };
   if (path.startsWith('/air/') && path !== '/air') return { route: 'flight-detail', params: { ...params, code: (path.split('/')[2] || '').toUpperCase() } };
   if (path.startsWith('/places/') && path !== '/places') {
@@ -252,9 +252,7 @@ function entryFromLocation(): StackEntry {
     return { route: 'blog-detail', params: { ...params, slug: path.split('/')[2] || '' } };
   }
   const match = Object.entries(ROUTE_PATHS).find(([, routePath]) => routePath === path);
-  // Pass URL query params through (e.g. /intercity?from=Benapole&to=Cox%27s+Bazar&chip=Transit)
-  // so deep links restore the search — pages ignore params they don't use.
-  return { route: match?.[0] || 'home', params };
+  return { route: match?.[0] || 'home' };
 }
 
 function getInitialLang(): Lang {
@@ -761,7 +759,7 @@ export function KoyJaboApp() {
       )}
       <main>{stage}</main>
       {aiFab}
-      {aiOpen && <Suspense fallback={<LazyFallback />}><AIChatModal theme={theme} lang={lang} isMobile={isPhone} initialQ={aiQ} onClose={() => setAiOpen(false)} onNav={(r, p) => { setAiOpen(false); nav(r, p); }} /></Suspense>}
+      {aiOpen && <Suspense fallback={<LazyFallback />}><AIChatModal theme={theme} lang={lang} isMobile={isPhone} initialQ={aiQ} onClose={() => setAiOpen(false)} /></Suspense>}
       {/* Desktop view toggle removed — mobile users always get mobile layout */}
       <NavDrawer
         open={menuOpen} theme={theme} lang={lang}

@@ -65,22 +65,6 @@ const SOCIAL = [
     // Official LinkedIn brand glyph (Simple Icons artwork, includes border).
     path: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z',
   },
-  {
-    title: 'Pinterest', href: 'https://www.pinterest.com/koyjabo/',
-    bg: '#E60023',
-    glow: 'rgba(230,0,35,.35)',
-    // Official Pinterest brand glyph (Simple Icons artwork).
-    path: 'M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z',
-  },
-  {
-    title: 'Reddit', href: 'https://www.reddit.com/r/KoyJabo/',
-    bg: '#FF4500',
-    glow: 'rgba(255,69,0,.35)',
-    // Official Reddit brand glyph — the alien head (Simple Icons artwork).
-    // NOTE: the Reddit and Pinterest paths are easy to confuse — verify the
-    // glyph renders distinctly before shipping (both are circular marks).
-    path: 'M12 0C5.373 0 0 5.373 0 12c0 3.314 1.343 6.314 3.515 8.485l-2.286 2.286C.775 23.225 1.097 24 1.738 24H12c6.627 0 12-5.373 12-12S18.627 0 12 0Zm4.388 3.199c1.104 0 1.999.895 1.999 1.999 0 1.105-.895 2-1.999 2-.946 0-1.739-.657-1.947-1.539v.002c-1.147.162-2.032 1.15-2.032 2.341v.007c1.776.067 3.4.567 4.686 1.363.473-.363 1.064-.58 1.707-.58 1.547 0 2.802 1.254 2.802 2.802 0 1.117-.655 2.081-1.601 2.531-.088 3.256-3.637 5.876-7.997 5.876-4.361 0-7.905-2.617-7.998-5.87-.954-.447-1.614-1.415-1.614-2.538 0-1.548 1.255-2.802 2.803-2.802.645 0 1.239.218 1.712.585 1.275-.79 2.881-1.291 4.64-1.365v-.01c0-1.663 1.263-3.034 2.88-3.207.188-.911.993-1.595 1.959-1.595Zm-8.085 8.376c-.784 0-1.459.78-1.506 1.797-.047 1.016.64 1.429 1.426 1.429.786 0 1.371-.369 1.418-1.385.047-1.017-.553-1.841-1.338-1.841Zm7.406 0c-.786 0-1.385.824-1.338 1.841.047 1.017.634 1.385 1.418 1.385.785 0 1.473-.413 1.426-1.429-.046-1.017-.721-1.797-1.506-1.797Zm-3.703 4.013c-.974 0-1.907.048-2.77.135-.147.015-.241.168-.183.305.483 1.154 1.622 1.964 2.953 1.964 1.33 0 2.47-.81 2.953-1.964.057-.137-.037-.29-.184-.305-.863-.087-1.795-.135-2.769-.135Z',
-  },
 ];
 
 interface KJFooterProps {
@@ -97,51 +81,22 @@ export function KJFooter({ tk, lang, isMobile, onNav, theme }: KJFooterProps) {
   return (
     <footer
       style={{
-        marginTop: 28,
-        background: tk.panelMuted,
+        marginTop: 36,
+        background: theme === 'dark' ? 'rgba(18, 18, 20, 0.75)' : 'rgba(245, 245, 247, 0.9)',
         borderTop: `1px solid ${tk.line}`,
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         position: 'relative',
-        overflow: 'hidden',
         width: '100%',
         boxSizing: 'border-box',
       }}
     >
-      {/* Decorative blob — top-right, pulsing glow */}
-      <div
-        className="kj-anim-pulse"
-        style={{
-          position: 'absolute',
-          right: -60,
-          top: -60,
-          width: 260,
-          height: 260,
-          borderRadius: 999,
-          background: `radial-gradient(circle, ${tk.primary}28 0%, ${tk.primary}08 60%, transparent 100%)`,
-          pointerEvents: 'none',
-        }}
-      />
-      {/* Decorative blob — bottom-left, offset phase */}
-      <div
-        className="kj-anim-glow"
-        style={{
-          position: 'absolute',
-          left: -80,
-          bottom: -80,
-          width: 200,
-          height: 200,
-          borderRadius: 999,
-          background: `radial-gradient(circle, ${tk.accent}18 0%, ${tk.accent}06 60%, transparent 100%)`,
-          pointerEvents: 'none',
-          animationDelay: '1.2s',
-        }}
-      />
-
       <div
         style={{
           position: 'relative',
           maxWidth: 1120,
           margin: '0 auto',
-          padding: isMobile ? '28px 18px 18px' : '40px 40px 22px',
+          padding: isMobile ? '28px 18px 18px' : '48px 32px 24px',
           display: 'grid',
           gap: isMobile ? 26 : 32,
           gridTemplateColumns: isMobile ? '1fr 1fr' : '1.5fr repeat(4, 1fr)',

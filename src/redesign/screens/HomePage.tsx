@@ -17,35 +17,19 @@ import { isNativePlatform } from '../../utils/platformDetect';
 import { NativeAdSection as NativeAdSectionReal } from '../components/AdComponents';
 import { STATIONS, BUS_DATA, METRO_STATIONS as REAL_METRO_STATIONS } from '../../../constants';
 import { setCanonicalUrl, setMetaTag, setPropertyMetaTag } from '../utils/useDocumentTitle';
+import { BD_TRAIN_ROUTES, TRAIN_STATIONS } from '../../../data/bangladeshTrainData';
+import { INTERCITY_BUS_ROUTES, MAJOR_TRANSPORT_HUBS } from '../../../data/intercityData';
+import { AIRPORTS_DATA } from '../../../data/bangladeshFlightData';
+import { LAUNCH_TERMINALS as LAUNCH_TERMINALS_DATA } from '../../../data/bangladeshLaunchData';
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
 import { DestinationCard } from '../components/DestinationCard';
+import { ALL_PLACES } from '../../../data/bangladeshPlaces';
+import { DESTINATION_ENRICHMENT } from '../../../data/destinationEnrichment';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { getFavoriteBusIds } from '../utils/favorites';
 import { getUserHistory, splitRouteKey } from '../../../services/analyticsService';
 import { enhancedBusSearch } from '../../../services/searchService';
 import { inHours, trackPushEvent } from '../../services/pushService';
-
-// ─── Lazy below-fold data + map ──────────────────────────────────────────────
-// Train / intercity / destinations / metro map are below the fold on the
-// homepage — loaded on mount as dynamic chunks so first paint doesn't parse
-// them. Each section renders empty (then fills in) instead of blocking.
-const loadTrainData = () => import('../../../data/bangladeshTrainData');
-const loadIntercityData = () => import('../../../data/intercityData');
-const loadPlacesData = () => import('../../../data/bangladeshPlaces');
-const loadEnrichmentData = () => import('../../../data/destinationEnrichment');
-const loadFlightData = () => import('../../../data/bangladeshFlightData');
-const loadLaunchData = () => import('../../../data/bangladeshLaunchData');
-const MetroMapView = React.lazy(() => import('../components/MetroMapView').then(m => ({ default: m.MetroMapView })));
-
-function useLazyData<T>(loader: () => Promise<T>): T | null {
-  const [data, setData] = useState<T | null>(null);
-  useEffect(() => {
-    let live = true;
-    loader().then(m => { if (live) setData(m); }).catch(() => { /* non-critical — section stays empty */ });
-    return () => { live = false; };
-  }, [loader]);
-  return data;
-}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -100,10 +84,6 @@ function SearchPanel({
   onNav,
   activeMode,
   setActiveMode,
-  trainData,
-  intercityData,
-  launchData,
-  flightData,
 }: {
   tk: Tokens;
   lang: Lang;
@@ -111,10 +91,6 @@ function SearchPanel({
   onNav: (r: string, params?: Record<string, string>) => void;
   activeMode: SearchModeId;
   setActiveMode: (m: SearchModeId) => void;
-  trainData: ReturnType<typeof loadTrainData> extends Promise<infer T> ? T : never;
-  intercityData: ReturnType<typeof loadIntercityData> extends Promise<infer T> ? T : never;
-  launchData: ReturnType<typeof loadLaunchData> extends Promise<infer T> ? T : never;
-  flightData: ReturnType<typeof loadFlightData> extends Promise<infer T> ? T : never;
 }) {
   const [searchQ, setSearchQ] = useState('');
   const [from, setFrom] = useState('');
@@ -174,25 +150,24 @@ function SearchPanel({
       return Object.values(REAL_METRO_STATIONS).map(s => ({ id: s.id, label: s.name, sub: s.bnName }));
     }
     if (activeMode === 'train') {
-      return trainData ? Object.values(trainData.TRAIN_STATIONS).slice(0, 20).map(s => ({ id: s.id, label: s.name, sub: s.bnName })) : [];
+      return Object.values(TRAIN_STATIONS).slice(0, 20).map(s => ({ id: s.id, label: s.name, sub: s.bnName }));
     }
     if (activeMode === 'launch') {
-      return launchData ? launchData.LAUNCH_TERMINALS.map(t => ({ id: t.id, label: t.en, sub: t.bn })) : [];
+      return LAUNCH_TERMINALS_DATA.map(t => ({ id: t.id, label: t.en, sub: t.bn }));
     }
     if (activeMode === 'flights') {
-      return flightData ? flightData.AIRPORTS_DATA.map(a => ({ id: a.iata, label: a.en, sub: a.bn })) : [];
+      return AIRPORTS_DATA.map(a => ({ id: a.iata, label: a.en, sub: a.bn }));
     }
     if (activeMode === 'intercity') {
-      if (!intercityData) return [];
       const seen = new Set<string>();
-      return [...intercityData.INTERCITY_BUS_ROUTES, ...intercityData.MAJOR_TRANSPORT_HUBS]
+      return [...INTERCITY_BUS_ROUTES, ...MAJOR_TRANSPORT_HUBS]
         .filter(r => { if (seen.has(r.district)) return false; seen.add(r.district); return true; })
         .sort((a, b) => a.district.localeCompare(b.district))
         .map(r => ({ id: r.district, label: r.district, sub: r.busOperators.slice(0, 2).join(', ') }));
     }
     // bus — popular Dhaka stops
     return Object.values(STATIONS).slice(0, 20).map(s => ({ id: s.id, label: s.name, sub: s.bnName }));
-  }, [activeMode, trainData, launchData, flightData, intercityData]);
+  }, [activeMode]);
 
   const filterModeOptions = (q: string, side: 'from' | 'to'): Suggestion[] => {
     if (!q.trim()) return emptyDefaultsForMode;
@@ -258,16 +233,14 @@ function SearchPanel({
         .map(r => ({ id: r.id, label: r.name, sub: r.routeString }));
     }
     if (activeMode === 'train') {
-      const trains = trainData
-        ? trainData.BD_TRAIN_ROUTES
-            .filter(r => r.name.toLowerCase().includes(q) || r.bnName.includes(debouncedQ) || r.number.includes(q))
-            .slice(0, 5)
-            .map(r => ({ id: r.id, label: `${r.name} (${r.number})`, sub: r.bnName }))
-        : [];
+      const trains = BD_TRAIN_ROUTES
+        .filter(r => r.name.toLowerCase().includes(q) || r.bnName.includes(debouncedQ) || r.number.includes(q))
+        .slice(0, 5)
+        .map(r => ({ id: r.id, label: `${r.name} (${r.number})`, sub: r.bnName }));
       return [...trains, ...filterModeOptions(debouncedQ, 'from')].slice(0, 15);
     }
     return filterModeOptions(debouncedQ, 'from');
-  }, [activeMode, debouncedQ, fromSuggestionsHook, trainData]);
+  }, [activeMode, debouncedQ, fromSuggestionsHook]);
 
   const changeMode = (mode: SearchModeId) => {
     setActiveMode(mode);
@@ -278,7 +251,7 @@ function SearchPanel({
 
   const pillBase: React.CSSProperties = {
     borderRadius: 999,
-    padding: '5px 13px',
+    padding: '7px 14px',
     fontFamily: lang === 'bn' ? BEN : SANS,
     fontSize: 12,
     fontWeight: 600,
@@ -286,26 +259,29 @@ function SearchPanel({
     border: 'none',
     whiteSpace: 'nowrap',
     flexShrink: 0,
-    transition: 'all 0.18s ease',
+    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
   };
 
   const fieldCard: React.CSSProperties = {
     background: tk.inputBg,
     border: `1px solid ${tk.line}`,
-    borderRadius: 14,
-    padding: '10px 14px',
+    borderRadius: 16,
+    padding: '11px 15px',
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
     flex: 1,
+    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
   };
 
   return (
     <div
       style={{
-        borderRadius: 24,
-        padding: 22,
+        borderRadius: 26,
+        padding: isMobile ? '18px 16px' : 24,
         background: tk.panel,
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         boxShadow: tk.shadowLg,
         border: `1px solid ${tk.line}`,
         display: 'flex',
@@ -313,27 +289,31 @@ function SearchPanel({
         gap: 16,
       }}
     >
-      {/* Mode pills — scroll horizontally on mobile */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, overflowX: 'auto', scrollbarWidth: 'none', flexWrap: isMobile ? 'nowrap' : 'wrap' }}>
-        {SEARCH_MODES.map((m) => (
-          <button
-            key={m.id}
-            data-kj-search-mode={m.id}
-            onClick={() => changeMode(m.id)}
-            title={T(lang, m.bn, m.en)}
-            style={{
-              ...pillBase,
-              background: activeMode === m.id ? tk.primary : tk.panelMuted,
-              color: activeMode === m.id ? tk.primaryInk : tk.textDim,
-              border: activeMode === m.id ? 'none' : `1px solid ${tk.line}`,
-              padding: '7px 11px',
-              minWidth: 0,
-              fontSize: 18,
-            }}
-          >
-            {m.icon}
-          </button>
-        ))}
+      {/* Mode segmented control / pills — scroll horizontally on mobile */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, overflowX: 'auto', scrollbarWidth: 'none', flexWrap: isMobile ? 'nowrap' : 'wrap', paddingBottom: 2 }}>
+        {SEARCH_MODES.map((m) => {
+          const active = activeMode === m.id;
+          return (
+            <button
+              key={m.id}
+              data-kj-search-mode={m.id}
+              onClick={() => changeMode(m.id)}
+              title={T(lang, m.bn, m.en)}
+              style={{
+                ...pillBase,
+                background: active ? tk.primary : tk.panelMuted,
+                color: active ? tk.primaryInk : tk.textDim,
+                border: active ? 'none' : `1px solid ${tk.line}`,
+                padding: '8px 13px',
+                minWidth: 0,
+                fontSize: 16,
+                boxShadow: active ? '0 2px 8px rgba(0, 113, 227, 0.3)' : 'none',
+              }}
+            >
+              {m.icon}
+            </button>
+          );
+        })}
         {!isMobile && (
           <button
             onClick={() => onNav('intercity')}
@@ -342,7 +322,7 @@ function SearchPanel({
               marginLeft: 'auto',
               background: tk.primarySoft,
               color: tk.primary,
-              border: `1px solid ${tk.primary}`,
+              border: `1px solid ${tk.primary}40`,
               display: 'flex',
               alignItems: 'center',
               gap: 6,
@@ -354,13 +334,23 @@ function SearchPanel({
         )}
       </div>
 
-      {/* Universal search field — real input */}
+      {/* Universal search field — Apple Spotlight style */}
       <div
         ref={searchRef}
-        style={{ background: tk.inputBg, border: `1px solid ${searchFocus ? tk.primary : tk.line}`, borderRadius: 14, padding: '11px 14px', display: 'flex', alignItems: 'center', gap: 10, transition: 'border-color 0.15s' }}
+        style={{
+          background: tk.inputBg,
+          border: `1px solid ${searchFocus ? tk.primary : tk.line}`,
+          boxShadow: searchFocus ? `0 0 0 3.5px ${tk.primarySoft}` : 'none',
+          borderRadius: 16,
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
       >
-        <div style={{ width: 30, height: 30, borderRadius: 8, background: 'linear-gradient(135deg, rgba(0,245,255,0.25), rgba(162,89,255,0.25))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: tk.primary }}>
-          <Icon.search s={15} />
+        <div style={{ width: 32, height: 32, borderRadius: 10, background: tk.primarySoft, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: tk.primary }}>
+          <Icon.search s={16} />
         </div>
         <input
           data-kj-home-search
@@ -370,10 +360,10 @@ function SearchPanel({
           onBlur={() => setTimeout(() => setSearchFocus(false), 150)}
           onKeyDown={e => e.key === 'Enter' && searchQ.trim() && submitSearch()}
           placeholder={modeSearchPlaceholder[activeMode]}
-          style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.text, minWidth: 0 }}
+          style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 14, color: tk.text, minWidth: 0, fontWeight: 500 }}
         />
         {!isMobile && (
-          <span style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 6, padding: '2px 6px', fontFamily: SANS, fontSize: 10, fontWeight: 600, color: tk.textFaint, flexShrink: 0 }}>⌘K</span>
+          <span style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 6, padding: '3px 7px', fontFamily: SANS, fontSize: 11, fontWeight: 700, color: tk.textFaint, flexShrink: 0, letterSpacing: 0.5 }}>⌘K</span>
         )}
       </div>
       {searchFocus && searchResults.length > 0 && (
@@ -381,13 +371,16 @@ function SearchPanel({
       )}
 
       {/* Divider */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{ flex: 1, height: 1, background: tk.line }} />
         <span
           style={{
             fontFamily: lang === 'bn' ? BEN : SANS,
             fontSize: 11,
+            fontWeight: 600,
             color: tk.textFaint,
+            textTransform: 'uppercase',
+            letterSpacing: 0.6,
           }}
         >
           {T(lang, 'অথবা · রুট প্ল্যান করুন', 'Or · plan a route')}
@@ -400,17 +393,17 @@ function SearchPanel({
         style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr auto',
-          gap: 10,
+          gap: 12,
           alignItems: 'center',
         }}
       >
         {/* From — real input with station suggestions */}
-        <div ref={fromRef} style={{ ...fieldCard, borderColor: fromFocus ? tk.primary : tk.line, transition: 'border-color 0.15s' }}>
-          <div style={{ width: 32, height: 32, borderRadius: 9, background: tk.primarySoft, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tk.primary, flexShrink: 0 }}>
-            <Icon.pin s={16} />
+        <div ref={fromRef} style={{ ...fieldCard, borderColor: fromFocus ? tk.primary : tk.line, boxShadow: fromFocus ? `0 0 0 3px ${tk.primarySoft}` : 'none' }}>
+          <div style={{ width: 34, height: 34, borderRadius: 10, background: tk.primarySoft, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tk.primary, flexShrink: 0 }}>
+            <Icon.pin s={17} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: SANS, fontSize: 10, fontWeight: 600, color: tk.textFaint, textTransform: 'uppercase', letterSpacing: 0.5 }}>{T(lang, 'কোথা থেকে', 'From')}</div>
+            <div style={{ fontFamily: SANS, fontSize: 10, fontWeight: 700, color: tk.textFaint, textTransform: 'uppercase', letterSpacing: 0.6 }}>{T(lang, 'কোথা থেকে', 'From')}</div>
             <input
               data-kj-from-input
               value={from}
@@ -418,7 +411,7 @@ function SearchPanel({
               onFocus={() => setFromFocus(true)}
               onBlur={() => setTimeout(() => setFromFocus(false), 150)}
               placeholder={fromPlaceholder[activeMode]}
-              style={{ background: 'transparent', border: 'none', outline: 'none', fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, fontWeight: 600, color: tk.text, width: '100%', marginTop: 2 }}
+              style={{ background: 'transparent', border: 'none', outline: 'none', fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 14, fontWeight: 600, color: tk.text, width: '100%', marginTop: 2 }}
             />
           </div>
         </div>
@@ -428,33 +421,34 @@ function SearchPanel({
         {!isMobile && (
           <button
             style={{
-              width: 40,
-              height: 40,
-              borderRadius: 999,
-              background: tk.primarySoft,
-              border: `1px solid ${tk.primary}`,
-              color: tk.primary,
+              width: 42,
+              height: 42,
+              borderRadius: '50%',
+              background: tk.panelMuted,
+              border: `1px solid ${tk.line}`,
+              color: tk.text,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
               order: 2,
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
             aria-label={T(lang, 'অদলবদল', 'Swap')}
             onClick={() => { setFrom(to); setTo(from); setSameLocError(false); }}
           >
-            <Icon.swap s={16} />
+            <Icon.swap s={17} />
           </button>
         )}
 
         {/* To — real input with station suggestions */}
-        <div ref={toRef} style={{ ...fieldCard, order: isMobile ? 0 : 1, borderColor: toFocus ? tk.accent : tk.line, transition: 'border-color 0.15s' }}>
-          <div style={{ width: 32, height: 32, borderRadius: 9, background: tk.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tk.accent, flexShrink: 0 }}>
-            <Icon.flag s={16} />
+        <div ref={toRef} style={{ ...fieldCard, order: isMobile ? 0 : 1, borderColor: toFocus ? tk.accent : tk.line, boxShadow: toFocus ? `0 0 0 3px ${tk.accentSoft}` : 'none' }}>
+          <div style={{ width: 34, height: 34, borderRadius: 10, background: tk.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', color: tk.accent, flexShrink: 0 }}>
+            <Icon.flag s={17} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: SANS, fontSize: 10, fontWeight: 600, color: tk.textFaint, textTransform: 'uppercase', letterSpacing: 0.5 }}>{T(lang, 'কোথায়', 'To')}</div>
+            <div style={{ fontFamily: SANS, fontSize: 10, fontWeight: 700, color: tk.textFaint, textTransform: 'uppercase', letterSpacing: 0.6 }}>{T(lang, 'কোথায়', 'To')}</div>
             <input
               data-kj-to-input
               value={to}
@@ -462,7 +456,7 @@ function SearchPanel({
               onFocus={() => setToFocus(true)}
               onBlur={() => setTimeout(() => setToFocus(false), 150)}
               placeholder={toPlaceholder[activeMode]}
-              style={{ background: 'transparent', border: 'none', outline: 'none', fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, fontWeight: 600, color: tk.text, width: '100%', marginTop: 2 }}
+              style={{ background: 'transparent', border: 'none', outline: 'none', fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 14, fontWeight: 600, color: tk.text, width: '100%', marginTop: 2 }}
             />
           </div>
         </div>
@@ -470,7 +464,7 @@ function SearchPanel({
 
         {/* From = To error */}
         {sameLocError && (
-          <div style={{ gridColumn: '1 / -1', order: -1, background: '#ef444422', border: '1px solid #ef4444', borderRadius: 10, padding: '8px 14px', fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 12, color: '#ef4444', fontWeight: 600 }}>
+          <div style={{ gridColumn: '1 / -1', order: -1, background: 'rgba(255, 59, 48, 0.12)', border: '1px solid rgba(255, 59, 48, 0.3)', borderRadius: 12, padding: '9px 14px', fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 12, color: '#ff3b30', fontWeight: 600 }}>
             ⚠ {T(lang, 'শুরু ও গন্তব্য আলাদা হতে হবে', 'From and To must be different locations')}
           </div>
         )}
@@ -494,8 +488,8 @@ function SearchPanel({
             background: tk.primary,
             color: tk.primaryInk,
             border: 'none',
-            borderRadius: 14,
-            padding: '13px 22px',
+            borderRadius: 16,
+            padding: '14px 24px',
             fontFamily: lang === 'bn' ? BEN : SANS,
             fontSize: 14,
             fontWeight: 700,
@@ -505,6 +499,8 @@ function SearchPanel({
             justifyContent: 'center',
             gap: 8,
             whiteSpace: 'nowrap',
+            boxShadow: `0 4px 14px ${tk.primarySoft}`,
+            transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
           {T(lang, 'রুট খুঁজুন', 'Find routes')}
@@ -617,10 +613,10 @@ function ModeTile({
       onMouseLeave={() => setHov(false)}
       style={{
         background: tile.grad,
-        borderRadius: 18,
+        borderRadius: 20,
         padding: '16px 14px 96px 14px', // bottom padding reserves space for 3D vehicle
         minHeight: 180,
-        border: 'none',
+        border: '1px solid rgba(255,255,255,0.15)',
         cursor: 'pointer',
         position: 'relative',
         overflow: 'hidden',
@@ -628,12 +624,12 @@ function ModeTile({
         flexDirection: 'column',
         justifyContent: 'space-between',
         textAlign: 'left',
-        transform: hov ? 'translateY(-3px) scale(1.02)' : 'none',
-        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-        boxShadow: hov ? '0 12px 32px rgba(0,0,0,0.35)' : '0 4px 12px rgba(0,0,0,0.2)',
+        transform: hov ? 'translateY(-3px)' : 'none',
+        transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease',
+        boxShadow: hov ? '0 12px 30px rgba(0,0,0,0.3)' : '0 4px 14px rgba(0,0,0,0.18)',
       }}
     >
-      {/* Animated blob */}
+      {/* Ambient background blur circles */}
       <div
         style={{
           position: 'absolute',
@@ -643,7 +639,7 @@ function ModeTile({
           background: 'rgba(255,255,255,0.08)',
           top: -30,
           right: -30,
-          animation: 'kjpulse 3s ease-in-out infinite',
+          animation: 'kjpulse 3.5s ease-in-out infinite',
         }}
       />
       <div
@@ -655,7 +651,7 @@ function ModeTile({
           background: 'rgba(255,255,255,0.06)',
           bottom: 30,
           left: -20,
-          animation: 'kjpulse 4s ease-in-out infinite',
+          animation: 'kjpulse 4.5s ease-in-out infinite',
           animationDelay: '1s',
         }}
       />
@@ -666,9 +662,10 @@ function ModeTile({
           style={{
             width: 38,
             height: 38,
-            borderRadius: 11,
-            background: 'rgba(255,255,255,0.18)',
-            backdropFilter: 'blur(4px)',
+            borderRadius: 12,
+            background: 'rgba(255,255,255,0.20)',
+            border: '1px solid rgba(255,255,255,0.25)',
+            backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -687,14 +684,16 @@ function ModeTile({
         {tile.badge && (
           <span
             style={{
-              background: 'rgba(255,255,255,0.22)',
+              background: 'rgba(255,255,255,0.25)',
+              border: '1px solid rgba(255,255,255,0.25)',
               borderRadius: 999,
-              padding: '3px 8px',
+              padding: '3px 9px',
               fontFamily: lang === 'bn' ? BEN : SANS,
               fontSize: 10,
               fontWeight: 700,
               color: 'white',
-              backdropFilter: 'blur(4px)',
+              backdropFilter: 'blur(8px)',
+              letterSpacing: -0.1,
             }}
           >
             {T(lang, tile.badge.bn, tile.badge.en)}
@@ -712,6 +711,7 @@ function ModeTile({
             color: 'white',
             lineHeight: 1.2,
             marginBottom: 4,
+            letterSpacing: -0.2,
           }}
         >
           {T(lang, tile.label.bn, tile.label.en)}
@@ -720,7 +720,7 @@ function ModeTile({
           style={{
             fontFamily: SANS,
             fontSize: 11,
-            color: 'rgba(255,255,255,0.72)',
+            color: 'rgba(255,255,255,0.8)',
             lineHeight: 1.3,
           }}
         >
@@ -746,17 +746,6 @@ function ModeTile({
 }
 
 // ─── KoyJaboStory ─────────────────────────────────────────────────────────────
-
-const KJ_STARS: Array<[number, number, number, number]> = [
-  [8, 5, 2, 0], [12, 18, 1.5, 0.5], [6, 30, 1.5, 1.0], [15, 42, 2, 0.3],
-  [9, 55, 1.5, 0.8], [5, 65, 2, 0.2], [14, 75, 1.5, 1.1], [7, 85, 2, 0.6],
-  [18, 92, 1.5, 0.4], [22, 25, 1, 0.9], [20, 70, 1, 0.7], [25, 48, 1, 1.3],
-]; // [top%, left%, sizePx, delayS]
-
-const KJ_BLDGS: Array<[number, number, number]> = [
-  [0, 7, 70], [6, 5, 90], [10, 9, 58], [18, 6, 80], [23, 4.5, 65], [28, 7, 52],
-  [60, 7, 68], [66, 4.5, 88], [70, 8, 60], [77, 6, 78], [82, 5, 55], [87, 7, 70], [93, 5, 85],
-]; // [left%, width%, height]
 
 const STORY_CAPTIONS = [
   {
@@ -787,179 +776,342 @@ function KoyJaboStory({
   onNav: (r: string, params?: Record<string, string>) => void;
 }) {
   const [scene, setScene] = useState(0);
-  const [prev, setPrev] = useState<number | null>(null);
-  const prevRef = useRef(0);
-  const mountedRef = useRef(false);
 
   useEffect(() => {
     const id = setInterval(() => setScene((s) => (s + 1) % 4), 3600);
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    if (!mountedRef.current) { mountedRef.current = true; return; }
-    setPrev(prevRef.current);
-    prevRef.current = scene;
-    const t = setTimeout(() => setPrev(null), 600);
-    return () => clearTimeout(t);
-  }, [scene]);
-
-  // Shared city background — rendered once beneath all scenes
-  const cityBg = (
-    <>
-      <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg, #07111f 0%, #0c1a30 60%, #0e2035 100%)' }} />
-      {KJ_STARS.map(([top, left, size, delay], i) => (
-        <div key={i} style={{ position:'absolute', width:size, height:size, borderRadius:'50%', background:'#fff', top:`${top}%`, left:`${left}%`, opacity:0.72, animation:`kjSpark ${1.4+(i%3)*0.6}s ease-in-out infinite`, animationDelay:`${delay}s` }} />
-      ))}
-      {/* Moon */}
-      <div style={{ position:'absolute', top:'6%', right:'8%', width:24, height:24, borderRadius:'50%', background:'radial-gradient(circle at 38% 38%, #fef9c3 0%, #fde68a 100%)', boxShadow:'0 0 18px rgba(253,230,138,0.45)', animation:'kjSpark 4s ease-in-out infinite' }} />
-      {/* City building silhouettes */}
-      {KJ_BLDGS.map(([left, width, height], i) => (
-        <div key={i} style={{ position:'absolute', bottom:63, left:`${left}%`, width:`${width}%`, height:height, background:'#091624', borderTop:'1px solid rgba(60,100,160,0.18)' }}>
-          {i % 3 !== 2 && <div style={{ position:'absolute', top:Math.floor(height*0.22), left:'22%', width:'22%', height:3.5, background:'#fde68a', opacity:0.38, boxShadow:'0 0 4px rgba(253,230,138,0.5)' }} />}
-          {i % 2 === 0 && <div style={{ position:'absolute', top:Math.floor(height*0.55), left:'55%', width:'22%', height:3.5, background:'#93c5fd', opacity:0.28 }} />}
-        </div>
-      ))}
-      {/* Street lamp */}
-      <div style={{ position:'absolute', bottom:63, left:'26%' }}>
-        <div style={{ width:2, height:28, background:'#4b5563', margin:'0 auto' }} />
-        <div style={{ position:'absolute', top:0, left:-7, width:10, height:2, background:'#4b5563', borderRadius:1 }} />
-        <div style={{ position:'absolute', top:-5, left:-10, width:8, height:5, borderRadius:'50%', background:'#fde68a', opacity:0.85, boxShadow:'0 0 12px rgba(253,230,138,0.7)' }} />
-      </div>
+  const sceneContent = [
+    // Scene 0: confused boy at bus stop
+    <div
+      key="s0"
+      className="kj-story-scene"
+      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}
+    >
+      {/* Sky */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #1e3a5f 0%, #0f2d4a 60%, #1a3c2a 100%)' }} />
       {/* Road */}
-      <div style={{ position:'absolute', bottom:0, left:0, right:0, height:65, background:'linear-gradient(180deg, #141c2a 0%, #0f1520 100%)' }} />
-      <div style={{ position:'absolute', bottom:29, left:0, right:0, height:3, background:'repeating-linear-gradient(90deg, #fde68a 0, #fde68a 18px, transparent 18px, transparent 42px)', opacity:0.3 }} />
-    </>
-  );
-
-  // Scene 0: confused at chaotic bus stop
-  const s0 = (
-    <>
-      <div style={{ position:'absolute', bottom:61, left:'30%', display:'flex', flexDirection:'column', alignItems:'center' }}>
-        <div style={{ background:'#1d4ed8', color:'white', padding:'3px 8px', borderRadius:4, fontFamily:BEN, fontSize:9, fontWeight:700, boxShadow:'0 0 10px rgba(29,78,216,0.55)' }}>বাস স্টপ</div>
-        <div style={{ width:3, height:46, background:'#6b7280' }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: '#1f2937' }} />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 28,
+          left: 0,
+          right: 0,
+          height: 3,
+          background: 'repeating-linear-gradient(90deg, #fde68a 0, #fde68a 24px, transparent 24px, transparent 48px)',
+          opacity: 0.5,
+        }}
+      />
+      {/* Bus stop sign */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 58,
+          left: '38%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <div
+          style={{
+            background: '#1d4ed8',
+            color: 'white',
+            padding: '3px 8px',
+            borderRadius: 4,
+            fontFamily: BEN,
+            fontSize: 11,
+            fontWeight: 700,
+          }}
+        >
+          BUS
+        </div>
+        <div style={{ width: 3, height: 40, background: '#9ca3af' }} />
       </div>
-      <div style={{ position:'absolute', bottom:61, left:'43%', fontSize:36, animation:'kjBobY 1.4s ease-in-out infinite' }}>😰</div>
-      {(['?','?','?'] as string[]).map((q,i) => (
-        <div key={i} style={{ position:'absolute', bottom:`${50+i*13}%`, left:`${52+i*7}%`, fontFamily:BEN, fontSize:16-i*2, fontWeight:900, color:'#fbbf24', animation:`kjFloatY ${1.3+i*0.5}s ease-in-out infinite`, animationDelay:`${i*0.35}s`, opacity:0.85 }}>{q}</div>
-      ))}
-      <div style={{ position:'absolute', bottom:'54%', left:'54%', background:'rgba(255,255,255,0.94)', borderRadius:12, padding:'4px 10px', fontFamily:BEN, fontSize:11, color:'#1f2937', fontWeight:700, boxShadow:'0 2px 14px rgba(0,0,0,0.28)', whiteSpace:'nowrap' }}>রুট ৮? নাকি ১২? 😵</div>
-      <div className="kj-anim-drive" style={{ position:'absolute', bottom:42, left:0, width:'28%', animationDuration:'5s' }}><Bus3D size={60} /></div>
-      <div className="kj-anim-drive" style={{ position:'absolute', bottom:42, left:'-60%', width:'28%', animationDuration:'7.5s', animationDelay:'2.2s' }}><Bus3D size={60} /></div>
-      <div className="kj-anim-drive" style={{ position:'absolute', bottom:42, left:'-25%', width:'22%', animationDuration:'9s', animationDelay:'0.8s' }}><Bus3D size={48} /></div>
-    </>
-  );
+      {/* Confused boy emoji */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 56,
+          left: '48%',
+          fontSize: 38,
+          animation: 'kjBobY 1.8s ease-in-out infinite',
+        }}
+      >
+        🧑
+      </div>
+      {/* Thought bubble */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '55%',
+          left: '54%',
+          background: 'rgba(255,255,255,0.92)',
+          borderRadius: 12,
+          padding: '5px 10px',
+          fontFamily: BEN,
+          fontSize: 12,
+          color: '#1f2937',
+          fontWeight: 600,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        কোন বাসে উঠবো? 😕
+      </div>
+      {/* Driving buses */}
+      <div
+        className="kj-anim-drive"
+        style={{ position: 'absolute', bottom: 38, left: 0, width: '30%', animationDuration: '6s' }}
+      >
+        <Bus3D size={64} />
+      </div>
+      <div
+        className="kj-anim-drive"
+        style={{ position: 'absolute', bottom: 38, left: '-50%', width: '30%', animationDuration: '9s', animationDelay: '3s' }}
+      >
+        <Bus3D size={64} />
+      </div>
+    </div>,
 
-  // Scene 1: typing destination on phone
-  const s1 = (
-    <>
-      <div style={{ position:'absolute', bottom:61, left:'35%', fontSize:34 }}>🧑</div>
-      <div style={{ position:'absolute', bottom:'27%', left:'47%', width:88, borderRadius:14, background:'#060d18', border:'2px solid rgba(0,245,255,0.6)', overflow:'hidden', boxShadow:'0 0 26px rgba(0,245,255,0.35), 0 0 60px rgba(0,245,255,0.1)', animation:'kjBobY 2.4s ease-in-out infinite' }}>
-        <div style={{ background:'rgba(0,245,255,0.12)', padding:'4px 6px 3px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <div style={{ fontFamily:BEN, fontSize:7, fontWeight:800 }}><span style={{ color:'#FF5A6E' }}>Koy</span><span style={{ color:'#00C081' }}>Jabo</span></div>
-          <div style={{ fontSize:7, opacity:0.5 }}>📶</div>
+    // Scene 1: boy with phone
+    <div
+      key="s1"
+      className="kj-story-scene"
+      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}
+    >
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #1e3a5f 0%, #0f2d4a 60%, #1a3c2a 100%)' }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: '#1f2937' }} />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 56,
+          left: '42%',
+          fontSize: 34,
+        }}
+      >
+        🧑
+      </div>
+      {/* Phone mockup */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '32%',
+          left: '50%',
+          width: 80,
+          borderRadius: 12,
+          background: '#0d1b2e',
+          border: '2px solid rgba(0,245,255,0.5)',
+          overflow: 'hidden',
+          boxShadow: '0 0 20px rgba(0,245,255,0.3)',
+          animation: 'kjBobY 2s ease-in-out infinite',
+        }}
+      >
+        <div style={{ background: 'rgba(0,245,255,0.15)', padding: '5px 6px 3px' }}>
+          <div style={{ fontFamily: BEN, fontSize: 7, fontWeight: 800, letterSpacing: 0.5 }}>
+            <span style={{ color: '#FF5A6E' }}>Koy</span><span style={{ color: '#00C081' }}>Jabo</span>
+          </div>
         </div>
-        <div style={{ padding:'5px 6px', display:'flex', flexDirection:'column', gap:4 }}>
-          <div style={{ background:'rgba(255,255,255,0.07)', borderRadius:5, padding:'3px 6px', display:'flex', alignItems:'center', gap:3 }}>
-            <span style={{ fontSize:7 }}>🟢</span>
-            <span style={{ fontFamily:BEN, fontSize:7, color:'rgba(255,255,255,0.9)' }}>হেমায়েতপুর</span>
+        <div style={{ padding: '4px 6px', display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.08)',
+              borderRadius: 4,
+              padding: '3px 5px',
+              fontFamily: BEN,
+              fontSize: 7,
+              color: 'rgba(255,255,255,0.5)',
+            }}
+          >
+            মতিঝিল...
           </div>
-          <div style={{ background:'rgba(0,245,255,0.08)', border:'1px solid rgba(0,245,255,0.45)', borderRadius:5, padding:'3px 6px', display:'flex', alignItems:'center', gap:3, overflow:'hidden' }}>
-            <span style={{ fontSize:7, flexShrink:0 }}>🔴</span>
-            <span style={{ display:'inline-block', maxWidth:0, overflow:'hidden', fontFamily:BEN, fontSize:7, color:'#00f5ff', fontWeight:600, whiteSpace:'nowrap', animation:'kjTypeW 1.4s steps(7,end) 0.5s both', verticalAlign:'middle' }}>গুলশান ১</span>
-            <span style={{ display:'inline-block', width:1.5, height:9, background:'#00f5ff', animation:'kj-blink 0.8s ease-in-out infinite', flexShrink:0 }}/>
-          </div>
-          <div style={{ background:'linear-gradient(90deg,#00c081,#00f5ff)', borderRadius:5, padding:'4px 6px', textAlign:'center' }}>
-            <span style={{ fontFamily:BEN, fontSize:7, fontWeight:700, color:'#001a10' }}>🔍 রুট খুঁজুন</span>
+          <div style={{ background: 'rgba(0,245,255,0.12)', borderRadius: 4, padding: '4px 5px', fontFamily: BEN, fontSize: 7, fontWeight: 600, color: '#00f5ff' }}>
+            🔍 খুঁজুন
           </div>
         </div>
       </div>
-      <div style={{ position:'absolute', bottom:'70%', left:'64%', fontSize:16, animation:'kjSpark 1.2s ease-in-out infinite' }}>✨</div>
-      <div style={{ position:'absolute', bottom:'50%', left:'40%', fontSize:11, animation:'kjSpark 1.9s ease-in-out infinite', animationDelay:'0.6s' }}>⭐</div>
-    </>
-  );
+      {/* Sparkle */}
+      <div style={{ position: 'absolute', bottom: '65%', left: '62%', fontSize: 18, animation: 'kjSpark 1.5s ease-in-out infinite' }}>✨</div>
+    </div>,
 
-  // Scene 2: route results with fare
-  const s2 = (
-    <>
-      <div style={{ position:'absolute', bottom:61, left:'32%', fontSize:32 }}>🧑</div>
-      <div style={{ position:'absolute', bottom:'24%', left:'45%', width:96, borderRadius:14, background:'#060d18', border:'2px solid rgba(0,245,255,0.5)', overflow:'hidden', boxShadow:'0 0 28px rgba(0,245,255,0.3)' }}>
-        <div style={{ background:'rgba(0,245,255,0.12)', padding:'4px 6px' }}>
-          <div style={{ fontFamily:BEN, fontSize:7, fontWeight:800, color:'#00f5ff' }}>৩টি রুট পাওয়া গেছে ✅</div>
+    // Scene 2: results on phone
+    <div
+      key="s2"
+      className="kj-story-scene"
+      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}
+    >
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #1e3a5f 0%, #0f2d4a 60%, #1a3c2a 100%)' }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: '#1f2937' }} />
+      <div style={{ position: 'absolute', bottom: 56, left: '38%', fontSize: 34 }}>🧑</div>
+      {/* Phone with results */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '28%',
+          left: '48%',
+          width: 90,
+          borderRadius: 12,
+          background: '#0d1b2e',
+          border: '2px solid rgba(0,245,255,0.5)',
+          overflow: 'hidden',
+          boxShadow: '0 0 24px rgba(0,245,255,0.35)',
+        }}
+      >
+        <div style={{ background: 'rgba(0,245,255,0.15)', padding: '4px 6px' }}>
+          <div style={{ fontFamily: BEN, fontSize: 7, fontWeight: 800, color: '#00f5ff' }}>৩টি রুট পাওয়া গেছে</div>
         </div>
-        {([
-          { route:'গ্রীন লাইন', fare:'৳৬০', time:'৩৫ মি.', c:'#10b981', d:'0s' },
-          { route:'হানিফ এন্টার.', fare:'৳৫০', time:'৪০ মি.', c:'#3b82f6', d:'0.15s' },
-          { route:'বিআরটিসি', fare:'৳৪০', time:'৪৫ মি.', c:'#8b5cf6', d:'0.3s' },
-        ] as {route:string,fare:string,time:string,c:string,d:string}[]).map((r,i) => (
-          <div key={i} style={{ padding:'4px 6px', borderBottom:i<2?'1px solid rgba(255,255,255,0.06)':'none', display:'flex', justifyContent:'space-between', alignItems:'center', animation:'kjStoryIn 0.35s ease both', animationDelay:r.d }}>
-            <div style={{ display:'flex', alignItems:'center', gap:3 }}>
-              <div style={{ width:3, height:14, borderRadius:2, background:r.c, flexShrink:0 }}/>
-              <span style={{ fontFamily:BEN, fontSize:7, color:'rgba(255,255,255,0.85)', fontWeight:600 }}>{r.route}</span>
-            </div>
-            <div style={{ textAlign:'right' }}>
-              <div style={{ fontFamily:BEN, fontSize:7, color:'#00f5ff', fontWeight:700 }}>{r.fare}</div>
-              <div style={{ fontFamily:BEN, fontSize:6, color:'rgba(255,255,255,0.38)' }}>{r.time}</div>
-            </div>
+        {[
+          { route: 'গ্রীন লাইন', c: '#10b981' },
+          { route: 'হানিফ', c: '#3b82f6' },
+          { route: 'বিআরটিসি', c: '#8b5cf6' },
+        ].map((r, i) => (
+          <div key={i} style={{ padding: '3px 6px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontFamily: BEN, fontSize: 7, color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{r.route}</span>
+            <span style={{ fontFamily: BEN, fontSize: 6, color: 'rgba(255,255,255,0.35)' }}>✓</span>
           </div>
         ))}
       </div>
-    </>
-  );
+    </div>,
 
-  // Scene 3: correct bus arrives
-  const s3 = (
-    <>
-      <div style={{ position:'absolute', bottom:61, left:'60%', fontSize:36, animation:'kjBobY 0.9s ease-in-out infinite' }}>🙌</div>
-      <div style={{ position:'absolute', bottom:42, left:'5%', animation:'kjRollIn 1.0s cubic-bezier(.15,.8,.2,1) both' }}>
-        <div style={{ position:'relative', display:'inline-block' }}>
-          <Bus3D size={88} />
-          <div style={{ position:'absolute', top:6, left:7, background:'#10b981', color:'white', fontFamily:BEN, fontSize:6, fontWeight:700, padding:'1px 4px', borderRadius:2 }}>গ্রীন লাইন</div>
-        </div>
+    // Scene 3: correct bus rolling in
+    <div
+      key="s3"
+      className="kj-story-scene"
+      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}
+    >
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #1e3a5f 0%, #0f2d4a 60%, #1a3c2a 100%)' }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: '#1f2937' }} />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 56,
+          left: '55%',
+          fontSize: 36,
+          animation: 'kjBobY 1.5s ease-in-out infinite',
+        }}
+      >
+        😊
       </div>
-      <div style={{ position:'absolute', bottom:'67%', left:'30%', width:30, height:30, borderRadius:'50%', background:'linear-gradient(135deg,#10b981,#22c55e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, animation:'kjPopIn 0.5s cubic-bezier(.2,.7,.25,1) both', animationDelay:'0.9s', opacity:0, boxShadow:'0 0 18px rgba(16,185,129,0.65)' }}>✓</div>
-      {(['🎉','✨','⭐','🎊','✨'] as string[]).map((e,i) => (
-        <div key={i} style={{ position:'absolute', fontSize:i%2===0?18:13, top:`${12+i*10}%`, left:`${55+(i%3)*10}%`, animation:`kjSpark ${0.85+i*0.35}s ease-in-out infinite`, animationDelay:`${i*0.25}s` }}>{e}</div>
+      {/* Rolling bus */}
+      <div
+        style={{ position: 'absolute', bottom: 38, left: '10%', animation: 'kjRollIn 1.2s cubic-bezier(.2,.7,.25,1) both' }}
+      >
+        <Bus3D size={90} />
+      </div>
+      {/* Green checkmark */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '65%',
+          left: '26%',
+          width: 32,
+          height: 32,
+          borderRadius: '50%',
+          background: '#22c55e',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 18,
+          animation: 'kjPopIn 0.5s cubic-bezier(.2,.7,.25,1) both',
+          animationDelay: '0.8s',
+          opacity: 0,
+        }}
+      >
+        ✓
+      </div>
+      {/* Sparkles */}
+      {['✨', '🎉', '⭐'].map((e, i) => (
+        <div
+          key={i}
+          style={{
+            position: 'absolute',
+            fontSize: 20,
+            top: `${20 + i * 15}%`,
+            left: `${60 + i * 8}%`,
+            animation: `kjSpark ${1 + i * 0.4}s ease-in-out infinite`,
+            animationDelay: `${i * 0.3}s`,
+          }}
+        >
+          {e}
+        </div>
       ))}
-    </>
-  );
-
-  const allScenes = [s0, s1, s2, s3];
+    </div>,
+  ];
 
   return (
-    <div style={{ borderRadius:22, overflow:'hidden', border:`1px solid ${tk.line}`, background:tk.panel }}>
+    <div
+      style={{
+        borderRadius: 22,
+        overflow: 'hidden',
+        border: `1px solid ${tk.line}`,
+        background: tk.panel,
+      }}
+    >
       {/* Scene stage */}
-      <div style={{ height:260, position:'relative', background:'#07111f' }}>
-        {cityBg}
-        {prev !== null && (
-          <div key={`p${prev}`} style={{ position:'absolute', inset:0, animation:'kjFadeOut 0.55s ease forwards', pointerEvents:'none' }}>
-            {allScenes[prev]}
-          </div>
-        )}
-        <div key={`s${scene}`} style={{ position:'absolute', inset:0, animation:'kjStoryIn 0.55s cubic-bezier(.2,.7,.25,1) both' }}>
-          {allScenes[scene]}
-        </div>
+      <div style={{ height: 260, position: 'relative', background: '#0d1b2e' }}>
+        {sceneContent[scene]}
       </div>
 
       {/* Caption bar */}
-      <div style={{ padding:'14px 18px', background:tk.panel }}>
-        <div style={{ display:'flex', gap:6, marginBottom:12 }}>
-          {[0,1,2,3].map((i) => (
-            <div key={i} style={{ flex:1, height:3, borderRadius:999, background:i<scene?tk.primary:tk.line, overflow:'hidden', transition:'background 0.4s ease' }}>
+      <div style={{ padding: '14px 18px', background: tk.panel }}>
+        {/* Progress bars */}
+        <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1,
+                height: 3,
+                borderRadius: 999,
+                background: i === scene ? tk.primary : tk.line,
+                transition: 'background 0.4s ease',
+                overflow: 'hidden',
+              }}
+            >
               {i === scene && (
-                <div style={{ height:'100%', background:tk.primary, animation:'kjLoadBar 3.6s linear forwards', borderRadius:999 }} />
+                <div
+                  style={{
+                    height: '100%',
+                    background: tk.primary,
+                    animation: 'kjLoadBar 3.6s linear forwards',
+                    borderRadius: 999,
+                  }}
+                />
               )}
             </div>
           ))}
         </div>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
-          <p style={{ margin:0, fontFamily:lang==='bn'?BEN:SANS, fontSize:13, color:tk.text, lineHeight:1.5, flex:1 }}>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: lang === 'bn' ? BEN : SANS,
+              fontSize: 13,
+              color: tk.text,
+              lineHeight: 1.5,
+              flex: 1,
+            }}
+          >
             {T(lang, STORY_CAPTIONS[scene].bn, STORY_CAPTIONS[scene].en)}
           </p>
           {scene === 3 && (
             <button
               onClick={() => onNav('bus-hub')}
-              style={{ background:tk.primary, color:tk.primaryInk, border:'none', borderRadius:999, padding:'7px 16px', fontFamily:lang==='bn'?BEN:SANS, fontSize:12, fontWeight:700, cursor:'pointer', whiteSpace:'nowrap' }}
+              style={{
+                background: tk.primary,
+                color: tk.primaryInk,
+                border: 'none',
+                borderRadius: 999,
+                padding: '7px 16px',
+                fontFamily: lang === 'bn' ? BEN : SANS,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
             >
               {T(lang, 'এখনই চেষ্টা করুন', 'Try it now')}
             </button>
@@ -1053,25 +1205,26 @@ function MetroLiveStrip({ tk, lang, isMobile }: { tk: Tokens; lang: Lang; isMobi
   return (
     <div style={{
       background: tk.metroBg,
-      borderRadius: 18,
-      padding: isMobile ? '14px 14px' : '18px 22px',
-      border: '1px solid rgba(59,130,246,0.3)',
+      borderRadius: 22,
+      padding: isMobile ? '16px 16px' : '20px 24px',
+      border: '1px solid rgba(41, 151, 255, 0.25)',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.45)',
       position: 'relative', overflow: 'hidden',
     }}>
       {/* Background glow */}
-      <div style={{ position:'absolute', top:-60, left:'30%', width:260, height:260, borderRadius:'50%', background:'radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%)', pointerEvents:'none' }}/>
+      <div style={{ position:'absolute', top:-60, left:'30%', width:260, height:260, borderRadius:'50%', background:'radial-gradient(circle, rgba(41,151,255,0.15) 0%, transparent 70%)', pointerEvents:'none' }}/>
 
       <div style={{ position:'relative', zIndex:1 }}>
         {/* Header */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <span style={{ background:'linear-gradient(135deg,#3b82f6,#1e3a8a)', borderRadius:8, padding:'4px 10px', fontFamily:SANS, fontSize:12, fontWeight:800, color:'white', letterSpacing:0.5 }}>M6</span>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+            <span style={{ background:'linear-gradient(135deg, #0a84ff, #0071e3)', borderRadius:10, padding:'5px 12px', fontFamily:SANS, fontSize:12, fontWeight:800, color:'white', letterSpacing:0.5, boxShadow: '0 2px 8px rgba(0, 113, 227, 0.4)' }}>M6</span>
             <div>
               <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                <span style={{ width:7, height:7, borderRadius:'50%', background:'#22c55e', animation:'kjpulse 1.5s ease-in-out infinite', display:'inline-block' }}/>
-                <span style={{ fontFamily:SANS, fontSize:12, fontWeight:600, color:'#93c5fd' }}>{T(lang,'শিডিউল · এমআরটি লাইন ৬','Schedule · MRT Line 6')}</span>
+                <span style={{ width:7, height:7, borderRadius:'50%', background:'#30d158', animation:'kjpulse 1.5s ease-in-out infinite', display:'inline-block' }}/>
+                <span style={{ fontFamily:SANS, fontSize:13, fontWeight:700, color:'#93c5fd', letterSpacing: -0.2 }}>{T(lang,'শিডিউল · এমআরটি লাইন ৬','Schedule · MRT Line 6')}</span>
               </div>
-              <div style={{ fontFamily:lang==='bn'?BEN:SANS, fontSize:11, color:'rgba(255,255,255,0.5)', marginTop:1 }}>
+              <div style={{ fontFamily:lang==='bn'?BEN:SANS, fontSize:11, color:'rgba(255,255,255,0.6)', marginTop:2 }}>
                 {T(lang,'উত্তরা উত্তর → মতিঝিল','Uttara North → Motijheel')}
               </div>
             </div>
@@ -1722,20 +1875,23 @@ function OfflinePWACard({ tk, lang, onNav, installPromptRef }: { tk: Tokens; lan
     <div
       style={{
         background: tk.panel,
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         border: `1px solid ${tk.line}`,
-        borderRadius: 16,
-        padding: '14px 16px',
+        borderRadius: 18,
+        padding: '14px 18px',
         display: 'flex',
         alignItems: 'center',
         gap: 12,
-        marginTop: 12,
+        boxShadow: tk.shadow,
+        transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       <div
         style={{
-          width: 40,
-          height: 40,
-          borderRadius: 12,
+          width: 38,
+          height: 38,
+          borderRadius: 11,
           background: tk.primarySoft,
           display: 'flex',
           alignItems: 'center',
@@ -1744,10 +1900,10 @@ function OfflinePWACard({ tk, lang, onNav, installPromptRef }: { tk: Tokens; lan
           flexShrink: 0,
         }}
       >
-        <Icon.wifi s={20} />
+        <Icon.wifi s={19} />
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, fontWeight: 700, color: tk.text, marginBottom: 2 }}>
+        <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, fontWeight: 700, color: tk.text, marginBottom: 2, letterSpacing: -0.2 }}>
           {T(lang, 'অফলাইনেও কাজ করে', 'Works offline too')}
         </div>
         <div style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>
@@ -1760,16 +1916,18 @@ function OfflinePWACard({ tk, lang, onNav, installPromptRef }: { tk: Tokens; lan
           background: tk.primary,
           color: tk.primaryInk,
           border: 'none',
-          borderRadius: 10,
-          padding: '6px 12px',
+          borderRadius: 999,
+          padding: '7px 16px',
           fontFamily: lang === 'bn' ? BEN : SANS,
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: 700,
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: 5,
+          gap: 6,
           flexShrink: 0,
+          boxShadow: `0 2px 8px ${tk.primarySoft}`,
+          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <Icon.download s={13} />
@@ -1796,22 +1954,13 @@ export function HomePage({
   const tk: Tokens = KJ_TOKENS[theme];
   const isMobile = device === 'mobile';
 
-  // Below-fold data loads as separate chunks after mount (see useLazyData)
-  const trainData = useLazyData(loadTrainData);
-  const intercityData = useLazyData(loadIntercityData);
-  const placesData = useLazyData(loadPlacesData);
-  const enrichmentData = useLazyData(loadEnrichmentData);
-  const flightData = useLazyData(loadFlightData);
-  const launchData = useLazyData(loadLaunchData);
-
   // Top-rated destinations for the Discover section (enriched first, fallback lat order)
   const topDestinations = useMemo(() => {
-    if (!placesData) return [];
-    const spots = placesData.ALL_PLACES.filter(p => p.type === 'tourist' || p.type === 'historical' || p.type === 'landmark');
+    const spots = ALL_PLACES.filter(p => p.type === 'tourist' || p.type === 'historical' || p.type === 'landmark');
     return [...spots].sort(
-      (a, b) => (enrichmentData?.DESTINATION_ENRICHMENT[b.id]?.gmRating ?? 0) - (enrichmentData?.DESTINATION_ENRICHMENT[a.id]?.gmRating ?? 0)
+      (a, b) => (DESTINATION_ENRICHMENT[b.id]?.gmRating ?? 0) - (DESTINATION_ENRICHMENT[a.id]?.gmRating ?? 0)
     );
-  }, [placesData, enrichmentData]);
+  }, []);
   const font = lang === 'bn' ? BEN : SANS;
   const [homeSearchMode, setHomeSearchMode] = useState<SearchModeId>('bus');
   const installPromptRef = useRef<{ prompt(): void } | null>(null);
@@ -1926,10 +2075,6 @@ export function HomePage({
                 onNav={onNav as (r: string, p?: Record<string, string>) => void}
                 activeMode={homeSearchMode}
                 setActiveMode={setHomeSearchMode}
-                trainData={trainData}
-                intercityData={intercityData}
-                launchData={launchData}
-                flightData={flightData}
               />
               {/* Gov ad banner — fills empty left-column space below search */}
               <GovAdBanner lang={lang} height={isMobile ? 200 : 240} />
@@ -1994,13 +2139,13 @@ export function HomePage({
             }}
           >
             <summary style={{ cursor: 'pointer', fontWeight: 800, fontSize: 13, color: tk.primary, letterSpacing: 1.2, textTransform: 'uppercase' }}>
-              {T(lang, 'সংক্ষেপে', 'Quick Summary')}
+              {T(lang, 'সংক্ষেপে', 'TL;DR')}
             </summary>
             <p style={{ margin: '8px 0 0', fontSize: 13, lineHeight: 1.6, color: tk.text }}>
               {T(
                 lang,
-                'কই যাবো বাংলাদেশের ফ্রি অফলাইন পরিবহন গাইড। ২০০+ ঢাকা বাস রুট, MRT-6 মেট্রো (১৬ সক্রিয় স্টেশন, ৳২০–১০০), ৬৪ জেলায় আন্তঃজেলা বাস/ট্রেন/ফ্লাইট/লঞ্চ, ট্রাক ও পণ্য পরিবহন (১৬ ভেহিকল টাইপ, রিয়েল মার্কেট রেট), ভাড়া ক্যালকুলেটর, এবং দ্বিভাষিক AI সহায়ক। অফলাইনে কাজ করে।',
-                'KoyJabo is Bangladesh\'s free offline transport guide. Covers 200+ Dhaka bus routes, MRT-6 Metro Rail (16 active stations, ৳20–100), intercity bus/train/flight/launch across 64 districts, truck & freight (16 vehicle types, real market rates), a fare calculator, and a bilingual AI assistant. Works offline.',
+                'কই যাবো বাংলাদেশের ফ্রি অফলাইন পরিবহন গাইড। ২০০+ ঢাকা বাস রুট, MRT-6 মেট্রো (১৭ স্টেশন, ৳২০–১০০), ৬৪ জেলায় আন্তঃজেলা বাস/ট্রেন/ফ্লাইট/লঞ্চ, ট্রাক ও পণ্য পরিবহন (১৬ ভেহিকল টাইপ, রিয়েল মার্কেট রেট), ভাড়া ক্যালকুলেটর, এবং দ্বিভাষিক AI সহায়ক। অফলাইনে কাজ করে।',
+                'KoyJabo is Bangladesh\'s free offline transport guide. Covers 200+ Dhaka bus routes, MRT-6 Metro Rail (17 stations, ৳20–100), intercity bus/train/flight/launch across 64 districts, truck & freight (16 vehicle types, real market rates), a fare calculator, and a bilingual AI assistant. Works offline.',
               )}
             </p>
           </details>
@@ -2087,18 +2232,16 @@ export function HomePage({
           <KoyJaboStory tk={tk} lang={lang} onNav={onNav} />
         </div>
 
-        {/* ── Metro Network Map ── */}
+        {/* ── Metro Live ── */}
         <div style={section}>
           <SectionHeader
             tk={tk}
             lang={lang}
-            title={T(lang, 'মেট্রো নেটওয়ার্ক ম্যাপ', 'Metro Network Map')}
-            action={T(lang, 'ভাড়া ও তথ্য', 'Fares & info')}
+            title={T(lang, 'মেট্রো শিডিউল', 'Metro Schedule')}
+            action={T(lang, 'সব স্টেশন', 'All stations')}
             onAction={() => onNav('metro-hub')}
           />
-          <React.Suspense fallback={<div style={{ minHeight: 260 }} />}>
-            <MetroMapView tk={tk} lang={lang} theme={theme} isMobile={isMobile} />
-          </React.Suspense>
+          <MetroLiveStrip tk={tk} lang={lang} isMobile={isMobile} />
         </div>
 
         {/* ── Middle Affiliate Slider Banner ── */}
