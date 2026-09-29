@@ -23,7 +23,7 @@
       "id": "dhaka-local-bus",
       "title": "Dhaka Local Bus Routes",
       "url": "https://koyjabo.com/",
-      "text": "KoyJabo covers 200+ Dhaka local bus routes including BRTC, Shyamoli, Hanif, Green Line, Desh Bangla, Nilachal, Grameen, and hundreds of private operators. Each route listing shows all stops in order, approximate fare based on BRTA rate (৳2.53/km city), and route length. Use the search box — enter starting stop in 'From' and destination in 'To' to find all available buses. Works offline after PWA installation.",
+      "text": "KoyJabo covers 200+ Dhaka local bus routes including BRTC, Shyamoli, Hanif, Green Line, Desh Bangla, Nilachal, Grameen, and hundreds of private operators. Each route listing shows all stops in order, approximate fare based on BRTA rate (৳2.70/km city), and route length. Use the search box — enter starting stop in 'From' and destination in 'To' to find all available buses. Works offline after PWA installation.",
       "tokens": 96
     },
     {
@@ -51,7 +51,7 @@
       "id": "fare-calculator",
       "title": "Bangladesh Bus Fare Calculator",
       "url": "https://koyjabo.com/fare",
-      "text": "KoyJabo's fare calculator uses BRTA official rates (April 2026 circular): City bus ৳2.53/km (minimum ৳10), Intercity non-AC ৳2.23/km, Intercity AC ৳2.90/km. Metro Rail MRT-6 fares are fixed by distance: ৳20 minimum, ৳100 maximum (Uttara North to Motijheel). Enter distance or route to calculate estimated fare.",
+      "text": "KoyJabo's fare calculator uses BRTA official rates (September 2026 circular): City bus ৳2.70/km (minimum ৳10, minibus ৳8), DTCA ৳2.60/km, Intercity non-AC ৳2.40/km, Intercity AC ৳3.10/km. Metro Rail MRT-6 fares are fixed by distance: ৳20 minimum, ৳100 maximum (Uttara North to Motijheel). Enter distance or route to calculate estimated fare.",
       "tokens": 85
     },
     {
