@@ -59,11 +59,11 @@ export function PageShell({
           pointerEvents: 'none',
           background:
             theme === 'dark'
-              ? `radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,245,255,0.07) 0%, transparent 70%),
-                 radial-gradient(ellipse 60% 40% at 90% 80%, rgba(168,85,247,0.06) 0%, transparent 60%),
-                 radial-gradient(ellipse 40% 50% at 10% 90%, rgba(255,42,109,0.04) 0%, transparent 60%)`
-              : `radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,184,217,0.06) 0%, transparent 70%),
-                 radial-gradient(ellipse 60% 40% at 90% 80%, rgba(168,85,247,0.04) 0%, transparent 60%)`,
+              ? `radial-gradient(ellipse 90% 60% at 50% -10%, rgba(0, 113, 227, 0.08) 0%, transparent 70%),
+                 radial-gradient(ellipse 60% 40% at 90% 80%, rgba(41, 151, 255, 0.05) 0%, transparent 60%),
+                 radial-gradient(ellipse 50% 50% at 10% 90%, rgba(52, 199, 89, 0.04) 0%, transparent 60%)`
+              : `radial-gradient(ellipse 90% 60% at 50% -10%, rgba(0, 113, 227, 0.05) 0%, transparent 70%),
+                 radial-gradient(ellipse 60% 40% at 90% 80%, rgba(52, 199, 89, 0.04) 0%, transparent 60%)`,
         }}
       />
 

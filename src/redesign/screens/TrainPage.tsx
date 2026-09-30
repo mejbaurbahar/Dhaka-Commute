@@ -116,18 +116,7 @@ export function TrainPage(props: Props) {
         .filter((t): t is typeof TRAINS[number] => !!t);
       return featured.length ? featured : TRAINS.slice(0, 5);
     }
-    return TRAINS.filter(r => {
-      if (!routeIncludes(r.source, fromQ) || !routeIncludes(r.source, toQ)) return false;
-      if (fromQ && toQ) {
-        const stopsText = r.source.stops.map(id =>
-          [id, stationName(id), stationBnName(id)].join(' ').toLowerCase()
-        );
-        const fi = stopsText.findIndex(t => t.includes(fromQ));
-        const ti = stopsText.findIndex(t => t.includes(toQ));
-        if (fi !== -1 && ti !== -1) return fi < ti;
-      }
-      return true;
-    });
+    return TRAINS.filter(r => routeIncludes(r.source, fromQ) && routeIncludes(r.source, toQ));
   }, [fromStation, toStation, hasSearched]);
 
   // Top search bar: filter by name/number
@@ -438,7 +427,7 @@ export function TrainPage(props: Props) {
         <ModeHero tk={tk} isMobile={isMobile} lang={lang} kind="train"
           gradient="linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #f59e0b 100%)"
           title={T(lang,'বাংলাদেশ রেলওয়ে · সকল রুট','Bangladesh Railway · all routes')}
-          subtitle={T(lang,'৩৫০+ আন্তঃনগর ট্রেন, ই-টিকেট তথ্য, লাইভ অবস্থান ট্র্যাকিং — পদ্মা সেতু রুট সহ।','350+ intercity trains, e-ticket info, live position tracking — including Padma Bridge route.')}
+          subtitle={T(lang,'৩৫০+ আন্তঃনগর ট্রেন, ই-টিকেট বুকিং, লাইভ অবস্থান ট্র্যাকিং — পদ্মা সেতু রুট সহ।','350+ intercity trains, e-ticket booking, live position tracking — including Padma Bridge route.')}
           stats={[{v:N(132,lang),l:T(lang,'ট্রেন','Trains')},{v:N(260,lang),l:T(lang,'স্টেশন','Stations')},{v:N(10,lang)+' days',l:T(lang,'অগ্রিম বুকিং','Advance booking')},{v:'★ '+N('4.5',lang),l:T(lang,'গড় রেটিং','Avg rating')}]}
         />
 

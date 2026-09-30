@@ -94,7 +94,7 @@ export function TopBar({
     background: tk.panelMuted,
     border: `1px solid ${tk.line}`,
     borderRadius: 999,
-    padding: '5px 10px',
+    padding: '6px 12px',
     fontFamily: SANS,
     fontSize: 12,
     fontWeight: 600,
@@ -102,22 +102,24 @@ export function TopBar({
     cursor: 'pointer',
     display: 'inline-flex',
     alignItems: 'center',
-    gap: 4,
+    gap: 5,
     whiteSpace: 'nowrap',
+    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
   };
 
   const iconBtn: React.CSSProperties = {
     background: tk.panelMuted,
     border: `1px solid ${tk.line}`,
-    borderRadius: 999,
-    width: 40,
-    height: 40,
+    borderRadius: '50%',
+    width: 38,
+    height: 38,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
     color: tk.text,
     flexShrink: 0,
+    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
   };
 
   return (
@@ -133,8 +135,8 @@ export function TopBar({
         // pad the top bar down so content never hides under it.
         paddingTop: 'env(safe-area-inset-top)',
         background: tk.panel,
-        backdropFilter: 'blur(14px)',
-        WebkitBackdropFilter: 'blur(14px)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         borderBottom: `1px solid ${tk.line}`,
         width: '100%',
         boxSizing: 'border-box',
@@ -142,17 +144,17 @@ export function TopBar({
     >
       <div
         style={{
-          padding: isMobile ? '0 4px 0 0' : '0 24px',
-          height: isMobile ? 52 : 60,
+          padding: isMobile ? '0 8px' : '0 28px',
+          height: isMobile ? 54 : 64,
           display: 'flex',
           alignItems: 'center',
-          gap: isMobile ? 0 : 16,
+          gap: isMobile ? 0 : 20,
         }}
       >
         {/* ── Mobile: back mode (navigated into a sub-page) ─────────────── */}
         {isMobile && canBack ? (
           <>
-            {/* Back arrow — 48×48 touch target (44px minimum per Material) */}
+            {/* Back arrow — 48×48 touch target */}
             <button
               onClick={onBack}
               aria-label={T(lang, 'পিছনে যান', 'Go back')}
@@ -169,7 +171,7 @@ export function TopBar({
                 cursor: 'pointer',
               }}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m15 18-6-6 6-6"/>
               </svg>
             </button>
@@ -185,7 +187,8 @@ export function TopBar({
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                paddingLeft: 2,
+                paddingLeft: 4,
+                letterSpacing: -0.2,
               }}
             >
               {T(lang,
@@ -223,26 +226,26 @@ export function TopBar({
               style={{
                 background: 'none',
                 border: 'none',
-                padding: '0 12px',
+                padding: '0 8px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 7,
+                gap: 8,
                 flexShrink: 0,
                 height: 52,
               }}
             >
               <Logo tk={tk} size={34} />
-              <span style={{ fontFamily: BEN, fontWeight: 800, fontSize: 16, letterSpacing: lang === 'bn' ? -0.5 : 0, whiteSpace: 'nowrap' }}>
-                <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>কই</span>
-                <span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}> যাবো</span>
+              <span style={{ fontFamily: BEN, fontWeight: 800, fontSize: 17, letterSpacing: -0.5, whiteSpace: 'nowrap' }}>
+                <span style={{ color: theme === 'dark' ? '#FF453A' : '#D91F35' }}>কই</span>
+                <span style={{ color: theme === 'dark' ? '#30D158' : '#008355' }}> যাবো</span>
               </span>
             </button>
 
             <div style={{ flex: 1 }} />
 
-            {/* Language button — opens the language list picker */}
-            <button onClick={() => setLangPickerOpen(true)} aria-label={T(lang, 'ভাষা নির্বাচন', 'Choose language')} style={{ ...controlBtn, marginRight: 4 }}>
+            {/* Language button */}
+            <button onClick={() => setLangPickerOpen(true)} aria-label={T(lang, 'ভাষা নির্বাচন', 'Choose language')} style={{ ...controlBtn, marginRight: 6 }}>
               <Icon.globe s={13}/>
               <span>{LANG_META[lang].flag}</span>
             </button>
@@ -267,14 +270,14 @@ export function TopBar({
               {theme === 'dark' ? <Icon.sun s={19} /> : <Icon.moon s={19} />}
             </button>
 
-            {/* Notification / menu — only show menu on mobile home */}
+            {/* Menu button */}
             <button
               onClick={onMenu}
               aria-label={T(lang, 'মেনু', 'Menu')}
               style={{
                 background: 'none',
                 border: 'none',
-                width: 48,
+                width: 44,
                 height: 52,
                 display: 'flex',
                 alignItems: 'center',
@@ -288,22 +291,22 @@ export function TopBar({
             </button>
           </>
         ) : (
-          /* ── Desktop layout (unchanged) ────────────────────────────────── */
+          /* ── Desktop layout ────────────────────────────────── */
           <>
             {/* Logo */}
             <button
               onClick={() => onNav('home')}
-              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}
+              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}
             >
-              <Logo tk={tk} size={48} />
-              <span style={{ fontFamily: BEN, fontWeight: 800, fontSize: 18, letterSpacing: lang === 'bn' ? -0.5 : 0, whiteSpace: 'nowrap' }}>
-                <span style={{ color: theme === 'dark' ? '#FF5A6E' : '#D91F35' }}>কই</span>
-                <span style={{ color: theme === 'dark' ? '#00C081' : '#008355' }}> যাবো</span>
+              <Logo tk={tk} size={44} />
+              <span style={{ fontFamily: BEN, fontWeight: 800, fontSize: 19, letterSpacing: -0.5, whiteSpace: 'nowrap' }}>
+                <span style={{ color: theme === 'dark' ? '#FF453A' : '#D91F35' }}>কই</span>
+                <span style={{ color: theme === 'dark' ? '#30D158' : '#008355' }}> যাবো</span>
               </span>
             </button>
 
             {/* Desktop nav */}
-            <nav style={{ display: 'flex', alignItems: 'center', gap: 1, marginLeft: 'auto', marginRight: 12, minWidth: 0, overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 1 }}>
+            <nav style={{ display: 'flex', alignItems: 'center', gap: 3, marginLeft: 'auto', marginRight: 16, minWidth: 0, overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 1 }}>
               {NAV_ITEMS.map((item) => {
                 const active = activeRoute === item.route;
                 return (
@@ -311,23 +314,23 @@ export function TopBar({
                     key={item.route}
                     onClick={() => onNav(item.route)}
                     style={{
-                      background: active ? tk.primarySoft : 'none',
-                      border: `1px solid ${active ? tk.primary + '60' : 'transparent'}`,
-                      borderRadius: 8,
-                      padding: '6px 7px',
+                      background: active ? tk.primarySoft : 'transparent',
+                      border: `1px solid ${active ? tk.primary + '40' : 'transparent'}`,
+                      borderRadius: 10,
+                      padding: '7px 11px',
                       fontFamily: lang === 'bn' ? BEN : SANS,
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: active ? 700 : 500,
                       color: active ? tk.primary : tk.textDim,
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 5,
+                      gap: 6,
                       whiteSpace: 'nowrap',
-                      transition: 'all 0.15s',
+                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
                   >
-                    {(() => { const I = Icon[item.ic]; return <I s={14} />; })()}
+                    {(() => { const I = Icon[item.ic]; return <I s={15} />; })()}
                     {T(lang, item.bn, item.en)}
                   </button>
                 );
@@ -335,8 +338,8 @@ export function TopBar({
             </nav>
 
             {/* Desktop right controls */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-              <button onClick={onMenu} style={iconBtn} title={T(lang, 'মেনু', 'Menu')}><Icon.menu s={18} /></button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+              <button onClick={onMenu} style={iconBtn} title={T(lang, 'মেনু', 'Menu')}><Icon.menu s={17} /></button>
               <button onClick={() => setLangPickerOpen(true)} style={controlBtn} title={T(lang, 'ভাষা নির্বাচন', 'Choose language')}><Icon.globe s={14}/><span>{LANG_META[lang].flag}</span></button>
               <button onClick={onTheme} style={iconBtn} aria-label={T(lang, 'থিম পরিবর্তন', 'Toggle theme')}>
                 {theme === 'dark' ? <Icon.sun s={16} /> : <Icon.moon s={16} />}

@@ -28,17 +28,19 @@ export function DestinationCard({ place, theme, lang, onClick }: Props) {
       aria-label={`${place.en} — ${place.bn}`}
       style={{
         cursor: 'pointer',
-        borderRadius: 18,
+        borderRadius: 20,
         overflow: 'hidden',
         background: tk.panel,
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
         border: `1px solid ${tk.line}`,
-        boxShadow: '0 8px 24px -12px rgba(0,0,0,0.25)',
-        transition: 'transform .18s ease, box-shadow .18s ease',
+        boxShadow: tk.shadow,
+        transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
-      onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
+      onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-3px)')}
       onMouseLeave={e => (e.currentTarget.style.transform = 'none')}
     >
-      <div style={{ position: 'relative', height: 128, background: tk.panelMuted }}>
+      <div style={{ position: 'relative', height: 132, background: tk.panelMuted }}>
         {photo ? (
           <img
             src={photo}
@@ -56,21 +58,22 @@ export function DestinationCard({ place, theme, lang, onClick }: Props) {
           <span
             style={{
               position: 'absolute', top: 8, right: 8,
-              background: 'rgba(0,0,0,0.55)', color: '#ffd54f',
-              padding: '3px 8px', borderRadius: 999,
-              fontFamily: SANS, fontSize: 12, fontWeight: 700,
-              backdropFilter: 'blur(6px)',
+              background: 'rgba(0,0,0,0.65)', color: '#ffb800',
+              padding: '3px 9px', borderRadius: 999,
+              fontFamily: SANS, fontSize: 11, fontWeight: 700,
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
             }}
           >
             ★ {rating.toFixed(1)}
           </span>
         )}
       </div>
-      <div style={{ padding: '10px 12px 12px' }}>
-        <p style={{ fontFamily: font, fontWeight: 700, fontSize: 14, color: tk.text, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <div style={{ padding: '12px 14px 14px' }}>
+        <p style={{ fontFamily: font, fontWeight: 700, fontSize: 14, color: tk.text, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', letterSpacing: -0.2 }}>
           {lang === 'bn' ? (place.bn || place.en) : place.en}
         </p>
-        <p style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, margin: '3px 0 0' }}>
+        <p style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint, margin: '4px 0 0' }}>
           {[place.district, place.division].filter(Boolean).join(' · ')}
         </p>
       </div>

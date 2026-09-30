@@ -4,7 +4,7 @@ export function injectGlobalStyles() {
   const style = document.createElement('style');
   style.id = 'kj-global-styles';
   style.textContent = `
-    html, body { margin: 0; padding: 0; background: #05060b; font-family: 'Inter', system-ui, sans-serif; }
+    html, body { margin: 0; padding: 0; background: #000000; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", -system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     #root { min-height: 100vh; }
 
@@ -25,22 +25,19 @@ export function injectGlobalStyles() {
     .kj-chips-scroll { overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap !important; }
     .kj-chips-scroll::-webkit-scrollbar { display: none; }
 
-    /* Native press feedback — applies to all buttons without custom active handlers */
-    button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-    button:active { opacity: 0.72; }
+    /* Native press feedback — Apple spring active scale */
+    button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease; }
+    button:active { transform: scale(0.97); opacity: 0.85; }
 
-    /* Screen transition animations:
-       kj-fwd  = navigate deeper (new page slides in from right — Android standard)
-       kj-back = pop back (previous page appears from left)
-       kj-tab  = tab switch (cross-fade, no directional slide) */
+    /* Screen transition animations */
     @media (prefers-reduced-motion: no-preference) {
-      .kj-fwd  { animation: kjIn   .24s cubic-bezier(.2,.7,.25,1) both; }
-      .kj-back { animation: kjBack .24s cubic-bezier(.2,.7,.25,1) both; }
+      .kj-fwd  { animation: kjIn   .24s cubic-bezier(.16,1,.3,1) both; }
+      .kj-back { animation: kjBack .24s cubic-bezier(.16,1,.3,1) both; }
       .kj-tab  { animation: kjTab  .18s ease both; }
     }
-    @keyframes kjIn   { from { transform: translateX(28px); opacity: 0.82; } to { transform: none; opacity: 1; } }
-    @keyframes kjBack { from { transform: translateX(-20px); opacity: 0.82; } to { transform: none; opacity: 1; } }
-    @keyframes kjTab  { from { opacity: 0.6; } to { opacity: 1; } }
+    @keyframes kjIn   { from { transform: translateX(20px); opacity: 0.88; } to { transform: none; opacity: 1; } }
+    @keyframes kjBack { from { transform: translateX(-16px); opacity: 0.88; } to { transform: none; opacity: 1; } }
+    @keyframes kjTab  { from { opacity: 0.7; } to { opacity: 1; } }
 
     @keyframes kjpulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
     .kj-anim-pulse { animation: kjpulse 2.4s ease-in-out infinite; }
@@ -71,8 +68,8 @@ export function injectGlobalStyles() {
     @keyframes kjStopIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
     @keyframes kjPulseRing { 0% { transform: scale(0.6); opacity: 0.7; } 100% { transform: scale(1.9); opacity: 0; } }
     @keyframes kjLineFlow { 0% { top: -50%; } 100% { top: 110%; } }
-    .kj-story-scene { animation: kjStoryIn .5s cubic-bezier(.2,.7,.25,1) both; }
-    @keyframes kjMapPulse { 0% { box-shadow: 0 0 0 0 rgba(37,99,235,.5); } 70% { box-shadow: 0 0 0 14px rgba(37,99,235,0); } 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); } }
+    .kj-story-scene { animation: kjStoryIn .5s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes kjMapPulse { 0% { box-shadow: 0 0 0 0 rgba(0,113,227,.5); } 70% { box-shadow: 0 0 0 14px rgba(0,113,227,0); } 100% { box-shadow: 0 0 0 0 rgba(0,113,227,0); } }
 
     /* 3D vehicle animations */
     @keyframes kj-drive   { 0% { transform: translateX(-34%); } 100% { transform: translateX(134%); } }
@@ -94,8 +91,6 @@ export function injectGlobalStyles() {
     @keyframes kj-wake    { 0% { transform: scaleX(0.4); opacity: 0.7; } 100% { transform: scaleX(1.6); opacity: 0; } }
     @keyframes kj-spark   { 0%, 92%, 100% { opacity: 0; } 95% { opacity: 1; } }
     @keyframes kj-prop    { from { transform: scaleX(1); opacity: 0.5; } 50% { transform: scaleX(0.15); opacity: 0.9; } to { transform: scaleX(1); opacity: 0.5; } }
-    @keyframes kj-bird    { 0% { transform: translateX(140%); } 100% { transform: translateX(-140%); } }
-    @keyframes kj-sunray  { 0%,100% { opacity: 0.22; } 50% { opacity: 0.48; } }
     .kj-anim-drive   { animation: kj-drive 9s linear infinite; transform-origin: center; }
     .kj-anim-fly     { animation: kj-fly 11s ease-in-out infinite; }
     .kj-anim-train   { animation: kj-train 7s linear infinite; }
@@ -112,36 +107,36 @@ export function injectGlobalStyles() {
     .kj-anim-prop    { animation: kj-prop 0.12s linear infinite; transform-origin: 50% 50%; transform-box: fill-box; }
 
     /* ── Staggered entrance animations ─────────────────────────────────────── */
-    @keyframes kjSlideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    @keyframes kjSlideUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
     @media (prefers-reduced-motion: no-preference) {
-      .kj-enter-1 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .00s both; }
-      .kj-enter-2 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .07s both; }
-      .kj-enter-3 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .14s both; }
-      .kj-enter-4 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .21s both; }
-      .kj-enter-5 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .28s both; }
-      .kj-enter-6 { animation: kjSlideUp .38s cubic-bezier(.2,.7,.25,1) .35s both; }
+      .kj-enter-1 { animation: kjSlideUp .38s cubic-bezier(.16,1,.3,1) .00s both; }
+      .kj-enter-2 { animation: kjSlideUp .38s cubic-bezier(.16,1,.3,1) .07s both; }
+      .kj-enter-3 { animation: kjSlideUp .38s cubic-bezier(.16,1,.3,1) .14s both; }
+      .kj-enter-4 { animation: kjSlideUp .38s cubic-bezier(.16,1,.3,1) .21s both; }
+      .kj-enter-5 { animation: kjSlideUp .38s cubic-bezier(.16,1,.3,1) .28s both; }
+      .kj-enter-6 { animation: kjSlideUp .38s cubic-bezier(.16,1,.3,1) .35s both; }
     }
 
     /* ── Scale in (for modals, cards) ──────────────────────────────────────── */
-    @keyframes kjScaleIn { from { transform: scale(0.94); opacity: 0; } to { transform: none; opacity: 1; } }
-    .kj-scale-in { animation: kjScaleIn .3s cubic-bezier(.2,.7,.25,1) both; }
+    @keyframes kjScaleIn { from { transform: scale(0.96); opacity: 0; } to { transform: none; opacity: 1; } }
+    .kj-scale-in { animation: kjScaleIn .3s cubic-bezier(.16,1,.3,1) both; }
 
     /* ── Glow pulse (for active tabs, badges) ─────────────────────────────── */
-    @keyframes kjGlowCyan  { 0%,100% { box-shadow: 0 0 10px rgba(0,245,255,0.55); } 50% { box-shadow: 0 0 22px rgba(0,245,255,0.9); } }
-    @keyframes kjGlowAccent{ 0%,100% { box-shadow: 0 0 10px rgba(255,42,109,0.5); } 50% { box-shadow: 0 0 20px rgba(255,42,109,0.85); } }
+    @keyframes kjGlowCyan  { 0%,100% { box-shadow: 0 0 10px rgba(41,151,255,0.4); } 50% { box-shadow: 0 0 20px rgba(41,151,255,0.7); } }
+    @keyframes kjGlowAccent{ 0%,100% { box-shadow: 0 0 10px rgba(255,55,95,0.4); } 50% { box-shadow: 0 0 18px rgba(255,55,95,0.7); } }
     .kj-glow-cyan   { animation: kjGlowCyan   2.2s ease-in-out infinite; }
     .kj-glow-accent { animation: kjGlowAccent 2.2s ease-in-out infinite; }
 
     /* ── Number count-up hint (attach to stat numbers) ──────────────────────── */
     @keyframes kjStatIn { from { opacity: 0; transform: translateY(6px) scale(.95); } to { opacity: 1; transform: none; } }
-    .kj-stat { animation: kjStatIn .5s cubic-bezier(.2,.7,.25,1) .1s both; }
+    .kj-stat { animation: kjStatIn .5s cubic-bezier(.16,1,.3,1) .1s both; }
 
     /* ── Tab bar active indicator slide ─────────────────────────────────────── */
-    @keyframes kjTabPop { from { transform: scale(0.7); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
-    .kj-tab-pop { animation: kjTabPop .22s cubic-bezier(.2,.7,.25,1) both; }
+    @keyframes kjTabPop { from { transform: scale(0.85); opacity: 0.6; } to { transform: scale(1); opacity: 1; } }
+    .kj-tab-pop { animation: kjTabPop .22s cubic-bezier(.16,1,.3,1) both; }
 
-    /* ── Card hover with lift (both desktop and mobile-friendly) ────────────── */
-    .kj-card { transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+    /* ── Card hover with lift (Apple smooth transition) ────────────── */
+    .kj-card { transition: transform 0.2s cubic-bezier(.16,1,.3,1), box-shadow 0.2s ease, border-color 0.2s ease; }
     @media (hover: hover) {
       .kj-card:hover { transform: translateY(-3px); }
     }
@@ -152,38 +147,26 @@ export function injectGlobalStyles() {
 
     /* ── Mode hero gradient text (dark mode) ────────────────────────────────── */
     .kj-hero-title {
-      background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.82) 100%);
+      background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.85) 100%);
       -webkit-background-clip: text;
       background-clip: text;
     }
 
-    /* ── Futuristic skin */
-    :root {
-      --kj-neon-cyan: #00f5ff;
-      --kj-neon-magenta: #ff2a6d;
-      --kj-neon-violet: #a259ff;
-      --kj-neon-amber: #ffb800;
-    }
+    /* ── Apple Ambient Background */
     .kj-future-bg {
       position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
     }
     .kj-future-bg::before {
-      content: ''; position: absolute; inset: -2px;
-      background-image:
-        linear-gradient(rgba(0,245,255,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,245,255,0.08) 1px, transparent 1px);
-      background-size: 40px 40px;
-      mask-image: radial-gradient(ellipse at center top, #000 25%, transparent 75%);
-      -webkit-mask-image: radial-gradient(ellipse at center top, #000 25%, transparent 75%);
-      animation: kj-grid-shift 20s linear infinite;
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(1200px circle at 50% -8%, rgba(41,151,255,0.08), transparent 70%),
+        radial-gradient(900px circle at 90% 25%, rgba(255,55,95,0.04), transparent 60%);
     }
     .kj-future-bg::after {
       content: ''; position: absolute; inset: 0;
       background:
-        radial-gradient(800px circle at 20% 0%, rgba(0,245,255,0.10), transparent 60%),
-        radial-gradient(600px circle at 90% 30%, rgba(255,42,109,0.08), transparent 60%),
-        radial-gradient(700px circle at 50% 100%, rgba(162,89,255,0.10), transparent 60%);
-      animation: kj-aurora 18s ease-in-out infinite alternate;
+        radial-gradient(1000px circle at 15% 45%, rgba(191,90,242,0.04), transparent 60%),
+        radial-gradient(1200px circle at 50% 100%, rgba(41,151,255,0.05), transparent 70%);
     }
     @keyframes kj-grid-shift { from { transform: translate(0,0); } to { transform: translate(40px,40px); } }
     @keyframes kj-aurora { 0%,100% { opacity: 0.9; } 50% { opacity: 1; } }

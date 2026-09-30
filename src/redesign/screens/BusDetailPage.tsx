@@ -276,7 +276,7 @@ export function BusDetailPage(props: Props) {
         km += (a?.lat && b?.lat) ? haversineKm({ lat: a.lat, lng: a.lng }, { lat: b.lat, lng: b.lng }) : 1.2;
       }
       if (km > 0) {
-        const rate = bus.type === 'AC' ? 5.0 : bus.type === 'Double-Decker' ? 3.2 : 2.53;
+        const rate = bus.type === 'AC' ? 5.0 : bus.type === 'Double-Decker' ? 3.2 : 2.70;
         return Math.max(10, Math.ceil(km * rate));
       }
     }
@@ -469,10 +469,7 @@ export function BusDetailPage(props: Props) {
                     ) : (
                       <span style={{ fontFamily:SANS,fontSize:11,color:tk.textFaint }}>{T(lang,'এখনো কোনো রিভিউ নেই','No reviews yet')}</span>
                     )}
-                    {bus.type === 'Pink Bus'
-                      ? <span style={{ fontFamily:'sans-serif', fontSize:11, fontWeight:600, letterSpacing:0.3, textTransform:'uppercase', background:'#ec489920', color:'#ec4899', border:'1px solid #ec489960', borderRadius:999, padding:'4px 8px' }}>{bus.type}</span>
-                      : <Pill tk={tk} tone={bus.type==='AC'?'primary':'mute'}>{bus.type}</Pill>
-                    }
+                    <Pill tk={tk} tone={bus.type==='AC'?'primary':'mute'}>{bus.type}</Pill>
                   </div>
                 </div>
               </div>

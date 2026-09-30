@@ -213,7 +213,7 @@ export function Plane3D({
   palette?: string[];
 }) {
   const [body, dark, navRed] = palette;
-  const w = 240;
+  const w = 220;
   const h = 150;
 
   return (
@@ -226,170 +226,152 @@ export function Plane3D({
       aria-label="3D airplane"
     >
       <defs>
-        {/* Fuselage — white top, graduates to light blue-grey */}
         <linearGradient id="pl-fuse" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#f2f8ff" />
-          <stop offset="30%" stopColor="#e0eef8" />
-          <stop offset="72%" stopColor="#a8c4da" />
-          <stop offset="100%" stopColor="#7899b2" />
-        </linearGradient>
-        {/* Fuselage top surface (perspective) */}
-        <linearGradient id="pl-fusetop" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#f8fbff" />
-          <stop offset="100%" stopColor="#d4e8f8" />
-        </linearGradient>
-        {/* Near wing — catches light on top */}
-        <linearGradient id="pl-wingN" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#e2f0ff" />
-          <stop offset="45%" stopColor={body} stopOpacity={0.78} />
+          <stop offset="0%" stopColor="#e8f4ff" />
+          <stop offset="40%" stopColor={body} stopOpacity="0.85" />
           <stop offset="100%" stopColor={dark} />
         </linearGradient>
-        {/* Far wing — in partial shadow */}
-        <linearGradient id="pl-wingF" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#c8d8ec" />
-          <stop offset="100%" stopColor={dark} stopOpacity={0.55} />
-        </linearGradient>
-        {/* Engine nacelle (metallic cylindrical look) */}
-        <linearGradient id="pl-nacelle" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#0e1e2e" />
-          <stop offset="22%" stopColor="#3a5870" />
-          <stop offset="65%" stopColor="#c0d0dc" />
-          <stop offset="100%" stopColor="#6888a0" />
-        </linearGradient>
         <radialGradient id="pl-shadow-rg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#000000" stopOpacity="0.16" />
+          <stop offset="0%" stopColor="#000000" stopOpacity="0.22" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      {/* Twin contrail trails behind engines */}
-      <line x1={214} y1={76} x2={240} y2={76} stroke="#ffffff" strokeWidth={2.4} strokeOpacity={0.42}
-        className="kj-anim-dash" style={{ strokeDasharray: '7 5' }} />
-      <line x1={214} y1={81} x2={240} y2={81} stroke="#ffffff" strokeWidth={1.8} strokeOpacity={0.32}
-        className="kj-anim-dash" style={{ strokeDasharray: '7 5', animationDelay: '0.28s' }} />
-      <line x1={216} y1={78} x2={240} y2={73} stroke="#ffffff" strokeWidth={0.9} strokeOpacity={0.18}
-        className="kj-anim-dash" style={{ strokeDasharray: '10 8', animationDelay: '0.55s' }} />
+      {/* Contrail dashes */}
+      <line
+        x1={10}
+        y1={68}
+        x2={200}
+        y2={68}
+        stroke="#ffffff"
+        strokeWidth={2}
+        strokeOpacity={0.3}
+        className="kj-anim-dash"
+      />
+      <line
+        x1={10}
+        y1={74}
+        x2={180}
+        y2={74}
+        stroke="#ffffff"
+        strokeWidth={1.2}
+        strokeOpacity={0.18}
+        className="kj-anim-dash"
+        style={{ animationDelay: '0.4s' }}
+      />
 
       {/* Ground shadow */}
-      <ellipse cx={118} cy={142} rx={72} ry={5} fill="url(#pl-shadow-rg)" />
+      <ellipse cx={110} cy={140} rx={65} ry={5} fill="url(#pl-shadow-rg)" />
 
-      {/* Banking animation group */}
-      <g className="kj-anim-bank" style={{ transformOrigin: '118px 80px' }}>
-
-        {/* ── Far horizontal stabilizer */}
-        <path d="M196 70 L228 59 L226 64 L198 75 Z" fill={dark} opacity={0.72} />
-
-        {/* ── Far wing (above fuselage in 3/4 view) */}
-        <path d="M118 73 L60 50 L54 55 L116 77 Z" fill="url(#pl-wingF)" opacity={0.82} />
-        {/* Far wing leading-edge catch-light */}
-        <path d="M118 73 L60 50 L61 47 L120 71 Z" fill="#e0f0ff" opacity={0.36} />
-        {/* Far winglet */}
-        <path d="M54 55 L48 49 L52 47 L58 53 Z" fill={dark} opacity={0.88} />
-        {/* Far engine pod (partial view under far wing) */}
-        <ellipse cx={83} cy={60} rx={9} ry={3.5} fill="#283848" opacity={0.5} />
-        <ellipse cx={79} cy={60} rx={4} ry={3.5} fill="#0a1520" opacity={0.62} />
-
-        {/* ── Vertical tail fin */}
-        <path d="M196 68 L213 36 L218 38 L200 70 Z" fill={dark} opacity={0.92} />
-        {/* Fin livery accent (top half) */}
-        <path d="M203 54 L213 36 L218 38 L208 54 Z" fill={navRed} opacity={0.88} />
-
-        {/* ── Fuselage underside (darker strip — 3D cylinder) */}
+      {/* Plane group with banking animation */}
+      <g className="kj-anim-bank" style={{ transformOrigin: '110px 80px' }}>
+        {/* Far wing (under fuselage) */}
         <path
-          d="M40 87 L196 87 Q214 87 218 80 Q214 94 196 94 L40 94 Q26 94 24 87 Z"
-          fill="#8aaac0"
-          opacity={0.78}
+          d="M95 82 L30 106 L38 112 L100 90 Z"
+          fill={dark}
+          opacity={0.65}
         />
 
-        {/* ── Fuselage side face (main visible face) */}
+        {/* Horizontal tail */}
         <path
-          d="M40 70 L196 70 Q218 70 222 80 Q218 90 196 90 L40 90 Q22 90 22 80 Q22 70 40 70 Z"
+          d="M168 76 L196 68 L196 72 L170 82 Z"
+          fill={dark}
+          opacity={0.8}
+        />
+        <path
+          d="M168 84 L196 92 L196 88 L170 82 Z"
+          fill={dark}
+          opacity={0.55}
+        />
+
+        {/* Vertical stabilizer */}
+        <path
+          d="M168 62 L178 44 L182 44 L172 62 Z"
+          fill={dark}
+          opacity={0.75}
+        />
+        {/* Accent stripe on tail */}
+        <rect x={170} y={50} width={8} height={4} rx={1} fill={navRed} opacity={0.9} />
+
+        {/* Fuselage */}
+        <path
+          d="M42 76 Q55 66 80 68 L168 68 Q180 68 184 76 Q180 86 168 86 L80 86 Q55 88 42 76 Z"
           fill="url(#pl-fuse)"
         />
 
-        {/* ── Fuselage top face (perspective — viewed from slight above) */}
+        {/* Cheat line (blue stripe along fuselage) */}
         <path
-          d="M40 70 L196 70 Q210 68 214 62 L208 61 L196 63 L40 65 Q26 67 22 70 Z"
-          fill="url(#pl-fusetop)"
+          d="M55 72 L168 72 Q176 72 178 76"
+          stroke={body}
+          strokeWidth={3}
+          strokeOpacity={0.6}
+          fill="none"
         />
 
-        {/* ── Livery cheat line */}
+        {/* Nose cone */}
         <path
-          d="M40 76 L196 76 Q216 76 218 80 Q216 84 196 84 L40 84 Q26 84 24 80 Q26 76 40 76 Z"
-          fill={body}
-          opacity={0.74}
+          d="M42 76 Q28 76 18 76 Q22 73 42 73 Z"
+          fill="#e8f4ff"
+          opacity={0.9}
         />
 
-        {/* ── Aerodynamic nose cone */}
-        <path d="M22 70 Q8 74 6 80 Q8 86 22 90 L22 70 Z" fill="#ecf4ff" />
-        {/* Cockpit forward glazing */}
-        <path d="M22 72 Q12 76 10 80 L22 79 Z" fill="#1a3458" opacity={0.9} />
-        {/* Cockpit light reflection */}
-        <path d="M22 73 Q16 76 14 80 L22 77 Z" fill="#c8e0f8" opacity={0.35} />
-
-        {/* ── Oval porthole windows — 12 windows */}
-        {Array.from({ length: 12 }).map((_, i) => (
-          <g key={i}>
-            <ellipse cx={44 + i * 13} cy={78} rx={3.8} ry={4.8} fill="#bcd8f5" opacity={0.92} />
-            <ellipse cx={43 + i * 13} cy={76} rx={1.8} ry={2.2} fill="#ffffff" opacity={0.5} />
-          </g>
+        {/* Porthole windows — 10 circles */}
+        {Array.from({ length: 10 }).map((_, i) => (
+          <circle
+            key={i}
+            cx={92 + i * 8}
+            cy={74}
+            r={2.8}
+            fill="#c8e8ff"
+            opacity={0.88}
+          />
         ))}
 
-        {/* ── Near horizontal stabilizer */}
-        <path d="M196 90 L224 101 L222 105 L198 95 Z" fill={dark} opacity={0.76} />
-
-        {/* ── Near wing (main visible swept wing) */}
-        {/* Wing surface */}
-        <path d="M118 87 Q103 93 62 120 L50 115 Q97 83 117 79 Z" fill="url(#pl-wingN)" />
-        {/* Leading-edge highlight — top of wing catches sun */}
-        <path d="M117 79 Q97 83 50 115 L52 113 Q99 81 119 77 Z" fill="#ffffff" opacity={0.22} />
-        {/* Flap line (inner wing) */}
-        <path d="M100 94 Q77 110 66 120" stroke={dark} strokeWidth={0.9} fill="none" strokeOpacity={0.42} />
-        {/* Aileron line (outer wing) */}
-        <path d="M72 113 Q60 117 54 117" stroke={dark} strokeWidth={0.8} fill="none" strokeOpacity={0.34} />
-        {/* Near winglet — upturned tip */}
-        <path d="M50 115 L44 107 L48 105 L54 113 Z" fill={dark} opacity={0.9} />
-
-        {/* ── Turbofan engine — under near wing */}
-        {/* Pylon connecting wing to nacelle */}
-        <path d="M96 91 L90 106 L96 106 L103 91 Z" fill="#7a8898" opacity={0.88} />
-        {/* Nacelle tube body */}
+        {/* Cockpit glass */}
         <path
-          d="M80 101 Q80 98 84 97 L102 97 Q108 101 108 105 Q108 109 102 109 L84 109 Q80 108 80 105 Z"
-          fill="url(#pl-nacelle)"
+          d="M42 73 Q52 66 62 68 L62 76 Q52 74 42 76 Z"
+          fill="#1e3a5f"
+          opacity={0.85}
         />
-        {/* Intake highlight ring */}
-        <path d="M80 99 Q84 96 84 101 Q84 110 80 109 Q76 105 80 99 Z" fill="#c8d8e4" opacity={0.45} />
-        {/* Intake face — dark turbine opening */}
-        <ellipse cx={80} cy={104} rx={5} ry={5.5} fill="#08121e" />
-        {/* Fan blade disc */}
-        <ellipse cx={80} cy={104} rx={4.2} ry={4.8} fill="#12223a" />
-        {/* Spinning fan blades */}
-        <g className="kj-anim-spin" style={{ transformOrigin: '80px 104px' }}>
-          {[0, 36, 72, 108, 144, 180, 216, 252, 288, 324].map(deg => (
-            <line key={deg}
-              x1={80} y1={104}
-              x2={80 + Math.cos(deg * Math.PI / 180) * 3.8}
-              y2={104 + Math.sin(deg * Math.PI / 180) * 3.8}
-              stroke="#344e66" strokeWidth={1.1} />
-          ))}
-        </g>
-        {/* Fan hub */}
-        <ellipse cx={80} cy={104} rx={1.5} ry={1.5} fill="#6888a0" />
-        {/* Exhaust nozzle */}
-        <ellipse cx={102} cy={103} rx={3.5} ry={4.5} fill="#182a3a" opacity={0.8} />
-        {/* Heat shimmer at exhaust */}
-        <path d="M102 99 Q111 103 102 108" stroke="#fffce0" strokeWidth={1.2} fill="none" strokeOpacity={0.26} />
 
-        {/* ── Navigation lights */}
-        {/* Left wingtip — red (port) */}
-        <circle cx={50} cy={115} r={2.5} fill={navRed} className="kj-anim-blink" />
-        {/* Far wingtip — green (starboard) */}
-        <circle cx={48} cy={49} r={2} fill="#22c55e" className="kj-anim-blink" style={{ animationDelay: '0.5s' }} />
-        {/* Tail strobe — white */}
-        <circle cx={225} cy={61} r={1.8} fill="#ffffff" className="kj-anim-pulse" style={{ animationDelay: '0.9s' }} />
-        {/* Belly anti-collision beacon — amber */}
-        <circle cx={120} cy={92} r={2.2} fill="#ffcc44" className="kj-anim-blink" style={{ animationDelay: '1.4s' }} />
+        {/* Near wing (over fuselage) */}
+        <path
+          d="M96 78 L32 116 L44 120 L104 84 Z"
+          fill={body}
+          opacity={0.88}
+        />
+        {/* Winglet */}
+        <path
+          d="M32 116 L28 108 L36 114 Z"
+          fill={dark}
+          opacity={0.9}
+        />
+
+        {/* Engine nacelle */}
+        <ellipse cx={78} cy={90} rx={10} ry={5} fill={dark} opacity={0.85} />
+        <ellipse cx={74} cy={90} rx={5} ry={5} fill="#111" />
+        {/* Spinning fan */}
+        <g className="kj-anim-prop" style={{ transformOrigin: '74px 90px' }}>
+          <ellipse cx={74} cy={90} rx={4.5} ry={1.2} fill="#555" />
+        </g>
+        <circle cx={74} cy={90} r={1.8} fill="#888" />
+
+        {/* Nav lights */}
+        <circle
+          cx={32}
+          cy={118}
+          r={2.5}
+          fill={navRed}
+          className="kj-anim-blink"
+        />
+        <circle
+          cx={196}
+          cy={70}
+          r={2}
+          fill="#ffffff"
+          className="kj-anim-blink"
+          style={{ animationDelay: '0.65s' }}
+        />
       </g>
     </svg>
   );
@@ -1073,207 +1055,170 @@ export function TravelHeroScene({
   height?: number;
 }) {
   const isDark = tk.bg === '#040814' || tk.primary === '#00f5ff';
-
-  // Sky palette — warm realistic sunrise/afternoon
-  const skyGrad = isDark
-    ? 'linear-gradient(180deg,#001428 0%,#001f12 35%,#0a0f00 65%,#180800 85%,#0d0400 100%)'
-    : 'linear-gradient(180deg,#3a9bd0 0%,#6bbde8 25%,#b0dff8 52%,#ffecc0 76%,#ffd590 90%,#ffbf70 100%)';
-
-  const cloudFill = isDark ? '#0a2a18' : '#ffffff';
-  const cloudOp  = isDark ? 0.22 : 0.88;
-  const buildFill  = isDark ? '#0a2218' : '#1e5c3a';
-  const buildGlow  = isDark ? '#1a5a35' : '#3daf72';
-  const hillFar  = isDark ? '#051208' : '#5ea870';
-  const hillNear = isDark ? '#041008' : '#3d7a50';
-  const roadBg   = isDark ? '#061410' : '#2d4e38';
-
-  // Window lights: % of windows that appear lit
-  const BUILDINGS = [
-    { x: 15, w: 44, h: 88 }, { x: 68, w: 56, h: 64 }, { x: 132, w: 38, h: 96 },
-    { x: 178, w: 52, h: 58 },
-    // right cluster
-    { x: 570, w: 54, h: 80 }, { x: 632, w: 40, h: 100 }, { x: 680, w: 62, h: 70 },
-    { x: 750, w: 46, h: 90 },
-  ];
+  const skyStart = isDark ? '#001a12' : '#c8f0e8';
+  const skyEnd = isDark ? 'transparent' : '#eef9f4';
+  const buildingFill = isDark ? '#1d3b30' : '#a9c9b6';
+  const roadColor = isDark ? '#0a1a12' : '#2d4a38';
 
   return (
-    <div style={{ position: 'relative', width: '100%', height, overflow: 'hidden', background: skyGrad }}>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height,
+        overflow: 'hidden',
+        background: `linear-gradient(180deg, ${skyStart} 0%, ${skyEnd} 100%)`,
+      }}
+    >
+      {/* Sun */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 18,
+          right: 32,
+          width: 48,
+          height: 48,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, #fffde0 30%, #fbbf24 70%, transparent 100%)',
+          opacity: 0.85,
+        }}
+      />
 
-      {/* ── Stars (dark only) ─────────────────────────────────────── */}
-      {isDark && (
-        <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '60%', pointerEvents: 'none' }}
-          viewBox="0 0 800 180" preserveAspectRatio="xMidYMid slice">
-          {[60,180,300,420,540,660,120,250,380,500,620,740,90,200,340,460,580,700].map((x, i) => {
-            const y = [20,35,12,28,15,40,55,45,60,35,55,25,80,75,90,68,80,72][i];
-            return (
-              <circle key={i} cx={x} cy={y} r={i % 4 === 0 ? 1.8 : 1.1} fill="#ffffff"
-                style={{ animation: `kj-blink ${1.5 + (i % 5) * 0.4}s ease-in-out infinite`, animationDelay: `${i * 0.17}s` }} />
-            );
-          })}
-        </svg>
-      )}
-
-      {/* ── Sun / Moon ────────────────────────────────────────────── */}
-      <div style={{
-        position: 'absolute', top: Math.round(height * 0.065), right: '14%',
-        width: 52, height: 52, borderRadius: '50%',
-        background: isDark
-          ? 'radial-gradient(circle at 38% 38%,#ddeeff 0%,#9bbce0 50%,transparent 100%)'
-          : 'radial-gradient(circle at 38% 38%,#fffde0 15%,#fde08a 55%,#fbbf24 78%,transparent 100%)',
-        boxShadow: isDark
-          ? '0 0 28px 8px rgba(180,210,255,0.2)'
-          : '0 0 40px 16px rgba(251,191,36,0.45),0 0 80px 28px rgba(253,200,100,0.18)',
-        opacity: isDark ? 0.72 : 0.95,
-      }} />
-
-      {/* Sun rays (light only) */}
-      {!isDark && (
-        <svg style={{ position: 'absolute', top: 0, right: 0, width: '30%', pointerEvents: 'none', overflow: 'visible' }}
-          viewBox="0 0 200 120" height={Math.round(height * 0.55)}>
-          {[0,30,60,90,120,150,180,210,240,270,300,330].map((deg, i) => {
-            const rad = (deg - 90) * Math.PI / 180;
-            const len = 46 + (i % 3) * 12;
-            return (
-              <line key={deg}
-                x1={152} y1={19}
-                x2={152 + Math.cos(rad) * len}
-                y2={19 + Math.sin(rad) * len}
-                stroke="#fde08a" strokeWidth={i % 3 === 0 ? 2.2 : 1.2} strokeOpacity={0.38}
-                style={{ animation: `kj-sunray ${3.2 + i * 0.22}s ease-in-out infinite`, animationDelay: `${i * 0.14}s` }} />
-            );
-          })}
-        </svg>
-      )}
-
-      {/* ── Clouds — 3 parallax layers ────────────────────────────── */}
-      {/* Far small — fastest */}
-      <svg style={{ position: 'absolute', top: Math.round(height * 0.04), left: 0, width: '100%', pointerEvents: 'none' }}
-        viewBox="0 0 800 55" preserveAspectRatio="xMidYMid slice" height={Math.round(height * 0.24)}>
-        <g style={{ animation: 'kj-drive 17s linear infinite' }} opacity={cloudOp * 0.52}>
-          <ellipse cx={100} cy={28} rx={36} ry={12} fill={cloudFill} />
-          <ellipse cx={122} cy={21} rx={24} ry={10} fill={cloudFill} />
-          <ellipse cx={78} cy={24} rx={20} ry={8} fill={cloudFill} />
-        </g>
-        <g style={{ animation: 'kj-drive 17s linear infinite', animationDelay: '-8.5s' }} opacity={cloudOp * 0.44}>
-          <ellipse cx={500} cy={18} rx={28} ry={9} fill={cloudFill} />
-          <ellipse cx={518} cy={13} rx={18} ry={8} fill={cloudFill} />
-        </g>
-      </svg>
-      {/* Mid */}
-      <svg style={{ position: 'absolute', top: Math.round(height * 0.08), left: 0, width: '100%', pointerEvents: 'none' }}
-        viewBox="0 0 800 75" preserveAspectRatio="xMidYMid slice" height={Math.round(height * 0.28)}>
-        <g style={{ animation: 'kj-drive 31s linear infinite' }} opacity={cloudOp * 0.72}>
-          <ellipse cx={240} cy={35} rx={55} ry={17} fill={cloudFill} />
-          <ellipse cx={268} cy={24} rx={38} ry={14} fill={cloudFill} />
-          <ellipse cx={212} cy={28} rx={30} ry={11} fill={cloudFill} />
-        </g>
-        <g style={{ animation: 'kj-drive 31s linear infinite', animationDelay: '-15.5s' }} opacity={cloudOp * 0.58}>
-          <ellipse cx={640} cy={42} rx={44} ry={14} fill={cloudFill} />
-          <ellipse cx={662} cy={31} rx={30} ry={12} fill={cloudFill} />
-        </g>
-      </svg>
-      {/* Near large — slowest */}
-      <svg style={{ position: 'absolute', top: Math.round(height * 0.02), left: 0, width: '100%', pointerEvents: 'none' }}
-        viewBox="0 0 800 95" preserveAspectRatio="xMidYMid slice" height={Math.round(height * 0.38)}>
-        <g style={{ animation: 'kj-drive 50s linear infinite', animationDelay: '-20s' }} opacity={cloudOp * 0.9}>
-          <ellipse cx={380} cy={55} rx={75} ry={22} fill={cloudFill} />
-          <ellipse cx={415} cy={40} rx={50} ry={18} fill={cloudFill} />
-          <ellipse cx={345} cy={44} rx={42} ry={16} fill={cloudFill} />
-        </g>
-      </svg>
-
-      {/* ── Birds (flock, right-to-left) ──────────────────────────── */}
-      <svg style={{ position: 'absolute', top: Math.round(height * 0.22), left: 0, width: '100%', height: Math.round(height * 0.2), pointerEvents: 'none' }}
-        viewBox="0 0 800 55" preserveAspectRatio="xMidYMid slice">
-        <g style={{ animation: 'kj-bird 22s linear infinite' }} opacity={isDark ? 0.45 : 0.65}
-          stroke={isDark ? '#8abfaa' : '#1e5c3a'} strokeLinecap="round" fill="none">
-          <path d="M500 20 Q506 15 512 20 Q518 15 524 20" strokeWidth={1.8} />
-          <path d="M528 32 Q533 28 537 32 Q542 28 547 32" strokeWidth={1.5} />
-          <path d="M514 43 Q518 40 521 43 Q525 40 529 43" strokeWidth={1.3} />
-          <path d="M542 22 Q545 19 548 22 Q551 19 554 22" strokeWidth={1.2} />
-        </g>
-      </svg>
-
-      {/* ── Distant hills ─────────────────────────────────────────── */}
-      <svg style={{ position: 'absolute', bottom: Math.round(height * 0.3), left: 0, width: '100%' }}
-        viewBox="0 0 800 80" preserveAspectRatio="none" height={Math.round(height * 0.32)}>
-        <path d="M0 80 Q200 0 400 30 Q600 58 800 18 L800 80 Z" fill={hillFar} opacity={0.55} />
-        <path d="M0 80 Q150 20 320 44 Q480 65 640 24 Q720 8 800 38 L800 80 Z" fill={hillNear} opacity={0.72} />
-      </svg>
-
-      {/* ── City skyline with windows ─────────────────────────────── */}
-      <svg style={{ position: 'absolute', bottom: Math.round(height * 0.22), left: 0, width: '100%' }}
-        viewBox="0 0 800 110" preserveAspectRatio="none" height={Math.round(height * 0.4)}>
-        {BUILDINGS.map(({ x, w, h }, bi) => (
-          <g key={bi}>
-            <rect x={x} y={110 - h} width={w} height={h} fill={buildFill} opacity={0.92} rx={2} />
-            {/* Window grid */}
-            {Array.from({ length: Math.floor(h / 14) }).map((_, row) =>
-              Array.from({ length: Math.floor(w / 12) }).map((_, col) => (
-                <rect key={`${row}-${col}`}
-                  x={x + 4 + col * 12} y={110 - h + 6 + row * 14}
-                  width={6} height={7} rx={1}
-                  fill={buildGlow}
-                  opacity={(bi + row + col) % 3 === 0 ? 0.9 : 0.22} />
-              ))
-            )}
-            {/* Antenna on tall buildings */}
-            {h > 82 && <line x1={x + w / 2} y1={110 - h} x2={x + w / 2} y2={110 - h - 12} stroke="#888" strokeWidth={1.5} strokeOpacity={0.6} />}
-          </g>
+      {/* City skyline SVG */}
+      <svg
+        style={{ position: 'absolute', bottom: height * 0.22, left: 0, width: '100%' }}
+        viewBox="0 0 800 100"
+        preserveAspectRatio="none"
+        height={Math.round(height * 0.35)}
+      >
+        {[
+          { x: 20, w: 40, h: 80 },
+          { x: 70, w: 55, h: 60 },
+          { x: 134, w: 36, h: 90 },
+          { x: 178, w: 48, h: 55 },
+          { x: 580, w: 52, h: 75 },
+          { x: 640, w: 38, h: 95 },
+          { x: 686, w: 60, h: 65 },
+          { x: 754, w: 44, h: 85 },
+        ].map(({ x, w, h }, i) => (
+          <rect key={i} x={x} y={100 - h} width={w} height={h} fill={buildingFill} opacity={0.88} rx={2} />
         ))}
       </svg>
 
-      {/* ── Horizon atmospheric haze ──────────────────────────────── */}
-      <div style={{
-        position: 'absolute', bottom: Math.round(height * 0.2), left: 0, right: 0,
-        height: Math.round(height * 0.1), pointerEvents: 'none',
-        background: isDark
-          ? 'linear-gradient(to top,rgba(0,0,0,0.38) 0%,transparent 100%)'
-          : 'linear-gradient(to top,rgba(255,215,130,0.32) 0%,transparent 100%)',
-      }} />
+      {/* Drifting clouds */}
+      <svg
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+        viewBox="0 0 800 200"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <ellipse
+          cx={200}
+          cy={55}
+          rx={70}
+          ry={22}
+          fill="#ffffff"
+          opacity={isDark ? 0.06 : 0.55}
+          style={{ animation: 'kj-drive 28s linear infinite', animationDelay: '0s' }}
+        />
+        <ellipse
+          cx={560}
+          cy={38}
+          rx={55}
+          ry={16}
+          fill="#ffffff"
+          opacity={isDark ? 0.04 : 0.4}
+          style={{ animation: 'kj-drive 44s linear infinite', animationDelay: '-12s' }}
+        />
+      </svg>
 
-      {/* ── Road ─────────────────────────────────────────────────── */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: Math.round(height * 0.22), background: roadBg }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.16)' }} />
-        <svg style={{ position: 'absolute', top: '38%', left: 0, width: '100%' }} height={4} viewBox="0 0 800 4" preserveAspectRatio="none">
-          <line x1={0} y1={2} x2={800} y2={2} stroke="#ffffff" strokeWidth={2.8} strokeOpacity={0.22} className="kj-anim-dash" />
+      {/* Animated road */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: height * 0.22,
+          background: roadColor,
+          opacity: 0.9,
+        }}
+      >
+        {/* Dashed center line */}
+        <svg
+          style={{ position: 'absolute', top: '40%', left: 0, width: '100%' }}
+          height={4}
+          viewBox="0 0 800 4"
+          preserveAspectRatio="none"
+        >
+          <line
+            x1={0}
+            y1={2}
+            x2={800}
+            y2={2}
+            stroke="#ffffff"
+            strokeWidth={2.5}
+            strokeOpacity={0.28}
+            className="kj-anim-dash"
+          />
         </svg>
       </div>
 
-      {/* ── Vehicles ─────────────────────────────────────────────── */}
-      {/* Far bus — smaller, slower = depth illusion */}
-      <div style={{
-        position: 'absolute', bottom: Math.round(height * 0.09), left: 0,
-        display: 'inline-block',
-        animation: 'kj-drive 15s linear -6s infinite',
-        filter: isDark ? 'brightness(0.45)' : 'brightness(0.7) saturate(0.75)',
-        opacity: 0.75,
-      }}>
-        <Bus3D size={90} />
-      </div>
-
-      {/* Near bus */}
-      <div className="kj-anim-drive" style={{ position: 'absolute', bottom: Math.round(height * 0.03), left: 0, display: 'inline-block' }}>
+      {/* Bus driving across bottom */}
+      <div
+        className="kj-anim-drive"
+        style={{
+          position: 'absolute',
+          bottom: height * 0.04,
+          left: 0,
+          display: 'inline-block',
+        }}
+      >
         <Bus3D size={160} />
       </div>
 
-      {/* Plane */}
-      <div className="kj-anim-fly" style={{ position: 'absolute', top: Math.round(height * 0.06), left: 0, display: 'inline-block' }}>
+      {/* Plane flying across top */}
+      <div
+        className="kj-anim-fly"
+        style={{
+          position: 'absolute',
+          top: height * 0.06,
+          left: 0,
+          display: 'inline-block',
+        }}
+      >
         <Plane3D size={120} />
       </div>
 
-      {/* ── LIVE · DHAKA badge ───────────────────────────────────── */}
-      <div style={{
-        position: 'absolute', top: 12, left: 16,
-        background: isDark ? 'rgba(0,245,255,0.18)' : 'rgba(0,184,217,0.18)',
-        border: `1px solid ${isDark ? 'rgba(0,245,255,0.4)' : 'rgba(0,184,217,0.4)'}`,
-        borderRadius: 999, padding: '4px 12px',
-        display: 'flex', alignItems: 'center', gap: 6,
-        fontFamily: "'Inter', system-ui, sans-serif",
-        fontWeight: 700, fontSize: 11,
-        color: isDark ? '#00f5ff' : '#0070ad', letterSpacing: '0.08em',
-      }} className="kj-anim-blink">
-        <span style={{ width: 6, height: 6, borderRadius: '50%', background: isDark ? '#00f5ff' : '#0070ad', display: 'inline-block' }} />
+      {/* LIVE · DHAKA badge */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 12,
+          left: 16,
+          background: isDark ? 'rgba(0,245,255,0.18)' : 'rgba(0,184,217,0.18)',
+          border: `1px solid ${isDark ? 'rgba(0,245,255,0.4)' : 'rgba(0,184,217,0.4)'}`,
+          borderRadius: 999,
+          padding: '4px 12px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontWeight: 700,
+          fontSize: 11,
+          color: isDark ? '#00f5ff' : '#0070ad',
+          letterSpacing: '0.08em',
+        }}
+        className="kj-anim-blink"
+      >
+        <span
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: '50%',
+            background: isDark ? '#00f5ff' : '#0070ad',
+            display: 'inline-block',
+          }}
+        />
         LIVE · DHAKA
       </div>
     </div>

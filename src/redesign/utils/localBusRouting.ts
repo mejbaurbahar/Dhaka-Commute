@@ -150,7 +150,7 @@ function segmentDistanceKm(bus: BusRoute, fromStopId: string, toStopId: string) 
 }
 
 function busFare(bus: BusRoute, distance: number) {
-  const rate = bus.type === 'AC' ? 5 : bus.type === 'Double-Decker' ? 3.2 : 2.53;
+  const rate = bus.type === 'AC' ? 5 : bus.type === 'Double-Decker' ? 3.2 : 2.70;
   return Math.max(bus.type === 'AC' ? 40 : 10, Math.ceil(distance * rate));
 }
 
@@ -284,7 +284,7 @@ function stationBnLabel(id: string) {
 }
 
 function legFareEstimate(dist: number) {
-  return Math.max(10, Math.ceil(dist * 2.53));
+  return Math.max(10, Math.ceil(dist * 2.70));
 }
 
 function legMinEstimate(dist: number) {

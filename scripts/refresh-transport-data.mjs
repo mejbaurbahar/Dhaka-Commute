@@ -138,12 +138,14 @@ async function fetchBRTAFares() {
   console.log('🚌 Loading BRTA official bus fares...');
   // BRTA doesn't publish a JSON endpoint; official rates as of April 2024 circular
   const fares = {
-    cityBusRatePerKm: 2.53,       // ৳/km for city buses (AC non-AC)
-    intercityBusRatePerKm: 2.23,  // ৳/km for intercity non-AC
-    intercityAcRatePerKm: 2.90,   // ৳/km for intercity AC
-    minimumFare: 10,              // ৳ minimum
-    effectiveDate: '2026-04-23',
-    source: 'BRTA circular dated 23 April 2026',
+    cityBusRatePerKm: 2.70,       // ৳/km for city buses (Dhaka/Ctg metro)
+    dtcaBusRatePerKm: 2.60,       // ৳/km for DTCA area (Dhaka, Gazipur, Narayanganj, etc.)
+    intercityBusRatePerKm: 2.40,  // ৳/km for intercity non-AC
+    intercityAcRatePerKm: 3.10,   // ৳/km for intercity AC
+    minimumFare: 10,              // ৳ minimum (bus)
+    minimumMinibusFare: 8,        // ৳ minimum (minibus)
+    effectiveDate: '2026-09-23',
+    source: 'BRTA circular dated 23 September 2026',
     fetchedAt: new Date().toISOString(),
   };
   console.log('  ✓ BRTA fares loaded');

@@ -8525,13 +8525,13 @@ export const ADVANCED_QA_DATA: AdvancedQAItem[] = [
   {
     "id": "513",
     "category": "Transport",
-    "question_en": "BRTA 2026 bus fare increase — when and how much?",
-    "question_bn": "BRTA ২০২৬ বাস ভাড়া বৃদ্ধি — কখন এবং কত?",
-    "answer_en": "In April 2026, the Bangladesh government increased bus fares by 11 paisa per km following a fuel price hike. The new rate: ৳2.23/km for 51-seat intercity buses. City buses: ৳2.05-2.15/km. The fare hike affected all intercity routes. All fares listed in KoyJabo reflect this 2026 update.",
-    "answer_bn": "এপ্রিল ২০২৬ এ বাংলাদেশ সরকার জ্বালানি মূল্য বৃদ্ধির পর বাস ভাড়া প্রতি কিমিতে ১১ পয়সা বাড়িয়েছে। নতুন হার: ৫১-আসন আন্তঃজেলা বাসে ৳২.২৩/কিমি। শহর বাস: ৳২.০৫-২.১৫/কিমি। এই ভাড়া বৃদ্ধি সব আন্তঃজেলা রুটে প্রযোজ্য হয়েছে।",
+    "question_en": "BRTA September 2026 bus fare increase — when and how much?",
+    "question_bn": "BRTA সেপ্টেম্বর ২০২৬ বাস ভাড়া বৃদ্ধি — কখন এবং কত?",
+    "answer_en": "Effective 22-23 September 2026, the Bangladesh Road Transport Authority (BRTA) updated bus fares: Dhaka & Chattogram city buses are ৳2.70/km (minimum ৳10, minibus ৳8). DTCA area (Dhaka, Gazipur, Narayanganj, Munshiganj, Narsingdi, Manikganj) is ৳2.60/km. Long-distance and intercity buses are ৳2.40/km. All fares listed in KoyJabo reflect this latest 2026 update.",
+    "answer_bn": "২২-২৩ সেপ্টেম্বর ২০২৬ তারিখে কার্যকর হওয়া বিআরটিএ-এর প্রজ্ঞাপন অনুযায়ী: ঢাকা ও চট্টগ্রাম মহানগর এলাকায় বাসের ভাড়া প্রতি কিমি ২.৭০ টাকা (সর্বনিম্ন ভাড়া বাস ১০ টাকা, মিনিবাস ৮ টাকা)। ডিটিসিএ আওতাধীন ৬ জেলায় ভাড়া প্রতি কিমি ২.৬০ টাকা। দূরপাল্লা ও আন্তঃজেলা রুটে বাস ভাড়া প্রতি কিমি ২.৪০ টাকা। কয়জাবো-তে সকল ভাড়া এই সর্বশেষ তালিকা অনুযায়ী আপডেট করা হয়েছে।",
     "keywords": [
       "brta", "2026", "bus", "fare", "increase", "hike", "ভাড়া", "বৃদ্ধি",
-      "BRTA", "বাস", "নতুন", "পরিবর্তন", "april", "এপ্রিল", "fuel"
+      "BRTA", "বাস", "নতুন", "পরিবর্তন", "september", "সেপ্টেম্বর", "fuel"
     ]
   },
   {

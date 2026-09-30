@@ -47,8 +47,8 @@ function busMatchesRoute(r: typeof BUS_DATA[0], from: string, to: string): boole
   const matchF = !from || r.routeString.toLowerCase().includes(from.toLowerCase()) || r.stops.some(s=>normQ(s).includes(rf));
   const matchT = !to || r.routeString.toLowerCase().includes(to.toLowerCase()) || r.stops.some(s=>normQ(s).includes(rt));
   if (!matchF || !matchT) return false;
-  // For bidirectional routes (⇄), both directions are valid — skip order check
-  if (from && to && !r.routeString.includes('⇄')) {
+  // When both endpoints match, verify from comes before to in stop order
+  if (from && to) {
     const fi = r.stops.findIndex(s => normQ(s).includes(rf) || normQ(STATIONS[s]?.name ?? '').includes(rf));
     const ti = r.stops.findIndex(s => normQ(s).includes(rt) || normQ(STATIONS[s]?.name ?? '').includes(rt));
     if (fi !== -1 && ti !== -1) return fi < ti;
@@ -368,10 +368,10 @@ export function RouteResultsV2Page(props: Props) {
     <PageShell {...props}>
     <div style={{ color: tk.text }}>
       {/* Hero bar */}
-      <div style={{ background: tk.panel, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderBottom: `1px solid ${tk.line}`, padding: isMobile ? '16px' : '16px 32px' }}>
+      <div style={{ background: tk.cardBg, backdropFilter: 'blur(20px) saturate(180%)', WebkitBackdropFilter: 'blur(20px) saturate(180%)', borderBottom: `1px solid ${tk.line}`, padding: isMobile ? '16px' : '20px 32px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           {/* From → To — editable inputs + Search */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
             <div style={{ position: 'relative', flex: 1, minWidth: isMobile ? '42%' : 120 }}>
               <input
                 ref={fromRef}
@@ -380,16 +380,30 @@ export function RouteResultsV2Page(props: Props) {
                 onFocus={() => setFromFocus(true)}
                 onBlur={() => setTimeout(() => setFromFocus(false), 150)}
                 placeholder={lbl('From', 'প্রেরণ')}
-                style={{ width: '100%', background: tk.inputBg, border: `1px solid ${fromFocus ? tk.primary : tk.line}`, borderRadius: 10, padding: '8px 12px', fontFamily: SANS, fontSize: 14, fontWeight: 600, color: tk.text, outline: 'none', boxSizing: 'border-box' }}
+                style={{
+                  width: '100%',
+                  background: tk.inputBg,
+                  border: `1px solid ${fromFocus ? tk.primary : tk.line}`,
+                  borderRadius: 14,
+                  padding: '10px 14px',
+                  fontFamily: SANS,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: tk.text,
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                  boxShadow: fromFocus ? `0 0 0 3px ${tk.primary}25` : 'none',
+                  transition: 'border-color 0.2s, box-shadow 0.2s',
+                }}
               />
               {fromFocus && fromSuggs.length > 0 && (
                 <SuggestionDropdown suggestions={fromSuggs as any} onSelect={s => { setEditFrom(s.label); setFromFocus(false); }} onDismiss={() => setFromFocus(false)} tk={tk} lang={lang} anchorRef={fromRef} />
               )}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontFamily: SANS, fontSize: 12, color: tk.textFaint, whiteSpace: 'nowrap' }}>
-              <div style={{ width: 16, height: 1, background: tk.line }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontFamily: SANS, fontSize: 13, color: tk.textDim, whiteSpace: 'nowrap' }}>
+              <div style={{ width: 12, height: 1, background: tk.line }} />
               <span>→</span>
-              <div style={{ width: 16, height: 1, background: tk.line }} />
+              <div style={{ width: 12, height: 1, background: tk.line }} />
             </div>
             <div style={{ position: 'relative', flex: 1, minWidth: isMobile ? '42%' : 120 }}>
               <input
@@ -399,17 +413,59 @@ export function RouteResultsV2Page(props: Props) {
                 onFocus={() => setToFocus(true)}
                 onBlur={() => setTimeout(() => setToFocus(false), 150)}
                 placeholder={lbl('To', 'গন্তব্য')}
-                style={{ width: '100%', background: tk.inputBg, border: `1px solid ${toFocus ? tk.primary : tk.line}`, borderRadius: 10, padding: '8px 12px', fontFamily: SANS, fontSize: 14, fontWeight: 600, color: tk.text, outline: 'none', boxSizing: 'border-box' }}
+                style={{
+                  width: '100%',
+                  background: tk.inputBg,
+                  border: `1px solid ${toFocus ? tk.primary : tk.line}`,
+                  borderRadius: 14,
+                  padding: '10px 14px',
+                  fontFamily: SANS,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: tk.text,
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                  boxShadow: toFocus ? `0 0 0 3px ${tk.primary}25` : 'none',
+                  transition: 'border-color 0.2s, box-shadow 0.2s',
+                }}
               />
               {toFocus && toSuggs.length > 0 && (
                 <SuggestionDropdown suggestions={toSuggs as any} onSelect={s => { setEditTo(s.label); setToFocus(false); }} onDismiss={() => setToFocus(false)} tk={tk} lang={lang} anchorRef={toRef} />
               )}
             </div>
             <button onClick={() => { const t = editFrom; setEditFrom(editTo); setEditTo(t); }} aria-label={lbl('Swap origin and destination', 'যাত্রা শুরু ও গন্তব্য অদলবদল')}
-              style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '8px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}><Icon.swap s={16} /></button>
+              style={{
+                background: tk.panelMuted,
+                border: `1px solid ${tk.line}`,
+                borderRadius: 12,
+                padding: '10px 12px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0,
+                color: tk.textDim,
+                transition: 'background 0.15s ease',
+              }}><Icon.swap s={16} /></button>
             <button
-              onClick={() => { if (editFrom.trim() || editTo.trim()) onNav('results', { from: editFrom.trim(), to: editTo.trim() }); }}
-              style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', border: 'none', borderRadius: 10, padding: '8px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: SANS, fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0, whiteSpace: 'nowrap' }}>
+              onClick={() => { if (editFrom.trim() || editTo.trim()) onNav('results', { from: editFrom.trim(), to: editTo.trim(), search: editFrom.trim() || editTo.trim() }); }}
+              style={{
+                background: tk.primary,
+                border: 'none',
+                borderRadius: 999,
+                padding: '10px 20px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                fontFamily: SANS,
+                fontSize: 14,
+                fontWeight: 600,
+                color: '#fff',
+                flexShrink: 0,
+                whiteSpace: 'nowrap',
+                boxShadow: `0 4px 14px ${tk.primary}40`,
+                transition: 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease',
+              }}>
               🔍 {lbl('Search', 'খুঁজুন')}
             </button>
           </div>
@@ -439,7 +495,7 @@ export function RouteResultsV2Page(props: Props) {
 
           {/* Mobile filter panel */}
           {isMobile && filterOpen && (
-            <div style={{ marginTop: 16, background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 16, padding: 16 }}>
+            <div style={{ marginTop: 16, background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 20, padding: 18, boxShadow: tk.shadowMuted }}>
               <FilterContent />
             </div>
           )}
@@ -598,55 +654,74 @@ export function RouteResultsV2Page(props: Props) {
                   icon="💡"
                 />
               )}
-              <div className={`kj-card kj-enter-${Math.min(idx + 1, 6)}`} style={{ background: tk.panel, border: `1px solid ${r.isAC ? '#10b981' : tk.line}`, borderRadius: 18, overflow: 'hidden', boxShadow: tk.shadow }}>
+              <div className={`kj-card kj-enter-${Math.min(idx + 1, 6)}`} style={{
+                background: tk.cardBg,
+                border: `1px solid ${r.isAC ? 'rgba(52, 199, 89, 0.4)' : tk.line}`,
+                borderRadius: 20,
+                overflow: 'hidden',
+                boxShadow: tk.shadowMuted,
+                transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease',
+              }}>
                 {r.isAC && (
-                  <div style={{ background: 'linear-gradient(135deg,#10b981,#059669)', padding: '7px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 14 }}>❄️</span>
-                    <span style={{ fontFamily: SANS, fontSize: 12, fontWeight: 700, color: '#fff' }}>AC</span>
-                    <span style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.2)', borderRadius: 4, padding: '2px 8px', fontFamily: SANS, fontSize: 11, color: '#fff' }}>
+                  <div style={{ background: 'linear-gradient(135deg, #34c759 0%, #30d158 100%)', padding: '6px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 13 }}>❄️</span>
+                    <span style={{ fontFamily: SANS, fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: 0.2 }}>AC EXPRESS</span>
+                    <span style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)', borderRadius: 999, padding: '2px 10px', fontFamily: SANS, fontSize: 11, fontWeight: 600, color: '#fff' }}>
                       {sortMode === 'cheapest' ? '💰 ' + lbl('Cheapest', 'সস্তা') : sortMode === 'fastest' ? '⚡ ' + lbl('Fastest', 'দ্রুত') : lbl('Best match', 'সেরা')}
                     </span>
                   </div>
                 )}
-                <div style={{ padding: 16 }}>
+                <div style={{ padding: 18 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                    <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: `linear-gradient(135deg,${r.badgeColor},${r.badgeColor}bb)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS, fontSize: 13, fontWeight: 800, color: '#fff' }}>
+                    <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: `linear-gradient(135deg, ${r.badgeColor}, ${r.badgeColor}cc)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS, fontSize: 13, fontWeight: 800, color: '#fff', boxShadow: `0 3px 10px ${r.badgeColor}35` }}>
                       {r.badge}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
-                        <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 15, fontWeight: 700, color: tk.text }}>
+                        <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 16, fontWeight: 700, color: tk.text, letterSpacing: -0.2 }}>
                           {lbl(r.name, r.nameBn)}
                         </div>
-                        <span style={{ fontFamily: SANS, fontSize: 18, fontWeight: 800, color: '#10b981' }}>৳{r.fare}</span>
+                        <span style={{ fontFamily: SANS, fontSize: 18, fontWeight: 800, color: '#34c759', letterSpacing: -0.3 }}>৳{r.fare}</span>
                       </div>
-                      <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.textDim, marginTop: 2 }}>{r.route}</div>
+                      <div style={{ fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 13, color: tk.textDim, marginTop: 3 }}>{r.route}</div>
                       {/* Stop pills */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 10, overflowX: 'auto' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 12, overflowX: 'auto', paddingBottom: 2 }}>
                         {r.stops.map((stop, si) => (
                           <React.Fragment key={stop}>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, flexShrink: 0 }}>
                               <div style={{ width: si === 0 || si === r.stops.length-1 ? 10 : 7, height: si === 0 || si === r.stops.length-1 ? 10 : 7, borderRadius: '50%', background: si === 0 || si === r.stops.length-1 ? r.badgeColor : tk.primary, border: `2px solid ${tk.bg}`, boxShadow: `0 0 0 1px ${si === 0 || si === r.stops.length-1 ? r.badgeColor : tk.primary}` }} />
-                              {!isMobile && <span style={{ fontFamily: SANS, fontSize: 9, color: tk.textFaint, whiteSpace: 'nowrap' }}>{stop}</span>}
+                              {!isMobile && <span style={{ fontFamily: SANS, fontSize: 10, color: tk.textDim, whiteSpace: 'nowrap' }}>{stop}</span>}
                             </div>
                             {si < r.stops.length-1 && <div style={{ flex: 1, height: 2, background: tk.line, minWidth: 16, flexShrink: 1 }} />}
                           </React.Fragment>
                         ))}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12, flexWrap: 'wrap', gap: 8 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 14, flexWrap: 'wrap', gap: 8 }}>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                          <span style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 6, padding: '3px 8px', fontFamily: SANS, fontSize: 12, color: tk.textDim }}>
+                          <span style={{ background: tk.panelMuted, border: `1px solid ${tk.line}`, borderRadius: 999, padding: '3px 10px', fontFamily: SANS, fontSize: 11, fontWeight: 500, color: tk.textDim }}>
                             {lbl(r.type, r.typeBn)}
                           </span>
-                          {r.stops.length > 0 && <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textFaint }}>{N(r.stops.length, lang)} {lbl('stops', 'স্টপ')}</span>}
+                          {r.stops.length > 0 && <span style={{ fontFamily: SANS, fontSize: 11, color: tk.textDim }}>{N(r.stops.length, lang)} {lbl('stops', 'স্টপ')}</span>}
                         </div>
-                        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                           <button onClick={() => setFavoriteIds(toggleFavoriteBus(r.busId, r.name))}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: favoriteIds.includes(r.busId) ? tk.accent : tk.textFaint }}>
+                            aria-label="Save to favorites"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: favoriteIds.includes(r.busId) ? '#ff375f' : tk.textDim, transition: 'transform 0.15s ease' }}>
                             {favoriteIds.includes(r.busId) ? '♥' : '♡'}
                           </button>
                           <button onClick={() => { trackBusSearch(r.busId, r.name); onNav('bus-detail', { busId: r.busId, from: fromQ, to: toQ }); }}
-                            style={{ background: tk.primarySoft, border: `1px solid ${tk.primary}`, borderRadius: 8, padding: '6px 14px', cursor: 'pointer', fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 12, fontWeight: 600, color: tk.primary }}>
+                            style={{
+                              background: tk.primarySoft,
+                              border: `1px solid ${tk.primary}40`,
+                              borderRadius: 999,
+                              padding: '6px 16px',
+                              cursor: 'pointer',
+                              fontFamily: lang === 'bn' ? BEN : SANS,
+                              fontSize: 13,
+                              fontWeight: 600,
+                              color: tk.primary,
+                              transition: 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease',
+                            }}>
                             {lbl('View details', 'বিস্তারিত')}
                           </button>
                         </div>

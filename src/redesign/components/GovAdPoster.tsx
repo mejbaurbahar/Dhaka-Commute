@@ -224,23 +224,25 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
 
   return (
     <div style={{
-      background: tk.panelSolid,
+      background: tk.panel,
+      backdropFilter: 'blur(24px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(24px) saturate(180%)',
       border: `1px solid ${tk.line}`,
       borderRadius: 18,
       overflow: 'hidden',
       boxShadow: tk.shadow,
       display: 'flex', flexDirection: 'column',
-      transition: 'box-shadow 0.2s ease',
+      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
     }}>
-      {/* Color accent strip */}
-      <div style={{ height: 3, background: d.color, opacity: 0.85 }} />
+      {/* Subtle color accent top bar */}
+      <div style={{ height: 3, background: d.color, opacity: 0.9 }} />
 
-      <div style={{ padding: '14px 16px 0', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+      <div style={{ padding: '16px 18px 0', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
         {/* Icon */}
         <div style={{
-          width: 46, height: 46, borderRadius: 13, flexShrink: 0,
+          width: 44, height: 44, borderRadius: 12, flexShrink: 0,
           background: `${d.color}14`,
-          border: `1.5px solid ${d.color}25`,
+          border: `1px solid ${d.color}30`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 22,
         }}>
@@ -262,7 +264,7 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
             border: `1px solid ${d.color}20`,
           }}>
             <span style={{
-              fontFamily: SANS, fontSize: 9.5, fontWeight: 600,
+              fontFamily: SANS, fontSize: 9.5, fontWeight: 700,
               color: d.color, letterSpacing: 0.2,
             }}>
               {T(lang, d.tagBn, d.tagEn)}
@@ -272,12 +274,12 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
       </div>
 
       {/* Features */}
-      <ul style={{ margin: '12px 0 0', padding: '0 16px', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <ul style={{ margin: '12px 0 0', padding: '0 18px', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
         {d.featuresEn.map((f, i) => (
           <li key={i} style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
             <div style={{
               width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
-              background: d.color, opacity: 0.7, marginTop: 5,
+              background: d.color, opacity: 0.75, marginTop: 5,
             }} />
             <span style={{
               fontFamily: font, fontSize: 12, color: tk.textDim, lineHeight: 1.4,
@@ -289,10 +291,10 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
       </ul>
 
       {/* Divider */}
-      <div style={{ margin: '12px 16px 0', height: 1, background: tk.line }} />
+      <div style={{ margin: '12px 18px 0', height: 1, background: tk.line }} />
 
       {/* CTA buttons */}
-      <div style={{ padding: '10px 14px 14px', display: 'flex', gap: 7, flexWrap: 'wrap' }}>
+      <div style={{ padding: '12px 16px 16px', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <a
           href={d.ctaUrl}
           target={d.ctaUrl.startsWith('tel:') ? '_self' : '_blank'}
@@ -301,13 +303,14 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
             background: d.color, color: d.colorText,
             borderRadius: 999, padding: '7px 16px',
             fontFamily: font, fontWeight: 700, fontSize: 12,
-            textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 5,
-            boxShadow: `0 3px 12px ${d.color}35`,
+            textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6,
+            boxShadow: `0 2px 8px ${d.color}35`,
             whiteSpace: 'nowrap',
+            transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
           {T(lang, d.ctaBn, d.ctaEn)}
-          <span style={{ fontSize: 13, opacity: 0.85 }}>→</span>
+          <span style={{ fontSize: 13, opacity: 0.9 }}>→</span>
         </a>
         {d.secondUrl && (
           <a
@@ -322,6 +325,7 @@ function ServiceCard({ d, lang, tk }: { d: ServiceDef; lang: Lang; tk: Tokens })
               fontFamily: font, fontWeight: 600, fontSize: 12,
               textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4,
               whiteSpace: 'nowrap',
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
             {T(lang, d.secondBn, d.secondEn)}

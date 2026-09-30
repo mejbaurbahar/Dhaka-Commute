@@ -46,29 +46,28 @@ interface AIFabProps {
 }
 
 export function AIFab({ tk, lang, onNav }: AIFabProps) {
-  injectFabStyles();
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div className="kj-ai-fab">
+    <div className="kj-ai-fab" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
       {/* Hover label */}
       <div
         style={{
           background: tk.panel,
           border: `1px solid ${tk.line}`,
-          borderRadius: 10,
-          padding: '7px 12px',
+          borderRadius: 999,
+          padding: '6px 14px',
           fontFamily: lang === 'bn' ? BEN : SANS,
           fontSize: 12,
           fontWeight: 600,
           color: tk.text,
           whiteSpace: 'nowrap',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          boxShadow: tk.shadow,
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          boxShadow: tk.shadowMuted,
           opacity: hovered ? 1 : 0,
           transform: hovered ? 'translateX(0)' : 'translateX(8px)',
-          transition: 'opacity 0.2s ease, transform 0.2s ease',
+          transition: 'opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
           pointerEvents: 'none',
         }}
       >
@@ -77,53 +76,18 @@ export function AIFab({ tk, lang, onNav }: AIFabProps) {
 
       {/* FAB button */}
       <div style={{ position: 'relative', flexShrink: 0 }}>
-        {/* Pulsing rings */}
+        {/* Apple Intelligence subtle ambient aura */}
         <div
           style={{
             position: 'absolute',
-            inset: -4,
+            inset: -2,
             borderRadius: 999,
-            border: `2px solid ${tk.primary}`,
-            animation: 'kjAiRing 2.4s ease-out infinite',
+            background: 'linear-gradient(135deg, rgba(0,113,227,0.4), rgba(168,85,247,0.4), rgba(255,55,95,0.4))',
+            filter: 'blur(8px)',
+            opacity: 0.8,
             pointerEvents: 'none',
           }}
         />
-        <div
-          style={{
-            position: 'absolute',
-            inset: -4,
-            borderRadius: 999,
-            border: `2px solid ${tk.accent}`,
-            animation: 'kjAiRing 2.4s ease-out infinite 1.2s',
-            pointerEvents: 'none',
-          }}
-        />
-
-        {/* Thinking bubble */}
-        <div
-          style={{
-            position: 'absolute',
-            top: -12,
-            right: -6,
-            display: 'flex',
-            gap: 3,
-            alignItems: 'flex-end',
-            pointerEvents: 'none',
-          }}
-        >
-          {[0, 0.2, 0.4].map((delay, i) => (
-            <div
-              key={i}
-              style={{
-                width: 5,
-                height: 5,
-                borderRadius: 999,
-                background: tk.primary,
-                animation: `kjAiThink 1.4s ease-in-out infinite ${delay}s`,
-              }}
-            />
-          ))}
-        </div>
 
         {/* Main button */}
         <button
@@ -132,69 +96,28 @@ export function AIFab({ tk, lang, onNav }: AIFabProps) {
           onMouseLeave={() => setHovered(false)}
           aria-label={T(lang, 'AI সহায়ক', 'AI Assistant')}
           style={{
-            width: 62,
-            height: 62,
+            width: 54,
+            height: 54,
             borderRadius: 999,
-            border: 'none',
+            border: '1px solid rgba(255,255,255,0.3)',
             cursor: 'pointer',
-            background: `linear-gradient(140deg, ${tk.primary}, ${tk.accent})`,
+            background: 'linear-gradient(145deg, #0071e3 0%, #7c3aed 50%, #ff375f 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            animation: 'kjAiFloat 3.2s ease-in-out infinite',
-            boxShadow: `0 8px 32px -8px ${tk.primary}80`,
+            boxShadow: '0 8px 24px rgba(0, 113, 227, 0.35)',
             position: 'relative',
+            transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease',
+            transform: hovered ? 'scale(1.06)' : 'scale(1)',
           }}
         >
-          {/* Robot face SVG */}
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-            {/* Antenna */}
-            <line x1="18" y1="4" x2="18" y2="10" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            <circle cx="18" cy="3.5" r="2" fill="white" />
-
-            {/* Head */}
-            <rect x="8" y="10" width="20" height="16" rx="4" fill="white" fillOpacity="0.2" stroke="white" strokeWidth="1.5" />
-
-            {/* Left eye */}
-            <rect
-              x="11"
-              y="14"
-              width="5"
-              height="5"
-              rx="1.5"
-              fill="white"
-              style={{
-                transformOrigin: '13.5px 16.5px',
-                animation: 'kj-ai-eye-blink 3s ease-in-out infinite',
-              }}
-            />
-
-            {/* Right eye */}
-            <rect
-              x="20"
-              y="14"
-              width="5"
-              height="5"
-              rx="1.5"
-              fill="white"
-              style={{
-                transformOrigin: '22.5px 16.5px',
-                animation: 'kj-ai-eye2-blink 3.5s ease-in-out infinite 0.5s',
-              }}
-            />
-
-            {/* Smile */}
-            <path
-              d="M13 22 Q18 26 23 22"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              fill="none"
-            />
-
-            {/* Side ears */}
-            <rect x="5" y="14" width="3" height="6" rx="1.5" fill="white" fillOpacity="0.5" />
-            <rect x="28" y="14" width="3" height="6" rx="1.5" fill="white" fillOpacity="0.5" />
+          {/* Apple Intelligence Sparkle Glyph */}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+            <path d="M5 3v4"/>
+            <path d="M19 17v4"/>
+            <path d="M3 5h4"/>
+            <path d="M17 19h4"/>
           </svg>
         </button>
       </div>

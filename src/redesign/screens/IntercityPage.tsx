@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { KJ_TOKENS, SANS, BEN, T, Tokens, Lang, N, Fare } from '../tokens';
 import { AdSlot, NativeAdCard } from '../components/AdSlot';
 import { trackIntercitySearch } from '../../../services/analyticsService';
@@ -18,8 +18,6 @@ import { LAUNCH_ROUTES, LAUNCH_TERMINALS } from '../../../data/bangladeshLaunchD
 import { SuggestionDropdown, Suggestion } from '../components/SuggestionDropdown';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { earnCoins } from '../utils/koyCoinService';
-import { searchTransit, type TransitSortKey, type TransitSearchResult } from '../../../services/intercityTransitService';
-import { TransitJourneyList } from '../components/TransitJourneyList';
 
 interface Props { theme:'dark'|'light'; device:'desktop'|'mobile'; lang:Lang; route:string; canBack:boolean; onNav:(r:string,p?:Record<string,string>)=>void; onNavTab?:(r:string)=>void; onBack:()=>void; onLang:()=>void; onTheme:()=>void; onMenu:()=>void; params?:Record<string,string>; }
 
@@ -93,7 +91,6 @@ const CHIPS = [
   { label: 'Train', labelBn: 'ট্রেন', icon: '🚆' },
   { label: 'Flight', labelBn: 'ফ্লাইট', icon: '✈️' },
   { label: 'Launch', labelBn: 'লঞ্চ', icon: '⛴️' },
-  { label: 'Transit', labelBn: 'ট্রানজিট', icon: '🔀' },
 ];
 
 const STATS = [
@@ -113,12 +110,11 @@ export function IntercityPage(props: Props) {
   setCanonicalUrl('/intercity');
   const isMobile = device === 'mobile';
   const tk: Tokens = KJ_TOKENS[theme];
-  const [activeChip, setActiveChip] = useState(params?.chip === 'Transit' ? 'Transit' : params?.mode === 'flights' ? 'Flight' : 'Bus');
+  const [activeChip, setActiveChip] = useState(params?.mode === 'flights' ? 'Flight' : 'Bus');
   const [nameSearch, setNameSearch] = useState(params?.search ?? '');
   const [from, setFrom] = useState(params?.from ?? '');
   const [to, setTo] = useState(params?.to ?? '');
   const [hasSearched, setHasSearched] = useState(!!(params?.from || params?.to || params?.search));
-  const [transitSort, setTransitSort] = useState<TransitSortKey>('recommended');
 
   const lbl = (en: string, bn: string) => T(lang, bn, en);
   const [fromFocus, setFromFocus] = useState(false);
@@ -401,30 +397,22 @@ export function IntercityPage(props: Props) {
       const toStations = toQ ? resolveStations(toQ) : [];
       return BD_TRAIN_ROUTES.filter(r => {
         const allStopIds = [r.from, r.to, ...(r.stops || [])];
-        const orderedStops = [r.from, ...(r.stops || []), r.to];
         const nameText = (r.name + ' ' + r.bnName).toLowerCase();
+        // Search filter
         if (sq && !loosematch(nameText, sq)) return false;
+        // From filter: station ID match OR loose name match in stops list
         const fromOk = !fromQ || (
           fromStations.length > 0
             ? fromStations.some(s => allStopIds.includes(s))
             : allStopIds.some(id => loosematch(id, fromQ)) || loosematch(nameText, fromQ)
         );
+        // To filter
         const toOk = !toQ || (
           toStations.length > 0
             ? toStations.some(s => allStopIds.includes(s))
             : allStopIds.some(id => loosematch(id, toQ)) || loosematch(nameText, toQ)
         );
-        if (!fromOk || !toOk) return false;
-        if (fromQ && toQ) {
-          const fi = orderedStops.findIndex(s =>
-            fromStations.length > 0 ? fromStations.includes(s) : loosematch(s, fromQ)
-          );
-          const ti = orderedStops.findIndex(s =>
-            toStations.length > 0 ? toStations.includes(s) : loosematch(s, toQ)
-          );
-          if (fi !== -1 && ti !== -1) return fi < ti;
-        }
-        return true;
+        return fromOk && toOk;
       });
     }
 
@@ -477,22 +465,6 @@ export function IntercityPage(props: Props) {
       return loosematch(text, fq || tq);
     });
   }, [nameSearch, from, to, activeChip]);
-
-  // District-level multi-mode journey search (direct → 1 → 2 transfers).
-  // Computed for Transit chip AND as a Bus-tab fallback when a non-Dhaka pair
-  // has no direct bus operators (e.g. Benapole → Cox's Bazar).
-  const transitResult: TransitSearchResult | null = useMemo(() =>
-    hasSearched && (activeChip === 'Transit' || activeChip === 'Bus') ? searchTransit(from, to) : null,
-  [from, to, activeChip, hasSearched]);
-
-  // Auto-select the sort pill that best matches the result: direct routes found →
-  // Direct (direct-first), transfer-only results → Fewest transfers, else Recommended.
-  useEffect(() => {
-    if (!transitResult || transitResult.kind !== 'ok') return;
-    const t = transitResult.journeys;
-    if (t.some(j => j.transfers === 0)) setTransitSort('direct');
-    else if (t.length > 0) setTransitSort('fewest');
-  }, [transitResult]);
 
   const DIVISION_COLORS: Record<string, string> = {
     Dhaka: '#3b82f6', Chattogram: '#10b981', Sylhet: '#a855f7',
@@ -692,10 +664,8 @@ export function IntercityPage(props: Props) {
 
         {hasSearched && (
         <div id="intercity-results" style={{ marginTop: 32 }}>
-          {/* Transit: multi-mode journey sections */}
-          {activeChip === 'Transit' ? (
-            <TransitJourneyList result={transitResult} sort={transitSort} onSort={setTransitSort} tk={tk} lang={lang} isMobile={isMobile} focusJourneyId={params?.journeyId} />
-          ) : activeChip === 'Bus' ? (() => {
+          {/* For bus: expand into per-operator cards */}
+          {activeChip === 'Bus' ? (() => {
             // Flatten all operators from all matched routes into individual cards
             const operatorCards: { opName: string; route: string; district: string; division: string; costNonAC: string; costAC: string; contact: string }[] = [];
             for (const r of filteredResults as any[]) {
@@ -718,11 +688,9 @@ export function IntercityPage(props: Props) {
             }
             return (
               <>
-                {operatorCards.length > 0 && (
                 <div style={{ fontFamily: SANS, fontSize: 11, fontWeight: 700, letterSpacing: 0.8, textTransform: 'uppercase', color: tk.textFaint, marginBottom: 16 }}>
                   {lbl(`${N(operatorCards.length,lang)} bus operators found`, `${N(operatorCards.length,lang)}টি বাস অপারেটর পাওয়া গেছে`)}
                 </div>
-                )}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {operatorCards.slice(0, 40).map((c, i) => {
                     const col = DIVISION_COLORS[c.division] || '#6b7280';
@@ -753,18 +721,9 @@ export function IntercityPage(props: Props) {
                   })}
                 </div>
                 {operatorCards.length === 0 && (
-                  transitResult && transitResult.kind === 'ok' && transitResult.journeys.length > 0 ? (
-                    <div>
-                      <div style={{ fontFamily: SANS, fontSize: 12, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase', color: tk.primary, margin: '8px 0 12px' }}>
-                        {lbl('No direct buses — multi-mode journeys found', 'সরাসরি বাস নেই — মাল্টি-মোড যাত্রা পাওয়া গেছে')}
-                      </div>
-                      <TransitJourneyList result={transitResult} sort={transitSort} onSort={setTransitSort} tk={tk} lang={lang} isMobile={isMobile} focusJourneyId={params?.journeyId} />
-                    </div>
-                  ) : (
                   <div style={{ textAlign: 'center', padding: '32px 16px', color: tk.textFaint, fontFamily: lang === 'bn' ? BEN : SANS, fontSize: 14 }}>
                     {lbl('No bus operators found. Try different locations.', 'কোনো বাস পাওয়া যায়নি।')}
                   </div>
-                  )
                 )}
               </>
             );
@@ -818,7 +777,7 @@ export function IntercityPage(props: Props) {
                 const fromT = LAUNCH_TERMINALS.find((t: any) => t.id === r.from);
                 const toT = LAUNCH_TERMINALS.find((t: any) => t.id === r.to);
                 return (
-                  <button key={r.id + i} onClick={() => onNav('vehicle', { kind:'launch', id:r.id, name:r.name.en, nameBn:r.name.bn, from:fromT?.en||r.from, to:toT?.en||r.to, dep:r.dep, arr:r.arr, dur:r.dur, deck:String(r.deck), cabin:String(r.cabin), vip:String(r.vip), operator:r.operator.en, operatorBn:r.operator.bn, rating:String(r.rating), col:'#0369a1', photos:(r.photos||[]).join('|') })}
+                  <button key={r.id + i} onClick={() => onNav('vehicle', { kind:'launch', id:r.id, name:r.name.en, nameBn:r.name.bn, from:fromT?.en||r.from, to:toT?.en||r.to, dep:r.dep, arr:r.arr, dur:r.dur, deck:String(r.deck), cabin:String(r.cabin), vip:String(r.vip), operator:r.operator.en, operatorBn:r.operator.bn, rating:String(r.rating), col:'#0369a1' })}
                     style={{ background: tk.panel, border: `1px solid ${tk.line}`, borderRadius: 14, padding: '12px 14px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 44, height: 44, borderRadius: 10, background: 'linear-gradient(135deg,#0c1a2e,#0369a1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>⛴️</div>
                     <div style={{ flex: 1, minWidth: 0 }}>

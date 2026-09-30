@@ -25,7 +25,7 @@
 - **Metro Rail:** MRT-6, 17 stations Uttara North → Kamalapur, fares ৳20–100, 7:10 AM–9:40 PM, closed Fridays
 - **Train routes:** 350+ intercity trains; book at eticket.railway.gov.bd
 - **Launch routes:** 67+ BIWTC ferry routes from Sadarghat terminal
-- **Fare rate:** BRTA official city rate ৳2.53/km (April 2026 circular)
+- **Fare rate:** BRTA official city rate ৳2.70/km, DTCA ৳2.60/km, intercity ৳2.40/km (September 2026 circular)
 - **Languages:** Bengali (বাংলা) and English
 - **Offline:** All routes accessible without internet via PWA
 

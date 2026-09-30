@@ -102,10 +102,17 @@ render.yaml
 # Data export dumps
 dhaka_transport_data_export.json
 
-# Android signing — never commit keystores or passwords
+# Android signing & credentials — never commit keystores, certificates, or passwords
 *.keystore
 *.jks
+*.pem
+*.key
+*.p12
+*.pkcs12
+*.pepk
 android/keystore.properties
+*.env.local
+*.env.*.local
 
 # Ad network documentation
 EZOIC_*.md
