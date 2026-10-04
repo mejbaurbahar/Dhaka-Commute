@@ -13,19 +13,19 @@
     "fareMax": 100,
     "topSpeedKmh": 100,
     "stations": 17,
-    "fetchedAt": "2026-08-23T14:14:18.119Z",
+    "fetchedAt": "2026-10-04T17:55:15.089Z",
     "source": "dmtcl.gov.bd (static schedule)"
   },
   "brtaFares": {
-    "cityBusRatePerKm": 2.70,
-    "dtcaBusRatePerKm": 2.60,
-    "intercityBusRatePerKm": 2.40,
-    "intercityAcRatePerKm": 3.10,
+    "cityBusRatePerKm": 2.7,
+    "dtcaBusRatePerKm": 2.6,
+    "intercityBusRatePerKm": 2.4,
+    "intercityAcRatePerKm": 3.1,
     "minimumFare": 10,
     "minimumMinibusFare": 8,
     "effectiveDate": "2026-09-23",
     "source": "BRTA circular dated 23 September 2026",
-    "fetchedAt": "2026-09-29T12:00:00.000Z"
+    "fetchedAt": "2026-10-04T17:55:15.089Z"
   },
   "launchRoutes": {
     "routes": [
@@ -111,7 +111,7 @@
       }
     ],
     "totalRoutes": 67,
-    "fetchedAt": "2026-08-23T14:14:18.119Z",
+    "fetchedAt": "2026-10-04T17:55:15.090Z",
     "source": "biwtc.gov.bd"
   },
   "trainFaresSpotCheck": {
@@ -124,10 +124,10 @@
     "totalTrainNames": 149,
     "seniorCitizenDiscount": 25,
     "seniorCitizenAge": 65,
-    "fetchedAt": "2026-08-23T14:14:18.960Z",
+    "fetchedAt": "2026-10-04T17:55:15.991Z",
     "source": "railspaapi.shohoz.com/handshake"
   },
-  "_refreshedAt": "2026-08-23T14:14:25.051Z",
+  "_refreshedAt": "2026-10-04T17:55:21.705Z",
   "trainRoutes": {
     "routes": [
       {
@@ -223,6 +223,7 @@
           "Bhairab_Bazar",
           "Brahmanbaria",
           "Akhaura",
+          "Quasba",
           "Cumilla",
           "Laksam",
           "Gunabati",
@@ -3741,6 +3742,7 @@
           "Azim Nagar",
           "Natore",
           "Santahar",
+          "Akkelpur",
           "Joypurhat",
           "Birampur",
           "Fulbari",
@@ -3806,6 +3808,7 @@
           "Natore",
           "Santahar",
           "Bogura",
+          "Sonatola",
           "Mahimaganj",
           "Bonar_Para",
           "Gaibandha",
@@ -3846,6 +3849,7 @@
           "Gaibandha",
           "Bonar_Para",
           "Mahimaganj",
+          "Sonatola",
           "Bogura",
           "Santahar",
           "Natore",
@@ -4078,7 +4082,7 @@
           "Rajshahi_Court",
           "Kakonhat",
           "Lolitnagar",
-          "Amnura",
+          "Amnura_Junction",
           "Nachole",
           "Rohanpur"
         ]
@@ -4101,7 +4105,7 @@
         "stops": [
           "Rohanpur",
           "Nachole",
-          "Amnura",
+          "Amnura_Junction",
           "Lolitnagar",
           "Kakonhat",
           "Rajshahi",
@@ -4133,7 +4137,7 @@
           "Rajshahi",
           "Kakonhat",
           "Lolitnagar",
-          "Amnura",
+          "Amnura_Junction",
           "Nachole",
           "Rohanpur"
         ]
@@ -4156,7 +4160,7 @@
         "stops": [
           "Rohanpur",
           "Nachole",
-          "Amnura",
+          "Amnura_Junction",
           "Lolitnagar",
           "Kakonhat",
           "Rajshahi_Court",
@@ -4165,7 +4169,7 @@
       }
     ],
     "totalTrains": 134,
-    "fetchedAt": "2026-08-23T14:14:25.051Z",
+    "fetchedAt": "2026-10-04T17:55:21.705Z",
     "source": "railspaapi.shohoz.com"
   }
 }
