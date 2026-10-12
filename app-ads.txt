@@ -1,2 +1,2 @@
-# Google AdMob — KoyJabo (koyjabo.bd Android app)
+# Google AdMob — KoyJabo Android app (package com.koyjabo.app)
 google.com, pub-8425219156685369, DIRECT, f08c47fec0942fa0
