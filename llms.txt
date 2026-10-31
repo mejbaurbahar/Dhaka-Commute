@@ -32,7 +32,7 @@
 ## About
 
 - [About KoyJabo](https://koyjabo.com/about): Project background and mission
-- [Blog](https://koyjabo.com/blogs): Transport guides and updates
+- [Blog](https://koyjabo.com/blog/): Transport guides and updates
 - [FAQ](https://koyjabo.com/qa): Common questions about Bangladesh transport
 - [Contact](https://koyjabo.com/contact): Developer contact
 

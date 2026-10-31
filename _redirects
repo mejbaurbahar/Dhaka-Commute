@@ -1,4 +1,7 @@
 /ads.txt /ads.txt 200
+/app-ads.txt /app-ads.txt 200
 /robots.txt /robots.txt 200
 /sitemap.xml /sitemap.xml 200
+/blogs/* /blog/ 301
+/blogs /blog/ 301
 /* /index.html 200
