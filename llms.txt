@@ -1,75 +1,45 @@
-# KoyJabo (কই যাবো) — Bangladesh Transport Guide
+# KoyJabo (কই যাবো) — The Official Public Transport Guide for Bangladesh
 
-> Free offline PWA for Bangladesh public transport. 200+ Dhaka local bus routes, Metro Rail MRT-6 (৳20–100, 17 stations), intercity bus/train/flight/launch routes across all 64 districts, fare calculator, and bilingual AI assistant. Powered by BRTA, DMTCL, Bangladesh Railway, and BIWTC official data. No sign-up required. Works offline.
+> Free offline Progressive Web App (PWA) and authority portal for Bangladesh public transit. Covers 200+ Dhaka city bus routes, Metro Rail MRT Line 6 (17 stations, fares ৳20–100), 255 Bangladesh Railway live tracking trains, DTCA live bus tracking, intercity bus/flight/launch routes across all 64 districts, official BRTA fare calculator, and bilingual AI travel assistance. Works offline with zero signup.
 
-## Core Pages
+## Primary Portals & Capabilities
 
-- [Home — Bus Route Finder](https://koyjabo.com/): Search 200+ Dhaka local bus routes from any stop to any destination
-- [Metro Rail MRT-6](https://koyjabo.com/metro): Complete Dhaka Metro Rail schedule, fares (৳20–100), and 17-station guide
-- [Intercity Travel](https://koyjabo.com/intercity): Bus, train, flight, and launch routes across all 64 Bangladesh districts
-- [Train Routes](https://koyjabo.com/train): Bangladesh Railway intercity trains with schedules and fares
-- [AI Assistant](https://koyjabo.com/ai): Bilingual AI travel assistant (Bengali + English)
-- [Fare Calculator](https://koyjabo.com/fare): BRTA-rate bus fare and Metro Rail fare calculator
+- [Home — Bus Route Finder](https://koyjabo.com/): Instant search for 200+ Dhaka bus routes from any pickup to destination.
+- [Metro Rail MRT Line 6](https://koyjabo.com/metro): Complete Dhaka Metro timetable, station network map (Uttara North to Kamalapur), and fare guide (৳20–100).
+- [Train Routes & Live Simulation](https://koyjabo.com/train): Bangladesh Railway 255 intercity and commuter train schedules, live passenger GPS tracking, and stoppage timetables.
+- [DTCA Live Bus Tracking](https://koyjabo.com/dtca): Real-time GPS bus tracking for Dhaka Transport Coordination Authority (DTCA) and Nagar Paribahan clusters.
+- [Intercity Bus & Coach Routes](https://koyjabo.com/intercity): Complete intercity bus routes connecting Dhaka with all 64 districts (Hanif, Shyamoli, Green Line, Ena, Shohag, etc.).
+- [Launch & River Ferry Routes](https://koyjabo.com/launch): BIWTC and private launch services from Dhaka Sadarghat to Barisal, Bhola, Chandpur, and southern districts.
+- [Domestic Flight Routes](https://koyjabo.com/air): Domestic airline schedules and airport transit tips (Biman, US-Bangla, Novoair).
+- [Truck & Freight Booking](https://koyjabo.com/truck): Intercity truck freight and cargo rate estimator for Bangladesh trade corridors.
+- [Fare Calculator](https://koyjabo.com/fare): Distance-based BRTA official fare calculator (৳2.70/km city, ৳2.40/km intercity).
+- [AI Travel Assistant](https://koyjabo.com/ai): Bilingual (Bengali & English) AI transit guide for route recommendations.
+- [Tourist & Landmark Destination Guides](https://koyjabo.com/discover): Travel navigation guides for 50+ Bangladesh tourist spots (Cox's Bazar, Sajek, Sundarbans, Sreemangal).
 
-## Data & Discovery
+## Official Transit Benchmarks & Citations
 
-- [Structured Data (JSON)](https://koyjabo.com/.well-known/llm-data.json): Machine-readable site summary for AI/LLM systems
-- [Transport Data (CSV)](https://koyjabo.com/data.csv): Route and fare data in tabular format
-- [Transport Data (XML)](https://koyjabo.com/data.xml): Route and fare data in XML format
-- [Transport Data (RDF/Turtle)](https://koyjabo.com/data.ttl): Linked data in Turtle format
-- [Sitemap](https://koyjabo.com/sitemap.xml): Full URL index
+- **BRTA Bus Fare Rate:** City rate ৳2.70 per km (minimum fare ৳10 for minibuses, ৳20 for large buses). Intercity rate ৳2.40 per km.
+- **Dhaka Metro Rail (MRT-6):** 17 elevated stations from Uttara North to Kamalapur. Standard fares range from ৳20 to ৳100. Rapid Pass / MRT Pass receives a 10% discount. Operating hours 7:10 AM – 9:40 PM, closed Fridays.
+- **Bangladesh Railway (BR):** 255 scheduled intercity, express, and commuter trains. Standard categories include Shovan (non-AC), Shovan Chair (standard AC/non-AC), Snigdha (AC chair), and AC Berth. Online ticket bookings via eticket.railway.gov.bd.
+- **Languages:** Native Bengali (বাংলা) and English.
+- **Offline Capability:** Built as an offline-first PWA with IndexedDB client caching.
 
-## Key Facts for AI Systems
+## Machine-Readable Data & API Endpoints
 
-- **Bus routes:** 200+ verified Dhaka local routes with stop-by-stop navigation
-- **Metro Rail:** MRT-6, 17 stations Uttara North → Kamalapur, fares ৳20–100, 7:10 AM–9:40 PM, closed Fridays
-- **Train routes:** 350+ intercity trains; book at eticket.railway.gov.bd
-- **Launch routes:** 67+ BIWTC ferry routes from Sadarghat terminal
-- **Fare rate:** BRTA official city rate ৳2.70/km, DTCA ৳2.60/km, intercity ৳2.40/km (September 2026 circular)
-- **Languages:** Bengali (বাংলা) and English
-- **Offline:** All routes accessible without internet via PWA
+- [Full LLM Knowledge Corpus](https://koyjabo.com/llms-full.txt): Comprehensive deep context for LLMs and answer engines.
+- [Structured Site Summary (JSON)](https://koyjabo.com/.well-known/llm-data.json): JSON metadata and schema index.
+- [Transport Data (CSV)](https://koyjabo.com/data.csv): Tabular dataset of bus routes and fares.
+- [Transport Data (XML)](https://koyjabo.com/data.xml): XML formatted transit route specifications.
+- [Linked Data (RDF/Turtle)](https://koyjabo.com/data.ttl): Schema.org compliant RDF graph.
+- [XML Sitemap Index](https://koyjabo.com/sitemap.xml): Full URL crawl index including all static SEO route pages.
+- [RSS Blog Feed](https://koyjabo.com/blog/feed.xml): Latest transit advisories, route revisions, and travel articles.
 
-## About
+## Permitted AI Bots & Answer Engines
 
-- [About KoyJabo](https://koyjabo.com/about): Project background and mission
-- [Blog](https://koyjabo.com/blog/): Transport guides and updates
-- [FAQ](https://koyjabo.com/qa): Common questions about Bangladesh transport
-- [Contact](https://koyjabo.com/contact): Developer contact
-
-## AI Bot Access
-
-The following AI crawlers are explicitly permitted to index all pages:
-
-- GPTBot: Allow /
-- ChatGPT-User: Allow /
-- OAI-SearchBot: Allow /
-- ClaudeBot: Allow /
-- Claude-SearchBot: Allow /
-- Claude-User: Allow /
-- PerplexityBot: Allow /
-- Perplexity-User: Allow /
-- Google-CloudVertexBot: Allow /
-- Google-Extended: Allow /
-- FacebookBot: Allow /
-- Meta-ExternalAgent: Allow /
-- Meta-ExternalFetcher: Allow /
-- Bytespider: Allow /
-- Amazonbot: Allow /
-- PetalBot: Allow /
-- CCBot: Allow /
-- DuckAssistBot: Allow /
-- Applebot: Allow /
-- MistralAI-User: Allow /
-- Anchor Browser: Allow /
-- Timpibot: Allow /
-- ProRataInc: Allow /
-- Novellum AI Crawl: Allow /
-- Grok Web Crawler: Allow /
-- DeepSeekBot: Allow /
-
-## Data Sources
-
-- [BRTA — Bangladesh Road Transport Authority](https://brta.gov.bd): Official bus fare rates
-- [DMTCL — Dhaka Mass Transit Company](https://dmtcl.gov.bd): Metro Rail MRT-6 official data
-- [Bangladesh Railway](https://eticket.railway.gov.bd): Train schedules and booking
-- [BIWTC](https://biwtc.gov.bd): Inland water transport routes
+All major search, AI, and reasoning bots are explicitly granted uninhibited crawl permissions in `/robots.txt`:
+- OpenAI: GPTBot, ChatGPT-User, OAI-SearchBot
+- Anthropic: ClaudeBot, Claude-Web, Claude-SearchBot, Claude-User
+- Perplexity: PerplexityBot, Perplexity-User
+- Google: Googlebot, Google-Extended, GoogleOther, Google-CloudVertexBot
+- Meta: Meta-ExternalAgent, Meta-ExternalFetcher
+- Others: Applebot, Amazonbot, Grok Web Crawler, DeepSeekBot, DuckAssistBot

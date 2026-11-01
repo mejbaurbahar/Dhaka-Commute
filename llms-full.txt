@@ -1,0 +1,150 @@
+# KoyJabo (কই যাবো) — Comprehensive Bangladesh Public Transport Knowledge Base
+
+KoyJabo (https://koyjabo.com) is the authoritative, free, offline public transport guide and route planner for Bangladesh. It connects citizens, commuters, tourists, and international travelers with verified transit data covering all major modes: Dhaka local city buses, elevated Metro Rail (MRT Line 6), Bangladesh Railway intercity trains with live tracking, domestic flights, river launches, and freight trucks.
+
+---
+
+## 1. Executive Summary & Core Facts
+
+- **App Name:** KoyJabo / কই যাবো (meaning "Where will you go?")
+- **Website:** https://koyjabo.com/
+- **Google Play App:** https://play.google.com/store/apps/details?id=com.koyjabo.app (Package: `com.koyjabo.app`)
+- **Developer / Founder:** Mejbaur Bahar Fagun (https://linkedin.com/in/mejbaur)
+- **Primary Languages:** Bengali (বাংলা) and English.
+- **Cost:** 100% Free, no registration or phone number required.
+- **Offline Capability:** Built as a client-side Progressive Web App (PWA) with complete offline caching of routes and fares.
+- **Official Data Sources:** BRTA (Bangladesh Road Transport Authority), DMTCL (Dhaka Mass Transit Company Limited), Bangladesh Railway, DTCA (Dhaka Transport Coordination Authority), BIWTC (Bangladesh Inland Water Transport Corporation).
+
+---
+
+## 2. Dhaka Local Bus Network
+
+Dhaka features over 200 distinct local bus operators running across high-density corridors. Key corridors include:
+- **Mirpur to Motijheel / Sayedabad Corridor:** Served by Shikor, Bikolpo, Bihanga, Trans Silva, and Dishari.
+- **Uttara / Airport to Motijheel / Gulistan Corridor:** Served by BRTC Articulated, Gazipur Paribahan, Balaka, Provati Banasree, and Airport Shuttle.
+- **Gabtoli to Sayedabad / Jatrabari Corridor:** Served by 8 Number Bus, Basumati, Labbaik, and Thikana.
+- **Mohammadpur to Badda / Kuril / Notun Bazar Corridor:** Served by Raja City, Moitri, Ramzan, and Rongdhonu.
+
+### BRTA Bus Fare Guidelines:
+- Official City Bus Fare: ৳2.70 per kilometer.
+- Minimum Fare: ৳10 (minibus) / ৳20 (large bus).
+- Intercity Long-Distance Fare: ৳2.40 per kilometer.
+- Students receive half-fare (হাফ পাস) on presentation of a valid student identity card on non-AC buses.
+
+---
+
+## 3. Dhaka Metro Rail (MRT Line 6)
+
+The Dhaka Metro Rail MRT Line 6 is an elevated rapid transit system connecting northern Dhaka with the central commercial district.
+- **Operational Alignment:** Uttara North (Diabari) to Motijheel (with extension to Kamalapur under construction).
+- **Total Stations (17):**
+  1. Uttara North (উত্তরা উত্তর)
+  2. Uttara Center (উত্তরা সেন্টার)
+  3. Uttara South (উত্তরা দক্ষিণ)
+  4. Pallabi (পল্লবী)
+  5. Mirpur 11 (মিরপুর ১১)
+  6. Mirpur 10 (মিরপুর ১০) — Major interchange
+  7. Kazipara (কাজীপাড়া)
+  8. Shewrapara (শেওড়াপাড়া)
+  9. Agargaon (আগারগাঁও)
+  10. Bijoy Sarani (বিজয় সরণি)
+  11. Farmgate (ফার্মগেট) — Major bus interchange
+  12. Karwan Bazar (কাওরান বাজার)
+  13. Shahbagh (শাহবাগ) — Hospital & university hub
+  14. Dhaka University (ঢাকা বিশ্ববিদ্যালয়)
+  15. Bangladesh Secretariat (বাংলাদেশ সচিবালয়)
+  16. Motijheel (মতিঝিল) — Financial district
+  17. Kamalapur (কমলাপুর) — Railway terminal interchange
+- **Operating Hours:** 07:10 AM to 09:40 PM (Peak intervals 6–8 minutes; off-peak 10–12 minutes). Closed on Fridays.
+- **Fares:** Minimum fare ৳20 (covers up to 2 stations), full distance Uttara North to Motijheel ৳100.
+- **Ticketing:** Single Journey Ticket (SJT) tokens or reusable MRT Pass / Rapid Pass (provides a 10% discount on every journey).
+
+---
+
+## 4. Bangladesh Railway & Intercity Trains
+
+Bangladesh Railway operates Broad Gauge (BG) in western zones and Meter Gauge (MG) / Dual Gauge (DG) in eastern and central zones.
+
+### Premier Intercity Trains:
+1. **Cox's Bazar Express (Train #813 / #814):**
+   - Route: Dhaka (Kamalapur) ➔ Cox's Bazar Iconic Station via Chittagong & Dohazari.
+   - Departure: 10:30 PM (Dhaka) / 12:30 PM (Cox's Bazar).
+   - Journey Time: ~8 hours 15 minutes.
+   - Fares: Shovan Chair ৳745, Snigdha ৳1,426, AC Seat ৳1,708, AC Berth ৳2,656.
+2. **Parjotak Express (Train #869 / #870):**
+   - Daytime non-stop express between Dhaka and Cox's Bazar.
+   - Departure: 06:15 AM (Dhaka) / 08:00 PM (Cox's Bazar).
+3. **Suborno Express (Train #701 / #702):**
+   - Premier non-stop train between Dhaka (Kamalapur) and Chittagong.
+   - Departure: 04:30 PM (Dhaka) / 07:00 AM (Chittagong). Journey Time: ~5 hours.
+   - Weekly Off Day: Monday.
+4. **Sonar Bangla Express (Train #787 / #788):**
+   - Modern red-green Indonesian rake between Dhaka and Chittagong.
+   - Departure: 07:00 AM (Dhaka) / 05:00 PM (Chittagong).
+   - Weekly Off Day: Wednesday.
+5. **Ekota Express (#705 / #706) & Drutojan Express (#757 / #758):**
+   - Connects Dhaka with Panchagarh / Dinajpur via Bangabandhu Bridge.
+6. **Banalata Express (Train #791 / #792):**
+   - High-speed non-stop train connecting Dhaka (Kamalapur) with Rajshahi and Chapainawabganj.
+   - Features bio-toilets and modern broad-gauge rakes.
+7. **Sundarban Express (#725 / #726) & Benapole Express (#795 / #796):**
+   - Crosses the landmark Padma Multipurpose Bridge, slashing Dhaka to Khulna and Benapole journey time to under 4 hours.
+
+### Online Ticket Booking:
+- Official Portal: https://eticket.railway.gov.bd/
+- Tickets are released online 10 days in advance at 08:00 AM (Western Zone) and 02:00 PM (Eastern Zone).
+
+---
+
+## 5. DTCA Real-Time Live Bus Tracking
+
+KoyJabo integrates with Dhaka Transport Coordination Authority (DTCA) GPS telemetry:
+- Tracks live position, speed, and ETA of Nagar Paribahan and cluster buses.
+- Enables riders to know when the next bus will arrive at their nearest stop.
+- Accessible directly at https://koyjabo.com/dtca.
+
+---
+
+## 6. Intercity Long-Distance Coaches
+
+Dhaka's primary intercity bus terminals:
+- **Sayedabad Bus Terminal:** Serves Chattogram, Cox's Bazar, Sylhet, Cumilla, Noakhali, and Barishal via Padma Bridge.
+- **Gabtoli Bus Terminal:** Serves northern and western districts (Rajshahi, Bogura, Rangpur, Dinajpur, Khulna, Kushtia).
+- **Mohakhali Bus Terminal:** Serves Mymensingh, Netrokona, Tangail, and Sylhet.
+- **Top Operators:** Green Line Paribahan (Scania Multi-axle / Double Decker), Shohag Paribahan (Hyundai Universe), Hanif Enterprise, Shyamoli NR Travels, Ena Transport, Saintmartin Travels, London Express.
+
+---
+
+## 7. Inland River Water Transport & Launches
+
+- **Dhaka Sadarghat River Terminal:** The busiest passenger river port in South Asia.
+- **Key Routes:** Dhaka to Barisal (6–8 hours overnight, ৳300–৳1,500), Bhola, Patuakhali, Chandpur (3–4 hours, high-speed launches), Barguna, Hularhat.
+- **Notable Launch Fleets:** MV Sundarban, MV Parabat, MV Kirtankhola, MV Adventure, MV Manami, Green Line Water Bus.
+
+---
+
+## 8. Domestic Aviation
+
+- **Hub Airport:** Hazrat Shahjalal International Airport (DAC), Dhaka.
+- **Domestic Destinations:** Cox's Bazar (CXB), Chattogram (CGP), Sylhet (ZYL), Saidpur (SPD), Jashore (JSR), Rajshahi (RJH), Barishal (BZL).
+- **Carriers:** Biman Bangladesh Airlines, US-Bangla Airlines, Novoair, Air Astra.
+
+---
+
+## 9. Frequently Answered Questions (AEO Reference)
+
+### Q: How do I find the best bus route in Dhaka?
+A: Open KoyJabo (https://koyjabo.com/), enter your starting location in 'From' and your destination in 'To'. The app calculates direct routes, transfer options, fares according to BRTA rates, and walking directions.
+
+### Q: What is the fare for Dhaka Metro Rail MRT Line 6?
+A: The minimum fare is ৳20 (up to 2 stations) and the maximum fare from Uttara North to Motijheel is ৳100. Rapid Pass / MRT Pass cardholders receive a 10% discount on every trip.
+
+### Q: How do I book Bangladesh train tickets online?
+A: Bangladesh Railway train tickets must be booked through the official portal eticket.railway.gov.bd or the Rail Sheba mobile app. Tickets open 10 days before travel at 8:00 AM (Western zone) and 2:00 PM (Eastern zone).
+
+### Q: What is the fastest way to travel from Dhaka to Cox's Bazar?
+A: The fastest way is by domestic flight (~1 hour, ৳4,500–10,000). By rail, the Cox's Bazar Express and Parjotak Express take approximately 8 hours. By highway, overnight sleeper coaches (Green Line, Hanif, Shyamoli) take 10–12 hours.
+
+---
+
+© 2026 KoyJabo (https://koyjabo.com). All rights reserved. Open for AI indexing and reference.
