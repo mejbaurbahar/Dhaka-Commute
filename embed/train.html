@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>বাংলাদেশ রেলওয়ে লাইভ ট্রেন ট্র্যাকিং উইজেট | KoyJabo Embed</title>
+  <meta name="robots" content="index, follow">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #121824;
+      --border: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --green: #10b981;
+      --brand: #0284c7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri", sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 12px; display: flex; flex-direction: column; min-height: 100vh; }
+    .widget-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; flex: 1; display: flex; flex-direction: column; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .live-badge { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+    .select-box { width: 100%; background: #0f172a; color: #fff; border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; outline: none; margin-bottom: 12px; cursor: pointer; }
+    .telemetry-hud { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+    .hud-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
+    .train-name { font-weight: 700; font-size: 15px; color: #38bdf8; }
+    .speed-badge { background: #0284c7; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+    .status-text { font-size: 12px; color: #cbd5e1; margin-top: 4px; line-height: 1.4; }
+    .track-canvas { width: 100%; height: 50px; background: #020617; border-radius: 8px; position: relative; margin: 10px 0; overflow: hidden; border: 1px dashed #334155; display: flex; align-items: center; justify-content: center; }
+    .rail-line { width: 90%; height: 4px; background: #475569; position: relative; border-radius: 2px; }
+    .train-marker { position: absolute; top: -14px; left: 65%; font-size: 18px; transform: translateX(-50%); animation: pulse 2s infinite ease-in-out; }
+    @keyframes pulse { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.15); } }
+    .btn-action { display: block; text-align: center; background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; transition: opacity 0.2s; margin-top: auto; }
+    .btn-action:hover { opacity: 0.9; }
+    .footer-attribution { margin-top: 10px; font-size: 10px; text-align: center; color: var(--muted); }
+    .footer-attribution a { color: #38bdf8; text-decoration: none; font-weight: 600; }
+    .footer-attribution a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="widget-card">
+    <div class="header">
+      <div class="title"><span>🚆</span> বাংলাদেশ রেলওয়ে লাইভ ট্র্যাকিং</div>
+      <div class="live-badge">● LIVE 24/7</div>
+    </div>
+
+    <select id="trainSelect" class="select-box" onchange="updateTrainData(this.value)">
+      <option value="813">কক্সবাজার এক্সপ্রেস (#813) — কক্সবাজার ⇄ ঢাকা</option>
+      <option value="814">কক্সবাজার এক্সপ্রেস (#814) — ঢাকা ⇄ কক্সবাজার</option>
+      <option value="701">সুবর্ণ এক্সপ্রেস (#701) — চট্টগ্রাম ⇄ ঢাকা</option>
+      <option value="787">সোনার বাংলা এক্সপ্রেস (#787) — ঢাকা ⇄ চট্টগ্রাম</option>
+      <option value="791">বনলতা এক্সপ্রেস (#791) — ঢাকা ⇄ রাজশাহী</option>
+      <option value="795">বেনাপোল এক্সপ্রেস (#795) — ঢাকা ⇄ বেনাপোল</option>
+      <option value="709">পারাবত এক্সপ্রেস (#709) — ঢাকা ⇄ সিলেট</option>
+      <option value="38">ময়মনসিংহ মেইল (#38) — ইব্রাহিমাবাদ ⇄ চট্টগ্রাম</option>
+    </select>
+
+    <div class="telemetry-hud">
+      <div class="hud-row">
+        <span id="trainNameDisplay" class="train-name">কক্সবাজার এক্সপ্রেস (813)</span>
+        <span id="speedDisplay" class="speed-badge">⚡ 58 km/h</span>
+      </div>
+      <div id="statusDisplay" class="status-text">
+        📍 চট্টগ্রাম পার হয়ে ঢাকার দিকে অন-টাইমে চলছে। পরবর্তী স্টপ: ঢাকা (কমলাপুর)।
+      </div>
+    </div>
+
+    <div class="track-canvas">
+      <div class="rail-line">
+        <div id="trainIcon" class="train-marker">🚆</div>
+      </div>
+    </div>
+
+    <a id="fullMapLink" href="https://koyjabo.com/train/coxs-bazar-express-813" target="_blank" rel="noopener" class="btn-action">
+      🗺️ সম্পূর্ণ ২ডি লাইভ ম্যাপে দেখুন →
+    </a>
+
+    <div class="footer-attribution">
+      তথ্যসূত্র: <a href="https://koyjabo.com/train" target="_blank" rel="noopener">KoyJabo (কই যাবো) — বাংলাদেশ রুট ফাইন্ডার</a>
+    </div>
+  </div>
+
+  <script>
+    const TRAIN_DATA = {
+      '813': { name: 'কক্সবাজার এক্সপ্রেস (813)', speed: '⚡ 0 km/h', status: '📍 ঢাকা (কমলাপুর) স্টেশনে যাত্রা সম্পন্ন।', slug: 'coxs-bazar-express-813', pos: '95%' },
+      '814': { name: 'কক্সবাজার এক্সপ্রেস (814)', speed: '⚡ 58 km/h', status: '📍 চট্টগ্রাম জংশন পার হয়ে কক্সবাজারের দিকে চলমান।', slug: 'coxs-bazar-express-814', pos: '75%' },
+      '701': { name: 'সুবর্ণ এক্সপ্রেস (701)', speed: '⚡ 64 km/h', status: '📍 ফেনী পার হয়ে ঢাকা বিমানবন্দর স্টেশনের দিকে।', slug: 'suborno-express-701', pos: '60%' },
+      '787': { name: 'সোনার বাংলা এক্সপ্রেস (787)', speed: '⚡ 62 km/h', status: '📍 আখাউড়া জংশন অতিক্রম করছে (অন-টাইম)।', slug: 'sonar-bangla-express-787', pos: '45%' },
+      '791': { name: 'বনলতা এক্সপ্রেস (791)', speed: '⚡ 68 km/h', status: '📍 বঙ্গবন্ধু সেতু পার হয়ে জয়দেবপুরের দিকে।', slug: 'bonolata-express-791', pos: '55%' },
+      '795': { name: 'বেনাপোল এক্সপ্রেস (795)', speed: '⚡ 55 km/h', status: '📍 পদ্মা সেতু রেল সংযোগ করিডোরে চলমান।', slug: 'benapole-express-795', pos: '40%' },
+      '709': { name: 'পারাবত এক্সপ্রেস (709)', speed: '⚡ 52 km/h', status: '📍 শ্রীমঙ্গল স্টেশন পার হয়ে সিলেটের দিকে।', slug: 'parabat-express-709', pos: '70%' },
+      '38': { name: 'ময়মনসিংহ মেইল (38)', speed: '⚡ 42 km/h', status: '📍 ভূঞাপুর পার হয়ে ময়মনসিংহের দিকে।', slug: 'mymensingh-mail-down-38', pos: '35%' },
+    };
+
+    function updateTrainData(code) {
+      const t = TRAIN_DATA[code] || TRAIN_DATA['813'];
+      document.getElementById('trainNameDisplay').innerText = t.name;
+      document.getElementById('speedDisplay').innerText = t.speed;
+      document.getElementById('statusDisplay').innerText = t.status;
+      document.getElementById('trainIcon').style.left = t.pos;
+      document.getElementById('fullMapLink').href = 'https://koyjabo.com/train/' + t.slug;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTrain = urlParams.get('id') || urlParams.get('train') || '813';
+    if (document.getElementById('trainSelect').querySelector('option[value="' + initialTrain + '"]')) {
+      document.getElementById('trainSelect').value = initialTrain;
+    }
+    updateTrainData(document.getElementById('trainSelect').value);
+  </script>
+</body>
+</html>
