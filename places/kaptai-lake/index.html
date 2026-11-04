@@ -16,7 +16,7 @@
        <script>/<style>. Switching to nonces would force every ads / Tailwind
        drop-in to opt in too. Everything else has been narrowed to a fixed
        origin list — no `https:` wildcards, no open connect-src. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://www.google.com https://adservice.google.com https://aistudiocdn.com https://shop.daamdekhi.com https://cdn.tailwindcss.com https://apis.google.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://dtca-backend.bondstein.net https://koyjabo-auth-proxy.fagun115946.workers.dev https://koyjabo-push.fagun115946.workers.dev https://koyjabo-bus-live.fagun115946.workers.dev https://api.koyjabo.com https://*.koyjabo.com https://api.github.com https://raw.githubusercontent.com https://challenges.cloudflare.com https://www.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://*.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://csi.gstatic.com https://www.google.com.bd https://api.tomtom.com https://api.maptiler.com https://router.project-osrm.org https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://ipwho.is https://firebaseremoteconfig.googleapis.com https://firebaseinstallations.googleapis.com https://*.googleapis.com https://*.firebaseio.com https://www.googleapis.com https://aistudiocdn.com https://fundingchoicesmessages.google.com https://shop.daamdekhi.com https://connect.facebook.net https://graph.facebook.com; frame-src https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://connect.facebook.net https://www.facebook.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://www.google.com https://adservice.google.com https://aistudiocdn.com https://shop.daamdekhi.com https://cdn.tailwindcss.com https://apis.google.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' http://127.0.0.1:5858 http://localhost:5858 ws://localhost:* ws://127.0.0.1:* https://dtca-backend.bondstein.net https://koyjabo-auth-proxy.fagun115946.workers.dev https://koyjabo-push.fagun115946.workers.dev https://koyjabo-bus-live.fagun115946.workers.dev https://api.koyjabo.com https://*.koyjabo.com https://api.github.com https://raw.githubusercontent.com https://challenges.cloudflare.com https://www.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://*.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://stats.g.doubleclick.net https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://csi.gstatic.com https://www.google.com.bd https://api.tomtom.com https://api.maptiler.com https://router.project-osrm.org https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://ipwho.is https://firebaseremoteconfig.googleapis.com https://firebaseinstallations.googleapis.com https://*.googleapis.com https://*.firebaseio.com https://www.googleapis.com https://aistudiocdn.com https://fundingchoicesmessages.google.com https://shop.daamdekhi.com https://connect.facebook.net https://graph.facebook.com; frame-src https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://fundingchoicesmessages.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.googleadservices.com https://connect.facebook.net https://www.facebook.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
 
 
   <!-- GitHub Pages SPA path restore — convert /?/bus/achia/ back to /bus/achia/ -->
@@ -87,8 +87,12 @@
   <meta name="author" content="Mejbaur Bahar Fagun" />
   <meta name="publisher" content="কই যাবো" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <meta name="googlebot" content="index, follow" />
-  <meta name="bingbot" content="index, follow" />
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+  <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+  <link rel="dns-prefetch" href="https://www.google-analytics.com">
   <meta name="language" content="en" />
   <meta http-equiv="content-language" content="en, bn" />
   <meta name="revisit-after" content="1 days" />
@@ -105,16 +109,61 @@
   <meta property="article:published_time" content="2022-01-01T00:00:00+06:00" />
   <meta property="article:modified_time" content="2026-11-01T18:00:00+06:00" />
 
-  <!-- Google Analytics 4 (Measurement ID: G-7L601M5G9R) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7L601M5G9R"></script>
+  <!-- Google Consent Mode v2 & Google Analytics 4 (G-7L601M5G9R) + AdSense Linking (pub-8425219156685369) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
+    // Initialize Google Consent Mode v2 (required for Google AdSense + GA4 compliance & revenue attribution)
+    gtag('consent', 'default', {
+      'ad_storage': 'granted',
+      'ad_user_data': 'granted',
+      'ad_personalization': 'granted',
+      'analytics_storage': 'granted',
+      'functionality_storage': 'granted',
+      'personalization_storage': 'granted',
+      'security_storage': 'granted',
+      'wait_for_update': 500
+    });
     gtag('js', new Date());
-    gtag('config', 'G-7L601M5G9R', { send_page_view: true });
+    gtag('config', 'G-7L601M5G9R', {
+      send_page_view: true,
+      cookie_flags: 'SameSite=None;Secure',
+      google_ad_client: 'ca-pub-8425219156685369'
+    });
   </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7L601M5G9R"></script>
 
-  <!-- Google Search Console: verified via sc-domain:koyjabo.com (DNS) -->
+  <!-- Google Play App Indexing & Deep Link Attribution -->
+  <meta name="google-play-app" content="app-id=com.koyjabo.app" />
+  <meta property="al:android:package" content="com.koyjabo.app" />
+  <meta property="al:android:app_name" content="Koy Jabo – Route Finder BD" />
+  <meta property="al:android:url" content="https://koyjabo.com/" />
+  <meta property="al:web:url" content="https://koyjabo.com/" />
+
+  <!-- Google Search Console Verification Tokens -->
+  <meta name="google-site-verification" content="OdNAg92VaTSFPacBoeWmmAA8i_ix-qLKj_zNRZ5HyR8" />
+  <meta name="google-site-verification" content="2iGQp_0m29d63ZWuVA-pfJH9d8eAfeIehg3RNX7KaSw" />
+  <meta name="google-site-verification" content="F_P4Qtxzedt1pUYMCv1sG3tGseGSQ-Tg5ZKVCaTbZiQ" />
+
+  <!-- Meta (Facebook) Domain Verification & Open Graph Page Association -->
+  <meta name="facebook-domain-verification" content="wmq76z4e2sstovxd7gzy5hwirhz57h" />
+  <meta property="fb:pages" content="857945850742920" />
+  <meta property="fb:app_id" content="857945850742920" />
+
+  <!-- Meta Pixel Code (KoyJabo Pixel ID: 857945850742920) -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '857945850742920');
+    fbq('track', 'PageView');
+  </script>
+  <!-- End Meta Pixel Code -->
 
   <!-- Google AdSense — Auto Ads (publisher: ca-pub-8425219156685369) -->
   <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
@@ -793,14 +842,14 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-NNR2RDVF');</script>
   <!-- End Google Tag Manager -->
-    <script type="module" crossorigin src="/assets/index-BrT7iUiX.js"></script>
+    <script type="module" crossorigin src="/assets/index-CBTfw3eN.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/train-data-CCHp_rZb.js">
-    <link rel="modulepreload" crossorigin href="/assets/intercity-data-gOJMZGvn.js">
-    <link rel="modulepreload" crossorigin href="/assets/ai-service-DvskDDUC.js">
+    <link rel="modulepreload" crossorigin href="/assets/intercity-data-EUGOFqyw.js">
+    <link rel="modulepreload" crossorigin href="/assets/ai-service-Cr4pXCF6.js">
     <link rel="modulepreload" crossorigin href="/assets/leaflet-BdVKSRIn.js">
     <link rel="modulepreload" crossorigin href="/assets/react-USqSMMEU.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-DSrInCAK.js">
-    <link rel="modulepreload" crossorigin href="/assets/react-dom-Dpn_1ayb.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-B4qUhWFT.js">
+    <link rel="modulepreload" crossorigin href="/assets/react-dom-B7v6sgSZ.js">
     <link rel="modulepreload" crossorigin href="/assets/lucide-isqBP3Jz.js">
     <link rel="stylesheet" crossorigin href="/assets/leaflet-Dgihpmma.css">
     <link rel="stylesheet" crossorigin href="/assets/index-CTDFMfqA.css">
@@ -813,6 +862,11 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NNR2RDVF"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+
+  <!-- Meta Pixel (noscript) -->
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=857945850742920&ev=PageView&noscript=1" alt="" /></noscript>
+  <!-- End Meta Pixel (noscript) -->
 
   <div id="kj-splash" role="status" aria-live="polite">
     <div class="kj-splash-col">
@@ -992,7 +1046,7 @@
       var SCRIPTS = [
         // GA4 removed here — now handled by GTM (GTM-NNR2RDVF) in head
         { src: 'https://fundingchoicesmessages.google.com/i/pub-8425219156685369?ers=1' },
-        { src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8425219156685369' },
+        { src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8425219156685369', crossOrigin: 'anonymous' },
         { src: 'https://shop.daamdekhi.com/aeo/tag.js', dataset: { site: 'MVZPpZlR' } }
       ];
       var loaded = false;

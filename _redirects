@@ -4,4 +4,11 @@
 /sitemap.xml /sitemap.xml 200
 /blogs/* /blog/ 301
 /blogs /blog/ 301
+/places/rema-kalenga-wildlife-sanctuary/* /discover/ 301
+/places/rema-kalenga-wildlife-sanctuary /discover/ 301
+/air /flights/ 301
+/air/ /flights/ 301
+/blog/:slug.jpg/ /blog/:slug.jpg 301
+/blog/:slug.png/ /blog/:slug.png 301
+/blog/:slug.webp/ /blog/:slug.webp 301
 /* /index.html 200
