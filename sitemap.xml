@@ -467,7 +467,43 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- Bus Routes (437) -->
+  <!-- Bus Routes (444) -->
+  <url>
+    <loc>https://koyjabo.com/bus/vip-dtca-6-company/</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/zoo-city-bus-chiriyakhana/</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/ramjan-ali-enterprise/</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/four-star-bus-line/</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/pnp-city-service/</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/dhaka-chaka-ac-service/</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
   <url>
     <loc>https://koyjabo.com/bus/13-no/</loc>
     <lastmod>2026-11-04</lastmod>
@@ -1333,7 +1369,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/ramjan/</loc>
+    <loc>https://koyjabo.com/bus/ramjan-ali-enterprise-route-22/</loc>
     <lastmod>2026-11-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1579,7 +1615,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://koyjabo.com/bus/vip-27/</loc>
+    <loc>https://koyjabo.com/bus/vip-27-vip/</loc>
     <lastmod>2026-11-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -2444,6 +2480,12 @@
   </url>
   <url>
     <loc>https://koyjabo.com/bus/dighirpar-transport/</loc>
+    <lastmod>2026-11-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/bus/vip-27/</loc>
     <lastmod>2026-11-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
