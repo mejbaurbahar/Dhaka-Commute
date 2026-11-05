@@ -52,12 +52,12 @@ Context: Based on active route permits and commuter schedules analyzed across Dh
 The average Dhaka city bus serves 16.2 intermediate stops from origin to destination terminal.
 Context: Measured across all 200+ distinct bus companies serving Dhaka and suburbs.
 
-### 7530 Routes — Busiest Transit Junction
-undefined is Dhaka's most interconnected public transit junction, served by 7530 passing bus routes.
+### 144 Routes — Busiest Transit Junction
+Shahbag is Dhaka's most interconnected public transit junction, served by 144 passing bus routes.
 Context: Intersection point for north-south and east-west Dhaka commuter corridors.
 
 ### 49 Stops — Longest Network Route
-undefined is the single route with the highest stop density, spanning 49 registered stops.
+Ajmeri Glory is the single route with the highest stop density, spanning 49 registered stops.
 Context: Inter-district commuter service connecting suburban zones to central commercial districts.
 
 ---

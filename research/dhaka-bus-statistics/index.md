@@ -18,16 +18,16 @@
 - **Bangla Summary**: ঢাকা শহরের প্রতিটি রুটের বাস গড়ে 16.2টি স্টপেজে যাত্রী ওঠানামা করায়।
 - **Citation Anchor**: `https://koyjabo.com/research/dhaka-bus-statistics#finding-avg-stops`
 
-### <a id="finding-top-hub"></a>7530 Routes — Busiest Transit Junction
-- **Claim**: undefined is Dhaka's most interconnected public transit junction, served by 7530 passing bus routes.
+### <a id="finding-top-hub"></a>144 Routes — Busiest Transit Junction
+- **Claim**: Shahbag is Dhaka's most interconnected public transit junction, served by 144 passing bus routes.
 - **Context**: Intersection point for north-south and east-west Dhaka commuter corridors.
-- **Bangla Summary**: undefined ঢাকার সবচেয়ে সংযুক্ত ট্রানজিট মোড়, যেখানে 7530টি বাস রুট যাতায়াত করে।
+- **Bangla Summary**: Shahbag ঢাকার সবচেয়ে সংযুক্ত ট্রানজিট মোড়, যেখানে 144টি বাস রুট যাতায়াত করে।
 - **Citation Anchor**: `https://koyjabo.com/research/dhaka-bus-statistics#finding-top-hub`
 
 ### <a id="finding-longest-route"></a>49 Stops — Longest Network Route
-- **Claim**: undefined is the single route with the highest stop density, spanning 49 registered stops.
+- **Claim**: Ajmeri Glory is the single route with the highest stop density, spanning 49 registered stops.
 - **Context**: Inter-district commuter service connecting suburban zones to central commercial districts.
-- **Bangla Summary**: undefined রুটের স্টপেজ সংখ্যা সবচেয়ে বেশি, যাতে মোট 49টি স্টপেজ রয়েছে।
+- **Bangla Summary**: আজমেরী গ্লোরী রুটের স্টপেজ সংখ্যা সবচেয়ে বেশি, যাতে মোট 49টি স্টপেজ রয়েছে।
 - **Citation Anchor**: `https://koyjabo.com/research/dhaka-bus-statistics#finding-longest-route`
 
 ## Statistical Tables & Distributions
@@ -44,7 +44,16 @@
 
 | Transit Hub / Junction | Routes Passing Through | Transit Dominance |
 | --- | --- | --- |
-| undefined | 7530 | High / Core Transfer Point |
+| Shahbag | 144 | High / Core Transfer Point |
+| Gulistan | 144 | High / Core Transfer Point |
+| Paltan | 134 | High / Core Transfer Point |
+| Technical | 129 | High / Core Transfer Point |
+| Farmgate | 128 | High / Core Transfer Point |
+| Shyamoli | 116 | High / Core Transfer Point |
+| Mirpur10 | 107 | High / Core Transfer Point |
+| Sayedabad | 104 | High / Core Transfer Point |
+| Kallyanpur | 102 | High / Core Transfer Point |
+| Gabtoli | 101 | High / Core Transfer Point |
 
 ## Methodology & Data Integrity
 
