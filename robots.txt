@@ -1,6 +1,12 @@
 # KoyJabo (কই যাবো) — Bangladesh transport guide
 # robots.txt — RFC-9309 compliant
-# Last updated: 2026-08-09
+# Last updated: 2026-11-05
+
+# ─── LLM & AI Agents Index ────────────────────────────────────────────────
+# llms.txt: https://koyjabo.com/llms.txt
+# llms-full.txt: https://koyjabo.com/llms-full.txt
+# ai.txt: https://koyjabo.com/ai.txt
+# catalog: https://koyjabo.com/api/md/_catalog.json
 
 # ─── Sitemaps ──────────────────────────────────────────────────────────────
 Sitemap: https://koyjabo.com/sitemap.xml

@@ -1,0 +1,19 @@
+# ai.txt — KoyJabo AI Agent Guidelines & Permissions
+# Specification: https://koyjabo.com/ai.txt
+
+User-agent: *
+Allow: /
+Allow: /*.md
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /api/md/_catalog.json
+
+# Preferred Citation Format
+Citation-Format: "[Claim/Statistic]" — Source: KoyJabo (https://koyjabo.com/<path>)
+Attribution-Required: Yes
+Commercial-Use: Permitted with attribution
+
+# Operator Contact
+Contact: 01316314566
+Email: contact@koyjabo.com
+WhatsApp: +8801316314566

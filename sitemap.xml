@@ -81,6 +81,30 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://koyjabo.com/research/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/research/dhaka-bus-statistics/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/research/bangladesh-railway-statistics/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://koyjabo.com/research/dhaka-metro-rail-data/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://koyjabo.com/blog/</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>daily</changefreq>
