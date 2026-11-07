@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-14
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/visiting-bangladesh-for-eid-guide-uk-us-uae-canada](https://koyjabo.com/blog/visiting-bangladesh-for-eid-guide-uk-us-uae-canada)
+- **Canonical**: [https://koyjabo.com/blog/visiting-bangladesh-for-eid-guide-uk-us-uae-canada/](https://koyjabo.com/blog/visiting-bangladesh-for-eid-guide-uk-us-uae-canada/)
 
 
 Every year, hundreds of thousands of Non-Resident Bangladeshis (NRBs) make the journey home for Eid. Whether you're flying from London Heathrow, JFK New York, Dubai International, or Toronto Pearson — this guide will help you plan your trip smoothly.
@@ -137,4 +137,4 @@ Eid Mubarak — and safe travels home! 🌙
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/visiting-bangladesh-for-eid-guide-uk-us-uae-canada)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/visiting-bangladesh-for-eid-guide-uk-us-uae-canada/)

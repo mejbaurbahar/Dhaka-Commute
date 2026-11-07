@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-11
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/saint-martin-island-travel-guide-bangladesh](https://koyjabo.com/blog/saint-martin-island-travel-guide-bangladesh)
+- **Canonical**: [https://koyjabo.com/blog/saint-martin-island-travel-guide-bangladesh/](https://koyjabo.com/blog/saint-martin-island-travel-guide-bangladesh/)
 
 
 **Saint Martin Island** (Narikel Jinjira / নারিকেল জিঞ্জিরা) is Bangladesh's only coral island and one of the most beautiful destinations in the entire Bay of Bengal. Located 9km south of Teknaf in the southernmost tip of Bangladesh, it offers turquoise water, white sandy beaches, coral reefs, and fresh seafood.
@@ -116,4 +116,4 @@ Use **[KoyJabo.com](https://koyjabo.com)** to check bus/train schedules and fare
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/saint-martin-island-travel-guide-bangladesh)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/saint-martin-island-travel-guide-bangladesh/)

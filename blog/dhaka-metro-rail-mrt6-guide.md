@@ -4,7 +4,7 @@
 
 - **Published**: 2026-08-16
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/dhaka-metro-rail-mrt6-guide](https://koyjabo.com/blog/dhaka-metro-rail-mrt6-guide)
+- **Canonical**: [https://koyjabo.com/blog/dhaka-metro-rail-mrt6-guide/](https://koyjabo.com/blog/dhaka-metro-rail-mrt6-guide/)
 
 
 The Dhaka Metro Rail MRT-6 is the train that changed Dhaka. From Uttara to Motijheel in about 39 minutes — air-conditioned, safe and on time.
@@ -55,4 +55,4 @@ Metro guide → [koyjabo.com](https://koyjabo.com)
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-metro-rail-mrt6-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-metro-rail-mrt6-guide/)

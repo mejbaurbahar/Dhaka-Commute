@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-14
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/what-changed-bangladesh-2026-nrb-returning-guide](https://koyjabo.com/blog/what-changed-bangladesh-2026-nrb-returning-guide)
+- **Canonical**: [https://koyjabo.com/blog/what-changed-bangladesh-2026-nrb-returning-guide/](https://koyjabo.com/blog/what-changed-bangladesh-2026-nrb-returning-guide/)
 
 
 If you left Bangladesh in 2019 or 2020 and haven't been back, you're in for a surprise. Bangladesh has transformed in ways that will genuinely impress you — new infrastructure, new technology, and a new way of living for Dhaka residents.
@@ -146,4 +146,4 @@ Dhaka's food scene has exploded. Dhanmondi, Gulshan, and Banani now have hundred
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/what-changed-bangladesh-2026-nrb-returning-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/what-changed-bangladesh-2026-nrb-returning-guide/)

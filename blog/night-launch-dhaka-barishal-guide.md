@@ -4,7 +4,7 @@
 
 - **Published**: 2026-08-21
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/night-launch-dhaka-barishal-guide](https://koyjabo.com/blog/night-launch-dhaka-barishal-guide)
+- **Canonical**: [https://koyjabo.com/blog/night-launch-dhaka-barishal-guide/](https://koyjabo.com/blog/night-launch-dhaka-barishal-guide/)
 
 
 Three days, three meals, 300 km — a Bangladeshi launch journey is an experience no train can give you.
@@ -51,4 +51,4 @@ Plan your river trip → [koyjabo.com](https://koyjabo.com)
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/night-launch-dhaka-barishal-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/night-launch-dhaka-barishal-guide/)

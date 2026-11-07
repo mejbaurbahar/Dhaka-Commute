@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-21
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/rickshaw-cng-guide-dhaka](https://koyjabo.com/blog/rickshaw-cng-guide-dhaka)
+- **Canonical**: [https://koyjabo.com/blog/rickshaw-cng-guide-dhaka/](https://koyjabo.com/blog/rickshaw-cng-guide-dhaka/)
 
 
 Dhaka has the **largest rickshaw fleet in the world** — estimates suggest over 400,000 cycle rickshaws operate daily. Alongside them are thousands of CNG-powered auto-rickshaws. Together they form an essential layer of Dhaka's transport fabric.
@@ -91,4 +91,4 @@ Use **KoyJabo** to estimate what transport mode makes sense for your specific ro
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/rickshaw-cng-guide-dhaka)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/rickshaw-cng-guide-dhaka/)

@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-30
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/bangladesh-tour-cost-breakdown-2026](https://koyjabo.com/blog/bangladesh-tour-cost-breakdown-2026)
+- **Canonical**: [https://koyjabo.com/blog/bangladesh-tour-cost-breakdown-2026/](https://koyjabo.com/blog/bangladesh-tour-cost-breakdown-2026/)
 
 
 How much does it cost to travel in Bangladesh in 2026? Whether you are a backpacker or a luxury traveler, here is the real breakdown.
@@ -55,4 +55,4 @@ Don't get overcharged by middlemen. Use **[KoyJabo.com](https://koyjabo.com)** t
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-tour-cost-breakdown-2026)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-tour-cost-breakdown-2026/)

@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-27
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/dhaka-metro-rail-mrt-line-6-complete-guide](https://koyjabo.com/blog/dhaka-metro-rail-mrt-line-6-complete-guide)
+- **Canonical**: [https://koyjabo.com/blog/dhaka-metro-rail-mrt-line-6-complete-guide/](https://koyjabo.com/blog/dhaka-metro-rail-mrt-line-6-complete-guide/)
 
 
 Dhaka's **MRT Line 6** transformed daily commuting for millions of people. What used to be a 90-minute bus crawl from Uttara to Motijheel is now a 40-minute metro ride. Here's everything you need to know.
@@ -122,4 +122,4 @@ For the Uttara–Motijheel corridor, **metro wins every time.** For destinations
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-metro-rail-mrt-line-6-complete-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-metro-rail-mrt-line-6-complete-guide/)

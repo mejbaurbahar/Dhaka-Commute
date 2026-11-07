@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-07
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/bangladesh-tour-packages-2026-travel-agency-guide](https://koyjabo.com/blog/bangladesh-tour-packages-2026-travel-agency-guide)
+- **Canonical**: [https://koyjabo.com/blog/bangladesh-tour-packages-2026-travel-agency-guide/](https://koyjabo.com/blog/bangladesh-tour-packages-2026-travel-agency-guide/)
 
 
 Bangladesh has some of Southeast Asia's most affordable and rewarding travel destinations. Whether you want a beach holiday at Cox's Bazar, a wildlife adventure in the Sundarbans, or a cultural journey through Dhaka — there's a tour package for every budget.
@@ -133,4 +133,4 @@ Prefer independent travel? Use **[KoyJabo.com](https://koyjabo.com)** to find bu
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-tour-packages-2026-travel-agency-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-tour-packages-2026-travel-agency-guide/)

@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-10
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/bangladesh-visa-guide-uk-us-uae-canada-2026](https://koyjabo.com/blog/bangladesh-visa-guide-uk-us-uae-canada-2026)
+- **Canonical**: [https://koyjabo.com/blog/bangladesh-visa-guide-uk-us-uae-canada-2026/](https://koyjabo.com/blog/bangladesh-visa-guide-uk-us-uae-canada-2026/)
 
 
 Planning a trip to Bangladesh? Getting your visa sorted is the first step. This complete guide covers everything UK, US, UAE, Canada and EU citizens need to know about Bangladesh visas in 2026.
@@ -142,4 +142,4 @@ Once your visa is sorted, use **[KoyJabo.com](https://koyjabo.com)** to plan all
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-visa-guide-uk-us-uae-canada-2026)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-visa-guide-uk-us-uae-canada-2026/)

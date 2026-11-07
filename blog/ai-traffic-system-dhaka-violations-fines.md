@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-30
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/ai-traffic-system-dhaka-violations-fines](https://koyjabo.com/blog/ai-traffic-system-dhaka-violations-fines)
+- **Canonical**: [https://koyjabo.com/blog/ai-traffic-system-dhaka-violations-fines/](https://koyjabo.com/blog/ai-traffic-system-dhaka-violations-fines/)
 
 
 A major change is finally arriving in Dhaka's traffic management. From now on, it's not just the traffic police you need to watch out for — **an AI-based system will automatically detect who is breaking the law.**
@@ -112,4 +112,4 @@ Dhaka is moving towards an **AI-driven traffic system**. The technology is getti
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/ai-traffic-system-dhaka-violations-fines)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/ai-traffic-system-dhaka-violations-fines/)

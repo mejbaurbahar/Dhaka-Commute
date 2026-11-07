@@ -4,7 +4,7 @@
 
 - **Published**: 2026-06-22
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/pathao-promo-codes-discount-codes-2026](https://koyjabo.com/blog/pathao-promo-codes-discount-codes-2026)
+- **Canonical**: [https://koyjabo.com/blog/pathao-promo-codes-discount-codes-2026/](https://koyjabo.com/blog/pathao-promo-codes-discount-codes-2026/)
 
 
 Looking for Bangladesh transport promo codes in 2026? KoyJabo has collected every verified, working discount code — Pathao rides, food delivery, domestic flights, international flights, and bus bookings — all in one place, updated June 2026.
@@ -183,4 +183,4 @@ KoyJabo.com covers all Bangladesh transport — Dhaka buses, Metro Rail, interci
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/pathao-promo-codes-discount-codes-2026)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/pathao-promo-codes-discount-codes-2026/)

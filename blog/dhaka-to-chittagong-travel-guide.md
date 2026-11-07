@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-25
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/dhaka-to-chittagong-travel-guide](https://koyjabo.com/blog/dhaka-to-chittagong-travel-guide)
+- **Canonical**: [https://koyjabo.com/blog/dhaka-to-chittagong-travel-guide/](https://koyjabo.com/blog/dhaka-to-chittagong-travel-guide/)
 
 
 Dhaka to Chittagong (also spelled Chattogram) is Bangladesh's busiest intercity corridor — covering 244 km between the capital and the country's main port city. You have three options: bus, train, or flight.
@@ -100,4 +100,4 @@ Before heading to Sayedabad or Kamalapur station, use **KoyJabo** to find the be
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-to-chittagong-travel-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-to-chittagong-travel-guide/)

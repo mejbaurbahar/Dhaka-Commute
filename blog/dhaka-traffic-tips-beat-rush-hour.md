@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-19
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/dhaka-traffic-tips-beat-rush-hour](https://koyjabo.com/blog/dhaka-traffic-tips-beat-rush-hour)
+- **Canonical**: [https://koyjabo.com/blog/dhaka-traffic-tips-beat-rush-hour/](https://koyjabo.com/blog/dhaka-traffic-tips-beat-rush-hour/)
 
 
 Dhaka's traffic is one of the most challenging in the world. The city regularly features in global "worst traffic" rankings. But millions of people navigate it daily — and those who do it smartly save 1–2 hours per day. Here's how.
@@ -100,4 +100,4 @@ The best commuters combine preparation (know your route), adaptability (know you
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-traffic-tips-beat-rush-hour)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-traffic-tips-beat-rush-hour/)

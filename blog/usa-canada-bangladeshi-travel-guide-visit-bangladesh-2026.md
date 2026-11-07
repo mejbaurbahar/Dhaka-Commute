@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-14
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/usa-canada-bangladeshi-travel-guide-visit-bangladesh-2026](https://koyjabo.com/blog/usa-canada-bangladeshi-travel-guide-visit-bangladesh-2026)
+- **Canonical**: [https://koyjabo.com/blog/usa-canada-bangladeshi-travel-guide-visit-bangladesh-2026/](https://koyjabo.com/blog/usa-canada-bangladeshi-travel-guide-visit-bangladesh-2026/)
 
 
 The United States and Canada are home to over **350,000 Bangladeshis** — concentrated in New York City (Jackson Heights, the Bronx, Jamaica), Detroit, Los Angeles, Washington DC, Toronto, and Montreal.
@@ -148,4 +148,4 @@ If you're visiting Bangladesh as an American-born Bangladeshi (ABD) for the firs
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/usa-canada-bangladeshi-travel-guide-visit-bangladesh-2026)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/usa-canada-bangladeshi-travel-guide-visit-bangladesh-2026/)

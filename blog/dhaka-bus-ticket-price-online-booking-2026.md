@@ -4,7 +4,7 @@
 
 - **Published**: 2026-08-10
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/dhaka-bus-ticket-price-online-booking-2026](https://koyjabo.com/blog/dhaka-bus-ticket-price-online-booking-2026)
+- **Canonical**: [https://koyjabo.com/blog/dhaka-bus-ticket-price-online-booking-2026/](https://koyjabo.com/blog/dhaka-bus-ticket-price-online-booking-2026/)
 
 
 Looking for **bus ticket** prices and booking options in Bangladesh in 2026? Whether you need a short-hop ticket on a Dhaka local bus or a long-distance intercity coach ticket, this guide covers current fares and every way to book — online, by phone and at the counter.
@@ -73,4 +73,4 @@ For live bus schedules, stops and exact fares, check [KoyJabo](https://koyjabo.c
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-bus-ticket-price-online-booking-2026)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-bus-ticket-price-online-booking-2026/)

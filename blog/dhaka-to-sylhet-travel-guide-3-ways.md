@@ -4,7 +4,7 @@
 
 - **Published**: 2026-08-20
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide-3-ways](https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide-3-ways)
+- **Canonical**: [https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide-3-ways/](https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide-3-ways/)
 
 
 Three ways to get from Dhaka to Sylhet — each with its own trade-off between time, money and comfort.
@@ -52,4 +52,4 @@ Compare all three, book smart → [koyjabo.com](https://koyjabo.com)
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide-3-ways)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide-3-ways/)

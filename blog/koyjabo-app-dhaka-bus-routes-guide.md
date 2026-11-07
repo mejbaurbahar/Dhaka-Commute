@@ -4,7 +4,7 @@
 
 - **Published**: 2026-08-18
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/koyjabo-app-dhaka-bus-routes-guide](https://koyjabo.com/blog/koyjabo-app-dhaka-bus-routes-guide)
+- **Canonical**: [https://koyjabo.com/blog/koyjabo-app-dhaka-bus-routes-guide/](https://koyjabo.com/blog/koyjabo-app-dhaka-bus-routes-guide/)
 
 
 Need to go somewhere in Dhaka? In 30 seconds you can know exactly which bus to take, the route map and the fare.
@@ -40,4 +40,4 @@ Save it today — you will use it every day → [koyjabo.com](https://koyjabo.co
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/koyjabo-app-dhaka-bus-routes-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/koyjabo-app-dhaka-bus-routes-guide/)

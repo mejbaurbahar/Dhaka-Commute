@@ -839,6 +839,30 @@
     #kj-splash .kj-splash-tag { font-size: 11px; color: #6b7a91; margin-top: 14px; }
     @keyframes kjLoadBar { 0% { transform: translateX(-120%); } 100% { transform: translateX(330%); } }
     @keyframes kjWheel { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+    /* Accessible Skip to Content Link (WCAG 2.4.1 Bypass Blocks) */
+    .kj-skip-link {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00d26a;
+      color: #05060b !important;
+      padding: 12px 24px;
+      font-weight: 800;
+      font-size: 15px;
+      font-family: 'Hind Siliguri', 'Inter', system-ui, sans-serif;
+      text-decoration: none;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 8px 30px rgba(0, 210, 106, 0.5);
+      z-index: 1000000;
+      transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+      border: 2px solid #ffffff;
+    }
+    .kj-skip-link:focus, .kj-skip-link:focus-visible {
+      top: 0;
+    }
   </style>
 
   <!-- Google Tag Manager -->
@@ -848,7 +872,7 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-NNR2RDVF');</script>
   <!-- End Google Tag Manager -->
-    <script type="module" crossorigin src="/assets/index-CqgAPwDr.js"></script>
+    <script type="module" crossorigin src="/assets/index-qCqPqora.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/train-data-BAuLH01B.js">
     <link rel="modulepreload" crossorigin href="/assets/intercity-data-DjlKnaQq.js">
     <link rel="modulepreload" crossorigin href="/assets/ai-service-DV4uFNcO.js">
@@ -866,6 +890,9 @@
 </head>
 
 <body style="margin:0;padding:0;background:#05060b">
+
+  <!-- Accessible Skip to Content Link for keyboard & screen reader navigation -->
+  <a href="#main-content" class="kj-skip-link">Skip to content / সরাসরি মূল কনটেন্টে যান</a>
 
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NNR2RDVF"
@@ -907,7 +934,7 @@
     <p>KoyJabo is Bangladesh's free offline transport guide covering 200+ Dhaka bus routes, Metro Rail MRT-6 fares (৳20–100, 17 stations), intercity bus/train/flight/launch routes across all 64 districts, truck &amp; freight booking with real BD market rates, a BRTA-rate fare calculator, and a bilingual Bengali/English AI assistant. Works offline.</p>
   </div>
 
-  <main class="kj-static-seo" style="position:absolute;left:-9999px;top:0;width:1px;overflow:hidden" aria-hidden="true"><h1>Tanguar Haor — How to Get There, Bus &amp; Train</h1><p>How to reach Tanguar Haor in Bangladesh by bus, train, launch or flight — routes, fares and travel tips on KoyJabo.</p></main>
+  <main id="main-content" class="kj-static-seo" style="position:absolute;left:-9999px;top:0;width:1px;overflow:hidden"><h1>Tanguar Haor — How to Get There, Bus &amp; Train</h1><p>How to reach Tanguar Haor in Bangladesh by bus, train, launch or flight — routes, fares and travel tips on KoyJabo.</p></main>
   <div id="root"></div>
 
     <!-- SEO Content for Search Engines -->

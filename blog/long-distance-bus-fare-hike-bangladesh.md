@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-27
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/long-distance-bus-fare-hike-bangladesh](https://koyjabo.com/blog/long-distance-bus-fare-hike-bangladesh)
+- **Canonical**: [https://koyjabo.com/blog/long-distance-bus-fare-hike-bangladesh/](https://koyjabo.com/blog/long-distance-bus-fare-hike-bangladesh/)
 
 
 A new long-distance bus fare list has recently been published. Fares have been increased for 40-seat and 51-seat buses on various routes — directly affecting the daily commute of ordinary passengers.
@@ -108,4 +108,4 @@ With the right information, you can save both time and money.
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/long-distance-bus-fare-hike-bangladesh)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/long-distance-bus-fare-hike-bangladesh/)

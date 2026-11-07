@@ -4,7 +4,7 @@
 
 - **Published**: 2026-08-19
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/local-bus-fare-dhaka-guide](https://koyjabo.com/blog/local-bus-fare-dhaka-guide)
+- **Canonical**: [https://koyjabo.com/blog/local-bus-fare-dhaka-guide/](https://koyjabo.com/blog/local-bus-fare-dhaka-guide/)
 
 
 Dhaka city buses have no pre-booking — buy a ticket from the conductor or pay on board. Here is what a local bus ticket costs in 2026.
@@ -44,4 +44,4 @@ The right bus, the right fare → [koyjabo.com](https://koyjabo.com)
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/local-bus-fare-dhaka-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/local-bus-fare-dhaka-guide/)

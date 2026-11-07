@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-26
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/dhaka-to-coxs-bazar-travel-guide](https://koyjabo.com/blog/dhaka-to-coxs-bazar-travel-guide)
+- **Canonical**: [https://koyjabo.com/blog/dhaka-to-coxs-bazar-travel-guide/](https://koyjabo.com/blog/dhaka-to-coxs-bazar-travel-guide/)
 
 
 Cox's Bazar is the world's longest natural sea beach — 120 km of unbroken coastline. It's Bangladesh's most popular tourist destination, and it's 400 km south of Dhaka. Here's how to get there.
@@ -111,4 +111,4 @@ Cox's Bazar is worth every kilometer. Whether you choose the overnight bus for t
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-to-coxs-bazar-travel-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-to-coxs-bazar-travel-guide/)

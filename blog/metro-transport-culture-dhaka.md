@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-25
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/metro-transport-culture-dhaka](https://koyjabo.com/blog/metro-transport-culture-dhaka)
+- **Canonical**: [https://koyjabo.com/blog/metro-transport-culture-dhaka/](https://koyjabo.com/blog/metro-transport-culture-dhaka/)
 
 
 Amid Dhaka's traffic, crowds, and uncertainty, Metro Rail has arrived as a kind of relief. It saves time and makes commuting easier. But Metro Rail isn't just a fast vehicle — it's introducing a new **transport culture** for our city.
@@ -84,4 +84,4 @@ When we change small habits, the experience of the whole city can change.
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/metro-transport-culture-dhaka)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/metro-transport-culture-dhaka/)

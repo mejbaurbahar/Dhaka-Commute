@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-22
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide](https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide)
+- **Canonical**: [https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide/](https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide/)
 
 
 Sylhet is northeastern Bangladesh's crown jewel — rolling tea estates, crystal-clear rivers, the mystical Ratargul swamp forest, and the stunning Jaflong hills on the Indian border. It's 240 km from Dhaka and very well connected.
@@ -86,4 +86,4 @@ Use **KoyJabo** to plan your route to Sayedabad or Mohakhali terminal from where
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-to-sylhet-travel-guide/)

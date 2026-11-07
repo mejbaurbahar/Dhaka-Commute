@@ -4,7 +4,7 @@
 
 - **Published**: 2026-08-15
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/live-bus-tracking-dhaka-guide](https://koyjabo.com/blog/live-bus-tracking-dhaka-guide)
+- **Canonical**: [https://koyjabo.com/blog/live-bus-tracking-dhaka-guide/](https://koyjabo.com/blog/live-bus-tracking-dhaka-guide/)
 
 
 Dhaka buses run every 5–20 minutes — but only if you know where the bus actually is. Standing at a stop for 40 minutes guessing is no longer necessary.
@@ -45,4 +45,4 @@ Stop guessing, start moving. See your bus live → [koyjabo.com](https://koyjabo
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/live-bus-tracking-dhaka-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/live-bus-tracking-dhaka-guide/)

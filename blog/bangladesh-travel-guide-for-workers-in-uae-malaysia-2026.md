@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-14
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/bangladesh-travel-guide-for-workers-in-uae-malaysia-2026](https://koyjabo.com/blog/bangladesh-travel-guide-for-workers-in-uae-malaysia-2026)
+- **Canonical**: [https://koyjabo.com/blog/bangladesh-travel-guide-for-workers-in-uae-malaysia-2026/](https://koyjabo.com/blog/bangladesh-travel-guide-for-workers-in-uae-malaysia-2026/)
 
 
 Over **1.5 million Bangladeshis** live and work in the UAE, and another **800,000+** in Malaysia. Most work in construction, manufacturing, hospitality, or domestic services — sending remittances home and saving for annual visits.
@@ -139,4 +139,4 @@ Bangladesh has changed since 2016–2018 when many workers left:
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-travel-guide-for-workers-in-uae-malaysia-2026)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-travel-guide-for-workers-in-uae-malaysia-2026/)

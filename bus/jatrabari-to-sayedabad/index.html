@@ -839,6 +839,30 @@
     #kj-splash .kj-splash-tag { font-size: 11px; color: #6b7a91; margin-top: 14px; }
     @keyframes kjLoadBar { 0% { transform: translateX(-120%); } 100% { transform: translateX(330%); } }
     @keyframes kjWheel { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+    /* Accessible Skip to Content Link (WCAG 2.4.1 Bypass Blocks) */
+    .kj-skip-link {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00d26a;
+      color: #05060b !important;
+      padding: 12px 24px;
+      font-weight: 800;
+      font-size: 15px;
+      font-family: 'Hind Siliguri', 'Inter', system-ui, sans-serif;
+      text-decoration: none;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 8px 30px rgba(0, 210, 106, 0.5);
+      z-index: 1000000;
+      transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+      border: 2px solid #ffffff;
+    }
+    .kj-skip-link:focus, .kj-skip-link:focus-visible {
+      top: 0;
+    }
   </style>
 
   <!-- Google Tag Manager -->
@@ -848,7 +872,7 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-NNR2RDVF');</script>
   <!-- End Google Tag Manager -->
-    <script type="module" crossorigin src="/assets/index-CqgAPwDr.js"></script>
+    <script type="module" crossorigin src="/assets/index-qCqPqora.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/train-data-BAuLH01B.js">
     <link rel="modulepreload" crossorigin href="/assets/intercity-data-DjlKnaQq.js">
     <link rel="modulepreload" crossorigin href="/assets/ai-service-DV4uFNcO.js">
@@ -867,6 +891,9 @@
 </head>
 
 <body style="margin:0;padding:0;background:#05060b">
+
+  <!-- Accessible Skip to Content Link for keyboard & screen reader navigation -->
+  <a href="#main-content" class="kj-skip-link">Skip to content / সরাসরি মূল কনটেন্টে যান</a>
 
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NNR2RDVF"
@@ -908,7 +935,7 @@
     <p>KoyJabo is Bangladesh's free offline transport guide covering 200+ Dhaka bus routes, Metro Rail MRT-6 fares (৳20–100, 17 stations), intercity bus/train/flight/launch routes across all 64 districts, truck &amp; freight booking with real BD market rates, a BRTA-rate fare calculator, and a bilingual Bengali/English AI assistant. Works offline.</p>
   </div>
 
-  <main class="kj-static-seo" style="position:absolute;left:-9999px;top:0;width:1px;overflow:hidden" aria-hidden="true">
+  <main id="main-content" class="kj-static-seo" style="position:absolute;left:-9999px;top:0;width:1px;overflow:hidden">
       <article>
         <h1>Which Bus Goes from Jatrabari to Sayedabad in Dhaka?</h1>
         <p>62 buses on KoyJabo cover the Jatrabari to Sayedabad route in Dhaka: Ramjan Ali Enterprise (রমজান আলী এন্টারপ্রাইজ (৬-কোম্পানি ফ্র্যাঞ্চাইজি)), Four Star Bus Line (ফোর স্টার বাস লাইন (৬-কোম্পানি ফ্র্যাঞ্চাইজি)), 8 No. (৮নং), Ajmi (আজমী), Anabil Super (অনাবিল সুপার), Asmani (আসমানী), Best Transport (বেষ্ট ট্রান্সপোর্ট), PPB City Paribahan (Signboard-Dhour Route) (পিপিবি সিটি পরিবহন (সাইনবোর্ড-ধৌড় রুট - সাবেক বিকাশ)), Bondhu (বন্ধু), BRTC (Madanpur-Savar) (বি আর টিসি), City Link (সিটি লিংক), Desh Bangla (দেশ বাংলা), Great Bikrampur (গ্রেট বিক্রমপুর), Green Anabil (গ্রীন অনাবিল), Himachal (হিমাচল), Ilish Paribahan (ইলিশ পরিবহন), J M Super Paribahan (জে এম সুপার পরিবহন), Kamal Plus Paribahan (কামাল প্লাস পরিবহন), Khajababa Paribahan (খাজাবাবা), Labbaik (লাব্বাইক), Manjil Express (মাঞ্জিল এক্সপ্রেস), Meghla Transport (মেঘলা ট্রান্সপোর্ট), MM Lovely (এম এম লাভলী), Moumita (মৌমিতা), Nilachol (নিলাচল), Onabil (অনাবিল), Rajanigandha (রজনীগন্ধা), Ramjan Ali Enterprise (Route 22) (রমজান আলী এন্টারপ্রাইজ (রুট ২২)), Rois (রাইস), Salsabil (সালসাবিল), Shatabdi (শতাব্দী), Somota Paribahan (সমতা পরিবহন), Somoy (সময়), Suveccha (শুভেচ্ছা), Talukdar (তালুকদার), Thikana Express (ঠিকানা এক্সপ্রেস), Transilva (ট্রান্সিলভা), Turag (তুরাগ), J.M Super Paribahan (জে.এম সুপার পরিবহন), Agragami (অগ্রগামী), Shikor Paribahan (শিখর পরিবহন), Thikana Paribahan (ঠিকানা পরিবহন), Great Elish (গ্রেট ইলিশ), Dighirpar Transport (দিঘীরপাড় পরিবহন), Prochesta Paribahan (প্রচেষ্টা পরিবহন), Nayan Paribahan (নয়ন পরিবহন), Raida Paribahan (রাইদা পরিবহন), Gangchil Paribahan (গাংচিল পরিবহন), Bikrompur Express (বিক্রমপুর এক্সপ্রেস), Munshiganj Super Service (মুন্সীগঞ্জ সুপার সার্ভিস), Labbayek (লাব্বাইক), Modhumita (মধুমিতা), Shahin Paribahan (শাহীন পরিবহন), 15 No. (১৫নং), Jatri Seva (যাত্রী সেবা), Bismillah (বিসমিল্লাহ), Monowar Paribahan (মনোয়ার পরিবহন), Seba Paribahan (সেবা পরিবহন), Moumita (DMB) (মৌমিতা (ডিএমবি)), Vuia (ভুইয়া পরিবহন), Shikor (শিখর), Shikhor Paribahan (Return) (শিখর পরিবহন). Open any bus to see its full stop list, fare guidance and live location.</p>

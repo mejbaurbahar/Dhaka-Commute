@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-23
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/best-bus-routes-dhaka-commuter-guide](https://koyjabo.com/blog/best-bus-routes-dhaka-commuter-guide)
+- **Canonical**: [https://koyjabo.com/blog/best-bus-routes-dhaka-commuter-guide/](https://koyjabo.com/blog/best-bus-routes-dhaka-commuter-guide/)
 
 
 Dhaka has hundreds of bus routes covering every corner of the city. For a daily commuter, knowing the right bus can save an hour or more every day. Here are the key corridors and routes.
@@ -90,4 +90,4 @@ The app covers thousands of routes across all Dhaka zones.
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/best-bus-routes-dhaka-commuter-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/best-bus-routes-dhaka-commuter-guide/)

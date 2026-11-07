@@ -4,7 +4,7 @@
 
 - **Published**: 2026-06-12
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/bangladesh-railway-senior-citizen-disability-fare-discount-2026](https://koyjabo.com/blog/bangladesh-railway-senior-citizen-disability-fare-discount-2026)
+- **Canonical**: [https://koyjabo.com/blog/bangladesh-railway-senior-citizen-disability-fare-discount-2026/](https://koyjabo.com/blog/bangladesh-railway-senior-citizen-disability-fare-discount-2026/)
 
 
 Bangladesh Railway has taken a landmark step toward **inclusive and passenger-friendly public transport**. From **25 May 2026**, two groups now receive a **25% discount on base fares**: citizens aged 65 and above, and holders of the government-issued 'Suborno' disability card.
@@ -150,4 +150,4 @@ Whether you're a senior citizen planning a visit to your home district or a care
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-railway-senior-citizen-disability-fare-discount-2026)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/bangladesh-railway-senior-citizen-disability-fare-discount-2026/)

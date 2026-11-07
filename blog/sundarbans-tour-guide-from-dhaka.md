@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-10
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/sundarbans-tour-guide-from-dhaka](https://koyjabo.com/blog/sundarbans-tour-guide-from-dhaka)
+- **Canonical**: [https://koyjabo.com/blog/sundarbans-tour-guide-from-dhaka/](https://koyjabo.com/blog/sundarbans-tour-guide-from-dhaka/)
 
 
 The **Sundarbans** is one of the most extraordinary places on Earth — a UNESCO World Heritage Site spanning 10,000 sq km across Bangladesh and India. It is home to the legendary **Royal Bengal Tiger**, saltwater crocodiles, spotted deer, and over 300 species of birds.
@@ -122,4 +122,4 @@ Use **[KoyJabo.com](https://koyjabo.com)** to find real-time bus fares and train
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/sundarbans-tour-guide-from-dhaka)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/sundarbans-tour-guide-from-dhaka/)

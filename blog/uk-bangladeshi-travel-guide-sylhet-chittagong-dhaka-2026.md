@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-14
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/uk-bangladeshi-travel-guide-sylhet-chittagong-dhaka-2026](https://koyjabo.com/blog/uk-bangladeshi-travel-guide-sylhet-chittagong-dhaka-2026)
+- **Canonical**: [https://koyjabo.com/blog/uk-bangladeshi-travel-guide-sylhet-chittagong-dhaka-2026/](https://koyjabo.com/blog/uk-bangladeshi-travel-guide-sylhet-chittagong-dhaka-2026/)
 
 
 Over 600,000 people of Bangladeshi origin live in the UK — the largest Bangladeshi diaspora community in the world outside South Asia. The vast majority trace their roots to **Sylhet Division**, with significant communities from **Chittagong** and **Dhaka** as well.
@@ -168,4 +168,4 @@ Dhaka has changed dramatically. Here's what to expect in 2026:
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/uk-bangladeshi-travel-guide-sylhet-chittagong-dhaka-2026)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/uk-bangladeshi-travel-guide-sylhet-chittagong-dhaka-2026/)

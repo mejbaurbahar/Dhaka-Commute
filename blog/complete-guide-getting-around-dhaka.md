@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-28
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/complete-guide-getting-around-dhaka](https://koyjabo.com/blog/complete-guide-getting-around-dhaka)
+- **Canonical**: [https://koyjabo.com/blog/complete-guide-getting-around-dhaka/](https://koyjabo.com/blog/complete-guide-getting-around-dhaka/)
 
 
 Dhaka is one of the most densely populated cities in the world, but getting around is more manageable than it looks — if you know your options. This guide covers every transport mode available in Dhaka in 2026, from the modern MRT Metro to the classic cycle rickshaw.
@@ -113,4 +113,4 @@ Dhaka rewards those who understand its transport system. With a metro card in yo
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/complete-guide-getting-around-dhaka)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/complete-guide-getting-around-dhaka/)

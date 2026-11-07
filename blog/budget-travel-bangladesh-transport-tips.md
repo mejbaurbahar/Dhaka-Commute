@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-20
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/budget-travel-bangladesh-transport-tips](https://koyjabo.com/blog/budget-travel-bangladesh-transport-tips)
+- **Canonical**: [https://koyjabo.com/blog/budget-travel-bangladesh-transport-tips/](https://koyjabo.com/blog/budget-travel-bangladesh-transport-tips/)
 
 
 Bangladesh is one of the most rewarding and affordable destinations in Asia. Transport options exist at every price point — from ৳5 local buses to ৳8,000 flights. Here's how to travel Bangladesh without breaking the bank.
@@ -98,4 +98,4 @@ Use **KoyJabo** to:
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/budget-travel-bangladesh-transport-tips)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/budget-travel-bangladesh-transport-tips/)

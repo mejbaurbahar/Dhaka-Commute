@@ -4,7 +4,7 @@
 
 - **Published**: 2026-08-17
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/koyjabo-ai-bangla-transport-assistant](https://koyjabo.com/blog/koyjabo-ai-bangla-transport-assistant)
+- **Canonical**: [https://koyjabo.com/blog/koyjabo-ai-bangla-transport-assistant/](https://koyjabo.com/blog/koyjabo-ai-bangla-transport-assistant/)
 
 
 "বাসে করে মিরপুর থেকে মতিঝিল যাব, কতক্ষণ লাগবে?" — Ask that in Bangla, get the answer in Bangla. Route, time, fare, everything.
@@ -41,4 +41,4 @@ Your 24/7 transport assistant → [koyjabo.com/ai](https://koyjabo.com/ai)
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/koyjabo-ai-bangla-transport-assistant)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/koyjabo-ai-bangla-transport-assistant/)

@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-14
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/dhaka-airport-arrival-guide-nrb-bangladeshi-diaspora](https://koyjabo.com/blog/dhaka-airport-arrival-guide-nrb-bangladeshi-diaspora)
+- **Canonical**: [https://koyjabo.com/blog/dhaka-airport-arrival-guide-nrb-bangladeshi-diaspora/](https://koyjabo.com/blog/dhaka-airport-arrival-guide-nrb-bangladeshi-diaspora/)
 
 
 Whether you've been away for 2 years or 20, arriving at Hazrat Shahjalal International Airport (DAC) in Dhaka can be overwhelming. This guide walks you through every step — from the moment you land to getting settled in the city.
@@ -145,4 +145,4 @@ Use **KoyJabo** to find the right bus, plan metro journeys, and get route info a
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-airport-arrival-guide-nrb-bangladeshi-diaspora)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/dhaka-airport-arrival-guide-nrb-bangladeshi-diaspora/)

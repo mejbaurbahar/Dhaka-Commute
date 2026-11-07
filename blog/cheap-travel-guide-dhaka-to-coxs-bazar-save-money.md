@@ -4,7 +4,7 @@
 
 - **Published**: 2026-05-01
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/cheap-travel-guide-dhaka-to-coxs-bazar-save-money](https://koyjabo.com/blog/cheap-travel-guide-dhaka-to-coxs-bazar-save-money)
+- **Canonical**: [https://koyjabo.com/blog/cheap-travel-guide-dhaka-to-coxs-bazar-save-money/](https://koyjabo.com/blog/cheap-travel-guide-dhaka-to-coxs-bazar-save-money/)
 
 
 Traveling to Cox's Bazar doesn't have to be expensive. With a little planning, you can enjoy the world's longest beach on a tight budget.
@@ -51,4 +51,4 @@ Avoid private CNGs. Shared electric Tomtoms (Easy bikes) cost only **৳10 - ৳
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/cheap-travel-guide-dhaka-to-coxs-bazar-save-money)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/cheap-travel-guide-dhaka-to-coxs-bazar-save-money/)

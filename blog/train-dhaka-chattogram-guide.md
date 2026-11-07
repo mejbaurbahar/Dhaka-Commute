@@ -4,7 +4,7 @@
 
 - **Published**: 2026-08-22
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/train-dhaka-chattogram-guide](https://koyjabo.com/blog/train-dhaka-chattogram-guide)
+- **Canonical**: [https://koyjabo.com/blog/train-dhaka-chattogram-guide/](https://koyjabo.com/blog/train-dhaka-chattogram-guide/)
 
 
 The Dhaka–Chattogram railway is the busiest in Bangladesh. Tickets sell fast, but the trip is easy if you plan ahead.
@@ -46,4 +46,4 @@ Train guide → [koyjabo.com](https://koyjabo.com)
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/train-dhaka-chattogram-guide)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/train-dhaka-chattogram-guide/)

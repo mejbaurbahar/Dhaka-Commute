@@ -4,7 +4,7 @@
 
 - **Published**: 2026-04-24
 - **Publisher**: KoyJabo Transport Insights
-- **Canonical**: [https://koyjabo.com/blog/how-to-use-koyjabo-app](https://koyjabo.com/blog/how-to-use-koyjabo-app)
+- **Canonical**: [https://koyjabo.com/blog/how-to-use-koyjabo-app/](https://koyjabo.com/blog/how-to-use-koyjabo-app/)
 
 
 **KoyJabo (কই যাবো)** — which means "Where are you going?" in Bengali — is Bangladesh's most comprehensive transport planning platform. It helps you navigate Dhaka's complex bus network, track metro routes, find trains, and plan multi-modal journeys.
@@ -111,4 +111,4 @@ Start planning smarter journeys today: **[koyjabo.com](https://koyjabo.com)**
 
 ---
 ### Citation
-> Source: KoyJabo Blog (https://koyjabo.com/blog/how-to-use-koyjabo-app)
+> Source: KoyJabo Blog (https://koyjabo.com/blog/how-to-use-koyjabo-app/)
