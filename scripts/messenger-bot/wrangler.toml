@@ -18,4 +18,4 @@ FB_PAGE_ID = "857945850742920"
 #   wrangler kv namespace create POSTED
 [[kv_namespaces]]
 binding = "POSTED"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "8508cc3eec84498d96f9c9f12c4c04a7"
