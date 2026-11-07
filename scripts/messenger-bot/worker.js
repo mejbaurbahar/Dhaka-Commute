@@ -475,6 +475,25 @@ async function handleKoyJaboComment(env, value) {
   await replyToComment(commentId, cleanReply, env.PAGE_ACCESS_TOKEN);
 }
 
+// Forward event to MI Agro live cPanel server with browser/FacebookBot user agent
+async function forwardToMiAgro(body) {
+  try {
+    const res = await fetch(MI_AGRO_WEBHOOK, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; FacebookBot/1.0; +http://developers.facebook.com)'
+      },
+      body: JSON.stringify(body)
+    });
+    console.log(`[Proxy] Forwarded to MI Agro. Response status: ${res.status}`);
+    return res.ok;
+  } catch (err) {
+    console.error('[Proxy] Failed to forward to MI Agro:', err);
+    return false;
+  }
+}
+
 // ─────────────────────────────────────────────────────────────
 // Blog RSS Auto-Poster: Reads feed.xml and posts newest article
 // ─────────────────────────────────────────────────────────────
@@ -539,7 +558,7 @@ export default {
     if (url.searchParams.get('diag') === (env.VERIFY_TOKEN || 'mi_agro_ai_secret_verify_2026')) {
       return new Response(JSON.stringify({
         status: 'active',
-        system: 'Koy Jabo & MI Agro Multi-Tenant AI Edge Mesh v9.0',
+        system: 'Koy Jabo & MI Agro Multi-Tenant AI Edge Mesh v9.2',
         platform: 'Cloudflare Workers (Edge)',
         koyjabo_page_id: env.FB_PAGE_ID || '857945850742920',
         mi_agro_proxy: MI_AGRO_WEBHOOK,
@@ -552,6 +571,23 @@ export default {
       }, null, 2), {
         headers: { 'Content-Type': 'application/json; charset=utf-8' }
       });
+    }
+
+    // 1b. Test MI Agro Proxy Connection
+    if (url.searchParams.get('test_mi') === '1') {
+      try {
+        const testRes = await fetch(`${MI_AGRO_WEBHOOK}?diag=${env.VERIFY_TOKEN || 'mi_agro_ai_secret_verify_2026'}`, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; FacebookBot/1.0; +http://developers.facebook.com)' }
+        });
+        const testData = await testRes.text();
+        return new Response(JSON.stringify({
+          proxy_target: MI_AGRO_WEBHOOK,
+          status: testRes.status,
+          response: testData
+        }, null, 2), { headers: { 'Content-Type': 'application/json' } });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
     }
 
     // 2. Meta Webhook Verification Handshake
@@ -583,26 +619,23 @@ export default {
         for (const entry of entries) {
           const entryId = String(entry.id || '');
 
-          // If entry is for MI Agro, proxy to live cPanel server
-          if (entryId === '1363075996880828' || entryId === '61594281573717') {
-            console.log(`[Proxy] Forwarding MI Agro entry ${entryId} to live server...`);
-            ctx.waitUntil(
-              fetch(MI_AGRO_WEBHOOK, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-              }).then(r => console.log('[Proxy] MI Agro response:', r.status)).catch(e => console.error('[Proxy] MI Agro error:', e))
-            );
+          // Check if this entry belongs to MI Agro
+          // Koy Jabo Page ID is 857945850742920. Anything else (or specifically 1363075996880828 / 61594281573717) is MI Agro
+          const isKoyJabo = entryId === '857945850742920' || entryId === String(env.FB_PAGE_ID);
+
+          if (!isKoyJabo) {
+            console.log(`[Proxy] Routing entry ${entryId} directly to MI Agro server...`);
+            await forwardToMiAgro(body);
             continue;
           }
 
-          // Otherwise, process as Koy Jabo
+          // If Koy Jabo:
           // A. Messenger Events
           if (Array.isArray(entry.messaging)) {
             for (const event of entry.messaging) {
               const recipientId = String(event.recipient?.id || '');
-              if (recipientId === '1363075996880828') {
-                ctx.waitUntil(fetch(MI_AGRO_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }));
+              if (recipientId !== '857945850742920') {
+                await forwardToMiAgro(body);
                 continue;
               }
               ctx.waitUntil(handleKoyJaboMessenger(env, event));
@@ -614,8 +647,8 @@ export default {
             for (const change of entry.changes) {
               if (change.field === 'feed' && change.value) {
                 const postId = String(change.value.post_id || change.value.post?.id || change.value.parent_id || '');
-                if (postId.startsWith('1363075996880828')) {
-                  ctx.waitUntil(fetch(MI_AGRO_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }));
+                if (!postId.includes('857945850742920')) {
+                  await forwardToMiAgro(body);
                   continue;
                 }
                 ctx.waitUntil(handleKoyJaboComment(env, change.value));
