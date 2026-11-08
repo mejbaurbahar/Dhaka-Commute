@@ -13,7 +13,7 @@
     "fareMax": 100,
     "topSpeedKmh": 100,
     "stations": 17,
-    "fetchedAt": "2026-11-01T18:41:01.323Z",
+    "fetchedAt": "2026-11-08T18:35:31.043Z",
     "source": "dmtcl.gov.bd (static schedule)"
   },
   "brtaFares": {
@@ -25,7 +25,7 @@
     "minimumMinibusFare": 8,
     "effectiveDate": "2026-09-23",
     "source": "BRTA circular dated 23 September 2026",
-    "fetchedAt": "2026-11-01T18:41:01.324Z"
+    "fetchedAt": "2026-11-08T18:35:31.043Z"
   },
   "launchRoutes": {
     "routes": [
@@ -111,7 +111,7 @@
       }
     ],
     "totalRoutes": 67,
-    "fetchedAt": "2026-11-01T18:41:01.324Z",
+    "fetchedAt": "2026-11-08T18:35:31.044Z",
     "source": "biwtc.gov.bd"
   },
   "trainFaresSpotCheck": {
@@ -121,13 +121,13 @@
     "maxTicketsPerOrder": 4,
     "tripSearchDayLimit": 10,
     "totalStations": 263,
-    "totalTrainNames": 157,
+    "totalTrainNames": 163,
     "seniorCitizenDiscount": 25,
     "seniorCitizenAge": 65,
-    "fetchedAt": "2026-11-01T18:41:01.944Z",
+    "fetchedAt": "2026-11-08T18:35:31.835Z",
     "source": "railspaapi.shohoz.com/handshake"
   },
-  "_refreshedAt": "2026-11-01T18:41:06.673Z",
+  "_refreshedAt": "2026-11-08T18:35:37.505Z",
   "trainRoutes": {
     "routes": [
       {
@@ -2964,6 +2964,7 @@
           "Santahar",
           "Akkelpur",
           "Joypurhat",
+          "Hili",
           "Birampur",
           "Fulbari",
           "Parbatipur",
@@ -3778,6 +3779,7 @@
           "Parbatipur",
           "Fulbari",
           "Birampur",
+          "Hili",
           "Joypurhat",
           "Akkelpur",
           "Santahar",
@@ -4171,7 +4173,7 @@
       }
     ],
     "totalTrains": 134,
-    "fetchedAt": "2026-11-01T18:41:06.673Z",
+    "fetchedAt": "2026-11-08T18:35:37.505Z",
     "source": "railspaapi.shohoz.com"
   }
 }
