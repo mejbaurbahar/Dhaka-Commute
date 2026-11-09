@@ -10,6 +10,11 @@
         // GitHub Pages SPA redirect — encode path as query param so Googlebot can render pages
         (function() {
           var l = window.location;
+          // Clean trailing slashes on image or static file URLs (e.g. /blog/*.jpg/)
+          if (/\.(jpe?g|png|webp|gif|svg|ico|xml|json|txt|md)\/+$/i.test(l.pathname)) {
+            window.location.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + l.pathname.replace(/\/+$/, '') + l.search + l.hash);
+            return;
+          }
           try { sessionStorage.setItem('redirect', l.href); } catch(e) {}
           // Encode path as /?/bus/achia/ so index.html serves with HTTP 200 and Google can render
           var p = l.pathname.slice(1);
