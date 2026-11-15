@@ -12,10 +12,10 @@
 - **Bangla Summary**: বাংলাদেশ রেলওয়ের পূর্ব ও পশ্চিম অঞ্চল মিলিয়ে সারাদেশে মোট 534টি সক্রিয় স্টেশন রয়েছে।
 - **Citation Anchor**: `https://koyjabo.com/research/bangladesh-railway-statistics#finding-total-stations`
 
-### <a id="finding-intercity-fleet"></a>255 — Intercity Train Routes
-- **Claim**: A scheduled network of 255 intercity train routes connects Dhaka with district headquarters across all 8 divisions.
+### <a id="finding-intercity-fleet"></a>258 — Intercity Train Routes
+- **Claim**: A scheduled network of 258 intercity train routes connects Dhaka with district headquarters across all 8 divisions.
 - **Context**: Exclusive of suburban commuter shuttles, mail trains, and goods freight trains.
-- **Bangla Summary**: সারাদেশের ৮টি বিভাগের সাথে ঢাকাকে সংযুক্ত করতে মোট 255টি আন্তঃনগর ট্রেন রুট চলাচল করে।
+- **Bangla Summary**: সারাদেশের ৮টি বিভাগের সাথে ঢাকাকে সংযুক্ত করতে মোট 258টি আন্তঃনগর ট্রেন রুট চলাচল করে।
 - **Citation Anchor**: `https://koyjabo.com/research/bangladesh-railway-statistics#finding-intercity-fleet`
 
 ### <a id="finding-popular-corridor"></a>Dhaka – Chattogram — Busiest Rail Corridor

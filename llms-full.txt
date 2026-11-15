@@ -68,8 +68,8 @@ Station records verified against Bangladesh Railway timetable, live train teleme
 Bangladesh Railway operates across 534 active stations across the country, spanning East and West operational zones.
 Context: Full rail network station directory verified from Bangladesh Railway telemetry.
 
-### 255 — Intercity Train Routes
-A scheduled network of 255 intercity train routes connects Dhaka with district headquarters across all 8 divisions.
+### 258 — Intercity Train Routes
+A scheduled network of 258 intercity train routes connects Dhaka with district headquarters across all 8 divisions.
 Context: Exclusive of suburban commuter shuttles, mail trains, and goods freight trains.
 
 ### Dhaka – Chattogram — Busiest Rail Corridor
