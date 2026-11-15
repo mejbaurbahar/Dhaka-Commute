@@ -51,84 +51,78 @@ Allow: /
 User-agent: AdsBot-Google-Mobile
 Allow: /
 
-# ─── AI / LLM crawlers — Allowed ───────────────────────────────────────────
-# Note: Cloudflare may prepend additional directives at CDN level.
-# If AI crawlers appear blocked, check Cloudflare Dashboard → AI Crawler Blocking.
-
+# ─── Block All AI Scraping & Model Training Bots ──────────────────────────
 User-agent: GPTBot
-Allow: /
+Disallow: /
 
 User-agent: ChatGPT-User
-Allow: /
+Disallow: /
 
 User-agent: OAI-SearchBot
-Allow: /
+Disallow: /
 
 User-agent: ClaudeBot
-Allow: /
+Disallow: /
 
 User-agent: Claude-Web
-Allow: /
+Disallow: /
 
 User-agent: Claude-SearchBot
-Allow: /
+Disallow: /
 
 User-agent: Claude-User
-Allow: /
+Disallow: /
 
 User-agent: anthropic-ai
-Allow: /
+Disallow: /
 
 User-agent: PerplexityBot
-Allow: /
+Disallow: /
 
 User-agent: Perplexity-User
-Allow: /
+Disallow: /
 
 User-agent: Google-Extended
-Allow: /
+Disallow: /
 
 User-agent: GoogleOther
-Allow: /
+Disallow: /
 
 User-agent: Google-CloudVertexBot
-Allow: /
+Disallow: /
 
 User-agent: Amazonbot
-Allow: /
-
-User-agent: Applebot
-Allow: /
+Disallow: /
 
 User-agent: Applebot-Extended
-Allow: /
+Disallow: /
 
 User-agent: Meta-ExternalAgent
-Allow: /
+Disallow: /
 
 User-agent: Meta-ExternalFetcher
-Allow: /
+Disallow: /
 
 User-agent: CCBot
-Allow: /
+Disallow: /
 
 User-agent: Bytespider
-Allow: /
+Disallow: /
 
 User-agent: cohere-ai
-Allow: /
+Disallow: /
 
 User-agent: MistralAI-User
-Allow: /
+Disallow: /
 
 User-agent: DeepSeekBot
-Allow: /
+Disallow: /
 
 User-agent: DuckAssistBot
-Allow: /
+Disallow: /
 
 User-agent: Timpibot
-Allow: /
+Disallow: /
 
 # ─── Blocked: aggressive scrapers / SEO drainers ───────────────────────────
 User-agent: SemrushBot
